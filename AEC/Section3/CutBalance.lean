@@ -498,8 +498,8 @@ lemma coeff_bump_self (x : HOrder δ) (g : Gamma δ) (q : ℚ) : coeff (bump x g
 
 lemma coeff_bump_ne (x : HOrder δ) (g i : Gamma δ) (q : ℚ) (h : i ≠ g) :
     coeff (bump x g q) i = coeff x i := by
-  rw [bump, coeff_add, coeff_sub, coeff_smulQ, coeff_smulQ, coeff_basis_ne h, coeff_basis_ne h,
-    mul_zero, mul_zero, sub_zero, add_zero]
+  rw [bump, coeff_add, coeff_sub, coeff_smulQ, coeff_smulQ]
+  simp only [coeff_basis_ne h, mul_zero, sub_zero, add_zero]
 
 lemma bump_self (x : HOrder δ) (g : Gamma δ) : bump x g (coeff x g) = x := by
   apply ofColex.injective
@@ -531,7 +531,7 @@ def hCrossing (c : Cut (HOrder δ)) : Set (Gamma δ) :=
 lemma sub_basis_lt (l : HOrder δ) (h : Gamma δ) : l - basisQ h < l := by
   have hneg : -basisQ h < 0 := neg_lt_zero_of_pos (basisQ_pos h)
   have hlt : -basisQ h + l < 0 + l := addRight_lt hneg
-  rw [← sub_eq_add_neg, add_zero] at hlt
+  rw [add_comm (-basisQ h) l, add_comm (0 : HOrder δ) l, add_zero, ← sub_eq_add_neg] at hlt
   exact hlt
 
 lemma hCrossing_up (c : Cut (HOrder δ)) {g h : Gamma δ} (hg : g ∈ hCrossing c) (hgh : g < h) :

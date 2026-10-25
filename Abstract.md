@@ -9,3 +9,9 @@ Categoricity in a cardinal $\kappa$ means that there is a model of cardinality $
 The main theorem (Theorem 1.2) says that for every infinite cardinal $\lambda$ there is a threshold $\mu(\lambda) \ge \lambda$ with the following property. If $K$ is an abstract elementary class with $\mathrm{LS}(K) \le \lambda$, and $K$ is categorical in any one cardinal $\kappa \ge \mu(\lambda)$, then $K$ is categorical in every cardinal $\kappa' \ge \mu(\lambda)$. The argument produces the existence of such a threshold. It does not produce a numerical bound.
 
 The qualitative form (Theorem 1.3) is equivalent: categoricity in unboundedly many cardinals implies categoricity on a tail of cardinals. Proposition 2.3 reduces the class form to a set-sized code for the class.
+
+## Paper abstract
+
+We prove Shelah’s eventual categoricity conjecture for abstract elementary classes in ZFC.
+
+For each infinite bound on the Löwenheim–Skolem number there is a uniform threshold such that categoricity in any one cardinal at or above that threshold implies categoricity in every cardinal at or above the same threshold.
