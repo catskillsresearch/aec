@@ -4,6 +4,7 @@ public import AEC.Section2.DirectLimit
 public import AEC.Section2.DirectedLimit
 public import AEC.Section2.ValidCode
 public import AEC.Section2.OrderPresentation
+public import AEC.Section2.Partition
 public import AEC.Section1.UniformThreshold
 public import AEC.Section1.UnboundedCategoricity
 public import AEC.Section1.CategoricalTail
@@ -87,7 +88,14 @@ theorem lemma_2_5 (ξ ν : Cardinal.{u}) (k : ℕ) (hξ : aleph0 ≤ ξ) (hν : 
                   ∀ i : Fin n, ∃ c : C i,
                     ∀ (s : Finset ι) (hs : s.card = arity i),
                       (∀ x ∈ s, x ∈ H) → color i ⟨s, hs⟩ = c := by
-  sorry
+  refine ⟨recursivePartitionBound k ξ ν, partitionBound_infinite hk hξ hν, ?_, ?_⟩
+  · intro ι hι C hC color
+    exact erdos_color hξ hν hk hι hC color
+  · intro n arity hpos
+    obtain ⟨R', _, hjoint⟩ := joint_partition hξ n hν arity hpos
+    refine ⟨max (recursivePartitionBound k ξ ν) R', le_max_left _ _, ?_⟩
+    intro ι hι C hC color
+    exact hjoint ι ((le_max_right _ _).trans hι) C hC color
 
 /-- **Theorem 2.6** (Order presentation). An AEC with arbitrarily large models has an
 Ehrenfeucht–Mostowski presentation by finitely supported labeled terms, and therefore a model

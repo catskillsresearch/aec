@@ -27,6 +27,7 @@ public import AEC.Section2.DirectLimitRel
 public import AEC.Section2.DirectedLimit
 public import AEC.Section2.DirectedSystem
 public import AEC.Section2.OrderPresentation
+public import AEC.Section2.Partition
 public import AEC.Section2.PartitionBound
 public import AEC.Section2.Results
 public import AEC.Section2.SmallCode
