@@ -3,3 +3,5 @@
 - [Valid code](ValidCode.md)
 - [Categoricity spectrum](CategoricitySpectrum.md)
 - [Spectrum bound](SpectrumBound.md)
+
+**[Results.lean](Results.lean)**

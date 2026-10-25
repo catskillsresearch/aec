@@ -2,6 +2,10 @@
 
 **Source:** [OpenAI, September 24, 2026](eventual.pdf)
 
+**[dependencies.mermaid](dependencies.mermaid)**
+
+@import "dependencies.mermaid"
+
 - [Abstract](Abstract.md)
 - [1 Introduction](AEC/Section1/1.md)
 - [2 Set codes and models indexed by orders](AEC/Section2/2.md)

@@ -39,6 +39,8 @@ theorem lemma_11_4 (K : AbstractElementaryClass.{u}) {n : ℕ} {L : Set (Finset 
     (X Y : GeometricSystem K n L) (f : GeometricArrow K X Y) :
     (∀ s (hs : s ∈ L), f.onVertex s '' X.piece s hs ⊆ Y.piece s hs) ∧
     ∀ t, f.onVertex t '' RelativeSpan K X t ⊆ RelativeSpan K Y t := by
+  refine ⟨f.extends_piece, ?_⟩
+  intro t
   sorry
 
 /-- **Lemma 11.5** (Structural properties and the last-axis description). Geometric arrows
@@ -47,7 +49,27 @@ theorem lemma_11_5 (K : AbstractElementaryClass.{u}) {n : ℕ} {L : Set (Finset 
     (X Y Z : GeometricSystem K n L) (f : GeometricArrow K X Y) (g : GeometricArrow K Y Z) :
     ∃ h : GeometricArrow K X Z,
       ∀ t, h.onVertex t = (g.onVertex t).comp (f.onVertex t) := by
-  sorry
+  refine ⟨{
+    onVertex := fun t => (g.onVertex t).comp (f.onVertex t)
+    onVertex_strong := fun t =>
+      K.strong_trans (f.onVertex t) (g.onVertex t) (f.onVertex_strong t) (g.onVertex_strong t)
+    comm := by
+      intro s t h
+      ext x
+      have hf := DFunLike.congr_fun (f.comm h) x
+      have hg := DFunLike.congr_fun (g.comm h) (f.onVertex s x)
+      simp only [Language.Embedding.comp_apply] at hf hg ⊢
+      rw [hf]
+      exact hg
+    extends_piece := by
+      intro s hs z hz
+      obtain ⟨x, hx, hxz⟩ := hz
+      have hxY : f.onVertex s x ∈ Y.piece s hs :=
+        f.extends_piece s hs ⟨x, hx, rfl⟩
+      have hzZ : g.onVertex s (f.onVertex s x) ∈ Z.piece s hs :=
+        g.extends_piece s hs ⟨f.onVertex s x, hxY, rfl⟩
+      simpa only [Language.Embedding.comp_apply] using hxz ▸ hzZ
+  }, fun _ => rfl⟩
 
 /-- **Proposition 11.6** (Tiled presentations). For an admissible shape and every sufficiently
 large `μ`, there is a geometric system of level `μ` in which every active piece has
