@@ -41,6 +41,7 @@ public import AEC.Section3.Cut
 public import AEC.Section3.CutBalance
 public import AEC.Section3.FiniteSupportOrder
 public import AEC.Section3.HausdorffOrder
+public import AEC.Section3.HOrderBalance
 public import AEC.Section3.InteriorNonprincipal
 public import AEC.Section3.Occupancy
 public import AEC.Section3.OrbitArrow
@@ -54,6 +55,7 @@ public import AEC.Section3.Profile
 public import AEC.Section3.Results
 public import AEC.Section3.Reversal
 public import AEC.Section3.SameRecord
+public import AEC.Section3.Segment
 public import AEC.Section3.StrictSlot
 public import AEC.Section3.VectorRank
 public import AEC.Section4.CountableClosure

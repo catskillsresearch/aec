@@ -3,6 +3,7 @@ module
 public import AEC.Section3.FiniteSupportOrder
 public import AEC.Section3.HausdorffOrder
 public import AEC.Section3.CutBalance
+public import AEC.Section3.HOrderBalance
 public import AEC.Section3.OrderCharacter
 public import AEC.Section3.InteriorNonprincipal
 public import AEC.Section3.Balanced
@@ -64,8 +65,7 @@ cut of `H(δ)`, is balanced. -/
 theorem lemma_3_3 (δ : _root_.Ordinal.{u}) :
     (∀ c : Cut (Gamma δ), Cut.IsInteriorNonprincipal c → Cut.IsBalanced c) ∧
     (∀ c : Cut (HOrder δ), Cut.IsInteriorNonprincipal c → Cut.IsBalanced c) :=
-  ⟨fun c hc => gamma_balanced c hc, fun _ _ => by
-    sorry⟩
+  ⟨fun c hc => gamma_balanced c hc, fun c hc => horder_balanced c hc⟩
 
 /-- **Lemma 3.4** (Segments approaching a small cut). In a dense endpoint-free linear order
 whose points have one character `κ` on both sides, whose bounded open intervals have one order
