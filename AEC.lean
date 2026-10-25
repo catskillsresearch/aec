@@ -38,6 +38,7 @@ public import AEC.Section2.ValidCode
 public import AEC.Section3.AdditivelyIndecomposable
 public import AEC.Section3.Balanced
 public import AEC.Section3.Cut
+public import AEC.Section3.CutBalance
 public import AEC.Section3.FiniteSupportOrder
 public import AEC.Section3.HausdorffOrder
 public import AEC.Section3.InteriorNonprincipal

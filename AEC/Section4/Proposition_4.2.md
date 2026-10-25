@@ -3,3 +3,5 @@
 - [Stable diagram](StableDiagram.md)
 
 **[Results.lean](Results.lean)**
+
+@import "Results.lean"

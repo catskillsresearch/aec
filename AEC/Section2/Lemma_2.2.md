@@ -10,3 +10,5 @@
 - [Decoded strong inclusion](DecodedStrong.md)
 
 **[Results.lean](Results.lean)**
+
+@import "Results.lean"

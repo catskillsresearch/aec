@@ -3,3 +3,5 @@
 - [Largest active label](LargestActiveLabel.md)
 
 **[Results.lean](Results.lean)**
+
+@import "Results.lean"

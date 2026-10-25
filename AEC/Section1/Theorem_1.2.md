@@ -5,3 +5,5 @@
 - [No maximal model](NoMaximalModel.md)
 
 **[Results.lean](Results.lean)**
+
+@import "Results.lean"

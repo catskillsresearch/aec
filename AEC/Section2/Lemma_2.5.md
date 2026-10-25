@@ -3,3 +3,5 @@
 - [Partition bound](PartitionBound.md)
 
 **[Results.lean](Results.lean)**
+
+@import "Results.lean"

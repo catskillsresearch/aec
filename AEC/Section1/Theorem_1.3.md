@@ -5,3 +5,5 @@
 - [Arbitrarily large models](ArbitrarilyLarge.md)
 
 **[Results.lean](Results.lean)**
+
+@import "Results.lean"

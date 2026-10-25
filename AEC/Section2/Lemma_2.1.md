@@ -5,3 +5,5 @@
 - [Direct-limit relation](DirectLimitRel.md)
 
 **[Results.lean](Results.lean)**
+
+@import "Results.lean"

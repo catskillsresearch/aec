@@ -4,3 +4,5 @@
 - [Galois type](TupleOver.md)
 
 **[Results.lean](Results.lean)**
+
+@import "Results.lean"

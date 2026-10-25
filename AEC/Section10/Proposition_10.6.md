@@ -3,3 +3,5 @@
 - [Pointed model](PointedModel.md)
 
 **[Results.lean](Results.lean)**
+
+@import "Results.lean"

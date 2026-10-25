@@ -3,3 +3,5 @@
 - [Support profile](SupportProfile.md)
 
 **[Results.lean](Results.lean)**
+
+@import "Results.lean"

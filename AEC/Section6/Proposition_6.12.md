@@ -3,3 +3,5 @@
 - [Product of types](ProductType.md)
 
 **[Results.lean](Results.lean)**
+
+@import "Results.lean"

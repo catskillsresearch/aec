@@ -3,3 +3,5 @@
 - [Geometric closure](GeomClosure.md)
 
 **[Results.lean](Results.lean)**
+
+@import "Results.lean"

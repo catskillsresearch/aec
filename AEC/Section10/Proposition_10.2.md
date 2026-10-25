@@ -3,3 +3,5 @@
 - [Minimal type](MinimalData.md)
 
 **[Results.lean](Results.lean)**
+
+@import "Results.lean"

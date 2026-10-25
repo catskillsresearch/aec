@@ -3,3 +3,5 @@
 - [Free lift](FreeExtension.md)
 
 **[Results.lean](Results.lean)**
+
+@import "Results.lean"

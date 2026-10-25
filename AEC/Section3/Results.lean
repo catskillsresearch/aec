@@ -1,6 +1,8 @@
 module
 
 public import AEC.Section3.FiniteSupportOrder
+public import AEC.Section3.HausdorffOrder
+public import AEC.Section3.CutBalance
 public import AEC.Section3.OrderCharacter
 public import AEC.Section3.InteriorNonprincipal
 public import AEC.Section3.Balanced
@@ -51,15 +53,19 @@ theorem lemma_3_2 (δ : _root_.Ordinal.{u}) (hδ : Order.IsSuccLimit δ) :
     (∀ a b c d : HOrder δ, a < b → c < d →
       Nonempty (↥(Ioo a b) ≃o ↥(Ioo c d))) ∧
     (∀ a b : HOrder δ, Nonempty (↥(Iio a) ≃o ↥(Iio b))) ∧
-    (∀ a b : HOrder δ, Nonempty (↥(Ioi a) ≃o ↥(Ioi b))) := by
-  sorry
+    (∀ a b : HOrder δ,       Nonempty (↥(Ioi a) ≃o ↥(Ioi b))) := by
+  refine ⟨HOrder.dense, HOrder.noBot, HOrder.noTop, HOrder.card_eq hδ, ?_,
+    HOrder.interval, HOrder.leftRay, HOrder.rightRay⟩
+  intro a
+  exact ⟨HOrder.leftChar hδ a, HOrder.rightChar hδ a⟩
 
 /-- **Lemma 3.3** (Balance of cuts). Every interior nonprincipal cut of `Γδ`, and every such
 cut of `H(δ)`, is balanced. -/
 theorem lemma_3_3 (δ : _root_.Ordinal.{u}) :
     (∀ c : Cut (Gamma δ), Cut.IsInteriorNonprincipal c → Cut.IsBalanced c) ∧
-    (∀ c : Cut (HOrder δ), Cut.IsInteriorNonprincipal c → Cut.IsBalanced c) := by
-  sorry
+    (∀ c : Cut (HOrder δ), Cut.IsInteriorNonprincipal c → Cut.IsBalanced c) :=
+  ⟨fun c hc => gamma_balanced c hc, fun _ _ => by
+    sorry⟩
 
 /-- **Lemma 3.4** (Segments approaching a small cut). In a dense endpoint-free linear order
 whose points have one character `κ` on both sides, whose bounded open intervals have one order

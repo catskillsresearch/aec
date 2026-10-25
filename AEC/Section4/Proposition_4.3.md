@@ -3,3 +3,5 @@
 - [Closure point](CountableClosure.md)
 
 **[Results.lean](Results.lean)**
+
+@import "Results.lean"

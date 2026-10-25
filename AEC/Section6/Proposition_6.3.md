@@ -3,3 +3,5 @@
 - [Testing function](TestingFunction.md)
 
 **[Results.lean](Results.lean)**
+
+@import "Results.lean"

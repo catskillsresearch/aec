@@ -5,3 +5,5 @@
 - [Orbit record](OrbitRecord.md)
 
 **[Results.lean](Results.lean)**
+
+@import "Results.lean"

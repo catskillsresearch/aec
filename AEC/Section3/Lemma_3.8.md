@@ -3,3 +3,5 @@
 - [Additively indecomposable ordinal](AdditivelyIndecomposable.md)
 
 **[Results.lean](Results.lean)**
+
+@import "Results.lean"

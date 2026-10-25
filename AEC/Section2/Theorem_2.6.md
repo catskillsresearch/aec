@@ -4,3 +4,5 @@
 - [Order presentation](OrderPresentation.md)
 
 **[Results.lean](Results.lean)**
+
+@import "Results.lean"

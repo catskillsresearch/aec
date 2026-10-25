@@ -3,3 +3,5 @@
 - [Padded order](PaddedOrder.md)
 
 **[Results.lean](Results.lean)**
+
+@import "Results.lean"

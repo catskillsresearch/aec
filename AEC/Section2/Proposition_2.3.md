@@ -5,3 +5,5 @@
 - [Spectrum bound](SpectrumBound.md)
 
 **[Results.lean](Results.lean)**
+
+@import "Results.lean"
