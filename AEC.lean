@@ -56,6 +56,7 @@ public import AEC.Section3.Results
 public import AEC.Section3.Reversal
 public import AEC.Section3.SameRecord
 public import AEC.Section3.Segment
+public import AEC.Section3.ShortOrbit
 public import AEC.Section3.StrictSlot
 public import AEC.Section3.VectorRank
 public import AEC.Section4.CountableClosure

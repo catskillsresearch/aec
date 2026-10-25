@@ -20,8 +20,10 @@ public import Mathlib.Order.Hom.Basic
 public import Mathlib.Order.Interval.Set.Basic
 public import Mathlib.SetTheory.Cardinal.Cofinality.Ordinal
 public import Mathlib.SetTheory.Cardinal.Order
+public import Mathlib.SetTheory.Cardinal.Ordinal
 public import Mathlib.SetTheory.Cardinal.Regular
 public import Mathlib.SetTheory.Ordinal.Arithmetic
+public import Mathlib.SetTheory.Ordinal.Exponential
 
 @[expose] public section
 
@@ -197,7 +199,26 @@ theorem lemma_3_10 (κ τ : Cardinal.{u}) (hκ : aleph0 ≤ κ) (hτ : aleph0 �
     ∀ α : _root_.Ordinal.{u}, α < (Order.succ κ).ord →
       ∃ δ : _root_.Ordinal.{u}, α ≤ δ ∧ δ < (Order.succ κ).ord ∧
         AdditivelyIndecomposable δ ∧ δ.card = κ ∧ Ordinal.cof δ = τ := by
-  sorry
+  intro α hα
+  have hαcard : α.card ≤ κ := Cardinal.card_le_iff.mpr hα
+  let ρ : _root_.Ordinal.{u} := α + κ.ord + τ.ord
+  have hτlim : Order.IsSuccLimit τ.ord := Cardinal.isSuccLimit_ord hτ
+  have hρlim : Order.IsSuccLimit ρ := Ordinal.isSuccLimit_add (α + κ.ord) hτlim
+  have hρcard : ρ.card = κ := by
+    have hsum : (α + κ.ord).card = κ := by
+      rw [Ordinal.card_add, Cardinal.card_ord, add_comm, Cardinal.add_eq_max hκ,
+        max_eq_left hαcard]
+    rw [Ordinal.card_add, Cardinal.card_ord, hsum, Cardinal.add_eq_max hκ, max_eq_left hle]
+  have hcofρ : Ordinal.cof ρ = τ := by
+    rw [Ordinal.cof_add (α + κ.ord) hτlim.ne_bot, hreg.cof_ord]
+  refine ⟨Ordinal.omega0 ^ ρ, ?_, ?_, ⟨Ordinal.isPrincipal_add_omega0_opow ρ⟩, ?_, ?_⟩
+  · exact (le_self_add : α ≤ α + κ.ord).trans
+      ((le_self_add : α + κ.ord ≤ α + κ.ord + τ.ord).trans
+        (Ordinal.right_le_opow ρ Ordinal.one_lt_omega0))
+  · apply Cardinal.card_le_iff.mp
+    rw [Ordinal.card_omega0_opow hρlim.ne_bot, hρcard, max_eq_right hκ]
+  · rw [Ordinal.card_omega0_opow hρlim.ne_bot, hρcard, max_eq_right hκ]
+  · rw [Ordinal.cof_map_of_isNormal (Ordinal.isNormal_opow Ordinal.one_lt_omega0) hρlim, hcofρ]
 
 /-- **Theorem 3.11** (Eventual reversal at categoricity cardinals). For each infinite cardinal
 `θ` there is a bound `b_K(θ)` such that, at every categoricity cardinal `κ ≥ b_K(θ)`, every
