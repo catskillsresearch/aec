@@ -9,6 +9,7 @@ public import AEC.Section3.Occupancy
 public import AEC.Section3.AdditivelyIndecomposable
 public import AEC.Section3.Reversal
 public import AEC.Section3.OrbitName
+public import AEC.Section3.OrbitRecord
 public import AEC.Section3.SameRecord
 public import AEC.Section2.OrderPresentation
 public import Mathlib.Order.Hom.Basic
@@ -93,17 +94,31 @@ theorem theorem_3_5 (δ : _root_.Ordinal.{u}) (θ : Cardinal.{u})
       ∃ e : HOrder δ ≃o HOrder δ, ∀ i, e (xs i) = ys i := by
   sorry
 
-/-- **Lemma 3.6** (Uniform orbit bound). At every categoricity cardinal `κ ≥ max(ℓ, θ⁺)`, the
-automorphism orbits of `θ`-tuples are named by a set of size at most `B(ℓ, θ)`. Each realized
-presentation record in `E(H(δ))`, for `|δ| = κ` and `cf(δ) > θ`, determines exactly one such
-orbit. -/
+/-- **Lemma 3.6** (Uniform orbit bound). There is a fixed set `Rθ` of possible presentation
+records, depending only on `ℓ` and `θ`, with `|Rθ| ≤ B(ℓ, θ) := 2^{2^{ℓ+θ}}`. For every
+categoricity cardinal `κ ≥ max(ℓ, θ⁺)`, the set of automorphism orbits of `θ`-tuples in its
+model has cardinality at most `B(ℓ, θ)`. This applies also when `κ` is singular. If `|δ| = κ`
+and `cf(δ) > θ`, each realized record in `E(H(δ))` determines exactly one such model orbit. -/
 theorem lemma_3_6 (K : AbstractElementaryClass.{u}) (E : OrderPresentation K)
-    (θ : Cardinal.{u}) (hθ : aleph0 ≤ θ) (κ : Cardinal.{u})
-    (hκ : max (ls K) (Order.succ θ) ≤ κ) (hcat : Categorical K κ) :
-    (∀ (M : Model K.τ) {ι : Type u}, K.Mem M → Model.card M = κ → #ι ≤ θ →
-      ∃ code : (ι → M.carrier) → Cardinal.{u},
-        (∀ xs, code xs < orbitRecordBound (ls K) θ) ∧
-        ∀ xs ys, code xs = code ys ↔ SameAutOrbit K M xs ys) := by
+    (θ : Cardinal.{u}) (hθ : aleph0 ≤ θ) :
+    ∃ (R : Type u) (decode : R → OrbitRecord E.lab E.arity),
+      #R ≤ orbitRecordBound (ls K) θ ∧
+      (∀ r, #(decode r).index ≤ θ ∧ #(decode r).slot ≤ θ) ∧
+      (∀ rec : OrbitRecord E.lab E.arity, #rec.index ≤ θ → #rec.slot ≤ θ →
+        ∃ r, OrbitRecord.Same rec (decode r)) ∧
+      ∀ (κ : Cardinal.{u}), max (ls K) (Order.succ θ) ≤ κ → Categorical K κ →
+        (∀ (M : Model K.τ) {ι : Type u}, K.Mem M → Model.card M = κ → #ι ≤ θ →
+          ∃ code : (ι → M.carrier) → R,
+            ∀ xs ys, code xs = code ys ↔ SameAutOrbit K M xs ys) ∧
+        ∀ (δ : _root_.Ordinal.{u}), δ.card = κ → θ < Ordinal.cof δ →
+          ∃ (I : Type u) (_ : LinearOrder I) (_ : Nonempty I) (e : HOrder δ ≃o I),
+            Model.card (E.obj I) = κ ∧
+            ∀ rec : OrbitRecord E.lab E.arity, OrbitRecordRealized (I := I) E rec →
+              ∀ (place₁ place₂ : rec.slot → I)
+                (xs ys : rec.index → (E.obj I).carrier),
+                RealizesOrbitRecord (I := I) E rec place₁ xs →
+                RealizesOrbitRecord (I := I) E rec place₂ ys →
+                SameAutOrbit K (E.obj I) xs ys := by
   sorry
 
 /-- **Lemma 3.7** (Closure of ordinal supports). A set `S ⊆ β` of size at most `a` sits in a

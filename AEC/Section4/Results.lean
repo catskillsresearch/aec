@@ -153,13 +153,14 @@ theorem lemma_4_6 (K : AbstractElementaryClass.{u}) (E : OrderPresentation K)
         (fun b => SupportTerm.along B.swap.toOrderEmbedding (s b))) := by
   sorry
 
-/-- **Lemma 4.7** (Ordinal-vector witnesses). A set of functions from a set into the ordinals
-has a set of coordinatewise lower bounds from the same family, one under each member. The
-paper obtains the family as a set from a definable class with set parameters. -/
-theorem lemma_4_7 {C ι : Type u} (u : ι → C → _root_.Ordinal.{u}) :
-    ∃ s : Set ι,
-      (∀ j ∈ s, ∀ i, (∀ c, u i c ≤ u j c) → ∀ c, u i c = u j c) ∧
-      (∀ i, ∃ j ∈ s, ∀ c, u j c ≤ u i c) := by
+/-- **Lemma 4.7** (Ordinal-vector witnesses). Let `C` be a set, and let `U` be a definable
+class of functions `C → Ord`, with fixed set parameters allowed in its definition. There is a
+set `U₀ ⊆ U` such that each `u ∈ U` dominates some `v ∈ U₀` coordinatewise. -/
+theorem lemma_4_7 {C parameter : Type u}
+    (holds : parameter → (C → _root_.Ordinal.{u}) → Prop) (a : parameter) :
+    ∃ (ι : Type u) (v : ι → C → _root_.Ordinal.{u}),
+      (∀ i, holds a (v i)) ∧
+      ∀ f, holds a f → ∃ i, ∀ c, v i c ≤ f c := by
   sorry
 
 /-- **Proposition 4.8** (Uniform testing of placed comparisons). There is a nondecreasing

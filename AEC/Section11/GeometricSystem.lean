@@ -15,8 +15,8 @@ open FirstOrder Cardinal
 
 /-- **Definition 11.1.** A geometric system of shape `L`: pointed models `X_t` for each subset
 of the axes, strong along inclusions, with a witnessing basis partition `(H_s)` of the top such
-that `P(X_t)` is the closure of the pieces `H_s` for `s ⊆ t`. At a uniform level every piece has
-cardinality `μ`. -/
+that `P(X_t)` is the closure of the pieces `H_s` for `s ⊆ t`. `pieceRank s` is the cardinality
+of the active piece at `s`. At a uniform level every piece rank equals `level`. -/
 structure GeometricSystem (K : AbstractElementaryClass.{u}) (n : ℕ)
     (L : Set (Finset (Fin n))) where
   admissible : Admissible n L
@@ -32,7 +32,8 @@ structure GeometricSystem (K : AbstractElementaryClass.{u}) (n : ℕ)
   indep : (t : Finset (Fin n)) → Set (vertex t).carrier → Prop
   inP : (t : Finset (Fin n)) → Set (vertex t).carrier
   piece : ∀ s, s ∈ L → Set (vertex s).carrier
-  piece_card : ∀ s (hs : s ∈ L), #(piece s hs) = level
+  pieceRank : ∀ s, s ∈ L → Cardinal.{u}
+  piece_card : ∀ s (hs : s ∈ L), #(piece s hs) = pieceRank s hs
   lower : (t : Finset (Fin n)) → Set (vertex t).carrier :=
     fun t => {x | ∃ s, ∃ hs : s ∈ L, ∃ hst : s ⊆ t, ∃ y, y ∈ piece s hs ∧ le hst y = x}
   span : ∀ t, inP t = {x | InClosure (indep t) (lower t) x}

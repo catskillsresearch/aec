@@ -43,6 +43,7 @@ public import AEC.Section3.InteriorNonprincipal
 public import AEC.Section3.Occupancy
 public import AEC.Section3.OrbitArrow
 public import AEC.Section3.OrbitName
+public import AEC.Section3.OrbitRecord
 public import AEC.Section3.OrbitRecordBound
 public import AEC.Section3.OrderCharacter
 public import AEC.Section3.OrderEqualityDiagram
