@@ -42,6 +42,7 @@ public import AEC.Section3.CutBalance
 public import AEC.Section3.FiniteSupportOrder
 public import AEC.Section3.HausdorffOrder
 public import AEC.Section3.HOrderBalance
+public import AEC.Section3.IndecomposableSegment
 public import AEC.Section3.InteriorNonprincipal
 public import AEC.Section3.Occupancy
 public import AEC.Section3.OrbitArrow

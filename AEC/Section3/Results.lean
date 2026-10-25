@@ -17,6 +17,7 @@ public import AEC.Section3.SameRecord
 public import AEC.Section3.Segment
 public import AEC.Section3.ShortOrbit
 public import AEC.Section3.SupportClosure
+public import AEC.Section3.IndecomposableSegment
 public import AEC.Section2.OrderPresentation
 public import Mathlib.Order.Hom.Basic
 public import Mathlib.Order.Interval.Set.Basic
@@ -150,12 +151,18 @@ theorem lemma_3_7 (θ a : Cardinal.{u}) (β : _root_.Ordinal.{u})
 /-- **Lemma 3.8** (Appending a long indecomposable segment). Extending the closed support `T₀`
 by a terminal segment of additively indecomposable order type `δ` yields a set of order type
 `δ` with the same finite-pattern matching property, and `H(δ)` computes the strict-slot
-occupancies of its `≤ θ` sequences inside `H(β)`. -/
+occupancies of its `≤ θ` sequences inside `H(β)`. The set `T₀` carries the finite-pattern
+property produced by Lemma 3.7. -/
 theorem lemma_3_8 (θ a : Cardinal.{u}) (β δ : _root_.Ordinal.{u})
     (hθ : aleph0 ≤ θ) (ha : Order.succ θ ≤ a) (hcofβ : a < Ordinal.cof β)
     (hβ : AdditivelyIndecomposable β) (hδ : AdditivelyIndecomposable δ) (hδlt : δ < β)
     (hcfδ : θ < Ordinal.cof δ)
     (T0 : Set (Ordinal.ToType β)) (hcard : #T0 ≤ a)
+    (hpat : ∀ {ι : Type u} (_hι : #ι ≤ θ) (p : ι → Ordinal.ToType β),
+      (∀ i, p i ∈ T0) →
+      ∀ {n : ℕ} (q : Fin n → Ordinal.ToType β),
+        ∃ q' : Fin n → Ordinal.ToType β,
+          (∀ i, q' i ∈ T0) ∧ SameOrderDiagram (Sum.elim p q) (Sum.elim p q'))
     (hotp : ∃ e : ↥T0 ↪o Ordinal.ToType δ, ∃ b : Ordinal.ToType δ, ∀ x, e x < b) :
     ∃ T : Set (Ordinal.ToType β), T0 ⊆ T ∧
       Nonempty (↥T ≃o Ordinal.ToType δ) ∧
@@ -168,7 +175,17 @@ theorem lemma_3_8 (θ a : Cardinal.{u}) (β δ : _root_.Ordinal.{u})
         ∀ {ι : Type u} (hι : #ι ≤ θ) (xs : ι → HOrder δ) (lower upper : Set ι),
           Occupied (xs '' lower) (xs '' upper) ↔
             Occupied ((fun i => f (xs i)) '' lower) ((fun i => f (xs i)) '' upper) := by
-  sorry
+  have haleph : aleph0 ≤ a := hθ.trans ((Order.lt_succ θ).le.trans ha)
+  obtain ⟨α, _, hαδ, hT0lt⟩ := exists_segment_base haleph hcofβ hβ hδlt T0 hcard
+  obtain ⟨T, hsub, ⟨e⟩, hmem⟩ := exists_extended_iso hδ α hαδ T0 hT0lt hotp
+  have hpatT :
+      ∀ {ι : Type u} (_hι : #ι ≤ θ) (p : ι → Ordinal.ToType β), (∀ i, p i ∈ T) →
+        ∀ {n : ℕ} (q : Fin n → Ordinal.ToType β), ∃ q' : Fin n → Ordinal.ToType β,
+          (∀ k, q' k ∈ T) ∧ SameOrderDiagram (Sum.elim p q) (Sum.elim p q') :=
+    extended_pattern hθ hcfδ α hαδ T0 hT0lt hpat T hmem
+  refine ⟨T, hsub, ⟨e⟩, hpatT, horderPush (segmentPosition e), ?_⟩
+  intro ι hι xs lower upper
+  exact extended_occupancy T hpatT e hθ hι xs lower upper
 
 /-- **Proposition 3.9** (Alignment of model orbits). When a presentation of the model of size
 `μ` and a cofinal family of presentations of the model of size `a` share one profile, every
