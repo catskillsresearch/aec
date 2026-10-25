@@ -15,6 +15,7 @@ public import AEC.Section3.OrbitName
 public import AEC.Section3.OrbitRecord
 public import AEC.Section3.SameRecord
 public import AEC.Section3.Segment
+public import AEC.Section3.ShortOrbit
 public import AEC.Section2.OrderPresentation
 public import Mathlib.Order.Hom.Basic
 public import Mathlib.Order.Interval.Set.Basic
@@ -35,13 +36,6 @@ universe u v
 set_option linter.unusedVariables false
 
 open Cardinal Set FirstOrder
-
-/-- Strict slots over a sequence are occupied in the same pattern. -/
-def SameSlotOccupancy {ι α : Type v} [LinearOrder α] (xs ys : ι → α) : Prop :=
-  ∀ (lower upper : Set ι),
-    (∀ i ∈ lower, ∀ j ∈ upper, xs i < xs j) →
-    (∀ i ∈ lower, ∀ j ∈ upper, ys i < ys j) →
-    Occupied (xs '' lower) (xs '' upper) ↔ Occupied (ys '' lower) (ys '' upper)
 
 /-- **Lemma 3.2.** `H(δ)` is dense without endpoints and has cardinality `|δ|`. Its points have
 character `cf(δ)` on both sides. All nonempty bounded open intervals have one order type, and
@@ -103,8 +97,8 @@ theorem theorem_3_5 (δ : _root_.Ordinal.{u}) (θ : Cardinal.{u})
     (hcf : lift.{u + 1} θ < lift.{u + 1} (Ordinal.cof δ))
     {ι : Type (u + 1)} (hι : #ι ≤ lift.{u + 1} θ) (xs ys : ι → HOrder δ) :
     (SameOrderDiagram xs ys ∧ SameSlotOccupancy xs ys) ↔
-      ∃ e : HOrder δ ≃o HOrder δ, ∀ i, e (xs i) = ys i := by
-  sorry
+      ∃ e : HOrder δ ≃o HOrder δ, ∀ i, e (xs i) = ys i :=
+  horder_orbit_iff δ θ hδ hθ hcf hι xs ys
 
 /-- **Lemma 3.6** (Uniform orbit bound). There is a fixed set `Rθ` of possible presentation
 records, depending only on `ℓ` and `θ`, with `|Rθ| ≤ B(ℓ, θ) := 2^{2^{ℓ+θ}}`. For every
