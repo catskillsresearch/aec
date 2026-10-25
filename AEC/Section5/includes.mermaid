@@ -1,0 +1,29 @@
+%% An arrow A --> B means A imports B.
+flowchart TD
+  BoundedAt
+  EligibleLevel
+  EligibleSubclass
+  LevelHierarchy
+  Lim
+  PackageClauses
+  PaddedOrder
+  PatternCode
+  StrictClosure
+  SystemArrow
+  SystemObject
+  SystemShape
+  TermTemplate
+  WorkingScheme
+  S1_AbstractElementaryClass["Section1/AbstractElementaryClass"]
+  S2_SupportTerm["Section2/SupportTerm"]
+  EligibleSubclass --> EligibleLevel
+  LevelHierarchy --> EligibleLevel
+  LevelHierarchy --> Lim
+  PackageClauses --> WorkingScheme
+  PatternCode --> S2_SupportTerm
+  StrictClosure --> BoundedAt
+  SystemArrow --> SystemObject
+  SystemObject --> SystemShape
+  SystemShape --> S1_AbstractElementaryClass
+  TermTemplate --> SystemArrow
+  WorkingScheme --> TermTemplate

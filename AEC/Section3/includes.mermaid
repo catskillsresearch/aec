@@ -1,0 +1,39 @@
+%% An arrow A --> B means A imports B.
+flowchart LR
+  AdditivelyIndecomposable
+  Balanced
+  Cut
+  FiniteSupportOrder
+  InteriorNonprincipal
+  Occupancy
+  OrbitArrow
+  OrbitName
+  OrbitRecordBound
+  OrderCharacter
+  OrderEqualityDiagram
+  PresentationRecord
+  Profile
+  Reversal
+  SameRecord
+  StrictSlot
+  VectorRank
+  S1_AbstractElementaryClass["Section1/AbstractElementaryClass"]
+  S1_Categorical["Section1/Categorical"]
+  S1_LoewenheimSkolem["Section1/LoewenheimSkolem"]
+  S2_SupportTerm["Section2/SupportTerm"]
+  Balanced --> InteriorNonprincipal
+  Balanced --> OrderCharacter
+  InteriorNonprincipal --> Cut
+  Occupancy --> StrictSlot
+  OrbitArrow --> S1_AbstractElementaryClass
+  OrbitName --> OrbitRecordBound
+  OrbitName --> S1_LoewenheimSkolem
+  OrderCharacter --> Cut
+  PresentationRecord --> Cut
+  PresentationRecord --> S2_SupportTerm
+  Profile --> OrbitName
+  Reversal --> OrbitArrow
+  Reversal --> S1_Categorical
+  SameRecord --> OrderEqualityDiagram
+  SameRecord --> PresentationRecord
+  VectorRank --> FiniteSupportOrder

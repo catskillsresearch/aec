@@ -1,0 +1,17 @@
+%% An arrow A --> B means A imports B.
+flowchart TD
+  CountableClosure
+  NaturalDiagram
+  StableDiagram
+  SupportProfile
+  S1_Categorical["Section1/Categorical"]
+  S2_OrderPresentation["Section2/OrderPresentation"]
+  S2_SupportTerm["Section2/SupportTerm"]
+  S5_EligibleLevel["Section5/EligibleLevel"]
+  S5_StrictClosure["Section5/StrictClosure"]
+  CountableClosure --> S5_EligibleLevel
+  CountableClosure --> S5_StrictClosure
+  NaturalDiagram --> StableDiagram
+  StableDiagram --> S1_Categorical
+  StableDiagram --> S2_OrderPresentation
+  SupportProfile --> S2_SupportTerm

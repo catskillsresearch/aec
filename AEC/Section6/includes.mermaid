@@ -1,0 +1,26 @@
+%% An arrow A --> B means A imports B.
+flowchart TD
+  ApproximateRetraction
+  ApproximationSequence
+  FreeExtension
+  MajorityValue
+  NaturalParameterLayout
+  ProductType
+  Query
+  SchemeAmalgam
+  TestCardinal
+  TestingFunction
+  TupleOver
+  S1_Model["Section1/Model"]
+  S5_BoundedAt["Section5/BoundedAt"]
+  S5_WorkingScheme["Section5/WorkingScheme"]
+  ApproximateRetraction --> S5_WorkingScheme
+  ApproximationSequence --> TupleOver
+  FreeExtension --> MajorityValue
+  MajorityValue --> ApproximationSequence
+  ProductType --> FreeExtension
+  Query --> S1_Model
+  Query --> S5_BoundedAt
+  SchemeAmalgam --> TupleOver
+  TestingFunction --> NaturalParameterLayout
+  TupleOver --> S5_WorkingScheme

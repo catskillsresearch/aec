@@ -1,0 +1,44 @@
+%% An arrow A --> B means A imports B.
+flowchart TD
+  CategoricitySpectrum
+  CodedInclusion
+  CodedPresentation
+  DecodedMembership
+  DecodedStrong
+  DirectLimit
+  DirectLimitRel
+  DirectedSystem
+  OrderPresentation
+  PartitionBound
+  SmallCode
+  SmallModel
+  SmallPair
+  SmallStrongSubmodel
+  SpectrumBound
+  SupportTerm
+  ValidCode
+  S1_Categorical["Section1/Categorical"]
+  S1_CategoricalTail["Section1/CategoricalTail"]
+  S1_LoewenheimSkolem["Section1/LoewenheimSkolem"]
+  S1_Model["Section1/Model"]
+  CategoricitySpectrum --> S1_Categorical
+  CodedInclusion --> CodedPresentation
+  CodedPresentation --> DirectLimit
+  CodedPresentation --> SmallCode
+  DecodedMembership --> CodedPresentation
+  DecodedStrong --> CodedInclusion
+  DirectLimit --> DirectedSystem
+  DirectLimitRel --> DirectedSystem
+  DirectedSystem --> S1_Model
+  OrderPresentation --> S1_LoewenheimSkolem
+  OrderPresentation --> SupportTerm
+  SmallCode --> SmallPair
+  SmallModel --> S1_Model
+  SmallPair --> SmallModel
+  SmallStrongSubmodel --> S1_LoewenheimSkolem
+  SpectrumBound --> CategoricitySpectrum
+  SpectrumBound --> S1_CategoricalTail
+  SpectrumBound --> S1_LoewenheimSkolem
+  ValidCode --> DecodedMembership
+  ValidCode --> DecodedStrong
+  ValidCode --> S1_LoewenheimSkolem

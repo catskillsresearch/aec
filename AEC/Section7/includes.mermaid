@@ -1,0 +1,16 @@
+%% An arrow A --> B means A imports B.
+flowchart TD
+  AllDominated
+  ContinuityCondition
+  ProductIndependent
+  RelativeIsolation
+  WitnessingChain
+  S6_ApproximationSequence["Section6/ApproximationSequence"]
+  S6_FreeExtension["Section6/FreeExtension"]
+  S6_ProductType["Section6/ProductType"]
+  AllDominated --> RelativeIsolation
+  ContinuityCondition --> S6_FreeExtension
+  ProductIndependent --> S6_ProductType
+  RelativeIsolation --> S6_ApproximationSequence
+  WitnessingChain --> AllDominated
+  WitnessingChain --> S6_FreeExtension

@@ -1,0 +1,9 @@
+%% An arrow A --> B means A imports B.
+flowchart TD
+  MarkedPair
+  StationaryPrescription
+  S6_FreeExtension["Section6/FreeExtension"]
+  S7_AllDominated["Section7/AllDominated"]
+  MarkedPair --> S7_AllDominated
+  MarkedPair --> StationaryPrescription
+  StationaryPrescription --> S6_FreeExtension

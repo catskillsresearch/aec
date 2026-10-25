@@ -1,0 +1,12 @@
+%% An arrow A --> B means A imports B.
+flowchart TD
+  Forces
+  GeomClosure
+  MinimalData
+  PointSet
+  PointedModel
+  S1_AbstractElementaryClass["Section1/AbstractElementaryClass"]
+  Forces --> PointSet
+  MinimalData --> S1_AbstractElementaryClass
+  PointSet --> MinimalData
+  PointedModel --> MinimalData

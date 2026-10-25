@@ -1,0 +1,3 @@
+# Proposition 4.3
+
+- [Closure point](CountableClosure.md)

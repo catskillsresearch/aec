@@ -1,0 +1,22 @@
+name = "AEC"
+version = "0.1.0"
+keywords = ["model-theory", "aec", "lean4"]
+defaultTargets = ["AEC"]
+
+# Public declarations in these modules mention definitions imported from mathlib.
+moreLeanArgs = [
+  "-Dbackward.privateInPublic=true",
+  "-Dbackward.privateInPublic.warn=false",
+]
+
+[leanOptions]
+pp.unicode.fun = true
+relaxedAutoImplicit = true
+
+[[require]]
+name = "mathlib"
+scope = "leanprover-community"
+rev = "v4.35.0"
+
+[[lean_lib]]
+name = "AEC"
