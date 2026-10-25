@@ -14,6 +14,7 @@ public import AEC.Section3.Reversal
 public import AEC.Section3.OrbitName
 public import AEC.Section3.OrbitRecord
 public import AEC.Section3.SameRecord
+public import AEC.Section3.Segment
 public import AEC.Section2.OrderPresentation
 public import Mathlib.Order.Hom.Basic
 public import Mathlib.Order.Interval.Set.Basic
@@ -87,7 +88,10 @@ theorem lemma_3_4 {L : Type u} [LinearOrder L]
     (p' q' : L) (hp' : p' ∈ c.upper) (hq' : q' ∈ d.upper) :
     Nonempty (↥{x : L | x ∈ c.lower ∧ p ≤ x} ≃o ↥{x : L | x ∈ d.lower ∧ q ≤ x}) ∧
     Nonempty (↥{x : L | x ∈ c.upper ∧ x ≤ p'} ≃o ↥{x : L | x ∈ d.upper ∧ x ≤ q'}) := by
-  sorry
+  exact bothSegments_of_regular hε hreg hεlt L
+    { dense := dense, noBot := noBot, noTop := noTop, pointChar := pointChar,
+      oneInterval := oneInterval, balanced := balanced }
+    c d hc hd hcb hdb hchar.1 hchar.2 p q hp hq p' q' hp' hq'
 
 /-- **Theorem 3.5** (Short-sequence order orbits). Two sequences of length at most `θ` in
 `H(δ)`, with `θ < cf(δ)`, lie in the same automorphism orbit if and only if they have the same
