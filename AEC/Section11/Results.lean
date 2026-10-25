@@ -4,6 +4,7 @@ public import AEC.Section11.GeometricSystem
 public import AEC.Section11.LargestActiveLabel
 public import AEC.Section11.JointFreshness
 public import AEC.Section5.Results
+public import AEC.Section6.Results
 
 @[expose] public section
 
@@ -77,6 +78,219 @@ theorem theorem_11_9 (K : AbstractElementaryClass.{u}) {n : ℕ}
       ∀ X Y : GeometricSystem K n L, X.level = μ → Y.level = μ →
         (∀ s (hs : s ∈ L), ∃ e : X.piece s hs ≃ Y.piece s hs, True) →
         ∃ f : GeometricArrow K X Y, ∀ t, Function.Bijective (f.onVertex t) := by
+  sorry
+
+/-- A scheme object read as a geometric system, vertex by vertex. -/
+structure SchemeFace {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
+    (W : WorkingScheme K S) {μ : Cardinal.{u}} (hμ : μ ∈ W.eligible) (X : W.Object μ hμ)
+    {n : ℕ} {L : Set (Finset (Fin n))} (G : GeometricSystem K n L) where
+  vertex : S.Vertex ≃ Finset (Fin n)
+  carrier : ∀ v, ((W.asSystem hμ X).obj v).carrier ≃ (G.vertex (vertex v)).carrier
+
+/-- The scheme occurrence of a geometric coordinate. -/
+def SchemeFace.toOccurrence {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
+    {W : WorkingScheme K S} {μ : Cardinal.{u}} {hμ : μ ∈ W.eligible} {X : W.Object μ hμ}
+    {n : ℕ} {L : Set (Finset (Fin n))} {G : GeometricSystem K n L}
+    (F : SchemeFace W hμ X G) (c : Coordinate G) :
+    Occurrence K S (W.asSystem hμ X) :=
+  ⟨F.vertex.symm c.label,
+    (F.carrier (F.vertex.symm c.label)).symm
+      (castCarrier (F.vertex.apply_symm_apply c.label).symm c.val)⟩
+
+/-- The scheme arrow and the geometric arrow are the same map of vertices. -/
+def SchemeFacesAgree {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
+    {W : WorkingScheme K S} {μ ν : Cardinal.{u}} {hμ : μ ∈ W.eligible} {hν : ν ∈ W.eligible}
+    {X : W.Object μ hμ} {Y : W.Object ν hν} {n : ℕ} {L : Set (Finset (Fin n))}
+    {Gx Gy : GeometricSystem K n L} (f : GeometricArrow K Gx Gy)
+    (sf : SystemArrow K S (W.asSystem hμ X) (W.asSystem hν Y))
+    (Fx : SchemeFace W hμ X Gx) (Fy : SchemeFace W hν Y Gy) : Prop :=
+  ∀ v, ∃ h : Fx.vertex v = Fy.vertex v, ∀ x,
+    Fy.carrier v (sf.onVertex v x) =
+      castCarrier h (f.onVertex (Fx.vertex v) (Fx.carrier v x))
+
+/-- **Claim 11.10** (Uniqueness of finite fresh types). For a fixed base and a finite ordered
+list of active labels, all jointly fresh tuples with those labels have the same type over the
+base. -/
+theorem claim_11_10 (K : AbstractElementaryClass.{u}) {n : ℕ} {L : Set (Finset (Fin n))} :
+    ∃ μ0 : Cardinal.{u}, ∀ μ, μ0 ≤ μ →
+      ∀ (X Y0 Y1 : GeometricSystem K n L),
+        X.level = μ → Y0.level = μ → Y1.level = μ →
+        ∀ (f0 : GeometricArrow K X Y0) (f1 : GeometricArrow K X Y1) (k : ℕ)
+          (labs : Fin k → Finset (Fin n)) (hlabs : ∀ i, labs i ∈ L)
+          (b0 : ∀ i, (Y0.vertex (labs i)).carrier)
+          (b1 : ∀ i, (Y1.vertex (labs i)).carrier),
+          JointlyFreshIndexed f0 labs hlabs b0 →
+          JointlyFreshIndexed f1 labs hlabs b1 →
+          SameGeometricType f0 f1 labs b0 b1 := by
+  sorry
+
+/-- **Claim 11.11** (Free lifts preserve freshness). The free lift of the fresh singleton type
+at an active label, along an arrow `X → V`, is fresh over `V`. A finite jointly fresh tuple
+has the product of those singleton types. A bounded jointly fresh list has one type, fixed by
+its labels, and an all-dominated hull. -/
+theorem claim_11_11 (K : AbstractElementaryClass.{u}) (S : SystemShape.{u})
+    (W : WorkingScheme K S) (hpack : IsWorkingPackage W) {n : ℕ}
+    {L : Set (Finset (Fin n))} :
+    ∃ T, ∃ hT : Tail W.eligible T,
+      (∀ μ (hμ : μ ∈ T) (X V : W.Object μ (Tail.mem hT hμ))
+        (f : SystemArrow K S (W.asSystem _ X) (W.asSystem _ V))
+        (hf : W.permitted (X := X) (Y := V) f)
+        (p : TupleOver K S W (Tail.mem hT hμ) X)
+        (q : TupleOver K S W (Tail.mem hT hμ) V)
+        (e : p.idx ≃ q.idx) (ep : p.idx ≃ PUnit.{u+1})
+        (s : Finset (Fin n)) (hs : s ∈ L)
+        (GX GV GP GQ : GeometricSystem K n L)
+        (geoXV : GeometricArrow K GX GV) (geoXP : GeometricArrow K GX GP)
+        (geoVQ : GeometricArrow K GV GQ)
+        (FX : SchemeFace W (Tail.mem hT hμ) X GX)
+        (FV : SchemeFace W (Tail.mem hT hμ) V GV)
+        (FP : SchemeFace W p.hν p.host GP)
+        (FQ : SchemeFace W q.hν q.host GQ),
+        GX.level = μ → GV.level = μ → GP.level = p.ν → GQ.level = q.ν →
+        IsFreeLift p q f hf e →
+        SchemeFacesAgree geoXV f FX FV →
+        SchemeFacesAgree geoXP p.incl FX FP →
+        SchemeFacesAgree geoVQ q.incl FV FQ →
+        (∃ hvt : FP.vertex ((p.val (ep.symm PUnit.unit)).1) = s,
+          JointlyFreshIndexed geoXP (fun _ : PUnit.{u+1} => s) (fun _ => hs)
+            (fun _ => castCarrier hvt
+              (FP.carrier ((p.val (ep.symm PUnit.unit)).1)
+                ((p.val (ep.symm PUnit.unit)).2)))) →
+        ∃ hvt : FQ.vertex ((q.val (e (ep.symm PUnit.unit))).1) = s,
+          JointlyFreshIndexed geoVQ (fun _ : PUnit.{u+1} => s) (fun _ => hs)
+            (fun _ => castCarrier hvt
+              (FQ.carrier ((q.val (e (ep.symm PUnit.unit))).1)
+                ((q.val (e (ep.symm PUnit.unit))).2)))) ∧
+      (∀ μ (hμ : μ ∈ T) (X Y : W.Object μ (Tail.mem hT hμ))
+        (sf : SystemArrow K S (W.asSystem _ X) (W.asSystem _ Y))
+        (hsf : W.permitted (X := X) (Y := Y) sf)
+        (GX GY : GeometricSystem K n L) (geo : GeometricArrow K GX GY)
+        (FX : SchemeFace W (Tail.mem hT hμ) X GX)
+        (FY : SchemeFace W (Tail.mem hT hμ) Y GY)
+        (k : ℕ) (labs : Fin k → Finset (Fin n)) (hlabs : ∀ i, labs i ∈ L)
+        (b : ∀ i, (GY.vertex (labs i)).carrier),
+        GX.level = μ → GY.level = μ →
+        SchemeFacesAgree geo sf FX FY →
+        JointlyFreshIndexed geo labs hlabs b →
+        ∃ p : Fin k → TupleOver K S W (Tail.mem hT hμ) X,
+          (∀ i, ∃ (e : (p i).idx ≃ PUnit.{u+1}) (GP : GeometricSystem K n L)
+              (FP : SchemeFace W (p i).hν (p i).host GP)
+              (geoP : GeometricArrow K GX GP),
+              GP.level = (p i).ν ∧
+              SchemeFacesAgree geoP (p i).incl FX FP ∧
+              ∃ hvt : FP.vertex ((p i).val (e.symm PUnit.unit)).1 = labs i,
+                JointlyFreshIndexed geoP (fun _ : PUnit.{u+1} => labs i) (fun _ => hlabs i)
+                  (fun _ => castCarrier hvt
+                    (FP.carrier ((p i).val (e.symm PUnit.unit)).1
+                      ((p i).val (e.symm PUnit.unit)).2))) ∧
+          ∃ joint : TupleOver K S W (Tail.mem hT hμ) X,
+            ∃ e : ULift.{u} (Fin k) ≃ joint.idx,
+              IsFiniteProduct k p joint ∧
+              SameGaloisType
+                (asTuple sf hsf (fun i : ULift.{u} (Fin k) =>
+                  FY.toOccurrence (⟨labs i.down, hlabs i.down, b i.down⟩ : Coordinate GY)))
+                joint e (Equiv.refl joint.idx) ∧
+              ∀ i : Fin k, ∃ e' : (p i).idx ≃ PUnit.{u+1},
+                SameGaloisType (p i)
+                  (asTuple sf hsf (fun _ : PUnit.{u+1} =>
+                    FY.toOccurrence (⟨labs i, hlabs i, b i⟩ : Coordinate GY)))
+                  e' (Equiv.refl _)) ∧
+      (∀ μ (hμ : μ ∈ T) (X Y0 Y1 : W.Object μ (Tail.mem hT hμ)) {ι : Type u}
+        (sf0 : SystemArrow K S (W.asSystem _ X) (W.asSystem _ Y0))
+        (hf0 : W.permitted (X := X) (Y := Y0) sf0)
+        (sf1 : SystemArrow K S (W.asSystem _ X) (W.asSystem _ Y1))
+        (hf1 : W.permitted (X := X) (Y := Y1) sf1)
+        (GX GY0 GY1 : GeometricSystem K n L)
+        (g0 : GeometricArrow K GX GY0) (g1 : GeometricArrow K GX GY1)
+        (FX : SchemeFace W (Tail.mem hT hμ) X GX)
+        (FY0 : SchemeFace W (Tail.mem hT hμ) Y0 GY0)
+        (FY1 : SchemeFace W (Tail.mem hT hμ) Y1 GY1)
+        (labs : ι → Finset (Fin n)) (hlabs : ∀ i, labs i ∈ L)
+        (b0 : ∀ i, (GY0.vertex (labs i)).carrier)
+        (b1 : ∀ i, (GY1.vertex (labs i)).carrier),
+        #ι < μ → GX.level = μ → GY0.level = μ → GY1.level = μ →
+        SchemeFacesAgree g0 sf0 FX FY0 →
+        SchemeFacesAgree g1 sf1 FX FY1 →
+        JointlyFreshIndexed g0 labs hlabs b0 →
+        JointlyFreshIndexed g1 labs hlabs b1 →
+        SameGaloisType
+          (asTuple sf0 hf0 (fun i =>
+            FY0.toOccurrence (⟨labs i, hlabs i, b0 i⟩ : Coordinate GY0)))
+          (asTuple sf1 hf1 (fun i =>
+            FY1.toOccurrence (⟨labs i, hlabs i, b1 i⟩ : Coordinate GY1)))
+          (Equiv.refl ι) (Equiv.refl ι) ∧
+        ∃ (Z : W.Object μ (Tail.mem hT hμ))
+          (incl : SystemArrow K S (W.asSystem _ X) (W.asSystem _ Z))
+          (hincl : W.permitted (X := X) (Y := Z) incl)
+          (c : ι → Occurrence K S (W.asSystem _ Z)),
+          AllDominated incl hincl ι c ∧
+          SameGaloisType
+            (asTuple sf0 hf0 (fun i =>
+              FY0.toOccurrence (⟨labs i, hlabs i, b0 i⟩ : Coordinate GY0)))
+            (asTuple incl hincl c) (Equiv.refl ι) (Equiv.refl ι)) := by
+  sorry
+
+/-- **Claim 11.12** (Bounded rank cost and chosen coordinates). A finite tuple in the target
+of an arrow sits in a subextension whose complementary pieces are finite. A bounded tuple
+sits in a subextension whose complementary pieces have total size at most `max(|d|, ℵ₀)`.
+If a complementary partition of the target is specified, those pieces can be taken inside
+it. -/
+theorem claim_11_12 (K : AbstractElementaryClass.{u}) {n : ℕ} {L : Set (Finset (Fin n))} :
+    ∃ μ0 : Cardinal.{u}, ∀ μ, μ0 ≤ μ → aleph0 ≤ μ →
+      ∀ (X Y : GeometricSystem K n L), X.level = μ → Y.level = μ →
+        ∀ f : GeometricArrow K X Y,
+          (∀ {ι : Type u} (d : ι → Σ t : Finset (Fin n), (Y.vertex t).carrier),
+            #ι < aleph0 →
+            ∃ (U : GeometricSystem K n L) (g : GeometricArrow K X U)
+              (h : GeometricArrow K U Y)
+              (extra : ∀ s, s ∈ L → Set (U.vertex s).carrier),
+              U.level = μ ∧ FactorsThrough f g h ∧ CoordinatesInImage h d ∧
+              IsPieceExtension g extra ∧ ∀ s hs, #(↥(extra s hs)) < aleph0) ∧
+          (∀ {ι : Type u} (d : ι → Σ t : Finset (Fin n), (Y.vertex t).carrier),
+            #ι < μ →
+            ∃ (U : GeometricSystem K n L) (g : GeometricArrow K X U)
+              (h : GeometricArrow K U Y)
+              (extra : ∀ s, s ∈ L → Set (U.vertex s).carrier),
+              U.level = μ ∧ FactorsThrough f g h ∧ CoordinatesInImage h d ∧
+              IsPieceExtension g extra ∧ complementTotal extra ≤ max (#ι) aleph0) ∧
+          (∀ (C : ∀ s, s ∈ L → Set (Y.vertex s).carrier), IsPieceExtension f C →
+            ∀ {ι : Type u} (d : ι → Σ t : Finset (Fin n), (Y.vertex t).carrier),
+              #ι < μ →
+              ∃ (U : GeometricSystem K n L) (g : GeometricArrow K X U)
+                (h : GeometricArrow K U Y)
+                (extra : ∀ s, s ∈ L → Set (U.vertex s).carrier),
+                U.level = μ ∧ FactorsThrough f g h ∧ CoordinatesInImage h d ∧
+                IsPieceExtension g extra ∧ complementTotal extra ≤ max (#ι) aleph0 ∧
+                ∀ s hs, h.onVertex s '' extra s hs ⊆ C s hs) := by
+  sorry
+
+/-- **Claim 11.13** (Primeness over bounded complementary pieces). If a bounded list
+enumerates every complementary piece of `X → U`, then `U` is all-dominated over `X` plus
+that list. `U` embeds over `X` into any extension that realizes a prescribed matching of
+these coordinates. -/
+theorem claim_11_13 (K : AbstractElementaryClass.{u}) (S : SystemShape.{u})
+    (W : WorkingScheme K S) (hpack : IsWorkingPackage W) {n : ℕ}
+    {L : Set (Finset (Fin n))} :
+    ∃ T, ∃ hT : Tail W.eligible T,
+      ∀ μ (hμ : μ ∈ T) (Xg Ug : GeometricSystem K n L) (f : GeometricArrow K Xg Ug)
+        {ι : Type u} (label : ι → Finset (Fin n)) (active : ∀ i, label i ∈ L)
+        (b : ∀ i, (Ug.vertex (label i)).carrier),
+        Xg.level = μ → Ug.level = μ → #ι < μ →
+        EnumeratesComplements f label active b →
+        (∀ (Xs Us : W.Object μ (Tail.mem hT hμ))
+          (sf : SystemArrow K S (W.asSystem _ Xs) (W.asSystem _ Us))
+          (hsf : W.permitted (X := Xs) (Y := Us) sf)
+          (FX : SchemeFace W (Tail.mem hT hμ) Xs Xg)
+          (FU : SchemeFace W (Tail.mem hT hμ) Us Ug),
+          SchemeFacesAgree f sf FX FU →
+          AllDominated sf hsf ι (fun i =>
+            FU.toOccurrence (⟨label i, active i, b i⟩ : Coordinate Ug))) ∧
+        ∀ (Yg : GeometricSystem K n L) (g : GeometricArrow K Xg Yg)
+          (c : ∀ i, (Yg.vertex (label i)).carrier),
+          Yg.level = μ →
+          JointlyFreshIndexed g label active c →
+          ∃ h : GeometricArrow K Ug Yg,
+            FactorsThrough g f h ∧ ∀ i, h.onVertex (label i) (b i) = c i := by
   sorry
 
 end
