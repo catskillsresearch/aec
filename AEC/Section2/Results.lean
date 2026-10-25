@@ -1,6 +1,7 @@
 module
 
 public import AEC.Section2.DirectLimit
+public import AEC.Section2.DirectedLimit
 public import AEC.Section2.ValidCode
 public import AEC.Section2.OrderPresentation
 public import AEC.Section1.UniformThreshold
@@ -36,8 +37,8 @@ theorem lemma_2_1 (K : AbstractElementaryClass.{u}) (S : DirectedSystem K.τ)
         (∀ i, K.Strong (g i)) →
         (∀ {i j} (hij : S.rel i j), (g j).comp (S.map hij) = g i) →
         ∃ f : Language.Embedding K.τ L.obj.carrier N.carrier,
-          K.Strong f ∧ ∀ i, f.comp (L.canon i) = g i := by
-  sorry
+          K.Strong f ∧ ∀ i, f.comp (L.canon i) = g i :=
+  directLimit_in_class K S hmem hstrong
 
 /-- **Lemma 2.2** (Recovery from small models and pairs). An AEC in a finitary language `τ`
 of cardinality at most `lam`, with `LS(K) ≤ lam`, is recovered from a set code for its models

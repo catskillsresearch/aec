@@ -24,6 +24,7 @@ public import AEC.Section2.DecodedMembership
 public import AEC.Section2.DecodedStrong
 public import AEC.Section2.DirectLimit
 public import AEC.Section2.DirectLimitRel
+public import AEC.Section2.DirectedLimit
 public import AEC.Section2.DirectedSystem
 public import AEC.Section2.OrderPresentation
 public import AEC.Section2.PartitionBound
