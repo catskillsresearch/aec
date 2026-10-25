@@ -16,6 +16,7 @@ public import AEC.Section3.OrbitRecord
 public import AEC.Section3.SameRecord
 public import AEC.Section3.Segment
 public import AEC.Section3.ShortOrbit
+public import AEC.Section3.SupportClosure
 public import AEC.Section2.OrderPresentation
 public import Mathlib.Order.Hom.Basic
 public import Mathlib.Order.Interval.Set.Basic
@@ -143,7 +144,8 @@ theorem lemma_3_7 (θ a : Cardinal.{u}) (β : _root_.Ordinal.{u})
               SameOrderDiagram (Sum.elim p q) (Sum.elim p q')) ∧
         (∃ b : Ordinal.ToType β, ∀ x ∈ T0, x ≤ b) ∧
         θ < setCofinality T0 := by
-  sorry
+  intro S hS
+  exact support_closure θ a hθ ha hcof S hS
 
 /-- **Lemma 3.8** (Appending a long indecomposable segment). Extending the closed support `T₀`
 by a terminal segment of additively indecomposable order type `δ` yields a set of order type
