@@ -27,6 +27,8 @@ theorem lemma_11_2 {n : ℕ} {L : Set (Finset (Fin n))} (hL : Admissible n L) :
       (u : Finset (Fin n)),
       IsLargestActive L t u → ¬ t ∈ L →
       ∃ h : u ⊆ t, Function.Bijective (X.le h) := by
+  refine ⟨⟨∅, hL.empty_mem, rfl⟩, fun s t hs ht => hL.union_mem hs ht, hL.exists_largest, ?_⟩
+  intro K X t u hu ht
   sorry
 
 /-- **Lemma 11.4** (Replacement and extension of relative bases). Any choice of bases of the

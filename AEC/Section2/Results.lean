@@ -56,7 +56,13 @@ cardinals is categorical above some bound depending on that AEC. -/
 theorem proposition_2_3 :
     (∃ μ : Cardinal.{u} → Cardinal.{u}, IsUniformThreshold μ) ↔
       ∀ K : AbstractElementaryClass.{u}, CategoricalUnbounded K → CategoricalOnTail K := by
-  sorry
+  constructor
+  · intro ⟨μ, hμ⟩ K hK
+    have hls : isLSBound K (ls K) := isLSBound_ls K
+    obtain ⟨κ, hκ, hcat⟩ := hK.unbounded (μ (ls K))
+    exact ⟨μ (ls K), fun κ' hκ' =>
+      (hμ.threshold (ls K) hls.1).2 K hls ⟨κ, hκ, hcat⟩ κ' hκ'⟩
+  · sorry
 
 /-- **Lemma 2.5.** For infinite cardinals `ξ`, `ν` and a positive integer `k`, some infinite
 cardinal `R` has the partition property: every coloring of the `k`-element subsets of a set of
