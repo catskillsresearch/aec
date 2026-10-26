@@ -18,7 +18,9 @@ public import AEC.Section3.Segment
 public import AEC.Section3.ShortOrbit
 public import AEC.Section3.SupportClosure
 public import AEC.Section3.IndecomposableSegment
+public import AEC.Section3.UniformOrbitBound
 public import AEC.Section2.OrderPresentation
+public import AEC.Section2.DirectedLimit
 public import Mathlib.Order.Hom.Basic
 public import Mathlib.Order.Interval.Set.Basic
 public import Mathlib.SetTheory.Cardinal.Cofinality.Ordinal
@@ -122,12 +124,65 @@ theorem lemma_3_6 (K : AbstractElementaryClass.{u}) (E : OrderPresentation K)
           ∃ (I : Type u) (_ : LinearOrder I) (_ : Nonempty I) (e : HOrder δ ≃o I),
             Model.card (E.obj I) = κ ∧
             ∀ rec : OrbitRecord E.lab E.arity, OrbitRecordRealized (I := I) E rec →
+              #rec.slot ≤ θ →
               ∀ (place₁ place₂ : rec.slot → I)
                 (xs ys : rec.index → (E.obj I).carrier),
                 RealizesOrbitRecord (I := I) E rec place₁ xs →
                 RealizesOrbitRecord (I := I) E rec place₂ ys →
                 SameAutOrbit K (E.obj I) xs ys := by
-  sorry
+  classical
+  let R := CanonicalRecord E.lab E.arity θ
+  let decode : R → OrbitRecord E.lab E.arity := CanonicalRecord.toOrbitRecord
+  have hell : aleph0 ≤ ls K := (isLSBound_ls K).1
+  have hlab : #E.lab ≤ ls K := by simpa [E.ell_eq] using E.lab_small
+  refine ⟨R, decode,
+    mk_canonicalRecord_le_orbitRecordBound (arity := E.arity) θ (ls K) hlab hθ hell,
+    fun r => ⟨canonical_record_card_index r, canonical_record_card_slot r⟩,
+    fun rec hidx hslt => canonical_record_covers rec hidx hslt, ?_⟩
+  intro κ hκle hcat
+  have hlsκ : ls K ≤ κ := le_trans (le_max_left _ _) hκle
+  have hsuccκ : Order.succ θ ≤ κ := le_trans (le_max_right _ _) hκle
+  have hκinf : aleph0 ≤ κ := le_trans hell hlsκ
+  refine ⟨?coding, ?orbits⟩
+  case coding =>
+    intro M ι hM hMcard hι
+    let δ := categoricityOrdinal κ θ
+    have hδcard := categoricityOrdinal_card (κ := κ) (θ := θ) hκinf hsuccκ
+    have hδlim := categoricityOrdinal_isSuccLimit (κ := κ) (θ := θ) hθ
+    have hδcof := categoricityOrdinal_cof (κ := κ) (θ := θ) hθ
+    have hθlt : θ < Ordinal.cof δ := by rw [hδcof]; exact Order.lt_succ θ
+    obtain ⟨I, _, _, eISO, hIcard⟩ := horderSmallCopy hδlim hδcard
+    have hImem := orderPresentation_obj_mem E I
+    have hEcard := orderPresentation_obj_card E hIcard hlsκ hκinf
+    obtain ⟨φ⟩ := hcat.unique_model M (E.obj I) hM hImem hMcard hEcard
+    let s := autOrbitSetoid K (E.obj I) hImem ι
+    have hQle : #(Quotient s) ≤ #R := by
+      let f : Quotient s → R := fun q =>
+        canonicalOfTuple E hθ hι (Quotient.out (s := s) q)
+      refine mk_le_of_injective (f := f) ?_
+      intro q1 q2 hf
+      rw [← Quotient.out_eq (s := s) q1, ← Quotient.out_eq (s := s) q2]
+      exact Quotient.sound (same_canonical_sameAutOrbit E δ θ hδlim hθ hθlt eISO hι
+        (Quotient.out (s := s) q1) (Quotient.out (s := s) q2) hf)
+    obtain ⟨inj⟩ := (Cardinal.le_def (Quotient s) R).mp hQle
+    refine ⟨fun xs => inj ⟦φ ∘ xs⟧, fun xs ys => ?_⟩
+    constructor
+    · intro hcode
+      exact (sameAutOrbit_congr K hM φ xs ys).mpr
+        (Quotient.exact (inj.injective hcode))
+    · intro horb
+      exact congrArg inj
+        (Quotient.sound ((sameAutOrbit_congr K hM φ xs ys).mp horb))
+  case orbits =>
+    intro δ hδcard hcf
+    have hδlim : Order.IsSuccLimit δ :=
+      Ordinal.one_lt_cof_iff.1 (lt_of_le_of_lt (one_le_aleph0.trans hθ) hcf)
+    obtain ⟨I, linI, nonI, eISO, hIcard⟩ := horderSmallCopy hδlim hδcard
+    refine ⟨I, linI, nonI, eISO,
+      orderPresentation_obj_card E hIcard hlsκ hκinf, ?_⟩
+    intro rec _hReal hslot place₁ place₂ xs ys h₁ h₂
+    exact same_record_sameAutOrbit E δ θ hδlim hθ hcf eISO rec hslot
+      place₁ place₂ xs ys h₁ h₂
 
 /-- **Lemma 3.7** (Closure of ordinal supports). A set `S ⊆ β` of size at most `a` sits in a
 bounded `T₀` of size at most `a` and cofinality greater than `θ`, such that every finite tuple

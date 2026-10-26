@@ -37,6 +37,12 @@ structure OrderPresentation (K : AbstractElementaryClass.{u}) where
     SupportTerm lab arity I → (obj I).carrier
   realize_surjective : ∀ {I : Type u} [LinearOrder I] [Nonempty I],
     Function.Surjective (realize (I := I))
+  /-- Realization is natural in the index order: substituting along an order embedding
+  commutes with the induced strong map of models. -/
+  realize_map : ∀ {I J : Type u} [LinearOrder I] [LinearOrder J] [Nonempty I] [Nonempty J]
+    (f : I ↪o J) (t : SupportTerm lab arity I),
+    map f (realize t) =
+      realize ⟨t.label, f ∘ t.pos, f.strictMono.comp t.increasing⟩
   /-- Equality of realized elements, and the value of every function and relation symbol
   on them, depends only on the labels and the order/equality pattern of the indices. -/
   pattern_determines : ∀ {I : Type u} [LinearOrder I] [Nonempty I] {n : ℕ}

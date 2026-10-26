@@ -1508,6 +1508,8 @@ noncomputable def emOrderPresentation (K : AbstractElementaryClass.{u}) [Arbitra
   map_comp {I J P} linI linJ linP nonI nonJ nonP f g := emMap_comp (K := K) f g
   realize {I} lin non t := emRealize (K := K) t
   realize_surjective {I} lin non := emRealize_surjective (K := K)
+  realize_map {I J} linI linJ nonI nonJ f t :=
+    emRealize_mapTerm (K := K) f t
   pattern_determines {I} lin non n t s hlabel heq hlt :=
     emPatternDetermines (K := K) t s hlabel heq hlt
   skeleton {I} lin non := emSkeleton K
