@@ -7,7 +7,7 @@ public import AEC.Section6.ApproximateRetraction
 public import AEC.Section7.AllDominated
 public import AEC.Section6.TestingFunction
 public import AEC.Section5.PackageClauses
-public import AEC.Section3.OrderEqualityDiagram
+public import AEC.Section6.SupportClosure
 
 @[expose] public section
 
@@ -236,8 +236,8 @@ theorem lemma_6_14 {J : Type u} [LinearOrder J] (color : J → ℕ)
           ∀ {n : ℕ} (q : Fin n → J), n ≤ χ →
             ∃ q' : Fin n → J, (∀ i, q' i ∈ S) ∧
               SameOrderDiagram (Sum.elim p q) (Sum.elim p q') ∧
-              ∀ i, color (q i) = color (q' i) := by
-  sorry
+              ∀ i, color (q i) = color (q' i) :=
+  lemma_6_14_proof color χ lam hχ hlam
 
 /-- **Proposition 6.15** (Universality of a fresh strip). Every same-level extension of a
 presented object `A` embeds into the object obtained by inserting a fresh convex strip. -/
