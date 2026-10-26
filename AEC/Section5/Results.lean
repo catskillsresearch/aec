@@ -2,6 +2,7 @@ module
 
 public import AEC.Section5.PackageClauses
 public import AEC.Section5.PaddedOrder
+public import AEC.Section5.RichPaddedOrder
 public import AEC.Section5.EligibleSubclass
 public import AEC.Section5.TermTemplate
 public import AEC.Section4.CountableClosure
@@ -61,8 +62,8 @@ theorem lemma_5_5 (η : Cardinal.{u}) (hη : aleph0 ≤ η) :
         #I = μ ∧
         (∀ a b : I, a < b → ∃ c, a < c ∧ c < b) ∧
         ∀ (L R : Set I), #L ≤ η → #R ≤ η → (∀ a ∈ L, ∀ b ∈ R, a < b) →
-          ∃ x : I, (∀ a ∈ L, a < x) ∧ (∀ b ∈ R, x < b) := by
-  sorry
+          ∃ x : I, (∀ a ∈ L, a < x) ∧ (∀ b ∈ R, x < b) :=
+  lemma_5_5_proof η hη
 
 /-- **Proposition 5.6** (The package for single models). There is a one-vertex working scheme
 whose eligible levels are an unbounded class of closure points for `t` and `g`. -/
