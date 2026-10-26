@@ -40,8 +40,44 @@ theorem lemma_11_4 (K : AbstractElementaryClass.{u}) {n : ℕ} {L : Set (Finset 
     (∀ s (hs : s ∈ L), f.onVertex s '' X.piece s hs ⊆ Y.piece s hs) ∧
     ∀ t, f.onVertex t '' RelativeSpan K X t ⊆ RelativeSpan K Y t := by
   refine ⟨f.extends_piece, ?_⟩
-  intro t
-  sorry
+  intro t y hy
+  obtain ⟨x, hx, rfl⟩ := hy
+  -- Pieces extend, so lower piece-spans map into the corresponding lower spans of `Y`.
+  have lower_image : ∀ u, f.onVertex u '' X.lower u ⊆ Y.lower u := by
+    intro u z hz
+    obtain ⟨w, hw, rfl⟩ := hz
+    obtain ⟨s, hs, hsu, v, hv, rfl⟩ := hw
+    refine ⟨s, hs, hsu, f.onVertex s v, f.extends_piece s hs ⟨v, hv, rfl⟩, ?_⟩
+    exact (DFunLike.congr_fun (f.comm hsu) v).symm
+  -- Hence `inP` maps, by transporting finite independence along the arrow.
+  have inP_image : ∀ u, f.onVertex u '' X.inP u ⊆ Y.inP u := by
+    intro u z hz
+    obtain ⟨w, hw, rfl⟩ := hz
+    have hw' : InClosure (X.indep u) (X.lower u) w := by
+      rw [X.span_lower u] at hw
+      exact hw
+    have hcl : InClosure (Y.indep u) (f.onVertex u '' X.lower u) (f.onVertex u w) :=
+      InClosure.image (f.onVertex u) (f.onVertex u).injective (f.indep_image u) hw'
+    have hcl' : InClosure (Y.indep u) (Y.lower u) (f.onVertex u w) :=
+      InClosure.mono (lower_image u) hcl
+    rw [Y.span_lower u]
+    exact hcl'
+  -- Relative-span generators are images of lower `inP`s; they map by `comm` and `inP_image`.
+  change InClosure (Y.indep t)
+      {y | ∃ r, ∃ hrt : r ⊂ t, ∃ z, z ∈ Y.inP r ∧ Y.le (le_of_lt hrt) z = y}
+      (f.onVertex t x)
+  have himg :
+      InClosure (Y.indep t)
+        (f.onVertex t ''
+          {y | ∃ r, ∃ hrt : r ⊂ t, ∃ z, z ∈ X.inP r ∧ X.le (le_of_lt hrt) z = y})
+        (f.onVertex t x) :=
+    InClosure.image (f.onVertex t) (f.onVertex t).injective (f.indep_image t) hx
+  refine InClosure.mono ?_ himg
+  intro z hz
+  obtain ⟨w, hw, rfl⟩ := hz
+  obtain ⟨r, hrt, v, hv, rfl⟩ := hw
+  refine ⟨r, hrt, f.onVertex r v, inP_image r ⟨v, hv, rfl⟩, ?_⟩
+  exact (DFunLike.congr_fun (f.comm (le_of_lt hrt)) v).symm
 
 /-- **Lemma 11.5** (Structural properties and the last-axis description). Geometric arrows
 compose, and restriction to a subset of the axes preserves systems and arrows. -/
@@ -69,6 +105,23 @@ theorem lemma_11_5 (K : AbstractElementaryClass.{u}) {n : ℕ} {L : Set (Finset 
       have hzZ : g.onVertex s (f.onVertex s x) ∈ Z.piece s hs :=
         g.extends_piece s hs ⟨f.onVertex s x, hxY, rfl⟩
       simpa only [Language.Embedding.comp_apply] using hxz ▸ hzZ
+    indep_image := by
+      intro t S
+      have himg :
+          (fun x => (g.onVertex t).comp (f.onVertex t) x) '' S =
+            g.onVertex t '' (f.onVertex t '' S) := by
+        ext z
+        simp [Set.mem_image, Language.Embedding.comp_apply]
+      constructor
+      · intro hS
+        have hY : Y.indep t (f.onVertex t '' S) := (f.indep_image t S).mp hS
+        have hZ : Z.indep t (g.onVertex t '' (f.onVertex t '' S)) :=
+          (g.indep_image t _).mp hY
+        simpa [himg] using hZ
+      · intro hS
+        have hZ : Z.indep t (g.onVertex t '' (f.onVertex t '' S)) := by
+          simpa [himg] using hS
+        exact (f.indep_image t S).mpr ((g.indep_image t _).mpr hZ)
   }, fun _ => rfl⟩
 
 /-- **Proposition 11.6** (Tiled presentations). For an admissible shape and every sufficiently

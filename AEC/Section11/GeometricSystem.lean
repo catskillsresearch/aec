@@ -34,9 +34,19 @@ structure GeometricSystem (K : AbstractElementaryClass.{u}) (n : ℕ)
   piece : ∀ s, s ∈ L → Set (vertex s).carrier
   pieceRank : ∀ s, s ∈ L → Cardinal.{u}
   piece_card : ∀ s (hs : s ∈ L), #(piece s hs) = pieceRank s hs
-  lower : (t : Finset (Fin n)) → Set (vertex t).carrier :=
-    fun t => {x | ∃ s, ∃ hs : s ∈ L, ∃ hst : s ⊆ t, ∃ y, y ∈ piece s hs ∧ le hst y = x}
-  span : ∀ t, inP t = {x | InClosure (indep t) (lower t) x}
+  span : ∀ t, inP t = {x | InClosure (indep t)
+    {y | ∃ s, ∃ hs : s ∈ L, ∃ hst : s ⊆ t, ∃ z, z ∈ piece s hs ∧ le hst z = y} x}
+
+/-- The span of active pieces below `t`. -/
+def GeometricSystem.lower {K : AbstractElementaryClass.{u}} {n : ℕ}
+    {L : Set (Finset (Fin n))} (X : GeometricSystem K n L) (t : Finset (Fin n)) :
+    Set (X.vertex t).carrier :=
+  {x | ∃ s, ∃ hs : s ∈ L, ∃ hst : s ⊆ t, ∃ y, y ∈ X.piece s hs ∧ X.le hst y = x}
+
+theorem GeometricSystem.span_lower {K : AbstractElementaryClass.{u}} {n : ℕ}
+    {L : Set (Finset (Fin n))} (X : GeometricSystem K n L) (t : Finset (Fin n)) :
+    X.inP t = {x | InClosure (X.indep t) (X.lower t) x} := by
+  simpa [GeometricSystem.lower] using X.span t
 
 /-- The relative span `D_t(X) = cl(⋃_{r ⊂ t} P(X_r))`. -/
 def RelativeSpan (K : AbstractElementaryClass.{u}) {n : ℕ} {L : Set (Finset (Fin n))}
@@ -45,7 +55,9 @@ def RelativeSpan (K : AbstractElementaryClass.{u}) {n : ℕ} {L : Set (Finset (F
     {y | ∃ r, ∃ hrt : r ⊂ t, ∃ z, z ∈ X.inP r ∧ X.le (le_of_lt hrt) z = y} x}
 
 /-- An arrow of geometric systems is a commuting family of strong embeddings carrying a
-witnessing partition of the domain into a witnessing partition of the codomain. -/
+witnessing partition of the domain into a witnessing partition of the codomain. Independence
+of finite sets is preserved and reflected along each vertex map, so relative-span calculations
+transport (Lemma 11.4). -/
 structure GeometricArrow (K : AbstractElementaryClass.{u}) {n : ℕ} {L : Set (Finset (Fin n))}
     (X Y : GeometricSystem K n L) where
   onVertex : ∀ t, Language.Embedding K.τ (X.vertex t).carrier (Y.vertex t).carrier
@@ -54,6 +66,8 @@ structure GeometricArrow (K : AbstractElementaryClass.{u}) {n : ℕ} {L : Set (F
     (onVertex t).comp (X.le h) = (Y.le h).comp (onVertex s)
   extends_piece : ∀ s (hs : s ∈ L),
     onVertex s '' X.piece s hs ⊆ Y.piece s hs
+  indep_image : ∀ t (S : Set (X.vertex t).carrier),
+    X.indep t S ↔ Y.indep t (onVertex t '' S)
 
 end
 end AEC
