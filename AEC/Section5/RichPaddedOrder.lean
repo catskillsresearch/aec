@@ -166,7 +166,9 @@ theorem exists_below (η : Cardinal.{u}) (hη : ℵ₀ ≤ η) (R : Set (Pt η))
     simpa [sNeg, νf] using this
   rw [hx]; exact Fin.pos_of_ne_zero hmem
 
-theorem exists_above (η : Cardinal.{u}) (hη : ℵ₀ ≤ η) (L : Set (Pt η))
+/-- Upper bound in a rich padded order; namespaced to avoid clashing with
+`Partition.exists_above`. -/
+theorem RichPaddedOrder.exists_above (η : Cardinal.{u}) (hη : ℵ₀ ≤ η) (L : Set (Pt η))
     (hL : #L ≤ η) (_hLne : L.Nonempty) :
     ∃ x : Pt η, ∀ f ∈ L, f < x := by
   obtain ⟨α, hα⟩ := exists_support η hη L hL
@@ -418,7 +420,7 @@ theorem pt_fills_cuts (η : Cardinal.{u}) (hη : ℵ₀ ≤ η) (L R : Set (Pt �
     · obtain ⟨x, hx⟩ := exists_below η hη R hR hRne
       exact ⟨x, by simp [hLe], hx⟩
   · rcases eq_empty_or_nonempty R with hRe | hRne
-    · obtain ⟨x, hx⟩ := exists_above η hη L hL hLne
+    · obtain ⟨x, hx⟩ := RichPaddedOrder.exists_above η hη L hL hLne
       exact ⟨x, hx, by simp [hRe]⟩
     · obtain ⟨α, hα⟩ := exists_support η hη (L ∪ R)
         ((mk_union_le _ _).trans (add_le_of_le hη hL hR))

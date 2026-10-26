@@ -227,7 +227,7 @@ theorem proposition_5_8 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
 working-diagram equality of lists of length at most `σ` by a back-and-forth of size `b(σ)`,
 at every eligible level strictly above `b(σ)`. -/
 theorem proposition_5_9 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
-    (W : WorkingScheme K S) (hpack : IsWorkingPackage W) :
+    (W : WorkingScheme K S) (_hpack : IsWorkingPackage W) :
     ∃ b : Cardinal.{u} → Cardinal.{u},
       (∀ σ τ, σ ≤ τ → b σ ≤ b τ) ∧
       ∀ (σ : Cardinal.{u}), aleph0 ≤ σ → ∀ μ (hμ : μ ∈ W.eligible), b σ < μ →
@@ -244,7 +244,51 @@ theorem proposition_5_9 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
               ∃ Z' : β → Occurrence K S (W.asSystem hμ X),
                 W.DiagramEq (X := Y) (Y := X)
                   (fun i : α ⊕ β => Sum.elim ys Z i) (fun i : α ⊕ β => Sum.elim xs Z' i)) := by
-  sorry
+  classical
+  -- A uniform bound on test size: at levels `μ > σ`, one-step extensions of size `≤ σ`
+  -- are witnessed by the same-level isomorphism that implements `DiagramEq` (English: the
+  -- stabilized back-and-forth test at bound `b_F(σ)` agrees with working diagrams).
+  refine ⟨fun σ => σ, fun _ _ h => h, ?_⟩
+  intro σ _hσ μ hμ _hb α _hα X Y xs ys
+  constructor
+  · intro hEq
+    constructor
+    · intro β Z _
+      obtain ⟨f, hfBij, hf⟩ := (W.diagram_iso (X := X) (Y := Y) xs ys).mp hEq
+      let Z' : β → Occurrence K S (W.asSystem hμ Y) :=
+        fun j => ⟨(Z j).1, f.onVertex (Z j).1 (Z j).2⟩
+      refine ⟨Z', ?_⟩
+      refine (W.diagram_iso (X := X) (Y := Y) (Sum.elim xs Z) (Sum.elim ys Z')).mpr
+        ⟨f, hfBij, ?_⟩
+      intro i
+      cases i with
+      | inl a => exact hf a
+      | inr b => rfl
+    · intro β Z _
+      have hEq' : W.DiagramEq (X := Y) (Y := X) ys xs :=
+        W.diagram_symm (X := X) (Y := Y) xs ys hEq
+      obtain ⟨g, hgBij, hg⟩ := (W.diagram_iso (X := Y) (Y := X) ys xs).mp hEq'
+      let Z' : β → Occurrence K S (W.asSystem hμ X) :=
+        fun j => ⟨(Z j).1, g.onVertex (Z j).1 (Z j).2⟩
+      refine ⟨Z', ?_⟩
+      refine (W.diagram_iso (X := Y) (Y := X) (Sum.elim ys Z) (Sum.elim xs Z')).mpr
+        ⟨g, hgBij, ?_⟩
+      intro i
+      cases i with
+      | inl a => exact hg a
+      | inr b => rfl
+  · intro hBF
+    -- Empty extension: the one-step test at the empty move recovers `DiagramEq`.
+    have hβ0 : #(PEmpty.{u + 1}) ≤ σ := by
+      simp [Cardinal.mk_eq_zero]
+    obtain ⟨Z', hZ'⟩ := hBF.1 (β := PEmpty.{u + 1}) (fun i => i.elim) hβ0
+    obtain ⟨f, hfBij, hf⟩ :=
+      (W.diagram_iso (X := X) (Y := Y)
+        (Sum.elim xs (fun j : PEmpty.{u + 1} => j.elim))
+        (Sum.elim ys Z')).mp hZ'
+    refine (W.diagram_iso (X := X) (Y := Y) xs ys).mpr ⟨f, hfBij, ?_⟩
+    intro i
+    exact hf (Sum.inl i)
 
 end
 end AEC
