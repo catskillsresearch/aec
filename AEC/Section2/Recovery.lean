@@ -4,6 +4,7 @@ public import AEC.Section2.ValidCode
 public import AEC.Section2.DirectedLimit
 public import AEC.Section2.SmallStrongSubmodel
 public import AEC.Section2.FiniteHull
+public import AEC.Section2.SpectrumBound
 public import Mathlib.SetTheory.Cardinal.Basic
 public import Mathlib.SetTheory.Cardinal.Order
 
@@ -17,6 +18,26 @@ universe u
 open FirstOrder Cardinal
 
 variable {K : AbstractElementaryClass.{u}}
+
+/-- The canonical language for AECs of Löwenheim–Skolem bound `lam`. -/
+def canTau (lam : Cardinal.{u}) : Tau.{u} where
+  Functions _ := Below lam
+  Relations _ := Below lam
+
+/-- The type of small codes over the canonical language of bound `lam`. -/
+def CanCode (lam : Cardinal.{u}) : Type u :=
+  SmallCode (canTau lam) lam
+
+/-- The replacement bound on all valid codes over the canonical language. -/
+noncomputable def canBound (lam : Cardinal.{u}) : Cardinal.{u} :=
+  Cardinal.sum (fun (c : {c : CanCode lam // IsValidCode lam c}) =>
+    spectrumBound (Classical.choose c.2.decodes))
+
+theorem spectrumBound_le_canBound {lam : Cardinal.{u}}
+    (c : CanCode lam) [hc : IsValidCode lam c] :
+    spectrumBound (Classical.choose hc.decodes) ≤ canBound lam :=
+  le_sum (fun (c : {c : CanCode lam // IsValidCode lam c}) =>
+    spectrumBound (Classical.choose c.2.decodes)) ⟨c, hc⟩
 
 /-- The canonical small code of an AEC at Löwenheim–Skolem bound `lam`. -/
 def aecCode (K : AbstractElementaryClass.{u}) (lam : Cardinal.{u}) : SmallCode K.τ lam where

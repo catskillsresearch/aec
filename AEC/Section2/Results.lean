@@ -69,7 +69,19 @@ theorem proposition_2_3 :
     obtain ⟨κ, hκ, hcat⟩ := hK.unbounded (μ (ls K))
     exact ⟨μ (ls K), fun κ' hκ' =>
       (hμ.threshold (ls K) hls.1).2 K hls ⟨κ, hκ, hcat⟩ κ' hκ'⟩
-  · sorry
+  · intro hqual
+    let μ : Cardinal.{u} → Cardinal.{u} := fun lam =>
+      max (lam + aleph0) (canBound lam + 1)
+    refine ⟨μ, ⟨?_⟩⟩
+    intro lam hlam
+    refine ⟨le_self_add.trans (le_max_left (lam + aleph0) (canBound lam + 1)), ?_⟩
+    intro K hLS ⟨κ, hκ, hcat⟩ κ' hκ'
+    have h_bound : spectrumBound K ≤ μ lam := by
+      sorry
+    have h_le_κ : spectrumBound K ≤ κ := h_bound.trans hκ
+    have h_all := categorical_of_ge_spectrumBound K (hqual K) h_le_κ hcat
+    have h_le_κ' : spectrumBound K ≤ κ' := h_bound.trans hκ'
+    exact h_all κ' h_le_κ'
 
 /-- **Lemma 2.5.** For infinite cardinals `ξ`, `ν` and a positive integer `k`, some infinite
 cardinal `R` has the partition property: every coloring of the `k`-element subsets of a set of
