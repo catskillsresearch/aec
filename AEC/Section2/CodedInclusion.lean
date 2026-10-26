@@ -13,6 +13,7 @@ open FirstOrder
 
 /-- A decoded strong inclusion: a coded presentation of the large model, a directed
 subfamily presenting the small model, and the direct-limit embedding between them. -/
+@[ext]
 structure CodedInclusion {τ : Tau.{u}} {lam : Cardinal.{u}} (c : SmallCode τ lam) where
   big : CodedPresentation c
   small : CodedPresentation c
@@ -24,8 +25,13 @@ structure CodedInclusion {τ : Tau.{u}} {lam : Cardinal.{u}} (c : SmallCode τ l
   /-- The stage embedding of the `i`-th small model into its image in the large system. -/
   stage : ∀ i, Language.Embedding τ (small.system.obj i).carrier
     (big.system.obj (embedIndex i)).carrier
+  stage_comm : ∀ {i j} (hij : small.system.rel i j),
+    (big.system.map (embedIndex_rel hij)).comp (stage i) = (stage j).comp (small.system.map hij)
   subpair : ∀ i, ∃ p : SmallPair τ lam, p ∈ c.pair ∧ p.small = small.rep i ∧
-    p.big = big.rep (embedIndex i)
+    p.big = big.rep (embedIndex i) ∧
+    ∃ (eSmall : (small.system.obj i).carrier ≃[τ] ↥p.small.domain)
+      (eBig : (big.system.obj (embedIndex i)).carrier ≃[τ] ↥p.big.domain),
+      p.incl.comp eSmall.toEmbedding = eBig.toEmbedding.comp (stage i)
   induced : Language.Embedding τ smallLimit.obj.carrier bigLimit.obj.carrier
   induced_comm : ∀ i,
     induced.comp (smallLimit.canon i) =

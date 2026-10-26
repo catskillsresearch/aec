@@ -1113,5 +1113,49 @@ lemma directLimit_in_class (K : AbstractElementaryClass.{u}) (S : DirectedSystem
         simp only [Language.Embedding.comp_apply, Language.Equiv.coe_toEmbedding] at hincl ⊢
         rw [hlim, hthrough, hincl, hpsi']
 
+/-- Any direct limit of a directed system is isomorphic to the algebraic direct limit. -/
+noncomputable def directLimitEquivAlgebraic {τ : Tau.{u}} (S : DirectedSystem τ)
+    (U : DirectLimit S) : (algebraicLimit S).obj.carrier ≃[τ] U.obj.carrier := by
+  have Hg : ∀ i j (hij : S.rel i j) (x : (S.obj i).carrier),
+      U.canon j (S.map hij x) = U.canon i x :=
+    fun i j hij x => congrFun (congrArg DFunLike.coe (U.compat hij)) x
+  let induced := Language.DirectLimit.lift τ (Index S)
+    (fun i : Index S => (S.obj i).carrier) (fun i j (h : i ≤ j) => S.map h) U.canon Hg
+  have hsurj : Function.Surjective induced := by
+    intro z
+    obtain ⟨i, y, rfl⟩ := U.joint z
+    refine ⟨(algebraicLimit S).canon i y, ?_⟩
+    exact Language.DirectLimit.lift_of (L := τ) (ι := Index S)
+      (G := fun i : Index S => (S.obj i).carrier)
+      (f := fun i j (h : i ≤ j) => S.map h) U.canon Hg (i := i) y
+  exact embeddingEquivOfSurjective induced hsurj
+
+lemma directLimitHg {τ : Tau.{u}} (S : DirectedSystem τ) (U : DirectLimit S)
+    (i j : S.ι) (hij : S.rel i j) (x : (S.obj i).carrier) :
+    U.canon j (S.map hij x) = U.canon i x :=
+  congrFun (congrArg DFunLike.coe (U.compat hij)) x
+
+theorem directLimitEquivAlgebraic_canon {τ : Tau.{u}} (S : DirectedSystem τ)
+    (U : DirectLimit S) (i : S.ι) (x : (S.obj i).carrier) :
+    directLimitEquivAlgebraic S U ((algebraicLimit S).canon i x) = U.canon i x := by
+  dsimp [directLimitEquivAlgebraic, embeddingEquivOfSurjective]
+  exact Language.DirectLimit.lift_of (L := τ) (ι := Index S)
+    (G := fun i : Index S => (S.obj i).carrier)
+    (f := fun i j (h : i ≤ j) => S.map h) U.canon (directLimitHg S U) (i := i) x
+
+/-- Any direct limit of models in `K` with strong maps belongs to `K`. -/
+theorem directLimit_mem (K : AbstractElementaryClass.{u}) (S : DirectedSystem K.τ)
+    (hmem : ∀ i, K.Mem (S.obj i))
+    (hstrong : ∀ {i j} (hij : S.rel i j), K.Strong (S.map hij))
+    (U : DirectLimit S) : K.Mem U.obj := by
+  obtain ⟨L, hL⟩ := directLimit_in_class K S hmem (fun {_ _} hij => hstrong hij)
+  have eL : (algebraicLimit S).obj.carrier ≃[K.τ] L.obj.carrier :=
+    directLimitEquivAlgebraic S L
+  have eU : (algebraicLimit S).obj.carrier ≃[K.τ] U.obj.carrier :=
+    directLimitEquivAlgebraic S U
+  have hiso : Nonempty (L.obj.carrier ≃[K.τ] U.obj.carrier) :=
+    ⟨eU.comp eL.symm⟩
+  exact K.iso_closed hiso hL.1
+
 end
 end AEC

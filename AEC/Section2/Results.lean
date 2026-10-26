@@ -3,6 +3,7 @@ module
 public import AEC.Section2.DirectLimit
 public import AEC.Section2.DirectedLimit
 public import AEC.Section2.ValidCode
+public import AEC.Section2.Recovery
 public import AEC.Section2.OrderPresentation
 public import AEC.Section2.Partition
 public import AEC.Section2.Presentation
@@ -51,7 +52,10 @@ theorem lemma_2_2 {τ : Tau.{u}} {lam : Cardinal.{u}} (K : AbstractElementaryCla
       (∀ M : Model K.τ, K.Mem M ↔ DecodedMem (hτ ▸ c) M) ∧
       (∀ {M N : Model K.τ} (f : Language.Embedding K.τ M.carrier N.carrier),
         K.Strong f ↔ DecodedStrong (hτ ▸ c) f) := by
-  sorry
+  subst hτ
+  refine ⟨aecCode K lam, aecCode_isValidCode hLS, ?_, ?_⟩
+  · intro M; exact mem_iff_decodedMem hLS M
+  · intro M N f; exact strong_iff_decodedStrong hLS f
 
 /-- **Proposition 2.3** (The uniform reduction). The uniform assertion of Theorem 1.2 is
 equivalent to the qualitative assertion that every AEC categorical in unboundedly many

@@ -37,6 +37,7 @@ public import AEC.Section2.Partition
 public import AEC.Section2.PartitionBound
 public import AEC.Section2.Presentation
 public import AEC.Section2.Reindex
+public import AEC.Section2.Recovery
 public import AEC.Section2.Results
 public import AEC.Section2.SmallCode
 public import AEC.Section2.SmallModel
