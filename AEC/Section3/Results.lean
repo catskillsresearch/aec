@@ -19,6 +19,8 @@ public import AEC.Section3.ShortOrbit
 public import AEC.Section3.SupportClosure
 public import AEC.Section3.IndecomposableSegment
 public import AEC.Section3.UniformOrbitBound
+public import AEC.Section3.Profile
+public import AEC.Section3.Alignment
 public import AEC.Section2.OrderPresentation
 public import AEC.Section2.DirectedLimit
 public import Mathlib.Order.Hom.Basic
@@ -249,7 +251,11 @@ whose `θ`-tuple orbit names agree with the names computed in the large model. -
 theorem proposition_3_9 (K : AbstractElementaryClass.{u}) (E : OrderPresentation K)
     (θ a μ : Cardinal.{u}) (N : OrbitNaming K θ)
     (hθ : aleph0 ≤ θ) (ha : max (ls K) (Order.succ θ) ≤ a) (hμ : a < μ)
-    (hcatA : Categorical K a) (hcatμ : Categorical K μ) :
+    (hcatA : Categorical K a) (hcatμ : Categorical K μ)
+    (P : CommonProfileSetup K E θ a μ N hθ)
+    (hname_iso : ∀ {M₁ M₂ : Model K.τ} (φ : M₁.carrier ≃[K.τ] M₂.carrier)
+      (hM₁ : K.Mem M₁) (hM₂ : K.Mem M₂) {ι : Type u} (xs : ι → M₁.carrier) (hι : #ι ≤ θ),
+      N.name hM₁ xs hι = N.name hM₂ (fun i => φ (xs i)) hι) :
     ∀ (M : Model K.τ) (hM : K.Mem M), Model.card M = μ →
       ∀ S : Set M.carrier, #S ≤ a →
         ∃ (A : Model K.τ) (f : Language.Embedding K.τ A.carrier M.carrier) (hA : K.Mem A),
@@ -258,7 +264,134 @@ theorem proposition_3_9 (K : AbstractElementaryClass.{u}) (E : OrderPresentation
           ∀ {ι : Type u} (hι : #ι ≤ θ) (xs : ι → A.carrier),
             N.name (M := A) (ι := ι) hA xs hι =
               N.name (M := M) (ι := ι) hM (fun i => f (xs i)) hι := by
-  sorry
+  classical
+  intro M hM hMcard S hS
+  have hls : ls K ≤ a := (le_max_left _ _).trans ha
+  have hsucc : Order.succ θ ≤ a := (le_max_right _ _).trans ha
+  have haleph_a : aleph0 ≤ a := hθ.trans ((Order.lt_succ θ).le.trans hsucc)
+  have hβlim : Order.IsSuccLimit P.β :=
+    Ordinal.one_lt_cof_iff.1 (lt_of_le_of_lt (one_le_aleph0.trans haleph_a) P.β_cof)
+  obtain ⟨I, _, _, eI, hIcard⟩ := horderSmallCopy hβlim P.β_card
+  have hImem := orderPresentation_obj_mem E I
+  have hlsμ : ls K ≤ μ := hls.trans hμ.le
+  have hEμ := orderPresentation_obj_card E hIcard hlsμ (haleph_a.trans hμ.le)
+  obtain ⟨φ⟩ := hcatμ.unique_model M (E.obj I) hM hImem hMcard hEμ
+  let S' : Set (E.obj I).carrier := φ '' S
+  have hS' : #S' ≤ a := (mk_image_le).trans hS
+  let Sord := ordinalSupportOf E eI S'
+  have hSord : #Sord ≤ a := ordinalSupportOf_card E eI haleph_a S' hS'
+  have hμβ : μ.ord ≤ P.β := by
+    have h := Cardinal.ord_card_le P.β
+    rwa [P.β_card] at h
+  have hβord : a.ord < P.β := (Cardinal.ord_lt_ord.mpr hμ).trans_le hμβ
+  obtain ⟨T0, hSsub, hT0card, hpat, _, _⟩ :=
+    lemma_3_7 θ a P.β hθ hsucc hβord P.β_cof Sord hSord
+  obtain ⟨δ, hδmem, hotp, hδind, hδcard, hδcof⟩ :=
+    exists_profile_delta (θ := θ) haleph_a P.Deltas P.deltas_spec P.deltas_cofinal T0 hT0card
+  obtain ⟨eT0, bT0, hbT0⟩ := exists_otp_embedding (β := P.β) (δ := δ) T0 hotp
+  have hδltβ : δ < P.β := by
+    have hδlt : δ < (Order.succ a).ord := (P.deltas_spec δ hδmem).2.2.2
+    have haμ : (Order.succ a).ord ≤ μ.ord :=
+      Cardinal.ord_le_ord.mpr (Order.succ_le_of_lt hμ)
+    exact hδlt.trans_le (haμ.trans hμβ)
+  -- Expand Lemma 3.8 so the segment iso and Hausdorff push share one witness
+  have haleph' : aleph0 ≤ a := haleph_a
+  obtain ⟨α, _, hαδ, hT0lt⟩ :=
+    exists_segment_base haleph' P.β_cof P.β_indecomposable hδltβ T0 hT0card
+  obtain ⟨T, hT0sub, ⟨eT⟩, hmem⟩ :=
+    exists_extended_iso hδind α hαδ T0 hT0lt ⟨eT0, bT0, hbT0⟩
+  have hpatT :
+      ∀ {ι : Type u} (_hι : #ι ≤ θ) (p : ι → P.β.ToType), (∀ i, p i ∈ T) →
+        ∀ {n : ℕ} (q : Fin n → P.β.ToType), ∃ q' : Fin n → P.β.ToType,
+          (∀ k, q' k ∈ T) ∧ SameOrderDiagram (Sum.elim p q) (Sum.elim p q') :=
+    extended_pattern (θ := θ) (β := P.β) (δ := δ) hθ hδcof α hαδ T0 hT0lt hpat T hmem
+  let φH : HOrder δ ↪o HOrder P.β := horderPush (segmentPosition eT)
+  have hocc :
+      ∀ {ι : Type u} (hι : #ι ≤ θ) (xs : ι → HOrder δ) (lower upper : Set ι),
+        Occupied (xs '' lower) (xs '' upper) ↔
+          Occupied ((fun i => φH (xs i)) '' lower) ((fun i => φH (xs i)) '' upper) := by
+    intro ι hι xs lower upper
+    simpa [φH] using extended_occupancy (θ := θ) T hpatT eT hθ hι xs lower upper
+  have hδlim : Order.IsSuccLimit δ :=
+    Ordinal.one_lt_cof_iff.1 (lt_of_le_of_lt (one_le_aleph0.trans hθ) hδcof)
+  obtain ⟨J, _, _, eJ, hJcard⟩ := horderSmallCopy hδlim hδcard
+  have hJmem := orderPresentation_obj_mem E J
+  have hEa := orderPresentation_obj_card E hJcard hls haleph_a
+  let embIJ := E.map (softPush eJ eI φH)
+  have hembStrong : K.Strong embIJ := softPush_strong E eJ eI φH
+  let f : Language.Embedding K.τ (E.obj J).carrier M.carrier :=
+    φ.symm.toEmbedding.comp embIJ
+  have hfStrong : K.Strong f :=
+    K.transport_strong embIJ φ.symm hembStrong
+  have hcontains : ∀ x ∈ S, ∃ y, f y = x := by
+    intro x hx
+    let x' := φ x
+    have hx' : x' ∈ S' := Set.mem_image_of_mem φ hx
+    let t := supportTermOf E x'
+    have htreal := realize_supportTermOf E x'
+    have hpos_in_T : ∀ k : Fin (E.arity t.label),
+        ∀ i ∈ hSupport (eI.symm (t.pos k)),
+          Ordinal.ToType.mk (asIio i) ∈ T := by
+      intro k i hi
+      have : Ordinal.ToType.mk (asIio i) ∈ Sord := by
+        dsimp [Sord, ordinalSupportOf]
+        refine Set.mem_biUnion hx' ?_
+        refine Set.mem_biUnion (Set.mem_range_self k) ?_
+        exact Set.mem_image_of_mem _ hi
+      exact hT0sub (hSsub this)
+    have hpos_range : ∀ k : Fin (E.arity t.label),
+        eI.symm (t.pos k) ∈ Set.range φH := by
+      intro k
+      obtain ⟨w, hw⟩ := horder_supported_pull (segmentPosition eT) (eI.symm (t.pos k)) (by
+        intro g hg i hi
+        have him : i ∈ hSupport (eI.symm (t.pos k)) := by
+          simp only [hSupport, Finset.mem_biUnion]
+          exact ⟨g, hg, hi⟩
+        exact segmentPosition_of_mem eT i (hpos_in_T k i him))
+      exact ⟨w, hw⟩
+    let posJ : Fin (E.arity t.label) → J := fun k =>
+      eJ (Classical.choose (hpos_range k))
+    have hinc : StrictMono posJ := by
+      intro k₁ k₂ hk
+      dsimp [posJ]
+      refine (eJ.lt_iff_lt).mpr ?_
+      have hw1 := Classical.choose_spec (hpos_range k₁)
+      have hw2 := Classical.choose_spec (hpos_range k₂)
+      exact (φH.lt_iff_lt).mp (by
+        change φH _ < φH _
+        rw [hw1, hw2]
+        exact (eI.symm.lt_iff_lt).mpr (t.increasing hk))
+    let y : (E.obj J).carrier := E.realize ⟨t.label, posJ, hinc⟩
+    refine ⟨y, ?_⟩
+    change φ.symm (embIJ y) = x
+    have hy : embIJ y = x' := by
+      dsimp [embIJ, y]
+      rw [E.realize_map]
+      have hterm : SupportTerm.mk t.label
+          (softPush eJ eI φH ∘ posJ)
+          ((softPush eJ eI φH).strictMono.comp hinc) = t := by
+        refine SupportTerm.ext_of_label_eq rfl fun k => ?_
+        change eI (φH (eJ.symm (eJ (Classical.choose (hpos_range k))))) = t.pos k
+        rw [OrderIso.symm_apply_apply, Classical.choose_spec (hpos_range k),
+          OrderIso.apply_symm_apply]
+      simpa [hterm] using htreal
+    simpa [hy, x'] using Equiv.symm_apply_apply φ x
+  refine ⟨E.obj J, f, hJmem, hfStrong, hEa, hcontains, ?_⟩
+  intro ι hι xs
+  have hsmall := P.assign_small δ hδmem eJ hι xs
+  have hreal := realizes_canonical_softPush E hθ eJ eI φH hocc hι xs
+  have hlarge := P.assign_realizes_large eI hι (fun i => embIJ (xs i))
+    (canonicalOfTuple E hθ hι xs)
+    (fun s => softPush eJ eI φH (canonicalPlaceOfTuple E hθ hι xs s))
+    (canonicalOfTupleIndexEquiv E hθ hι xs).symm
+    hreal
+  have hnames : N.name hJmem xs hι =
+      N.name hImem (fun i => embIJ (xs i)) hι := by
+    have : some (N.name hJmem xs hι) = some (N.name hImem (fun i => embIJ (xs i)) hι) := by
+      rw [← hsmall, ← hlarge]
+    exact Option.some.inj this
+  have htoM := hname_iso φ.symm hImem hM (fun i => embIJ (xs i)) hι
+  exact hnames.trans (by simpa [f, Language.Embedding.comp_apply] using htoM)
 
 /-- **Lemma 3.10.** The additively indecomposable ordinals `δ < κ⁺` with `|δ| = κ` and
 `cf(δ) = τ` are cofinal in `κ⁺`, for infinite `κ` and infinite regular `τ ≤ κ`. -/
