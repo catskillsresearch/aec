@@ -11,6 +11,7 @@ public import AEC.Section3.OrderEqualityDiagram
 public import AEC.Section3.Occupancy
 public import AEC.Section3.AdditivelyIndecomposable
 public import AEC.Section3.Reversal
+public import AEC.Section3.Elimination
 public import AEC.Section3.OrbitName
 public import AEC.Section3.OrbitRecord
 public import AEC.Section3.SameRecord
@@ -23,6 +24,7 @@ public import AEC.Section3.Profile
 public import AEC.Section3.Alignment
 public import AEC.Section2.OrderPresentation
 public import AEC.Section2.DirectedLimit
+public import AEC.Section2.Results
 public import Mathlib.Order.Hom.Basic
 public import Mathlib.Order.Interval.Set.Basic
 public import Mathlib.SetTheory.Cardinal.Cofinality.Ordinal
@@ -252,10 +254,7 @@ theorem proposition_3_9 (K : AbstractElementaryClass.{u}) (E : OrderPresentation
     (θ a μ : Cardinal.{u}) (N : OrbitNaming K θ)
     (hθ : aleph0 ≤ θ) (ha : max (ls K) (Order.succ θ) ≤ a) (hμ : a < μ)
     (hcatA : Categorical K a) (hcatμ : Categorical K μ)
-    (P : CommonProfileSetup K E θ a μ N hθ)
-    (hname_iso : ∀ {M₁ M₂ : Model K.τ} (φ : M₁.carrier ≃[K.τ] M₂.carrier)
-      (hM₁ : K.Mem M₁) (hM₂ : K.Mem M₂) {ι : Type u} (xs : ι → M₁.carrier) (hι : #ι ≤ θ),
-      N.name hM₁ xs hι = N.name hM₂ (fun i => φ (xs i)) hι) :
+    (P : CommonProfileSetup K E θ a μ N hθ) :
     ∀ (M : Model K.τ) (hM : K.Mem M), Model.card M = μ →
       ∀ S : Set M.carrier, #S ≤ a →
         ∃ (A : Model K.τ) (f : Language.Embedding K.τ A.carrier M.carrier) (hA : K.Mem A),
@@ -270,7 +269,7 @@ theorem proposition_3_9 (K : AbstractElementaryClass.{u}) (E : OrderPresentation
   have hsucc : Order.succ θ ≤ a := (le_max_right _ _).trans ha
   have haleph_a : aleph0 ≤ a := hθ.trans ((Order.lt_succ θ).le.trans hsucc)
   have hβlim : Order.IsSuccLimit P.β :=
-    Ordinal.one_lt_cof_iff.1 (lt_of_le_of_lt (one_le_aleph0.trans haleph_a) P.β_cof)
+    Ordinal.one_lt_cof_iff.1 (lt_of_le_of_lt (one_le_aleph0.trans haleph_a) P.β_cof_a)
   obtain ⟨I, _, _, eI, hIcard⟩ := horderSmallCopy hβlim P.β_card
   have hImem := orderPresentation_obj_mem E I
   have hlsμ : ls K ≤ μ := hls.trans hμ.le
@@ -285,7 +284,7 @@ theorem proposition_3_9 (K : AbstractElementaryClass.{u}) (E : OrderPresentation
     rwa [P.β_card] at h
   have hβord : a.ord < P.β := (Cardinal.ord_lt_ord.mpr hμ).trans_le hμβ
   obtain ⟨T0, hSsub, hT0card, hpat, _, _⟩ :=
-    lemma_3_7 θ a P.β hθ hsucc hβord P.β_cof Sord hSord
+    lemma_3_7 θ a P.β hθ hsucc hβord P.β_cof_a Sord hSord
   obtain ⟨δ, hδmem, hotp, hδind, hδcard, hδcof⟩ :=
     exists_profile_delta (θ := θ) haleph_a P.Deltas P.deltas_spec P.deltas_cofinal T0 hT0card
   obtain ⟨eT0, bT0, hbT0⟩ := exists_otp_embedding (β := P.β) (δ := δ) T0 hotp
@@ -297,7 +296,7 @@ theorem proposition_3_9 (K : AbstractElementaryClass.{u}) (E : OrderPresentation
   -- Expand Lemma 3.8 so the segment iso and Hausdorff push share one witness
   have haleph' : aleph0 ≤ a := haleph_a
   obtain ⟨α, _, hαδ, hT0lt⟩ :=
-    exists_segment_base haleph' P.β_cof P.β_indecomposable hδltβ T0 hT0card
+    exists_segment_base haleph' P.β_cof_a P.β_indecomposable hδltβ T0 hT0card
   obtain ⟨T, hT0sub, ⟨eT⟩, hmem⟩ :=
     exists_extended_iso hδind α hαδ T0 hT0lt ⟨eT0, bT0, hbT0⟩
   have hpatT :
@@ -390,7 +389,7 @@ theorem proposition_3_9 (K : AbstractElementaryClass.{u}) (E : OrderPresentation
     have : some (N.name hJmem xs hι) = some (N.name hImem (fun i => embIJ (xs i)) hι) := by
       rw [← hsmall, ← hlarge]
     exact Option.some.inj this
-  have htoM := hname_iso φ.symm hImem hM (fun i => embIJ (xs i)) hι
+  have htoM := N.name_iso φ.symm hImem hM (fun i => embIJ (xs i)) hι
   exact hnames.trans (by simpa [f, Language.Embedding.comp_apply] using htoM)
 
 /-- **Lemma 3.10.** The additively indecomposable ordinals `δ < κ⁺` with `|δ| = κ` and
@@ -423,10 +422,30 @@ theorem lemma_3_10 (κ τ : Cardinal.{u}) (hκ : aleph0 ≤ κ) (hτ : aleph0 �
 
 /-- **Theorem 3.11** (Eventual reversal at categoricity cardinals). For each infinite cardinal
 `θ` there is a bound `b_K(θ)` such that, at every categoricity cardinal `κ ≥ b_K(θ)`, every
-strong self-embedding is inverted on every tuple of length at most `θ`. -/
+strong self-embedding is inverted on every tuple of length at most `θ`.
+
+Proof shape (text.md §3.5): if failing categoricity cardinals are bounded, apply
+`isReversalThreshold_of_fails_bounded`. Otherwise the `P⁺`-sequence of failures, profile
+pigeonhole, Proposition 3.9 alignment, the θ⁺-renaming kill, and `killed_copy_impossible`
+yield a contradiction. -/
 theorem theorem_3_11 (K : AbstractElementaryClass.{u}) (θ : Cardinal.{u}) (hθ : aleph0 ≤ θ) :
     ∃ b : Cardinal.{u}, IsReversalThreshold K θ b := by
-  sorry
+  classical
+  by_cases hB : ∃ B : Cardinal.{u}, ∀ κ, FailsReversal K θ κ → κ ≤ B
+  · obtain ⟨B, hBound⟩ := hB
+    exact ⟨Order.succ B, isReversalThreshold_of_fails_bounded K θ B hBound⟩
+  · -- Unbounded failures: eliminate via profiles + Prop 3.9 renaming (text.md 180–202).
+    push Not at hB
+    have hUnb : ∀ B : Cardinal.{u}, ∃ κ, FailsReversal K θ κ ∧ B < κ := hB
+    have : ArbitrarilyLarge K := arbitrarilyLarge_of_unbounded_fails K θ hUnb
+    obtain ⟨E, _, _⟩ := @theorem_2_6 K this
+    let N := elimOrbitNaming K E θ hθ
+    -- Remaining (text.md 186–201): profile pigeonhole on `failingSequence` → a < μ with
+    -- common cofinal profile and asymmetric NamedArrow p→r; CommonProfileSetup + Prop 3.9;
+    -- θ⁺·a^θ renaming kill; killed_copy_impossible K θ a N ... .
+    exact False.elim (by
+      clear N
+      sorry)
 
 end
 end AEC

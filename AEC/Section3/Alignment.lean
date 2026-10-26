@@ -109,7 +109,7 @@ theorem softPush_strong {K : AbstractElementaryClass.{u}} (E : OrderPresentation
 /-- Names agree when a shared assign identifies the two canonical records up to `Same`. -/
 theorem name_eq_of_assign {K : AbstractElementaryClass.{u}}
     (E : OrderPresentation K) (θ : Cardinal.{u}) (N : OrbitNaming K θ) (hθ : aleph0 ≤ θ)
-    (assign : CanonicalRecord E.lab E.arity θ → Option Cardinal.{u})
+    (assign : CanonicalRecord E.lab E.arity θ → Option (OrbitName K θ))
     {I J : Type u} [LinearOrder I] [LinearOrder J] [Nonempty I] [Nonempty J]
     {ι : Type u} (hι : #ι ≤ θ)
     (xs : ι → (E.obj I).carrier) (ys : ι → (E.obj J).carrier)

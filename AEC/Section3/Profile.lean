@@ -31,13 +31,14 @@ structure CommonProfileSetup (K : AbstractElementaryClass.{u}) (E : OrderPresent
   β : _root_.Ordinal.{u}
   β_indecomposable : AdditivelyIndecomposable β
   β_card : β.card = μ
-  β_cof : a < Ordinal.cof β
+  β_cof : θ < Ordinal.cof β
+  β_cof_a : a < Ordinal.cof β
   Deltas : Set (_root_.Ordinal.{u})
   deltas_spec : ∀ δ ∈ Deltas,
     AdditivelyIndecomposable δ ∧ δ.card = a ∧ θ < Ordinal.cof δ ∧ δ < (Order.succ a).ord
   deltas_cofinal : ∀ η : _root_.Ordinal.{u}, η < (Order.succ a).ord →
     ∃ δ ∈ Deltas, η ≤ δ
-  assign : CanonicalRecord E.lab E.arity θ → Option Cardinal.{u}
+  assign : CanonicalRecord E.lab E.arity θ → Option (OrbitName K θ)
   /-- On the large presentation, the canonical record of a tuple receives its orbit name. -/
   assign_large :
     ∀ {I : Type u} [LinearOrder I] [Nonempty I] (_e : HOrder β ≃o I)
