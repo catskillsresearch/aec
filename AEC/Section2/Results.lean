@@ -76,8 +76,9 @@ theorem proposition_2_3 :
     intro lam hlam
     refine ⟨le_self_add.trans (le_max_left (lam + aleph0) (canBound lam + 1)), ?_⟩
     intro K hLS ⟨κ, hκ, hcat⟩ κ' hκ'
-    have h_bound : spectrumBound K ≤ μ lam := by
-      sorry
+    have h_bound : spectrumBound K ≤ μ lam :=
+      (spectrumBound_le_canBound_of_isLSBound hLS).trans
+        (le_self_add.trans (le_max_right (lam + aleph0) (canBound lam + 1)))
     have h_le_κ : spectrumBound K ≤ κ := h_bound.trans hκ
     have h_all := categorical_of_ge_spectrumBound K (hqual K) h_le_κ hcat
     have h_le_κ' : spectrumBound K ≤ κ' := h_bound.trans hκ'

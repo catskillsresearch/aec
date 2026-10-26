@@ -5,6 +5,7 @@ public import AEC.Section2.DirectedLimit
 public import AEC.Section2.SmallStrongSubmodel
 public import AEC.Section2.FiniteHull
 public import AEC.Section2.SpectrumBound
+public import AEC.Section2.Rename
 public import Mathlib.SetTheory.Cardinal.Basic
 public import Mathlib.SetTheory.Cardinal.Order
 
@@ -28,15 +29,19 @@ def canTau (lam : Cardinal.{u}) : Tau.{u} where
 def CanCode (lam : Cardinal.{u}) : Type u :=
   SmallCode (canTau lam) lam
 
-/-- The replacement bound on all valid codes over the canonical language. -/
+/-- A valid ordinal code: an ordinal language together with a valid small code. -/
+def ValidOrdCode (lam : Cardinal.{u}) : Type u :=
+  {c : OrdCode lam // IsValidCode lam c.2}
+
+/-- The replacement bound on all valid ordinal codes (Proposition 2.3). -/
 noncomputable def canBound (lam : Cardinal.{u}) : Cardinal.{u} :=
-  Cardinal.sum (fun (c : {c : CanCode lam // IsValidCode lam c}) =>
+  Cardinal.sum (fun (c : ValidOrdCode lam) =>
     spectrumBound (Classical.choose c.2.decodes))
 
 theorem spectrumBound_le_canBound {lam : Cardinal.{u}}
-    (c : CanCode lam) [hc : IsValidCode lam c] :
+    (c : OrdCode lam) [hc : IsValidCode lam c.2] :
     spectrumBound (Classical.choose hc.decodes) ≤ canBound lam :=
-  le_sum (fun (c : {c : CanCode lam // IsValidCode lam c}) =>
+  le_sum (fun (c : ValidOrdCode lam) =>
     spectrumBound (Classical.choose c.2.decodes)) ⟨c, hc⟩
 
 /-- The canonical small code of an AEC at Löwenheim–Skolem bound `lam`. -/
@@ -582,3 +587,114 @@ theorem aecCode_isValidCode {lam : Cardinal.{u}} (hLS : isLSBound K lam) :
   refine ⟨K, rfl, hLS, ?_, ?_⟩
   · intro M; exact mem_iff_decodedMem hLS M
   · intro M N f; exact strong_iff_decodedStrong hLS f
+
+/-- Categoricity for AECs that share a language and agree on `Mem`. -/
+theorem categorical_of_mem_eq {K₁ K₂ : AbstractElementaryClass.{u}}
+    (hτ : K₁.τ = K₂.τ)
+    (hmem : ∀ M : Model K₁.τ, K₁.Mem M ↔ K₂.Mem (hτ ▸ M))
+    (κ : Cardinal.{u}) :
+    Categorical K₁ κ ↔ Categorical K₂ κ := by
+  -- Destructure so `cases` on the language equality succeeds.
+  rcases K₁ with ⟨τ₁, Mem₁, Strong₁, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, ls1, ls2, ls3, ls4⟩
+  rcases K₂ with ⟨τ₂, Mem₂, Strong₂, b1, b2, b3, b4, b5, b6, b7, b8, b9, b10, mt1, mt2, mt3, mt4⟩
+  cases hτ
+  have hmem' : ∀ M, Mem₁ M ↔ Mem₂ M := hmem
+  constructor
+  · intro h
+    refine ⟨?_, ?_⟩
+    · obtain ⟨M, hM, hc⟩ := h.exists_model
+      exact ⟨M, (hmem' M).mp hM, hc⟩
+    · intro M N hM hN hκM hκN
+      exact h.unique_model M N ((hmem' M).mpr hM) ((hmem' N).mpr hN) hκM hκN
+  · intro h
+    refine ⟨?_, ?_⟩
+    · obtain ⟨M, hM, hc⟩ := h.exists_model
+      exact ⟨M, (hmem' M).mpr hM, hc⟩
+    · intro M N hM hN hκM hκN
+      exact h.unique_model M N ((hmem' M).mp hM) ((hmem' N).mp hN) hκM hκN
+
+theorem SpectrumBounded.mem_eq {K₁ K₂ : AbstractElementaryClass.{u}}
+    (hτ : K₁.τ = K₂.τ)
+    (hmem : ∀ M : Model K₁.τ, K₁.Mem M ↔ K₂.Mem (hτ ▸ M)) :
+    SpectrumBounded K₁ ↔ SpectrumBounded K₂ := by
+  have hcat := categorical_of_mem_eq hτ hmem
+  constructor
+  · intro h
+    obtain ⟨b, hb⟩ := h.bound
+    exact ⟨b, fun μ hμ => hb μ ((hcat μ).mpr hμ)⟩
+  · intro h
+    obtain ⟨b, hb⟩ := h.bound
+    exact ⟨b, fun μ hμ => hb μ ((hcat μ).mp hμ)⟩
+
+theorem spectrumBound_eq_of_mem_eq {K₁ K₂ : AbstractElementaryClass.{u}}
+    (hτ : K₁.τ = K₂.τ)
+    (hmem : ∀ M : Model K₁.τ, K₁.Mem M ↔ K₂.Mem (hτ ▸ M)) :
+    spectrumBound K₁ = spectrumBound K₂ := by
+  have hcat := categorical_of_mem_eq hτ hmem
+  have hsb := SpectrumBounded.mem_eq hτ hmem
+  have hspec : categoricitySpectrum K₁ = categoricitySpectrum K₂ := by
+    ext μ; simp only [categoricitySpectrum, Set.mem_ofPred_eq]; exact hcat μ
+  apply congrArg sInf
+  ext κ
+  simp only [spectrumBoundSet, Set.mem_ofPred_eq, hsb, hspec]
+  refine and_congr_right' (or_congr ?_ ?_)
+  · refine and_congr_right' ?_
+    constructor <;> intro h μ hμ <;> exact h μ (by simpa [hspec] using hμ)
+  · refine and_congr_right' ?_
+    constructor <;> intro h μ hμ <;> simpa [hcat] using h μ hμ
+
+/-- Decoding `aecCode K` recovers an AEC with the same spectrum bound as `K`. -/
+theorem spectrumBound_choose_aecCode {lam : Cardinal.{u}} (hLS : isLSBound K lam) :
+    spectrumBound (Classical.choose (aecCode_isValidCode (K := K) hLS).decodes) =
+      spectrumBound K := by
+  let K' := Classical.choose (aecCode_isValidCode (K := K) hLS).decodes
+  have hspec := Classical.choose_spec (aecCode_isValidCode (K := K) hLS).decodes
+  obtain ⟨hτ, _, hmem, _⟩ := hspec
+  -- `hτ : K.τ = K'.τ` and `K'.Mem ↔ DecodedMem (hτ ▸ aecCode)`.
+  exact (spectrumBound_eq_of_mem_eq (K₁ := K) (K₂ := K') hτ (fun M => by
+    have hiff := mem_iff_decodedMem (K := K) hLS M
+    have hK' := hmem (hτ ▸ M)
+    have hcast : DecodedMem (aecCode K lam) M ↔
+        DecodedMem (hτ ▸ aecCode K lam) (hτ ▸ M) :=
+      Eq.rec (motive := fun (τ' : Tau.{u}) (h : K.τ = τ') =>
+        DecodedMem (aecCode K lam) M ↔ DecodedMem (h ▸ aecCode K lam) (h ▸ M))
+        Iff.rfl hτ
+    change K.Mem M ↔ K'.Mem (hτ ▸ M)
+    rw [hiff, hcast, hK'])).symm
+
+/-- Language card bound from an LS bound. -/
+theorem card_le_of_isLSBound {lam : Cardinal.{u}} (hLS : isLSBound K lam) :
+    K.τ.card ≤ lam :=
+  (le_self_add).trans hLS.2.1
+
+/-- The ordinal code of an AEC at bound `lam`, after renaming into ordinal symbols. -/
+noncomputable def aecOrdCode (K : AbstractElementaryClass.{u}) (lam : Cardinal.{u})
+    (hLS : isLSBound K lam) : OrdCode lam :=
+  let hcard := card_le_of_isLSBound (K := K) hLS
+  let e := ordLangEquiv K.τ lam hcard
+  ⟨ordLangOf K.τ lam hcard, aecCode (reindexAEC K e) lam⟩
+
+theorem aecOrdCode_isValidCode {lam : Cardinal.{u}} (hLS : isLSBound K lam) :
+    IsValidCode lam (aecOrdCode K lam hLS).2 := by
+  let hcard := card_le_of_isLSBound (K := K) hLS
+  let e := ordLangEquiv K.τ lam hcard
+  exact aecCode_isValidCode (reindexAEC_isLSBound K e hLS)
+
+/-- Replacement: every AEC with LS bound `lam` has `spectrumBound ≤ canBound lam`. -/
+theorem spectrumBound_le_canBound_of_isLSBound {lam : Cardinal.{u}}
+    (hLS : isLSBound K lam) :
+    spectrumBound K ≤ canBound lam := by
+  let hcard := card_le_of_isLSBound (K := K) hLS
+  let e := ordLangEquiv K.τ lam hcard
+  let K' := reindexAEC K e
+  have hLS' : isLSBound K' lam := reindexAEC_isLSBound K e hLS
+  have : IsValidCode lam (aecOrdCode K lam hLS).2 := aecOrdCode_isValidCode hLS
+  have hle : spectrumBound (Classical.choose
+      (aecOrdCode_isValidCode (K := K) hLS).decodes) ≤ canBound lam :=
+    spectrumBound_le_canBound (aecOrdCode K lam hLS)
+  have heq₁ : spectrumBound (Classical.choose
+      (aecOrdCode_isValidCode (K := K) hLS).decodes) = spectrumBound K' := by
+    simpa [aecOrdCode] using spectrumBound_choose_aecCode (K := K') hLS'
+  have heq₂ : spectrumBound K' = spectrumBound K := reindexAEC_spectrumBound_eq K e
+  rw [← heq₂, ← heq₁]
+  exact hle
