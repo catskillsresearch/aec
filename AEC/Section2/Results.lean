@@ -5,6 +5,7 @@ public import AEC.Section2.DirectedLimit
 public import AEC.Section2.ValidCode
 public import AEC.Section2.OrderPresentation
 public import AEC.Section2.Partition
+public import AEC.Section2.Presentation
 public import AEC.Section1.UniformThreshold
 public import AEC.Section1.UnboundedCategoricity
 public import AEC.Section1.CategoricalTail
@@ -105,7 +106,29 @@ theorem theorem_2_6 (K : AbstractElementaryClass.{u}) [ArbitrarilyLarge K] :
       (∀ (I : Type u) [LinearOrder I] [Nonempty I], K.Mem (E.obj I)) ∧
       ∀ κ : Cardinal.{u}, aleph0 ≤ κ → ls K ≤ κ →
         ∃ M : Model K.τ, K.Mem M ∧ Model.card M = κ := by
-  sorry
+  let E := emOrderPresentation K
+  refine ⟨E, fun I => (emLimit_spec (K := K) I).1, ?_⟩
+  intro κ hκ hls
+  let I := κ.ord.ToType
+  have hI_card : #I = κ := Cardinal.mk_ord_toType κ
+  haveI : LinearOrder I := inferInstance
+  haveI : Nonempty I := by
+    rw [← Cardinal.mk_ne_zero_iff, hI_card]
+    exact ne_of_gt (aleph0_pos.trans_le hκ)
+  let M := E.obj I
+  have hM_mem : K.Mem M := (emLimit_spec (K := K) I).1
+  have hM_card : Model.card M = κ := by
+    apply le_antisymm
+    · have hupper := E.card_upper (I := I)
+      rw [E.ell_eq] at hupper
+      have h_add : #I + ls K = κ := by
+        rw [hI_card]
+        exact add_eq_left hκ hls
+      exact hupper.trans (le_of_eq h_add)
+    · have hlower := E.card_lower (I := I)
+      rw [hI_card] at hlower
+      exact hlower
+  exact ⟨M, hM_mem, hM_card⟩
 
 end
 end AEC

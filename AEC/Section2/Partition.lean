@@ -18,7 +18,8 @@ open Cardinal
 
 noncomputable local instance {α : Type u} : DecidableEq α := Classical.typeDecidableEq α
 
-noncomputable local instance (P : Prop) : Decidable P := Classical.propDecidable P
+noncomputable local instance instDecidablePropPartition (P : Prop) : Decidable P :=
+  Classical.propDecidable P
 
 /-!
 Lemma 2.5, first sentence of the proof. A set of cardinality greater than `ξ · ν` cannot be
@@ -404,20 +405,20 @@ noncomputable def stageStep {m : ℕ} {idx α : Type u} [LinearOrder idx] [WellF
 
 /-- Outgoing residual of the node at height `i` on the branch selected by `f`. The root residual
 is the whole ground set, recovered as the empty intersection. -/
-noncomputable def stage {m : ℕ} {idx α : Type u} [LinearOrder idx] [WellFoundedLT idx]
+noncomputable def partitionStage {m : ℕ} {idx α : Type u} [LinearOrder idx] [WellFoundedLT idx]
     {ξ : Cardinal.{u}} (e : α ≃ (#α).ord.ToType)
     (color : {s : Finset α // s.card = m + 1} → ξ.ord.ToType) (default : ξ.ord.ToType)
     (f : idx → ({t : Finset idx // t.card = m} → ξ.ord.ToType)) : idx → Set α :=
   WellFounded.fix (inferInstance : WellFounded ((· < ·) : idx → idx → Prop))
     (fun i rec => stageStep e color default f i rec)
 
-lemma stage_eq {m : ℕ} {idx α : Type u} [LinearOrder idx] [WellFoundedLT idx]
+lemma partitionStage_eq {m : ℕ} {idx α : Type u} [LinearOrder idx] [WellFoundedLT idx]
     {ξ : Cardinal.{u}} (e : α ≃ (#α).ord.ToType)
     (color : {s : Finset α // s.card = m + 1} → ξ.ord.ToType) (default : ξ.ord.ToType)
     (f : idx → ({t : Finset idx // t.card = m} → ξ.ord.ToType)) (i : idx) :
-    stage e color default f i =
-      stageStep e color default f i (fun j _hj => stage e color default f j) := by
-  unfold stage
+    partitionStage e color default f i =
+      stageStep e color default f i (fun j _hj => partitionStage e color default f j) := by
+  unfold partitionStage
   exact WellFounded.fix_eq _ _ i
 
 /-- The residual entering the node at height `i`: every earlier outgoing residual. -/
@@ -425,7 +426,7 @@ def incoming {m : ℕ} {idx α : Type u} [LinearOrder idx] [WellFoundedLT idx]
     {ξ : Cardinal.{u}} (e : α ≃ (#α).ord.ToType)
     (color : {s : Finset α // s.card = m + 1} → ξ.ord.ToType) (default : ξ.ord.ToType)
     (f : idx → ({t : Finset idx // t.card = m} → ξ.ord.ToType)) (i : idx) : Set α :=
-  {x | ∀ j (hj : j < i), x ∈ stage e color default f j}
+  {x | ∀ j (hj : j < i), x ∈ partitionStage e color default f j}
 
 /-- The point named at height `i`, when the incoming residual is nonempty. -/
 noncomputable def namedAt {m : ℕ} {idx α : Type u} [LinearOrder idx] [WellFoundedLT idx]
@@ -616,16 +617,16 @@ lemma follow_eq_stage {m : ℕ} {idx α : Type u} [LinearOrder idx] [WellFounded
     {ξ : Cardinal.{u}} (e : α ≃ (#α).ord.ToType)
     (color : {s : Finset α // s.card = m + 1} → ξ.ord.ToType) (default : ξ.ord.ToType)
     (u : α) (i : idx) :
-    stage e color default (followLabel e color default u) i = follow e color default u i := by
+    partitionStage e color default (followLabel e color default u) i = follow e color default u i := by
   induction i using WellFoundedLT.induction with
   | ind i IH =>
     have hrec : ∀ j (hj : j < i),
-        stage e color default (followLabel e color default u) j = follow e color default u j :=
+        partitionStage e color default (followLabel e color default u) j = follow e color default u j :=
       fun j hj => IH j hj
-    rw [stage_eq, follow_eq]
+    rw [partitionStage_eq, follow_eq]
     unfold stageStep
     have hset : ({x | ∀ j (hj : j < i),
-        x ∈ stage e color default (followLabel e color default u) j} : Set α) =
+        x ∈ partitionStage e color default (followLabel e color default u) j} : Set α) =
         {x | ∀ j (hj : j < i), x ∈ follow e color default u j} := by
       ext x
       constructor
@@ -637,7 +638,7 @@ lemma follow_eq_stage {m : ℕ} {idx α : Type u} [LinearOrder idx] [WellFounded
         exact hx j hj
     by_cases h : ({x | ∀ j (hj : j < i), x ∈ follow e color default u j} : Set α).Nonempty
     · have h' : ({x | ∀ j (hj : j < i),
-          x ∈ stage e color default (followLabel e color default u) j} : Set α).Nonempty :=
+          x ∈ partitionStage e color default (followLabel e color default u) j} : Set α).Nonempty :=
         hset.symm ▸ h
       simp only [dif_pos h, dif_pos h']
       ext v
@@ -668,7 +669,7 @@ lemma follow_eq_stage {m : ℕ} {idx α : Type u} [LinearOrder idx] [WellFounded
           rw [hlabel]
           exact hvlabel
     · have h' : ¬ ({x | ∀ j (hj : j < i),
-          x ∈ stage e color default (followLabel e color default u) j} : Set α).Nonempty := by
+          x ∈ partitionStage e color default (followLabel e color default u) j} : Set α).Nonempty := by
         intro hne
         exact h (hset ▸ hne)
       simp only [dif_neg h, dif_neg h']
@@ -691,12 +692,12 @@ lemma survivor_in_follow {m : ℕ} {idx α : Type u} [LinearOrder idx] [WellFoun
     refine ⟨hinc, ?_, fun s => rfl⟩
     intro heq
     have hstage : ({x | ∀ j (hj : j < i),
-        x ∈ stage e color default (followLabel e color default u) j} : Set α) =
+        x ∈ partitionStage e color default (followLabel e color default u) j} : Set α) =
         {x | ∀ j (hj : j < i), x ∈ follow e color default u j} := by
       ext x
       constructor
       · intro hx j hj
-        have hmem : x ∈ stage e color default (followLabel e color default u) j := hx j hj
+        have hmem : x ∈ partitionStage e color default (followLabel e color default u) j := hx j hj
         rw [follow_eq_stage e color default u j] at hmem
         exact hmem
       · intro hx j hj

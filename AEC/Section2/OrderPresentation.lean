@@ -51,9 +51,15 @@ structure OrderPresentation (K : AbstractElementaryClass.{u}) where
         (s i).pos (Fin.cast (congrArg arity (hlabel i)) a) <
           (s j).pos (Fin.cast (congrArg arity (hlabel j)) b)) →
     (∀ i j, realize (t i) = realize (t j) ↔ realize (s i) = realize (s j)) ∧
-    (∀ {k} (f : K.τ.Functions k) (idx : Fin k → Fin n),
-      Language.Structure.funMap f (fun a => realize (t (idx a))) =
-        Language.Structure.funMap f (fun a => realize (s (idx a)))) ∧
+    (∀ {k} (f : K.τ.Functions k) (idx : Fin k → Fin n) (j : Fin n),
+      Language.Structure.funMap f (fun a => realize (t (idx a))) = realize (t j) ↔
+        Language.Structure.funMap f (fun a => realize (s (idx a))) = realize (s j)) ∧
+    (∀ {k₁ k₂ : ℕ} (f₁ : K.τ.Functions k₁) (f₂ : K.τ.Functions k₂)
+      (idx₁ : Fin k₁ → Fin n) (idx₂ : Fin k₂ → Fin n),
+      Language.Structure.funMap f₁ (fun a => realize (t (idx₁ a))) =
+          Language.Structure.funMap f₂ (fun a => realize (t (idx₂ a))) ↔
+        Language.Structure.funMap f₁ (fun a => realize (s (idx₁ a))) =
+          Language.Structure.funMap f₂ (fun a => realize (s (idx₂ a)))) ∧
     (∀ {k} (r : K.τ.Relations k) (idx : Fin k → Fin n),
       Language.Structure.RelMap r (fun a => realize (t (idx a))) ↔
         Language.Structure.RelMap r (fun a => realize (s (idx a))))
