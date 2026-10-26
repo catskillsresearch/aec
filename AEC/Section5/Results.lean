@@ -7,6 +7,7 @@ public import AEC.Section5.EligibleSubclass
 public import AEC.Section5.TermTemplate
 public import AEC.Section4.CountableClosure
 public import AEC.Section4.StableDiagram
+public import Mathlib.Order.WellFoundedSet
 
 @[expose] public section
 
@@ -29,11 +30,77 @@ theorem EligibleSubclass.mem_source {S T : Set Cardinal.{u}} (h : EligibleSubcla
   dsimp [EligibleSubclass] at h
   exact h.1 hμ
 
+/-- An empty-index chain union yields an object at every eligible level. -/
+noncomputable def objectOfEmptyChain {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
+    (W : WorkingScheme K S) (hpack : HasChainUnions W)
+    {μ : Cardinal.{u}} (hμ : μ ∈ W.eligible) : W.Object μ hμ := by
+  classical
+  have h :=
+    hpack.union (hμ := hμ) (index := PEmpty.{u + 1})
+      (obj := fun i => i.elim)
+      (le := fun i => i.elim)
+      (fun i => i.elim)
+      (fun i => i.elim)
+      (by simp [Cardinal.mk_eq_zero])
+  exact h.choose
+
+/-- Inclusion of a set as an order embedding of subtypes. -/
+def setInclusionOrderEmbed {α : Type u} [Preorder α] {s t : Set α} (h : s ⊆ t) : s ↪o t where
+  toFun := Set.inclusion h
+  inj' := Set.inclusion_injective h
+  map_rel_iff' := Iff.rfl
+
+/-- An order embedding restricts to an order embedding onto the image of a subset. -/
+def orderEmbedImage {α β : Type u} [LinearOrder α] [LinearOrder β] (f : α ↪o β) (s : Set α) :
+    s ↪o (f '' s : Set β) where
+  toFun x := ⟨f x.1, ⟨x.1, x.2, rfl⟩⟩
+  inj' := by
+    intro a b h
+    exact Subtype.ext (f.injective (Subtype.ext_iff.mp h))
+  map_rel_iff' := by
+    intro a b
+    exact f.map_rel_iff
+
+/-- Convert subtype well-foundedness to `Set.IsWF`. -/
+theorem isWF_of_subtype_wf {α : Type u} [LT α] {s : Set α}
+    (hs : WellFounded ((· < ·) : s → s → Prop)) : s.IsWF := hs
+
+/-- Convert `Set.IsWF` to subtype well-foundedness. -/
+theorem subtype_wf_of_isWF {α : Type u} [LT α] {s : Set α}
+    (hs : s.IsWF) : WellFounded ((· < ·) : s → s → Prop) := hs
+
+/-- Order isomorphism between a set and its image under an order embedding. -/
+noncomputable def orderIsoImage {α β : Type u} [LinearOrder α] [LinearOrder β]
+    (f : α ↪o β) (s : Set α) : s ≃o (f '' s : Set β) where
+  toEquiv := Equiv.ofBijective (orderEmbedImage f s) ⟨(orderEmbedImage f s).injective, by
+    intro y
+    obtain ⟨x, hx, hxy⟩ := y.2
+    refine ⟨⟨x, hx⟩, Subtype.ext ?_⟩
+    exact hxy⟩
+  map_rel_iff' := by
+    intro a b
+    exact (orderEmbedImage f s).map_rel_iff
+
+/-- The image of a well-founded subset under an order embedding remains well-founded. -/
+theorem wellFounded_image_orderEmbed {α β : Type u} [LinearOrder α] [LinearOrder β]
+    (f : α ↪o β) {s : Set α} (hs : WellFounded ((· < ·) : s → s → Prop)) :
+    WellFounded ((· < ·) : (f '' s : Set β) → (f '' s : Set β) → Prop) := by
+  let _ : WellFoundedLT s := hs
+  exact ((orderIsoImage f s).symm.toOrderEmbedding).strictMono.wellFoundedLT
+
+/-- Union of two well-founded subsets of a linear order is well-founded on the subtype. -/
+theorem wellFounded_union_subtype {α : Type u} [LinearOrder α] {s t : Set α}
+    (hs : WellFounded ((· < ·) : s → s → Prop))
+    (ht : WellFounded ((· < ·) : t → t → Prop)) :
+    WellFounded ((· < ·) : (s ∪ t : Set α) → (s ∪ t : Set α) → Prop) :=
+  subtype_wf_of_isWF (Set.IsWF.union (isWF_of_subtype_wf hs) (isWF_of_subtype_wf ht))
+
 /-- **Lemma 5.4** (Directed unions and padded presentations). Where chain unions are
 available, the presentation of a padded order of eligible cardinality `μ` is an object at
 `μ`, and an order embedding of padded orders induces a permitted arrow. -/
 theorem lemma_5_4 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
     (W : WorkingScheme K S) (F : TermTemplate K S) (hpack : HasChainUnions W)
+    [hpres : HasPresentations W F]
     {μ : Cardinal.{u}} (hμ : μ ∈ W.eligible) (I : Type u) [LinearOrder I] [Nonempty I]
     [IsPadded I] (hI : #I = μ) :
     ∃ X : W.Object μ hμ,
@@ -44,7 +111,48 @@ theorem lemma_5_4 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
         ∃ Y : W.Object ν hν,
           ∃ arr : SystemArrow K S (W.asSystem hμ X) (W.asSystem hν Y),
             W.permitted (X := X) (Y := Y) arr := by
-  sorry
+  classical
+  let X : W.Object μ hμ := objectOfEmptyChain W hpack hμ
+  refine ⟨X, ?_, ?_⟩
+  · exact hpres.present_equiv hμ X I hI
+  · intro ν hν J _ _ _ f hJ
+    let Y : W.Object ν hν := objectOfEmptyChain W hpack hν
+    obtain ⟨s, hsCard, hsWF⟩ := IsPadded.padded (I := I)
+    obtain ⟨t, htCard, htWF⟩ := IsPadded.padded (I := J)
+    have hsI : #s = μ := hsCard.trans hI
+    have htJ : #t = ν := htCard.trans hJ
+    have hsNe : Nonempty s := by
+      rw [← Cardinal.mk_ne_zero_iff, hsI, ← hI]
+      exact Cardinal.mk_ne_zero_iff.mpr inferInstance
+    have htNe : Nonempty t := by
+      rw [← Cardinal.mk_ne_zero_iff, htJ, ← hJ]
+      exact Cardinal.mk_ne_zero_iff.mpr inferInstance
+    let im : Set J := (↑f : I → J) '' s
+    have himCard : #im = μ := by
+      rw [Cardinal.mk_image_eq f.injective, hsI]
+    have himWF : WellFounded ((· < ·) : im → im → Prop) :=
+      wellFounded_image_orderEmbed f hsWF
+    let u : Set J := im ∪ t
+    have huWF : WellFounded ((· < ·) : u → u → Prop) :=
+      wellFounded_union_subtype himWF htWF
+    have huCard : #u = ν := by
+      apply le_antisymm
+      · calc
+          #u ≤ #J := Cardinal.mk_subtype_le _
+          _ = ν := hJ
+      · calc
+          ν = #t := htJ.symm
+          _ ≤ #u := Cardinal.mk_le_mk_of_subset Set.subset_union_right
+    let _ : WellFoundedLT s := hsWF
+    let _ : WellFoundedLT u := huWF
+    let _ : Nonempty s := hsNe
+    let _ : Nonempty u :=
+      let ⟨x⟩ := htNe
+      ⟨⟨x.1, Or.inr x.2⟩⟩
+    let emb : s ↪o u :=
+      (orderEmbedImage f s).trans (setInclusionOrderEmbed (Set.subset_union_left (s := im) (t := t)))
+    obtain ⟨arr, harr⟩ := hpres.wellOrder_arrow hμ hν s u X Y emb hsI huCard
+    exact ⟨Y, arr, harr⟩
 
 /-- **Lemma 5.5** (Rich padded orders). For infinite `η` there is a dense endpoint-free linear
 order of cardinality `2^η` in which every cut given by at most `η` parameters on either side

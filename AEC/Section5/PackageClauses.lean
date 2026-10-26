@@ -1,6 +1,7 @@
 module
 
 public import AEC.Section5.WorkingScheme
+public import Mathlib.Order.WellFounded
 
 @[expose] public section
 
@@ -10,6 +11,29 @@ section
 universe u
 
 open FirstOrder Cardinal
+
+/-- Definition 5.2(2), presentations. Well-order presentations of eligible cardinality are
+compared to scheme objects by vertexwise language equivalence, and an order embedding of
+well-orders of eligible cardinalities induces a permitted arrow between any objects at those
+levels. (Every object is isomorphic to a well-order presentation by the empty-diagram clause of
+the scheme, so it is enough to state the arrow condition for arbitrary objects.) -/
+class HasPresentations {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
+    (W : WorkingScheme K S) (F : TermTemplate K S) : Prop where
+  /-- At an eligible level, the vertex models of `F.present I` are language-equivalent to those of
+  any scheme object whenever `#I` equals that level. -/
+  present_equiv : ∀ {μ : Cardinal.{u}} (hμ : μ ∈ W.eligible) (X : W.Object μ hμ)
+    (I : Type u) [LinearOrder I] [Nonempty I],
+    #I = μ →
+    ∀ v, Nonempty (((F.present I).obj v).carrier ≃[K.τ]
+      ((W.asSystem hμ X).obj v).carrier)
+  /-- An order embedding of well-orders of eligible cardinalities induces a permitted arrow. -/
+  wellOrder_arrow : ∀ {μ ν : Cardinal.{u}} (hμ : μ ∈ W.eligible) (hν : ν ∈ W.eligible)
+    (I J : Type u) [LinearOrder I] [LinearOrder J] [Nonempty I] [Nonempty J]
+    [WellFoundedLT I] [WellFoundedLT J]
+    (X : W.Object μ hμ) (Y : W.Object ν hν) (_f : I ↪o J),
+    #I = μ → #J = ν →
+    ∃ arr : SystemArrow K S (W.asSystem hμ X) (W.asSystem hν Y),
+      W.permitted (X := X) (Y := Y) arr
 
 /-- Definition 5.2(1), unions. An increasing chain of objects at one eligible level, whose union
 has cardinality that level, is an object, and a chain that maps into an object at a larger eligible

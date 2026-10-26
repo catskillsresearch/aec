@@ -42,5 +42,17 @@ def SystemArrow.comp {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
     rw [hf]
     exact hg
 
+/-- The identity system arrow. -/
+def SystemArrow.refl {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
+    (X : SystemObject K S) : SystemArrow K S X X where
+  onVertex v := Language.Embedding.refl K.τ (X.obj v).carrier
+  onVertex_strong v := by
+    have hmem : K.Mem (X.obj v) := X.inK v
+    simpa using K.strong_refl (X.obj v) hmem
+  comm := by
+    intro i j h
+    ext x
+    simp [Language.Embedding.comp_apply, Language.Embedding.refl_apply]
+
 end
 end AEC
