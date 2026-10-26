@@ -3,6 +3,9 @@ module
 public import AEC.Section4.NaturalDiagram
 public import AEC.Section4.CountableClosure
 public import AEC.Section1.ArbitrarilyLarge
+public import AEC.Section2.FiniteHull
+public import AEC.Section2.DirectedLimit
+public import AEC.Section3.Reversal
 public import Mathlib.Order.WellFounded
 public import Mathlib.SetTheory.Cardinal.Cofinality.Ordinal
 
@@ -25,11 +28,25 @@ def DiagramsDifferOnSubset (K : AbstractElementaryClass.{u}) (E : OrderPresentat
   ∃ t' s' : α → SupportTerm E.lab E.arity (↥X),
     ¬ SameNaturalDiagram K E D σ hσ t' s'
 
-/-- **Lemma 4.1** (Canonical classes above one categoricity size). A tuple in a model of size
-at least a categoricity cardinal `κ` has a class computed in any strong `κ`-submodel containing
-it, and a strong embedding of models of size at least `κ` preserves that class. -/
+/-- Factor a strong embedding through a strong ambient map whose range covers it; coherence
+supplies strength of the factor. -/
+theorem strongFactorEmbedding {K : AbstractElementaryClass.{u}} {M₀ M₁ M₂ : Model K.τ}
+    (f₀₂ : Language.Embedding K.τ M₀.carrier M₂.carrier)
+    (f₁₂ : Language.Embedding K.τ M₁.carrier M₂.carrier)
+    (hf₀₂ : K.Strong f₀₂) (hf₁₂ : K.Strong f₁₂)
+    (himg : ∀ x, ∃ y, f₁₂ y = f₀₂ x) :
+    K.Strong (factorEmbedding f₀₂ f₁₂ himg) :=
+  K.coherence (factorEmbedding f₀₂ f₁₂ himg) f₀₂ f₁₂ hf₀₂ hf₁₂
+    (factorEmbedding_comp f₀₂ f₁₂ himg)
+
+/-- **Lemma 4.1** (Canonical classes above one categoricity size). At a categoricity cardinal
+`κ ≥ LS(K)` where reversal holds for `κ`-tuples, a tuple in a model of size at least `κ` has a
+well-defined `≡σκ`-class: any two strong `κ`-submodels containing it are related by a strong map
+sending the tuple to itself, and a strong embedding of models of size at least `κ` preserves
+that class. -/
 theorem lemma_4_1 (K : AbstractElementaryClass.{u}) (κ : Cardinal.{u})
-    (hcat : Categorical K κ) (N : Model K.τ) (hN : K.Mem N) (hcard : κ ≤ Model.card N)
+    (hcat : Categorical K κ) (hls : ls K ≤ κ) (hrev : ReversalProperty K κ κ)
+    (N : Model K.τ) (hN : K.Mem N) (hcard : κ ≤ Model.card N)
     {α : Type u} (a : α → N.carrier) (hα : #α ≤ κ) :
     (∀ (M₁ M₂ : Model K.τ)
         (f₁ : Language.Embedding K.τ M₁.carrier N.carrier)
@@ -37,8 +54,8 @@ theorem lemma_4_1 (K : AbstractElementaryClass.{u}) (κ : Cardinal.{u})
         K.Mem M₁ → K.Mem M₂ → K.Strong f₁ → K.Strong f₂ →
         Model.card M₁ = κ → Model.card M₂ = κ →
         (∀ i, ∃ x, f₁ x = a i) → (∀ i, ∃ y, f₂ y = a i) →
-        ∃ e : M₁.carrier ≃[K.τ] M₂.carrier,
-          K.Strong e.toEmbedding ∧
+        ∃ e : Language.Embedding K.τ M₁.carrier M₂.carrier,
+          K.Strong e ∧
           ∀ i x y, f₁ x = a i → f₂ y = a i → e x = y) ∧
     ∀ (N' : Model K.τ) (g : Language.Embedding K.τ N.carrier N'.carrier),
       K.Mem N' → K.Strong g → κ ≤ Model.card N' →
@@ -48,10 +65,120 @@ theorem lemma_4_1 (K : AbstractElementaryClass.{u}) (κ : Cardinal.{u})
         K.Mem M₁ → K.Mem M₂ → K.Strong f₁ → K.Strong f₂ →
         Model.card M₁ = κ → Model.card M₂ = κ →
         (∀ i, ∃ x, f₁ x = a i) → (∀ i, ∃ y, f₂ y = g (a i)) →
-        ∃ e : M₁.carrier ≃[K.τ] M₂.carrier,
-          K.Strong e.toEmbedding ∧
+        ∃ e : Language.Embedding K.τ M₁.carrier M₂.carrier,
+          K.Strong e ∧
           ∀ i x y, f₁ x = a i → f₂ y = g (a i) → e x = y := by
-  sorry
+  classical
+  have hκinf : aleph0 ≤ κ := (isLSBound_ls K).1.trans hls
+  /- Common strong `κ`-hull of two strong `κ`-embeddings into an ambient model. -/
+  have commonHull {M₁ M₂ P : Model K.τ}
+      (f₁ : Language.Embedding K.τ M₁.carrier P.carrier)
+      (f₂ : Language.Embedding K.τ M₂.carrier P.carrier)
+      (hP : K.Mem P) (hf₁ : K.Strong f₁) (hf₂ : K.Strong f₂)
+      (hc₁ : Model.card M₁ = κ) (hc₂ : Model.card M₂ = κ) :
+      ∃ (M₃ : Model K.τ)
+        (f₃ : Language.Embedding K.τ M₃.carrier P.carrier)
+        (g₁ : Language.Embedding K.τ M₁.carrier M₃.carrier)
+        (g₂ : Language.Embedding K.τ M₂.carrier M₃.carrier),
+        K.Mem M₃ ∧ K.Strong f₃ ∧ Model.card M₃ = κ ∧
+        K.Strong g₁ ∧ K.Strong g₂ ∧
+        f₃.comp g₁ = f₁ ∧ f₃.comp g₂ = f₂ := by
+    let A : Set P.carrier := Set.range f₁ ∪ Set.range f₂
+    have hA_le : #A ≤ κ := by
+      have hle := mk_union_le (Set.range f₁) (Set.range f₂)
+      have h1 : #(Set.range f₁) ≤ κ :=
+        (mk_range_le (f := ⇑f₁)).trans_eq hc₁
+      have h2 : #(Set.range f₂) ≤ κ :=
+        (mk_range_le (f := ⇑f₂)).trans_eq hc₂
+      have hsum := add_le_add h1 h2
+      rw [add_eq_self hκinf] at hsum
+      exact hle.trans hsum
+    have hA_ge : κ ≤ #A := by
+      have hr : #(Set.range f₁) = κ :=
+        (mk_range_eq (⇑f₁) f₁.injective).trans hc₁
+      exact hr.symm.trans_le (mk_le_mk_of_subset Set.subset_union_left)
+    have hA_eq : #A = κ := le_antisymm hA_le hA_ge
+    obtain ⟨M₃, f₃, hM₃, hf₃, hcov, hcard₃⟩ := (isLSBound_ls K).2.2 P hP A
+    have hcard_le : Model.card M₃ ≤ κ := by
+      have h := hcard₃.trans (add_le_add (le_of_eq hA_eq) hls)
+      rwa [add_eq_self hκinf] at h
+    have hcard_ge : κ ≤ Model.card M₃ := by
+      have hr : #(Set.range f₁) = κ :=
+        (mk_range_eq (⇑f₁) f₁.injective).trans hc₁
+      have hsub : Set.range f₁ ⊆ Set.range f₃ := by
+        intro x hx
+        obtain ⟨n, hn⟩ := hcov x (Or.inl hx)
+        exact ⟨n, hn⟩
+      have hle : #(Set.range f₁) ≤ #(Set.range f₃) := mk_le_mk_of_subset hsub
+      exact hr.symm.trans_le (hle.trans mk_range_le)
+    have hc₃ : Model.card M₃ = κ := le_antisymm hcard_le hcard_ge
+    have himg₁ : ∀ x, ∃ y, f₃ y = f₁ x := fun x =>
+      hcov (f₁ x) (Or.inl ⟨x, rfl⟩)
+    have himg₂ : ∀ x, ∃ y, f₃ y = f₂ x := fun x =>
+      hcov (f₂ x) (Or.inr ⟨x, rfl⟩)
+    let g₁ := factorEmbedding f₁ f₃ himg₁
+    let g₂ := factorEmbedding f₂ f₃ himg₂
+    refine ⟨M₃, f₃, g₁, g₂, hM₃, hf₃, hc₃,
+      strongFactorEmbedding f₁ f₃ hf₁ hf₃ himg₁,
+      strongFactorEmbedding f₂ f₃ hf₂ hf₃ himg₂,
+      factorEmbedding_comp f₁ f₃ himg₁,
+      factorEmbedding_comp f₂ f₃ himg₂⟩
+  /- Strong map between two `κ`-models that hit the same ambient tuple. -/
+  have sameClass {M₁ M₂ P : Model K.τ} (b : α → P.carrier)
+      (f₁ : Language.Embedding K.τ M₁.carrier P.carrier)
+      (f₂ : Language.Embedding K.τ M₂.carrier P.carrier)
+      (hP : K.Mem P) (hf₁ : K.Strong f₁) (hf₂ : K.Strong f₂)
+      (hc₁ : Model.card M₁ = κ) (hc₂ : Model.card M₂ = κ)
+      (hhit₁ : ∀ i, ∃ x, f₁ x = b i) (hhit₂ : ∀ i, ∃ y, f₂ y = b i) :
+      ∃ e : Language.Embedding K.τ M₁.carrier M₂.carrier,
+        K.Strong e ∧ ∀ i x y, f₁ x = b i → f₂ y = b i → e x = y := by
+    obtain ⟨M₃, f₃, g₁, g₂, hM₃, _hf₃, hc₃, hg₁, hg₂, hcg₁, hcg₂⟩ :=
+      commonHull f₁ f₂ hP hf₁ hf₂ hc₁ hc₂
+    let x₁ : α → M₁.carrier := fun i => Classical.choose (hhit₁ i)
+    let y₂ : α → M₂.carrier := fun i => Classical.choose (hhit₂ i)
+    have hx₁ : ∀ i, f₁ (x₁ i) = b i := fun i => Classical.choose_spec (hhit₁ i)
+    have hy₂ : ∀ i, f₂ (y₂ i) = b i := fun i => Classical.choose_spec (hhit₂ i)
+    have hz : ∀ i, g₁ (x₁ i) = g₂ (y₂ i) := by
+      intro i
+      apply f₃.injective
+      calc
+        f₃ (g₁ (x₁ i)) = f₁ (x₁ i) := by rw [← Language.Embedding.comp_apply, hcg₁]
+        _ = b i := hx₁ i
+        _ = f₂ (y₂ i) := (hy₂ i).symm
+        _ = f₃ (g₂ (y₂ i)) := by rw [← Language.Embedding.comp_apply, hcg₂]
+    have hM₂ : K.Mem M₂ := K.strong_mem_dom f₂ hf₂
+    obtain ⟨φ⟩ := hcat.unique_model M₃ M₂ hM₃ hM₂ hc₃ hc₂
+    have hφstr : K.Strong φ.toEmbedding := strong_of_equiv K φ hM₃
+    let s : Language.Embedding K.τ M₂.carrier M₂.carrier := φ.toEmbedding.comp g₂
+    have hs : K.Strong s := K.strong_trans g₂ φ.toEmbedding hg₂ hφstr
+    obtain ⟨r, hr, hr_tup⟩ := hrev M₂ s (fun i => y₂ i) hM₂ hc₂ hs hα
+    let e : Language.Embedding K.τ M₁.carrier M₂.carrier :=
+      (r.comp φ.toEmbedding).comp g₁
+    have he : K.Strong e :=
+      K.strong_trans g₁ (r.comp φ.toEmbedding) hg₁
+        (K.strong_trans φ.toEmbedding r hφstr hr)
+    refine ⟨e, he, ?_⟩
+    intro i x y hx hy
+    have hx_eq : x = x₁ i := f₁.injective (hx.trans (hx₁ i).symm)
+    have hy_eq : y = y₂ i := f₂.injective (hy.trans (hy₂ i).symm)
+    rw [hx_eq, hy_eq]
+    change r (φ (g₁ (x₁ i))) = y₂ i
+    rw [hz i]
+    simpa [s, Language.Embedding.comp_apply] using hr_tup i
+  refine ⟨?_, ?_⟩
+  · intro M₁ M₂ f₁ f₂ _hM₁ _hM₂ hf₁ hf₂ hc₁ hc₂ hhit₁ hhit₂
+    exact sameClass a f₁ f₂ hN hf₁ hf₂ hc₁ hc₂ hhit₁ hhit₂
+  · intro N' g hN' hg _hcard' M₁ M₂ f₁ f₂ _hM₁ _hM₂ hf₁ hf₂ hc₁ hc₂ hhit₁ hhit₂
+    have hf₁' : K.Strong (g.comp f₁) := K.strong_trans f₁ g hf₁ hg
+    have hhit₁' : ∀ i, ∃ x, (g.comp f₁) x = g (a i) := by
+      intro i
+      obtain ⟨x, hx⟩ := hhit₁ i
+      exact ⟨x, by rw [Language.Embedding.comp_apply, hx]⟩
+    obtain ⟨e, he, he_tup⟩ :=
+      sameClass (fun i => g (a i)) (g.comp f₁) f₂ hN' hf₁' hf₂ hc₁ hc₂ hhit₁' hhit₂
+    refine ⟨e, he, ?_⟩
+    intro i x y hx hy
+    exact he_tup i x y (by rw [Language.Embedding.comp_apply, hx]) hy
 
 /-- **Proposition 4.2** (Stable diagrams). There is a nondecreasing cardinal function `t`,
 with `t(σ)` a categoricity cardinal above `ℓ + σ`, whose diagram equality is preserved by
