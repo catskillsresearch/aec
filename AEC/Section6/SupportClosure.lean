@@ -19,6 +19,8 @@ open Cardinal Classical Set
 
 attribute [local instance] Classical.propDecidable
 
+namespace Section6SupportClosure
+
 abbrev EmptyU : Type u := PEmpty.{u + 1}
 abbrev FinU (n : ℕ) : Type u := ULift.{u, 0} (Fin n)
 abbrev NatU : Type u := ULift.{u, 0} ℕ
@@ -472,6 +474,10 @@ theorem lemma_6_14_proof {J : Type u} [LinearOrder J] (color : J → ℕ)
   exact mem_iUnion.mpr ⟨i1, by
     rw [closureStage.eq_def]
     exact hq' k⟩
+
+end Section6SupportClosure
+
+alias lemma_6_14_proof := Section6SupportClosure.lemma_6_14_proof
 
 end
 end AEC

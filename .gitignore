@@ -1,2 +1,11 @@
 /.lake
 /lake-packages
+/.build/
+/aec.tex
+/aec.pdf
+/aec.{aux,log,out,toc,lof,fls,fdb_latexmk,synctex.gz}
+/lean-listings/
+/figures/
+/scripts/__pycache__/
+/aec.bbl
+/aec.blg
