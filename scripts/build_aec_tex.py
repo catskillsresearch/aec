@@ -15,6 +15,7 @@ ABSTRACT_MD = AEC_ROOT / "Abstract.md"
 
 TITLE = "Lean formalization of OpenAI English proof of AEC eventual categoricity"
 AUTHOR = "Lars Ericson"
+DEFAULT_REPO_URL = "https://github.com/catskillsresearch/aec"
 
 ABSTRACT_INTRO = (
     "This is a Lean 4 formalization using Grok 4.7 of the English text of the "
@@ -78,7 +79,7 @@ def paper_abstract_latex(barx) -> str:
     return tex
 
 
-def build_title_page(barx, _abstract_latex: str) -> str:
+def build_title_page(barx, _abstract_latex: str, *, repo_url: str) -> str:
     abstract_block = ""
     segments = [ABSTRACT_INTRO]
     paper_tex = paper_abstract_latex(barx)
@@ -93,7 +94,7 @@ def build_title_page(barx, _abstract_latex: str) -> str:
         f"""
         \\title{{{TITLE}}}
 
-        \\author{{{AUTHOR}}}
+        \\author{{{AUTHOR}\\\\\\url{{{repo_url}}}}}
         \\date{{\\today}}
         \\hypersetup{{
           pdftitle={{{TITLE}}},
@@ -129,8 +130,15 @@ def main() -> int:
 
     import aec_model_cards  # noqa: E402
 
+    aec_github = os.environ.get("AEC_GITHUB_URL", DEFAULT_REPO_URL)
+
     dt_model_cards.MODEL_CARDS = aec_model_cards.MODEL_CARDS
-    dt_model_cards.ACKNOWLEDGMENTS_MARKDOWN = aec_model_cards.ACKNOWLEDGMENTS_MARKDOWN
+    dt_model_cards.ACKNOWLEDGMENTS_MARKDOWN = (
+        aec_model_cards.ACKNOWLEDGMENTS_MARKDOWN.replace(
+            aec_model_cards.DEFAULT_REPO_URL,
+            aec_github,
+        )
+    )
 
     from lean_listing_sanitize import sanitize_lean_for_arxiv  # noqa: E402
     from strip_lean_comments import strip_lean_comments  # noqa: E402
@@ -156,9 +164,6 @@ def main() -> int:
 
     barx.write_listing = write_listing_aec
 
-    aec_github = os.environ.get(
-        "AEC_GITHUB_URL", "https://github.com/catskillsresearch/aec"
-    )
     barx.GITHUB_URL = aec_github
 
     def canon_lean_hrefs_aec(md: str) -> str:
@@ -226,7 +231,11 @@ def main() -> int:
     barx.OUT = Path(os.environ["ARXIV_TEX"])
     barx.TITLE = TITLE
     barx.PDF_AUTHORS = AUTHOR
-    barx.build_title_page = lambda abstract_latex: build_title_page(barx, abstract_latex)  # noqa: ARG005
+    barx.build_title_page = lambda abstract_latex: build_title_page(  # noqa: ARG005
+        barx,
+        abstract_latex,
+        repo_url=aec_github,
+    )
 
     def insert_front_matter_lists(latex: str) -> str:
         block = (

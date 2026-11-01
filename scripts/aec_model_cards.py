@@ -5,6 +5,8 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass
 
+DEFAULT_REPO_URL = "https://github.com/catskillsresearch/aec"
+
 from ai_model_cards import (  # DomainTheory/scripts on sys.path
     REFERENCES_BEGIN,
     REFERENCES_END,
@@ -89,7 +91,8 @@ full responsibility for them.
 
 ### Artifact availability and reproducibility
 
-The Lean development lives in this repository. Build locally:
+The Lean development and this PDF source live in the GitHub repository
+\cite{AecRepo} (\url{""" + DEFAULT_REPO_URL + r"""}). Build locally:
 
 ```bash
 lake exe cache get
