@@ -73,6 +73,9 @@ public import AEC.Section3.StrictSlot
 public import AEC.Section3.SupportClosure
 public import AEC.Section3.VectorRank
 public import AEC.Section4.BoundedDiagramLift
+public import AEC.Section4.ClosedLevelAmalgam
+public import AEC.Section4.ClosedLevelTypes
+public import AEC.Section4.ClosedLevels
 public import AEC.Section4.CompactPlacement
 public import AEC.Section4.CountableBackAndForth
 public import AEC.Section4.CountableClosure

@@ -25,7 +25,7 @@ ABSTRACT_OUTRO = (
     "The paper quotes the original language throughout and adds the Lean translation "
     "alongside."
 )
-ABSTRACT_WIP = r"\textbf{Work in Progress: currently 65 holes.}"
+ABSTRACT_WIP = r"\textbf{Work in Progress: currently 64 holes.}"
 
 
 def load_domain_theory_builder():

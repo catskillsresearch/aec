@@ -1,6 +1,6 @@
 {
   "updated": "2026-11-10",
-  "sorryCount": 65,
+  "sorryCount": 64,
   "legend": {
     "open": "No unfinished required proof-deps — try next",
     "blocked": "Waiting on incomplete required proof-deps",
@@ -19,7 +19,7 @@
     "Prop 4.8 is done on the support encoding (UniformTesting.lean): g σ = max ℵ₀ σ, test set = joint support, for infinite σ. The Lean proof does not use Lemma 4.7, so lemma_4_7 → proposition_4_8 is soft (English-only); lemma_4_7 stays wired through its English use in Lem 12.5.",
     "Prop 4.9 is done by the English support-profile obstruction (CompactPlacement.lean). Statement changes: [CategoricalUnbounded K], ℵ₀ ≤ σ, natural-parameter clause hnat, coherence clause hcoh; the prescription for p is the diagram of a tuple q p of E(I), so possibility needs no hypothesis. Hard edge proposition_4_2 → proposition_4_9 added (strong-map clause of Prop 4.2). Lemma 4.10 is unblocked: its only hard dep is Prop 4.9; a natural instantiation of q p is via a strong map B → E(I) fixing p (Prop 4.2 at μ), which satisfies hnat and hcoh.",
     "Lemma 4.10 is done (BoundedDiagramLift.lean, PlacedTesting.lean). Statement changes: the old statement was vacuous, since each test clause carried D.t μ ≤ Model.card B while Model.card B = μ < D.t μ (StableDiagram.above). Now the lift clauses are at the bounded levels ρ < μ (the diagrams D(d, X; B), |X| < μ, whose thresholds lie below μ), J is produced with D.t μ ≤ ‖E(J)‖, and uniqueness is the level-μ comparison over all of A; added [CategoricalUnbounded K], hcat : Categorical K μ, ℵ₀ ≤ σ, and hg : PlacedTester K E D g. PlacedTester is the English Prop 4.8 over the base (placements of a σ-tuple over E(I) that differ over A differ over ≤ g(σ) positions of I); it is proved as proposition_4_8_over_base / exists_placedTester from Lemma 4.7 (type_u_witness_set) by the frozen-data / ordinal-vector argument, because proposition_4_8 on the support encoding only tests two full lists on their own joint support. So lemma_4_7 → proposition_4_8 is hard again, and proposition_4_8, proposition_4_2 (strong maps B → E(I) fixing parameters), proposition_4_3 (common hulls, categoricity at μ) → lemma_4_10 are hard.",
-    "Thm 4.11 is unblocked but its Lean statement needs repair before proving: clause 2 tests at level μ under h₀ : D.t μ ≤ Model.card B₀ and h₁ : D.t μ ≤ Model.card B₁ with Model.card Bᵢ = μ, which is unsatisfiable (same defect as the old lemma_4_10), so the right side of the iff is vacuously true and the iff would identify any two tuples (not possible for two distinct elements of A). The tests should be at a bounded level ρ < μ as in lemma_4_10. Also g is an arbitrary monotone function there; lemma_4_10 needs a testing bound hg : PlacedTester K E D g (from proposition_4_8_over_base), an OrderPresentation E, [CategoricalUnbounded K], and ℵ₀ ≤ σ."
+    "Thm 4.11 is done (ClosedLevels.lean, ClosedLevelAmalgam.lean, ClosedLevelTypes.lean); Section 4 is complete (no sorry in AEC/Section4), and Prop 5.6 is unblocked. S = closure points μ > ℓ of {t, g}. Statement changes: added [CategoricalUnbounded K], E : OrderPresentation K, hg : PlacedTester K E D g (replacing the monotone-only g). Clause 2: added ℵ₀ ≤ σ; the old right side was vacuous (tests at level μ under D.t μ ≤ Model.card Bᵢ = μ < D.t μ); it is now the tests at the bounded levels ρ < μ (as in lemma_4_10) over all parameter lists p : β → A with #β ≤ g σ + ls K. β is quantified inside the iff, since for one fixed β the iff fails when β is small; the bound is g σ + ls K because PlacedTester bounds positions of I and ≤ g(σ) positions support ≤ g(σ) + ℓ elements of A. Clause 3: the old form compared x, y ∈ A under g₀ = g₁ on A, which forces x = y and holds for any injection A → μ; it is now a code for the elements of all μ-extensions (B, f) of A, with code B₀ f₀ x = code B₁ f₁ y iff an amalgam over A identifies x with y (the old form is the case B₀ = B₁ = A). Hard edges proposition_4_2 → theorem_4_11 (strong-map clause, StableDiagram.to_strong) and proposition_4_8 → theorem_4_11 (placed tester) added."
   ],
   "nodes": [
     {
@@ -269,9 +269,9 @@
       "label": "Thm 4.11",
       "section": 4,
       "file": "AEC/Section4/Results.lean",
-      "status": "open",
+      "status": "done",
       "blocker": null,
-      "detail": "Unblocked by Lemma 4.10 (done). Repair the statement first: clause 2 tests at level μ under D.t μ ≤ Model.card Bᵢ with Model.card Bᵢ = μ < D.t μ, so its right side is vacuous and the iff cannot hold for two distinct elements of A; restate the tests at a bounded level ρ < μ as in lemma_4_10. lemma_4_10 needs hg : PlacedTester K E D g (proposition_4_8_over_base supplies a monotone infinite g), an OrderPresentation E, [CategoricalUnbounded K], hcat and ℵ₀ ≤ σ; the current statement assumes only that g is monotone."
+      "detail": "ClosedLevels.lean: closure points of {t, g} above any κ (exists_closurePoint_ge, an ω-tower of successors of 2^θ ⊔ sup of t, g below θ; no monotonicity of g needed), categoricity by Prop 4.3 (categorical_of_closurePoint), unions of countable strong chains (exists_strong_of_nat_exhaustion), transport of a tuple with a level-μ diagram into a fixed categorical model (StableDiagram.exists_transport). ClosedLevelAmalgam.lean: A ≅ E(I), I of order type μ; G = E(J) of a categoricity size ≥ t(μ) (exists_categorical_extension); LiftsTuple = a tuple of E(J) lifting the bounded diagrams over A; one step exists_lift_extension (Lemma 4.10 lift of the longer tuple, uniqueness at level μ over all of A against the given lift, transport into G); countable tower of strong submodels smaller than μ (exists_strong_tower, countable cofinality); each lifted stage is a strong map by D.to_strong in a common hull (exists_strong_of_liftsTuple); the union is a strong map B → G over A extending a prescribed lift (exists_strong_embedding_over); amalgams exists_amalgam_of_common_lift / exists_amalgam_of_agreeOn (LS hull of size μ in G); sufficiency of the tests by the placed tester (agreeOn_univ_of_tests), necessity by D.of_strong (StableDiagram.same_of_amalgam). ClosedLevelTypes.lean: ClosedLevel.amalgamation, ClosedLevel.tuple_amalgamation_iff, ClosedLevel.singleton_types; a singleton placement is coded by its label and the cuts of its finite support in I (Placement.singletonCode, ≤ μ codes mk_singletonCode_le, equal codes give the same comparison over A by sameNaturalDiagram_of_pattern), code of an element = least code of a placement lifting it. Statement changes: [CategoricalUnbounded K], E, hg : PlacedTester K E D g; clause 2 with ℵ₀ ≤ σ and bounded-level tests ρ < μ over all parameter lists of length ≤ g σ + ls K (β inside the iff); clause 3 generalized from the degenerate x, y ∈ A form to elements of all μ-extensions of A. No sorry (axioms: propext, Classical.choice, Quot.sound)."
     },
     {
       "id": "lemma_5_4",
@@ -294,9 +294,9 @@
       "label": "Prop 5.6",
       "section": 5,
       "file": "AEC/Section5/Results.lean",
-      "status": "blocked",
+      "status": "open",
       "blocker": null,
-      "detail": "Single-model working package. Downstream: Thm 9.3 (start scheme), Prop 10.2 (choose λ₀)."
+      "detail": "Unblocked by Thm 4.11 (done; hard deps 2.6, 4.2, 4.3, 4.11 closed). Single-model working package. Downstream: Thm 9.3 (start scheme), Prop 10.2 (choose λ₀)."
     },
     {
       "id": "proposition_5_7",
@@ -992,6 +992,16 @@
       "kind": "hard"
     },
     {
+      "from": "proposition_4_2",
+      "to": "theorem_4_11",
+      "kind": "hard"
+    },
+    {
+      "from": "proposition_4_8",
+      "to": "theorem_4_11",
+      "kind": "hard"
+    },
+    {
       "from": "theorem_4_11",
       "to": "proposition_5_6",
       "kind": "hard"
@@ -1632,5 +1642,5 @@
       "kind": "hard"
     }
   ],
-  "doneCount": 47
+  "doneCount": 48
 }

@@ -4,8 +4,8 @@ Inventory of Lean `sorry` holes in this repository, ordered **prove-first**: Lay
 are holes with no remaining unfinished prerequisites; later layers wait on earlier
 ones. Apex theorems 1.2 and 1.3 are **last**.
 
-**Count:** 65 `sorry`, 0 `admit`. All live in `AEC/Section*/Results.lean`.
-Sections **2**, **3**, and **13** have no holes.
+**Count:** 64 `sorry`, 0 `admit`. All live in `AEC/Section*/Results.lean`.
+Sections **2**, **3**, **4**, and **13** have no holes.
 
 **Dependency basis:** paper/logical order from `dependencies.mermaid`
 (`A --> B` means B waits on A), reconciled with the current hole set, plus
@@ -31,7 +31,7 @@ Section 13 is complete and was never on that chain.
 | 1 | 2 | `AEC/Section1/Results.lean` |
 | 2 | 0 | — |
 | 3 | 0 | — |
-| 4 | 1 | `AEC/Section4/Results.lean` |
+| 4 | 0 | — |
 | 5 | 2 | `AEC/Section5/Results.lean` |
 | 6 | 14 | `AEC/Section6/Results.lean` |
 | 7 | 9 | `AEC/Section7/Results.lean` |
@@ -42,7 +42,7 @@ Section 13 is complete and was never on that chain.
 | 12 | 4 | `AEC/Section12/Results.lean` |
 | 13 | 0 | — |
 | 14 | 4 | `AEC/Section14/Results.lean` |
-| **Total** | **65** | |
+| **Total** | **64** | |
 
 ---
 
@@ -95,10 +95,11 @@ Within a layer, siblings are listed in paper number order.
 
 ## BFS layers (individual holes)
 
-### L0 — Independent foundations (1 open)
+### L0 — Independent foundations (0 open)
 
 No unfinished Results prerequisites. Section 3 is complete (Theorem 3.11 closed by the
-`θ⁺ · a^θ` renaming kill); Section 4 starts the diagrams/orbits stack.
+`θ⁺ · a^θ` renaming kill); Section 4 (the diagrams/orbits stack) is complete (Theorem 4.11 closed
+by the countable tower of Lemma 4.10 lifts into one categorical `E(J)`).
 
 **Live board:** [`holes.html`](holes.html) + [`holes-graph.json`](holes-graph.json).
 Edge **B→A** means the English proof of A requires B (no soft/narrative-only edges).
@@ -108,16 +109,16 @@ counterexample refutes the program.
 **Dependency rule:** edge B→A only if the English proof of A requires B, or A
 needs an explicit Lean infra subgoal B (not a paper-number chain).
 
-**Open:** `theorem_4_11`, `objectOfEmptyChain`.
-**Note:** `theorem_3_11`, `proposition_5_7`, `lemma_4_6`, `lemma_6_14`, `proposition_4_3`, `lemma_4_5`, `lemma_4_7`, `proposition_4_8`, `proposition_4_9`, `lemma_4_10`, `proposition_5_8`, `proposition_5_9`,
+**Open:** `proposition_5_6`, `objectOfEmptyChain` (both Section 5, listed under L1).
+**Note:** `theorem_3_11`, `proposition_5_7`, `lemma_4_6`, `lemma_6_14`, `proposition_4_3`, `lemma_4_5`, `lemma_4_7`, `proposition_4_8`, `proposition_4_9`, `lemma_4_10`, `theorem_4_11`, `proposition_5_8`, `proposition_5_9`,
 `infra_pair_coloring_glue`, `infra_rank_slice`, `infra_type_u_witness_set`, `infra_countable_back_and_forth`, `infra_stable_diagram_realize`, `infra_zeta_model_existence`, `infra_eligible_reclass`, `infra_template_fixed_support`, `infra_named_working_scheme`, `infra_named_working_package` are done.
 Lean 5.8 is the residual `diagram_iso`+`structural_iso` form.
 False `6.13→6.14` / `5.8→5.9` edges removed. Later adjacent-number edges still suspect.
 `4.7→4.8` is hard again: `proposition_4_8` on the support encoding tests two full lists on their joint support and does not use Lemma 4.7, but the English form over the base needed by Lemma 4.10 (`proposition_4_8_over_base`, `PlacedTester`) is proved from Lemma 4.7.
-`4.2→4.9` added (hard): local realizability and restriction of diagrams in Prop 4.9 use Prop 4.2's strong-map clause. `4.2→4.10`, `4.3→4.10`, `4.8→4.10` added (hard): Lemma 4.10 uses strong maps `B → E(I)` fixing parameters (Prop 4.2 at `μ`), common hulls and categoricity at `μ` (Prop 4.3), and the placed tester (Prop 4.8). Lemma 4.10 is done; Theorem 4.11 is open, **but its Lean statement must be repaired first** (see the table).
+`4.2→4.9` added (hard): local realizability and restriction of diagrams in Prop 4.9 use Prop 4.2's strong-map clause. `4.2→4.10`, `4.3→4.10`, `4.8→4.10` added (hard): Lemma 4.10 uses strong maps `B → E(I)` fixing parameters (Prop 4.2 at `μ`), common hulls and categoricity at `μ` (Prop 4.3), and the placed tester (Prop 4.8). Lemma 4.10 is done. `4.2→4.11`, `4.8→4.11` added (hard): Theorem 4.11 uses the strong-map clause of Prop 4.2 (`StableDiagram.to_strong`, for each lifted stage of the tower) and the placed tester of Prop 4.8 (clause 2, and the codes of clause 3). Theorem 4.11 is done, **with a repaired statement** (see the table); Proposition 5.6 is unblocked.
 
 **Wired (intended use, reach apex):** `5.6 → 9.3, 10.2`; `5.7 → 9.3, 10.6, 10.8`;
-`2.3 → 1.2`; `3.11 → 4.2, 5.8`; `4.2 → 4.9, 4.10`; `4.3 → 4.10`; `4.6 → 4.9`; `4.7 → 4.8, 12.5`; `4.8 → 4.10`; `6.14 → 12.6`; `13.5 → 10.9, 14.2`.
+`2.3 → 1.2`; `3.11 → 4.2, 5.8`; `4.2 → 4.9, 4.10, 4.11`; `4.3 → 4.10, 4.11`; `4.6 → 4.9`; `4.7 → 4.8, 12.5`; `4.8 → 4.10, 4.11`; `4.10 → 4.11`; `4.11 → 5.6`; `6.14 → 12.6`; `13.5 → 10.9, 14.2`.
 Full hard-edge list: [`holes-edges.txt`](holes-edges.txt). Target: every Results/paper
 node reaches Thm 1.2 or 1.3; completed work should admit dead-code analysis of each edge.
 
@@ -131,13 +132,13 @@ node reaches Thm 1.2 or 1.3; completed work should admit dead-code analysis of e
 | `proposition_4_8` | Proposition 4.8 | `AEC/Section4/Results.lean` (**done**: no `sorryAx`; `g σ = max ℵ₀ σ`, test set = joint support `testingSet`; `sameNaturalDiagram_restrict_iff` via the cut-lex amalgam `exists_linearOrder_amalgam` in `UniformTesting.lean`. Statement changes: `DiagramsDifferOnSubset` now compares the restrictions of the given placements, and the hypothesis `ℵ₀ ≤ σ` was added since `StableDiagram.of_strong` is only available for infinite `σ`) |
 | `proposition_4_9` | Proposition 4.9 | `AEC/Section4/Results.lean` (**done**: no `sorryAx`; English support-profile obstruction `compact_placement` in `CompactPlacement.lean`: profiles over `S_X` (`SameProfile`, `SupportProfile.ofTerms`, at most `χ` codes `mk_profileCode_le`), no-event continuations `exists_inert_continuation`, no-event comparison by Lemma 4.6 on the slots `sameNaturalDiagram_of_sameProfile_noEvent`, local realizability by Prop 4.2 `exists_local_placement`, `σ⁺` stages with at most `σ` new events. Statement changes: added `[CategoricalUnbounded K]`, `ℵ₀ ≤ σ`, the natural-parameter clause `hnat` and the coherence clause `hcoh`; possibility needs no hypothesis since the prescription for `p` is the diagram of the tuple `q p` of `E(I)`) |
 | `lemma_4_10` | Lemma 4.10 | `AEC/Section4/Results.lean` (**done**: no `sorryAx`; `boundedDiagramLift` in `BoundedDiagramLift.lean`: cofinal `χ = 2^(κ ⊔ σ)`, prescription `(φ ∘ d, p)` for a strong `φ : B → E(I)` fixing `p` (`exists_paramFixing`), `compact_placement` at `χ` (`exists_placement_lifting`), agreement of two lifts on `≤ g(σ)` positions (`agreeOn_of_lifts`) and hence everywhere by the placed tester, uniqueness `Placement.LiftsBounded.agreeOn_univ`, restriction `Placement.LiftsBounded.reindex`; the placed tester is the English Prop 4.8 over the base, `exists_placedTester` in `PlacedTesting.lean` (`FrozenData`, `Layout`, Lemma 4.7), exposed as `proposition_4_8_over_base`. Statement changes: the old statement was vacuous (each test clause assumed `D.t μ ≤ Model.card B` with `Model.card B = μ < D.t μ`); the lift clauses are now at bounded levels `ρ < μ`, `J` is produced with `D.t μ ≤ ‖E(J)‖`, uniqueness is the level-`μ` comparison over all of `A`; added `[CategoricalUnbounded K]`, `hcat : Categorical K μ`, `ℵ₀ ≤ σ`, `hg : PlacedTester K E D g`) |
-| `theorem_4_11` | Theorem 4.11 | `AEC/Section4/Results.lean:1423` (**statement needs repair before proving**: clause 2 tests at level `μ` under `D.t μ ≤ Model.card Bᵢ` with `Model.card Bᵢ = μ < D.t μ`, so the right side of its iff is vacuous and the iff cannot hold for two distinct elements of `A`; restate at bounded levels `ρ < μ` as in `lemma_4_10`. `g` is only assumed monotone; `lemma_4_10` needs `PlacedTester K E D g` (from `proposition_4_8_over_base`), an `OrderPresentation E`, `[CategoricalUnbounded K]`, `ℵ₀ ≤ σ`) |
+| `theorem_4_11` | Theorem 4.11 | `AEC/Section4/Results.lean` (**done**: no `sorryAx`; `S` = closure points `μ > ℓ` of `{t, g}`, unbounded by `exists_closurePoint_ge` and categorical by Prop 4.3 (`categorical_of_closurePoint`) in `ClosedLevels.lean`. `ClosedLevelAmalgam.lean`: `A ≅ E(I)`, `I` of order type `μ`; `G = E(J)` of a categoricity size `≥ t(μ)`; `LiftsTuple` (a tuple of `E(J)` lifting the bounded diagrams over `A`), one step `exists_lift_extension` (Lemma 4.10 lift, uniqueness at level `μ`, transport into `G` by `StableDiagram.exists_transport`), countable tower of small strong submodels `exists_strong_tower`, each lifted stage strong by `to_strong` (`exists_strong_of_liftsTuple`), union `exists_strong_of_nat_exhaustion`, giving `exists_strong_embedding_over` and the amalgams `exists_amalgam_of_common_lift` / `exists_amalgam_of_agreeOn`; clause 2 from the placed tester `agreeOn_univ_of_tests` and necessity `StableDiagram.same_of_amalgam`. `ClosedLevelTypes.lean`: clauses `ClosedLevel.amalgamation`, `ClosedLevel.tuple_amalgamation_iff`, `ClosedLevel.singleton_types`; singleton codes = label + cuts of the finite support in `I` (`Placement.singletonCode`, `mk_singletonCode_le`, `Placement.AgreeOn.of_sameProfile_univ`). Statement changes: added `[CategoricalUnbounded K]`, `E : OrderPresentation K`, `hg : PlacedTester K E D g` (replacing monotone `g`); clause 2: added `ℵ₀ ≤ σ`, and the old right side, vacuous under `D.t μ ≤ Model.card Bᵢ`, is now the tests at the bounded levels `ρ < μ` over **all** parameter lists `p : β → A` with `#β ≤ g σ + ls K` (`β` is quantified inside the iff: with one fixed `β` the iff fails for small `β`; `+ ls K` because `PlacedTester` bounds positions of `I`, and `≤ g(σ)` positions support `≤ g(σ) + ℓ` elements); clause 3: the old form compared `x, y ∈ A` under `g₀ = g₁` on `A`, which forces `x = y` and is satisfied by any injection `A → μ`; now `code B f x` for elements of all `μ`-extensions `(B, f)` of `A`, with equal codes iff an amalgam over `A` identifies them (the old form is the case `B₀ = B₁ = A`)) |
 
-Within Section 4, Lemma 4.10 is done (hard deps 4.2, 4.3, 4.8, 4.9 closed), so Theorem 4.11 is open; it is the last hole of the section.
+Section 4 is complete: Theorem 4.11, its last hole, is done (hard deps 4.2, 4.3, 4.8, 4.10 closed).
 
 ### L1 — Section 5 after diagrams (2 open)
 
-Waits on Section 4 diagrams / amalgamation story.
+Section 4 (diagrams / amalgamation) is complete, so Proposition 5.6 is open (hard deps 2.6, 4.2, 4.3, 4.11 closed).
 
 | Decl | Title | Location |
 |------|-------|----------|
@@ -286,7 +287,7 @@ layer (and thus the whole stack).
 
 | Layer | Count |
 |------:|------:|
-| L0 | 1 |
+| L0 | 0 |
 | L1 | 2 |
 | L2 | 14 |
 | L3 | 9 |
@@ -297,4 +298,4 @@ layer (and thus the whole stack).
 | L8 | 4 |
 | L9 | 4 |
 | L10 | 2 |
-| **Total** | **65** |
+| **Total** | **64** |

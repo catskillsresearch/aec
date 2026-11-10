@@ -6,6 +6,7 @@ public import AEC.Section4.BlockInterchange
 public import AEC.Section4.CompactPlacement
 public import AEC.Section4.PlacedTesting
 public import AEC.Section4.BoundedDiagramLift
+public import AEC.Section4.ClosedLevelTypes
 public import AEC.Section4.CountableClosure
 public import AEC.Section4.StableDiagramConstruction
 public import AEC.Section4.Prop43BAF
@@ -1418,10 +1419,41 @@ theorem lemma_4_10 (K : AbstractElementaryClass.{u}) [CategoricalUnbounded K]
 
 /-- **Theorem 4.11** (Amalgamation at closed levels). An unbounded class of strong-limit
 cardinals of countable cofinality, strictly closed under `t` and `g`, consists of
-categoricity cardinals at which `μ`-extensions of a `μ`-model amalgamate, tuples amalgamate
-exactly when their diagrams agree up to `g(σ)`, and there are at most `μ` singleton types. -/
-theorem theorem_4_11 (K : AbstractElementaryClass.{u}) (D : StableDiagram K)
-    (g : Cardinal.{u} → Cardinal.{u}) (hg : ∀ σ τ, σ ≤ τ → g σ ≤ g τ) :
+categoricity cardinals `μ` at which
+
+1. two `μ`-extensions of a `μ`-model `A` have a strong amalgam of size `μ` over `A`;
+2. tuples `d₀`, `d₁` of length at most an infinite `σ < μ` in two `μ`-extensions of `A` are
+   identified in an amalgam over `A` exactly when their diagrams agree over the subsets of `A`
+   of size at most `g(σ)`;
+3. there are at most `μ` singleton types over `A`.
+
+Here `g` is a testing bound of Proposition 4.8 (`hg : PlacedTester K E D g`, supplied by
+`proposition_4_8_over_base`) for the presentation `E` of `K` (so `K` is categorical in
+unboundedly many cardinals), as in Lemma 4.10. `S` is the class of closure points `μ > ℓ` for
+`{t, g}`.
+
+* In (2) the diagrams `D(dᵢ, X; Bᵢ)`, `X ⊆ A`, `|X| ≤ g(σ)`, are the diagrams of `(dᵢ, fᵢ ∘ p)`
+  at the infinite bounds `ρ < μ`, whose thresholds `t(ρ)` lie below `μ = ‖Bᵢ‖`, as in
+  Lemma 4.10. (A diagram of length `μ` is not defined in `Bᵢ`, since `t(μ) > μ` by
+  `StableDiagram.above`.) The parameter lists `p` have length at most `g(σ) + ℓ`: `g(σ)`
+  bounds a set of positions of the order presenting `A`, and the elements of `A` supported on
+  at most `g(σ)` positions number at most `g(σ) + ℓ`. `σ` is infinite, as in every operational
+  clause of `StableDiagram`.
+* In (3) the singleton types over `A` are the classes of the elements `x` of the
+  `μ`-extensions `(B, f)` of `A` under identification in an amalgam over `A`; `code B f x`
+  takes at most `μ` values (`μ.ord.ToType`) and is a complete invariant.
+
+Proof (`ClosedLevels.lean`, `ClosedLevelAmalgam.lean`, `ClosedLevelTypes.lean`, following
+`text.md`): `A ≅ E(I)` by categoricity (Proposition 4.3), `I` of order type `μ`. Fix `G = E(J)`,
+`J ⊇ I`, of a categoricity size at least `t(μ)`. A `μ`-extension `B` of `A` is a countable
+union of strong submodels smaller than `μ`; Lemma 4.10 lifts their enumerations compatibly
+into `G` over `A`, each lift is strong by `StableDiagram.to_strong`, and the union is a strong
+map `B → G` over `A` (1). A common placed lift of `d₀`, `d₁` (Propositions 4.8 and 4.2) is
+realized once and both maps are built extending it (2). The placed lift of a singleton is
+determined by its label and the cuts of its finite support in `I`: at most `μ` codes (3). -/
+theorem theorem_4_11 (K : AbstractElementaryClass.{u}) [CategoricalUnbounded K]
+    (E : OrderPresentation K) (D : StableDiagram K)
+    (g : Cardinal.{u} → Cardinal.{u}) (hg : PlacedTester K E D g) :
     ∃ S : Set Cardinal.{u},
       (∀ κ, ∃ μ, κ ≤ μ ∧ μ ∈ S) ∧
       (∀ μ ∈ S, IsClosurePoint {D.t, g} μ) ∧
@@ -1436,7 +1468,7 @@ theorem theorem_4_11 (K : AbstractElementaryClass.{u}) (D : StableDiagram K)
               (g₁ : Language.Embedding K.τ B₁.carrier P.carrier),
               K.Mem P ∧ K.Strong g₀ ∧ K.Strong g₁ ∧ Model.card P = μ ∧
               ∀ x, g₀ (f₀ x) = g₁ (f₁ x)) ∧
-        (∀ σ, σ < μ → ∀ {α β : Type u} (hα : #α ≤ σ) (_hβ : #β ≤ g σ)
+        (∀ σ, aleph0 ≤ σ → σ < μ → ∀ {α : Type u} (hα : #α ≤ σ)
             (A B₀ B₁ : Model K.τ)
             (f₀ : Language.Embedding K.τ A.carrier B₀.carrier)
             (f₁ : Language.Embedding K.τ A.carrier B₁.carrier)
@@ -1448,18 +1480,44 @@ theorem theorem_4_11 (K : AbstractElementaryClass.{u}) (D : StableDiagram K)
                 (g₁ : Language.Embedding K.τ B₁.carrier P.carrier),
                 K.Mem P ∧ K.Strong g₀ ∧ K.Strong g₁ ∧
                 (∀ x, g₀ (f₀ x) = g₁ (f₁ x)) ∧ ∀ i, g₀ (d₀ i) = g₁ (d₁ i)) ↔
-              (∀ (p : β → A.carrier) (hjoint : #(α ⊕ β) ≤ μ)
-                  (h₀ : D.t μ ≤ Model.card B₀) (h₁ : D.t μ ≤ Model.card B₁),
+              (∀ {β : Type u} (_ : #β ≤ g σ + ls K) (ρ : Cardinal.{u}) (_ : aleph0 ≤ ρ)
+                  (_ : ρ < μ) (p : β → A.carrier) (hjoint : #(α ⊕ β) ≤ ρ)
+                  (h₀ : D.t ρ ≤ Model.card B₀) (h₁ : D.t ρ ≤ Model.card B₁),
                 D.same hjoint hB₀ hB₁ h₀ h₁
                   (Sum.elim d₀ (fun b => f₀ (p b)))
                   (Sum.elim d₁ (fun b => f₁ (p b)))))) ∧
         (∀ (A : Model K.τ), K.Mem A → Model.card A = μ →
-          ∃ code : A.carrier → μ.ord.ToType,
-            ∀ x y, code x = code y ↔
-              ∃ (P : Model K.τ) (g₀ g₁ : Language.Embedding K.τ A.carrier P.carrier),
-                K.Mem P ∧ K.Strong g₀ ∧ K.Strong g₁ ∧
-                (∀ a, g₀ a = g₁ a) ∧ g₀ x = g₁ y) := by
-  sorry
+          ∃ code : ∀ (B : Model K.τ), Language.Embedding K.τ A.carrier B.carrier →
+              B.carrier → μ.ord.ToType,
+            ∀ (B₀ B₁ : Model K.τ) (f₀ : Language.Embedding K.τ A.carrier B₀.carrier)
+              (f₁ : Language.Embedding K.τ A.carrier B₁.carrier),
+              K.Mem B₀ → K.Mem B₁ → K.Strong f₀ → K.Strong f₁ →
+              Model.card B₀ = μ → Model.card B₁ = μ →
+              ∀ (x : B₀.carrier) (y : B₁.carrier),
+                code B₀ f₀ x = code B₁ f₁ y ↔
+                  ∃ (P : Model K.τ) (g₀ : Language.Embedding K.τ B₀.carrier P.carrier)
+                    (g₁ : Language.Embedding K.τ B₁.carrier P.carrier),
+                    K.Mem P ∧ K.Strong g₀ ∧ K.Strong g₁ ∧
+                    (∀ a, g₀ (f₀ a) = g₁ (f₁ a)) ∧ g₀ x = g₁ y) := by
+  refine ⟨{μ | IsClosurePoint {D.t, g} μ ∧ ls K < μ}, fun κ => ?_, fun μ hμ => hμ.1,
+    fun μ hμ => ?_⟩
+  · obtain ⟨μ, hκμ, hμ⟩ := exists_closurePoint_ge D.t g (max κ (Order.succ (ls K)))
+    exact ⟨μ, (le_max_left _ _).trans hκμ, hμ,
+      (Order.lt_succ (ls K)).trans_le ((le_max_right _ _).trans hκμ)⟩
+  · have hL : ClosedLevel K E D g μ := ClosedLevel.of_closurePoint hg hμ.1 hμ.2
+    refine ⟨hL.cat, ?_, ?_, ?_⟩
+    · intro A B₀ B₁ f₀ f₁ hA hB₀ hB₁ hf₀ hf₁ hcA hc₀ hc₁
+      exact hL.amalgamation A B₀ B₁ f₀ f₁ hA hB₀ hB₁ hf₀ hf₁ hcA hc₀ hc₁
+    · intro σ hσinf hσ α hα A B₀ B₁ f₀ f₁ d₀ d₁ hA hB₀ hB₁ hf₀ hf₁ hcA hc₀ hc₁
+      exact hL.tuple_amalgamation_iff hσinf hσ hα A B₀ B₁ f₀ f₁ d₀ d₁ hA hB₀ hB₁ hf₀ hf₁
+        hcA hc₀ hc₁
+    · intro A hA hcA
+      obtain ⟨code, hcode⟩ := hL.singleton_types A hA hcA
+      refine ⟨code, fun B₀ B₁ f₀ f₁ hB₀ hB₁ hf₀ hf₁ hc₀ hc₁ x y => ⟨fun h => ?_, ?_⟩⟩
+      · obtain ⟨P, g₀, g₁, hP, hg₀, hg₁, -, hbase, hxy⟩ :=
+          (hcode B₀ B₁ f₀ f₁ hB₀ hB₁ hf₀ hf₁ hc₀ hc₁ x y).1 h
+        exact ⟨P, g₀, g₁, hP, hg₀, hg₁, hbase, hxy⟩
+      · exact (hcode B₀ B₁ f₀ f₁ hB₀ hB₁ hf₀ hf₁ hc₀ hc₁ x y).2
 
 end
 end AEC
