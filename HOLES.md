@@ -4,10 +4,8 @@ Inventory of Lean `sorry` holes in this repository, ordered **prove-first**: Lay
 are holes with no remaining unfinished prerequisites; later layers wait on earlier
 ones. Apex theorems 1.2 and 1.3 are **last**.
 
-**Count:** 71 `sorry`, 0 `admit`. All live in `AEC/Section*/Results.lean`.
-Sections **2** and **13** have no holes. (`ABSTRACT_WIP` in
-`scripts/build_aec_tex.py` still reads 74 and needs syncing; the layer tables below
-also still list declarations since marked **done**.)
+**Count:** 70 `sorry`, 0 `admit`. All live in `AEC/Section*/Results.lean`.
+Sections **2** and **13** have no holes.
 
 **Dependency basis:** paper/logical order from `dependencies.mermaid`
 (`A --> B` means B waits on A), reconciled with the current hole set, plus
@@ -33,7 +31,7 @@ Section 13 is complete and was never on that chain.
 | 1 | 2 | `AEC/Section1/Results.lean` |
 | 2 | 0 | — |
 | 3 | 1 | `AEC/Section3/Results.lean` |
-| 4 | 6 | `AEC/Section4/Results.lean` |
+| 4 | 5 | `AEC/Section4/Results.lean` |
 | 5 | 2 | `AEC/Section5/Results.lean` |
 | 6 | 14 | `AEC/Section6/Results.lean` |
 | 7 | 9 | `AEC/Section7/Results.lean` |
@@ -44,7 +42,7 @@ Section 13 is complete and was never on that chain.
 | 12 | 4 | `AEC/Section12/Results.lean` |
 | 13 | 0 | — |
 | 14 | 4 | `AEC/Section14/Results.lean` |
-| **Total** | **71** | |
+| **Total** | **70** | |
 
 ---
 
@@ -290,4 +288,4 @@ layer (and thus the whole stack).
 | L8 | 4 |
 | L9 | 4 |
 | L10 | 2 |
-| **Total** | **74** |
+| **Total** | **70** |
