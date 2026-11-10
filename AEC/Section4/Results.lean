@@ -1,6 +1,7 @@
 module
 
 public import AEC.Section4.NaturalDiagram
+public import AEC.Section4.BlockInterchange
 public import AEC.Section4.CountableClosure
 public import AEC.Section4.StableDiagramConstruction
 public import AEC.Section4.Prop43BAF
@@ -1206,37 +1207,8 @@ theorem lemma_4_5 (K : AbstractElementaryClass.{u}) [CategoricalUnbounded K]
   obtain ⟨E, _, _⟩ := exists_orderPresentation_of_categoricalUnbounded K
   exact lemma_4_5_with_E K E σ χ hσ hpow hχ
 
-/-- A family of disjoint adjacent block pairs, swapped by an order automorphism and fixing
-every position outside those blocks. **Lemma 4.6.** -/
-structure DisjointBlockSwap (I : Type u) [LinearOrder I] where
-  swap : I ≃o I
-  blocks : Set (Set I × Set I)
-  disjoint : ∀ p ∈ blocks, ∀ q ∈ blocks, p = q ∨
-    Disjoint p.1 q.1 ∧ Disjoint p.1 q.2 ∧ Disjoint p.2 q.1 ∧ Disjoint p.2 q.2
-  leftBeforeRight : ∀ p ∈ blocks, ∀ a ∈ p.1, ∀ b ∈ p.2, a < b
-  convex : ∀ p ∈ blocks,
-    (∀ a c b, a ∈ p.1 → c ∈ p.1 → a ≤ b → b ≤ c → b ∈ p.1) ∧
-    (∀ a c b, a ∈ p.2 → c ∈ p.2 → a ≤ b → b ≤ c → b ∈ p.2) ∧
-    (∀ x, (∃ a ∈ p.1, ∃ b ∈ p.2, a ≤ x ∧ x ≤ b) → x ∈ p.1 ∨ x ∈ p.2)
-  swaps : ∀ p ∈ blocks, swap '' p.1 = p.2 ∧ swap '' p.2 = p.1
-  fixes : ∀ i, (∀ p ∈ blocks, i ∉ p.1 ∧ i ∉ p.2) → swap i = i
-
-/-- **Lemma 4.6** (Disjoint block transpositions). Swapping, in each of a family of disjoint
-convex regions, the adjacent block used only by the first term family with the block used
-only by the second, leaves the joint natural diagram unchanged. -/
-theorem lemma_4_6 (K : AbstractElementaryClass.{u}) (E : OrderPresentation K)
-    (D : StableDiagram K) {I : Type u} [LinearOrder I] [Nonempty I]
-    {α β : Type u} (σ : Cardinal.{u}) (hjoint : #(α ⊕ β) ≤ σ)
-    (t : α → SupportTerm E.lab E.arity I) (s : β → SupportTerm E.lab E.arity I)
-    (B : DisjointBlockSwap I)
-    (ht : ∀ a (i : Fin (E.arity (t a).label)) p, p ∈ B.blocks →
-      (t a).pos i ∈ p.1 ∨ (t a).pos i ∈ p.2 → (t a).pos i ∈ p.1)
-    (hs : ∀ b (i : Fin (E.arity (s b).label)) p, p ∈ B.blocks →
-      (s b).pos i ∈ p.1 ∨ (s b).pos i ∈ p.2 → (s b).pos i ∈ p.2) :
-    SameNaturalDiagram K E D σ hjoint (Sum.elim t s)
-      (Sum.elim (fun a => SupportTerm.along B.swap.toOrderEmbedding (t a))
-        (fun b => SupportTerm.along B.swap.toOrderEmbedding (s b))) := by
-  sorry
+-- Lemma 4.6 (`BlockRegions`, `lemma_4_6`) is proved in
+-- `AEC.Section4.BlockInterchange` (imported above) by the English tree/orbit argument.
 
 /-- **Lemma 4.7** (Ordinal-vector witnesses). Let `C` be a set, and let `U` be a definable
 class of functions `C → Ord`, with fixed set parameters allowed in its definition. There is a

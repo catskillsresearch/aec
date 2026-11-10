@@ -4,7 +4,7 @@ Inventory of Lean `sorry` holes in this repository, ordered **prove-first**: Lay
 are holes with no remaining unfinished prerequisites; later layers wait on earlier
 ones. Apex theorems 1.2 and 1.3 are **last**.
 
-**Count:** 71 `sorry`, 0 `admit`. All live in `AEC/Section*/Results.lean`.
+**Count:** 70 `sorry`, 0 `admit`. All live in `AEC/Section*/Results.lean`.
 Sections **2** and **13** have no holes.
 
 **Dependency basis:** paper/logical order from `dependencies.mermaid`
@@ -104,14 +104,15 @@ Section 2 Results; Section 4 starts the diagrams/orbits stack.
 
 **Live board:** [`holes.html`](holes.html) + [`holes-graph.json`](holes-graph.json).
 Edge **B→A** means the English proof of A requires B (no soft/narrative-only edges).
-Blue = done; green = open; grey = blocked; red = failed.
+Blue = done; green = open; grey = blocked. No separate failed status unless a
+counterexample refutes the program.
 
 **Dependency rule:** edge B→A only if the English proof of A requires B, or A
 needs an explicit Lean infra subgoal B (not a paper-number chain).
 
-**Failed:** `theorem_3_11`, `lemma_4_6`.
-**Open:** `proposition_5_7` (existence of named realizations on a tail; packer + package transfer done).
-**Note:** `lemma_6_14`, `proposition_4_3`, `lemma_4_5`, `lemma_4_7`, `proposition_5_8`, `proposition_5_9`,
+**Open:** `theorem_3_11`, `proposition_5_7` (existence of named realizations on a
+tail; packer + package transfer done), `objectOfEmptyChain`.
+**Note:** `lemma_4_6`, `lemma_6_14`, `proposition_4_3`, `lemma_4_5`, `lemma_4_7`, `proposition_5_8`, `proposition_5_9`,
 `infra_pair_coloring_glue`, `infra_rank_slice`, `infra_type_u_witness_set`, `infra_countable_back_and_forth`, `infra_stable_diagram_realize`, `infra_zeta_model_existence`, `infra_eligible_reclass`, `infra_template_fixed_support`, `infra_named_working_scheme`, `infra_named_working_package` are done.
 Lean 5.8 is the residual `diagram_iso`+`structural_iso` form.
 False `6.13→6.14` / `5.8→5.9` edges removed. Later adjacent-number edges still suspect.
@@ -123,18 +124,17 @@ node reaches Thm 1.2 or 1.3; completed work should admit dead-code analysis of e
 
 | Decl | Title | Location |
 |------|-------|----------|
-| `theorem_3_11` | Theorem 3.11 | `AEC/Section3/Results.lean:448` (**failed**: profile / assign / renaming) |
+| `theorem_3_11` | Theorem 3.11 | `AEC/Section3/Results.lean:448` (**open**: profile / assign / renaming) |
 | `proposition_4_3` | Proposition 4.3 | `AEC/Section4/Results.lean` (**done**: `prop43_hull_back_and_forth` in `Prop43BAF.lean`; hull back-and-forth on `HullMatch` stages, uses the new `StableDiagram.trans` field) |
 | `lemma_4_5` | Lemma 4.5 | `AEC/Section4/Results.lean` (**done**: no `sorryAx`; mixed S⊕new occupancy closed in `fingerprint_same_order_and_occupancy`) |
-| `lemma_4_6` | Lemma 4.6 | `AEC/Section4/Results.lean:1248` (**failed**: needs `SameNaturalDiagram` API + block-swap pattern preservation → `D.same`; no short order-iso shortcut) |
+| `lemma_4_6` | Lemma 4.6 | `AEC/Section4/BlockInterchange.lean` (**done**: English tree/repeat/orbit via `BlockRegions` + `lemma_4_5_with_E`; `DisjointBlockSwap` packaging is degenerate) |
 | `lemma_4_7` | Lemma 4.7 | `AEC/Section4/Results.lean` (**done**: `type_u_witness_set_param`) |
 | `proposition_4_8` | Proposition 4.8 | `AEC/Section4/Results.lean:1274` |
 | `proposition_4_9` | Proposition 4.9 | `AEC/Section4/Results.lean:1294` |
 | `lemma_4_10` | Lemma 4.10 | `AEC/Section4/Results.lean:1331` |
 | `theorem_4_11` | Theorem 4.11 | `AEC/Section4/Results.lean:1376` |
 
-Within Section 4, prefer early work on `lemma_4_6` when sequencing
-internals (per `dependencies.mermaid`).
+Within Section 4, `lemma_4_6` is done; Prop 4.9 remains blocked on remaining gaps.
 
 ### L1 — Section 5 after diagrams (3)
 

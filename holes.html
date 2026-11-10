@@ -15,8 +15,8 @@
       --open-bg: #c8ecd9;
       --blocked: #9aa19a;
       --blocked-bg: #ecece8;
-      --failed: #8a3b12;
-      --failed-bg: #f3ddd0;
+      --err: #8a3b12;
+      --err-bg: #f3ddd0;
       --done: #1d4f91;
       --done-bg: #d5e4f7;
     }
@@ -117,7 +117,6 @@
     }
     .legend .open i { background: var(--open-bg); color: var(--open); }
     .legend .blocked i { background: var(--blocked-bg); color: var(--blocked); }
-    .legend .failed i { background: var(--failed-bg); color: var(--failed); }
     .legend .done i { background: var(--done-bg); color: var(--done); }
     #graph {
       width: 100%;
@@ -147,7 +146,6 @@
     .status-open rect { fill: var(--open-bg); stroke: var(--open); stroke-width: 2.25; }
     .status-done rect { fill: var(--done-bg); stroke: var(--done); }
     .status-blocked rect { fill: var(--blocked-bg); stroke: var(--blocked); }
-    .status-failed rect { fill: var(--failed-bg); stroke: var(--failed); stroke-width: 2; }
     .chip.done { background: var(--done-bg); border-color: var(--done); color: var(--done); }
     .node.dim { opacity: 0.22; }
     .edge {
@@ -183,9 +181,9 @@
     .err {
       margin: 0.75rem 1.25rem;
       padding: 0.75rem;
-      border: 1px solid var(--failed);
-      background: var(--failed-bg);
-      color: var(--failed);
+      border: 1px solid var(--err);
+      background: var(--err-bg);
+      color: var(--err);
     }
   </style>
 </head>
@@ -209,24 +207,24 @@
         <span class="open"><i></i>open</span>
         <span class="done"><i></i>done</span>
         <span class="blocked"><i></i>blocked</span>
-        <span class="failed"><i></i>failed</span>
       </div>
       <div id="graph"></div>
       <div id="detail"><div class="title">Select a node</div></div>
     </section>
   </main>
   <script>
-    const STATUS_RANK = { open: 0, done: 1, failed: 2, blocked: 3 };
+    const STATUS_RANK = { open: 0, done: 1, blocked: 2 };
     const NW = 132, NH = 32, RANK_GAP = 96, NODE_GAP = 28, PAD_X = 110, PAD_Y = 28;
     const FOCUS_KEY = "aec-holes-focus-open";
     let SELECTED = null;
 
     function normStatus(s) {
-      return s === "kill" ? "failed" : s;
+      // Legacy "failed"/"kill" are treated as open unless a program-refuting counterexample appears.
+      return (s === "kill" || s === "failed") ? "open" : s;
     }
 
     function countBy(nodes) {
-      const c = { open: 0, blocked: 0, failed: 0, done: 0 };
+      const c = { open: 0, blocked: 0, done: 0 };
       for (const n of nodes) {
         const s = normStatus(n.status);
         c[s] = (c[s] || 0) + 1;
@@ -296,15 +294,18 @@
     }
 
     function neighborhood(data, seeds) {
+      // Seed cone only: unfinished hard ancestors of the seeds, plus a bounded
+      // forward fan of their dependents. Do NOT pull ancestors of forward nodes
+      // (that dragged unrelated opens like 5.7 into a 3.11 focus).
       const keep = new Set(seeds);
+      addHardAncestors(data, keep);
       const hard = data.edges.filter(e => e.kind === "hard");
-      // Forward context from seeds only (do not dump every failed hole into the view).
       const queue = [...seeds];
       const dist = new Map(seeds.map(s => [s, 0]));
       while (queue.length) {
         const id = queue.shift();
         const d = dist.get(id);
-        if (d >= 3) continue;
+        if (d >= 2) continue;
         for (const e of hard) {
           if (e.from !== id) continue;
           if (!dist.has(e.to)) {
@@ -314,8 +315,7 @@
           }
         }
       }
-      // Pull unfinished hard ancestors; strip done/blue from the focus view.
-      return stripDone(data, addHardAncestors(data, keep));
+      return stripDone(data, keep);
     }
 
     /** Fan ports so parallel edges do not share the same attachment point. */
@@ -371,7 +371,6 @@
         ["open", counts.open, "open"],
         ["done", counts.done, "done"],
         ["blocked", counts.blocked, ""],
-        ["failed", counts.failed, ""],
         ["sorry", data.sorryCount, ""],
       ].map(([k, v, cls]) => `<span class="chip ${cls}"><b>${v}</b> ${k}</span>`).join("");
 
@@ -380,7 +379,7 @@
       bar.innerHTML = open.length
         ? `<span class="label">Open now</span>` +
           open.map(n => `<button type="button" data-id="${n.id}">${n.id}</button>`).join("")
-        : `<span class="label">Open now</span><span class="empty">None — every hole is blocked, failed, or killed.</span>`;
+        : `<span class="label">Open now</span><span class="empty">None — every hole is blocked or done.</span>`;
 
       // Focus view: one open hole’s dependency cone (selected open-bar chip, else a default).
       const openIds = open.map(n => n.id);
@@ -540,7 +539,8 @@
             <span id="copy-tip" class="copy-tip" hidden></span></div>
           <div><b>status:</b> ${nodeStatus(n)} · <b>file:</b> ${n.file}</div>
           <div><b>proof requires:</b> ${preds}</div>
-          ${n.blocker ? `<div style="margin-top:0.3rem;color:var(--failed)"><b>blocker:</b> ${n.blocker}</div>` : ""}
+          ${n.blocker ? `<div style="margin-top:0.3rem;color:var(--blocked)"><b>blocker:</b> ${n.blocker}</div>` : ""}
+          ${n.detail ? `<div style="margin-top:0.3rem"><b>detail:</b> ${n.detail}</div>` : ""}
         `;
         const g = document.querySelector(`.node[data-id="${id}"]`);
         if (g) g.scrollIntoView({ block: "center", inline: "center", behavior: "smooth" });
@@ -556,7 +556,7 @@
       const focusId = (SELECTED && visible.has(SELECTED)) ? SELECTED : seedOpen;
       if (focusId) select(focusId);
       else document.getElementById("detail").innerHTML =
-        `<div class="title">No open holes</div><div>All remaining work is blocked or failed.</div>`;
+        `<div class="title">No open holes</div><div>All remaining work is blocked or done.</div>`;
     }
 
     let DATA = null;

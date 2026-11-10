@@ -1,15 +1,14 @@
 {
   "updated": "2026-11-10",
-  "sorryCount": 71,
+  "sorryCount": 70,
   "legend": {
     "open": "No unfinished required proof-deps \u2014 try next",
-    "blocked": "Waiting on incomplete or failed required proof-deps",
-    "failed": "Attempted or deferred; still shown with blocker note",
+    "blocked": "Waiting on incomplete required proof-deps",
     "done": "Proved (no sorry)"
   },
   "notes": [
     "Edge B\u2192A means the English proof of A requires B (or a required Lean infra subgoal).",
-    "Blue = done. Green = open. Grey = blocked. Red = failed.",
+    "Blue = done. Green = open. Grey = blocked. No separate failed status unless a counterexample refutes the program.",
     "lemma_6_14 is independent of Prop 6.13 (false paper-number edge removed); it feeds lemma_12_6.",
     "Prop 4.3 is done (hull back-and-forth, Prop43BAF.lean); StableDiagram gained a trans field, supplied by proposition_4_2.",
     "Prop 5.6 / 5.7 wired by intended English use: 5.6 feeds Thm 9.3 and Prop 10.2; 5.7 feeds Thm 9.3, Prop 10.6, and Lem 10.8.",
@@ -144,8 +143,9 @@
       "label": "Thm 3.11",
       "section": 3,
       "file": "AEC/Section3/Results.lean",
-      "status": "failed",
-      "blocker": "Deferred: profile mismatch vs CommonProfileSetup; assign/name; renaming kill"
+      "status": "open",
+      "blocker": null,
+      "detail": "Still open: profile mismatch vs CommonProfileSetup; assign/name; renaming."
     },
     {
       "id": "theorem_3_5",
@@ -211,9 +211,10 @@
       "id": "lemma_4_6",
       "label": "Lem 4.6",
       "section": 4,
-      "file": "AEC/Section4/Results.lean",
-      "status": "failed",
-      "blocker": "Needs SameNaturalDiagram API + block-swap pattern \u2192 D.same"
+      "file": "AEC/Section4/BlockInterchange.lean",
+      "status": "done",
+      "blocker": null,
+      "detail": "BlockInterchange.lean: BlockRegions + LexTree + repeatsAlong + lemma_4_5_with_E (English pipeline). DisjointBlockSwap/OrderIso packaging is degenerate (orderIso_swaps_blocks_empty). Axioms: propext, Classical.choice, Quot.sound."
     },
     {
       "id": "lemma_4_7",
