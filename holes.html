@@ -512,20 +512,24 @@
           return;
         }
         if (copy) copyId(id);
-        const incident = new Set();
+        const focusMode = focusEl.checked;
+        // Focus view is already the open cone (done stripped). Keep hard
+        // ancestors + direct successors bright so prerequisites stay readable;
+        // only highlight incident edges as hot.
+        const keepBright = new Set([id]);
+        addHardAncestors(data, keepBright);
+        for (const e of data.edges) {
+          if (e.kind === "hard" && e.from === id) keepBright.add(e.to);
+        }
         document.querySelectorAll(".edge").forEach(path => {
           const hot = path.dataset.from === id || path.dataset.to === id;
           path.classList.toggle("hot", hot);
-          path.classList.toggle("dim", !hot);
-          if (hot) {
-            incident.add(path.dataset.from);
-            incident.add(path.dataset.to);
-          }
+          const bothKept = keepBright.has(path.dataset.from) && keepBright.has(path.dataset.to);
+          path.classList.toggle("dim", focusMode && !bothKept);
         });
-        incident.add(id);
         document.querySelectorAll(".node").forEach(g => {
           g.classList.toggle("selected", g.dataset.id === id);
-          g.classList.toggle("dim", !incident.has(g.dataset.id));
+          g.classList.toggle("dim", focusMode && !keepBright.has(g.dataset.id));
         });
         document.querySelectorAll("#open-bar button").forEach(b => b.classList.toggle("active", b.dataset.id === id));
         const n = byId[id];

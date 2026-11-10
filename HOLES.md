@@ -109,12 +109,17 @@ Blue = done; green = open; grey = blocked; red = failed.
 **Dependency rule:** edge B→A only if the English proof of A requires B, or A
 needs an explicit Lean infra subgoal B (not a paper-number chain).
 
-**Failed:** `theorem_3_11`, `lemma_4_6`, `proposition_5_7`.
-**Open:** Prop 4.5 / 5.7 infra nodes (see below).
+**Failed:** `theorem_3_11`, `lemma_4_6`.
+**Open:** `proposition_5_7` (existence of named realizations on a tail; packer + package transfer done).
 **Note:** `lemma_6_14`, `proposition_4_3`, `lemma_4_5`, `lemma_4_7`, `proposition_5_8`, `proposition_5_9`,
-`infra_pair_coloring_glue`, `infra_rank_slice`, `infra_type_u_witness_set`, `infra_countable_back_and_forth`, `infra_stable_diagram_realize`, `infra_zeta_model_existence` are done.
+`infra_pair_coloring_glue`, `infra_rank_slice`, `infra_type_u_witness_set`, `infra_countable_back_and_forth`, `infra_stable_diagram_realize`, `infra_zeta_model_existence`, `infra_eligible_reclass`, `infra_template_fixed_support`, `infra_named_working_scheme`, `infra_named_working_package` are done.
 Lean 5.8 is the residual `diagram_iso`+`structural_iso` form.
 False `6.13→6.14` / `5.8→5.9` edges removed. Later adjacent-number edges still suspect.
+
+**Wired (intended use, reach apex):** `5.6 → 9.3, 10.2`; `5.7 → 9.3, 10.6, 10.8`;
+`2.3 → 1.2`; `3.11 → 4.2, 5.8`; `4.6 → 4.9`; `6.14 → 12.6`; `13.5 → 10.9, 14.2`.
+Full hard-edge list: [`holes-edges.txt`](holes-edges.txt). Target: every Results/paper
+node reaches Thm 1.2 or 1.3; completed work should admit dead-code analysis of each edge.
 
 | Decl | Title | Location |
 |------|-------|----------|
@@ -137,8 +142,12 @@ Waits on Section 4 diagrams / amalgamation story.
 
 | Decl | Title | Location |
 |------|-------|----------|
-| `proposition_5_6` | Proposition 5.6 | `AEC/Section5/Results.lean:184` |
-| `proposition_5_7` | Proposition 5.7 | `AEC/Section5/Results.lean:202` (**failed**: named-scheme construction; see `infra_template_fixed_support` / `infra_named_working_scheme` / `infra_named_working_package` / `infra_eligible_reclass`) |
+| `proposition_5_6` | Proposition 5.6 | `AEC/Section5/Results.lean:184` (feeds Thm 9.3, Prop 10.2) |
+| `proposition_5_7` | Proposition 5.7 | `AEC/Section5/Results.lean` (**open**: existence on a naming tail; feeds Thm 9.3, Prop 10.6, Lem 10.8) |
+| `infra_template_fixed_support` | Template F(J+H) | `AEC/Section5/TermTemplate.lean` (**done**: `withFixedSupport`, `sumLexEmbedRight` / `sumLexEmbedLeftIncl`, `fixedSupportArrow`) |
+| `infra_eligible_reclass` | Convention 5.3 tails / Lim | `AEC/Section5/EligibleSubclass.lean` (**done**: `eligibleTail`, `EligibleSubclass.tail` / `lim` / `aboveNamingThreshold`) |
+| `infra_named_working_scheme` | Named WorkingScheme ctor | `AEC/Section5/NamedWorkingScheme.lean` (**done**: `WorkingScheme.IsStructIso` + `namedWorkingScheme` packer; no `sorry`) |
+| `infra_named_working_package` | Named package transfer | `AEC/Section5/NamedPackageTransfer.lean` (**done**: `isWorkingPackage_namedWorkingScheme`; no `sorry`) |
 | `proposition_5_8` | Proposition 5.8 | `AEC/Section5/Results.lean:224` (**done**: Lean residual via `diagram_iso` + `structural_iso`) |
 
 ### L2 — Section 6 unlock (14)

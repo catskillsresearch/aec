@@ -20,29 +20,13 @@ set_option linter.unusedVariables false
 
 open FirstOrder Cardinal
 
-/-- The four working-package clauses of Definition 5.2 beyond the scheme data. -/
-def IsWorkingPackage {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
-    (W : WorkingScheme K S) : Prop :=
-  HasChainUnions W ∧ HasMixedDownward W ∧ IsSaturated W ∧ SatisfiesExhaustion W
-
-theorem EligibleSubclass.mem_source {S T : Set Cardinal.{u}} (h : EligibleSubclass S T)
-    {μ : Cardinal.{u}} (hμ : μ ∈ T) : μ ∈ S := by
-  dsimp [EligibleSubclass] at h
-  exact h.1 hμ
-
-/-- An empty-index chain union yields an object at every eligible level. -/
+/-- A seed object at an eligible level. Chain unions require a nonempty index
+(Definition 5.2(1)), so emptiness is no longer a source of objects; existence of a seed at
+each eligible level is a residual obligation (typically from presentations). -/
 noncomputable def objectOfEmptyChain {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
-    (W : WorkingScheme K S) (hpack : HasChainUnions W)
-    {μ : Cardinal.{u}} (hμ : μ ∈ W.eligible) : W.Object μ hμ := by
-  classical
-  have h :=
-    hpack.union (hμ := hμ) (index := PEmpty.{u + 1})
-      (obj := fun i => i.elim)
-      (le := fun i => i.elim)
-      (fun i => i.elim)
-      (fun i => i.elim)
-      (by simp [Cardinal.mk_eq_zero])
-  exact h.choose
+    (W : WorkingScheme K S) (_hpack : HasChainUnions W)
+    {μ : Cardinal.{u}} (hμ : μ ∈ W.eligible) : W.Object μ hμ :=
+  Classical.choice (show Nonempty (W.Object μ hμ) from sorry)
 
 /-- Inclusion of a set as an order embedding of subtypes. -/
 def setInclusionOrderEmbed {α : Type u} [Preorder α] {s t : Set α} (h : s ⊆ t) : s ↪o t where
@@ -186,10 +170,9 @@ theorem proposition_5_6 (K : AbstractElementaryClass.{u}) (D : StableDiagram K)
 /-- **Proposition 5.7** (Naming bounded data). On an unbounded class of higher eligible levels,
 the diagram of a fixed bounded list is realized, and those levels carry a working scheme.
 
-**Failed (this campaign).** Needs a named-scheme construction layer not present in Lean:
-`infra_template_fixed_support` (template `F(J+H)` with arity-0 names),
-`infra_named_working_scheme`, `infra_named_working_package`, and `infra_eligible_reclass`.
-`TermTemplate` today only has `present` / `onOrder`; there is no `WorkingScheme` constructor. -/
+Named scheme data and package transfer are available (`namedWorkingScheme`,
+`isWorkingPackage_namedWorkingScheme`); remaining gap is existence of realizations on a
+tail `T` (and the shape/`eligible` packaging into the ∃-statement). -/
 theorem proposition_5_7 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
     (W : WorkingScheme K S) (hpack : IsWorkingPackage W)
     {μ0 : Cardinal.{u}} (hμ0 : μ0 ∈ W.eligible) (X0 : W.Object μ0 hμ0)
@@ -220,7 +203,7 @@ theorem proposition_5_8 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
     (_hcat : ∀ μ (hμ : μ ∈ T), ∀ X Y : W.Object μ (EligibleSubclass.mem_source hsub hμ),
       ∃ f : SystemArrow K S (W.asSystem (EligibleSubclass.mem_source hsub hμ) X)
         (W.asSystem (EligibleSubclass.mem_source hsub hμ) Y),
-        (∀ v, Function.Bijective (f.onVertex v)) ∧ W.permitted (X := X) (Y := Y) f) :
+        W.IsStructIso (X := X) (Y := Y) f ∧ W.permitted (X := X) (Y := Y) f) :
     ∀ μ (hμ : μ ∈ T) {α : Type u} (_hα : #α < μ)
       (X Y : W.Object μ (EligibleSubclass.mem_source hsub hμ))
       (xs : α → Occurrence K S (W.asSystem (EligibleSubclass.mem_source hsub hμ) X))
@@ -228,16 +211,16 @@ theorem proposition_5_8 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
       W.DiagramEq (X := X) (Y := Y) xs ys ↔
         ∃ f : SystemArrow K S (W.asSystem (EligibleSubclass.mem_source hsub hμ) X)
           (W.asSystem (EligibleSubclass.mem_source hsub hμ) Y),
-          (∀ v, Function.Bijective (f.onVertex v)) ∧
+          W.IsStructIso (X := X) (Y := Y) f ∧
           W.permitted (X := X) (Y := Y) f ∧
           ∀ i, ys i = ⟨(xs i).1, f.onVertex (xs i).1 (xs i).2⟩ := by
   intro μ hμ α _hα X Y xs ys
   constructor
   · intro hEq
-    obtain ⟨f, hfBij, hf⟩ := (W.diagram_iso (X := X) (Y := Y) xs ys).mp hEq
-    exact ⟨f, hfBij, W.structural_iso (X := X) (Y := Y) f hfBij, hf⟩
-  · rintro ⟨f, hfBij, _hfPerm, hf⟩
-    exact (W.diagram_iso (X := X) (Y := Y) xs ys).mpr ⟨f, hfBij, hf⟩
+    obtain ⟨f, hIso, hf⟩ := (W.diagram_iso (X := X) (Y := Y) xs ys).mp hEq
+    exact ⟨f, hIso, W.structural_iso (X := X) (Y := Y) f hIso, hf⟩
+  · rintro ⟨f, hIso, _hfPerm, hf⟩
+    exact (W.diagram_iso (X := X) (Y := Y) xs ys).mpr ⟨f, hIso, hf⟩
 
 /-- **Proposition 5.9** (Uniform coding of working diagrams). A monotone bound `b` computes
 working-diagram equality of lists of length at most `σ` by a back-and-forth of size `b(σ)`,
@@ -270,12 +253,12 @@ theorem proposition_5_9 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
   · intro hEq
     constructor
     · intro β Z _
-      obtain ⟨f, hfBij, hf⟩ := (W.diagram_iso (X := X) (Y := Y) xs ys).mp hEq
+      obtain ⟨f, hIso, hf⟩ := (W.diagram_iso (X := X) (Y := Y) xs ys).mp hEq
       let Z' : β → Occurrence K S (W.asSystem hμ Y) :=
         fun j => ⟨(Z j).1, f.onVertex (Z j).1 (Z j).2⟩
       refine ⟨Z', ?_⟩
       refine (W.diagram_iso (X := X) (Y := Y) (Sum.elim xs Z) (Sum.elim ys Z')).mpr
-        ⟨f, hfBij, ?_⟩
+        ⟨f, hIso, ?_⟩
       intro i
       cases i with
       | inl a => exact hf a
@@ -283,12 +266,12 @@ theorem proposition_5_9 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
     · intro β Z _
       have hEq' : W.DiagramEq (X := Y) (Y := X) ys xs :=
         W.diagram_symm (X := X) (Y := Y) xs ys hEq
-      obtain ⟨g, hgBij, hg⟩ := (W.diagram_iso (X := Y) (Y := X) ys xs).mp hEq'
+      obtain ⟨g, hIso, hg⟩ := (W.diagram_iso (X := Y) (Y := X) ys xs).mp hEq'
       let Z' : β → Occurrence K S (W.asSystem hμ X) :=
         fun j => ⟨(Z j).1, g.onVertex (Z j).1 (Z j).2⟩
       refine ⟨Z', ?_⟩
       refine (W.diagram_iso (X := Y) (Y := X) (Sum.elim ys Z) (Sum.elim xs Z')).mpr
-        ⟨g, hgBij, ?_⟩
+        ⟨g, hIso, ?_⟩
       intro i
       cases i with
       | inl a => exact hg a
@@ -298,11 +281,11 @@ theorem proposition_5_9 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
     have hβ0 : #(PEmpty.{u + 1}) ≤ σ := by
       simp [Cardinal.mk_eq_zero]
     obtain ⟨Z', hZ'⟩ := hBF.1 (β := PEmpty.{u + 1}) (fun i => i.elim) hβ0
-    obtain ⟨f, hfBij, hf⟩ :=
+    obtain ⟨f, hIso, hf⟩ :=
       (W.diagram_iso (X := X) (Y := Y)
         (Sum.elim xs (fun j : PEmpty.{u + 1} => j.elim))
         (Sum.elim ys Z')).mp hZ'
-    refine (W.diagram_iso (X := X) (Y := Y) xs ys).mpr ⟨f, hfBij, ?_⟩
+    refine (W.diagram_iso (X := X) (Y := Y) xs ys).mpr ⟨f, hIso, ?_⟩
     intro i
     exact hf (Sum.inl i)
 

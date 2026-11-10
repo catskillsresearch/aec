@@ -35,12 +35,12 @@ class HasPresentations {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
     ∃ arr : SystemArrow K S (W.asSystem hμ X) (W.asSystem hν Y),
       W.permitted (X := X) (Y := Y) arr
 
-/-- Definition 5.2(1), unions. An increasing chain of objects at one eligible level, whose union
-has cardinality that level, is an object, and a chain that maps into an object at a larger eligible
-level has its union arrow into that object. -/
+/-- Definition 5.2(1), unions. A nonempty increasing chain of objects at one eligible level, whose
+union has cardinality that level, is an object; inclusions are a cocone for the chain arrows; and a
+chain that maps into an object at a larger eligible level has its union arrow into that object. -/
 class HasChainUnions {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
     (W : WorkingScheme K S) : Prop where
-  union : ∀ {μ : Cardinal.{u}} (hμ : μ ∈ W.eligible) (index : Type u)
+  union : ∀ {μ : Cardinal.{u}} (hμ : μ ∈ W.eligible) (index : Type u) [Nonempty index]
     (obj : index → W.Object μ hμ)
     (le : (i j : index) → SystemArrow K S (W.asSystem hμ (obj i)) (W.asSystem hμ (obj j)))
     (_le_arrow : ∀ i j, W.permitted (X := obj i) (Y := obj j) (le i j)),
@@ -49,6 +49,7 @@ class HasChainUnions {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
     ∃ U : W.Object μ hμ,
       ∃ incl : (i : index) → SystemArrow K S (W.asSystem hμ (obj i)) (W.asSystem hμ U),
         (∀ i, W.permitted (X := obj i) (Y := U) (incl i)) ∧
+        (∀ i j, SystemArrow.comp (le i j) (incl j) = incl i) ∧
         ∀ {ν : Cardinal.{u}} (hν : ν ∈ W.eligible) (Z : W.Object ν hν)
           (toZ : (i : index) →
             SystemArrow K S (W.asSystem hμ (obj i)) (W.asSystem hν Z)),
@@ -91,19 +92,24 @@ class IsSaturated {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
       (∀ i, zs (Sum.inl i) = ⟨(xs i).1, f.onVertex (xs i).1 (xs i).2⟩) ∧
       W.DiagramEq (X := Z) (Y := Y) zs ext
 
-/-- Definition 5.2(4). A commuting family of strong vertex maps is an arrow when it preserves
-the `D`-diagram of every list bounded at the source level. Component strongness is the
+/-- Definition 5.2(4). A commuting family of strong vertex maps at one level is an arrow when it
+preserves the `D`-diagram of every list bounded at that level. Component strongness is the
 `onVertex_strong` field; an additional scheme condition is included by concluding `permitted`. -/
 class SatisfiesExhaustion {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
     (W : WorkingScheme K S) : Prop where
-  exhaustion : ∀ {μ ν : Cardinal.{u}} {hμ : μ ∈ W.eligible} {hν : ν ∈ W.eligible}
-    (X : W.Object μ hμ) (Y : W.Object ν hν)
-    (f : SystemArrow K S (W.asSystem hμ X) (W.asSystem hν Y)),
+  exhaustion : ∀ {μ : Cardinal.{u}} {hμ : μ ∈ W.eligible}
+    (X Y : W.Object μ hμ)
+    (f : SystemArrow K S (W.asSystem hμ X) (W.asSystem hμ Y)),
     (∀ {ι : Type u} (xs : ι → Occurrence K S (W.asSystem hμ X)),
       #ι < μ →
       W.DiagramEq (X := X) (Y := Y) xs
         (fun i => ⟨(xs i).1, f.onVertex (xs i).1 (xs i).2⟩)) →
     W.permitted (X := X) (Y := Y) f
+
+/-- The four working-package clauses of Definition 5.2 beyond the scheme data. -/
+def IsWorkingPackage {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
+    (W : WorkingScheme K S) : Prop :=
+  HasChainUnions W ∧ HasMixedDownward W ∧ IsSaturated W ∧ SatisfiesExhaustion W
 
 end
 end AEC

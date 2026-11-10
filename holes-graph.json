@@ -2,16 +2,20 @@
   "updated": "2026-11-10",
   "sorryCount": 70,
   "legend": {
-    "open": "No unfinished required proof-deps — try next",
+    "open": "No unfinished required proof-deps \u2014 try next",
     "blocked": "Waiting on incomplete or failed required proof-deps",
     "failed": "Attempted or deferred; still shown with blocker note",
     "done": "Proved (no sorry)"
   },
   "notes": [
-    "Edge B→A means the English proof of A requires B (or a required Lean infra subgoal).",
+    "Edge B\u2192A means the English proof of A requires B (or a required Lean infra subgoal).",
     "Blue = done. Green = open. Grey = blocked. Red = failed.",
-    "lemma_6_14 is independent order combinatorics — NOT dependent on Prop 6.13 (false paper-number edge removed).",
+    "lemma_6_14 is independent of Prop 6.13 (false paper-number edge removed); it feeds lemma_12_6.",
     "Prop 4.3 is done (hull back-and-forth, Prop43BAF.lean); StableDiagram gained a trans field, supplied by proposition_4_2.",
+    "Prop 5.6 / 5.7 wired by intended English use: 5.6 feeds Thm 9.3 and Prop 10.2; 5.7 feeds Thm 9.3, Prop 10.6, and Lem 10.8.",
+    "Prop 2.3 \u2192 Thm 1.2 is the set-coding reduction; Thm 14.5 supplies qualitative content for both apex theorems.",
+    "Also wired: Thm 3.11 \u2192 Prop 4.2 / 5.8; Lem 4.6 \u2192 Prop 4.9; Lem 6.14 \u2192 Lem 12.6; Thm 13.5 \u2192 Thm 10.9 / Lem 14.2.",
+    "Target: every Results/paper node reaches Thm 1.2 or 1.3; dead-code analysis should eventually justify each hard edge.",
     "sorryCount is the live count of sorry tokens under AEC/ (ABSTRACT_WIP in scripts/build_aec_tex.py may lag)."
   ],
   "nodes": [
@@ -153,25 +157,25 @@
     },
     {
       "id": "infra_countable_back_and_forth",
-      "label": "Infra: ω back-and-forth → iso",
+      "label": "Infra: \u03c9 back-and-forth \u2192 iso",
       "section": 4,
       "file": "AEC/Section4/Prop43BAF.lean",
       "status": "done",
       "blocker": null,
-      "detail": "Hull-based: HullMatch.forth/back + exists_equiv_of_commonDomain_chain (common-domain glue → Language.Equiv). Prop 4.3 does not use StrongClassBAF (CountableBackAndForth.lean), whose ambient strong maps would presuppose categoricity at ζ"
+      "detail": "Hull-based: HullMatch.forth/back + exists_equiv_of_commonDomain_chain (common-domain glue \u2192 Language.Equiv). Prop 4.3 does not use StrongClassBAF (CountableBackAndForth.lean), whose ambient strong maps would presuppose categoricity at \u03b6"
     },
     {
       "id": "infra_stable_diagram_realize",
-      "label": "Infra: D.same ⇒ strong map",
+      "label": "Infra: D.same \u21d2 strong map",
       "section": 4,
       "file": "AEC/Section4/StableDiagram.lean",
       "status": "done",
       "blocker": null,
-      "detail": "StableDiagram.to_strong / of_strong / realize_joint / trans; filled by proposition_4_2. trans (Prop 4.2(2): diagram equality is an equality) is required by Prop 4.3 to move matches between ζ-models and their hulls"
+      "detail": "StableDiagram.to_strong / of_strong / realize_joint / trans; filled by proposition_4_2. trans (Prop 4.2(2): diagram equality is an equality) is required by Prop 4.3 to move matches between \u03b6-models and their hulls"
     },
     {
       "id": "infra_zeta_model_existence",
-      "label": "Infra: ∃ model size ζ",
+      "label": "Infra: \u2203 model size \u03b6",
       "section": 4,
       "file": "AEC/Section4/StableDiagramConstruction.lean",
       "status": "done",
@@ -201,7 +205,7 @@
       "file": "AEC/Section4/Results.lean",
       "status": "done",
       "blocker": null,
-      "detail": "fingerprint_same_order_and_occupancy closed (incl. mixed S⊕new occupancy). #print axioms AEC.lemma_4_5: propext, Classical.choice, Quot.sound (no sorryAx)."
+      "detail": "fingerprint_same_order_and_occupancy closed (incl. mixed S\u2295new occupancy). #print axioms AEC.lemma_4_5: propext, Classical.choice, Quot.sound (no sorryAx)."
     },
     {
       "id": "lemma_4_6",
@@ -209,7 +213,7 @@
       "section": 4,
       "file": "AEC/Section4/Results.lean",
       "status": "failed",
-      "blocker": "Needs SameNaturalDiagram API + block-swap pattern → D.same"
+      "blocker": "Needs SameNaturalDiagram API + block-swap pattern \u2192 D.same"
     },
     {
       "id": "lemma_4_7",
@@ -234,7 +238,7 @@
       "file": "AEC/Section4/Results.lean",
       "status": "done",
       "blocker": null,
-      "detail": "prop43_hull_back_and_forth (Prop43BAF.lean): HullMatch stages, D.to_strong between t(σ)-hulls, common-domain union; no sorry (axioms: propext, Classical.choice, Quot.sound)"
+      "detail": "prop43_hull_back_and_forth (Prop43BAF.lean): HullMatch stages, D.to_strong between t(\u03c3)-hulls, common-domain union; no sorry (axioms: propext, Classical.choice, Quot.sound)"
     },
     {
       "id": "proposition_4_8",
@@ -282,15 +286,17 @@
       "section": 5,
       "file": "AEC/Section5/Results.lean",
       "status": "blocked",
-      "blocker": null
+      "blocker": null,
+      "detail": "Single-model working package. Downstream: Thm 9.3 (start scheme), Prop 10.2 (choose \u03bb\u2080)."
     },
     {
       "id": "proposition_5_7",
       "label": "Prop 5.7",
       "section": 5,
       "file": "AEC/Section5/Results.lean",
-      "status": "failed",
-      "blocker": "Needs named-scheme construction: template F(J+H), NamedWorkingScheme, IsWorkingPackage transfer, eligible reclass"
+      "status": "open",
+      "blocker": null,
+      "detail": "Naming bounded data. Downstream: Thm 9.3, Prop 10.6, Lem 10.8. Packer + IsWorkingPackage transfer done; remaining: existence of realizations on a naming tail T and packaging into the ∃-statement."
     },
     {
       "id": "proposition_5_8",
@@ -859,11 +865,11 @@
       "file": "AEC/Section4/TypeUWitness.lean",
       "status": "done",
       "blocker": null,
-      "detail": "type_u_witness_set: package dominating U₀ as ι : Type u via rank-slice + padded pair-color glue"
+      "detail": "type_u_witness_set: package dominating U\u2080 as \u03b9 : Type u via rank-slice + padded pair-color glue"
     },
     {
       "id": "infra_rank_slice",
-      "label": "Infra: rank-slice V_β",
+      "label": "Infra: rank-slice V_\u03b2",
       "section": 4,
       "file": "AEC/Section4/RankSlice.lean",
       "status": "done",
@@ -877,16 +883,16 @@
       "file": "AEC/Section4/PairColoringGlue.lean",
       "status": "done",
       "blocker": null,
-      "detail": "pair_coloring_glue: Lemma 2.5 pair-homogeneous ⇒ no ω-descent on a coordinate"
+      "detail": "pair_coloring_glue: Lemma 2.5 pair-homogeneous \u21d2 no \u03c9-descent on a coordinate"
     },
     {
       "id": "infra_relcode_joint_canonical",
-      "label": "Infra: RelCode ⇒ joint canon",
+      "label": "Infra: RelCode \u21d2 joint canon",
       "section": 4,
       "file": "AEC/Section4/OrbitsOverParameters.lean",
       "status": "done",
       "blocker": null,
-      "detail": "Proved equal_relCode_equal_joint_canon: RelCode.jointCanon stores canonicalOfTuple on P⊕ι; equal codes ⇒ equal joint canons via congrArg"
+      "detail": "Proved equal_relCode_equal_joint_canon: RelCode.jointCanon stores canonicalOfTuple on P\u2295\u03b9; equal codes \u21d2 equal joint canons via congrArg"
     },
     {
       "id": "infra_relcode_orbit_record",
@@ -902,36 +908,36 @@
       "label": "Infra: template F(J+H)",
       "section": 5,
       "file": "AEC/Section5/TermTemplate.lean",
-      "status": "open",
-      "blocker": "Fixed support J, arity-0 name labels, presentations on J⊕H, id-on-J order arrows",
-      "detail": "English Prop 5.7 template renaming; TermTemplate today has only present/onOrder"
+      "status": "done",
+      "blocker": null,
+      "detail": "withFixedSupport + sumLexEmbedRight/LeftIncl + fixedSupportArrow; onOrder_id/comp via embed refl/trans; no sorry"
     },
     {
       "id": "infra_named_working_scheme",
       "label": "Infra: named WorkingScheme",
       "section": 5,
-      "file": "AEC/Section5/WorkingScheme.lean",
-      "status": "open",
-      "blocker": "Build S', W' from (W,X0,c): objects=named realizations, name-preserving arrows",
-      "detail": "No WorkingScheme constructor/instance exists yet"
+      "file": "AEC/Section5/NamedWorkingScheme.lean",
+      "status": "done",
+      "blocker": null,
+      "detail": "WorkingScheme.IsStructIso abstracts scheme isos; namedWorkingScheme packs NamedObject / NamedPermitted / NamedStructIso / NamedDiagramEq on an EligibleSubclass. No sorry."
     },
     {
       "id": "infra_named_working_package",
       "label": "Infra: named package xfer",
       "section": 5,
-      "file": "AEC/Section5/PackageClauses.lean",
-      "status": "open",
-      "blocker": "IsWorkingPackage W → IsWorkingPackage W' for the named constructor",
-      "detail": "Chain unions, mixed downward, saturation, exhaustion with retained names"
+      "file": "AEC/Section5/NamedPackageTransfer.lean",
+      "status": "done",
+      "blocker": null,
+      "detail": "isWorkingPackage_namedWorkingScheme: saturation, mixed downward, same-level exhaustion (prefix cancel via diagram_restrict), nonempty chain unions (cocone naturality). No sorry."
     },
     {
       "id": "infra_eligible_reclass",
       "label": "Infra: eligible reclass T",
       "section": 5,
       "file": "AEC/Section5/EligibleSubclass.lean",
-      "status": "open",
-      "blocker": "Definable countably-sup-closed T ⊆ W.eligible above naming threshold",
-      "detail": "EligibleSubclass exists as Prop only; Convention 5.3 tails not constructed"
+      "status": "done",
+      "blocker": null,
+      "detail": "eligibleTail + EligibleSubclass.tail / lim / aboveNamingThreshold proved (Convention 5.3 refinements)"
     }
   ],
   "edges": [
@@ -1271,6 +1277,66 @@
       "kind": "hard"
     },
     {
+      "from": "proposition_2_3",
+      "to": "theorem_1_2",
+      "kind": "hard"
+    },
+    {
+      "from": "proposition_5_6",
+      "to": "theorem_9_3",
+      "kind": "hard"
+    },
+    {
+      "from": "proposition_5_6",
+      "to": "proposition_10_2",
+      "kind": "hard"
+    },
+    {
+      "from": "proposition_5_7",
+      "to": "theorem_9_3",
+      "kind": "hard"
+    },
+    {
+      "from": "proposition_5_7",
+      "to": "proposition_10_6",
+      "kind": "hard"
+    },
+    {
+      "from": "proposition_5_7",
+      "to": "lemma_10_8",
+      "kind": "hard"
+    },
+    {
+      "from": "theorem_3_11",
+      "to": "proposition_4_2",
+      "kind": "hard"
+    },
+    {
+      "from": "theorem_3_11",
+      "to": "proposition_5_8",
+      "kind": "hard"
+    },
+    {
+      "from": "lemma_4_6",
+      "to": "proposition_4_9",
+      "kind": "hard"
+    },
+    {
+      "from": "lemma_6_14",
+      "to": "lemma_12_6",
+      "kind": "hard"
+    },
+    {
+      "from": "theorem_13_5",
+      "to": "theorem_10_9",
+      "kind": "hard"
+    },
+    {
+      "from": "theorem_13_5",
+      "to": "lemma_14_2",
+      "kind": "hard"
+    },
+    {
       "from": "lemma_2_1",
       "to": "lemma_2_2",
       "kind": "hard"
@@ -1531,5 +1597,5 @@
       "kind": "hard"
     }
   ],
-  "doneCount": 38
+  "doneCount": 42
 }
