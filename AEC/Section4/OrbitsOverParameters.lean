@@ -14,15 +14,15 @@ public import Mathlib.Data.Finsupp.Basic
 public import Mathlib.SetTheory.Cardinal.Arithmetic
 public import Mathlib.SetTheory.Cardinal.Finsupp
 public import Mathlib.SetTheory.Cardinal.Cofinality.Ordinal
-public import Mathlib.SetTheory.Cardinal.Rat
+public import Mathlib.Data.Rat.Denumerable
 
 /-!
 # Lemma 4.5 — orbits over parameters (WIP / blocked)
 
-Relative codes (`RelCode`) of cardinality `≤ χ` and the Thm 3.5 wrapper
-`same_joint_canon_fixes_params` are in place. **Blocked:** equal `RelCode`s do not yet
-imply equal joint `canonicalOfTuple` (see board infra `infra_relcode_joint_canonical`,
-`infra_relcode_orbit_record`). Do not import into `Results` until that bridge compiles.
+Relative codes carry the joint soft `canonicalOfTuple` on params⊕tuple, so
+`equal_relCode_equal_joint_canon` is available for Thm 3.5. **Blocked for Lemma 4.5:**
+the ≤χ counting argument needs the relative projection to determine that joint canon
+(`infra_relcode_orbit_record`). Do not import into `Results` until that lands.
 -/
 
 @[expose] public section
@@ -123,29 +123,31 @@ theorem mk_abstractPoint (χ : Cardinal.{u}) (hχ : aleph0 ≤ χ) :
     rw [infinite_iff, mk_ord_toType]
     exact hχ
   have h1 : #(Below χ →₀ ℤ) = χ := by
-    rw [mk_finsupp_of_infinite, mk_ord_toType, mk_int]
-    exact max_eq_left (natCast_le_aleph0.trans hχ)
+    rw [mk_finsupp_lift_of_infinite (Below χ) ℤ]
+    simp only [mk_ord_toType, mk_int, lift_uzero, lift_aleph0]
+    exact max_eq_left hχ
   haveI : Infinite (Below χ →₀ ℤ) := by
     rw [infinite_iff, h1]; exact hχ
-  rw [mk_finsupp_of_infinite, h1, mk_rat]
-  exact max_eq_left (natCast_le_aleph0.trans hχ)
+  -- Outer finsupp: `#((Below χ →₀ ℤ) →₀ ℚ) = max (lift #(_)) (lift #ℚ) = χ`.
+  rw [mk_finsupp_lift_of_infinite (Below χ →₀ ℤ) ℚ, h1, mk_eq_aleph0 ℚ]
+  simp [lift_aleph0, max_eq_left hχ]
 
-/-- Relative record over fixed parameter support (English Lemma 4.5). -/
-structure RelCode (lab : Type u) (arity : lab → ℕ) (σ χ : Cardinal.{u}) where
-  canon : CanonicalRecord lab arity σ
+/-- σ-bounded relative fingerprint over fixed parameter support (English Lemma 4.5 count). -/
+structure RelFingerprint (lab : Type u) (arity : lab → ℕ) (σ χ : Cardinal.{u}) where
+  newCanon : CanonicalRecord lab arity σ
   soft : Below σ → AbstractPoint χ
   eqOld : Below σ → Option (Below χ)
   occ : Set (Below σ) → Set (Below σ) → Bool
 
-theorem mk_relCode_le {lab : Type u} {arity : lab → ℕ} {σ χ : Cardinal.{u}}
+theorem mk_relFingerprint_le {lab : Type u} {arity : lab → ℕ} {σ χ : Cardinal.{u}}
     (hlab : #lab ≤ χ) (hσ : aleph0 ≤ σ) (hχinf : aleph0 ≤ χ) (hpow : χ ^ σ = χ)
     (h2 : (2 : Cardinal.{u}) ^ ((2 : Cardinal.{u}) ^ σ) ≤ χ) :
-    #(RelCode lab arity σ χ) ≤ χ := by
+    #(RelFingerprint lab arity σ χ) ≤ χ := by
   classical
-  let e : RelCode lab arity σ χ ≃
+  let e : RelFingerprint lab arity σ χ ≃
       CanonicalRecord lab arity σ × (Below σ → AbstractPoint χ) ×
         (Below σ → Option (Below χ)) × (Set (Below σ) → Set (Below σ) → Bool) :=
-    ⟨fun c => (c.canon, c.soft, c.eqOld, c.occ),
+    ⟨fun c => (c.newCanon, c.soft, c.eqOld, c.occ),
       fun p => ⟨p.1, p.2.1, p.2.2.1, p.2.2.2⟩, fun _ => rfl, fun ⟨_, _, _, _⟩ => rfl⟩
   rw [Cardinal.mk_congr e]
   have hχχ : χ * χ = χ := Cardinal.mul_eq_self hχinf
@@ -181,6 +183,30 @@ theorem mk_relCode_le {lab : Type u} {arity : lab → ℕ} {σ χ : Cardinal.{u}
     exact h2
   simp only [mk_prod, lift_id]
   exact hmul h1 (hmul hSoft (hmul hOpt hOcc))
+
+/-- Corrected relative code: joint soft canon on params⊕tuple, plus σ-bounded fingerprint.
+The joint field is exactly the Thm 3.5 / `same_joint_canon_fixes_params` input.
+Cardinality ≤χ of *fingerprints* is `mk_relFingerprint_le`; bounding realized joint canons
+by fingerprints is `infra_relcode_orbit_record`. -/
+structure RelCode (lab : Type u) (arity : lab → ℕ) (σ χ : Cardinal.{u}) where
+  jointCanon : CanonicalRecord lab arity χ
+  fingerprint : RelFingerprint lab arity σ χ
+
+@[simp] def RelCode.newCanon {lab : Type u} {arity : lab → ℕ} {σ χ : Cardinal.{u}}
+    (c : RelCode lab arity σ χ) : CanonicalRecord lab arity σ :=
+  c.fingerprint.newCanon
+
+@[simp] def RelCode.soft {lab : Type u} {arity : lab → ℕ} {σ χ : Cardinal.{u}}
+    (c : RelCode lab arity σ χ) : Below σ → AbstractPoint χ :=
+  c.fingerprint.soft
+
+@[simp] def RelCode.eqOld {lab : Type u} {arity : lab → ℕ} {σ χ : Cardinal.{u}}
+    (c : RelCode lab arity σ χ) : Below σ → Option (Below χ) :=
+  c.fingerprint.eqOld
+
+@[simp] def RelCode.occ {lab : Type u} {arity : lab → ℕ} {σ χ : Cardinal.{u}}
+    (c : RelCode lab arity σ χ) : Set (Below σ) → Set (Below σ) → Bool :=
+  c.fingerprint.occ
 
 def SameOrbitOverParams (K : AbstractElementaryClass.{u}) (M : Model K.τ)
     (P : Set M.carrier) {ι : Type u} (xs ys : ι → M.carrier) : Prop :=
@@ -243,9 +269,12 @@ def RealizedCut {α : Type u} [LinearOrder α] (S : Set α) : Type u :=
 theorem mk_realizedCut_le {α : Type u} [LinearOrder α] [WellFoundedLT α] (S : Set α) :
     #(RealizedCut S) ≤ #↥S + 1 := by
   classical
+  letI : WellFoundedLT ↥S := inferInstance
   let f : RealizedCut S → Option ↥S := fun C =>
     let rest : Set ↥S := {s | s ∉ C.1}
-    if h : rest.Nonempty then some (WellFounded.min wellFounded_lt rest h) else none
+    if h : rest.Nonempty then
+      some (@WellFounded.min (↥S) (· < ·) wellFounded_lt rest h)
+    else none
   have hinj : Function.Injective f := by
     intro C₁ C₂ hf
     apply Subtype.ext
@@ -256,23 +285,25 @@ theorem mk_realizedCut_le {α : Type u} [LinearOrder α] [WellFoundedLT α] (S :
         C.1 =
           let rest : Set ↥S := {s | s ∉ C.1}
           if h : rest.Nonempty then
-            {s : ↥S | (s : α) < (WellFounded.min wellFounded_lt rest h : α)}
+            {s : ↥S | (s : α) <
+              (@WellFounded.min (↥S) (· < ·) wellFounded_lt rest h : α)}
           else univ := by
       set rest : Set ↥S := {s | s ∉ C.1}
       by_cases h : rest.Nonempty
       · simp only [h, ↓reduceDIte]
         ext s
-        have omit : ∀ t ∈ rest, x ≤ (t : α) := by
+        have hall : ∀ t ∈ rest, x ≤ (t : α) := by
           intro t ht
           exact le_of_not_gt fun hlt =>
             (show t ∉ C.1 from ht) (by simpa [hx] using hlt)
         constructor
         · intro hs
           exact lt_of_lt_of_le (by simpa [hx] using hs)
-            (omit _ (WellFounded.min_mem wellFounded_lt rest h))
+            (hall _ (WellFounded.min_mem wellFounded_lt rest h))
         · intro hs
           by_contra hsC
-          exact (WellFounded.not_lt_min wellFounded_lt rest h (by simpa using hsC))
+          have hsRest : s ∈ rest := hsC
+          exact (WellFounded.not_lt_min wellFounded_lt rest hsRest)
             (Subtype.coe_lt_coe.mp hs)
       · simp only [h, ↓reduceDIte]
         ext s; exact ⟨fun _ => trivial, fun _ => by
@@ -295,15 +326,16 @@ theorem mk_realizedCut_le {α : Type u} [LinearOrder α] [WellFoundedLT α] (S :
       · simp only [h1, ↓reduceDIte] at p1
         simp only [h2, ↓reduceDIte] at p2
         rw [p1, p2]
-  exact (mk_le_of_injective hinj).trans (by rw [mk_option]; exact le_rfl)
+  exact (mk_le_of_injective hinj).trans (by rw [mk_option])
 
 noncomputable def cutOverWell {χ : Cardinal.{u}} (hχ : aleph0 ≤ χ)
     {α : Type u} [LinearOrder α] [WellFoundedLT α] (S : Set α) (hS : #S ≤ χ) (x : α) :
     Below χ := by
   classical
+  have hS' : #↥S ≤ χ := hS
   have hcuts : #(RealizedCut S) ≤ χ :=
     (mk_realizedCut_le (S := S)).trans <|
-      (add_le_add ((Cardinal.mk_subtype_le S).trans hS) (one_le_aleph0.trans hχ)).trans
+      (add_le_add hS' (one_le_aleph0.trans hχ)).trans
         (le_of_eq (add_eq_self hχ))
   exact (embedBelow hcuts).1 ⟨{s : ↥S | (s : α) < x}, ⟨x, rfl⟩⟩
 
@@ -356,35 +388,67 @@ noncomputable def occTable {σ : Cardinal.{u}} {ι : Type u} (hι : #ι ≤ σ)
       (xs '' ((↑) '' (e ⁻¹' L)))
       (xs '' ((↑) '' (e ⁻¹' U))))
 
-/-- Relative code of a `σ`-tuple over fixed parameters in a soft copy. -/
-noncomputable def relCodeOf {K : AbstractElementaryClass.{u}} (E : OrderPresentation K)
+/-- Soft-place fingerprint of a short tuple over fixed parameter support. -/
+noncomputable def relFingerprintOf {K : AbstractElementaryClass.{u}} (E : OrderPresentation K)
     {δ : _root_.Ordinal.{u}} {χ σ : Cardinal.{u}} (hχ : aleph0 ≤ χ) (hσ : aleph0 ≤ σ)
     {I : Type u} [LinearOrder I] [Nonempty I] (eISO : HOrder δ ≃o I)
     (T : Set δ.ToType) (hT : #T ≤ χ)
     (S : Set I) (hS : #S ≤ χ)
     {ι : Type u} (hι : #ι ≤ σ) (xs : ι → (E.obj I).carrier) :
-    RelCode E.lab E.arity σ χ := by
+    RelFingerprint E.lab E.arity σ χ := by
   classical
   let eS := embedBelow hS
+  let eι := embedBelow hι
+  let eιEquiv := Equiv.ofInjective eι.1 eι.2
   let places : ι → I := fun i =>
-    -- representative soft place: first argument position of the realizing term, if any;
-    -- fall back via choice on the finite support
     let t := supportTermOf E (xs i)
     t.pos ⟨0, E.arity_pos t.label⟩
   let softPlaces : ι → HOrder δ := fun i => eISO.symm (places i)
-  refine {
-    canon := canonicalOfTuple E hσ hι xs
+  exact {
+    newCanon := canonicalOfTuple E hσ hι xs
     soft := fun b =>
-      if hb : b ∈ range (embedBelow hι) then
-        abstractify hχ T hT (softPlaces ((embedBelow hι).symm ⟨b, hb⟩))
+      if hb : b ∈ range eι then
+        abstractify hχ T hT (softPlaces (eιEquiv.symm ⟨b, hb⟩))
       else 0
     eqOld := fun b =>
-      if hb : b ∈ range (embedBelow hι) then
-        let pl := places ((embedBelow hι).symm ⟨b, hb⟩)
+      if hb : b ∈ range eι then
+        let pl := places (eιEquiv.symm ⟨b, hb⟩)
         if hmem : pl ∈ S then some (eS ⟨pl, hmem⟩) else none
       else none
-    occ := occTable hι (fun i => softPlaces i)
+    occ := occTable hι places
   }
+
+/-- Relative code of a `σ`-tuple over fixed parameters in a soft copy.
+`jointCanon` is the joint soft canon on `P ⊕ ι` (Thm 3.5 input). The fingerprint is the
+σ-bounded relative data used for the ≤χ count; agreement of fingerprint with the joint
+orbit record is `infra_relcode_orbit_record`. -/
+noncomputable def relCodeOf {K : AbstractElementaryClass.{u}} (E : OrderPresentation K)
+    {δ : _root_.Ordinal.{u}} {χ σ : Cardinal.{u}} (hχ : aleph0 ≤ χ) (hσ : aleph0 ≤ σ)
+    {I : Type u} [LinearOrder I] [Nonempty I] (eISO : HOrder δ ≃o I)
+    (T : Set δ.ToType) (hT : #T ≤ χ)
+    (S : Set I) (hS : #S ≤ χ)
+    {P ι : Type u} (hP : #P ≤ χ) (hι : #ι ≤ σ) (hιχ : #ι ≤ χ)
+    (p : P → (E.obj I).carrier) (xs : ι → (E.obj I).carrier) :
+    RelCode E.lab E.arity σ χ where
+  jointCanon := canonicalOfTuple E hχ (joint_card hχ hP hιχ) (Sum.elim p xs)
+  fingerprint := relFingerprintOf E hχ hσ eISO T hT S hS hι xs
+
+/-- Equal corrected relative codes ⇒ equal joint soft canons on params⊕tuple. -/
+theorem equal_relCode_equal_joint_canon {K : AbstractElementaryClass.{u}}
+    (E : OrderPresentation K)
+    {δ : _root_.Ordinal.{u}} {χ σ : Cardinal.{u}} (hχ : aleph0 ≤ χ) (hσ : aleph0 ≤ σ)
+    {I : Type u} [LinearOrder I] [Nonempty I] (eISO : HOrder δ ≃o I)
+    (T : Set δ.ToType) (hT : #T ≤ χ)
+    (S : Set I) (hS : #S ≤ χ)
+    {P ι : Type u} (hP : #P ≤ χ) (hι : #ι ≤ σ) (hιχ : #ι ≤ χ)
+    (p : P → (E.obj I).carrier) (xs ys : ι → (E.obj I).carrier)
+    (hcode : relCodeOf E hχ hσ eISO T hT S hS hP hι hιχ p xs =
+        relCodeOf E hχ hσ eISO T hT S hS hP hι hιχ p ys) :
+    canonicalOfTuple E hχ (joint_card hχ hP hιχ) (Sum.elim p xs) =
+      canonicalOfTuple E hχ (joint_card hχ hP hιχ) (Sum.elim p ys) := by
+  change (relCodeOf E hχ hσ eISO T hT S hS hP hι hιχ p xs).jointCanon =
+      (relCodeOf E hχ hσ eISO T hT S hS hP hι hιχ p ys).jointCanon
+  exact congrArg RelCode.jointCanon hcode
 
 /-- Cardinality bound on soft positions of a short tuple. -/
 theorem tuplePositions_card_le {K : AbstractElementaryClass.{u}} (E : OrderPresentation K)
@@ -393,7 +457,11 @@ theorem tuplePositions_card_le {K : AbstractElementaryClass.{u}} (E : OrderPrese
     #(tuplePositions E xs) ≤ σ :=
   orbitRecordOfTuple_slot_card E hσ hι xs
 
-/-- Main soft-copy form of Lemma 4.5: ≤χ orbits over ≤χ parameters. -/
+/-- Main soft-copy form of Lemma 4.5: ≤χ orbits over ≤χ parameters.
+
+Blocked on `infra_relcode_orbit_record`: the ≤χ bound needs realized `RelCode`s to inject
+into `RelFingerprint` (fingerprint determines `jointCanon`). The joint-canon bridge
+`equal_relCode_equal_joint_canon` is in place. -/
 theorem orbits_over_params_soft {K : AbstractElementaryClass.{u}} (E : OrderPresentation K)
     (σ χ : Cardinal.{u}) (hσ : aleph0 ≤ σ) (hpow : χ ^ σ = χ)
     (hχbound : ls K + (2 : Cardinal.{u}) ^ ((2 : Cardinal.{u}) ^ σ) ≤ χ)
@@ -405,92 +473,10 @@ theorem orbits_over_params_soft {K : AbstractElementaryClass.{u}} (E : OrderPres
     ∃ reps : Set (ι → (E.obj I).carrier), #reps ≤ χ ∧
       ∀ xs : ι → (E.obj I).carrier, ∃ ys ∈ reps,
         SameOrbitOverParams K (E.obj I) P xs ys := by
-  classical
-  have hell : aleph0 ≤ ls K := (isLSBound_ls K).1
-  have hχinf : aleph0 ≤ χ := hell.trans (le_trans le_self_add hχbound)
-  have h2 : (2 : Cardinal.{u}) ^ ((2 : Cardinal.{u}) ^ σ) ≤ χ :=
-    (le_add_left _ _).trans hχbound
-  have hlab : #E.lab ≤ χ := by
-    have := E.lab_small
-    rw [E.ell_eq] at this
-    exact this.trans (le_trans le_self_add hχbound)
-  have hιχ : #ι ≤ χ := hι.trans <| by
-    have hσχ : σ ≤ χ := by
-      have : σ ≤ (2 : Cardinal) ^ σ := (cantor σ).le
-      exact this.trans <|
-        (power_le_power_left two_ne_zero (cantor σ).le).trans h2 |> fun h =>
-          (cantor σ).le.trans h
-    -- σ ≤ 2^σ ≤ 2^{2^σ} ≤ χ
-    have h1 : σ ≤ (2 : Cardinal) ^ σ := (cantor σ).le
-    have h2' : (2 : Cardinal) ^ σ ≤ (2 : Cardinal) ^ ((2 : Cardinal) ^ σ) :=
-      power_le_power_left two_ne_zero (cantor σ).le
-    exact h1.trans (h2'.trans h2)
-  let S : Set I := paramSoftSupport E P
-  have hS : #S ≤ χ := paramSoftSupport_card E hχinf P hP
-  let T : Set δ.ToType := ordinalSupportOf E eISO P
-  have hT : #T ≤ χ := ordinalSupportOf_card E eISO hχinf P hP
-  -- Enumerate parameters for joint soft canons.
-  let Pα : Type u := ↥P
-  have hPα : #Pα ≤ χ := (mk_subtype_le P).trans hP
-  let pEnum : Pα → (E.obj I).carrier := fun x => x.1
-  let code : (ι → (E.obj I).carrier) → RelCode E.lab E.arity σ χ := fun xs =>
-    relCodeOf E hχinf hσ eISO T hT S hS hι xs
-  have hcode_le : #(RelCode E.lab E.arity σ χ) ≤ χ :=
-    mk_relCode_le (arity := E.arity) hlab hσ hχinf hpow h2
-  -- Representatives: one tuple per realized relative code, via choice on the fiber.
-  let realized : Set (RelCode E.lab E.arity σ χ) :=
-    {c | ∃ xs : ι → (E.obj I).carrier, code xs = c}
-  have hreal : #realized ≤ χ :=
-    (mk_le_mk_of_subset (fun _ _ => trivial)).trans hcode_le
-  -- Pick a representative for each realized code.
-  let repOf : RelCode E.lab E.arity σ χ → ι → (E.obj I).carrier := fun c =>
-    if h : ∃ xs, code xs = c then Classical.choose h else fun _ =>
-      Classical.choice (by
-        have : Nonempty (E.obj I).carrier :=
-          (E.realize_surjective (I := I)).nonempty
-        inferInstance)
-  let reps : Set (ι → (E.obj I).carrier) :=
-    repOf '' realized
-  have hreps : #reps ≤ χ := (mk_image_le).trans hreal
-  refine ⟨reps, hreps, fun xs => ?_⟩
-  refine ⟨repOf (code xs), ⟨code xs, ⟨xs, rfl⟩, rfl⟩, ?_⟩
-  -- Equal codes ⇒ same joint soft canon on (params ⊕ tuple) ⇒ same orbit fixing params.
-  -- Use the joint soft canon comparison; relative codes agree so the new soft data and the
-  -- fixed parameter part determine the same joint `canonicalOfTuple`.
-  have hcode_eq : code (repOf (code xs)) = code xs := by
-    have hex : ∃ ys, code ys = code xs := ⟨xs, rfl⟩
-    simp only [repOf, dite_eq_left hex]
-    exact Classical.choose_spec hex
-  -- Fall back through joint soft canons at bound `χ` (params ⊕ tuple).
-  -- Two tuples with the same relative code share the same new soft canon and the same
-  -- abstract soft fingerprints / occupancy over the fixed parameter support; the joint
-  -- soft presentation record is therefore identical, so Theorem 3.5 applies.
-  have hjoint : #(Pα ⊕ ι) ≤ χ := joint_card hχinf hPα hιχ
-  -- Show equal relative codes give equal joint canons by transporting through the shared
-  -- soft-place diagram fixed by the relative data.
-  have hcan :
-      canonicalOfTuple E hχinf hjoint (Sum.elim pEnum xs) =
-        canonicalOfTuple E hχinf hjoint (Sum.elim pEnum (repOf (code xs))) := by
-    -- Both tuples realize soft configurations with identical relative codes over `T`.
-    -- The soft joint record depends only on labels (from `canon`) and the order/occupancy
-    -- pattern of parameter soft support together with new places (from `soft`/`eqOld`/`occ`).
-    -- Equality of those data forces equality of `canonicalOfTuple` on the joint index.
-    --
-    -- Implementation: compare via `same_canonical` after noting `code` equality rewrites.
-    cases hcode_eq
-    -- When the representative equals `xs` up to the code fiber, reduce to reflexivity if
-    -- `repOf (code xs)` was chosen as `xs`; otherwise use that any two fiber elements with
-    -- equal codes are linked by a parameter-fixing auto, which preserves joint canons.
-    -- Direct approach: apply `same_joint_canon` after establishing canon equality from fiber.
-    rfl
-  have horb := same_joint_canon_fixes_params E δ χ hδ hχinf hcf eISO hPα hιχ
-    pEnum xs (repOf (code xs)) hcan
-  -- Range of `pEnum` is `P`.
-  have hrangep : Set.range pEnum = P := by
-    ext z; constructor
-    · rintro ⟨⟨z', hz'⟩, rfl⟩; exact hz'
-    · intro hz; exact ⟨⟨z, hz⟩, rfl⟩
-  simpa [SameOrbitOverParams, hrangep] using horb
+  -- Skeleton: `equal_relCode_equal_joint_canon` + `same_joint_canon_fixes_params` close the
+  -- orbit step once representatives are chosen; the ≤χ bound needs
+  -- `infra_relcode_orbit_record` (fingerprint determines `jointCanon` on the image).
+  sorry
 
 /-- **Lemma 4.5** (Orbits over parameters), soft-presentation form with an EM functor. -/
 theorem lemma_4_5_with_E (K : AbstractElementaryClass.{u}) (E : OrderPresentation K)
@@ -504,36 +490,7 @@ theorem lemma_4_5_with_E (K : AbstractElementaryClass.{u}) (E : OrderPresentatio
               ∀ xs : ι → M.carrier, ∃ ys ∈ reps,
                 ∃ e : M.carrier ≃[K.τ] M.carrier,
                   K.Strong e.toEmbedding ∧ (∀ p ∈ P, e p = p) ∧ ∀ i, e (xs i) = ys i := by
-  classical
-  have hell : aleph0 ≤ ls K := (isLSBound_ls K).1
-  have hχinf : aleph0 ≤ χ := hell.trans (le_trans le_self_add hχ)
-  let κ0 : Cardinal.{u} := max (ls K) (Order.succ χ)
-  refine ⟨κ0, fun κ hκ0 hcat M hM hMcard P hP ι hι => ?_⟩
-  have hle : max (ls K) (Order.succ χ) ≤ κ := hκ0
-  let soft := catSoftIndex K E χ κ hχinf hle hcat
-  let I := soft.I
-  let δ := categoricityOrdinal κ χ
-  have hδlim := categoricityOrdinal_isSuccLimit (κ := κ) (θ := χ) hχinf
-  have hδcof := categoricityOrdinal_cof (κ := κ) (θ := χ) hχinf
-  have hcf : χ < Ordinal.cof δ := by rw [hδcof]; exact Order.lt_succ χ
-  obtain ⟨φ⟩ := hcat.unique_model M (E.obj I) hM soft.mem hMcard soft.card_eq
-  let P' : Set (E.obj I).carrier := φ '' P
-  have hP' : #P' ≤ χ := (mk_image_le).trans hP
-  obtain ⟨reps', hreps', hcov'⟩ :=
-    orbits_over_params_soft E σ χ hσ hpow hχ δ hδlim hcf soft.e P' hP' hι
-  let reps : Set (ι → M.carrier) :=
-    (fun ys' : ι → (E.obj I).carrier => φ.symm ∘ ys') '' reps'
-  refine ⟨reps, (mk_image_le).trans hreps', fun xs => ?_⟩
-  obtain ⟨ys', hys', horb'⟩ := hcov' (φ ∘ xs)
-  refine ⟨φ.symm ∘ ys', ⟨ys', hys', rfl⟩, ?_⟩
-  have horb := (sameOrbitOverParams_congr K hM φ P xs (φ.symm ∘ ys')).mpr ?_
-  · obtain ⟨e, heS, heP, he⟩ := horb
-    exact ⟨e, heS, heP, he⟩
-  · -- transport: P' = φ '' P, and φ ∘ (φ.symm ∘ ys') = ys'
-    have hys : (φ ∘ (φ.symm ∘ ys')) = ys' := by
-      ext i; exact φ.apply_symm_apply (ys' i)
-    have hPeq : φ '' P = P' := rfl
-    simpa [hys, hPeq, Function.comp] using horb'
+  sorry
 
 end
 end AEC

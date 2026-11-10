@@ -122,7 +122,7 @@ False `6.13→6.14` / `5.8→5.9` edges removed. Later adjacent-number edges sti
 |------|-------|----------|
 | `theorem_3_11` | Theorem 3.11 | `AEC/Section3/Results.lean:448` (**failed**: profile / assign / renaming) |
 | `proposition_4_3` | Proposition 4.3 | `AEC/Section4/Results.lean` (**done**: `prop43_hull_back_and_forth` in `Prop43BAF.lean`; hull back-and-forth on `HullMatch` stages, uses the new `StableDiagram.trans` field) |
-| `lemma_4_5` | Lemma 4.5 | `AEC/Section4/Results.lean:1216` (**failed**: RelCode ⇏ joint `canonicalOfTuple` / orbit; see `infra_relcode_joint_canonical`, `infra_relcode_orbit_record`) |
+| `lemma_4_5` | Lemma 4.5 | `AEC/Section4/Results.lean:1216` (**failed**: needs `infra_relcode_orbit_record` for ≤χ fingerprint⇒joint injection; `infra_relcode_joint_canonical` done via `equal_relCode_equal_joint_canon`) |
 | `lemma_4_6` | Lemma 4.6 | `AEC/Section4/Results.lean:1248` (**failed**: needs `SameNaturalDiagram` API + block-swap pattern preservation → `D.same`; no short order-iso shortcut) |
 | `lemma_4_7` | Lemma 4.7 | `AEC/Section4/Results.lean` (**done**: `type_u_witness_set_param`) |
 | `proposition_4_8` | Proposition 4.8 | `AEC/Section4/Results.lean:1274` |

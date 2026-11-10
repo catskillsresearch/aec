@@ -200,7 +200,8 @@
       "section": 4,
       "file": "AEC/Section4/Results.lean",
       "status": "failed",
-      "blocker": "Needs RelCode \u21d2 joint canonicalOfTuple / SameOrbit bridge (infra_relcode_joint_canonical + infra_relcode_orbit_record); cardinality shell exists in OrbitsOverParameters"
+      "blocker": "Needs RelCode fingerprint \u21d2 jointCanon / SameOrbit bridge (infra_relcode_orbit_record); equal_relCode_equal_joint_canon done",
+      "detail": ""
     },
     {
       "id": "lemma_4_6",
@@ -883,9 +884,9 @@
       "label": "Infra: RelCode \u21d2 joint canon",
       "section": 4,
       "file": "AEC/Section4/OrbitsOverParameters.lean",
-      "status": "open",
-      "blocker": "Equal RelCodes \u21d2 equal joint canonicalOfTuple on P \u2295 \u03b9 (Thm 3.5 input)",
-      "detail": "Core gap in orbits_over_params_soft; cases hcode_eq; rfl is invalid"
+      "status": "done",
+      "blocker": null,
+      "detail": "Proved equal_relCode_equal_joint_canon: RelCode.jointCanon stores canonicalOfTuple on P\u2295\u03b9; equal codes \u21d2 equal joint canons via congrArg"
     },
     {
       "id": "infra_relcode_orbit_record",
@@ -893,8 +894,8 @@
       "section": 4,
       "file": "AEC/Section4/OrbitsOverParameters.lean",
       "status": "open",
-      "blocker": "relCodeOf must match joint orbitRecordOfTuple over params+tuple (not \u03c3-only canon)",
-      "detail": "Refactor or prove agreement of soft/eqOld/occ with soft presentation record"
+      "blocker": "Fingerprint must determine jointCanon on image of relCodeOf (for \u2264\u03c7 count); soft/eqOld/occ \u2194 joint orbitRecordOfTuple",
+      "detail": "orbits_over_params_soft / lemma_4_5_with_E sorry pending this; RelFingerprint \u2264\u03c7 is proved (mk_relFingerprint_le)"
     },
     {
       "id": "infra_template_fixed_support",
@@ -1530,5 +1531,5 @@
       "kind": "hard"
     }
   ],
-  "doneCount": 36
+  "doneCount": 37
 }
