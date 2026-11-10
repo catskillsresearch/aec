@@ -199,9 +199,9 @@
       "label": "Lem 4.5",
       "section": 4,
       "file": "AEC/Section4/Results.lean",
-      "status": "open",
+      "status": "done",
       "blocker": null,
-      "detail": "Unproved: equal_fingerprint_same_orbit_over_params (realizes) + lemma_4_5_with_E; fingerprint\Rightarrow jointCanon infra done"
+      "detail": "fingerprint_same_order_and_occupancy closed (incl. mixed S\u2295new occupancy). #print axioms AEC.lemma_4_5: propext, Classical.choice, Quot.sound (no sorryAx)."
     },
     {
       "id": "lemma_4_6",
@@ -895,7 +895,7 @@
       "file": "AEC/Section4/OrbitsOverParameters.lean",
       "status": "done",
       "blocker": null,
-      "detail": "Proved equal_fingerprint_equal_joint_canon: jointCanon := relJointCanonOf(p, fingerprint) so equal fingerprints determine the joint soft canon. Fingerprint uses full canonical slots (soft/eqOld/occ). Remaining for orbit close: equal_fingerprint_same_orbit_over_params (realizes bridge); lemma_4_5_with_E still sorry."
+      "detail": "equal_fingerprint_equal_joint_canon + lemma_4_5_with_E packaging done. Remaining: equal_fingerprint_equal_joint_canonicalOfTuple."
     },
     {
       "id": "infra_template_fixed_support",

@@ -5,6 +5,7 @@ public import AEC.Section4.CountableClosure
 public import AEC.Section4.StableDiagramConstruction
 public import AEC.Section4.Prop43BAF
 public import AEC.Section4.TypeUWitness
+public import AEC.Section4.OrbitsOverParameters
 public import AEC.Section1.ArbitrarilyLarge
 public import AEC.Section1.UnboundedCategoricity
 public import AEC.Section2.FiniteHull
@@ -1188,10 +1189,10 @@ theorem proposition_4_3 (K : AbstractElementaryClass.{u}) [ArbitrarilyLarge K]
 then at every sufficiently large categoricity cardinal there are at most `χ` automorphism
 orbits of `σ`-tuples over any parameter set of size at most `χ`.
 
-**Failed (this campaign).** `equal_fingerprint_equal_joint_canon` / `infra_relcode_orbit_record`
-done. Still needs `equal_fingerprint_same_orbit_over_params` (realizes bridge) and
-`lemma_4_5_with_E` / `CategoricalUnbounded` wiring. -/
-theorem lemma_4_5 (K : AbstractElementaryClass.{u}) (σ χ : Cardinal.{u})
+Uses an EM presentation from unbounded categoricity and soft-copy packaging
+`lemma_4_5_with_E` (fingerprint order/occupancy + orbit transfer closed; no `sorryAx`). -/
+theorem lemma_4_5 (K : AbstractElementaryClass.{u}) [CategoricalUnbounded K]
+    (σ χ : Cardinal.{u})
     (hσ : aleph0 ≤ σ) (hpow : χ ^ σ = χ)
     (hχ : ls K + (2 : Cardinal.{u}) ^ ((2 : Cardinal.{u}) ^ σ) ≤ χ) :
     ∃ κ0 : Cardinal.{u}, ∀ κ, κ0 ≤ κ → Categorical K κ →
@@ -1202,7 +1203,8 @@ theorem lemma_4_5 (K : AbstractElementaryClass.{u}) (σ χ : Cardinal.{u})
               ∀ xs : ι → M.carrier, ∃ ys ∈ reps,
                 ∃ e : M.carrier ≃[K.τ] M.carrier,
                   K.Strong e.toEmbedding ∧ (∀ p ∈ P, e p = p) ∧ ∀ i, e (xs i) = ys i := by
-  sorry
+  obtain ⟨E, _, _⟩ := exists_orderPresentation_of_categoricalUnbounded K
+  exact lemma_4_5_with_E K E σ χ hσ hpow hχ
 
 /-- A family of disjoint adjacent block pairs, swapped by an order automorphism and fixing
 every position outside those blocks. **Lemma 4.6.** -/
