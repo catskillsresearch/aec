@@ -72,11 +72,13 @@ public import AEC.Section3.ShortOrbit
 public import AEC.Section3.StrictSlot
 public import AEC.Section3.SupportClosure
 public import AEC.Section3.VectorRank
+public import AEC.Section4.BoundedDiagramLift
 public import AEC.Section4.CompactPlacement
 public import AEC.Section4.CountableBackAndForth
 public import AEC.Section4.CountableClosure
 public import AEC.Section4.NaturalDiagram
 public import AEC.Section4.PairColoringGlue
+public import AEC.Section4.PlacedTesting
 public import AEC.Section4.Prop43BAF
 public import AEC.Section4.RankSlice
 public import AEC.Section4.Results

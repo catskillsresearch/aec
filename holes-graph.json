@@ -1,6 +1,6 @@
 {
   "updated": "2026-11-10",
-  "sorryCount": 66,
+  "sorryCount": 65,
   "legend": {
     "open": "No unfinished required proof-deps — try next",
     "blocked": "Waiting on incomplete required proof-deps",
@@ -17,7 +17,9 @@
     "Target: every Results/paper node reaches Thm 1.2 or 1.3; dead-code analysis should eventually justify each hard edge.",
     "sorryCount is the live count of sorry tokens under AEC/ (ABSTRACT_WIP in scripts/build_aec_tex.py may lag).",
     "Prop 4.8 is done on the support encoding (UniformTesting.lean): g σ = max ℵ₀ σ, test set = joint support, for infinite σ. The Lean proof does not use Lemma 4.7, so lemma_4_7 → proposition_4_8 is soft (English-only); lemma_4_7 stays wired through its English use in Lem 12.5.",
-    "Prop 4.9 is done by the English support-profile obstruction (CompactPlacement.lean). Statement changes: [CategoricalUnbounded K], ℵ₀ ≤ σ, natural-parameter clause hnat, coherence clause hcoh; the prescription for p is the diagram of a tuple q p of E(I), so possibility needs no hypothesis. Hard edge proposition_4_2 → proposition_4_9 added (strong-map clause of Prop 4.2). Lemma 4.10 is unblocked: its only hard dep is Prop 4.9; a natural instantiation of q p is via a strong map B → E(I) fixing p (Prop 4.2 at μ), which satisfies hnat and hcoh."
+    "Prop 4.9 is done by the English support-profile obstruction (CompactPlacement.lean). Statement changes: [CategoricalUnbounded K], ℵ₀ ≤ σ, natural-parameter clause hnat, coherence clause hcoh; the prescription for p is the diagram of a tuple q p of E(I), so possibility needs no hypothesis. Hard edge proposition_4_2 → proposition_4_9 added (strong-map clause of Prop 4.2). Lemma 4.10 is unblocked: its only hard dep is Prop 4.9; a natural instantiation of q p is via a strong map B → E(I) fixing p (Prop 4.2 at μ), which satisfies hnat and hcoh.",
+    "Lemma 4.10 is done (BoundedDiagramLift.lean, PlacedTesting.lean). Statement changes: the old statement was vacuous, since each test clause carried D.t μ ≤ Model.card B while Model.card B = μ < D.t μ (StableDiagram.above). Now the lift clauses are at the bounded levels ρ < μ (the diagrams D(d, X; B), |X| < μ, whose thresholds lie below μ), J is produced with D.t μ ≤ ‖E(J)‖, and uniqueness is the level-μ comparison over all of A; added [CategoricalUnbounded K], hcat : Categorical K μ, ℵ₀ ≤ σ, and hg : PlacedTester K E D g. PlacedTester is the English Prop 4.8 over the base (placements of a σ-tuple over E(I) that differ over A differ over ≤ g(σ) positions of I); it is proved as proposition_4_8_over_base / exists_placedTester from Lemma 4.7 (type_u_witness_set) by the frozen-data / ordinal-vector argument, because proposition_4_8 on the support encoding only tests two full lists on their own joint support. So lemma_4_7 → proposition_4_8 is hard again, and proposition_4_8, proposition_4_2 (strong maps B → E(I) fixing parameters), proposition_4_3 (common hulls, categoricity at μ) → lemma_4_10 are hard.",
+    "Thm 4.11 is unblocked but its Lean statement needs repair before proving: clause 2 tests at level μ under h₀ : D.t μ ≤ Model.card B₀ and h₁ : D.t μ ≤ Model.card B₁ with Model.card Bᵢ = μ, which is unsatisfiable (same defect as the old lemma_4_10), so the right side of the iff is vacuously true and the iff would identify any two tuples (not possible for two distinct elements of A). The tests should be at a bounded level ρ < μ as in lemma_4_10. Also g is an arbitrary monotone function there; lemma_4_10 needs a testing bound hg : PlacedTester K E D g (from proposition_4_8_over_base), an OrderPresentation E, [CategoricalUnbounded K], and ℵ₀ ≤ σ."
   ],
   "nodes": [
     {
@@ -197,9 +199,9 @@
       "label": "Lem 4.10",
       "section": 4,
       "file": "AEC/Section4/Results.lean",
-      "status": "open",
+      "status": "done",
       "blocker": null,
-      "detail": "Unblocked by Prop 4.9 (done). proposition_4_9 now asks for hnat/hcoh on the prescriptions q and for ℵ₀ ≤ σ and [CategoricalUnbounded K]; a natural choice is q p = φ_p ∘ (d, incl ∘ p) for a strong φ_p : B → E(I) with φ_p (incl (p b)) = p b (D.to_strong at the categoricity cardinal μ), so that hnat is D.refl and hcoh follows from D.of_strong, D.symm, D.trans."
+      "detail": "BoundedDiagramLift.lean (boundedDiagramLift, exists_boundedDiagramLift): cofinal χ = 2^(κ ⊔ σ) with χ^σ = χ (exists_power_fixed_below); prescription q p = (φ ∘ d, p) for a strong φ : B → E(I) fixing p (exists_paramFixing, D.to_strong at the categoricity cardinal μ; hnat by D.refl, hcoh by D.of_strong / D.trans); compact_placement at χ (exists_placement_lifting); two placements lifting the tests at one χ ≥ g(σ) agree on every set of ≤ g(σ) positions (agreeOn_of_lifts) hence on all of I by the placed tester (agreeOn_univ_of_lifts); a fixed one lifts every bounded test (releveling by common hulls, StableDiagram.same_relevel); uniqueness Placement.LiftsBounded.agreeOn_univ; restriction clause Placement.LiftsBounded.reindex. PlacedTesting.lean (exists_placedTester): the English Prop 4.8 over the base, by frozen data on the union of the supports (FrozenData), ordinal vectors of component lengths (Layout, Layout.exists_embedding) and Lemma 4.7 (type_u_witness_set, exists_frozenBound). Statement changes: bounded test levels ρ < μ instead of the unsatisfiable level-μ hypothesis D.t μ ≤ Model.card B; J produced with D.t μ ≤ ‖E(J)‖; added [CategoricalUnbounded K], hcat, ℵ₀ ≤ σ, hg : PlacedTester K E D g. No sorry (axioms: propext, Classical.choice, Quot.sound)."
     },
     {
       "id": "lemma_4_5",
@@ -251,7 +253,7 @@
       "file": "AEC/Section4/Results.lean",
       "status": "done",
       "blocker": null,
-      "detail": "UniformTesting.lean: exists_linearOrder_amalgam (cut-lex amalgam of linear orders over a common suborder), SameNaturalDiagram.along / sameNaturalDiagram_restrict_iff (diagram comparison depends only on the joint support, via D.of_strong, so needs ℵ₀ ≤ σ), testingSet with #X ≤ max ℵ₀ σ. Statement changes: DiagramsDifferOnSubset now speaks about the restrictions of the given placements; added hypothesis ℵ₀ ≤ σ. No sorry (axioms: propext, Classical.choice, Quot.sound)."
+      "detail": "UniformTesting.lean: exists_linearOrder_amalgam (cut-lex amalgam of linear orders over a common suborder), SameNaturalDiagram.along / sameNaturalDiagram_restrict_iff (diagram comparison depends only on the joint support, via D.of_strong, so needs ℵ₀ ≤ σ), testingSet with #X ≤ max ℵ₀ σ. Statement changes: DiagramsDifferOnSubset now speaks about the restrictions of the given placements; added hypothesis ℵ₀ ≤ σ. No sorry (axioms: propext, Classical.choice, Quot.sound). The English form over the base used by Lemma 4.10 is proposition_4_8_over_base (PlacedTesting.lean, exists_placedTester : PlacedTester K E D g for a nondecreasing infinite g), proved from Lemma 4.7; g is not explicit there."
     },
     {
       "id": "proposition_4_9",
@@ -267,8 +269,9 @@
       "label": "Thm 4.11",
       "section": 4,
       "file": "AEC/Section4/Results.lean",
-      "status": "blocked",
-      "blocker": null
+      "status": "open",
+      "blocker": null,
+      "detail": "Unblocked by Lemma 4.10 (done). Repair the statement first: clause 2 tests at level μ under D.t μ ≤ Model.card Bᵢ with Model.card Bᵢ = μ < D.t μ, so its right side is vacuous and the iff cannot hold for two distinct elements of A; restate the tests at a bounded level ρ < μ as in lemma_4_10. lemma_4_10 needs hg : PlacedTester K E D g (proposition_4_8_over_base supplies a monotone infinite g), an OrderPresentation E, [CategoricalUnbounded K], hcat and ℵ₀ ≤ σ; the current statement assumes only that g is monotone."
     },
     {
       "id": "lemma_5_4",
@@ -950,8 +953,8 @@
     {
       "from": "lemma_4_7",
       "to": "proposition_4_8",
-      "kind": "soft",
-      "note": "English proof of 4.8 applies Lemma 4.7; the Lean proof on the support encoding does not."
+      "kind": "hard",
+      "note": "proposition_4_8_over_base (the English form, PlacedTesting.lean) applies Lemma 4.7 via type_u_witness_set; proposition_4_8 on the support encoding does not."
     },
     {
       "from": "lemma_4_7",
@@ -961,6 +964,21 @@
     {
       "from": "proposition_4_8",
       "to": "proposition_4_9",
+      "kind": "hard"
+    },
+    {
+      "from": "proposition_4_8",
+      "to": "lemma_4_10",
+      "kind": "hard"
+    },
+    {
+      "from": "proposition_4_2",
+      "to": "lemma_4_10",
+      "kind": "hard"
+    },
+    {
+      "from": "proposition_4_3",
+      "to": "lemma_4_10",
       "kind": "hard"
     },
     {
@@ -1614,5 +1632,5 @@
       "kind": "hard"
     }
   ],
-  "doneCount": 46
+  "doneCount": 47
 }

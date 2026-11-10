@@ -4,6 +4,8 @@ public import AEC.Section4.NaturalDiagram
 public import AEC.Section4.UniformTesting
 public import AEC.Section4.BlockInterchange
 public import AEC.Section4.CompactPlacement
+public import AEC.Section4.PlacedTesting
+public import AEC.Section4.BoundedDiagramLift
 public import AEC.Section4.CountableClosure
 public import AEC.Section4.StableDiagramConstruction
 public import AEC.Section4.Prop43BAF
@@ -1252,6 +1254,27 @@ theorem proposition_4_8 (K : AbstractElementaryClass.{u}) (E : OrderPresentation
     termSupport_subset_testingSet_left E t s, termSupport_subset_testingSet_right E t s,
     not_sameNaturalDiagram_restrict_testingSet E D hσinf hσ t s hne⟩
 
+/-- **Proposition 4.8, over the base** (the form of `text.md` used by Lemma 4.10). There is a
+nondecreasing infinite cardinal function `g` such that, over every well-order `I`, two
+placements of a tuple of length at most `σ` over `A = E(I)` whose placed comparisons over `A`
+differ already have different natural diagrams over a set of at most `g(σ)` positions of `I`
+(`PlacedTester`: placements agreeing on every such set agree on all of `I`). The bound is
+independent of `|I|`.
+
+`proposition_4_8` above tests a comparison of two full lists on their own joint support; it
+does not bound the parameters of `A` needed to separate two placements of a `σ`-tuple. This is
+the English statement, proved in `PlacedTesting.lean` by the English argument: frozen data of
+the union `T` of the two supports (`FrozenData`), the ordinal vector of the lengths of the
+components of `I \ T` in the strict slots over `T` (`Layout`), embeddings of configurations
+from coordinatewise domination (`Layout.exists_embedding`), and Lemma 4.7
+(`type_u_witness_set`) on the class of unequal configurations (`exists_frozenBound`). Here `g`
+is not explicit. -/
+theorem proposition_4_8_over_base (K : AbstractElementaryClass.{u}) [CategoricalUnbounded K]
+    (E : OrderPresentation K) (D : StableDiagram K) :
+    ∃ g : Cardinal.{u} → Cardinal.{u},
+      (∀ σ τ, σ ≤ τ → g σ ≤ g τ) ∧ (∀ σ, aleph0 ≤ g σ) ∧ PlacedTester K E D g :=
+  exists_placedTester E D
+
 /-- **Proposition 4.9** (Compact placement). Coherent prescriptions of joint diagrams of a
 tuple of length at most `σ` with every parameter set of size at most `χ`, where
 `χ ^ σ = χ` and `χ > ℓ + σ`, are realized by one placement over `I`.
@@ -1333,30 +1356,54 @@ theorem proposition_4_9 (K : AbstractElementaryClass.{u}) [CategoricalUnbounded 
     exact absurd hcardI' hcardI
 
 /-- **Lemma 4.10** (Unique lifts of bounded diagrams). At a strong limit `μ > ℓ` of countable
-cofinality strictly closed under `t` and `g`, the diagrams of a bounded tuple in `B` over
+cofinality strictly closed under `t` and `g`, the diagrams of a bounded tuple `d` of `B` over
 bounded subsets of `A = E(I)` lift to one placed comparison over `A`, uniquely as a comparison
-diagram. -/
-theorem lemma_4_10 (K : AbstractElementaryClass.{u}) (E : OrderPresentation K)
-    (D : StableDiagram K) (g : Cardinal.{u} → Cardinal.{u})
-    (μ σ : Cardinal.{u}) (hμ : IsClosurePoint {D.t, g} μ) (hσ : σ < μ)
-    (hℓ : ls K < μ) {I : Type u} [LinearOrder I] [Nonempty I] [WellFoundedLT I]
+diagram.
+
+* The diagrams `D(d, X; B)`, `X ⊆ A`, `|X| < μ`, are the diagrams of `(d, p)` at the infinite
+  bounds `ρ < μ`: their thresholds `t(ρ)` lie below `μ = ‖B‖`. (A diagram of length `μ` is not
+  defined in `B`, since `t(μ) > μ` by `StableDiagram.above`.)
+* The lift is a tuple `z` of `E(J)`, `J ⊇ I`; `J` is taken above the threshold for diagrams of
+  length `μ`, so that the placed comparison of `z` over all of `A` is defined in `E(J)`.
+* Uniqueness: every other lift `z'` in a presentation above that threshold has the same
+  diagram with every parameter tuple of `A` of length at most `μ`. The form for arbitrary
+  lifts is `Placement.LiftsBounded.agreeOn_univ` (equality of natural diagrams), and
+  `Placement.LiftsBounded.reindex` is the restriction clause.
+
+Hypotheses beyond the English statement: `μ` is a categoricity cardinal (`hcat`, Proposition
+4.3 at `μ`), `σ` is infinite as in every operational clause of `StableDiagram`, and `g` is a
+testing bound of Proposition 4.8 (`hg : PlacedTester K E D g`, supplied by
+`proposition_4_8_over_base`).
+
+Proof (`BoundedDiagramLift.lean`, following `text.md`): for `χ < μ` with `χ ^ σ = χ`,
+Proposition 4.9 gives a placement realizing the tests of size at most `χ`; the prescription
+for `p` is the diagram of `(φ ∘ d, p)` for a strong `φ : B → A` fixing `p`. Once `χ ≥ g(σ)`
+any two such placements have the same full comparison by Proposition 4.8. Fix one; every
+bounded test is covered by a larger `χ`. -/
+theorem lemma_4_10 (K : AbstractElementaryClass.{u}) [CategoricalUnbounded K]
+    (E : OrderPresentation K)
+    (D : StableDiagram K) (g : Cardinal.{u} → Cardinal.{u}) (hg : PlacedTester K E D g)
+    (μ σ : Cardinal.{u}) (hμ : IsClosurePoint {D.t, g} μ) (hσinf : aleph0 ≤ σ) (hσ : σ < μ)
+    (hℓ : ls K < μ) (hcat : Categorical K μ)
+    {I : Type u} [LinearOrder I] [Nonempty I] [WellFoundedLT I]
     (hI : #I = μ) (Aeq : K.Mem (E.obj I))
     (B : Model K.τ) (incl : Language.Embedding K.τ (E.obj I).carrier B.carrier)
     (hB : K.Mem B) (hstrong : K.Strong incl) (hcard : Model.card B = μ)
     {α : Type u} (d : α → B.carrier) (hα : #α ≤ σ) :
     ∃ (J : Type u) (_ : LinearOrder J) (_ : Nonempty J) (f : I ↪o J)
       (z : α → (E.obj J).carrier) (hJ : K.Mem (E.obj J)),
-      (∀ {β : Type u} (p : β → (E.obj I).carrier)
-          (hjoint : #(α ⊕ β) ≤ μ)
-          (hBcard : D.t μ ≤ Model.card B) (hJcard : D.t μ ≤ Model.card (E.obj J)),
+      D.t μ ≤ Model.card (E.obj J) ∧
+      (∀ {β : Type u} (ρ : Cardinal.{u}) (_ : aleph0 ≤ ρ) (_ : ρ < μ)
+          (p : β → (E.obj I).carrier) (hjoint : #(α ⊕ β) ≤ ρ)
+          (hBcard : D.t ρ ≤ Model.card B) (hJcard : D.t ρ ≤ Model.card (E.obj J)),
           D.same hjoint hB hJ hBcard hJcard
             (Sum.elim d (fun b => incl (p b)))
             (Sum.elim z (fun b => E.map f (p b)))) ∧
       ∀ {J' : Type u} [LinearOrder J'] [Nonempty J'] (f' : I ↪o J')
         (z' : α → (E.obj J').carrier) (hJ' : K.Mem (E.obj J')),
-        (∀ {β : Type u} (p : β → (E.obj I).carrier)
-            (hjoint : #(α ⊕ β) ≤ μ)
-            (hBcard : D.t μ ≤ Model.card B) (hJcard : D.t μ ≤ Model.card (E.obj J')),
+        (∀ {β : Type u} (ρ : Cardinal.{u}) (_ : aleph0 ≤ ρ) (_ : ρ < μ)
+            (p : β → (E.obj I).carrier) (hjoint : #(α ⊕ β) ≤ ρ)
+            (hBcard : D.t ρ ≤ Model.card B) (hJcard : D.t ρ ≤ Model.card (E.obj J')),
             D.same hjoint hB hJ' hBcard hJcard
               (Sum.elim d (fun b => incl (p b)))
               (Sum.elim z' (fun b => E.map f' (p b)))) →
@@ -1366,8 +1413,8 @@ theorem lemma_4_10 (K : AbstractElementaryClass.{u}) (E : OrderPresentation K)
           (hJ'card : D.t μ ≤ Model.card (E.obj J')),
           D.same hjoint hJ hJ' hJcard hJ'card
             (Sum.elim z (fun b => E.map f (p b)))
-            (Sum.elim z' (fun b => E.map f' (p b))) := by
-  sorry
+            (Sum.elim z' (fun b => E.map f' (p b))) :=
+  boundedDiagramLift hg hμ hσinf hσ hℓ hcat hI hstrong hcard hα
 
 /-- **Theorem 4.11** (Amalgamation at closed levels). An unbounded class of strong-limit
 cardinals of countable cofinality, strictly closed under `t` and `g`, consists of
