@@ -5,6 +5,9 @@ public import AEC.Section5.PaddedOrder
 public import AEC.Section5.RichPaddedOrder
 public import AEC.Section5.EligibleSubclass
 public import AEC.Section5.TermTemplate
+public import AEC.Section5.NamedWorkingScheme
+public import AEC.Section5.NamedPackageTransfer
+public import AEC.Section5.NamedRealizationExistence
 public import AEC.Section4.CountableClosure
 public import AEC.Section4.StableDiagram
 public import Mathlib.Order.WellFoundedSet
@@ -170,11 +173,15 @@ theorem proposition_5_6 (K : AbstractElementaryClass.{u}) (D : StableDiagram K)
 /-- **Proposition 5.7** (Naming bounded data). On an unbounded class of higher eligible levels,
 the diagram of a fixed bounded list is realized, and those levels carry a working scheme.
 
-Named scheme data and package transfer are available (`namedWorkingScheme`,
-`isWorkingPackage_namedWorkingScheme`); remaining gap is existence of realizations on a
-tail `T` (and the shape/`eligible` packaging into the ∃-statement). -/
+Uses Convention 5.3 (`hElig`), presentations (`HasPresentations`), and seed objects at each
+eligible level (`hObj`). Realizations on the naming tail come from order arrows
+(`exists_named_realization_of_arrow`); the named package is `namedWorkingScheme` with
+`isWorkingPackage_namedWorkingScheme`. -/
 theorem proposition_5_7 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
     (W : WorkingScheme K S) (hpack : IsWorkingPackage W)
+    (hElig : EligibleSubclass W.eligible W.eligible)
+    [hpres : HasPresentations W W.template]
+    (hObj : ∀ μ hμ, Nonempty (W.Object μ hμ))
     {μ0 : Cardinal.{u}} (hμ0 : μ0 ∈ W.eligible) (X0 : W.Object μ0 hμ0)
     {ι : Type u} (c : ι → Occurrence K S (W.asSystem hμ0 X0)) (hι : #ι < μ0) :
     ∃ T : Set Cardinal.{u}, ∃ hT : EligibleSubclass W.eligible T,
@@ -187,7 +194,21 @@ theorem proposition_5_7 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
               (fun i => ⟨(c i).1, arr.onVertex (c i).1 (c i).2⟩)) ∧
       ∃ S' : SystemShape.{u}, ∃ W' : WorkingScheme K S',
         IsWorkingPackage W' ∧ W'.eligible = T := by
-  sorry
+  classical
+  let α : Cardinal.{u} := μ0 ⊔ aleph0
+  let T : Set Cardinal.{u} := eligibleTail W.eligible α
+  have hT : EligibleSubclass W.eligible T :=
+    EligibleSubclass.aboveNamingThreshold hElig α
+  refine ⟨T, hT, ?_, ?_⟩
+  · intro μ hμT
+    have hμW : μ ∈ W.eligible := EligibleSubclass.mem_source hT hμT
+    have hle : μ0 ≤ μ := le_sup_left.trans hμT.2
+    exact exists_named_realization_of_arrow W hObj hμ0 hμW X0 c hι hle
+  · let W' : WorkingScheme K S := WorkingScheme.namedWorkingScheme W X0 c T hT
+    have hTail : ∀ μ ∈ T, μ0 ≤ μ := fun μ hμ => le_sup_left.trans hμ.2
+    have hinf : ∀ μ ∈ T, aleph0 ≤ μ := fun μ hμ => le_sup_right.trans hμ.2
+    exact ⟨S, W',
+      WorkingScheme.isWorkingPackage_namedWorkingScheme W hpack X0 c T hT hι hTail hinf, rfl⟩
 
 /-- **Proposition 5.8** (Obtaining the diagram clause). On a countably closed unbounded supply
 of levels at which objects are isomorphic by permitted arrows, equality of bounded diagrams is

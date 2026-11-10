@@ -4,7 +4,7 @@ Inventory of Lean `sorry` holes in this repository, ordered **prove-first**: Lay
 are holes with no remaining unfinished prerequisites; later layers wait on earlier
 ones. Apex theorems 1.2 and 1.3 are **last**.
 
-**Count:** 69 `sorry`, 0 `admit`. All live in `AEC/Section*/Results.lean`.
+**Count:** 68 `sorry`, 0 `admit`. All live in `AEC/Section*/Results.lean`.
 Sections **2**, **3**, and **13** have no holes.
 
 **Dependency basis:** paper/logical order from `dependencies.mermaid`
@@ -32,7 +32,7 @@ Section 13 is complete and was never on that chain.
 | 2 | 0 | — |
 | 3 | 0 | — |
 | 4 | 4 | `AEC/Section4/Results.lean` |
-| 5 | 3 | `AEC/Section5/Results.lean` |
+| 5 | 2 | `AEC/Section5/Results.lean` |
 | 6 | 14 | `AEC/Section6/Results.lean` |
 | 7 | 9 | `AEC/Section7/Results.lean` |
 | 8 | 5 | `AEC/Section8/Results.lean` |
@@ -42,7 +42,7 @@ Section 13 is complete and was never on that chain.
 | 12 | 4 | `AEC/Section12/Results.lean` |
 | 13 | 0 | — |
 | 14 | 4 | `AEC/Section14/Results.lean` |
-| **Total** | **69** | |
+| **Total** | **68** | |
 
 ---
 
@@ -108,9 +108,8 @@ counterexample refutes the program.
 **Dependency rule:** edge B→A only if the English proof of A requires B, or A
 needs an explicit Lean infra subgoal B (not a paper-number chain).
 
-**Open:** `proposition_5_7` (existence of named realizations on a
-tail; packer + package transfer done), `objectOfEmptyChain`.
-**Note:** `theorem_3_11`, `lemma_4_6`, `lemma_6_14`, `proposition_4_3`, `lemma_4_5`, `lemma_4_7`, `proposition_5_8`, `proposition_5_9`,
+**Open:** `objectOfEmptyChain`.
+**Note:** `theorem_3_11`, `proposition_5_7`, `lemma_4_6`, `lemma_6_14`, `proposition_4_3`, `lemma_4_5`, `lemma_4_7`, `proposition_5_8`, `proposition_5_9`,
 `infra_pair_coloring_glue`, `infra_rank_slice`, `infra_type_u_witness_set`, `infra_countable_back_and_forth`, `infra_stable_diagram_realize`, `infra_zeta_model_existence`, `infra_eligible_reclass`, `infra_template_fixed_support`, `infra_named_working_scheme`, `infra_named_working_package` are done.
 Lean 5.8 is the residual `diagram_iso`+`structural_iso` form.
 False `6.13→6.14` / `5.8→5.9` edges removed. Later adjacent-number edges still suspect.
@@ -134,14 +133,14 @@ node reaches Thm 1.2 or 1.3; completed work should admit dead-code analysis of e
 
 Within Section 4, `lemma_4_6` is done; Prop 4.9 remains blocked on remaining gaps.
 
-### L1 — Section 5 after diagrams (3)
+### L1 — Section 5 after diagrams (2 open)
 
 Waits on Section 4 diagrams / amalgamation story.
 
 | Decl | Title | Location |
 |------|-------|----------|
 | `proposition_5_6` | Proposition 5.6 | `AEC/Section5/Results.lean:184` (feeds Thm 9.3, Prop 10.2) |
-| `proposition_5_7` | Proposition 5.7 | `AEC/Section5/Results.lean` (**open**: existence on a naming tail; feeds Thm 9.3, Prop 10.6, Lem 10.8) |
+| `proposition_5_7` | Proposition 5.7 | `AEC/Section5/Results.lean` (**done**: no `sorryAx`; `exists_named_realization_of_arrow` via `wellOrder_arrow` + `diagram_preserved` in `NamedRealizationExistence.lean`; packaged with `namedWorkingScheme` / `isWorkingPackage_namedWorkingScheme` on `eligibleTail (μ0 ⊔ ℵ₀)`) |
 | `infra_template_fixed_support` | Template F(J+H) | `AEC/Section5/TermTemplate.lean` (**done**: `withFixedSupport`, `sumLexEmbedRight` / `sumLexEmbedLeftIncl`, `fixedSupportArrow`) |
 | `infra_eligible_reclass` | Convention 5.3 tails / Lim | `AEC/Section5/EligibleSubclass.lean` (**done**: `eligibleTail`, `EligibleSubclass.tail` / `lim` / `aboveNamingThreshold`) |
 | `infra_named_working_scheme` | Named WorkingScheme ctor | `AEC/Section5/NamedWorkingScheme.lean` (**done**: `WorkingScheme.IsStructIso` + `namedWorkingScheme` packer; no `sorry`) |
@@ -286,7 +285,7 @@ layer (and thus the whole stack).
 | Layer | Count |
 |------:|------:|
 | L0 | 4 |
-| L1 | 3 |
+| L1 | 2 |
 | L2 | 14 |
 | L3 | 9 |
 | L4 | 5 |
@@ -296,4 +295,4 @@ layer (and thus the whole stack).
 | L8 | 4 |
 | L9 | 4 |
 | L10 | 2 |
-| **Total** | **69** |
+| **Total** | **68** |

@@ -89,6 +89,7 @@ public import AEC.Section5.LevelHierarchy
 public import AEC.Section5.Lim
 public import AEC.Section5.NamedWorkingScheme
 public import AEC.Section5.NamedPackageTransfer
+public import AEC.Section5.NamedRealizationExistence
 public import AEC.Section5.PackageClauses
 public import AEC.Section5.PaddedOrder
 public import AEC.Section5.PatternCode

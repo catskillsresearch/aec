@@ -1,19 +1,19 @@
 {
   "updated": "2026-11-10",
-  "sorryCount": 69,
+  "sorryCount": 68,
   "legend": {
-    "open": "No unfinished required proof-deps \u2014 try next",
+    "open": "No unfinished required proof-deps — try next",
     "blocked": "Waiting on incomplete required proof-deps",
     "done": "Proved (no sorry)"
   },
   "notes": [
-    "Edge B\u2192A means the English proof of A requires B (or a required Lean infra subgoal).",
+    "Edge B→A means the English proof of A requires B (or a required Lean infra subgoal).",
     "Blue = done. Green = open. Grey = blocked. No separate failed status unless a counterexample refutes the program.",
     "lemma_6_14 is independent of Prop 6.13 (false paper-number edge removed); it feeds lemma_12_6.",
     "Prop 4.3 is done (hull back-and-forth, Prop43BAF.lean); StableDiagram gained a trans field, supplied by proposition_4_2.",
     "Prop 5.6 / 5.7 wired by intended English use: 5.6 feeds Thm 9.3 and Prop 10.2; 5.7 feeds Thm 9.3, Prop 10.6, and Lem 10.8.",
-    "Prop 2.3 \u2192 Thm 1.2 is the set-coding reduction; Thm 14.5 supplies qualitative content for both apex theorems.",
-    "Also wired: Thm 3.11 \u2192 Prop 4.2 / 5.8; Lem 4.6 \u2192 Prop 4.9; Lem 6.14 \u2192 Lem 12.6; Thm 13.5 \u2192 Thm 10.9 / Lem 14.2.",
+    "Prop 2.3 → Thm 1.2 is the set-coding reduction; Thm 14.5 supplies qualitative content for both apex theorems.",
+    "Also wired: Thm 3.11 → Prop 4.2 / 5.8; Lem 4.6 → Prop 4.9; Lem 6.14 → Lem 12.6; Thm 13.5 → Thm 10.9 / Lem 14.2.",
     "Target: every Results/paper node reaches Thm 1.2 or 1.3; dead-code analysis should eventually justify each hard edge.",
     "sorryCount is the live count of sorry tokens under AEC/ (ABSTRACT_WIP in scripts/build_aec_tex.py may lag)."
   ],
@@ -145,7 +145,7 @@
       "file": "AEC/Section3/Results.lean",
       "status": "done",
       "blocker": null,
-      "detail": "No sorry (axioms: propext, Classical.choice, Quot.sound). Recurring-profile pigeonhole exists_asymmetric_common_setup (ReversalKill.lean), Prop 3.9 alignment, and the \u03b8\u207a\u00b7a^\u03b8 renaming kill exists_killed_copy (RenamingKill.lean): chains of strong self-maps (selfChainRec), exists_dead_selfMap for the a^\u03b8 steps, \u03b8\u207a rounds and their union."
+      "detail": "No sorry (axioms: propext, Classical.choice, Quot.sound). Recurring-profile pigeonhole exists_asymmetric_common_setup (ReversalKill.lean), Prop 3.9 alignment, and the θ⁺·a^θ renaming kill exists_killed_copy (RenamingKill.lean): chains of strong self-maps (selfChainRec), exists_dead_selfMap for the a^θ steps, θ⁺ rounds and their union."
     },
     {
       "id": "theorem_3_5",
@@ -157,25 +157,25 @@
     },
     {
       "id": "infra_countable_back_and_forth",
-      "label": "Infra: \u03c9 back-and-forth \u2192 iso",
+      "label": "Infra: ω back-and-forth → iso",
       "section": 4,
       "file": "AEC/Section4/Prop43BAF.lean",
       "status": "done",
       "blocker": null,
-      "detail": "Hull-based: HullMatch.forth/back + exists_equiv_of_commonDomain_chain (common-domain glue \u2192 Language.Equiv). Prop 4.3 does not use StrongClassBAF (CountableBackAndForth.lean), whose ambient strong maps would presuppose categoricity at \u03b6"
+      "detail": "Hull-based: HullMatch.forth/back + exists_equiv_of_commonDomain_chain (common-domain glue → Language.Equiv). Prop 4.3 does not use StrongClassBAF (CountableBackAndForth.lean), whose ambient strong maps would presuppose categoricity at ζ"
     },
     {
       "id": "infra_stable_diagram_realize",
-      "label": "Infra: D.same \u21d2 strong map",
+      "label": "Infra: D.same ⇒ strong map",
       "section": 4,
       "file": "AEC/Section4/StableDiagram.lean",
       "status": "done",
       "blocker": null,
-      "detail": "StableDiagram.to_strong / of_strong / realize_joint / trans; filled by proposition_4_2. trans (Prop 4.2(2): diagram equality is an equality) is required by Prop 4.3 to move matches between \u03b6-models and their hulls"
+      "detail": "StableDiagram.to_strong / of_strong / realize_joint / trans; filled by proposition_4_2. trans (Prop 4.2(2): diagram equality is an equality) is required by Prop 4.3 to move matches between ζ-models and their hulls"
     },
     {
       "id": "infra_zeta_model_existence",
-      "label": "Infra: \u2203 model size \u03b6",
+      "label": "Infra: ∃ model size ζ",
       "section": 4,
       "file": "AEC/Section4/StableDiagramConstruction.lean",
       "status": "done",
@@ -205,7 +205,7 @@
       "file": "AEC/Section4/Results.lean",
       "status": "done",
       "blocker": null,
-      "detail": "fingerprint_same_order_and_occupancy closed (incl. mixed S\u2295new occupancy). #print axioms AEC.lemma_4_5: propext, Classical.choice, Quot.sound (no sorryAx)."
+      "detail": "fingerprint_same_order_and_occupancy closed (incl. mixed S⊕new occupancy). #print axioms AEC.lemma_4_5: propext, Classical.choice, Quot.sound (no sorryAx)."
     },
     {
       "id": "lemma_4_6",
@@ -239,14 +239,14 @@
       "file": "AEC/Section4/Results.lean",
       "status": "done",
       "blocker": null,
-      "detail": "prop43_hull_back_and_forth (Prop43BAF.lean): HullMatch stages, D.to_strong between t(\u03c3)-hulls, common-domain union; no sorry (axioms: propext, Classical.choice, Quot.sound)"
+      "detail": "prop43_hull_back_and_forth (Prop43BAF.lean): HullMatch stages, D.to_strong between t(σ)-hulls, common-domain union; no sorry (axioms: propext, Classical.choice, Quot.sound)"
     },
     {
       "id": "proposition_4_8",
       "label": "Prop 4.8",
       "section": 4,
       "file": "AEC/Section4/Results.lean",
-      "status": "blocked",
+      "status": "open",
       "blocker": null
     },
     {
@@ -288,16 +288,16 @@
       "file": "AEC/Section5/Results.lean",
       "status": "blocked",
       "blocker": null,
-      "detail": "Single-model working package. Downstream: Thm 9.3 (start scheme), Prop 10.2 (choose \u03bb\u2080)."
+      "detail": "Single-model working package. Downstream: Thm 9.3 (start scheme), Prop 10.2 (choose λ₀)."
     },
     {
       "id": "proposition_5_7",
       "label": "Prop 5.7",
       "section": 5,
       "file": "AEC/Section5/Results.lean",
-      "status": "open",
+      "status": "done",
       "blocker": null,
-      "detail": "Naming bounded data. Downstream: Thm 9.3, Prop 10.6, Lem 10.8. Packer + IsWorkingPackage transfer done; remaining: existence of realizations on a naming tail T and packaging into the ∃-statement."
+      "detail": "No sorry (axioms: propext, Classical.choice, Quot.sound). Naming tail eligibleTail (μ0 ⊔ ℵ₀); exists_named_realization_of_arrow via wellOrder_arrow + diagram_preserved (NamedRealizationExistence.lean); namedWorkingScheme + isWorkingPackage_namedWorkingScheme. Hyps: Convention 5.3, HasPresentations, seed objects. Downstream: Thm 9.3, Prop 10.6, Lem 10.8."
     },
     {
       "id": "proposition_5_8",
@@ -336,7 +336,7 @@
       "label": "Lem 6.1",
       "section": 6,
       "file": "AEC/Section6/Results.lean",
-      "status": "blocked",
+      "status": "open",
       "blocker": null
     },
     {
@@ -866,11 +866,11 @@
       "file": "AEC/Section4/TypeUWitness.lean",
       "status": "done",
       "blocker": null,
-      "detail": "type_u_witness_set: package dominating U\u2080 as \u03b9 : Type u via rank-slice + padded pair-color glue"
+      "detail": "type_u_witness_set: package dominating U₀ as ι : Type u via rank-slice + padded pair-color glue"
     },
     {
       "id": "infra_rank_slice",
-      "label": "Infra: rank-slice V_\u03b2",
+      "label": "Infra: rank-slice V_β",
       "section": 4,
       "file": "AEC/Section4/RankSlice.lean",
       "status": "done",
@@ -884,16 +884,16 @@
       "file": "AEC/Section4/PairColoringGlue.lean",
       "status": "done",
       "blocker": null,
-      "detail": "pair_coloring_glue: Lemma 2.5 pair-homogeneous \u21d2 no \u03c9-descent on a coordinate"
+      "detail": "pair_coloring_glue: Lemma 2.5 pair-homogeneous ⇒ no ω-descent on a coordinate"
     },
     {
       "id": "infra_relcode_joint_canonical",
-      "label": "Infra: RelCode \u21d2 joint canon",
+      "label": "Infra: RelCode ⇒ joint canon",
       "section": 4,
       "file": "AEC/Section4/OrbitsOverParameters.lean",
       "status": "done",
       "blocker": null,
-      "detail": "Proved equal_relCode_equal_joint_canon: RelCode.jointCanon stores canonicalOfTuple on P\u2295\u03b9; equal codes \u21d2 equal joint canons via congrArg"
+      "detail": "Proved equal_relCode_equal_joint_canon: RelCode.jointCanon stores canonicalOfTuple on P⊕ι; equal codes ⇒ equal joint canons via congrArg"
     },
     {
       "id": "infra_relcode_orbit_record",
@@ -1598,5 +1598,5 @@
       "kind": "hard"
     }
   ],
-  "doneCount": 43
+  "doneCount": 44
 }
