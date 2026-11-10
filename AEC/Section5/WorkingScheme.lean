@@ -16,6 +16,11 @@ open FirstOrder Cardinal
 term template. Objects at level `μ` have every vertex of cardinality `μ`. Arrows are the
 permitted system arrows. `D`-diagrams are the equivalence `DiagramEq`.
 
+`DiagramEq` is a relation on lists of every length, but Definition 5.2(3) speaks of lists of
+bounded cardinality: preservation under arrows (`diagram_preserved`) and homogeneity
+(`diagram_iso`) are asserted for lists bounded at the levels involved (`#α < μ`). Unbounded,
+these two clauses would make every same-level arrow vertexwise bijective.
+
 `IsStructIso` is the scheme-specific notion of structural isomorphism at one level. For ordinary
 (single-model / unmarked) schemes this is vertexwise bijectivity. For named schemes it also
 requires that the arrow preserve the fixed names. -/
@@ -85,12 +90,16 @@ structure WorkingScheme (K : AbstractElementaryClass.{u}) (S : SystemShape.{u}) 
     (X : Object μ hμ) (Y : Object ν hν),
     DiagramEq (X := X) (Y := Y)
       (fun i : PEmpty.{u + 1} => i.elim) (fun i : PEmpty.{u + 1} => i.elim)
-  /-- Every permitted arrow preserves diagrams (Definition 5.2(3)). -/
-  diagram_preserved : ∀ {α μ ν} {hμ : μ ∈ eligible} {hν : ν ∈ eligible}
+  /-- Every permitted arrow preserves the diagram of every list bounded at both levels
+  (Definition 5.2(3): diagrams compare bounded lists in objects large enough for the index
+  set). The bound is necessary: for a list enumerating a whole vertex, preservation at one level
+  together with `diagram_iso` would force every same-level arrow to be surjective. -/
+  diagram_preserved : ∀ {α : Type u} {μ ν} {hμ : μ ∈ eligible} {hν : ν ∈ eligible}
     (X : Object μ hμ) (Y : Object ν hν)
     (f : SystemArrow K S (asSystem hμ X) (asSystem hν Y))
     (hf : permitted (X := X) (Y := Y) f)
     (xs : α → Occurrence K S (asSystem hμ X)),
+    #α < μ → #α < ν →
     DiagramEq (X := X) (Y := Y) xs
       (fun i => ⟨(xs i).1, f.onVertex (xs i).1 (xs i).2⟩)
   /-- Diagram equality respects reindexing along an equivalence (Definition 5.2(3)). -/
@@ -109,14 +118,16 @@ structure WorkingScheme (K : AbstractElementaryClass.{u}) (S : SystemShape.{u}) 
     (ys' : β → Occurrence K S (asSystem hν Y)),
     DiagramEq (X := X) (Y := Y) (Sum.elim xs xs') (Sum.elim ys ys') →
       DiagramEq (X := X) (Y := Y) xs ys ∧ DiagramEq (X := X) (Y := Y) xs' ys'
-  /-- At one level, equal diagrams are exactly the lists matched by a structural isomorphism. -/
-  diagram_iso : ∀ {α μ} {hμ : μ ∈ eligible} (X Y : Object μ hμ)
+  /-- At one level, two lists bounded at that level have equal diagrams exactly when a
+  structural isomorphism matches them (Definition 5.2(3): "two bounded lists"). -/
+  diagram_iso : ∀ {α : Type u} {μ} {hμ : μ ∈ eligible} (X Y : Object μ hμ)
     (xs : α → Occurrence K S (asSystem hμ X))
     (ys : α → Occurrence K S (asSystem hμ Y)),
-    DiagramEq (X := X) (Y := Y) xs ys ↔
+    #α < μ →
+    (DiagramEq (X := X) (Y := Y) xs ys ↔
       ∃ f : SystemArrow K S (asSystem hμ X) (asSystem hμ Y),
         IsStructIso (X := X) (Y := Y) f ∧
-        ∀ i, ys i = ⟨(xs i).1, f.onVertex (xs i).1 (xs i).2⟩
+        ∀ i, ys i = ⟨(xs i).1, f.onVertex (xs i).1 (xs i).2⟩)
 
 /-- Ordinary schemes: structural isomorphism is vertexwise bijectivity. -/
 abbrev bijectiveStructIso {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}

@@ -27,16 +27,6 @@ namespace WorkingScheme
 
 variable {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
 
-theorem named_index_lt_of_tail {μ0 : Cardinal.{u}} {ι : Type u} {T : Set Cardinal.{u}}
-    (hι : #ι < μ0) (hTail : ∀ μ ∈ T, μ0 ≤ μ) {μ : Cardinal.{u}} (hμ : μ ∈ T) :
-    #ι < μ :=
-  lt_of_lt_of_le hι (hTail μ hμ)
-
-theorem sum_mk_lt_of_lt {α β : Type u} {μ : Cardinal.{u}}
-    (hinf : aleph0 ≤ μ) (hα : #α < μ) (hβ : #β < μ) : #(α ⊕ β) < μ := by
-  rw [← add_def]
-  exact add_lt_of_lt hinf hα hβ
-
 /-- Saturation: named diagrams are `W`-diagrams of names followed by the further list. -/
 theorem isSaturated_namedWorkingScheme
     (W : WorkingScheme K S) (hSat : IsSaturated W)
@@ -44,8 +34,8 @@ theorem isSaturated_namedWorkingScheme
     {ι : Type u} (c : ι → Occurrence K S (W.asSystem hμ0 X0))
     (T : Set Cardinal.{u}) (hT : EligibleSubclass W.eligible T)
     (hι : #ι < μ0) (hTail : ∀ μ ∈ T, μ0 ≤ μ) (hinf : ∀ μ ∈ T, aleph0 ≤ μ) :
-    IsSaturated (namedWorkingScheme W X0 c T hT) where
-  saturated := fun {μ ν} {hμ} {hν} {α β} X Y xs base ext hα hβ hEq => by
+    IsSaturated (namedWorkingScheme W X0 c T hT hι hTail hinf) where
+  saturated := fun {μ ν} {hμ} {hν} {α β} X Y xs base ext hα hβ hext hEq => by
     have hμT : μ ∈ T := hμ
     have hιμ : #ι < μ := named_index_lt_of_tail hι hTail hμT
     let extW : (ι ⊕ α) ⊕ β → Occurrence K S Y.system := fun i =>
@@ -56,11 +46,15 @@ theorem isSaturated_namedWorkingScheme
     obtain ⟨Z0, f0, zs0, hf0, hzs0, hEqZ⟩ :=
       hSat.saturated (X := X.base) (Y := Y.base)
         (xs := Sum.elim X.names xs) (base := Sum.elim Y.names base) (ext := extW)
-        (sum_mk_lt_of_lt (hinf μ hμT) hιμ hα) hβ hEq
+        (sum_mk_lt_of_lt (hinf μ hμT) hιμ hα) hβ
+        (by
+          rintro (j | a)
+          · rfl
+          · exact hext a) hEq
     let Z : NamedObject W X0 c μ (EligibleSubclass.mem_source hT hμT) :=
       ⟨Z0, fun j => zs0 (Sum.inl (Sum.inl j)), by
         have hpush : W.DiagramEq X.base Z0 X.names (fun j => zs0 (Sum.inl (Sum.inl j))) := by
-          have h := W.diagram_preserved X.base Z0 f0 hf0 X.names
+          have h := W.diagram_preserved X.base Z0 f0 hf0 X.names hιμ hιμ
           have heq : (fun j => zs0 (Sum.inl (Sum.inl j))) =
               (fun j => f0.mapOcc (X.names j)) := by
             funext j; exact hzs0 (Sum.inl j)
@@ -110,11 +104,12 @@ theorem hasMixedDownward_namedWorkingScheme
     {ι : Type u} (c : ι → Occurrence K S (W.asSystem hμ0 X0))
     (T : Set Cardinal.{u}) (hT : EligibleSubclass W.eligible T)
     (hι : #ι < μ0) (hTail : ∀ μ ∈ T, μ0 ≤ μ) (hinf : ∀ μ ∈ T, aleph0 ≤ μ) :
-    HasMixedDownward (namedWorkingScheme W X0 c T hT) where
+    HasMixedDownward (namedWorkingScheme W X0 c T hT hι hTail hinf) where
   downward := fun {μ ν} hμ hν X γ occ hνμ hγ => by
     have hμT : μ ∈ T := hμ
     have hνT : ν ∈ T := hν
     have hιν : #ι < ν := named_index_lt_of_tail hι hTail hνT
+    have hιμ : #ι < μ := named_index_lt_of_tail hι hTail hμT
     have hsum : #(ι ⊕ γ) ≤ ν := by
       rw [← add_def]
       exact Cardinal.add_le_of_le (hinf ν hνT) (le_of_lt hιν) hγ
@@ -128,7 +123,7 @@ theorem hasMixedDownward_namedWorkingScheme
       fun j => Classical.choose_spec (hocc (Sum.inl j))
     refine ⟨⟨Y0, hnamesY, ?_⟩, f0, ⟨hf0, fun j => hnamesY_spec j⟩, ?_⟩
     · have hpush : W.DiagramEq Y0 X.base hnamesY X.names := by
-        have h := W.diagram_preserved Y0 X.base f0 hf0 hnamesY
+        have h := W.diagram_preserved Y0 X.base f0 hf0 hnamesY hιν hιμ
         have heq : X.names = (fun j => f0.mapOcc (hnamesY j)) := by
           funext j; exact hnamesY_spec j
         simpa [heq, SystemArrow.mapOcc] using h
@@ -145,8 +140,8 @@ theorem satisfiesExhaustion_namedWorkingScheme
     {μ0 : Cardinal.{u}} {hμ0 : μ0 ∈ W.eligible} (X0 : W.Object μ0 hμ0)
     {ι : Type u} (c : ι → Occurrence K S (W.asSystem hμ0 X0))
     (T : Set Cardinal.{u}) (hT : EligibleSubclass W.eligible T)
-    (hι : #ι < μ0) (hTail : ∀ μ ∈ T, μ0 ≤ μ) (_hinf : ∀ μ ∈ T, aleph0 ≤ μ) :
-    SatisfiesExhaustion (namedWorkingScheme W X0 c T hT) where
+    (hι : #ι < μ0) (hTail : ∀ μ ∈ T, μ0 ≤ μ) (hinf : ∀ μ ∈ T, aleph0 ≤ μ) :
+    SatisfiesExhaustion (namedWorkingScheme W X0 c T hT hι hTail hinf) where
   exhaustion := fun {μ} {hμ} X Y f hdiag => by
     have hμT : μ ∈ T := hμ
     have hιμ : #ι < μ := named_index_lt_of_tail hι hTail hμT
@@ -154,7 +149,8 @@ theorem satisfiesExhaustion_namedWorkingScheme
       have hN := hdiag (xs := X.names) hιμ
       obtain ⟨ψ, _, hψ⟩ := (W.diagram_iso X.base Y.base
           (Sum.elim X.names X.names)
-          (Sum.elim Y.names (fun j => f.mapOcc (X.names j)))).mp hN
+          (Sum.elim Y.names (fun j => f.mapOcc (X.names j)))
+          (sum_mk_lt_of_lt (hinf μ hμT) hιμ hιμ)).mp hN
       intro j
       exact (hψ (Sum.inl j)).trans (hψ (Sum.inr j)).symm
     refine ⟨?_, hn⟩
@@ -179,8 +175,8 @@ theorem hasChainUnions_namedWorkingScheme
     {μ0 : Cardinal.{u}} {hμ0 : μ0 ∈ W.eligible} (X0 : W.Object μ0 hμ0)
     {ι : Type u} (c : ι → Occurrence K S (W.asSystem hμ0 X0))
     (T : Set Cardinal.{u}) (hT : EligibleSubclass W.eligible T)
-    (_hι : #ι < μ0) (_hTail : ∀ μ ∈ T, μ0 ≤ μ) (_hinf : ∀ μ ∈ T, aleph0 ≤ μ) :
-    HasChainUnions (namedWorkingScheme W X0 c T hT) where
+    (hι : #ι < μ0) (hTail : ∀ μ ∈ T, μ0 ≤ μ) (hinf : ∀ μ ∈ T, aleph0 ≤ μ) :
+    HasChainUnions (namedWorkingScheme W X0 c T hT hι hTail hinf) where
   union := fun {μ} hμ index _inst obj le le_arrow hcomp hidx => by
     classical
     have hμT : μ ∈ T := hμ
@@ -193,7 +189,8 @@ theorem hasChainUnions_namedWorkingScheme
       fun j => (incl0 i0).mapOcc ((obj i0).names j)
     have hreal : W.DiagramEq X0 U0 c namesU :=
       W.diagram_trans X0 (obj i0).base U0 c (obj i0).names namesU (obj i0).realizes
-        (W.diagram_preserved (obj i0).base U0 (incl0 i0) (hincl0 i0) (obj i0).names)
+        (W.diagram_preserved (obj i0).base U0 (incl0 i0) (hincl0 i0) (obj i0).names
+          (named_index_lt_of_tail hι hTail hμT) (named_index_lt_of_tail hι hTail hμT))
     let U : NamedObject W X0 c μ hμW := ⟨U0, namesU, hreal⟩
     have hinclNamed : ∀ i, NamedPermitted (obj i) U (incl0 i) := by
       intro i
@@ -213,11 +210,11 @@ theorem hasChainUnions_namedWorkingScheme
     refine ⟨U, incl0, hinclNamed, ?_, ?_⟩
     · intro i j
       exact hnat i j
-    · intro ν hν Z toZ htoZ hμν
+    · intro ν hν Z toZ htoZ hcocone hμν
       have hνT : ν ∈ T := hν
       let hνW : ν ∈ W.eligible := EligibleSubclass.mem_source hT hνT
       obtain ⟨toU, htoU, hfac⟩ :=
-        hub hνW Z.base (fun i => toZ i) (fun i => (htoZ i).1) hμν
+        hub hνW Z.base (fun i => toZ i) (fun i => (htoZ i).1) hcocone hμν
       refine ⟨toU, ⟨htoU, ?_⟩, hfac⟩
       intro j
       have hZ := (htoZ i0).2 j
@@ -233,7 +230,7 @@ theorem isWorkingPackage_namedWorkingScheme
     {ι : Type u} (c : ι → Occurrence K S (W.asSystem hμ0 X0))
     (T : Set Cardinal.{u}) (hT : EligibleSubclass W.eligible T)
     (hι : #ι < μ0) (hTail : ∀ μ ∈ T, μ0 ≤ μ) (hinf : ∀ μ ∈ T, aleph0 ≤ μ) :
-    IsWorkingPackage (namedWorkingScheme W X0 c T hT) :=
+    IsWorkingPackage (namedWorkingScheme W X0 c T hT hι hTail hinf) :=
   ⟨hasChainUnions_namedWorkingScheme W hpack.1 X0 c T hT hι hTail hinf,
     hasMixedDownward_namedWorkingScheme W hpack.2.1 X0 c T hT hι hTail hinf,
     isSaturated_namedWorkingScheme W hpack.2.2.1 X0 c T hT hι hTail hinf,

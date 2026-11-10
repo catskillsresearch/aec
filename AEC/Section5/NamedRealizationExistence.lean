@@ -12,7 +12,7 @@ public import Mathlib.Order.InitialSeg
 # Named realizations via order arrows (Proposition 5.7, existence)
 
 Any permitted arrow out of the witness `X0` preserves the diagram of the fixed list `c`
-(`diagram_preserved`). Cross-level permitted arrows are supplied by
+(`diagram_preserved`; the list is bounded at the level of `X0`, hence at every higher level). Cross-level permitted arrows are supplied by
 `HasPresentations.wellOrder_arrow` along well-order embeddings of the eligible cardinals.
 -/
 
@@ -72,7 +72,7 @@ theorem exists_named_realization_of_arrow (W : WorkingScheme K S)
   let Y : W.Object μ hμ := Classical.choice (hObj μ hμ)
   obtain ⟨arr, harr⟩ :=
     hpres.wellOrder_arrow hμ0 hμ I J X0 Y emb (mk_cardWellOrder μ0) (mk_cardWellOrder μ)
-  exact ⟨Y, arr, harr, W.diagram_preserved X0 Y arr harr c⟩
+  exact ⟨Y, arr, harr, W.diagram_preserved X0 Y arr harr c hι (hι.trans_le hle)⟩
 
 end
 end AEC

@@ -1,7 +1,7 @@
 # Hard edges from holes-graph.json
 # Convention: FROM --> TO means the English proof of TO requires FROM.
 # Apex: theorem_1_2, theorem_1_3
-# Nodes: 113  Hard edges: 138  Reach apex: 113/113
+# Nodes: 115  Hard edges: 141  Reach apex: 115/115
 # All nodes reach theorem_1_2 or theorem_1_3.
 
 claim_11_10 --> claim_11_11
@@ -23,6 +23,9 @@ infra_pair_coloring_glue --> lemma_4_7
 infra_rank_slice --> lemma_4_7
 infra_relcode_joint_canonical --> lemma_4_5
 infra_relcode_orbit_record --> lemma_4_5
+infra_single_model_package --> proposition_5_6
+infra_single_model_scheme --> infra_single_model_package
+infra_single_model_scheme --> proposition_5_6
 infra_stable_diagram_realize --> proposition_4_3
 infra_template_fixed_support --> infra_named_working_scheme
 infra_template_fixed_support --> proposition_5_7

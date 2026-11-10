@@ -8,6 +8,8 @@ public import AEC.Section5.TermTemplate
 public import AEC.Section5.NamedWorkingScheme
 public import AEC.Section5.NamedPackageTransfer
 public import AEC.Section5.NamedRealizationExistence
+public import AEC.Section5.SingleModelScheme
+public import AEC.Section5.SingleModelPackage
 public import AEC.Section4.CountableClosure
 public import AEC.Section4.StableDiagram
 public import Mathlib.Order.WellFoundedSet
@@ -160,15 +162,30 @@ theorem lemma_5_5 (η : Cardinal.{u}) (hη : aleph0 ≤ η) :
           ∃ x : I, (∀ a ∈ L, a < x) ∧ (∀ b ∈ R, x < b) :=
   lemma_5_5_proof η hη
 
-/-- **Proposition 5.6** (The package for single models). There is a one-vertex working scheme
-whose eligible levels are an unbounded class of closure points for `t` and `g`. -/
+/-- **Proposition 5.6** (The package for single models). At the closure points of `{D.t, g}`
+above `ℓ = LS(K)` (the levels of Proposition 4.3, refined as in Theorem 4.11 by the bound `g`),
+the single `K`-models, with strong maps as arrows and the term presentation `E` of Theorem 2.6,
+form a working package. The scheme has one vertex, presentations (`HasPresentations`), and an
+object at every eligible level, which is what Proposition 5.7 consumes.
+
+The scheme is `SingleModelData.scheme` (`SingleModelScheme.lean`), for the order presentation
+obtained from the unbounded categoricity supplied by `D`; the package clauses are
+`SingleModelData.isWorkingPackage` (`SingleModelPackage.lean`). The amalgamation of
+Theorem 4.11 is not used: it is not a clause of a working scheme. -/
 theorem proposition_5_6 (K : AbstractElementaryClass.{u}) (D : StableDiagram K)
     (g : Cardinal.{u} → Cardinal.{u}) :
     ∃ S : SystemShape.{u}, ∃ W : WorkingScheme K S,
-      IsWorkingPackage W ∧ Nonempty S.Vertex ∧ Subsingleton S.Vertex ∧
+      IsWorkingPackage W ∧ HasPresentations W W.template ∧
+      (∀ μ hμ, Nonempty (W.Object μ hμ)) ∧
+      Nonempty S.Vertex ∧ Subsingleton S.Vertex ∧
       (∀ κ, ∃ μ, κ ≤ μ ∧ μ ∈ W.eligible) ∧
-      ∀ μ, μ ∈ W.eligible → IsClosurePoint {D.t, g} μ := by
-  sorry
+      ∀ μ ∈ W.eligible, IsClosurePoint {D.t, g} μ := by
+  haveI : CategoricalUnbounded K := D.categoricalUnbounded
+  obtain ⟨E, hE, -⟩ := exists_orderPresentation_of_categoricalUnbounded K
+  let P : SingleModelData K := ⟨D, g, E, hE⟩
+  exact ⟨oneVertexShape, P.scheme, P.isWorkingPackage, P.hasPresentations,
+    fun μ hμ => SingleModelData.nonempty_object hμ, inferInstance, inferInstance,
+    P.exists_ge, fun μ hμ => hμ.1⟩
 
 /-- **Proposition 5.7** (Naming bounded data). On an unbounded class of higher eligible levels,
 the diagram of a fixed bounded list is realized, and those levels carry a working scheme.
@@ -204,9 +221,10 @@ theorem proposition_5_7 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
     have hμW : μ ∈ W.eligible := EligibleSubclass.mem_source hT hμT
     have hle : μ0 ≤ μ := le_sup_left.trans hμT.2
     exact exists_named_realization_of_arrow W hObj hμ0 hμW X0 c hι hle
-  · let W' : WorkingScheme K S := WorkingScheme.namedWorkingScheme W X0 c T hT
-    have hTail : ∀ μ ∈ T, μ0 ≤ μ := fun μ hμ => le_sup_left.trans hμ.2
+  · have hTail : ∀ μ ∈ T, μ0 ≤ μ := fun μ hμ => le_sup_left.trans hμ.2
     have hinf : ∀ μ ∈ T, aleph0 ≤ μ := fun μ hμ => le_sup_right.trans hμ.2
+    let W' : WorkingScheme K S :=
+      WorkingScheme.namedWorkingScheme W X0 c T hT hι hTail hinf
     exact ⟨S, W',
       WorkingScheme.isWorkingPackage_namedWorkingScheme W hpack X0 c T hT hι hTail hinf, rfl⟩
 
@@ -217,7 +235,8 @@ exactly the existence of a structural isomorphism carrying one list to the other
 Lean residual form: once `W` already carries `diagram_iso` and `structural_iso`, the
 permitted-iso characterization of `DiagramEq` is immediate. The English construction that
 *builds* diagrams from reversal/orbit inputs is not this statement (and is not attempted here).
-The hypotheses `hcat` / `hα` / `hsub` match the English setup but are unused in this residual. -/
+The hypotheses `hcat` / `hsub` match the English setup but are unused in this residual. The
+bound `hα : #α < μ` is used: `diagram_iso` is the homogeneity clause for bounded lists. -/
 theorem proposition_5_8 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
     (W : WorkingScheme K S) (T : Set Cardinal.{u})
     (hsub : EligibleSubclass W.eligible T)
@@ -225,7 +244,7 @@ theorem proposition_5_8 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
       ∃ f : SystemArrow K S (W.asSystem (EligibleSubclass.mem_source hsub hμ) X)
         (W.asSystem (EligibleSubclass.mem_source hsub hμ) Y),
         W.IsStructIso (X := X) (Y := Y) f ∧ W.permitted (X := X) (Y := Y) f) :
-    ∀ μ (hμ : μ ∈ T) {α : Type u} (_hα : #α < μ)
+    ∀ μ (hμ : μ ∈ T) {α : Type u} (hα : #α < μ)
       (X Y : W.Object μ (EligibleSubclass.mem_source hsub hμ))
       (xs : α → Occurrence K S (W.asSystem (EligibleSubclass.mem_source hsub hμ) X))
       (ys : α → Occurrence K S (W.asSystem (EligibleSubclass.mem_source hsub hμ) Y)),
@@ -235,13 +254,13 @@ theorem proposition_5_8 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
           W.IsStructIso (X := X) (Y := Y) f ∧
           W.permitted (X := X) (Y := Y) f ∧
           ∀ i, ys i = ⟨(xs i).1, f.onVertex (xs i).1 (xs i).2⟩ := by
-  intro μ hμ α _hα X Y xs ys
+  intro μ hμ α hα X Y xs ys
   constructor
   · intro hEq
-    obtain ⟨f, hIso, hf⟩ := (W.diagram_iso (X := X) (Y := Y) xs ys).mp hEq
+    obtain ⟨f, hIso, hf⟩ := (W.diagram_iso (X := X) (Y := Y) xs ys hα).mp hEq
     exact ⟨f, hIso, W.structural_iso (X := X) (Y := Y) f hIso, hf⟩
   · rintro ⟨f, hIso, _hfPerm, hf⟩
-    exact (W.diagram_iso (X := X) (Y := Y) xs ys).mpr ⟨f, hIso, hf⟩
+    exact (W.diagram_iso (X := X) (Y := Y) xs ys hα).mpr ⟨f, hIso, hf⟩
 
 /-- **Proposition 5.9** (Uniform coding of working diagrams). A monotone bound `b` computes
 working-diagram equality of lists of length at most `σ` by a back-and-forth of size `b(σ)`,
@@ -269,30 +288,37 @@ theorem proposition_5_9 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
   -- are witnessed by the same-level isomorphism that implements `DiagramEq` (English: the
   -- stabilized back-and-forth test at bound `b_F(σ)` agrees with working diagrams).
   refine ⟨fun σ => σ, fun _ _ h => h, ?_⟩
-  intro σ _hσ μ hμ _hb α _hα X Y xs ys
+  intro σ hσ μ hμ hb α hα X Y xs ys
+  -- Lists of length at most `σ`, also with a test extension of length at most `σ`, are
+  -- bounded at `μ > σ`; `diagram_iso` is the homogeneity clause for bounded lists.
+  have hαμ : #α < μ := hα.trans_lt hb
+  have hsum : ∀ {β : Type u}, #β ≤ σ → #(α ⊕ β) < μ := by
+    intro β hβ
+    rw [Cardinal.mk_sum, Cardinal.lift_id, Cardinal.lift_id]
+    exact (Cardinal.add_le_of_le hσ hα hβ).trans_lt hb
   constructor
   · intro hEq
     constructor
-    · intro β Z _
-      obtain ⟨f, hIso, hf⟩ := (W.diagram_iso (X := X) (Y := Y) xs ys).mp hEq
+    · intro β Z hβ
+      obtain ⟨f, hIso, hf⟩ := (W.diagram_iso (X := X) (Y := Y) xs ys hαμ).mp hEq
       let Z' : β → Occurrence K S (W.asSystem hμ Y) :=
         fun j => ⟨(Z j).1, f.onVertex (Z j).1 (Z j).2⟩
       refine ⟨Z', ?_⟩
-      refine (W.diagram_iso (X := X) (Y := Y) (Sum.elim xs Z) (Sum.elim ys Z')).mpr
-        ⟨f, hIso, ?_⟩
+      refine (W.diagram_iso (X := X) (Y := Y) (Sum.elim xs Z) (Sum.elim ys Z')
+        (hsum hβ)).mpr ⟨f, hIso, ?_⟩
       intro i
       cases i with
       | inl a => exact hf a
       | inr b => rfl
-    · intro β Z _
+    · intro β Z hβ
       have hEq' : W.DiagramEq (X := Y) (Y := X) ys xs :=
         W.diagram_symm (X := X) (Y := Y) xs ys hEq
-      obtain ⟨g, hIso, hg⟩ := (W.diagram_iso (X := Y) (Y := X) ys xs).mp hEq'
+      obtain ⟨g, hIso, hg⟩ := (W.diagram_iso (X := Y) (Y := X) ys xs hαμ).mp hEq'
       let Z' : β → Occurrence K S (W.asSystem hμ X) :=
         fun j => ⟨(Z j).1, g.onVertex (Z j).1 (Z j).2⟩
       refine ⟨Z', ?_⟩
-      refine (W.diagram_iso (X := Y) (Y := X) (Sum.elim ys Z) (Sum.elim xs Z')).mpr
-        ⟨g, hIso, ?_⟩
+      refine (W.diagram_iso (X := Y) (Y := X) (Sum.elim ys Z) (Sum.elim xs Z')
+        (hsum hβ)).mpr ⟨g, hIso, ?_⟩
       intro i
       cases i with
       | inl a => exact hg a
@@ -305,8 +331,8 @@ theorem proposition_5_9 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
     obtain ⟨f, hIso, hf⟩ :=
       (W.diagram_iso (X := X) (Y := Y)
         (Sum.elim xs (fun j : PEmpty.{u + 1} => j.elim))
-        (Sum.elim ys Z')).mp hZ'
-    refine (W.diagram_iso (X := X) (Y := Y) xs ys).mpr ⟨f, hIso, ?_⟩
+        (Sum.elim ys Z') (hsum hβ0)).mp hZ'
+    refine (W.diagram_iso (X := X) (Y := Y) xs ys hαμ).mpr ⟨f, hIso, ?_⟩
     intro i
     exact hf (Sum.inl i)
 

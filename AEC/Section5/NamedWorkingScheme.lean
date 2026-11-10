@@ -2,6 +2,7 @@ module
 
 public import AEC.Section5.WorkingScheme
 public import AEC.Section5.EligibleSubclass
+public import Mathlib.SetTheory.Cardinal.Arithmetic
 
 @[expose] public section
 
@@ -20,6 +21,11 @@ builds the data of the named scheme of Proposition 5.7 on top of `W`:
 `WorkingScheme.IsStructIso` is the scheme-specific isomorphism predicate. For the named scheme
 it is `W.IsStructIso` on the underlying objects together with `PreservesNames`. The packer
 `namedWorkingScheme` assembles these fields into a `WorkingScheme K S` on an eligible subclass.
+
+`W.diagram_preserved` and `W.diagram_iso` are available for lists bounded at the levels
+involved. The names followed by a bounded list form a bounded list as soon as the list of names
+is bounded at every level of the subclass and those levels are infinite; the packer takes these
+threshold hypotheses (`#ι < μ0`, the levels of `T` are `≥ μ0` and infinite).
 -/
 
 namespace AEC
@@ -75,6 +81,16 @@ theorem SystemArrow.mapOcc_of_comp_eq {X Y Z : SystemObject K S} (xy : SystemArr
 
 namespace WorkingScheme
 
+theorem named_index_lt_of_tail {μ0 : Cardinal.{u}} {ι : Type u} {T : Set Cardinal.{u}}
+    (hι : #ι < μ0) (hTail : ∀ μ ∈ T, μ0 ≤ μ) {μ : Cardinal.{u}} (hμ : μ ∈ T) :
+    #ι < μ :=
+  lt_of_lt_of_le hι (hTail μ hμ)
+
+theorem sum_mk_lt_of_lt {α β : Type u} {μ : Cardinal.{u}}
+    (hinf : aleph0 ≤ μ) (hα : #α < μ) (hβ : #β < μ) : #(α ⊕ β) < μ := by
+  rw [← add_def]
+  exact add_lt_of_lt hinf hα hβ
+
 variable (W : WorkingScheme K S) {μ0 : Cardinal.{u}} {hμ0 : μ0 ∈ W.eligible}
   (X0 : W.Object μ0 hμ0) {ι : Type u} (c : ι → Occurrence K S (W.asSystem hμ0 X0))
 
@@ -114,15 +130,16 @@ def NamedObject.ofArrow (Y : W.Object μ hμ)
   names i := arr.mapOcc (c i)
   realizes := h
 
-/-- Transport the names of a named object along a structural isomorphism at the same level. -/
+/-- Transport the names of a named object along a structural isomorphism at the same level.
+The list of names is bounded at that level. -/
 def NamedObject.mapIso (X : NamedObject W X0 c μ hμ) (Y : W.Object μ hμ)
     (f : SystemArrow K S X.system (W.asSystem hμ Y))
-    (hIso : W.IsStructIso X.base Y f) : NamedObject W X0 c μ hμ where
+    (hIso : W.IsStructIso X.base Y f) (hιμ : #ι < μ) : NamedObject W X0 c μ hμ where
   base := Y
   names i := f.mapOcc (X.names i)
   realizes :=
     W.diagram_trans X0 X.base Y c X.names _ X.realizes
-      ((W.diagram_iso X.base Y X.names _).mpr ⟨f, hIso, fun _ => rfl⟩)
+      ((W.diagram_iso X.base Y X.names _ hιμ).mpr ⟨f, hIso, fun _ => rfl⟩)
 
 /-! ### Arrows preserving names -/
 
@@ -147,8 +164,8 @@ theorem preservesNames_refl (X : NamedObject W X0 c μ hμ) :
 
 theorem preservesNames_mapIso (X : NamedObject W X0 c μ hμ) (Y : W.Object μ hμ)
     (f : SystemArrow K S X.system (W.asSystem hμ Y))
-    (hIso : W.IsStructIso X.base Y f) :
-    PreservesNames X (X.mapIso Y f hIso) f :=
+    (hIso : W.IsStructIso X.base Y f) (hιμ : #ι < μ) :
+    PreservesNames X (X.mapIso Y f hIso hιμ) f :=
   fun _ => rfl
 
 theorem PreservesNames.comp {X : NamedObject W X0 c μ hμ} {Y : NamedObject W X0 c ν hν}
@@ -236,19 +253,21 @@ theorem namedDiagramEq_trans {α : Type u} (X : NamedObject W X0 c μ hμ)
     NamedDiagramEq X Z xs zs :=
   W.diagram_trans X.base Y.base Z.base _ _ _ hxy hyz
 
-/-- `diagram_iso` for the named scheme: at one level, two lists have the same diagram over
-the names exactly when a named structural iso carries one list to the other. -/
+/-- `diagram_iso` for the named scheme: at one level, two lists that are bounded together with
+the names have the same diagram over the names exactly when a named structural iso carries one
+list to the other. -/
 theorem namedDiagramEq_iff_iso {α : Type u} (X Y : NamedObject W X0 c μ hμ)
-    (xs : α → Occurrence K S X.system) (ys : α → Occurrence K S Y.system) :
+    (xs : α → Occurrence K S X.system) (ys : α → Occurrence K S Y.system)
+    (hb : #(ι ⊕ α) < μ) :
     NamedDiagramEq X Y xs ys ↔
       ∃ f : SystemArrow K S X.system Y.system,
         NamedStructIso X Y f ∧ ∀ i, ys i = f.mapOcc (xs i) := by
   constructor
   · intro h
-    obtain ⟨f, hIso, hf⟩ := (W.diagram_iso X.base Y.base _ _).mp h
+    obtain ⟨f, hIso, hf⟩ := (W.diagram_iso X.base Y.base _ _ hb).mp h
     exact ⟨f, ⟨hIso, fun i => hf (Sum.inl i)⟩, fun i => hf (Sum.inr i)⟩
   · rintro ⟨f, ⟨hIso, hn⟩, hx⟩
-    refine (W.diagram_iso X.base Y.base _ _).mpr ⟨f, hIso, ?_⟩
+    refine (W.diagram_iso X.base Y.base _ _ hb).mpr ⟨f, hIso, ?_⟩
     rintro (i | i)
     · exact hn i
     · exact hx i
@@ -256,34 +275,39 @@ theorem namedDiagramEq_iff_iso {α : Type u} (X Y : NamedObject W X0 c μ hμ)
 /-- The form of Proposition 5.8 for the named scheme: equal diagrams over the names are
 exactly the lists matched by a named structural iso that is permitted. -/
 theorem namedDiagramEq_iff_namedPermitted_iso {α : Type u} (X Y : NamedObject W X0 c μ hμ)
-    (xs : α → Occurrence K S X.system) (ys : α → Occurrence K S Y.system) :
+    (xs : α → Occurrence K S X.system) (ys : α → Occurrence K S Y.system)
+    (hb : #(ι ⊕ α) < μ) :
     NamedDiagramEq X Y xs ys ↔
       ∃ f : SystemArrow K S X.system Y.system,
         NamedStructIso X Y f ∧ NamedPermitted X Y f ∧
         ∀ i, ys i = f.mapOcc (xs i) := by
-  rw [namedDiagramEq_iff_iso]
+  rw [namedDiagramEq_iff_iso X Y xs ys hb]
   constructor
   · rintro ⟨f, hIso, hx⟩
     exact ⟨f, hIso, namedPermitted_of_structIso X Y f hIso, hx⟩
   · rintro ⟨f, hIso, _hp, hx⟩
     exact ⟨f, hIso, hx⟩
 
-/-- Two named objects at one level are isomorphic by an arrow of the named scheme. -/
-theorem exists_namedPermitted_iso (X Y : NamedObject W X0 c μ hμ) :
+/-- Two named objects at one level, at which the list of names is bounded, are isomorphic by
+an arrow of the named scheme. -/
+theorem exists_namedPermitted_iso (X Y : NamedObject W X0 c μ hμ) (hιμ : #ι < μ) :
     ∃ f : SystemArrow K S X.system Y.system,
       NamedStructIso X Y f ∧ NamedPermitted X Y f := by
   have h : W.DiagramEq X.base Y.base X.names Y.names :=
     W.diagram_trans X.base X0 Y.base _ _ _
       (W.diagram_symm X0 X.base _ _ X.realizes) Y.realizes
-  obtain ⟨f, hIso, hf⟩ := (W.diagram_iso X.base Y.base _ _).mp h
+  obtain ⟨f, hIso, hf⟩ := (W.diagram_iso X.base Y.base _ _ hιμ).mp h
   exact ⟨f, ⟨hIso, hf⟩, namedPermitted_of_structIso X Y f ⟨hIso, hf⟩⟩
 
 /-- At one level, the empty lists of any two named objects have the same diagram over the
 names. -/
-theorem namedDiagramEq_empty (X Y : NamedObject W X0 c μ hμ) :
+theorem namedDiagramEq_empty (X Y : NamedObject W X0 c μ hμ) (hιμ : #ι < μ) :
     NamedDiagramEq X Y (fun i : PEmpty.{u + 1} => i.elim) (fun i : PEmpty.{u + 1} => i.elim) := by
-  obtain ⟨f, hIso, _hp⟩ := exists_namedPermitted_iso X Y
-  exact (namedDiagramEq_iff_iso X Y _ _).mpr ⟨f, hIso, fun i => i.elim⟩
+  obtain ⟨f, hIso, _hp⟩ := exists_namedPermitted_iso X Y hιμ
+  have hb : #(ι ⊕ PEmpty.{u + 1}) < μ := by
+    rw [Cardinal.mk_congr (Equiv.sumEmpty ι PEmpty.{u + 1})]
+    exact hιμ
+  exact (namedDiagramEq_iff_iso X Y _ _ hb).mpr ⟨f, hIso, fun i => i.elim⟩
 
 /-- Equal diagrams over the names restrict to equal diagrams of the further lists in `W`. -/
 theorem NamedDiagramEq.diagramEq {α : Type u} {X : NamedObject W X0 c μ hμ}
@@ -292,12 +316,12 @@ theorem NamedDiagramEq.diagramEq {α : Type u} {X : NamedObject W X0 c μ hμ}
     (h : NamedDiagramEq X Y xs ys) : W.DiagramEq X.base Y.base xs ys :=
   (W.diagram_restrict X.base Y.base X.names Y.names xs ys h).2
 
-/-- At one level, a named structural iso preserves every diagram over the names. -/
+/-- At one level, a named structural iso preserves every bounded diagram over the names. -/
 theorem namedDiagramEq_mapOcc {α : Type u} (X Y : NamedObject W X0 c μ hμ)
     (f : SystemArrow K S X.system Y.system) (hIso : NamedStructIso X Y f)
-    (xs : α → Occurrence K S X.system) :
+    (xs : α → Occurrence K S X.system) (hb : #(ι ⊕ α) < μ) :
     NamedDiagramEq X Y xs (fun i => f.mapOcc (xs i)) :=
-  (namedDiagramEq_iff_iso X Y xs _).mpr ⟨f, hIso, fun _ => rfl⟩
+  (namedDiagramEq_iff_iso X Y xs _ hb).mpr ⟨f, hIso, fun _ => rfl⟩
 
 /-- Reindexing for named diagrams, via reindexing of the concatenated `W`-diagrams. -/
 theorem namedDiagramEq_reindex {α β : Type u} (X : NamedObject W X0 c μ hμ)
@@ -407,12 +431,17 @@ theorem namedDiagramEq_restrict {α β : Type u} (X : NamedObject W X0 c μ hμ)
 
 /-- The named working scheme of Proposition 5.7 on an eligible subclass `T ⊆ W.eligible`.
 Objects are named realizations of the fixed diagram of `c`; arrows preserve names;
-structural isomorphisms are structural isos of `W` that preserve names. -/
+structural isomorphisms are structural isos of `W` that preserve names.
+
+The threshold hypotheses (`#ι < μ0`, every level of `T` is `≥ μ0` and infinite) make the
+names followed by a bounded list a bounded list, as `W.diagram_preserved` and `W.diagram_iso`
+require. -/
 noncomputable def namedWorkingScheme
     (W : WorkingScheme K S) {μ0 : Cardinal.{u}} {hμ0 : μ0 ∈ W.eligible}
     (X0 : W.Object μ0 hμ0) {ι : Type u}
     (c : ι → Occurrence K S (W.asSystem hμ0 X0))
-    (T : Set Cardinal.{u}) (hT : EligibleSubclass W.eligible T) :
+    (T : Set Cardinal.{u}) (hT : EligibleSubclass W.eligible T)
+    (hι : #ι < μ0) (hTail : ∀ μ ∈ T, μ0 ≤ μ) (hinf : ∀ μ ∈ T, aleph0 ≤ μ) :
     WorkingScheme K S where
   eligible := T
   eligible_unbounded := hT.2.1
@@ -454,12 +483,14 @@ noncomputable def namedWorkingScheme
         | inr v => cases v
     have h' := (W.diagram_reindex X.base Y.base e X.names Y.names).mp h
     simpa [heqX, heqY] using h'
-  diagram_preserved := fun {α μ ν} {hμ} {hν} X Y f hf xs => by
+  diagram_preserved := fun {α μ ν} {hμ} {hν} X Y f hf xs hαμ hαν => by
     change W.DiagramEq X.base Y.base (Sum.elim X.names xs)
       (Sum.elim Y.names (fun i => f.mapOcc (xs i)))
     have hW : W.DiagramEq X.base Y.base (Sum.elim X.names xs)
         (fun i => f.mapOcc (Sum.elim X.names xs i)) :=
       W.diagram_preserved X.base Y.base f hf.1 (Sum.elim X.names xs)
+        (sum_mk_lt_of_lt (hinf μ hμ) (named_index_lt_of_tail hι hTail hμ) hαμ)
+        (sum_mk_lt_of_lt (hinf ν hν) (named_index_lt_of_tail hι hTail hν) hαν)
     convert hW using 1
     funext i
     cases i with
@@ -469,8 +500,9 @@ noncomputable def namedWorkingScheme
     namedDiagramEq_reindex X Y e xs ys
   diagram_restrict := fun {α β μ ν} {hμ} {hν} X Y xs ys xs' ys' h =>
     namedDiagramEq_restrict X Y xs ys xs' ys' h
-  diagram_iso := fun {α μ} {hμ} X Y xs ys => by
+  diagram_iso := fun {α μ} {hμ} X Y xs ys hα => by
     simpa [SystemArrow.mapOcc] using namedDiagramEq_iff_iso X Y xs ys
+      (sum_mk_lt_of_lt (hinf μ hμ) (named_index_lt_of_tail hι hTail hμ) hα)
 
 end WorkingScheme
 

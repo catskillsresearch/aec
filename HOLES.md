@@ -4,7 +4,7 @@ Inventory of Lean `sorry` holes in this repository, ordered **prove-first**: Lay
 are holes with no remaining unfinished prerequisites; later layers wait on earlier
 ones. Apex theorems 1.2 and 1.3 are **last**.
 
-**Count:** 64 `sorry`, 0 `admit`. All live in `AEC/Section*/Results.lean`.
+**Count:** 63 `sorry`, 0 `admit`. All live in `AEC/Section*/Results.lean`.
 Sections **2**, **3**, **4**, and **13** have no holes.
 
 **Dependency basis:** paper/logical order from `dependencies.mermaid`
@@ -32,7 +32,7 @@ Section 13 is complete and was never on that chain.
 | 2 | 0 | — |
 | 3 | 0 | — |
 | 4 | 0 | — |
-| 5 | 2 | `AEC/Section5/Results.lean` |
+| 5 | 1 | `AEC/Section5/Results.lean` |
 | 6 | 14 | `AEC/Section6/Results.lean` |
 | 7 | 9 | `AEC/Section7/Results.lean` |
 | 8 | 5 | `AEC/Section8/Results.lean` |
@@ -42,7 +42,7 @@ Section 13 is complete and was never on that chain.
 | 12 | 4 | `AEC/Section12/Results.lean` |
 | 13 | 0 | — |
 | 14 | 4 | `AEC/Section14/Results.lean` |
-| **Total** | **64** | |
+| **Total** | **63** | |
 
 ---
 
@@ -109,13 +109,23 @@ counterexample refutes the program.
 **Dependency rule:** edge B→A only if the English proof of A requires B, or A
 needs an explicit Lean infra subgoal B (not a paper-number chain).
 
-**Open:** `proposition_5_6`, `objectOfEmptyChain` (both Section 5, listed under L1).
-**Note:** `theorem_3_11`, `proposition_5_7`, `lemma_4_6`, `lemma_6_14`, `proposition_4_3`, `lemma_4_5`, `lemma_4_7`, `proposition_4_8`, `proposition_4_9`, `lemma_4_10`, `theorem_4_11`, `proposition_5_8`, `proposition_5_9`,
-`infra_pair_coloring_glue`, `infra_rank_slice`, `infra_type_u_witness_set`, `infra_countable_back_and_forth`, `infra_stable_diagram_realize`, `infra_zeta_model_existence`, `infra_eligible_reclass`, `infra_template_fixed_support`, `infra_named_working_scheme`, `infra_named_working_package` are done.
+**Open:** `objectOfEmptyChain` (Section 5, listed under L1), `lemma_6_1` (Section 6).
+**Note:** `theorem_3_11`, `proposition_5_6`, `proposition_5_7`, `lemma_4_6`, `lemma_6_14`, `proposition_4_3`, `lemma_4_5`, `lemma_4_7`, `proposition_4_8`, `proposition_4_9`, `lemma_4_10`, `theorem_4_11`, `proposition_5_8`, `proposition_5_9`,
+`infra_pair_coloring_glue`, `infra_rank_slice`, `infra_type_u_witness_set`, `infra_countable_back_and_forth`, `infra_stable_diagram_realize`, `infra_zeta_model_existence`, `infra_eligible_reclass`, `infra_template_fixed_support`, `infra_named_working_scheme`, `infra_named_working_package`, `infra_single_model_scheme`, `infra_single_model_package` are done.
 Lean 5.8 is the residual `diagram_iso`+`structural_iso` form.
 False `6.13→6.14` / `5.8→5.9` edges removed. Later adjacent-number edges still suspect.
 `4.7→4.8` is hard again: `proposition_4_8` on the support encoding tests two full lists on their joint support and does not use Lemma 4.7, but the English form over the base needed by Lemma 4.10 (`proposition_4_8_over_base`, `PlacedTester`) is proved from Lemma 4.7.
 `4.2→4.9` added (hard): local realizability and restriction of diagrams in Prop 4.9 use Prop 4.2's strong-map clause. `4.2→4.10`, `4.3→4.10`, `4.8→4.10` added (hard): Lemma 4.10 uses strong maps `B → E(I)` fixing parameters (Prop 4.2 at `μ`), common hulls and categoricity at `μ` (Prop 4.3), and the placed tester (Prop 4.8). Lemma 4.10 is done. `4.2→4.11`, `4.8→4.11` added (hard): Theorem 4.11 uses the strong-map clause of Prop 4.2 (`StableDiagram.to_strong`, for each lifted stage of the tower) and the placed tester of Prop 4.8 (clause 2, and the codes of clause 3). Theorem 4.11 is done, **with a repaired statement** (see the table); Proposition 5.6 is unblocked.
+Proposition 5.6 is done, **with a strengthened statement and after three repairs of Definition 5.2** (next paragraph). Its Lean proof uses the closure points of Theorem 4.11 (`ClosedLevels.lean`), Prop 4.3 and Theorem 2.6, and does not call `theorem_4_11` or `PlacedTester` (amalgamation is not a clause of a working scheme); the edges `2.6, 4.2, 4.3, 4.11 → 5.6` stay as English dependencies.
+
+**Definition 5.2 repairs (made for Proposition 5.6).** The planned statement of Proposition 5.6 (a working package with an object at every eligible level) was refutable from the definitions; each obstruction was checked in Lean before the repair.
+1. `WorkingScheme.diagram_iso` is now for lists with `#α < μ`, and `WorkingScheme.diagram_preserved` for lists with `#α < μ` and `#α < ν` (`AEC/Section5/WorkingScheme.lean`). Unbounded, the two fields applied to the list of all occurrences of an object made every permitted arrow between objects at one level vertexwise bijective; the stable diagram `D` only controls bounded lists. `diagram_refl`, `diagram_symm`, `diagram_trans`, `diagram_reindex`, `diagram_restrict`, `diagram_empty` are unchanged.
+2. `IsSaturated.saturated` now assumes `∀ i, ext (Sum.inl i) = base i` (`AEC/Section5/PackageClauses.lean`): the witness extends the list whose diagram is that of the actual list. Before, `ext` was unrelated to `base` and `xs`, and the clause failed for a constant `ext` over an injective `xs`.
+3. `HasChainUnions.union` now assumes the cocone condition `∀ i j, SystemArrow.comp (le i j) (toZ j) = toZ i` in its universal property (`AEC/Section5/PackageClauses.lean`). This repair was not planned: after 1 and 2 the statement was still refutable, since for a two-element constant family the clause identified any two permitted arrows `X → Z`, which with mixed downward closure refutes every package that has an object.
+
+Callers: `namedWorkingScheme` now takes `hι : #ι < μ0`, `hTail : ∀ μ ∈ T, μ0 ≤ μ`, `hinf : ∀ μ ∈ T, ℵ₀ ≤ μ` (a bounded list together with the names is bounded); `named_index_lt_of_tail` and `sum_mk_lt_of_lt` moved to `NamedWorkingScheme.lean`. Props 5.7, 5.8, 5.9 remain proved without `sorry`.
+
+**Known residual in `HasChainUnions`.** The clause quantifies over arrows `le i j` for *every* ordered pair `(i, j)`, composing strictly, so its families consist of mutually inverse isomorphisms; with the cocone condition the clause holds in every scheme (take `U := obj i₀`). A faithful clause would index `le` over `i ≤ j` in a directed order. It was left unchanged (minimal repairs); the real content for single models is `SingleModelData.exists_directed_union`. Re-index the clause when Sections 6–11 first need a chain union.
 
 **Wired (intended use, reach apex):** `5.6 → 9.3, 10.2`; `5.7 → 9.3, 10.6, 10.8`;
 `2.3 → 1.2`; `3.11 → 4.2, 5.8`; `4.2 → 4.9, 4.10, 4.11`; `4.3 → 4.10, 4.11`; `4.6 → 4.9`; `4.7 → 4.8, 12.5`; `4.8 → 4.10, 4.11`; `4.10 → 4.11`; `4.11 → 5.6`; `6.14 → 12.6`; `13.5 → 10.9, 14.2`.
@@ -136,20 +146,22 @@ node reaches Thm 1.2 or 1.3; completed work should admit dead-code analysis of e
 
 Section 4 is complete: Theorem 4.11, its last hole, is done (hard deps 4.2, 4.3, 4.8, 4.10 closed).
 
-### L1 — Section 5 after diagrams (2 open)
+### L1 — Section 5 after diagrams (1 open)
 
-Section 4 (diagrams / amalgamation) is complete, so Proposition 5.6 is open (hard deps 2.6, 4.2, 4.3, 4.11 closed).
+Proposition 5.6 is done (single-model working package on the closure points of `{t, g}` above `ℓ`). The remaining hole is the seed object `objectOfEmptyChain`.
 
 | Decl | Title | Location |
 |------|-------|----------|
-| `proposition_5_6` | Proposition 5.6 | `AEC/Section5/Results.lean:184` (feeds Thm 9.3, Prop 10.2) |
-| `proposition_5_7` | Proposition 5.7 | `AEC/Section5/Results.lean` (**done**: no `sorryAx`; `exists_named_realization_of_arrow` via `wellOrder_arrow` + `diagram_preserved` in `NamedRealizationExistence.lean`; packaged with `namedWorkingScheme` / `isWorkingPackage_namedWorkingScheme` on `eligibleTail (μ0 ⊔ ℵ₀)`) |
+| `proposition_5_6` | Proposition 5.6 | `AEC/Section5/Results.lean` (**done**: no `sorryAx`; `SingleModelData.scheme` in `SingleModelScheme.lean` and `SingleModelData.isWorkingPackage` in `SingleModelPackage.lean`. One vertex; objects at `μ` = `K`-structures on the carrier `μ.ord.ToType` in `K` (`SMObject`); arrows = strong maps; eligible = closure points of `{D.t, g}` above `ls K`; `E` from `exists_orderPresentation_of_categoricalUnbounded`, with `CategoricalUnbounded K` from `D`. `DiagramEq` compares two lists by `D.same` inside the presentation `E(ρ)` at every eligible `ρ` above both levels and the length, after canonical charts (`chart`, `push`); for lists bounded at both levels it is `D.same` in the models (`diagramEq_iff_sameD`); `diagram_iso` by Prop 4.3. Saturation `exists_saturation`: a Prop 4.3 automorphism of `E(max μ ν)` moves the base of the witness onto the actual list, then a strong hull of size `μ`. Statement changes: inputs stay `(K) (D) (g)`; the conclusion is now `∃ S W, IsWorkingPackage W ∧ HasPresentations W W.template ∧ (∀ μ hμ, Nonempty (W.Object μ hμ)) ∧ Nonempty S.Vertex ∧ Subsingleton S.Vertex ∧ (∀ κ, ∃ μ, κ ≤ μ ∧ μ ∈ W.eligible) ∧ ∀ μ ∈ W.eligible, IsClosurePoint {D.t, g} μ`, the hypotheses that Proposition 5.7 consumes. Needed the Definition 5.2 repairs above. Feeds Thm 9.3, Prop 10.2) |
+| `infra_single_model_scheme` | Single-model WorkingScheme | `AEC/Section5/SingleModelScheme.lean` (**done**: `oneVertexShape`, `SMObject`, `SingleModelData`, `SingleModelData.DiagramEq`, `SingleModelData.scheme`; no `sorry`) |
+| `infra_single_model_package` | Single-model package clauses | `AEC/Section5/SingleModelPackage.lean` (**done**: `nonempty_object`, `hasPresentations`, `hasMixedDownward`, `isSaturated`, `satisfiesExhaustion`, `hasChainUnions`, `isWorkingPackage`, `exists_directed_union`; no `sorry`) |
+| `proposition_5_7` | Proposition 5.7 | `AEC/Section5/Results.lean` (**done**: no `sorryAx`; `exists_named_realization_of_arrow` via `wellOrder_arrow` + `diagram_preserved` in `NamedRealizationExistence.lean`; packaged with `namedWorkingScheme` / `isWorkingPackage_namedWorkingScheme` on `eligibleTail (μ0 ⊔ ℵ₀)`; the named scheme takes `#ι < μ0` and the tail bounds after the Definition 5.2 repairs) |
 | `infra_template_fixed_support` | Template F(J+H) | `AEC/Section5/TermTemplate.lean` (**done**: `withFixedSupport`, `sumLexEmbedRight` / `sumLexEmbedLeftIncl`, `fixedSupportArrow`) |
 | `infra_eligible_reclass` | Convention 5.3 tails / Lim | `AEC/Section5/EligibleSubclass.lean` (**done**: `eligibleTail`, `EligibleSubclass.tail` / `lim` / `aboveNamingThreshold`) |
 | `infra_named_working_scheme` | Named WorkingScheme ctor | `AEC/Section5/NamedWorkingScheme.lean` (**done**: `WorkingScheme.IsStructIso` + `namedWorkingScheme` packer; no `sorry`) |
 | `infra_named_working_package` | Named package transfer | `AEC/Section5/NamedPackageTransfer.lean` (**done**: `isWorkingPackage_namedWorkingScheme`; no `sorry`) |
 | `objectOfEmptyChain` | Seed object at eligible level | `AEC/Section5/Results.lean` (**open**: nonempty chain unions no longer supply empty-index objects) |
-| `proposition_5_8` | Proposition 5.8 | `AEC/Section5/Results.lean:224` (**done**: Lean residual via `diagram_iso` + `structural_iso`) |
+| `proposition_5_8` | Proposition 5.8 | `AEC/Section5/Results.lean` (**done**: Lean residual via `diagram_iso` + `structural_iso`) |
 
 ### L2 — Section 6 unlock (14)
 
@@ -288,7 +300,7 @@ layer (and thus the whole stack).
 | Layer | Count |
 |------:|------:|
 | L0 | 0 |
-| L1 | 2 |
+| L1 | 1 |
 | L2 | 14 |
 | L3 | 9 |
 | L4 | 5 |
@@ -298,4 +310,4 @@ layer (and thus the whole stack).
 | L8 | 4 |
 | L9 | 4 |
 | L10 | 2 |
-| **Total** | **64** |
+| **Total** | **63** |

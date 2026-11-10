@@ -1,6 +1,6 @@
 {
   "updated": "2026-11-10",
-  "sorryCount": 64,
+  "sorryCount": 63,
   "legend": {
     "open": "No unfinished required proof-deps — try next",
     "blocked": "Waiting on incomplete required proof-deps",
@@ -19,7 +19,8 @@
     "Prop 4.8 is done on the support encoding (UniformTesting.lean): g σ = max ℵ₀ σ, test set = joint support, for infinite σ. The Lean proof does not use Lemma 4.7, so lemma_4_7 → proposition_4_8 is soft (English-only); lemma_4_7 stays wired through its English use in Lem 12.5.",
     "Prop 4.9 is done by the English support-profile obstruction (CompactPlacement.lean). Statement changes: [CategoricalUnbounded K], ℵ₀ ≤ σ, natural-parameter clause hnat, coherence clause hcoh; the prescription for p is the diagram of a tuple q p of E(I), so possibility needs no hypothesis. Hard edge proposition_4_2 → proposition_4_9 added (strong-map clause of Prop 4.2). Lemma 4.10 is unblocked: its only hard dep is Prop 4.9; a natural instantiation of q p is via a strong map B → E(I) fixing p (Prop 4.2 at μ), which satisfies hnat and hcoh.",
     "Lemma 4.10 is done (BoundedDiagramLift.lean, PlacedTesting.lean). Statement changes: the old statement was vacuous, since each test clause carried D.t μ ≤ Model.card B while Model.card B = μ < D.t μ (StableDiagram.above). Now the lift clauses are at the bounded levels ρ < μ (the diagrams D(d, X; B), |X| < μ, whose thresholds lie below μ), J is produced with D.t μ ≤ ‖E(J)‖, and uniqueness is the level-μ comparison over all of A; added [CategoricalUnbounded K], hcat : Categorical K μ, ℵ₀ ≤ σ, and hg : PlacedTester K E D g. PlacedTester is the English Prop 4.8 over the base (placements of a σ-tuple over E(I) that differ over A differ over ≤ g(σ) positions of I); it is proved as proposition_4_8_over_base / exists_placedTester from Lemma 4.7 (type_u_witness_set) by the frozen-data / ordinal-vector argument, because proposition_4_8 on the support encoding only tests two full lists on their own joint support. So lemma_4_7 → proposition_4_8 is hard again, and proposition_4_8, proposition_4_2 (strong maps B → E(I) fixing parameters), proposition_4_3 (common hulls, categoricity at μ) → lemma_4_10 are hard.",
-    "Thm 4.11 is done (ClosedLevels.lean, ClosedLevelAmalgam.lean, ClosedLevelTypes.lean); Section 4 is complete (no sorry in AEC/Section4), and Prop 5.6 is unblocked. S = closure points μ > ℓ of {t, g}. Statement changes: added [CategoricalUnbounded K], E : OrderPresentation K, hg : PlacedTester K E D g (replacing the monotone-only g). Clause 2: added ℵ₀ ≤ σ; the old right side was vacuous (tests at level μ under D.t μ ≤ Model.card Bᵢ = μ < D.t μ); it is now the tests at the bounded levels ρ < μ (as in lemma_4_10) over all parameter lists p : β → A with #β ≤ g σ + ls K. β is quantified inside the iff, since for one fixed β the iff fails when β is small; the bound is g σ + ls K because PlacedTester bounds positions of I and ≤ g(σ) positions support ≤ g(σ) + ℓ elements of A. Clause 3: the old form compared x, y ∈ A under g₀ = g₁ on A, which forces x = y and holds for any injection A → μ; it is now a code for the elements of all μ-extensions (B, f) of A, with code B₀ f₀ x = code B₁ f₁ y iff an amalgam over A identifies x with y (the old form is the case B₀ = B₁ = A). Hard edges proposition_4_2 → theorem_4_11 (strong-map clause, StableDiagram.to_strong) and proposition_4_8 → theorem_4_11 (placed tester) added."
+    "Thm 4.11 is done (ClosedLevels.lean, ClosedLevelAmalgam.lean, ClosedLevelTypes.lean); Section 4 is complete (no sorry in AEC/Section4), and Prop 5.6 is unblocked. S = closure points μ > ℓ of {t, g}. Statement changes: added [CategoricalUnbounded K], E : OrderPresentation K, hg : PlacedTester K E D g (replacing the monotone-only g). Clause 2: added ℵ₀ ≤ σ; the old right side was vacuous (tests at level μ under D.t μ ≤ Model.card Bᵢ = μ < D.t μ); it is now the tests at the bounded levels ρ < μ (as in lemma_4_10) over all parameter lists p : β → A with #β ≤ g σ + ls K. β is quantified inside the iff, since for one fixed β the iff fails when β is small; the bound is g σ + ls K because PlacedTester bounds positions of I and ≤ g(σ) positions support ≤ g(σ) + ℓ elements of A. Clause 3: the old form compared x, y ∈ A under g₀ = g₁ on A, which forces x = y and holds for any injection A → μ; it is now a code for the elements of all μ-extensions (B, f) of A, with code B₀ f₀ x = code B₁ f₁ y iff an amalgam over A identifies x with y (the old form is the case B₀ = B₁ = A). Hard edges proposition_4_2 → theorem_4_11 (strong-map clause, StableDiagram.to_strong) and proposition_4_8 → theorem_4_11 (placed tester) added.",
+    "Prop 5.6 is done (SingleModelScheme.lean, SingleModelPackage.lean), with a strengthened statement: a one-vertex working package with presentations and an object at every eligible level, on an unbounded class of closure points of {D.t, g}. Definition 5.2 was repaired first, because the planned statement was refutable (Lean-checked obstructions). (1) WorkingScheme.diagram_iso is for lists with #α < μ, and WorkingScheme.diagram_preserved for lists with #α < μ and #α < ν: unbounded, the two fields applied to the list of all occurrences of an object make every permitted arrow between objects at one level vertexwise bijective, and the stable diagram D only controls bounded lists. (2) IsSaturated.saturated assumes ∀ i, ext (Sum.inl i) = base i: the witness extends the list whose diagram is that of the actual list (otherwise ext was unrelated to base and xs). (3) HasChainUnions.union assumes the cocone condition ∀ i j, comp (le i j) (toZ j) = toZ i in its universal property: without it a two-element constant family identifies any two permitted arrows X → Z, which with mixed downward closure refutes every package having an object. diagram_trans / diagram_reindex / diagram_restrict / diagram_refl / diagram_symm / diagram_empty are unchanged (unbounded). Callers updated: namedWorkingScheme now takes #ι < μ0 and the tail bounds μ0 ≤ μ, ℵ₀ ≤ μ; Props 5.7, 5.8, 5.9 remain proved. Known residual: HasChainUnions.union quantifies over arrows le i j for every ordered pair (i, j) with strict composition, so its families consist of mutually inverse isomorphisms and, with the cocone condition, the clause holds in every scheme (take U := obj i₀); a faithful clause would index le over i ≤ j in a directed order. Left unchanged; the real content for single models is SingleModelData.exists_directed_union. Sections 6–11 that consume chain unions should re-index the clause when they need it."
   ],
   "nodes": [
     {
@@ -290,13 +291,31 @@
       "blocker": null
     },
     {
+      "id": "infra_single_model_scheme",
+      "label": "Infra: single-model WorkingScheme",
+      "section": 5,
+      "file": "AEC/Section5/SingleModelScheme.lean",
+      "status": "done",
+      "blocker": null,
+      "detail": "oneVertexShape; SMObject K μ = K-structures on the carrier μ.ord.ToType in K; SingleModelData (D, g, E); eligible = closure points of {D.t, g} above ls K (unbounded by exists_closurePoint_ge, categorical by categorical_of_closurePoint); arrows = strong maps (permitted := True), isos = bijective arrows. DiagramEq: push both lists by canonical charts (categoricity) and the level maps E(μ) → E(ρ) into the presentation E(ρ) at every eligible ρ above both levels and the length, and compare by D.same there (StableDiagram.SameD); for lists bounded at both levels this is D.same in the models (diagramEq_iff_sameD). diagram_iso from Prop 4.3 (sameD_equiv), diagram_preserved from D.of_strong. No sorry."
+    },
+    {
+      "id": "infra_single_model_package",
+      "label": "Infra: single-model package",
+      "section": 5,
+      "file": "AEC/Section5/SingleModelPackage.lean",
+      "status": "done",
+      "blocker": null,
+      "detail": "Clauses of Def 5.2 for SingleModelData.scheme: nonempty_object (copy of E(μ)), hasPresentations (categoricity charts + E.map), hasMixedDownward (exact-cardinality strong hull), isSaturated (Prop 4.3 automorphism of E(max μ ν) moving the base of the witness onto the actual list, then a strong hull of size μ), satisfiesExhaustion, hasChainUnions, isWorkingPackage; exists_directed_union (Lemma 2.1 with the cardinality count) is the union of a directed system of objects. No sorry."
+    },
+    {
       "id": "proposition_5_6",
       "label": "Prop 5.6",
       "section": 5,
       "file": "AEC/Section5/Results.lean",
-      "status": "open",
+      "status": "done",
       "blocker": null,
-      "detail": "Unblocked by Thm 4.11 (done; hard deps 2.6, 4.2, 4.3, 4.11 closed). Single-model working package. Downstream: Thm 9.3 (start scheme), Prop 10.2 (choose λ₀)."
+      "detail": "No sorry (axioms: propext, Classical.choice, Quot.sound). Strengthened statement, inputs (K)(D : StableDiagram K)(g): ∃ S W, IsWorkingPackage W ∧ HasPresentations W W.template ∧ an object at every eligible level ∧ one vertex ∧ eligible unbounded ∧ every eligible μ is a closure point of {D.t, g}. Scheme SingleModelData.scheme (SingleModelScheme.lean) on eligible = closure points of {D.t, g} above ls K, E from exists_orderPresentation_of_categoricalUnbounded (CategoricalUnbounded from D); package SingleModelData.isWorkingPackage (SingleModelPackage.lean). Objects are real K-models (nonempty at every level), so the package is not vacuous. The Lean proof uses the closure-point infrastructure of Thm 4.11 (ClosedLevels.lean), Prop 4.3 and Thm 2.6; it does not call theorem_4_11 or PlacedTester (amalgamation is not a clause of a working scheme). Needed three repairs of Definition 5.2 (see notes). Downstream: Thm 9.3 (start scheme), Prop 10.2 (choose λ₀)."
     },
     {
       "id": "proposition_5_7",
@@ -305,7 +324,7 @@
       "file": "AEC/Section5/Results.lean",
       "status": "done",
       "blocker": null,
-      "detail": "No sorry (axioms: propext, Classical.choice, Quot.sound). Naming tail eligibleTail (μ0 ⊔ ℵ₀); exists_named_realization_of_arrow via wellOrder_arrow + diagram_preserved (NamedRealizationExistence.lean); namedWorkingScheme + isWorkingPackage_namedWorkingScheme. Hyps: Convention 5.3, HasPresentations, seed objects. Downstream: Thm 9.3, Prop 10.6, Lem 10.8."
+      "detail": "No sorry (axioms: propext, Classical.choice, Quot.sound). Naming tail eligibleTail (μ0 ⊔ ℵ₀); exists_named_realization_of_arrow via wellOrder_arrow + diagram_preserved (NamedRealizationExistence.lean); namedWorkingScheme + isWorkingPackage_namedWorkingScheme (after the Def 5.2 repairs the named scheme takes #ι < μ0 and the tail bounds μ0 ≤ μ, ℵ₀ ≤ μ, which make name-extended lists bounded). Hyps: Convention 5.3, HasPresentations, seed objects. Downstream: Thm 9.3, Prop 10.6, Lem 10.8."
     },
     {
       "id": "proposition_5_8",
@@ -928,7 +947,7 @@
       "file": "AEC/Section5/NamedWorkingScheme.lean",
       "status": "done",
       "blocker": null,
-      "detail": "WorkingScheme.IsStructIso abstracts scheme isos; namedWorkingScheme packs NamedObject / NamedPermitted / NamedStructIso / NamedDiagramEq on an EligibleSubclass. No sorry."
+      "detail": "WorkingScheme.IsStructIso abstracts scheme isos; namedWorkingScheme packs NamedObject / NamedPermitted / NamedStructIso / NamedDiagramEq on an EligibleSubclass. namedWorkingScheme takes hι : #ι < μ0, hTail : ∀ μ ∈ T, μ0 ≤ μ, hinf : ∀ μ ∈ T, ℵ₀ ≤ μ, so that a bounded list together with the names is bounded (bounded diagram_preserved / diagram_iso). No sorry."
     },
     {
       "id": "infra_named_working_package",
@@ -937,7 +956,7 @@
       "file": "AEC/Section5/NamedPackageTransfer.lean",
       "status": "done",
       "blocker": null,
-      "detail": "isWorkingPackage_namedWorkingScheme: saturation, mixed downward, same-level exhaustion (prefix cancel via diagram_restrict), nonempty chain unions (cocone naturality). No sorry."
+      "detail": "isWorkingPackage_namedWorkingScheme: saturation, mixed downward, same-level exhaustion (prefix cancel via diagram_restrict), nonempty chain unions (cocone naturality). Follows the Def 5.2 repairs: saturation carries ext ∘ inl = base, chain unions carry the cocone hypothesis. No sorry."
     },
     {
       "id": "infra_eligible_reclass",
@@ -1572,6 +1591,21 @@
       "kind": "hard"
     },
     {
+      "from": "infra_single_model_scheme",
+      "to": "infra_single_model_package",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_single_model_scheme",
+      "to": "proposition_5_6",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_single_model_package",
+      "to": "proposition_5_6",
+      "kind": "hard"
+    },
+    {
       "from": "lemma_5_4",
       "to": "proposition_5_9",
       "kind": "hard"
@@ -1642,5 +1676,5 @@
       "kind": "hard"
     }
   ],
-  "doneCount": 48
+  "doneCount": 49
 }

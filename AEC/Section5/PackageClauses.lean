@@ -37,7 +37,12 @@ class HasPresentations {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
 
 /-- Definition 5.2(1), unions. A nonempty increasing chain of objects at one eligible level, whose
 union has cardinality that level, is an object; inclusions are a cocone for the chain arrows; and a
-chain that maps into an object at a larger eligible level has its union arrow into that object. -/
+chain that maps into an object at a larger eligible level has its union arrow into that object.
+
+"All members of the chain map by the inclusions into one object `Z`": the family `toZ` is a
+cocone over the chain arrows (`le i j ≫ toZ j = toZ i`). Without this hypothesis the clause,
+applied to a two-element index with identity transition maps, would identify any two permitted
+arrows `X → Z`. -/
 class HasChainUnions {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
     (W : WorkingScheme K S) : Prop where
   union : ∀ {μ : Cardinal.{u}} (hμ : μ ∈ W.eligible) (index : Type u) [Nonempty index]
@@ -54,6 +59,7 @@ class HasChainUnions {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
           (toZ : (i : index) →
             SystemArrow K S (W.asSystem hμ (obj i)) (W.asSystem hν Z)),
           (∀ i, W.permitted (X := obj i) (Y := Z) (toZ i)) →
+          (∀ i j, SystemArrow.comp (le i j) (toZ j) = toZ i) →
           μ ≤ ν →
           ∃ toU : SystemArrow K S (W.asSystem hμ U) (W.asSystem hν Z),
             W.permitted (X := U) (Y := Z) toU ∧
@@ -75,7 +81,11 @@ class HasMixedDownward {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
 
 /-- Definition 5.2(3), saturation. A joint diagram of bounded length that extends the diagram
 of an actual bounded list, and is witnessed in any eligible object, is realized over that list at
-its own level. -/
+its own level.
+
+The witness `ext` extends the list `base` whose diagram is that of the actual list `xs`
+(`ext ∘ Sum.inl = base`). Without this link the clause would ask for a realization of an
+arbitrary list `ext` over `xs`, which fails already for `ext` constant and `xs` injective. -/
 class IsSaturated {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
     (W : WorkingScheme K S) : Prop where
   saturated : ∀ {μ ν : Cardinal.{u}} {hμ : μ ∈ W.eligible} {hν : ν ∈ W.eligible}
@@ -84,6 +94,7 @@ class IsSaturated {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
     (base : α → Occurrence K S (W.asSystem hν Y))
     (ext : α ⊕ β → Occurrence K S (W.asSystem hν Y)),
     #α < μ → #β < μ →
+    (∀ i, ext (Sum.inl i) = base i) →
     W.DiagramEq (X := X) (Y := Y) xs base →
     ∃ (Z : W.Object μ hμ)
       (f : SystemArrow K S (W.asSystem hμ X) (W.asSystem hμ Z))
