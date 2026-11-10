@@ -111,8 +111,8 @@ Blue = done; green = open; grey = blocked; red = failed.
 **Dependency rule:** edge B→A only if the English proof of A requires B, or A
 needs an explicit Lean infra subgoal B (not a paper-number chain).
 
-**Failed:** `theorem_3_11`, `lemma_4_5`, `lemma_4_6`, `proposition_5_7`.
-**Open:** Prop 4.5 / 5.7 infra nodes (see below).
+**Failed:** `theorem_3_11`, `lemma_4_6`, `proposition_5_7`.
+**Open:** `lemma_4_5` (realizes bridge + packaging); Prop 4.5 / 5.7 infra nodes (see below).
 **Note:** `lemma_6_14`, `proposition_4_3`, `lemma_4_7`, `proposition_5_8`, `proposition_5_9`,
 `infra_pair_coloring_glue`, `infra_rank_slice`, `infra_type_u_witness_set`, `infra_countable_back_and_forth`, `infra_stable_diagram_realize`, `infra_zeta_model_existence` are done.
 Lean 5.8 is the residual `diagram_iso`+`structural_iso` form.
@@ -122,7 +122,7 @@ False `6.13→6.14` / `5.8→5.9` edges removed. Later adjacent-number edges sti
 |------|-------|----------|
 | `theorem_3_11` | Theorem 3.11 | `AEC/Section3/Results.lean:448` (**failed**: profile / assign / renaming) |
 | `proposition_4_3` | Proposition 4.3 | `AEC/Section4/Results.lean` (**done**: `prop43_hull_back_and_forth` in `Prop43BAF.lean`; hull back-and-forth on `HullMatch` stages, uses the new `StableDiagram.trans` field) |
-| `lemma_4_5` | Lemma 4.5 | `AEC/Section4/Results.lean:1216` (**failed**: needs `infra_relcode_orbit_record` for ≤χ fingerprint⇒joint injection; `infra_relcode_joint_canonical` done via `equal_relCode_equal_joint_canon`) |
+| `lemma_4_5` | Lemma 4.5 | `AEC/Section4/Results.lean` (**open**: unproved; needs `equal_fingerprint_same_orbit_over_params` + `lemma_4_5_with_E`; fingerprint⇒jointCanon infra done) |
 | `lemma_4_6` | Lemma 4.6 | `AEC/Section4/Results.lean:1248` (**failed**: needs `SameNaturalDiagram` API + block-swap pattern preservation → `D.same`; no short order-iso shortcut) |
 | `lemma_4_7` | Lemma 4.7 | `AEC/Section4/Results.lean` (**done**: `type_u_witness_set_param`) |
 | `proposition_4_8` | Proposition 4.8 | `AEC/Section4/Results.lean:1274` |

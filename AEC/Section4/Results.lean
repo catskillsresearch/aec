@@ -1188,9 +1188,9 @@ theorem proposition_4_3 (K : AbstractElementaryClass.{u}) [ArbitrarilyLarge K]
 then at every sufficiently large categoricity cardinal there are at most `χ` automorphism
 orbits of `σ`-tuples over any parameter set of size at most `χ`.
 
-**Failed (this campaign).** `equal_relCode_equal_joint_canon` is proved (`infra_relcode_joint_canonical`
-done). Still needs `infra_relcode_orbit_record` so fingerprints determine joint canons for the
-≤χ count / `orbits_over_params_soft`. Wire `E` via `CategoricalUnbounded` once that lands. -/
+**Failed (this campaign).** `equal_fingerprint_equal_joint_canon` / `infra_relcode_orbit_record`
+done. Still needs `equal_fingerprint_same_orbit_over_params` (realizes bridge) and
+`lemma_4_5_with_E` / `CategoricalUnbounded` wiring. -/
 theorem lemma_4_5 (K : AbstractElementaryClass.{u}) (σ χ : Cardinal.{u})
     (hσ : aleph0 ≤ σ) (hpow : χ ^ σ = χ)
     (hχ : ls K + (2 : Cardinal.{u}) ^ ((2 : Cardinal.{u}) ^ σ) ≤ χ) :

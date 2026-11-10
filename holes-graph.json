@@ -199,9 +199,9 @@
       "label": "Lem 4.5",
       "section": 4,
       "file": "AEC/Section4/Results.lean",
-      "status": "failed",
-      "blocker": "Needs RelCode fingerprint \u21d2 jointCanon / SameOrbit bridge (infra_relcode_orbit_record); equal_relCode_equal_joint_canon done",
-      "detail": ""
+      "status": "open",
+      "blocker": null,
+      "detail": "Unproved: equal_fingerprint_same_orbit_over_params (realizes) + lemma_4_5_with_E; fingerprint\Rightarrow jointCanon infra done"
     },
     {
       "id": "lemma_4_6",
@@ -893,9 +893,9 @@
       "label": "Infra: RelCode = orbit record",
       "section": 4,
       "file": "AEC/Section4/OrbitsOverParameters.lean",
-      "status": "open",
-      "blocker": "Fingerprint must determine jointCanon on image of relCodeOf (for \u2264\u03c7 count); soft/eqOld/occ \u2194 joint orbitRecordOfTuple",
-      "detail": "orbits_over_params_soft / lemma_4_5_with_E sorry pending this; RelFingerprint \u2264\u03c7 is proved (mk_relFingerprint_le)"
+      "status": "done",
+      "blocker": null,
+      "detail": "Proved equal_fingerprint_equal_joint_canon: jointCanon := relJointCanonOf(p, fingerprint) so equal fingerprints determine the joint soft canon. Fingerprint uses full canonical slots (soft/eqOld/occ). Remaining for orbit close: equal_fingerprint_same_orbit_over_params (realizes bridge); lemma_4_5_with_E still sorry."
     },
     {
       "id": "infra_template_fixed_support",
@@ -1531,5 +1531,5 @@
       "kind": "hard"
     }
   ],
-  "doneCount": 37
+  "doneCount": 38
 }

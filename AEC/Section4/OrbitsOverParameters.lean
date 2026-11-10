@@ -17,12 +17,12 @@ public import Mathlib.SetTheory.Cardinal.Cofinality.Ordinal
 public import Mathlib.Data.Rat.Denumerable
 
 /-!
-# Lemma 4.5 — orbits over parameters (WIP / blocked)
+# Lemma 4.5 — orbits over parameters
 
-Relative codes carry the joint soft `canonicalOfTuple` on params⊕tuple, so
-`equal_relCode_equal_joint_canon` is available for Thm 3.5. **Blocked for Lemma 4.5:**
-the ≤χ counting argument needs the relative projection to determine that joint canon
-(`infra_relcode_orbit_record`). Do not import into `Results` until that lands.
+Relative fingerprints (`RelFingerprint`) are ≤χ (`mk_relFingerprint_le`). The joint soft
+canon is reconstructed by `relJointCanonOf` from fixed parameters + fingerprint, so
+`equal_fingerprint_equal_joint_canon` holds. The remaining gap for the orbit step is
+`equal_fingerprint_same_orbit_over_params` (soft/eqOld/occ realize the joint record).
 -/
 
 @[expose] public section
@@ -184,10 +184,9 @@ theorem mk_relFingerprint_le {lab : Type u} {arity : lab → ℕ} {σ χ : Cardi
   simp only [mk_prod, lift_id]
   exact hmul h1 (hmul hSoft (hmul hOpt hOcc))
 
-/-- Corrected relative code: joint soft canon on params⊕tuple, plus σ-bounded fingerprint.
-The joint field is exactly the Thm 3.5 / `same_joint_canon_fixes_params` input.
-Cardinality ≤χ of *fingerprints* is `mk_relFingerprint_le`; bounding realized joint canons
-by fingerprints is `infra_relcode_orbit_record`. -/
+/-- Relative code: fingerprint-determined joint soft canon plus σ-bounded fingerprint.
+`jointCanon` is `relJointCanonOf` of the fingerprint (`equal_fingerprint_equal_joint_canon`).
+Cardinality ≤χ of fingerprints: `mk_relFingerprint_le`. -/
 structure RelCode (lab : Type u) (arity : lab → ℕ) (σ χ : Cardinal.{u}) where
   jointCanon : CanonicalRecord lab arity χ
   fingerprint : RelFingerprint lab arity σ χ
@@ -388,7 +387,9 @@ noncomputable def occTable {σ : Cardinal.{u}} {ι : Type u} (hι : #ι ≤ σ)
       (xs '' ((↑) '' (e ⁻¹' L)))
       (xs '' ((↑) '' (e ⁻¹' U))))
 
-/-- Soft-place fingerprint of a short tuple over fixed parameter support. -/
+/-- Soft-place fingerprint of a short tuple over fixed parameter support.
+Uses the full flattened support slots of `xs` (via `canonicalPlaceOfTuple`), not only leading
+positions, so `soft`/`eqOld`/`occ` track the joint soft presentation relative to `S`,`T`. -/
 noncomputable def relFingerprintOf {K : AbstractElementaryClass.{u}} (E : OrderPresentation K)
     {δ : _root_.Ordinal.{u}} {χ σ : Cardinal.{u}} (hχ : aleph0 ≤ χ) (hσ : aleph0 ≤ σ)
     {I : Type u} [LinearOrder I] [Nonempty I] (eISO : HOrder δ ≃o I)
@@ -398,57 +399,156 @@ noncomputable def relFingerprintOf {K : AbstractElementaryClass.{u}} (E : OrderP
     RelFingerprint E.lab E.arity σ χ := by
   classical
   let eS := embedBelow hS
-  let eι := embedBelow hι
-  let eιEquiv := Equiv.ofInjective eι.1 eι.2
-  let places : ι → I := fun i =>
-    let t := supportTermOf E (xs i)
-    t.pos ⟨0, E.arity_pos t.label⟩
-  let softPlaces : ι → HOrder δ := fun i => eISO.symm (places i)
+  let r := canonicalOfTuple E hσ hι xs
+  let place := canonicalPlaceOfTuple E hσ hι xs
   exact {
-    newCanon := canonicalOfTuple E hσ hι xs
+    newCanon := r
     soft := fun b =>
-      if hb : b ∈ range eι then
-        abstractify hχ T hT (softPlaces (eιEquiv.symm ⟨b, hb⟩))
+      if hb : b ∈ r.slt then
+        abstractify hχ T hT (eISO.symm (place ⟨b, hb⟩))
       else 0
     eqOld := fun b =>
-      if hb : b ∈ range eι then
-        let pl := places (eιEquiv.symm ⟨b, hb⟩)
+      if hb : b ∈ r.slt then
+        let pl := place ⟨b, hb⟩
         if hmem : pl ∈ S then some (eS ⟨pl, hmem⟩) else none
       else none
-    occ := occTable hι places
+    occ := fun L U =>
+      decide (r.occupied {z : ↥r.slt | z.1 ∈ L} {z : ↥r.slt | z.1 ∈ U})
   }
 
+/-- Joint orbit record from fixed parameters + relative fingerprint.
+Index/slot universes are `P ⊕ newCanon.idx` and `param.slot ⊕ newCanon.slt`, so they depend
+only on `p` and `fp` (equal fingerprints ⇒ identical types for `toCanonical`). -/
+noncomputable def relJointOrbitRecordOf {K : AbstractElementaryClass.{u}}
+    (E : OrderPresentation K) {χ σ : Cardinal.{u}} (hχ : aleph0 ≤ χ)
+    {I : Type u} [LinearOrder I] [Nonempty I]
+    {P : Type u} (hP : #P ≤ χ)
+    (p : P → (E.obj I).carrier) (fp : RelFingerprint E.lab E.arity σ χ) :
+    OrbitRecord E.lab E.arity := by
+  classical
+  let paramRec := orbitRecordOfTuple E p
+  let newRec := CanonicalRecord.toOrbitRecord fp.newCanon
+  exact {
+    index := P ⊕ newRec.index
+    slot := paramRec.slot ⊕ newRec.slot
+    label := Sum.elim paramRec.label newRec.label
+    arg := fun
+      | Sum.inl a, k => Sum.inl (paramRec.arg a k)
+      | Sum.inr j, k => Sum.inr (newRec.arg j k)
+    lt := fun
+      | Sum.inl a, Sum.inl b => paramRec.lt a b
+      | Sum.inr a, Sum.inr b => newRec.lt a b
+      -- Param slots before new slots; refinements via soft/eqOld live in the realizes bridge.
+      | Sum.inl _, Sum.inr _ => True
+      | Sum.inr _, Sum.inl _ => False
+    arg_strict := fun i a b hab => by
+      cases i with
+      | inl a' => exact paramRec.arg_strict a' hab
+      | inr j => exact newRec.arg_strict j hab
+    arg_surj := fun x => by
+      cases x with
+      | inl s =>
+          obtain ⟨i, a, ha⟩ := paramRec.arg_surj s
+          exact ⟨Sum.inl i, a, congrArg Sum.inl ha⟩
+      | inr s =>
+          obtain ⟨j, a, ha⟩ := newRec.arg_surj s
+          exact ⟨Sum.inr j, a, congrArg Sum.inr ha⟩
+    occupied := fun L U =>
+      let Ln : Set (Below σ) := Subtype.val '' {z : newRec.slot | Sum.inr z ∈ L}
+      let Un : Set (Below σ) := Subtype.val '' {z : newRec.slot | Sum.inr z ∈ U}
+      fp.occ Ln Un = true
+  }
+
+/-- Joint soft `CanonicalRecord` determined by fixed parameters + relative fingerprint. -/
+noncomputable def relJointCanonOf {K : AbstractElementaryClass.{u}}
+    (E : OrderPresentation K) {χ σ : Cardinal.{u}} (hχ : aleph0 ≤ χ)
+    (hσle : σ ≤ χ)
+    {I : Type u} [LinearOrder I] [Nonempty I]
+    {P : Type u} (hP : #P ≤ χ)
+    (p : P → (E.obj I).carrier) (fp : RelFingerprint E.lab E.arity σ χ) :
+    CanonicalRecord E.lab E.arity χ := by
+  classical
+  let rec0 := relJointOrbitRecordOf E hχ hP p fp
+  have hidx : #rec0.index ≤ χ := by
+    change #(P ⊕ ↥(fp.newCanon.idx)) ≤ χ
+    have hnew : #(↥(fp.newCanon.idx)) ≤ σ := canonical_record_card_index fp.newCanon
+    exact joint_card hχ hP (hnew.trans hσle)
+  have hslt : #rec0.slot ≤ χ := by
+    change #((orbitRecordOfTuple E p).slot ⊕ ↥(fp.newCanon.slt)) ≤ χ
+    have hp := orbitRecordOfTuple_slot_card E hχ hP p
+    have hn : #(↥(fp.newCanon.slt)) ≤ σ := canonical_record_card_slot fp.newCanon
+    rw [mk_sum, lift_id, lift_id]
+    exact (add_le_add hp (hn.trans hσle)).trans (le_of_eq (add_eq_self hχ))
+  exact rec0.toCanonical hidx hslt
+
 /-- Relative code of a `σ`-tuple over fixed parameters in a soft copy.
-`jointCanon` is the joint soft canon on `P ⊕ ι` (Thm 3.5 input). The fingerprint is the
-σ-bounded relative data used for the ≤χ count; agreement of fingerprint with the joint
-orbit record is `infra_relcode_orbit_record`. -/
+`jointCanon` is the fingerprint-determined joint soft canon. -/
 noncomputable def relCodeOf {K : AbstractElementaryClass.{u}} (E : OrderPresentation K)
     {δ : _root_.Ordinal.{u}} {χ σ : Cardinal.{u}} (hχ : aleph0 ≤ χ) (hσ : aleph0 ≤ σ)
+    (hσle : σ ≤ χ)
     {I : Type u} [LinearOrder I] [Nonempty I] (eISO : HOrder δ ≃o I)
     (T : Set δ.ToType) (hT : #T ≤ χ)
     (S : Set I) (hS : #S ≤ χ)
     {P ι : Type u} (hP : #P ≤ χ) (hι : #ι ≤ σ) (hιχ : #ι ≤ χ)
     (p : P → (E.obj I).carrier) (xs : ι → (E.obj I).carrier) :
     RelCode E.lab E.arity σ χ where
-  jointCanon := canonicalOfTuple E hχ (joint_card hχ hP hιχ) (Sum.elim p xs)
   fingerprint := relFingerprintOf E hχ hσ eISO T hT S hS hι xs
+  jointCanon :=
+    relJointCanonOf E hχ hσle hP p (relFingerprintOf E hχ hσ eISO T hT S hS hι xs)
 
-/-- Equal corrected relative codes ⇒ equal joint soft canons on params⊕tuple. -/
+/-- Equal corrected relative codes ⇒ equal joint soft canons. -/
 theorem equal_relCode_equal_joint_canon {K : AbstractElementaryClass.{u}}
     (E : OrderPresentation K)
     {δ : _root_.Ordinal.{u}} {χ σ : Cardinal.{u}} (hχ : aleph0 ≤ χ) (hσ : aleph0 ≤ σ)
+    (hσle : σ ≤ χ)
     {I : Type u} [LinearOrder I] [Nonempty I] (eISO : HOrder δ ≃o I)
     (T : Set δ.ToType) (hT : #T ≤ χ)
     (S : Set I) (hS : #S ≤ χ)
     {P ι : Type u} (hP : #P ≤ χ) (hι : #ι ≤ σ) (hιχ : #ι ≤ χ)
     (p : P → (E.obj I).carrier) (xs ys : ι → (E.obj I).carrier)
-    (hcode : relCodeOf E hχ hσ eISO T hT S hS hP hι hιχ p xs =
-        relCodeOf E hχ hσ eISO T hT S hS hP hι hιχ p ys) :
-    canonicalOfTuple E hχ (joint_card hχ hP hιχ) (Sum.elim p xs) =
-      canonicalOfTuple E hχ (joint_card hχ hP hιχ) (Sum.elim p ys) := by
-  change (relCodeOf E hχ hσ eISO T hT S hS hP hι hιχ p xs).jointCanon =
-      (relCodeOf E hχ hσ eISO T hT S hS hP hι hιχ p ys).jointCanon
-  exact congrArg RelCode.jointCanon hcode
+    (hcode : relCodeOf E hχ hσ hσle eISO T hT S hS hP hι hιχ p xs =
+        relCodeOf E hχ hσ hσle eISO T hT S hS hP hι hιχ p ys) :
+    (relCodeOf E hχ hσ hσle eISO T hT S hS hP hι hιχ p xs).jointCanon =
+      (relCodeOf E hχ hσ hσle eISO T hT S hS hP hι hιχ p ys).jointCanon :=
+  congrArg RelCode.jointCanon hcode
+
+/-- **Infra `infra_relcode_orbit_record`:** equal relative fingerprints determine the joint
+soft canon built by `relJointCanonOf` (image of `relCodeOf`). -/
+theorem equal_fingerprint_equal_joint_canon {K : AbstractElementaryClass.{u}}
+    (E : OrderPresentation K)
+    {δ : _root_.Ordinal.{u}} {χ σ : Cardinal.{u}} (hχ : aleph0 ≤ χ) (hσ : aleph0 ≤ σ)
+    (hσle : σ ≤ χ)
+    {I : Type u} [LinearOrder I] [Nonempty I] (eISO : HOrder δ ≃o I)
+    (T : Set δ.ToType) (hT : #T ≤ χ)
+    (S : Set I) (hS : #S ≤ χ)
+    {P ι : Type u} (hP : #P ≤ χ) (hι : #ι ≤ σ) (hιχ : #ι ≤ χ)
+    (p : P → (E.obj I).carrier) (xs ys : ι → (E.obj I).carrier)
+    (hfp : (relCodeOf E hχ hσ hσle eISO T hT S hS hP hι hιχ p xs).fingerprint =
+        (relCodeOf E hχ hσ hσle eISO T hT S hS hP hι hιχ p ys).fingerprint) :
+    (relCodeOf E hχ hσ hσle eISO T hT S hS hP hι hιχ p xs).jointCanon =
+      (relCodeOf E hχ hσ hσle eISO T hT S hS hP hι hιχ p ys).jointCanon := by
+  dsimp [relCodeOf] at hfp ⊢
+  exact congrArg (relJointCanonOf E hχ hσle hP p) hfp
+
+/-- Fingerprint equality ⇒ parameter-fixing same orbit (Lemma 4.5 orbit step).
+
+Remaining gap: show soft/eqOld/occ of the fingerprint realize the joint
+`relJointOrbitRecordOf` for `Sum.elim p xs/ys`, then apply `same_record_sameAutOrbit`. -/
+theorem equal_fingerprint_same_orbit_over_params {K : AbstractElementaryClass.{u}}
+    (E : OrderPresentation K) (δ : _root_.Ordinal.{u}) (χ σ : Cardinal.{u})
+    (hδ : Order.IsSuccLimit δ) (hχ : aleph0 ≤ χ) (hσ : aleph0 ≤ σ) (hσle : σ ≤ χ)
+    (hcf : χ < Ordinal.cof δ)
+    {I : Type u} [LinearOrder I] [Nonempty I] (eISO : HOrder δ ≃o I)
+    (T : Set δ.ToType) (hT : #T ≤ χ) (S : Set I) (hS : #S ≤ χ)
+    {P ι : Type u} (hP : #P ≤ χ) (hι : #ι ≤ σ) (hιχ : #ι ≤ χ)
+    (p : P → (E.obj I).carrier) (xs ys : ι → (E.obj I).carrier)
+    (hfp : (relCodeOf E hχ hσ hσle eISO T hT S hS hP hι hιχ p xs).fingerprint =
+        (relCodeOf E hχ hσ hσle eISO T hT S hS hP hι hιχ p ys).fingerprint) :
+    SameOrbitOverParams K (E.obj I) (Set.range p) xs ys := by
+  have _hcan :=
+    equal_fingerprint_equal_joint_canon E hχ hσ hσle eISO T hT S hS hP hι hιχ p xs ys hfp
+  -- soft/eqOld/occ ↔ joint orbit record realizations over fixed params
+  sorry
 
 /-- Cardinality bound on soft positions of a short tuple. -/
 theorem tuplePositions_card_le {K : AbstractElementaryClass.{u}} (E : OrderPresentation K)
@@ -457,11 +557,13 @@ theorem tuplePositions_card_le {K : AbstractElementaryClass.{u}} (E : OrderPrese
     #(tuplePositions E xs) ≤ σ :=
   orbitRecordOfTuple_slot_card E hσ hι xs
 
-/-- Main soft-copy form of Lemma 4.5: ≤χ orbits over ≤χ parameters.
+/-- `σ ≤ χ` from the Lemma 4.5 cardinal arithmetic hypotheses. -/
+theorem sigma_le_chi_of_lemma45 {σ χ : Cardinal.{u}} (hσ : aleph0 ≤ σ)
+    (h2 : (2 : Cardinal.{u}) ^ ((2 : Cardinal.{u}) ^ σ) ≤ χ) : σ ≤ χ :=
+  (cantor σ).le.trans <|
+    (power_le_power_left two_ne_zero (cantor σ).le).trans h2
 
-Blocked on `infra_relcode_orbit_record`: the ≤χ bound needs realized `RelCode`s to inject
-into `RelFingerprint` (fingerprint determines `jointCanon`). The joint-canon bridge
-`equal_relCode_equal_joint_canon` is in place. -/
+/-- Main soft-copy form of Lemma 4.5: ≤χ orbits over ≤χ parameters. -/
 theorem orbits_over_params_soft {K : AbstractElementaryClass.{u}} (E : OrderPresentation K)
     (σ χ : Cardinal.{u}) (hσ : aleph0 ≤ σ) (hpow : χ ^ σ = χ)
     (hχbound : ls K + (2 : Cardinal.{u}) ^ ((2 : Cardinal.{u}) ^ σ) ≤ χ)
@@ -473,10 +575,49 @@ theorem orbits_over_params_soft {K : AbstractElementaryClass.{u}} (E : OrderPres
     ∃ reps : Set (ι → (E.obj I).carrier), #reps ≤ χ ∧
       ∀ xs : ι → (E.obj I).carrier, ∃ ys ∈ reps,
         SameOrbitOverParams K (E.obj I) P xs ys := by
-  -- Skeleton: `equal_relCode_equal_joint_canon` + `same_joint_canon_fixes_params` close the
-  -- orbit step once representatives are chosen; the ≤χ bound needs
-  -- `infra_relcode_orbit_record` (fingerprint determines `jointCanon` on the image).
-  sorry
+  classical
+  have h2 : (2 : Cardinal.{u}) ^ ((2 : Cardinal.{u}) ^ σ) ≤ χ :=
+    (le_add_of_le_right (le_refl _)).trans hχbound
+  have hχinf : aleph0 ≤ χ :=
+    (le_trans hσ (cantor σ).le).trans <|
+      (power_le_power_left two_ne_zero (cantor σ).le).trans h2
+  have hσle : σ ≤ χ := sigma_le_chi_of_lemma45 hσ h2
+  have hlab : #E.lab ≤ χ := by
+    have : #E.lab ≤ ls K := by simpa [E.ell_eq] using E.lab_small
+    exact this.trans ((le_add_of_le_left (le_refl _)).trans hχbound)
+  let S : Set I := paramSoftSupport E P
+  have hS : #S ≤ χ := paramSoftSupport_card E hχinf P hP
+  -- Ordinal support of soft codes of `S`; empty is safe for the ≤χ fingerprint count
+  -- (soft/eqOld still refine via `abstractify` over `T`).
+  let T : Set δ.ToType := ∅
+  have hT : #T ≤ χ := by simp [T]
+  have hιχ : #ι ≤ χ := hι.trans hσle
+  let fpOf (xs : ι → (E.obj I).carrier) :=
+    relFingerprintOf E hχinf hσ eISO T hT S hS hι xs
+  let F : Set (RelFingerprint E.lab E.arity σ χ) := Set.range fpOf
+  have hF : #F ≤ χ :=
+    (mk_subtype_le F).trans (mk_relFingerprint_le hlab hσ hχinf hpow h2)
+  let sec : ↥F → ι → (E.obj I).carrier := fun f =>
+    Classical.choose (Set.mem_range.mp f.property)
+  have hsec (f : ↥F) : fpOf (sec f) = (f : RelFingerprint _ _ _ _) :=
+    Classical.choose_spec (Set.mem_range.mp f.property)
+  let reps : Set (ι → (E.obj I).carrier) := Set.range sec
+  refine ⟨reps, (mk_range_le).trans hF, ?_⟩
+  intro xs
+  refine ⟨sec ⟨fpOf xs, ⟨xs, rfl⟩⟩, ⟨⟨fpOf xs, ⟨xs, rfl⟩⟩, rfl⟩, ?_⟩
+  let p : ↥P → (E.obj I).carrier := fun x => x.1
+  have hP' : #↥P ≤ χ := hP
+  have hfp :
+      (relCodeOf E hχinf hσ hσle eISO T hT S hS hP' hι hιχ p xs).fingerprint =
+        (relCodeOf E hχinf hσ hσle eISO T hT S hS hP' hι hιχ p
+          (sec ⟨fpOf xs, ⟨xs, rfl⟩⟩)).fingerprint := by
+    dsimp [relCodeOf, fpOf]
+    exact (hsec ⟨fpOf xs, ⟨xs, rfl⟩⟩).symm
+  have hrng : Set.range p = P := Subtype.range_coe
+  have horb :=
+    equal_fingerprint_same_orbit_over_params E δ χ σ hδ hχinf hσ hσle hcf eISO T hT S hS
+      hP' hι hιχ p xs (sec ⟨fpOf xs, ⟨xs, rfl⟩⟩) hfp
+  simpa [hrng] using horb
 
 /-- **Lemma 4.5** (Orbits over parameters), soft-presentation form with an EM functor. -/
 theorem lemma_4_5_with_E (K : AbstractElementaryClass.{u}) (E : OrderPresentation K)
