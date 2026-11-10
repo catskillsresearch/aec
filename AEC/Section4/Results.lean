@@ -1,6 +1,7 @@
 module
 
 public import AEC.Section4.NaturalDiagram
+public import AEC.Section4.UniformTesting
 public import AEC.Section4.BlockInterchange
 public import AEC.Section4.CountableClosure
 public import AEC.Section4.StableDiagramConstruction
@@ -26,13 +27,17 @@ set_option linter.unusedVariables false
 
 open FirstOrder Cardinal Ordinal
 
-/-- The natural diagrams of two `σ`-tuples already differ on the induced suborder `X`. -/
+/-- The natural diagrams of two placements `t`, `s` of a `σ`-tuple over `I` already differ on
+the induced suborder `X`: every position used by `t` and `s` lies in `X`, and the restrictions
+of the two placements to `X` have different natural diagrams. -/
 def DiagramsDifferOnSubset (K : AbstractElementaryClass.{u}) (E : OrderPresentation K)
     (D : StableDiagram K) {I : Type u} [LinearOrder I] [Nonempty I]
-    {α : Type u} (σ : Cardinal.{u}) (hσ : #α ≤ σ) (X : Set I) (hX : X.Nonempty) : Prop :=
+    {α : Type u} (σ : Cardinal.{u}) (hσ : #α ≤ σ)
+    (t s : α → SupportTerm E.lab E.arity I) (X : Set I) (hX : X.Nonempty) : Prop :=
   haveI : Nonempty (↥X) := hX.to_subtype
-  ∃ t' s' : α → SupportTerm E.lab E.arity (↥X),
-    ¬ SameNaturalDiagram K E D σ hσ t' s'
+  ∃ (ht : ∀ a, termSupport (t a) ⊆ X) (hs : ∀ a, termSupport (s a) ⊆ X),
+    ¬ SameNaturalDiagram K E D σ hσ
+      (fun a => (t a).restrict X (ht a)) (fun a => (s a).restrict X (hs a))
 
 /-- Factor a strong embedding through a strong ambient map whose range covers it; coherence
 supplies strength of the factor. -/
@@ -1223,18 +1228,28 @@ theorem lemma_4_7 {C parameter : Type u}
 /-- **Proposition 4.8** (Uniform testing of placed comparisons). There is a nondecreasing
 infinite cardinal function `g` such that two placements of a tuple of length at most `σ`
 over `E(I)` whose placed comparisons differ already have different natural diagrams over some
-parameter set of size at most `g(σ)`. -/
+parameter set of size at most `g(σ)`.
+
+Here `g σ = max ℵ₀ σ` and the test set is the joint support of the two placements
+(`testingSet`): by `sameNaturalDiagram_restrict_iff` the natural diagram comparison only
+depends on the labels and the joint order pattern of the supports. As in every operational
+clause of `StableDiagram`, the tuple length bound `σ` is infinite. -/
 theorem proposition_4_8 (K : AbstractElementaryClass.{u}) (E : OrderPresentation K)
     (D : StableDiagram K) :
     ∃ g : Cardinal.{u} → Cardinal.{u},
       (∀ σ τ, σ ≤ τ → g σ ≤ g τ) ∧ (∀ σ, aleph0 ≤ g σ) ∧
       ∀ {I : Type u} [LinearOrder I] [Nonempty I] [WellFoundedLT I]
-        {α : Type u} (σ : Cardinal.{u}) (hσ : #α ≤ σ)
+        {α : Type u} (σ : Cardinal.{u}) (hσinf : aleph0 ≤ σ) (hσ : #α ≤ σ)
         (t s : α → SupportTerm E.lab E.arity I),
         ¬ SameNaturalDiagram K E D σ hσ t s →
         ∃ X : Set I, ∃ hX : X.Nonempty, #X ≤ g σ ∧
-          DiagramsDifferOnSubset K E D σ hσ X hX := by
-  sorry
+          DiagramsDifferOnSubset K E D σ hσ t s X hX := by
+  refine ⟨fun σ => max aleph0 σ, fun σ τ h => max_le_max le_rfl h,
+    fun σ => le_max_left _ _, ?_⟩
+  intro I _ _ _ α σ hσinf hσ t s hne
+  exact ⟨testingSet E t s, testingSet_nonempty E t s, mk_testingSet_le E hσ t s,
+    termSupport_subset_testingSet_left E t s, termSupport_subset_testingSet_right E t s,
+    not_sameNaturalDiagram_restrict_testingSet E D hσinf hσ t s hne⟩
 
 /-- **Proposition 4.9** (Compact placement). Coherent prescriptions of joint diagrams of a
 tuple of length at most `σ` with every parameter set of size at most `χ`, where

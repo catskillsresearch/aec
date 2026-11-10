@@ -82,6 +82,7 @@ public import AEC.Section4.Results
 public import AEC.Section4.StableDiagram
 public import AEC.Section4.SupportProfile
 public import AEC.Section4.TypeUWitness
+public import AEC.Section4.UniformTesting
 public import AEC.Section5.BoundedAt
 public import AEC.Section5.EligibleLevel
 public import AEC.Section5.EligibleSubclass

@@ -1,6 +1,6 @@
 {
   "updated": "2026-11-10",
-  "sorryCount": 68,
+  "sorryCount": 67,
   "legend": {
     "open": "No unfinished required proof-deps — try next",
     "blocked": "Waiting on incomplete required proof-deps",
@@ -15,7 +15,8 @@
     "Prop 2.3 → Thm 1.2 is the set-coding reduction; Thm 14.5 supplies qualitative content for both apex theorems.",
     "Also wired: Thm 3.11 → Prop 4.2 / 5.8; Lem 4.6 → Prop 4.9; Lem 6.14 → Lem 12.6; Thm 13.5 → Thm 10.9 / Lem 14.2.",
     "Target: every Results/paper node reaches Thm 1.2 or 1.3; dead-code analysis should eventually justify each hard edge.",
-    "sorryCount is the live count of sorry tokens under AEC/ (ABSTRACT_WIP in scripts/build_aec_tex.py may lag)."
+    "sorryCount is the live count of sorry tokens under AEC/ (ABSTRACT_WIP in scripts/build_aec_tex.py may lag).",
+    "Prop 4.8 is done on the support encoding (UniformTesting.lean): g σ = max ℵ₀ σ, test set = joint support, for infinite σ. The Lean proof does not use Lemma 4.7, so lemma_4_7 → proposition_4_8 is soft (English-only); lemma_4_7 stays wired through its English use in Lem 12.5."
   ],
   "nodes": [
     {
@@ -246,15 +247,16 @@
       "label": "Prop 4.8",
       "section": 4,
       "file": "AEC/Section4/Results.lean",
-      "status": "open",
-      "blocker": null
+      "status": "done",
+      "blocker": null,
+      "detail": "UniformTesting.lean: exists_linearOrder_amalgam (cut-lex amalgam of linear orders over a common suborder), SameNaturalDiagram.along / sameNaturalDiagram_restrict_iff (diagram comparison depends only on the joint support, via D.of_strong, so needs ℵ₀ ≤ σ), testingSet with #X ≤ max ℵ₀ σ. Statement changes: DiagramsDifferOnSubset now speaks about the restrictions of the given placements; added hypothesis ℵ₀ ≤ σ. No sorry (axioms: propext, Classical.choice, Quot.sound)."
     },
     {
       "id": "proposition_4_9",
       "label": "Prop 4.9",
       "section": 4,
       "file": "AEC/Section4/Results.lean",
-      "status": "blocked",
+      "status": "open",
       "blocker": null
     },
     {
@@ -945,6 +947,12 @@
     {
       "from": "lemma_4_7",
       "to": "proposition_4_8",
+      "kind": "soft",
+      "note": "English proof of 4.8 applies Lemma 4.7; the Lean proof on the support encoding does not."
+    },
+    {
+      "from": "lemma_4_7",
+      "to": "lemma_12_5",
       "kind": "hard"
     },
     {
@@ -1598,5 +1606,5 @@
       "kind": "hard"
     }
   ],
-  "doneCount": 44
+  "doneCount": 45
 }
