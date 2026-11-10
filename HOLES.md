@@ -4,7 +4,7 @@ Inventory of Lean `sorry` holes in this repository, ordered **prove-first**: Lay
 are holes with no remaining unfinished prerequisites; later layers wait on earlier
 ones. Apex theorems 1.2 and 1.3 are **last**.
 
-**Count:** 67 `sorry`, 0 `admit`. All live in `AEC/Section*/Results.lean`.
+**Count:** 66 `sorry`, 0 `admit`. All live in `AEC/Section*/Results.lean`.
 Sections **2**, **3**, and **13** have no holes.
 
 **Dependency basis:** paper/logical order from `dependencies.mermaid`
@@ -31,7 +31,7 @@ Section 13 is complete and was never on that chain.
 | 1 | 2 | `AEC/Section1/Results.lean` |
 | 2 | 0 | — |
 | 3 | 0 | — |
-| 4 | 3 | `AEC/Section4/Results.lean` |
+| 4 | 2 | `AEC/Section4/Results.lean` |
 | 5 | 2 | `AEC/Section5/Results.lean` |
 | 6 | 14 | `AEC/Section6/Results.lean` |
 | 7 | 9 | `AEC/Section7/Results.lean` |
@@ -42,7 +42,7 @@ Section 13 is complete and was never on that chain.
 | 12 | 4 | `AEC/Section12/Results.lean` |
 | 13 | 0 | — |
 | 14 | 4 | `AEC/Section14/Results.lean` |
-| **Total** | **67** | |
+| **Total** | **66** | |
 
 ---
 
@@ -95,7 +95,7 @@ Within a layer, siblings are listed in paper number order.
 
 ## BFS layers (individual holes)
 
-### L0 — Independent foundations (3 open)
+### L0 — Independent foundations (2 open)
 
 No unfinished Results prerequisites. Section 3 is complete (Theorem 3.11 closed by the
 `θ⁺ · a^θ` renaming kill); Section 4 starts the diagrams/orbits stack.
@@ -108,15 +108,16 @@ counterexample refutes the program.
 **Dependency rule:** edge B→A only if the English proof of A requires B, or A
 needs an explicit Lean infra subgoal B (not a paper-number chain).
 
-**Open:** `proposition_4_9`, `objectOfEmptyChain`.
-**Note:** `theorem_3_11`, `proposition_5_7`, `lemma_4_6`, `lemma_6_14`, `proposition_4_3`, `lemma_4_5`, `lemma_4_7`, `proposition_4_8`, `proposition_5_8`, `proposition_5_9`,
+**Open:** `lemma_4_10`, `objectOfEmptyChain`.
+**Note:** `theorem_3_11`, `proposition_5_7`, `lemma_4_6`, `lemma_6_14`, `proposition_4_3`, `lemma_4_5`, `lemma_4_7`, `proposition_4_8`, `proposition_4_9`, `proposition_5_8`, `proposition_5_9`,
 `infra_pair_coloring_glue`, `infra_rank_slice`, `infra_type_u_witness_set`, `infra_countable_back_and_forth`, `infra_stable_diagram_realize`, `infra_zeta_model_existence`, `infra_eligible_reclass`, `infra_template_fixed_support`, `infra_named_working_scheme`, `infra_named_working_package` are done.
 Lean 5.8 is the residual `diagram_iso`+`structural_iso` form.
 False `6.13→6.14` / `5.8→5.9` edges removed. Later adjacent-number edges still suspect.
 `4.7→4.8` is now soft (English-only): the Lean proof of 4.8 tests on the joint support and does not use Lemma 4.7.
+`4.2→4.9` added (hard): local realizability and restriction of diagrams in Prop 4.9 use Prop 4.2's strong-map clause. `4.9→4.10` is now unblocked (Lemma 4.10 is open).
 
 **Wired (intended use, reach apex):** `5.6 → 9.3, 10.2`; `5.7 → 9.3, 10.6, 10.8`;
-`2.3 → 1.2`; `3.11 → 4.2, 5.8`; `4.6 → 4.9`; `4.7 → 12.5`; `6.14 → 12.6`; `13.5 → 10.9, 14.2`.
+`2.3 → 1.2`; `3.11 → 4.2, 5.8`; `4.2 → 4.9`; `4.6 → 4.9`; `4.7 → 12.5`; `6.14 → 12.6`; `13.5 → 10.9, 14.2`.
 Full hard-edge list: [`holes-edges.txt`](holes-edges.txt). Target: every Results/paper
 node reaches Thm 1.2 or 1.3; completed work should admit dead-code analysis of each edge.
 
@@ -128,11 +129,11 @@ node reaches Thm 1.2 or 1.3; completed work should admit dead-code analysis of e
 | `lemma_4_6` | Lemma 4.6 | `AEC/Section4/BlockInterchange.lean` (**done**: English tree/repeat/orbit via `BlockRegions` + `lemma_4_5_with_E`; `DisjointBlockSwap` packaging is degenerate) |
 | `lemma_4_7` | Lemma 4.7 | `AEC/Section4/Results.lean` (**done**: `type_u_witness_set_param`) |
 | `proposition_4_8` | Proposition 4.8 | `AEC/Section4/Results.lean` (**done**: no `sorryAx`; `g σ = max ℵ₀ σ`, test set = joint support `testingSet`; `sameNaturalDiagram_restrict_iff` via the cut-lex amalgam `exists_linearOrder_amalgam` in `UniformTesting.lean`. Statement changes: `DiagramsDifferOnSubset` now compares the restrictions of the given placements, and the hypothesis `ℵ₀ ≤ σ` was added since `StableDiagram.of_strong` is only available for infinite `σ`) |
-| `proposition_4_9` | Proposition 4.9 | `AEC/Section4/Results.lean:1272` |
-| `lemma_4_10` | Lemma 4.10 | `AEC/Section4/Results.lean:1309` |
-| `theorem_4_11` | Theorem 4.11 | `AEC/Section4/Results.lean:1354` |
+| `proposition_4_9` | Proposition 4.9 | `AEC/Section4/Results.lean` (**done**: no `sorryAx`; English support-profile obstruction `compact_placement` in `CompactPlacement.lean`: profiles over `S_X` (`SameProfile`, `SupportProfile.ofTerms`, at most `χ` codes `mk_profileCode_le`), no-event continuations `exists_inert_continuation`, no-event comparison by Lemma 4.6 on the slots `sameNaturalDiagram_of_sameProfile_noEvent`, local realizability by Prop 4.2 `exists_local_placement`, `σ⁺` stages with at most `σ` new events. Statement changes: added `[CategoricalUnbounded K]`, `ℵ₀ ≤ σ`, the natural-parameter clause `hnat` and the coherence clause `hcoh`; possibility needs no hypothesis since the prescription for `p` is the diagram of the tuple `q p` of `E(I)`) |
+| `lemma_4_10` | Lemma 4.10 | `AEC/Section4/Results.lean:1370` |
+| `theorem_4_11` | Theorem 4.11 | `AEC/Section4/Results.lean:1415` |
 
-Within Section 4, `lemma_4_6` and `proposition_4_8` are done, so Prop 4.9 is open (its hard deps 4.6 and 4.8 are closed).
+Within Section 4, Prop 4.9 is done (hard deps 4.2, 4.6, 4.8 closed), so Lemma 4.10 is open; Theorem 4.11 waits on Lemma 4.10.
 
 ### L1 — Section 5 after diagrams (2 open)
 
@@ -285,7 +286,7 @@ layer (and thus the whole stack).
 
 | Layer | Count |
 |------:|------:|
-| L0 | 3 |
+| L0 | 2 |
 | L1 | 2 |
 | L2 | 14 |
 | L3 | 9 |
@@ -296,4 +297,4 @@ layer (and thus the whole stack).
 | L8 | 4 |
 | L9 | 4 |
 | L10 | 2 |
-| **Total** | **67** |
+| **Total** | **66** |

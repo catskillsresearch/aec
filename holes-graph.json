@@ -1,6 +1,6 @@
 {
   "updated": "2026-11-10",
-  "sorryCount": 67,
+  "sorryCount": 66,
   "legend": {
     "open": "No unfinished required proof-deps — try next",
     "blocked": "Waiting on incomplete required proof-deps",
@@ -16,7 +16,8 @@
     "Also wired: Thm 3.11 → Prop 4.2 / 5.8; Lem 4.6 → Prop 4.9; Lem 6.14 → Lem 12.6; Thm 13.5 → Thm 10.9 / Lem 14.2.",
     "Target: every Results/paper node reaches Thm 1.2 or 1.3; dead-code analysis should eventually justify each hard edge.",
     "sorryCount is the live count of sorry tokens under AEC/ (ABSTRACT_WIP in scripts/build_aec_tex.py may lag).",
-    "Prop 4.8 is done on the support encoding (UniformTesting.lean): g σ = max ℵ₀ σ, test set = joint support, for infinite σ. The Lean proof does not use Lemma 4.7, so lemma_4_7 → proposition_4_8 is soft (English-only); lemma_4_7 stays wired through its English use in Lem 12.5."
+    "Prop 4.8 is done on the support encoding (UniformTesting.lean): g σ = max ℵ₀ σ, test set = joint support, for infinite σ. The Lean proof does not use Lemma 4.7, so lemma_4_7 → proposition_4_8 is soft (English-only); lemma_4_7 stays wired through its English use in Lem 12.5.",
+    "Prop 4.9 is done by the English support-profile obstruction (CompactPlacement.lean). Statement changes: [CategoricalUnbounded K], ℵ₀ ≤ σ, natural-parameter clause hnat, coherence clause hcoh; the prescription for p is the diagram of a tuple q p of E(I), so possibility needs no hypothesis. Hard edge proposition_4_2 → proposition_4_9 added (strong-map clause of Prop 4.2). Lemma 4.10 is unblocked: its only hard dep is Prop 4.9; a natural instantiation of q p is via a strong map B → E(I) fixing p (Prop 4.2 at μ), which satisfies hnat and hcoh."
   ],
   "nodes": [
     {
@@ -196,8 +197,9 @@
       "label": "Lem 4.10",
       "section": 4,
       "file": "AEC/Section4/Results.lean",
-      "status": "blocked",
-      "blocker": null
+      "status": "open",
+      "blocker": null,
+      "detail": "Unblocked by Prop 4.9 (done). proposition_4_9 now asks for hnat/hcoh on the prescriptions q and for ℵ₀ ≤ σ and [CategoricalUnbounded K]; a natural choice is q p = φ_p ∘ (d, incl ∘ p) for a strong φ_p : B → E(I) with φ_p (incl (p b)) = p b (D.to_strong at the categoricity cardinal μ), so that hnat is D.refl and hcoh follows from D.of_strong, D.symm, D.trans."
     },
     {
       "id": "lemma_4_5",
@@ -256,8 +258,9 @@
       "label": "Prop 4.9",
       "section": 4,
       "file": "AEC/Section4/Results.lean",
-      "status": "open",
-      "blocker": null
+      "status": "done",
+      "blocker": null,
+      "detail": "CompactPlacement.lean (compact_placement): placements and support profiles over S_X (SameProfile = SupportProfile.Agree of SupportProfile.ofTerms; at most χ^σ = χ codes, mk_profileCode_le, since a well-order of size ≤ χ has ≤ χ cuts); continuations leaving every cluster intact with no new event over I (exists_inert_continuation, cut-lex amalgam over S_X); no-event continuations of one profile have the same natural diagram over X' (sameNaturalDiagram_of_sameProfile_noEvent: Lemma 4.6 on the disjoint slots, Placement.regions); local realizability by Prop 4.2 at a categoricity size (exists_local_placement, D.to_strong/of_strong); σ⁺ stages adjoining failing sets, at most σ + σ² = σ new events. Statement changes: added [CategoricalUnbounded K], ℵ₀ ≤ σ, hnat (parameter diagrams are the natural ones), hcoh (prescriptions restrict coherently). No sorry (axioms: propext, Classical.choice, Quot.sound)."
     },
     {
       "id": "theorem_4_11",
@@ -1461,6 +1464,11 @@
       "kind": "hard"
     },
     {
+      "from": "proposition_4_2",
+      "to": "proposition_4_9",
+      "kind": "hard"
+    },
+    {
       "from": "proposition_5_9",
       "to": "lemma_6_1",
       "kind": "hard"
@@ -1606,5 +1614,5 @@
       "kind": "hard"
     }
   ],
-  "doneCount": 45
+  "doneCount": 46
 }

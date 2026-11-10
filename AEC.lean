@@ -72,6 +72,7 @@ public import AEC.Section3.ShortOrbit
 public import AEC.Section3.StrictSlot
 public import AEC.Section3.SupportClosure
 public import AEC.Section3.VectorRank
+public import AEC.Section4.CompactPlacement
 public import AEC.Section4.CountableBackAndForth
 public import AEC.Section4.CountableClosure
 public import AEC.Section4.NaturalDiagram

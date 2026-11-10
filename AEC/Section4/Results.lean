@@ -3,6 +3,7 @@ module
 public import AEC.Section4.NaturalDiagram
 public import AEC.Section4.UniformTesting
 public import AEC.Section4.BlockInterchange
+public import AEC.Section4.CompactPlacement
 public import AEC.Section4.CountableClosure
 public import AEC.Section4.StableDiagramConstruction
 public import AEC.Section4.Prop43BAF
@@ -1253,12 +1254,39 @@ theorem proposition_4_8 (K : AbstractElementaryClass.{u}) (E : OrderPresentation
 
 /-- **Proposition 4.9** (Compact placement). Coherent prescriptions of joint diagrams of a
 tuple of length at most `σ` with every parameter set of size at most `χ`, where
-`χ ^ σ = χ` and `χ > ℓ + σ`, are realized by one placement over `I`. -/
-theorem proposition_4_9 (K : AbstractElementaryClass.{u}) (E : OrderPresentation K)
+`χ ^ σ = χ` and `χ > ℓ + σ`, are realized by one placement over `I`.
+
+The prescription for a parameter tuple `p` is the diagram of the tuple `q p` of `E(I)`, so it
+is a *possible* joint diagram (the diagram of an actual tuple, defined once `E(I)` is above
+the threshold `t(σ + χ)`). The English hypotheses are:
+
+* `hnat`: the parameter diagrams of the prescriptions are the natural ones, i.e. the parameter
+  part of `q p` has the diagram of `p`;
+* `hcoh`: the prescriptions restrict coherently, i.e. restricting (or reindexing) the
+  parameters of `q p` along `ι` gives the diagram prescribed for `p ∘ ι`.
+
+As in every operational clause of `StableDiagram`, the length bound `σ` is infinite, and
+Lemma 4.6 and Proposition 4.2 are used through `CategoricalUnbounded`.
+
+Proof (`compact_placement` in `CompactPlacement.lean`, following `text.md`): support profiles
+over `S_X` (`SameProfile`, at most `χ` codes), continuations with no new event
+(`exists_inert_continuation`), the no-event comparison by Lemma 4.6 on the slots
+(`sameNaturalDiagram_of_sameProfile_noEvent`), local realizability by Proposition 4.2
+(`exists_local_placement`), and the `σ⁺`-stage obstruction with at most `σ` new events. -/
+theorem proposition_4_9 (K : AbstractElementaryClass.{u}) [CategoricalUnbounded K]
+    (E : OrderPresentation K)
     (D : StableDiagram K) {I : Type u} [LinearOrder I] [Nonempty I] [WellFoundedLT I]
-    {α : Type u} (σ χ : Cardinal.{u}) (hσ : #α ≤ σ) (hχ : ls K + σ < χ)
-    (hpow : χ ^ σ = χ) (hI : K.Mem (E.obj I))
-    (q : ∀ {β : Type u}, #β ≤ χ → (β → (E.obj I).carrier) → α ⊕ β → (E.obj I).carrier) :
+    {α : Type u} (σ χ : Cardinal.{u}) (hσinf : aleph0 ≤ σ) (hσ : #α ≤ σ)
+    (hχ : ls K + σ < χ) (hpow : χ ^ σ = χ) (hI : K.Mem (E.obj I))
+    (q : ∀ {β : Type u}, #β ≤ χ → (β → (E.obj I).carrier) → α ⊕ β → (E.obj I).carrier)
+    (hnat : ∀ {β : Type u} (hβ : #β ≤ χ) (p : β → (E.obj I).carrier)
+      (hpar : #β ≤ σ + χ) (hcardI : D.t (σ + χ) ≤ Model.card (E.obj I)),
+      D.same hpar hI hI hcardI hcardI (fun b => q hβ p (Sum.inr b)) p)
+    (hcoh : ∀ {β β' : Type u} (hβ : #β ≤ χ) (hβ' : #β' ≤ χ) (p : β → (E.obj I).carrier)
+      (ι : β' → β) (hjoint : #(α ⊕ β') ≤ σ + χ)
+      (hcardI : D.t (σ + χ) ≤ Model.card (E.obj I)),
+      D.same hjoint hI hI hcardI hcardI
+        (fun i => q hβ p (Sum.map id ι i)) (q hβ' (fun b => p (ι b)))) :
     ∃ (J : Type u) (_ : LinearOrder J) (_ : Nonempty J) (f : I ↪o J)
       (z : α → (E.obj J).carrier) (hJ : K.Mem (E.obj J)),
       ∀ {β : Type u} (hβ : #β ≤ χ) (p : β → (E.obj I).carrier)
@@ -1269,7 +1297,40 @@ theorem proposition_4_9 (K : AbstractElementaryClass.{u}) (E : OrderPresentation
           (Sum.elim z (fun b => E.map f (p b)))
           (Sum.elim (fun a => E.map f (q hβ p (Sum.inl a)))
             (fun b => E.map f (q hβ p (Sum.inr b)))) := by
-  sorry
+  classical
+  by_cases hcardI : D.t (σ + χ) ≤ Model.card (E.obj I)
+  · -- above the threshold: the support-profile obstruction
+    obtain ⟨P, hP⟩ := compact_placement E D σ χ hσinf hσ hχ hpow hcardI q
+      (fun hβ p hpar => hnat hβ p hpar hcardI)
+      (fun hβ hβ' p ι hj => hcoh hβ hβ' p ι hj hcardI)
+    have hJ : K.Mem (E.obj P.J) := orderPresentation_obj_mem E P.J
+    refine ⟨P.J, inferInstance, inferInstance, P.f, fun a => E.realize (P.z a), hJ, ?_⟩
+    intro β hβ p hjoint _ hcardJ
+    have hρinf : aleph0 ≤ σ + χ := hσinf.trans (self_le_add_right σ χ)
+    have h1 := SameNaturalDiagram.same hρinf (hP hβ p hjoint) hcardJ hcardI hJ hI
+    simp only [realize_supportTermOf] at h1
+    have h2 := D.of_strong hjoint hI hJ hcardI hcardJ (q hβ p)
+      (fun i => E.map P.f (q hβ p i)) (E.map P.f) hρinf (E.map_strong P.f) (fun _ => rfl)
+    have h := D.trans hjoint hJ hI hJ hcardJ hcardI hcardJ _ _ _ h1 h2
+    have e1 : (fun c => E.realize (P.joint (fun b => supportTermOf E (p b)) c)) =
+        Sum.elim (fun a => E.realize (P.z a)) (fun b => E.map P.f (p b)) := by
+      funext c
+      rcases c with a | b
+      · rfl
+      · change E.realize (SupportTerm.along P.f (supportTermOf E (p b))) = E.map P.f (p b)
+        rw [← E.realize_along, realize_supportTermOf]
+    have e2 : (fun i => E.map P.f (q hβ p i)) =
+        Sum.elim (fun a => E.map P.f (q hβ p (Sum.inl a)))
+          (fun b => E.map P.f (q hβ p (Sum.inr b))) := by
+      funext i
+      rcases i with a | b <;> rfl
+    rw [e1, e2] at h
+    exact h
+  · -- below the threshold the diagrams of length `σ + χ` over `E(I)` are not defined
+    refine ⟨I, inferInstance, inferInstance, (OrderIso.refl I).toOrderEmbedding,
+      fun a => q (β := PEmpty) (by simp) PEmpty.elim (Sum.inl a), hI, ?_⟩
+    intro β hβ p hjoint hcardI' _
+    exact absurd hcardI' hcardI
 
 /-- **Lemma 4.10** (Unique lifts of bounded diagrams). At a strong limit `μ > ℓ` of countable
 cofinality strictly closed under `t` and `g`, the diagrams of a bounded tuple in `B` over
