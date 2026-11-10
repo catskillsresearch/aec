@@ -42,6 +42,29 @@ theorem exists_orderPresentation_of_categoricalUnbounded (K : AbstractElementary
   have : ArbitrarilyLarge K := arbitrarilyLarge_of_categoricalUnbounded K
   exact theorem_2_6 K
 
+/-! ### Infra: ∃ model of size ζ (Prop 4.3) -/
+
+/-- **Infra: ∃ model of size ζ.** Paper uses `E(I)` for `|I| = ζ`; Theorem 2.6 supplies an
+order presentation and exact-cardinality models at every infinite `κ ≥ LS(K)`. -/
+theorem exists_model_of_card (K : AbstractElementaryClass.{u}) [ArbitrarilyLarge K]
+    (ζ : Cardinal.{u}) (hinf : aleph0 ≤ ζ) (hls : ls K ≤ ζ) :
+    ∃ M : Model K.τ, K.Mem M ∧ Model.card M = ζ := by
+  obtain ⟨_, _, hcard⟩ := theorem_2_6 K
+  exact hcard ζ hinf hls
+
+/-- Same existence under unbounded categoricity (via `ArbitrarilyLarge`). -/
+theorem exists_model_of_card_categoricalUnbounded (K : AbstractElementaryClass.{u})
+    [CategoricalUnbounded K] (ζ : Cardinal.{u}) (hinf : aleph0 ≤ ζ) (hls : ls K ≤ ζ) :
+    ∃ M : Model K.τ, K.Mem M ∧ Model.card M = ζ := by
+  have : ArbitrarilyLarge K := arbitrarilyLarge_of_categoricalUnbounded K
+  exact exists_model_of_card K ζ hinf hls
+
+/-- Specialization used by Prop 4.3: `ζ > LS(K)` implies a model of size exactly `ζ`. -/
+theorem exists_model_of_card_gt_ls (K : AbstractElementaryClass.{u}) [ArbitrarilyLarge K]
+    (ζ : Cardinal.{u}) (hζ : ls K < ζ) :
+    ∃ M : Model K.τ, K.Mem M ∧ Model.card M = ζ :=
+  exists_model_of_card K ζ ((isLSBound_ls K).1.trans (le_of_lt hζ)) (le_of_lt hζ)
+
 /-! ### Exact-size strong hulls -/
 
 /-- A strong submodel of exact cardinality `κ` containing a given set of size at most `κ`. -/

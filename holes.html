@@ -135,8 +135,8 @@
       font-weight: 700;
       letter-spacing: 0.06em;
     }
-    .node { pointer-events: auto; }
-    .node rect { stroke-width: 1.4; cursor: pointer; }
+    .node { pointer-events: auto; cursor: copy; }
+    .node rect { stroke-width: 1.4; cursor: copy; }
     .node text { font-size: 12px; pointer-events: none; fill: var(--ink); }
     .node .badge {
       font-size: 8px;
@@ -149,9 +149,20 @@
     .status-blocked rect { fill: var(--blocked-bg); stroke: var(--blocked); }
     .status-failed rect { fill: var(--failed-bg); stroke: var(--failed); stroke-width: 2; }
     .chip.done { background: var(--done-bg); border-color: var(--done); color: var(--done); }
-    .node.dim { opacity: 0.28; }
-    .edge { fill: none; stroke: #3f4742; stroke-width: 1.55; pointer-events: none; }
-    .edge.dim { opacity: 0.2; }
+    .node.dim { opacity: 0.22; }
+    .edge {
+      fill: none;
+      stroke: #5a635c;
+      stroke-width: 1.35;
+      opacity: 0.55;
+      pointer-events: none;
+    }
+    .edge.dim { opacity: 0.08; }
+    .edge.hot {
+      stroke: #1a1f1c;
+      stroke-width: 2.15;
+      opacity: 1;
+    }
     .node.selected rect { filter: drop-shadow(0 0 0.3rem color-mix(in srgb, var(--open) 40%, transparent)); }
     #detail {
       margin-top: 0.65rem;
@@ -162,6 +173,13 @@
     }
     #detail .title { font-family: Georgia, serif; font-size: 1.05rem; margin-bottom: 0.25rem; }
     #detail .id { font-family: ui-monospace, monospace; font-size: 0.82rem; color: var(--muted); }
+    #detail .copy-tip {
+      margin-left: 0.55rem;
+      font-family: ui-monospace, monospace;
+      font-size: 0.75rem;
+      color: var(--open);
+      font-weight: 600;
+    }
     .err {
       margin: 0.75rem 1.25rem;
       padding: 0.75rem;
@@ -179,7 +197,7 @@
     </div>
     <div class="stats" id="stats"></div>
     <div class="controls">
-      <label><input type="checkbox" id="tog-focus"> focus open (hide done)</label>
+      <label><input type="checkbox" id="tog-focus" checked> focus open (hide done)</label>
     </div>
   </header>
   <div id="load-error" class="err" hidden></div>
@@ -199,7 +217,9 @@
   </main>
   <script>
     const STATUS_RANK = { open: 0, done: 1, failed: 2, blocked: 3 };
-    const NW = 132, NH = 32, RANK_GAP = 78, NODE_GAP = 22, PAD_X = 110, PAD_Y = 28;
+    const NW = 132, NH = 32, RANK_GAP = 96, NODE_GAP = 28, PAD_X = 110, PAD_Y = 28;
+    const FOCUS_KEY = "aec-holes-focus-open";
+    let SELECTED = null;
 
     function normStatus(s) {
       return s === "kill" ? "failed" : s;
@@ -278,9 +298,7 @@
     function neighborhood(data, seeds) {
       const keep = new Set(seeds);
       const hard = data.edges.filter(e => e.kind === "hard");
-      // Failed nodes stay visible and wired.
-      for (const n of data.nodes) if (normStatus(n.status) === "failed") keep.add(n.id);
-      // Forward context from opens.
+      // Forward context from seeds only (do not dump every failed hole into the view).
       const queue = [...seeds];
       const dist = new Map(seeds.map(s => [s, 0]));
       while (queue.length) {
@@ -298,6 +316,12 @@
       }
       // Pull unfinished hard ancestors; strip done/blue from the focus view.
       return stripDone(data, addHardAncestors(data, keep));
+    }
+
+    /** Fan ports so parallel edges do not share the same attachment point. */
+    function portOffset(index, count, span) {
+      if (count <= 1) return 0;
+      return ((index / (count - 1)) - 0.5) * span;
     }
 
     function layout(data, visible) {
@@ -340,7 +364,8 @@
     }
 
     function render(data) {
-      const focus = document.getElementById("tog-focus").checked;
+      const focusEl = document.getElementById("tog-focus");
+      const focus = focusEl.checked;
       const counts = countBy(data.nodes);
       document.getElementById("stats").innerHTML = [
         ["open", counts.open, "open"],
@@ -357,7 +382,17 @@
           open.map(n => `<button type="button" data-id="${n.id}">${n.id}</button>`).join("")
         : `<span class="label">Open now</span><span class="empty">None — every hole is blocked, failed, or killed.</span>`;
 
-      const seeds = open.map(n => n.id);
+      // Focus view: one open hole’s dependency cone (selected open-bar chip, else a default).
+      const openIds = open.map(n => n.id);
+      if (SELECTED && !data.nodes.some(n => n.id === SELECTED)) SELECTED = null;
+      const seedOpen = (SELECTED && openIds.includes(SELECTED))
+        ? SELECTED
+        : (open.find(n => n.id === "lemma_4_5")?.id
+          || open.find(n => n.id === "proposition_4_3")?.id
+          || open.find(n => n.id === "infra_named_working_package")?.id
+          || open[0]?.id
+          || null);
+      const seeds = focus ? (seedOpen ? [seedOpen] : []) : openIds;
       const visible = focus && seeds.length
         ? neighborhood(data, seeds)
         : new Set(data.nodes.map(n => n.id));
@@ -366,39 +401,53 @@
       const byId = Object.fromEntries(data.nodes.map(n => [n.id, n]));
 
       const edges = data.edges.filter(e => visible.has(e.from) && visible.has(e.to));
+      const outIdx = new Map(), inIdx = new Map(), outN = new Map(), inN = new Map();
+      for (const e of edges) {
+        outN.set(e.from, (outN.get(e.from) || 0) + 1);
+        inN.set(e.to, (inN.get(e.to) || 0) + 1);
+      }
+      const outSeen = new Map(), inSeen = new Map();
+      for (const e of edges) {
+        const oi = outSeen.get(e.from) || 0;
+        outSeen.set(e.from, oi + 1);
+        outIdx.set(e, oi);
+        const ii = inSeen.get(e.to) || 0;
+        inSeen.set(e.to, ii + 1);
+        inIdx.set(e, ii);
+      }
 
       const edgePaths = edges.map(e => {
         const a = pos.get(e.from), b = pos.get(e.to);
         if (!a || !b) return "";
-        // Shortest curved path: cubic Bézier source → target (no orthogonal trunks).
+        const oi = outIdx.get(e), oc = outN.get(e.from) || 1;
+        const ii = inIdx.get(e), ic = inN.get(e.to) || 1;
         let x1, y1, x2, y2, cx1, cy1, cx2, cy2;
         if (a.rank === b.rank) {
-          // Same row: leave/enter via near sides, bow slightly below the row.
           const leftToRight = a.x <= b.x;
           x1 = leftToRight ? a.x + a.w : a.x;
-          y1 = a.y + a.h / 2;
+          y1 = a.y + a.h / 2 + portOffset(oi, oc, a.h * 0.55);
           x2 = leftToRight ? b.x : b.x + b.w;
-          y2 = b.y + b.h / 2;
-          const bow = Math.min(48, 18 + Math.abs(x2 - x1) * 0.12);
-          cx1 = x1 + (leftToRight ? bow * 0.35 : -bow * 0.35);
+          y2 = b.y + b.h / 2 + portOffset(ii, ic, b.h * 0.55);
+          const bow = Math.min(56, 22 + Math.abs(x2 - x1) * 0.14) + oi * 10;
+          cx1 = x1 + (leftToRight ? bow * 0.4 : -bow * 0.4);
           cy1 = y1 + bow;
-          cx2 = x2 + (leftToRight ? -bow * 0.35 : bow * 0.35);
+          cx2 = x2 + (leftToRight ? -bow * 0.4 : bow * 0.4);
           cy2 = y2 + bow;
         } else {
-          // Downward (or rare upward): bottom/top centers with vertical handles.
           const down = b.rank >= a.rank;
-          x1 = a.x + a.w / 2;
+          x1 = a.x + a.w / 2 + portOffset(oi, oc, a.w * 0.7);
           y1 = down ? a.y + a.h : a.y;
-          x2 = b.x + b.w / 2;
+          x2 = b.x + b.w / 2 + portOffset(ii, ic, b.w * 0.7);
           y2 = down ? b.y : b.y + b.h;
-          const dy = Math.max(24, Math.abs(y2 - y1) * 0.45);
-          cx1 = x1;
+          const dy = Math.max(28, Math.abs(y2 - y1) * 0.42);
+          const sway = (oi - (oc - 1) / 2) * 14 + (ii - (ic - 1) / 2) * 8;
+          cx1 = x1 + sway;
           cy1 = down ? y1 + dy : y1 - dy;
-          cx2 = x2;
+          cx2 = x2 - sway * 0.35;
           cy2 = down ? y2 - dy : y2 + dy;
         }
         const d = `M${x1},${y1} C${cx1},${cy1} ${cx2},${cy2} ${x2},${y2}`;
-        return `<path class="edge" marker-end="url(#arrow)" d="${d}" />`;
+        return `<path class="edge" data-from="${e.from}" data-to="${e.to}" marker-end="url(#arrow)" d="${d}" />`;
       }).join("");
 
       const rankLabels = rankList.map((ri, i) => {
@@ -422,23 +471,69 @@
 
       const defs = `<defs>
         <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
-          <path d="M0,1 L9,5 L0,9 z" fill="#3f4742" />
+          <path d="M0,1 L9,5 L0,9 z" fill="#1a1f1c" />
         </marker>
       </defs>`;
 
+      // Edges under nodes so labels stay readable.
       const graphEl = document.getElementById("graph");
       graphEl.innerHTML = `<svg viewBox="0 0 ${width} ${height}" width="${width}" height="${height}">
-        ${defs}${rankLabels}${nodes}${edgePaths}
+        ${defs}${rankLabels}${edgePaths}${nodes}
       </svg>`;
 
-      function select(id) {
-        document.querySelectorAll(".node").forEach(g => g.classList.toggle("selected", g.dataset.id === id));
+      function copyId(id) {
+        const done = () => {
+          const tip = document.getElementById("copy-tip");
+          if (tip) {
+            tip.textContent = `copied ${id}`;
+            tip.hidden = false;
+            clearTimeout(copyId._t);
+            copyId._t = setTimeout(() => { tip.hidden = true; }, 1200);
+          }
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(id).then(done).catch(() => {});
+        } else {
+          const ta = document.createElement("textarea");
+          ta.value = id;
+          document.body.appendChild(ta);
+          ta.select();
+          try { document.execCommand("copy"); } catch (_) {}
+          ta.remove();
+          done();
+        }
+      }
+
+      function select(id, { reseed = false, copy = false } = {}) {
+        SELECTED = id;
+        if (reseed && focusEl.checked) {
+          redraw();
+          if (copy) copyId(id);
+          return;
+        }
+        if (copy) copyId(id);
+        const incident = new Set();
+        document.querySelectorAll(".edge").forEach(path => {
+          const hot = path.dataset.from === id || path.dataset.to === id;
+          path.classList.toggle("hot", hot);
+          path.classList.toggle("dim", !hot);
+          if (hot) {
+            incident.add(path.dataset.from);
+            incident.add(path.dataset.to);
+          }
+        });
+        incident.add(id);
+        document.querySelectorAll(".node").forEach(g => {
+          g.classList.toggle("selected", g.dataset.id === id);
+          g.classList.toggle("dim", !incident.has(g.dataset.id));
+        });
         document.querySelectorAll("#open-bar button").forEach(b => b.classList.toggle("active", b.dataset.id === id));
         const n = byId[id];
         if (!n) return;
         const preds = hardPreds(data, id).map(p => byId[p]?.label || p).join(", ") || "—";
         document.getElementById("detail").innerHTML = `
-          <div class="title">${n.label} <span class="id">(${n.id})</span></div>
+          <div class="title">${n.label} <span class="id">(${n.id})</span>
+            <span id="copy-tip" class="copy-tip" hidden></span></div>
           <div><b>status:</b> ${nodeStatus(n)} · <b>file:</b> ${n.file}</div>
           <div><b>proof requires:</b> ${preds}</div>
           ${n.blocker ? `<div style="margin-top:0.3rem;color:var(--failed)"><b>blocker:</b> ${n.blocker}</div>` : ""}
@@ -447,13 +542,14 @@
         if (g) g.scrollIntoView({ block: "center", inline: "center", behavior: "smooth" });
       }
 
-      document.querySelectorAll(".node, #open-bar button[data-id]").forEach(el => {
-        el.addEventListener("click", () => select(el.dataset.id));
+      document.querySelectorAll(".node").forEach(el => {
+        el.addEventListener("click", () => select(el.dataset.id, { copy: true }));
+      });
+      document.querySelectorAll("#open-bar button[data-id]").forEach(el => {
+        el.addEventListener("click", () => select(el.dataset.id, { reseed: true, copy: true }));
       });
 
-      const focusId = open.find(n => n.id === "lemma_4_5")?.id
-        || open.find(n => n.id === "proposition_4_3")?.id
-        || open[0]?.id;
+      const focusId = (SELECTED && visible.has(SELECTED)) ? SELECTED : seedOpen;
       if (focusId) select(focusId);
       else document.getElementById("detail").innerHTML =
         `<div class="title">No open holes</div><div>All remaining work is blocked or failed.</div>`;
@@ -462,7 +558,16 @@
     let DATA = null;
     function redraw() { if (DATA) render(DATA); }
 
-    document.getElementById("tog-focus").addEventListener("change", redraw);
+    (function initFocusToggle() {
+      const el = document.getElementById("tog-focus");
+      const saved = localStorage.getItem(FOCUS_KEY);
+      el.checked = saved === null ? true : saved === "1";
+      el.addEventListener("change", () => {
+        localStorage.setItem(FOCUS_KEY, el.checked ? "1" : "0");
+        SELECTED = null;
+        redraw();
+      });
+    })();
 
     fetch("holes-graph.json", { cache: "no-store" })
       .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })

@@ -1,6 +1,6 @@
 {
   "updated": "2026-11-09",
-  "sorryCount": 74,
+  "sorryCount": 71,
   "legend": {
     "open": "No unfinished required proof-deps \u2014 try next",
     "blocked": "Waiting on incomplete or failed required proof-deps",
@@ -11,8 +11,8 @@
     "Edge B\u2192A means the English proof of A requires B (or a required Lean infra subgoal).",
     "Blue = done. Green = open. Grey = blocked. Red = failed.",
     "lemma_6_14 is independent order combinatorics \u2014 NOT dependent on Prop 6.13 (false paper-number edge removed).",
-    "Prop 4.3 has three open infra subgoals that are not named theorems in the paper.",
-    "Open: lemma_4_5 + Prop 4.3 infra nodes."
+    "Prop 4.3 is done (hull back-and-forth, Prop43BAF.lean); StableDiagram gained a trans field, supplied by proposition_4_2.",
+    "sorryCount is the live count of sorry tokens under AEC/ (ABSTRACT_WIP in scripts/build_aec_tex.py may lag)."
   ],
   "nodes": [
     {
@@ -155,28 +155,28 @@
       "id": "infra_countable_back_and_forth",
       "label": "Infra: \u03c9 back-and-forth \u2192 iso",
       "section": 4,
-      "file": "AEC/Section4/",
-      "status": "open",
+      "file": "AEC/Section4/Prop43BAF.lean",
+      "status": "done",
       "blocker": null,
-      "detail": "Countable exhaustions, alternating SameStrongClass steps, union to \u2243[K.\u03c4]."
+      "detail": "Hull-based: HullMatch.forth/back + exists_equiv_of_commonDomain_chain (common-domain glue \u2192 Language.Equiv). Prop 4.3 does not use StrongClassBAF (CountableBackAndForth.lean), whose ambient strong maps would presuppose categoricity at \u03b6"
     },
     {
       "id": "infra_stable_diagram_realize",
       "label": "Infra: D.same \u21d2 strong map",
       "section": 4,
       "file": "AEC/Section4/StableDiagram.lean",
-      "status": "open",
+      "status": "done",
       "blocker": null,
-      "detail": "Export Prop 4.2 clause (2) on StableDiagram (or SameDiagramAt unpack)."
+      "detail": "StableDiagram.to_strong / of_strong / realize_joint / trans; filled by proposition_4_2. trans (Prop 4.2(2): diagram equality is an equality) is required by Prop 4.3 to move matches between \u03b6-models and their hulls"
     },
     {
       "id": "infra_zeta_model_existence",
       "label": "Infra: \u2203 model size \u03b6",
       "section": 4,
-      "file": "AEC/Section4/Results.lean",
-      "status": "open",
+      "file": "AEC/Section4/StableDiagramConstruction.lean",
+      "status": "done",
       "blocker": null,
-      "detail": "Paper: existence via E(I). Lean needs ArbitrarilyLarge/CategoricalUnbounded or an explicit hyp."
+      "detail": "exists_model_of_card / exists_model_of_card_gt_ls via Thm 2.6 under ArbitrarilyLarge"
     },
     {
       "id": "lemma_4_1",
@@ -215,8 +215,8 @@
       "label": "Lem 4.7",
       "section": 4,
       "file": "AEC/Section4/Results.lean",
-      "status": "failed",
-      "blocker": "Needs infra_type_u_witness_set + infra_rank_slice + infra_pair_coloring_glue on top of lemma_2_5"
+      "status": "done",
+      "blocker": null
     },
     {
       "id": "proposition_4_2",
@@ -231,8 +231,9 @@
       "label": "Prop 4.3",
       "section": 4,
       "file": "AEC/Section4/Results.lean",
-      "status": "failed",
-      "blocker": "Needs infra subgoals: \u03b6-model existence, StableDiagram realize API, countable back-and-forth\u2192iso (see open infra nodes)."
+      "status": "done",
+      "blocker": null,
+      "detail": "prop43_hull_back_and_forth (Prop43BAF.lean): HullMatch stages, D.to_strong between t(\u03c3)-hulls, common-domain union; no sorry (axioms: propext, Classical.choice, Quot.sound)"
     },
     {
       "id": "proposition_4_8",
@@ -854,19 +855,19 @@
       "id": "infra_type_u_witness_set",
       "label": "Infra: Type-u witness set",
       "section": 4,
-      "file": "AEC/Section4/Results.lean",
-      "status": "open",
-      "blocker": "Package U\u2080 as \u03b9 : Type u with v : \u03b9 \u2192 C \u2192 Ordinal (mermaid witnesses node)",
-      "detail": "Lean packaging for Lemma 4.7 conclusion; planned in dependencies.mermaid"
+      "file": "AEC/Section4/TypeUWitness.lean",
+      "status": "done",
+      "blocker": null,
+      "detail": "type_u_witness_set: package dominating U\u2080 as \u03b9 : Type u via rank-slice + padded pair-color glue"
     },
     {
       "id": "infra_rank_slice",
       "label": "Infra: rank-slice V_\u03b2",
       "section": 4,
-      "file": "AEC/Section4/Results.lean",
-      "status": "open",
-      "blocker": "Rank-bounded generating family U \u2229 V_\u03b2 and upward generation",
-      "detail": "English proof\u2019s rank-slice layer before Erd\u0151s\u2013Rado"
+      "file": "AEC/Section4/RankSlice.lean",
+      "status": "done",
+      "blocker": null,
+      "detail": "Slice/BoundVec coding, escapeBound ladder, ladder_descent_family for pair_coloring_glue"
     },
     {
       "id": "infra_pair_coloring_glue",
@@ -1529,5 +1530,5 @@
       "kind": "hard"
     }
   ],
-  "doneCount": 29
+  "doneCount": 36
 }

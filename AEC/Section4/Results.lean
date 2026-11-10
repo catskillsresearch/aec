@@ -3,6 +3,8 @@ module
 public import AEC.Section4.NaturalDiagram
 public import AEC.Section4.CountableClosure
 public import AEC.Section4.StableDiagramConstruction
+public import AEC.Section4.Prop43BAF
+public import AEC.Section4.TypeUWitness
 public import AEC.Section1.ArbitrarilyLarge
 public import AEC.Section1.UnboundedCategoricity
 public import AEC.Section2.FiniteHull
@@ -1034,37 +1036,11 @@ theorem sameDiagramAt_comp_inl (K : AbstractElementaryClass.{u}) (κ : Cardinal.
     hA, hB, hfA, hfB, hcA, hcB, fun i => hxA (Sum.inl i), fun i => hyB (Sum.inl i),
     ⟨e, he, fun i => het (Sum.inl i)⟩⟩
 
-/-- **Proposition 4.2** (Stable diagrams). -/
+/-- **Proposition 4.2** (Stable diagrams). The returned `StableDiagram` packages the
+canonical diagrams together with Prop 4.2’s operational clauses (`trans`, `of_strong`,
+`to_strong`, `realize_joint`). -/
 theorem proposition_4_2 (K : AbstractElementaryClass.{u}) [CategoricalUnbounded K] :
-    ∃ D : StableDiagram K,
-      (∀ {σ : Cardinal.{u}} {α : Type u} {M N : Model K.τ} (hα : #α ≤ σ)
-          (hM : K.Mem M) (hN : K.Mem N)
-          (hMcard : D.t σ ≤ Model.card M) (hNcard : D.t σ ≤ Model.card N)
-          (xs : α → M.carrier) (ys : α → N.carrier)
-          (f : Language.Embedding K.τ M.carrier N.carrier),
-          aleph0 ≤ σ → K.Strong f → (∀ i, f (xs i) = ys i) →
-          D.same hα hM hN hMcard hNcard xs ys) ∧
-      (∀ {σ : Cardinal.{u}} {α : Type u} {M N : Model K.τ} (hα : #α ≤ σ)
-          (hM : K.Mem M) (hN : K.Mem N)
-          (xs : α → M.carrier) (ys : α → N.carrier),
-          aleph0 ≤ σ → Categorical K (Model.card M) →
-          Model.card M = Model.card N →
-          (hMcard : D.t σ ≤ Model.card M) → (hNcard : D.t σ ≤ Model.card N) →
-          D.same hα hM hN hMcard hNcard xs ys →
-          ∃ f : Language.Embedding K.τ M.carrier N.carrier,
-            K.Strong f ∧ ∀ i, f (xs i) = ys i) ∧
-      (∀ {σ : Cardinal.{u}} {α γ : Type u} {M N : Model K.τ}
-          (hαγ : #(α ⊕ γ) ≤ σ) (hα : #α ≤ σ)
-          (hM : K.Mem M) (hN : K.Mem N)
-          (hMcard : D.t σ ≤ Model.card M) (hNcard : D.t σ ≤ Model.card N)
-          (ac : α ⊕ γ → M.carrier) (a : α → N.carrier),
-          aleph0 ≤ σ → Categorical K (Model.card N) →
-          D.same hαγ hM hM hMcard hMcard ac ac →
-          D.same hα hM hN hMcard hNcard (fun i => ac (Sum.inl i)) a →
-          ∃ (Q : Model K.τ) (f : Language.Embedding K.τ N.carrier Q.carrier)
-            (c : γ → Q.carrier) (hQ : K.Mem Q) (hQcard : D.t σ ≤ Model.card Q),
-            K.Strong f ∧
-            D.same hαγ hM hQ hMcard hQcard ac (Sum.elim (fun i => f (a i)) c)) := by
+    Nonempty (StableDiagram K) := by
   classical
   obtain ⟨E, _, _⟩ := exists_orderPresentation_of_categoricalUnbounded K
   let tFun := diagramThreshold K E
@@ -1078,7 +1054,7 @@ theorem proposition_4_2 (K : AbstractElementaryClass.{u}) [CategoricalUnbounded 
   have hrevθ' (σ) : ReversalProperty K (σ ⊔ aleph0) (tFun σ) :=
     (readyAt K (σ ⊔ aleph0) (tFun σ) le_sup_right
       (diagramThreshold_ge_stableBound K E σ) (ht_cat σ)).2.1
-  let D : StableDiagram K := {
+  exact ⟨{
     t := tFun
     mono := fun _ _ h => diagramThreshold_mono K E h
     above := fun σ hσ => diagramThreshold_above_tau K E σ hσ
@@ -1089,99 +1065,98 @@ theorem proposition_4_2 (K : AbstractElementaryClass.{u}) [CategoricalUnbounded 
     symm := fun {σ α M N} hα hM hN _ _ xs ys h =>
       sameDiagramAt_symm K (tFun σ) (σ ⊔ aleph0) (ht_cat σ) (hrevθ' σ)
         (hα.trans le_sup_left) xs ys h
+    trans := fun {σ α M N P} hα _ hN _ _ _ _ xs ys zs h₁ h₂ =>
+      sameDiagramAt_trans K (tFun σ) (σ ⊔ aleph0) (ht_cat σ) (hlsθ σ) (hrevθ' σ) hN
+        (hα.trans le_sup_left) xs ys zs h₁ h₂
     preserves_atomic := fun {_ α M N} _ _ _ _ _ xs ys h =>
       sameDiagramAt_preserves_eq K (tFun _) xs ys h
-  }
-  refine ⟨D, ?_, ?_, ?_⟩
-  · -- (1) strong embeddings preserve diagrams
-    intro σ α M N hα hM hN hMc _ xs ys f _ hf het
-    have hrefl := sameDiagramAt_refl K (tFun σ) (hlsθ σ) (hinfθ σ) hM hMc xs
-      (hα.trans (hσle σ))
-    simpa [D, het] using sameDiagramAt_of_strong_image K (tFun σ) xs f hf hrefl
-  · -- (2) equal diagrams at equal categoricity size ⇒ strong map
-    intro σ α M N hα hM hN xs ys hσ hcat hc hMc _ hsame
-    have hready := readyAt K (σ ⊔ aleph0) (Model.card M) le_sup_right
-      ((diagramThreshold_ge_stableBound K E σ).trans hMc) hcat
-    have hlsM : ls K ≤ Model.card M := (le_max_left _ _).trans hready.1
-    have hrevM : ReversalProperty K σ (Model.card M) :=
-      fun M' f _ xs' hM' hcM' hf hι =>
-        hready.2.1 M' f xs' hM' hcM' hf (hι.trans le_sup_left)
-    have hinj : ProjectionInjective K σ (tFun σ) (Model.card M) :=
-      projection_injective_past_threshold K E σ hσ le_rfl hMc (ht_cat σ) hcat
-    have hsameκ : SameDiagramAt K (Model.card M) xs ys :=
-      hinj hα xs ys (le_of_eq rfl) (le_of_eq hc) hsame
-    exact sameDiagramAt_to_strong K (Model.card M) σ hcat hlsM hrevM
-      hM hN rfl (by rw [← hc]) hα xs ys hsameκ
-  · -- (3) realize joint diagram over a matching parameter tuple
-    intro σ α γ M N hαγ hα hM hN hMc hNc ac a hσ _ hsameAC hsameA
-    let θ := tFun σ
-    have hαγθ : #(α ⊕ γ) ≤ θ := hαγ.trans (hσle σ)
-    have hαθ : #α ≤ θ := hα.trans (hσle σ)
-    obtain ⟨M₀, f₀, hM₀, hf₀, hcM₀, hhitM⟩ :=
-      exists_strong_hull_of_tuple K θ (hlsθ σ) (hinfθ σ) M hM hMc ac hαγθ
-    let xac : α ⊕ γ → M₀.carrier := fun i => Classical.choose (hhitM i)
-    have hxac : ∀ i, f₀ (xac i) = ac i := fun i => Classical.choose_spec (hhitM i)
-    have hAc_xac : SameDiagramAt K θ ac xac := by
-      have himg : SameDiagramAt K θ xac (fun i => f₀ (xac i)) :=
-        sameDiagramAt_of_strong_image K θ xac f₀ hf₀
-          (sameDiagramAt_refl K θ (hlsθ σ) (hinfθ σ) hM₀ (le_of_eq hcM₀.symm) xac hαγθ)
-      have himg' : SameDiagramAt K θ xac ac := by simpa [hxac] using himg
-      exact sameDiagramAt_symm K θ (σ ⊔ aleph0) (ht_cat σ) (hrevθ' σ)
-        (hαγ.trans le_sup_left) xac ac himg'
-    obtain ⟨N₀, g₀, hN₀, hg₀, hcN₀, hhitN⟩ :=
-      exists_strong_hull_of_tuple K θ (hlsθ σ) (hinfθ σ) N hN hNc a hαθ
-    let xa : α → N₀.carrier := fun i => Classical.choose (hhitN i)
-    have hxa : ∀ i, g₀ (xa i) = a i := fun i => Classical.choose_spec (hhitN i)
-    have ha_xa : SameDiagramAt K θ a xa := by
-      have himg : SameDiagramAt K θ xa (fun i => g₀ (xa i)) :=
-        sameDiagramAt_of_strong_image K θ xa g₀ hg₀
-          (sameDiagramAt_refl K θ (hlsθ σ) (hinfθ σ) hN₀ (le_of_eq hcN₀.symm) xa hαθ)
-      have himg' : SameDiagramAt K θ xa a := by simpa [hxa] using himg
-      exact sameDiagramAt_symm K θ (σ ⊔ aleph0) (ht_cat σ) (hrevθ' σ)
-        (hα.trans le_sup_left) xa a himg'
-    have hα_match : SameDiagramAt K θ (fun i => xac (Sum.inl i)) xa :=
-      sameDiagramAt_trans K θ (σ ⊔ aleph0) (ht_cat σ) (hlsθ σ) (hrevθ' σ) hM
-        (hα.trans le_sup_left)
-        (fun i => xac (Sum.inl i)) (fun i => ac (Sum.inl i)) xa
-        (sameDiagramAt_symm K θ (σ ⊔ aleph0) (ht_cat σ) (hrevθ' σ)
-          (hα.trans le_sup_left) (fun i => ac (Sum.inl i)) (fun i => xac (Sum.inl i))
-          (sameDiagramAt_comp_inl K θ ac xac hAc_xac))
-        (sameDiagramAt_trans K θ (σ ⊔ aleph0) (ht_cat σ) (hlsθ σ) (hrevθ' σ) hN
+    of_strong := fun {σ α M N} hα hM _hN hMc _hNc xs ys f _ hf het => by
+      have hrefl := sameDiagramAt_refl K (tFun σ) (hlsθ σ) (hinfθ σ) hM hMc xs
+        (hα.trans (hσle σ))
+      simpa [het] using sameDiagramAt_of_strong_image K (tFun σ) xs f hf hrefl
+    to_strong := fun {σ α M N} hα hM hN xs ys hσ hcat hc hMc _hNc hsame => by
+      have hready := readyAt K (σ ⊔ aleph0) (Model.card M) le_sup_right
+        ((diagramThreshold_ge_stableBound K E σ).trans hMc) hcat
+      have hlsM : ls K ≤ Model.card M := (le_max_left _ _).trans hready.1
+      have hrevM : ReversalProperty K σ (Model.card M) :=
+        fun M' f _ xs' hM' hcM' hf hι =>
+          hready.2.1 M' f xs' hM' hcM' hf (hι.trans le_sup_left)
+      have hinj : ProjectionInjective K σ (tFun σ) (Model.card M) :=
+        projection_injective_past_threshold K E σ hσ le_rfl hMc (ht_cat σ) hcat
+      have hsameκ : SameDiagramAt K (Model.card M) xs ys :=
+        hinj hα xs ys (le_of_eq rfl) (le_of_eq hc) hsame
+      exact sameDiagramAt_to_strong K (Model.card M) σ hcat hlsM hrevM
+        hM hN rfl (by rw [← hc]) hα xs ys hsameκ
+    realize_joint := fun {σ α γ M N} hαγ hα hM hN hMc hNc ac a hσ _ hsameAC hsameA => by
+      let θ := tFun σ
+      have hαγθ : #(α ⊕ γ) ≤ θ := hαγ.trans (hσle σ)
+      have hαθ : #α ≤ θ := hα.trans (hσle σ)
+      obtain ⟨M₀, f₀, hM₀, hf₀, hcM₀, hhitM⟩ :=
+        exists_strong_hull_of_tuple K θ (hlsθ σ) (hinfθ σ) M hM hMc ac hαγθ
+      let xac : α ⊕ γ → M₀.carrier := fun i => Classical.choose (hhitM i)
+      have hxac : ∀ i, f₀ (xac i) = ac i := fun i => Classical.choose_spec (hhitM i)
+      have hAc_xac : SameDiagramAt K θ ac xac := by
+        have himg : SameDiagramAt K θ xac (fun i => f₀ (xac i)) :=
+          sameDiagramAt_of_strong_image K θ xac f₀ hf₀
+            (sameDiagramAt_refl K θ (hlsθ σ) (hinfθ σ) hM₀ (le_of_eq hcM₀.symm) xac hαγθ)
+        have himg' : SameDiagramAt K θ xac ac := by simpa [hxac] using himg
+        exact sameDiagramAt_symm K θ (σ ⊔ aleph0) (ht_cat σ) (hrevθ' σ)
+          (hαγ.trans le_sup_left) xac ac himg'
+      obtain ⟨N₀, g₀, hN₀, hg₀, hcN₀, hhitN⟩ :=
+        exists_strong_hull_of_tuple K θ (hlsθ σ) (hinfθ σ) N hN hNc a hαθ
+      let xa : α → N₀.carrier := fun i => Classical.choose (hhitN i)
+      have hxa : ∀ i, g₀ (xa i) = a i := fun i => Classical.choose_spec (hhitN i)
+      have ha_xa : SameDiagramAt K θ a xa := by
+        have himg : SameDiagramAt K θ xa (fun i => g₀ (xa i)) :=
+          sameDiagramAt_of_strong_image K θ xa g₀ hg₀
+            (sameDiagramAt_refl K θ (hlsθ σ) (hinfθ σ) hN₀ (le_of_eq hcN₀.symm) xa hαθ)
+        have himg' : SameDiagramAt K θ xa a := by simpa [hxa] using himg
+        exact sameDiagramAt_symm K θ (σ ⊔ aleph0) (ht_cat σ) (hrevθ' σ)
+          (hα.trans le_sup_left) xa a himg'
+      have hα_match : SameDiagramAt K θ (fun i => xac (Sum.inl i)) xa :=
+        sameDiagramAt_trans K θ (σ ⊔ aleph0) (ht_cat σ) (hlsθ σ) (hrevθ' σ) hM
           (hα.trans le_sup_left)
-          (fun i => ac (Sum.inl i)) a xa hsameA ha_xa)
-    have hstr : SameStrongClass K (fun i => xac (Sum.inl i)) xa :=
-      sameDiagramAt_to_strong K θ σ (ht_cat σ) (hlsθ σ) (hrevθ σ)
-        hM₀ hN₀ hcM₀ hcN₀ hα (fun i => xac (Sum.inl i)) xa hα_match
-    obtain ⟨e, he, het⟩ := hstr
-    let c₀ : γ → N₀.carrier := fun j => e (xac (Sum.inr j))
-    have he_full : ∀ i, e (xac i) = Sum.elim xa c₀ i := by
-      intro i; cases i with
-      | inl i => exact het i
-      | inr j => rfl
-    have hjoint : SameDiagramAt K θ xac (Sum.elim xa c₀) :=
-      sameDiagramAt_of_sameStrongClass K θ hM₀ hN₀ hcM₀ hcN₀ xac (Sum.elim xa c₀)
-        ⟨e, he, he_full⟩
-    let c : γ → N.carrier := fun j => g₀ (c₀ j)
-    have hfinal : SameDiagramAt K θ ac (Sum.elim a c) := by
-      have h1 : SameDiagramAt K θ ac (Sum.elim xa c₀) :=
-        sameDiagramAt_trans K θ (σ ⊔ aleph0) (ht_cat σ) (hlsθ σ) (hrevθ' σ) hM₀
-          (hαγ.trans le_sup_left) ac xac (Sum.elim xa c₀) hAc_xac hjoint
-      have h2 : SameDiagramAt K θ (Sum.elim xa c₀) (Sum.elim a c) := by
-        have himg : SameDiagramAt K θ (Sum.elim xa c₀)
-            (fun i => g₀ (Sum.elim xa c₀ i)) :=
-          sameDiagramAt_of_strong_image K θ (Sum.elim xa c₀) g₀ hg₀
-            (sameDiagramAt_refl K θ (hlsθ σ) (hinfθ σ) hN₀ (le_of_eq hcN₀.symm)
-              (Sum.elim xa c₀) hαγθ)
-        have heq : (fun i => g₀ (Sum.elim xa c₀ i)) = Sum.elim a c := by
-          funext i; cases i with
-          | inl i => simp [Sum.elim, hxa]
-          | inr j => simp [Sum.elim, c]
-        simpa [heq] using himg
-      exact sameDiagramAt_trans K θ (σ ⊔ aleph0) (ht_cat σ) (hlsθ σ) (hrevθ' σ) hN₀
-        (hαγ.trans le_sup_left) ac (Sum.elim xa c₀) (Sum.elim a c) h1 h2
-    refine ⟨N, Language.Embedding.refl K.τ N.carrier, c, hN, hNc,
-      K.strong_refl N hN, ?_⟩
-    simpa [D, Language.Embedding.refl_apply] using hfinal
+          (fun i => xac (Sum.inl i)) (fun i => ac (Sum.inl i)) xa
+          (sameDiagramAt_symm K θ (σ ⊔ aleph0) (ht_cat σ) (hrevθ' σ)
+            (hα.trans le_sup_left) (fun i => ac (Sum.inl i)) (fun i => xac (Sum.inl i))
+            (sameDiagramAt_comp_inl K θ ac xac hAc_xac))
+          (sameDiagramAt_trans K θ (σ ⊔ aleph0) (ht_cat σ) (hlsθ σ) (hrevθ' σ) hN
+            (hα.trans le_sup_left)
+            (fun i => ac (Sum.inl i)) a xa hsameA ha_xa)
+      have hstr : SameStrongClass K (fun i => xac (Sum.inl i)) xa :=
+        sameDiagramAt_to_strong K θ σ (ht_cat σ) (hlsθ σ) (hrevθ σ)
+          hM₀ hN₀ hcM₀ hcN₀ hα (fun i => xac (Sum.inl i)) xa hα_match
+      obtain ⟨e, he, het⟩ := hstr
+      let c₀ : γ → N₀.carrier := fun j => e (xac (Sum.inr j))
+      have he_full : ∀ i, e (xac i) = Sum.elim xa c₀ i := by
+        intro i; cases i with
+        | inl i => exact het i
+        | inr j => rfl
+      have hjoint : SameDiagramAt K θ xac (Sum.elim xa c₀) :=
+        sameDiagramAt_of_sameStrongClass K θ hM₀ hN₀ hcM₀ hcN₀ xac (Sum.elim xa c₀)
+          ⟨e, he, he_full⟩
+      let c : γ → N.carrier := fun j => g₀ (c₀ j)
+      have hfinal : SameDiagramAt K θ ac (Sum.elim a c) := by
+        have h1 : SameDiagramAt K θ ac (Sum.elim xa c₀) :=
+          sameDiagramAt_trans K θ (σ ⊔ aleph0) (ht_cat σ) (hlsθ σ) (hrevθ' σ) hM₀
+            (hαγ.trans le_sup_left) ac xac (Sum.elim xa c₀) hAc_xac hjoint
+        have h2 : SameDiagramAt K θ (Sum.elim xa c₀) (Sum.elim a c) := by
+          have himg : SameDiagramAt K θ (Sum.elim xa c₀)
+              (fun i => g₀ (Sum.elim xa c₀ i)) :=
+            sameDiagramAt_of_strong_image K θ (Sum.elim xa c₀) g₀ hg₀
+              (sameDiagramAt_refl K θ (hlsθ σ) (hinfθ σ) hN₀ (le_of_eq hcN₀.symm)
+                (Sum.elim xa c₀) hαγθ)
+          have heq : (fun i => g₀ (Sum.elim xa c₀ i)) = Sum.elim a c := by
+            funext i; cases i with
+            | inl i => simp [Sum.elim, hxa]
+            | inr j => simp [Sum.elim, c]
+          simpa [heq] using himg
+        exact sameDiagramAt_trans K θ (σ ⊔ aleph0) (ht_cat σ) (hlsθ σ) (hrevθ' σ) hN₀
+          (hαγ.trans le_sup_left) ac (Sum.elim xa c₀) (Sum.elim a c) h1 h2
+      refine ⟨N, Language.Embedding.refl K.τ N.carrier, c, hN, hNc,
+        K.strong_refl N hN, ?_⟩
+      simpa [Language.Embedding.refl_apply] using hfinal
+  }⟩
 
 /-- **Proposition 4.3** (Categoricity at countably cofinal closure points). A cardinal `ζ > ℓ`
 of countable cofinality strictly above `t(σ)` for every infinite `σ < ζ` is a categoricity
@@ -1190,13 +1165,13 @@ cardinal, and a diagram match of bounded tuples extends to an isomorphism.
 English proof (text.md): countable alternating back-and-forth using Prop 4.2 at sizes
 `t(σ) < ζ`, then union of partial strong matches.
 
-**Blocker (failed this campaign):** needs (1) model existence at `ζ` (`E(I)` /
-`ArbitrarilyLarge` / `CategoricalUnbounded` — not in the current hypotheses);
-(2) a `StableDiagram` “realize” API exporting Prop 4.2 clause (2)
-(`D.same` at equal categoricity size ⇒ strong map) — abstract `D.same` alone is
-opaque; (3) countable exhaustion + alternating `SameStrongClass` chain +
-union-to-`≃[K.τ]` layer (not yet in-tree). -/
-theorem proposition_4_3 (K : AbstractElementaryClass.{u}) (D : StableDiagram K)
+Existence at `ζ` is `exists_model_of_card_gt_ls` (`infra_zeta_model_existence`), under
+`ArbitrarilyLarge`. Uniqueness and the extension clause are the hull back-and-forth of
+`Prop43BAF.lean` (`prop43_hull_back_and_forth`): stages are partial matches carried by a
+common strong hull of size `t(σ) < ζ` (`HullMatch`), extended by `D.to_strong` between hulls;
+no strong embedding of the full `ζ`-models is used. -/
+theorem proposition_4_3 (K : AbstractElementaryClass.{u}) [ArbitrarilyLarge K]
+    (D : StableDiagram K)
     (ζ : Cardinal.{u}) (hζ : ls K < ζ) (hcof : Ordinal.cof ζ.ord = aleph0)
     (hclosed : ∀ σ, aleph0 ≤ σ → σ < ζ → D.t σ < ζ) :
     Categorical K ζ ∧
@@ -1207,7 +1182,7 @@ theorem proposition_4_3 (K : AbstractElementaryClass.{u}) (D : StableDiagram K)
           ∃ hMcard : D.t σ ≤ Model.card M, ∃ hNcard : D.t σ ≤ Model.card N,
         D.same hα hM hN hMcard hNcard xs ys) →
       ∃ e : M.carrier ≃[K.τ] N.carrier, ∀ i, e (xs i) = ys i := by
-  sorry
+  exact prop43_hull_back_and_forth K D ζ hζ hcof hclosed
 
 /-- **Lemma 4.5** (Orbits over parameters). If `χ ^ σ = χ` and `χ` is at least `ℓ + 2^{2^σ}`,
 then at every sufficiently large categoricity cardinal there are at most `χ` automorphism
@@ -1269,8 +1244,8 @@ theorem lemma_4_7 {C parameter : Type u}
     (holds : parameter → (C → _root_.Ordinal.{u}) → Prop) (a : parameter) :
     ∃ (ι : Type u) (v : ι → C → _root_.Ordinal.{u}),
       (∀ i, holds a (v i)) ∧
-      ∀ f, holds a f → ∃ i, ∀ c, v i c ≤ f c := by
-  sorry
+      ∀ f, holds a f → ∃ i, ∀ c, v i c ≤ f c :=
+  type_u_witness_set_param holds a
 
 /-- **Proposition 4.8** (Uniform testing of placed comparisons). There is a nondecreasing
 infinite cardinal function `g` such that two placements of a tuple of length at most `σ`

@@ -4,9 +4,10 @@ Inventory of Lean `sorry` holes in this repository, ordered **prove-first**: Lay
 are holes with no remaining unfinished prerequisites; later layers wait on earlier
 ones. Apex theorems 1.2 and 1.3 are **last**.
 
-**Count:** 74 `sorry`, 0 `admit`. All live in `AEC/Section*/Results.lean`.
-Sections **2** and **13** have no holes. This matches
-`ABSTRACT_WIP` in `scripts/build_aec_tex.py`.
+**Count:** 71 `sorry`, 0 `admit`. All live in `AEC/Section*/Results.lean`.
+Sections **2** and **13** have no holes. (`ABSTRACT_WIP` in
+`scripts/build_aec_tex.py` still reads 74 and needs syncing; the layer tables below
+also still list declarations since marked **done**.)
 
 **Dependency basis:** paper/logical order from `dependencies.mermaid`
 (`A --> B` means B waits on A), reconciled with the current hole set, plus
@@ -32,8 +33,8 @@ Section 13 is complete and was never on that chain.
 | 1 | 2 | `AEC/Section1/Results.lean` |
 | 2 | 0 | — |
 | 3 | 1 | `AEC/Section3/Results.lean` |
-| 4 | 8 | `AEC/Section4/Results.lean` |
-| 5 | 3 | `AEC/Section5/Results.lean` |
+| 4 | 6 | `AEC/Section4/Results.lean` |
+| 5 | 2 | `AEC/Section5/Results.lean` |
 | 6 | 14 | `AEC/Section6/Results.lean` |
 | 7 | 9 | `AEC/Section7/Results.lean` |
 | 8 | 5 | `AEC/Section8/Results.lean` |
@@ -43,7 +44,7 @@ Section 13 is complete and was never on that chain.
 | 12 | 4 | `AEC/Section12/Results.lean` |
 | 13 | 0 | — |
 | 14 | 4 | `AEC/Section14/Results.lean` |
-| **Total** | **74** | |
+| **Total** | **71** | |
 
 ---
 
@@ -53,7 +54,7 @@ Section 13 is complete and was never on that chain.
 flowchart TD
   subgraph L0 [L0 Foundations]
     S3["Section 3: Thm 3.11"]
-    S4["Section 4: Prop 4.3 … Thm 4.11"]
+    S4["Section 4: Lem 4.5 … Thm 4.11"]
   end
   subgraph L1 [L1 Schemes start]
     S5["Section 5: Prop 5.6–5.8"]
@@ -110,27 +111,26 @@ Blue = done; green = open; grey = blocked; red = failed.
 **Dependency rule:** edge B→A only if the English proof of A requires B, or A
 needs an explicit Lean infra subgoal B (not a paper-number chain).
 
-**Failed:** `theorem_3_11`, `lemma_4_5`, `lemma_4_6`, `lemma_4_7`, `proposition_4_3`,
-`proposition_5_7`.
-**Open:** Prop 4.3 / 4.5 / 4.7 / 5.7 infra nodes (see below). No open Results holes in L0–L1
-beyond those failed; next queue is later sections / infra.
-**Note:** `lemma_6_14`, `proposition_5_8`, `proposition_5_9`, `infra_pair_coloring_glue`
-are done. Lean 5.8 is the residual `diagram_iso`+`structural_iso` form.
+**Failed:** `theorem_3_11`, `lemma_4_5`, `lemma_4_6`, `proposition_5_7`.
+**Open:** Prop 4.5 / 5.7 infra nodes (see below).
+**Note:** `lemma_6_14`, `proposition_4_3`, `lemma_4_7`, `proposition_5_8`, `proposition_5_9`,
+`infra_pair_coloring_glue`, `infra_rank_slice`, `infra_type_u_witness_set`, `infra_countable_back_and_forth`, `infra_stable_diagram_realize`, `infra_zeta_model_existence` are done.
+Lean 5.8 is the residual `diagram_iso`+`structural_iso` form.
 False `6.13→6.14` / `5.8→5.9` edges removed. Later adjacent-number edges still suspect.
 
 | Decl | Title | Location |
 |------|-------|----------|
 | `theorem_3_11` | Theorem 3.11 | `AEC/Section3/Results.lean:448` (**failed**: profile / assign / renaming) |
-| `proposition_4_3` | Proposition 4.3 | `AEC/Section4/Results.lean` (**failed**: back-and-forth / realize API / ζ-existence) |
+| `proposition_4_3` | Proposition 4.3 | `AEC/Section4/Results.lean` (**done**: `prop43_hull_back_and_forth` in `Prop43BAF.lean`; hull back-and-forth on `HullMatch` stages, uses the new `StableDiagram.trans` field) |
 | `lemma_4_5` | Lemma 4.5 | `AEC/Section4/Results.lean:1216` (**failed**: RelCode ⇏ joint `canonicalOfTuple` / orbit; see `infra_relcode_joint_canonical`, `infra_relcode_orbit_record`) |
 | `lemma_4_6` | Lemma 4.6 | `AEC/Section4/Results.lean:1248` (**failed**: needs `SameNaturalDiagram` API + block-swap pattern preservation → `D.same`; no short order-iso shortcut) |
-| `lemma_4_7` | Lemma 4.7 | `AEC/Section4/Results.lean:1258` (**failed**: needs `infra_type_u_witness_set` / `infra_rank_slice`; `infra_pair_coloring_glue` **done** in `PairColoringGlue.lean`) |
+| `lemma_4_7` | Lemma 4.7 | `AEC/Section4/Results.lean` (**done**: `type_u_witness_set_param`) |
 | `proposition_4_8` | Proposition 4.8 | `AEC/Section4/Results.lean:1274` |
 | `proposition_4_9` | Proposition 4.9 | `AEC/Section4/Results.lean:1294` |
 | `lemma_4_10` | Lemma 4.10 | `AEC/Section4/Results.lean:1331` |
 | `theorem_4_11` | Theorem 4.11 | `AEC/Section4/Results.lean:1376` |
 
-Within Section 4, prefer early work on `lemma_4_6` / `lemma_4_7` when sequencing
+Within Section 4, prefer early work on `lemma_4_6` when sequencing
 internals (per `dependencies.mermaid`).
 
 ### L1 — Section 5 after diagrams (3)
