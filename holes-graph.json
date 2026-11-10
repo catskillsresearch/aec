@@ -1,6 +1,6 @@
 {
   "updated": "2026-11-10",
-  "sorryCount": 70,
+  "sorryCount": 71,
   "legend": {
     "open": "No unfinished required proof-deps \u2014 try next",
     "blocked": "Waiting on incomplete or failed required proof-deps",

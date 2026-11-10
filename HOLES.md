@@ -4,7 +4,7 @@ Inventory of Lean `sorry` holes in this repository, ordered **prove-first**: Lay
 are holes with no remaining unfinished prerequisites; later layers wait on earlier
 ones. Apex theorems 1.2 and 1.3 are **last**.
 
-**Count:** 70 `sorry`, 0 `admit`. All live in `AEC/Section*/Results.lean`.
+**Count:** 71 `sorry`, 0 `admit`. All live in `AEC/Section*/Results.lean`.
 Sections **2** and **13** have no holes.
 
 **Dependency basis:** paper/logical order from `dependencies.mermaid`
@@ -32,7 +32,7 @@ Section 13 is complete and was never on that chain.
 | 2 | 0 | — |
 | 3 | 1 | `AEC/Section3/Results.lean` |
 | 4 | 5 | `AEC/Section4/Results.lean` |
-| 5 | 2 | `AEC/Section5/Results.lean` |
+| 5 | 3 | `AEC/Section5/Results.lean` |
 | 6 | 14 | `AEC/Section6/Results.lean` |
 | 7 | 9 | `AEC/Section7/Results.lean` |
 | 8 | 5 | `AEC/Section8/Results.lean` |
@@ -42,7 +42,7 @@ Section 13 is complete and was never on that chain.
 | 12 | 4 | `AEC/Section12/Results.lean` |
 | 13 | 0 | — |
 | 14 | 4 | `AEC/Section14/Results.lean` |
-| **Total** | **70** | |
+| **Total** | **71** | |
 
 ---
 
@@ -148,6 +148,7 @@ Waits on Section 4 diagrams / amalgamation story.
 | `infra_eligible_reclass` | Convention 5.3 tails / Lim | `AEC/Section5/EligibleSubclass.lean` (**done**: `eligibleTail`, `EligibleSubclass.tail` / `lim` / `aboveNamingThreshold`) |
 | `infra_named_working_scheme` | Named WorkingScheme ctor | `AEC/Section5/NamedWorkingScheme.lean` (**done**: `WorkingScheme.IsStructIso` + `namedWorkingScheme` packer; no `sorry`) |
 | `infra_named_working_package` | Named package transfer | `AEC/Section5/NamedPackageTransfer.lean` (**done**: `isWorkingPackage_namedWorkingScheme`; no `sorry`) |
+| `objectOfEmptyChain` | Seed object at eligible level | `AEC/Section5/Results.lean` (**open**: nonempty chain unions no longer supply empty-index objects) |
 | `proposition_5_8` | Proposition 5.8 | `AEC/Section5/Results.lean:224` (**done**: Lean residual via `diagram_iso` + `structural_iso`) |
 
 ### L2 — Section 6 unlock (14)
@@ -297,4 +298,4 @@ layer (and thus the whole stack).
 | L8 | 4 |
 | L9 | 4 |
 | L10 | 2 |
-| **Total** | **70** |
+| **Total** | **71** |
