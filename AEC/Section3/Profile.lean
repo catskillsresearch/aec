@@ -52,19 +52,20 @@ structure CommonProfileSetup (K : AbstractElementaryClass.{u}) (E : OrderPresent
         {ι : Type u} (hι : #ι ≤ θ) (xs : ι → (E.obj I).carrier),
         assign (canonicalOfTuple E hθ hι xs) =
           some (N.name (orderPresentation_obj_mem E I) xs hι)
-  /-- The shared assign depends only on the record up to `OrbitRecord.Same`. -/
-  assign_same :
-    ∀ r s : CanonicalRecord E.lab E.arity θ,
-      OrbitRecord.Same (CanonicalRecord.toOrbitRecord r) (CanonicalRecord.toOrbitRecord s) →
-        assign r = assign s
-  /-- On the large presentation, any canonical record realizing a reindexing of `xs`
-  receives the name of `xs`. (All realized records of one orbit share one name.) -/
+  /-- On the large presentation, a canonical record realized by the canonical reindexing of
+  `xs` (along the fixed `embedBelow hι`, the one used by `canonicalOfTuple`) receives the name
+  of `xs`.
+
+  The reindexing must be the canonical one: an orbit naming separates a tuple from its
+  non-conjugate permutations at categoricity cardinals, so no assign can be invariant under
+  arbitrary bijections of the index set. -/
   assign_realizes_large :
     ∀ {I : Type u} [LinearOrder I] [Nonempty I] (_e : HOrder β ≃o I)
       {ι : Type u} (hι : #ι ≤ θ) (xs : ι → (E.obj I).carrier)
       (r : CanonicalRecord E.lab E.arity θ)
       (place : (CanonicalRecord.toOrbitRecord r).slot → I)
       (reindex : (CanonicalRecord.toOrbitRecord r).index ≃ ι),
+      (∀ j : (CanonicalRecord.toOrbitRecord r).index, embedBelow hι (reindex j) = j.val) →
       RealizesOrbitRecord (I := I) E (CanonicalRecord.toOrbitRecord r) place
         (fun j => xs (reindex j)) →
       assign r = some (N.name (orderPresentation_obj_mem E I) xs hι)

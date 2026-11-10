@@ -4,8 +4,8 @@ Inventory of Lean `sorry` holes in this repository, ordered **prove-first**: Lay
 are holes with no remaining unfinished prerequisites; later layers wait on earlier
 ones. Apex theorems 1.2 and 1.3 are **last**.
 
-**Count:** 70 `sorry`, 0 `admit`. All live in `AEC/Section*/Results.lean`.
-Sections **2** and **13** have no holes.
+**Count:** 69 `sorry`, 0 `admit`. All live in `AEC/Section*/Results.lean`.
+Sections **2**, **3**, and **13** have no holes.
 
 **Dependency basis:** paper/logical order from `dependencies.mermaid`
 (`A --> B` means B waits on A), reconciled with the current hole set, plus
@@ -30,8 +30,8 @@ Section 13 is complete and was never on that chain.
 |--------:|------:|------|
 | 1 | 2 | `AEC/Section1/Results.lean` |
 | 2 | 0 | — |
-| 3 | 1 | `AEC/Section3/Results.lean` |
-| 4 | 5 | `AEC/Section4/Results.lean` |
+| 3 | 0 | — |
+| 4 | 4 | `AEC/Section4/Results.lean` |
 | 5 | 3 | `AEC/Section5/Results.lean` |
 | 6 | 14 | `AEC/Section6/Results.lean` |
 | 7 | 9 | `AEC/Section7/Results.lean` |
@@ -42,7 +42,7 @@ Section 13 is complete and was never on that chain.
 | 12 | 4 | `AEC/Section12/Results.lean` |
 | 13 | 0 | — |
 | 14 | 4 | `AEC/Section14/Results.lean` |
-| **Total** | **71** | |
+| **Total** | **69** | |
 
 ---
 
@@ -51,7 +51,6 @@ Section 13 is complete and was never on that chain.
 ```mermaid
 flowchart TD
   subgraph L0 [L0 Foundations]
-    S3["Section 3: Thm 3.11"]
     S4["Section 4: Lem 4.5 … Thm 4.11"]
   end
   subgraph L1 [L1 Schemes start]
@@ -79,7 +78,6 @@ flowchart TD
     T12["Theorem 1.2"]
     T13["Theorem 1.3"]
   end
-  S3 --> S4
   S4 --> S5 --> S6 --> S7 --> S8 --> S9 --> S10
   S5 --> S8
   S5 --> S9
@@ -97,10 +95,10 @@ Within a layer, siblings are listed in paper number order.
 
 ## BFS layers (individual holes)
 
-### L0 — Independent foundations (9)
+### L0 — Independent foundations (4 open)
 
-No unfinished Results prerequisites. Section 3’s remaining hole uses completed
-Section 2 Results; Section 4 starts the diagrams/orbits stack.
+No unfinished Results prerequisites. Section 3 is complete (Theorem 3.11 closed by the
+`θ⁺ · a^θ` renaming kill); Section 4 starts the diagrams/orbits stack.
 
 **Live board:** [`holes.html`](holes.html) + [`holes-graph.json`](holes-graph.json).
 Edge **B→A** means the English proof of A requires B (no soft/narrative-only edges).
@@ -110,9 +108,9 @@ counterexample refutes the program.
 **Dependency rule:** edge B→A only if the English proof of A requires B, or A
 needs an explicit Lean infra subgoal B (not a paper-number chain).
 
-**Open:** `theorem_3_11`, `proposition_5_7` (existence of named realizations on a
+**Open:** `proposition_5_7` (existence of named realizations on a
 tail; packer + package transfer done), `objectOfEmptyChain`.
-**Note:** `lemma_4_6`, `lemma_6_14`, `proposition_4_3`, `lemma_4_5`, `lemma_4_7`, `proposition_5_8`, `proposition_5_9`,
+**Note:** `theorem_3_11`, `lemma_4_6`, `lemma_6_14`, `proposition_4_3`, `lemma_4_5`, `lemma_4_7`, `proposition_5_8`, `proposition_5_9`,
 `infra_pair_coloring_glue`, `infra_rank_slice`, `infra_type_u_witness_set`, `infra_countable_back_and_forth`, `infra_stable_diagram_realize`, `infra_zeta_model_existence`, `infra_eligible_reclass`, `infra_template_fixed_support`, `infra_named_working_scheme`, `infra_named_working_package` are done.
 Lean 5.8 is the residual `diagram_iso`+`structural_iso` form.
 False `6.13→6.14` / `5.8→5.9` edges removed. Later adjacent-number edges still suspect.
@@ -124,7 +122,7 @@ node reaches Thm 1.2 or 1.3; completed work should admit dead-code analysis of e
 
 | Decl | Title | Location |
 |------|-------|----------|
-| `theorem_3_11` | Theorem 3.11 | `AEC/Section3/Results.lean:448` (**open**: profile / assign / renaming) |
+| `theorem_3_11` | Theorem 3.11 | `AEC/Section3/Results.lean` (**done**: no `sorryAx`; recurring-profile pigeonhole `exists_asymmetric_common_setup` in `ReversalKill.lean`, Prop 3.9 alignment, `θ⁺ · a^θ` kill `exists_killed_copy` in `RenamingKill.lean` via chains of strong self-maps `selfChainRec`) |
 | `proposition_4_3` | Proposition 4.3 | `AEC/Section4/Results.lean` (**done**: `prop43_hull_back_and_forth` in `Prop43BAF.lean`; hull back-and-forth on `HullMatch` stages, uses the new `StableDiagram.trans` field) |
 | `lemma_4_5` | Lemma 4.5 | `AEC/Section4/Results.lean` (**done**: no `sorryAx`; mixed S⊕new occupancy closed in `fingerprint_same_order_and_occupancy`) |
 | `lemma_4_6` | Lemma 4.6 | `AEC/Section4/BlockInterchange.lean` (**done**: English tree/repeat/orbit via `BlockRegions` + `lemma_4_5_with_E`; `DisjointBlockSwap` packaging is degenerate) |
@@ -287,7 +285,7 @@ layer (and thus the whole stack).
 
 | Layer | Count |
 |------:|------:|
-| L0 | 9 |
+| L0 | 4 |
 | L1 | 3 |
 | L2 | 14 |
 | L3 | 9 |
@@ -298,4 +296,4 @@ layer (and thus the whole stack).
 | L8 | 4 |
 | L9 | 4 |
 | L10 | 2 |
-| **Total** | **71** |
+| **Total** | **69** |

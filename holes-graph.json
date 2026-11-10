@@ -1,6 +1,6 @@
 {
   "updated": "2026-11-10",
-  "sorryCount": 70,
+  "sorryCount": 69,
   "legend": {
     "open": "No unfinished required proof-deps \u2014 try next",
     "blocked": "Waiting on incomplete required proof-deps",
@@ -143,9 +143,9 @@
       "label": "Thm 3.11",
       "section": 3,
       "file": "AEC/Section3/Results.lean",
-      "status": "open",
+      "status": "done",
       "blocker": null,
-      "detail": "Still open: profile mismatch vs CommonProfileSetup; assign/name; renaming."
+      "detail": "No sorry (axioms: propext, Classical.choice, Quot.sound). Recurring-profile pigeonhole exists_asymmetric_common_setup (ReversalKill.lean), Prop 3.9 alignment, and the \u03b8\u207a\u00b7a^\u03b8 renaming kill exists_killed_copy (RenamingKill.lean): chains of strong self-maps (selfChainRec), exists_dead_selfMap for the a^\u03b8 steps, \u03b8\u207a rounds and their union."
     },
     {
       "id": "theorem_3_5",
@@ -1598,5 +1598,5 @@
       "kind": "hard"
     }
   ],
-  "doneCount": 42
+  "doneCount": 43
 }

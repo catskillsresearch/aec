@@ -12,6 +12,9 @@ public import AEC.Section3.Occupancy
 public import AEC.Section3.AdditivelyIndecomposable
 public import AEC.Section3.Reversal
 public import AEC.Section3.Elimination
+public import AEC.Section3.Lemma310
+public import AEC.Section3.ReversalKill
+public import AEC.Section3.RenamingKill
 public import AEC.Section3.OrbitName
 public import AEC.Section3.OrbitRecord
 public import AEC.Section3.SameRecord
@@ -383,6 +386,7 @@ theorem proposition_3_9 (K : AbstractElementaryClass.{u}) (E : OrderPresentation
     (canonicalOfTuple E hθ hι xs)
     (fun s => softPush eJ eI φH (canonicalPlaceOfTuple E hθ hι xs s))
     (canonicalOfTupleIndexEquiv E hθ hι xs).symm
+    (fun j => Equiv.apply_ofInjective_symm (embedBelow hι).injective j)
     hreal
   have hnames : N.name hJmem xs hι =
       N.name hImem (fun i => embIJ (xs i)) hι := by
@@ -398,36 +402,19 @@ theorem lemma_3_10 (κ τ : Cardinal.{u}) (hκ : aleph0 ≤ κ) (hτ : aleph0 �
     (hreg : Cardinal.IsRegular τ) (hle : τ ≤ κ) :
     ∀ α : _root_.Ordinal.{u}, α < (Order.succ κ).ord →
       ∃ δ : _root_.Ordinal.{u}, α ≤ δ ∧ δ < (Order.succ κ).ord ∧
-        AdditivelyIndecomposable δ ∧ δ.card = κ ∧ Ordinal.cof δ = τ := by
-  intro α hα
-  have hαcard : α.card ≤ κ := Cardinal.card_le_iff.mpr hα
-  let ρ : _root_.Ordinal.{u} := α + κ.ord + τ.ord
-  have hτlim : Order.IsSuccLimit τ.ord := Cardinal.isSuccLimit_ord hτ
-  have hρlim : Order.IsSuccLimit ρ := Ordinal.isSuccLimit_add (α + κ.ord) hτlim
-  have hρcard : ρ.card = κ := by
-    have hsum : (α + κ.ord).card = κ := by
-      rw [Ordinal.card_add, Cardinal.card_ord, add_comm, Cardinal.add_eq_max hκ,
-        max_eq_left hαcard]
-    rw [Ordinal.card_add, Cardinal.card_ord, hsum, Cardinal.add_eq_max hκ, max_eq_left hle]
-  have hcofρ : Ordinal.cof ρ = τ := by
-    rw [Ordinal.cof_add (α + κ.ord) hτlim.ne_bot, hreg.cof_ord]
-  refine ⟨Ordinal.omega0 ^ ρ, ?_, ?_, ⟨Ordinal.isPrincipal_add_omega0_opow ρ⟩, ?_, ?_⟩
-  · exact (le_self_add : α ≤ α + κ.ord).trans
-      ((le_self_add : α + κ.ord ≤ α + κ.ord + τ.ord).trans
-        (Ordinal.right_le_opow ρ Ordinal.one_lt_omega0))
-  · apply Cardinal.card_le_iff.mp
-    rw [Ordinal.card_omega0_opow hρlim.ne_bot, hρcard, max_eq_right hκ]
-  · rw [Ordinal.card_omega0_opow hρlim.ne_bot, hρcard, max_eq_right hκ]
-  · rw [Ordinal.cof_map_of_isNormal (Ordinal.isNormal_opow Ordinal.one_lt_omega0) hρlim, hcofρ]
+        AdditivelyIndecomposable δ ∧ δ.card = κ ∧ Ordinal.cof δ = τ :=
+  indecomposable_cofinal κ τ hκ hτ hreg hle
 
 /-- **Theorem 3.11** (Eventual reversal at categoricity cardinals). For each infinite cardinal
 `θ` there is a bound `b_K(θ)` such that, at every categoricity cardinal `κ ≥ b_K(θ)`, every
 strong self-embedding is inverted on every tuple of length at most `θ`.
 
 Proof shape (text.md §3.5): if failing categoricity cardinals are bounded, apply
-`isReversalThreshold_of_fails_bounded`. Otherwise the `P⁺`-sequence of failures, profile
-pigeonhole, Proposition 3.9 alignment, the θ⁺-renaming kill, and `killed_copy_impossible`
-yield a contradiction. -/
+`isReversalThreshold_of_fails_bounded`. Otherwise the `P⁺`-sequence of failures and the
+recurring-profile pigeonhole (`exists_asymmetric_common_setup`) give two sizes `a < μ` with one
+profile and an arrow `p ⟶ r` with no reverse; Proposition 3.9 aligns small submodels, and the
+`θ⁺ · a^θ` renaming kill (`exists_killed_copy`) produces a model of size `a` with no tuple
+named `p`, although `p` occurs at size `a`. -/
 theorem theorem_3_11 (K : AbstractElementaryClass.{u}) (θ : Cardinal.{u}) (hθ : aleph0 ≤ θ) :
     ∃ b : Cardinal.{u}, IsReversalThreshold K θ b := by
   classical
@@ -439,21 +426,29 @@ theorem theorem_3_11 (K : AbstractElementaryClass.{u}) (θ : Cardinal.{u}) (hθ 
     have hUnb : ∀ B : Cardinal.{u}, ∃ κ, FailsReversal K θ κ ∧ B < κ := hB
     have : ArbitrarilyLarge K := arbitrarilyLarge_of_unbounded_fails K θ hUnb
     obtain ⟨E, _, _⟩ := @theorem_2_6 K this
-    let N := elimOrbitNaming K E θ hθ
-    -- Pigeonhole + asymmetric named arrows at both sizes (Elimination.lean).
-    obtain ⟨a, μ, haFail, hμFail, hale, hμle, hlt, hpow, hΦ, p, r,
-      hprA, hrpA, hprμ, hrpμ, hpOcc⟩ :=
-      exists_asymmetric_common_fail K E θ hθ N hUnb
-    -- Remaining open formalization (text.md 188–201):
-    -- 1. Build `CommonProfileSetup` from the shared `failProfileAt` assign /
-    --    categoricity ordinals (`lemma_3_10` for `Deltas`), then apply
-    --    `proposition_3_9` to get `AlignmentProperty`.
-    -- 2. θ⁺ · a^θ renaming-kill construction under that alignment, producing a
-    --    size-`a` copy with no name-`p` θ-tuple.
-    -- 3. `killed_copy_impossible K θ a N haFail.1 p hpOcc hkill`.
-    exact False.elim (by
-      clear N a μ haFail hμFail hale hμle hlt hpow hΦ p r hprA hrpA hprμ hrpμ hpOcc
-      sorry)
+    -- Index-normalized naming: tuples of every index type are named through index sets
+    -- `S ⊆ θ`, so one record-to-name function computes all names (ReversalKill.lean).
+    let N := (elimOrbitNaming K E θ hθ).normalize
+    -- Recurring-profile pigeonhole over the `P⁺`-sequence of failing sizes: two sizes
+    -- `a < μ` with `a^θ ≤ μ`, a common profile setup (`β` and the `δ`s from `lemma_3_10`),
+    -- and a common asymmetric named arrow `p ⟶ r` whose source occurs at size `a`.
+    obtain ⟨a, μ, haFail, hμFail, hale, hμle, hlt, hpow, ⟨P⟩, p, r,
+      hprA, hrpA, hprμ, hrpμ, hpOcc, hArrowEq⟩ :=
+      exists_asymmetric_common_setup K E θ hθ (elimOrbitNaming K E θ hθ) hUnb
+    -- Proposition 3.9: aligned `a`-sized strong submodels inside every copy of `C_μ`.
+    have hAlign : AlignmentProperty K θ a μ N :=
+      proposition_3_9 K E θ a μ N hθ hale hlt haFail.1 hμFail.1 P
+    -- The `θ⁺ · a^θ` renaming kill (text.md 188–198): a model of size `a` with no tuple
+    -- named `p`.
+    obtain ⟨A, hA, hAcard, hno⟩ :=
+      exists_killed_copy K θ a μ N hθ hale hlt hpow haFail.1 hμFail.1 hAlign p r hprμ hrpμ
+        (fun q => (hArrowEq q p).1)
+    -- But `p` occurs at size `a`, hence in this model (text.md 200).
+    obtain ⟨M, hM, hMcard, xs, hxs⟩ := hpOcc
+    obtain ⟨φ⟩ := haFail.1.unique_model M A hM hA hMcard hAcard
+    refine (hno (fun i => φ (xs i)) ?_).elim
+    rw [← N.name_iso φ hM hA xs (mk_below_le θ)]
+    exact hxs
 
 end
 end AEC
