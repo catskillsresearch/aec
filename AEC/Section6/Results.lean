@@ -8,6 +8,7 @@ public import AEC.Section7.AllDominated
 public import AEC.Section6.TestingFunction
 public import AEC.Section5.PackageClauses
 public import AEC.Section6.SupportClosure
+public import AEC.Section6.ParameterOrbits
 
 @[expose] public section
 
@@ -29,11 +30,41 @@ theorem Tail.mem {S T : Set Cardinal.{u}} (h : Tail S T) {μ : Cardinal.{u}}
   h.1 hμ
 
 /-- **Lemma 6.1** (Parameter orbits for a scheme). If `χ ^ σ = χ` and `χ > b + σ`, then at
-every sufficiently closed level there are at most `χ` diagrams of `σ`-tuples over a parameter
-tuple of length at most `χ`. -/
+every sufficiently closed level greater than `χ` there are at most `χ` diagrams of `σ`-tuples
+over a parameter tuple of length at most `χ`.
+
+Hypotheses on the scheme. For a bare `WorkingScheme` the statement fails (`DiagramEq` may be
+equality of lists). Assuming a working package with presentations is not enough either:
+`IsWorkingPackage` and `HasPresentations` do not make the automorphisms of the vertex models
+structural isomorphisms, for instance when the isomorphisms of the scheme respect a colouring
+of the occurrences by more than `χ` colours. The link to Lemma 4.5 is
+`hiso : AssemblesStructIso W b`: strong vertex automorphisms fixing a set of at most `b`
+occurrences assemble into structural isomorphisms.
+`b` is the bound of the English statement, and `hb : b + σ < χ` is the English hypothesis. For
+the single-model scheme of Proposition 5.6, `b = 0` (`SingleModelData.assemblesStructIso`); for
+the named scheme of Proposition 5.7, `b` grows by the number of names
+(`WorkingScheme.assemblesStructIso_named`). Further hypotheses: `hcat`, categoricity at the
+levels (true at closure points), `hχ`, the bound of Lemma 4.5, and `hedge`, the shape has no
+specified map.
+
+`hedge` is needed by this proof. Lemma 4.5 gives automorphisms of the vertex models one vertex
+at a time, with nothing forcing them to commute with the maps of a system, and
+`AssemblesStructIso` assembles commuting families only. The number of vertices is not
+restricted. A single vertex with a specified map to itself is not covered.
+
+Proof: `WorkingScheme.exists_parameter_orbit_reps` (`ParameterOrbits.lean`), from Lemma 4.5 at
+each vertex and `W.diagram_iso`. The tail is the levels above `χ` and the threshold of
+Lemma 4.5. The clause of the English statement on block transpositions is `lemma_4_6`. -/
 theorem lemma_6_1 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
-    (W : WorkingScheme K S) (σ χ b : Cardinal.{u})
-    (hσ : aleph0 ≤ σ) (hpow : χ ^ σ = χ) (hb : b + σ < χ) :
+    [CategoricalUnbounded K]
+    (W : WorkingScheme K S)
+    (hedge : ∀ i j, ¬ S.specified i j)
+    (hcat : ∀ μ ∈ W.eligible, Categorical K μ)
+    (σ χ b : Cardinal.{u})
+    (hσ : aleph0 ≤ σ) (hpow : χ ^ σ = χ)
+    (hb : b + σ < χ)
+    (hχ : ls K + (2 : Cardinal.{u}) ^ ((2 : Cardinal.{u}) ^ σ) ≤ χ)
+    (hiso : AssemblesStructIso W b) :
     ∃ T, ∃ hT : Tail W.eligible T,
       ∀ μ (hμ : μ ∈ T) (X : W.Object μ (Tail.mem hT hμ))
         {ι ρ : Type u} (hι : #ι ≤ σ) (hρ : #ρ ≤ χ)
@@ -42,9 +73,17 @@ theorem lemma_6_1 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
         ∃ reps : Set (ι → Occurrence K S (W.asSystem _ X)),
           #reps ≤ χ ∧ ∀ xs ∈ family, ∃ ys ∈ reps,
             W.DiagramEq (X := X) (Y := X)
-              (fun i : ι ⊕ ρ => Sum.elim xs params i)
-              (fun i : ι ⊕ ρ => Sum.elim ys params i) := by
-  sorry
+              (Sum.elim xs params) (Sum.elim ys params) := by
+  obtain ⟨κ0, h⟩ := W.exists_parameter_orbit_reps hedge hcat σ χ b hσ hpow hb hχ hiso
+  have hT : Tail W.eligible {μ | μ ∈ W.eligible ∧ κ0 ≤ μ ∧ χ < μ} := by
+    refine ⟨fun μ hμ => hμ.1, fun κ => ?_⟩
+    obtain ⟨μ, hle, hμ⟩ := W.eligible_unbounded (max κ (max κ0 (Order.succ χ)))
+    exact ⟨μ, (le_max_left _ _).trans hle, hμ,
+      ((le_max_left _ _).trans (le_max_right _ _)).trans hle,
+      (Order.lt_succ χ).trans_le (((le_max_right _ _).trans (le_max_right _ _)).trans hle)⟩
+  refine ⟨_, hT, fun μ hμ X ι ρ hι hρ params family => ?_⟩
+  obtain ⟨reps, hreps, hrep⟩ := h μ hμ.1 hμ.2.1 hμ.2.2 X hι hρ params
+  exact ⟨reps, hreps, fun xs _ => hrep xs⟩
 
 /-- **Proposition 6.3** (Uniform testing for natural layouts). For each fixed natural layout
 there is a monotone `g` such that, at all sufficiently closed levels, two placed types of

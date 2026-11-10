@@ -4,7 +4,7 @@ Inventory of Lean `sorry` holes in this repository, ordered **prove-first**: Lay
 are holes with no remaining unfinished prerequisites; later layers wait on earlier
 ones. Apex theorems 1.2 and 1.3 are **last**.
 
-**Count:** 63 `sorry`, 0 `admit`. All live in `AEC/Section*/Results.lean`.
+**Count:** 62 `sorry`, 0 `admit`. All live in `AEC/Section*/Results.lean`.
 Sections **2**, **3**, **4**, and **13** have no holes.
 
 **Dependency basis:** paper/logical order from `dependencies.mermaid`
@@ -33,7 +33,7 @@ Section 13 is complete and was never on that chain.
 | 3 | 0 | — |
 | 4 | 0 | — |
 | 5 | 1 | `AEC/Section5/Results.lean` |
-| 6 | 14 | `AEC/Section6/Results.lean` |
+| 6 | 13 | `AEC/Section6/Results.lean` |
 | 7 | 9 | `AEC/Section7/Results.lean` |
 | 8 | 5 | `AEC/Section8/Results.lean` |
 | 9 | 7 | `AEC/Section9/Results.lean` |
@@ -42,7 +42,7 @@ Section 13 is complete and was never on that chain.
 | 12 | 4 | `AEC/Section12/Results.lean` |
 | 13 | 0 | — |
 | 14 | 4 | `AEC/Section14/Results.lean` |
-| **Total** | **63** | |
+| **Total** | **62** | |
 
 ---
 
@@ -57,7 +57,7 @@ flowchart TD
     S5["Section 5: Prop 5.6–5.8"]
   end
   subgraph L2 [L2]
-    S6["Section 6: 14 holes"]
+    S6["Section 6: 13 holes"]
   end
   subgraph L3to6 [L3–L6]
     S7["Section 7"]
@@ -109,8 +109,8 @@ counterexample refutes the program.
 **Dependency rule:** edge B→A only if the English proof of A requires B, or A
 needs an explicit Lean infra subgoal B (not a paper-number chain).
 
-**Open:** `objectOfEmptyChain` (Section 5, listed under L1), `lemma_6_1` (Section 6).
-**Note:** `theorem_3_11`, `proposition_5_6`, `proposition_5_7`, `lemma_4_6`, `lemma_6_14`, `proposition_4_3`, `lemma_4_5`, `lemma_4_7`, `proposition_4_8`, `proposition_4_9`, `lemma_4_10`, `theorem_4_11`, `proposition_5_8`, `proposition_5_9`,
+**Open:** `objectOfEmptyChain` (Section 5, listed under L1), `proposition_6_3` (Section 6).
+**Note:** `lemma_6_1`, `theorem_3_11`, `proposition_5_6`, `proposition_5_7`, `lemma_4_6`, `lemma_6_14`, `proposition_4_3`, `lemma_4_5`, `lemma_4_7`, `proposition_4_8`, `proposition_4_9`, `lemma_4_10`, `theorem_4_11`, `proposition_5_8`, `proposition_5_9`,
 `infra_pair_coloring_glue`, `infra_rank_slice`, `infra_type_u_witness_set`, `infra_countable_back_and_forth`, `infra_stable_diagram_realize`, `infra_zeta_model_existence`, `infra_eligible_reclass`, `infra_template_fixed_support`, `infra_named_working_scheme`, `infra_named_working_package`, `infra_single_model_scheme`, `infra_single_model_package` are done.
 Lean 5.8 is the residual `diagram_iso`+`structural_iso` form.
 False `6.13→6.14` / `5.8→5.9` edges removed. Later adjacent-number edges still suspect.
@@ -127,8 +127,15 @@ Callers: `namedWorkingScheme` now takes `hι : #ι < μ0`, `hTail : ∀ μ ∈ T
 
 **Known residual in `HasChainUnions`.** The clause quantifies over arrows `le i j` for *every* ordered pair `(i, j)`, composing strictly, so its families consist of mutually inverse isomorphisms; with the cocone condition the clause holds in every scheme (take `U := obj i₀`). A faithful clause would index `le` over `i ≤ j` in a directed order. It was left unchanged (minimal repairs); the real content for single models is `SingleModelData.exists_directed_union`. Re-index the clause when Sections 6–11 first need a chain union.
 
+**Lemma 6.1 is done, with a repaired statement** (`AEC/Section6/ParameterOrbits.lean`). The bare-scheme statement was refutable (`DiagramEq` may be equality of lists). Assuming a working package with presentations is not enough: `IsWorkingPackage` and `HasPresentations` do not make the automorphisms of the vertex models, which Lemma 4.5 produces, structural isomorphisms of the scheme (counterexample pattern, not formalized: isomorphisms that preserve a colouring by more than `χ` colours). The statement now has:
+1. `hiso : AssemblesStructIso W b` (new definition): at every object there is a set `B` of at most `b` occurrences such that strong vertex automorphisms fixing `B` and commuting with the specified maps are the vertex maps of a structural isomorphism. The English bound `b` and `hb : b + σ < χ` are kept.
+2. `hχ : ls K + 2^(2^σ) ≤ χ`, the bound of Lemma 4.5, `hcat : ∀ μ ∈ W.eligible, Categorical K μ`, and `[CategoricalUnbounded K]`.
+3. `hedge : ∀ i j, ¬ S.specified i j`: the shape has no specified map. Lemma 4.5 gives vertex automorphisms one vertex at a time, and they need not commute with the maps of a system. Any finite number of vertices is covered. A one-vertex hypothesis was not used: it is not needed, and it does not suffice for this proof (one vertex with a specified map to itself).
+
+`IsWorkingPackage` and `HasPresentations` are not hypotheses; the proof does not use them. `hiso` holds for the Prop 5.6 scheme with `b = 0` (`SingleModelData.assemblesStructIso`, from `assemblesStructIso_bijective`) and for the Prop 5.7 named scheme with `b + #names` (`WorkingScheme.assemblesStructIso_named`). `SingleModelData.exists_parameter_orbit_reps` is the lemma for the Prop 5.6 scheme with no scheme hypothesis left. `proposition_5_6` does not export `hedge`, `hcat` or `hiso` for its existential scheme: callers of Lemma 6.1 use `SingleModelData.scheme` directly, or the statement of Prop 5.6 has to be extended. Shapes with specified maps remain open for Lemma 6.1 (they need orbits of system automorphisms, not of vertex automorphisms). Hard edge `4.5 → 6.1` added; Prop 6.3 is unblocked.
+
 **Wired (intended use, reach apex):** `5.6 → 9.3, 10.2`; `5.7 → 9.3, 10.6, 10.8`;
-`2.3 → 1.2`; `3.11 → 4.2, 5.8`; `4.2 → 4.9, 4.10, 4.11`; `4.3 → 4.10, 4.11`; `4.6 → 4.9`; `4.7 → 4.8, 12.5`; `4.8 → 4.10, 4.11`; `4.10 → 4.11`; `4.11 → 5.6`; `6.14 → 12.6`; `13.5 → 10.9, 14.2`.
+`2.3 → 1.2`; `3.11 → 4.2, 5.8`; `4.2 → 4.9, 4.10, 4.11`; `4.3 → 4.10, 4.11`; `4.5 → 6.1`; `4.6 → 4.9`; `4.7 → 4.8, 12.5`; `4.8 → 4.10, 4.11`; `4.10 → 4.11`; `4.11 → 5.6`; `6.14 → 12.6`; `13.5 → 10.9, 14.2`.
 Full hard-edge list: [`holes-edges.txt`](holes-edges.txt). Target: every Results/paper
 node reaches Thm 1.2 or 1.3; completed work should admit dead-code analysis of each edge.
 
@@ -163,28 +170,28 @@ Proposition 5.6 is done (single-model working package on the closure points of `
 | `objectOfEmptyChain` | Seed object at eligible level | `AEC/Section5/Results.lean` (**open**: nonempty chain unions no longer supply empty-index objects) |
 | `proposition_5_8` | Proposition 5.8 | `AEC/Section5/Results.lean` (**done**: Lean residual via `diagram_iso` + `structural_iso`) |
 
-### L2 — Section 6 unlock (14)
+### L2 — Section 6 unlock (13)
 
 Waits on Section 5 working package. Lean: later Results import this module.
 
 | Decl | Title | Location |
 |------|-------|----------|
-| `lemma_6_1` | Lemma 6.1 | `AEC/Section6/Results.lean:47` |
-| `proposition_6_3` | Proposition 6.3 | `AEC/Section6/Results.lean:65` |
-| `lemma_6_4` | Lemma 6.4 | `AEC/Section6/Results.lean:89` |
-| `lemma_6_5` | Lemma 6.5 | `AEC/Section6/Results.lean:106` |
-| `theorem_6_6` | Theorem 6.6 | `AEC/Section6/Results.lean:141` |
-| `corollary_6_7` | Corollary 6.7 | `AEC/Section6/Results.lean:156` |
-| `lemma_6_9` | Lemma 6.9 | `AEC/Section6/Results.lean:167` |
-| `theorem_6_10` | Theorem 6.10 | `AEC/Section6/Results.lean:182` |
-| `lemma_6_11` | Lemma 6.11 | `AEC/Section6/Results.lean:200` |
-| `proposition_6_12` | Proposition 6.12 | `AEC/Section6/Results.lean:212` |
-| `proposition_6_13` | Proposition 6.13 | `AEC/Section6/Results.lean:226` |
-| `proposition_6_15` | Proposition 6.15 | `AEC/Section6/Results.lean:257` |
-| `corollary_6_16` | Corollary 6.16 | `AEC/Section6/Results.lean:269` |
-| `lemma_6_17` | Lemma 6.17 | `AEC/Section6/Results.lean:301` |
+| `lemma_6_1` | Lemma 6.1 | `AEC/Section6/Results.lean` (**done**: no `sorryAx`; `WorkingScheme.exists_parameter_orbit_reps` in `ParameterOrbits.lean`: Lemma 4.5 at each vertex over the parameters and the exceptional occurrences (`exists_vertexwise_orbit_reps`), `AssemblesStructIso`, `W.diagram_iso` for the list of length `≤ χ < μ`; tail = eligible levels above `χ` and the threshold of Lemma 4.5. Statement changes: added `[CategoricalUnbounded K]`, `hedge`, `hcat`, `hχ`, `hiso : AssemblesStructIso W b`; `b` and `b + σ < χ` kept; see the paragraph above) |
+| `proposition_6_3` | Proposition 6.3 | `AEC/Section6/Results.lean:104` |
+| `lemma_6_4` | Lemma 6.4 | `AEC/Section6/Results.lean:128` |
+| `lemma_6_5` | Lemma 6.5 | `AEC/Section6/Results.lean:145` |
+| `theorem_6_6` | Theorem 6.6 | `AEC/Section6/Results.lean:180` |
+| `corollary_6_7` | Corollary 6.7 | `AEC/Section6/Results.lean:195` |
+| `lemma_6_9` | Lemma 6.9 | `AEC/Section6/Results.lean:206` |
+| `theorem_6_10` | Theorem 6.10 | `AEC/Section6/Results.lean:221` |
+| `lemma_6_11` | Lemma 6.11 | `AEC/Section6/Results.lean:239` |
+| `proposition_6_12` | Proposition 6.12 | `AEC/Section6/Results.lean:251` |
+| `proposition_6_13` | Proposition 6.13 | `AEC/Section6/Results.lean:265` |
+| `proposition_6_15` | Proposition 6.15 | `AEC/Section6/Results.lean:296` |
+| `corollary_6_16` | Corollary 6.16 | `AEC/Section6/Results.lean:308` |
+| `lemma_6_17` | Lemma 6.17 | `AEC/Section6/Results.lean:340` |
 
-(`lemma_6_14` is already proved.)
+(`lemma_6_14` is already proved; `lemma_6_1` is done and stays in the table for its statement changes.)
 
 ### L3 — Section 7 (9)
 
@@ -301,7 +308,7 @@ layer (and thus the whole stack).
 |------:|------:|
 | L0 | 0 |
 | L1 | 1 |
-| L2 | 14 |
+| L2 | 13 |
 | L3 | 9 |
 | L4 | 5 |
 | L5 | 7 |
@@ -310,4 +317,4 @@ layer (and thus the whole stack).
 | L8 | 4 |
 | L9 | 4 |
 | L10 | 2 |
-| **Total** | **63** |
+| **Total** | **62** |
