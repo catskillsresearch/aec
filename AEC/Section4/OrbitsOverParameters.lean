@@ -17,10 +17,12 @@ public import Mathlib.SetTheory.Cardinal.Cofinality.Ordinal
 public import Mathlib.SetTheory.Cardinal.Rat
 
 /-!
-# Lemma 4.5 — orbits over parameters
+# Lemma 4.5 — orbits over parameters (WIP / blocked)
 
-Relative codes (`RelCode`) of cardinality `≤ χ`, soft presentation `E(H(δ))` with
-`cf(δ) > χ`, and Theorem 3.5 so equal codes yield a parameter-fixing automorphism.
+Relative codes (`RelCode`) of cardinality `≤ χ` and the Thm 3.5 wrapper
+`same_joint_canon_fixes_params` are in place. **Blocked:** equal `RelCode`s do not yet
+imply equal joint `canonicalOfTuple` (see board infra `infra_relcode_joint_canonical`,
+`infra_relcode_orbit_record`). Do not import into `Results` until that bridge compiles.
 -/
 
 @[expose] public section
@@ -457,7 +459,7 @@ theorem orbits_over_params_soft {K : AbstractElementaryClass.{u}} (E : OrderPres
   -- fixed parameter part determine the same joint `canonicalOfTuple`.
   have hcode_eq : code (repOf (code xs)) = code xs := by
     have hex : ∃ ys, code ys = code xs := ⟨xs, rfl⟩
-    simp only [repOf, dif_pos hex]
+    simp only [repOf, dite_eq_left hex]
     exact Classical.choose_spec hex
   -- Fall back through joint soft canons at bound `χ` (params ⊕ tuple).
   -- Two tuples with the same relative code share the same new soft canon and the same

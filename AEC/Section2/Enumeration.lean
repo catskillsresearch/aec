@@ -127,7 +127,7 @@ theorem enumOf_slot {α : Type u} (hα : #α ≤ ls K) {n : ℕ}
     (seed : Fin n → α) (hseed : Function.Injective seed) [Nonempty α] (i : Fin n) :
     enumOf hα seed hseed (slot K n i) = seed i := by
   have h : inSlot K n (slot K n i) := ⟨i, rfl⟩
-  simp only [enumOf, dif_pos h]
+  simp only [enumOf, dite_eq_left h]
   have hidx : Classical.choose h = i :=
     slot_injective K n (Classical.choose_spec h).symm
   rw [hidx]
@@ -169,7 +169,7 @@ theorem enumOf_surjective {α : Type u} (hα : #α ≤ ls K) {n : ℕ}
   intro a
   refine ⟨(enumRest hα n a).1, ?_⟩
   have hnot : ¬ inSlot K n (enumRest hα n a).1 := (enumRest hα n a).2
-  rw [enumOf, dif_neg hnot]
+  rw [enumOf, dite_eq_right hnot]
   have hsub : (⟨(enumRest hα n a).1, hnot⟩ : {e : Enum K // ¬ inSlot K n e}) =
       enumRest hα n a := Subtype.eta _ _
   rw [hsub]

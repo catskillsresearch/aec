@@ -464,7 +464,7 @@ lemma branch_le {idx : Type u} [LinearOrder idx] {ξ ρ : Cardinal.{u}}
   calc
     #idx * #(idx → ({t : Finset idx // t.card = m} → ξ.ord.ToType))
         = #idx * (#({t : Finset idx // t.card = m} → ξ.ord.ToType) ^ #idx) := by rw [hspace]
-    _ ≤ #idx * ((ξ ^ ρ) ^ #idx) := mul_le_mul_of_nonneg_left hpow (Cardinal.zero_le _)
+    _ ≤ #idx * ((ξ ^ ρ) ^ #idx) := mul_le_mul_of_nonneg_left hpow bot_le
     _ = #idx * ((ξ ^ ρ) ^ ρ) := by rw [hidx]
     _ = #idx * (ξ ^ ρ) := by rw [hself]
     _ = ξ ^ ρ := hprod
@@ -640,7 +640,7 @@ lemma follow_eq_stage {m : ℕ} {idx α : Type u} [LinearOrder idx] [WellFounded
     · have h' : ({x | ∀ j (hj : j < i),
           x ∈ partitionStage e color default (followLabel e color default u) j} : Set α).Nonempty :=
         hset.symm ▸ h
-      simp only [dif_pos h, dif_pos h']
+      simp only [dite_eq_left h, dite_eq_left h']
       ext v
       have hleast := leastOf_of_eq e hset h' h
       have hpre := nodePrefix_congr e (fun j hj => hrec j hj) h' h
@@ -648,7 +648,7 @@ lemma follow_eq_stage {m : ℕ} {idx α : Type u} [LinearOrder idx] [WellFounded
           fun s => subsetColor color default
             (nodePrefix e i (fun j _hj => follow e color default u j) h) u s := by
         unfold followLabel
-        rw [dif_pos h]
+        rw [dite_eq_left h]
       constructor
       · intro hv
         refine ⟨hset ▸ hv.1, ?_, ?_⟩
@@ -672,7 +672,7 @@ lemma follow_eq_stage {m : ℕ} {idx α : Type u} [LinearOrder idx] [WellFounded
           x ∈ partitionStage e color default (followLabel e color default u) j} : Set α).Nonempty := by
         intro hne
         exact h (hset ▸ hne)
-      simp only [dif_neg h, dif_neg h']
+      simp only [dite_eq_right h, dite_eq_right h']
 
 lemma survivor_in_follow {m : ℕ} {idx α : Type u} [LinearOrder idx] [WellFoundedLT idx]
     {ξ : Cardinal.{u}} (e : α ≃ (#α).ord.ToType)
@@ -688,7 +688,7 @@ lemma survivor_in_follow {m : ℕ} {idx α : Type u} [LinearOrder idx] [WellFoun
       fun j hj => IH j hj
     have hne : ({x | ∀ j (hj : j < i), x ∈ follow e color default u j} : Set α).Nonempty :=
       ⟨u, hinc⟩
-    simp only [dif_pos hne]
+    simp only [dite_eq_left hne]
     refine ⟨hinc, ?_, fun s => rfl⟩
     intro heq
     have hstage : ({x | ∀ j (hj : j < i),
@@ -708,7 +708,7 @@ lemma survivor_in_follow {m : ℕ} {idx α : Type u} [LinearOrder idx] [WellFoun
       have hneS : (incoming e color default (followLabel e color default u) i).Nonempty := by
         unfold incoming
         exact hstage.symm ▸ hne
-      rw [dif_pos hneS]
+      rw [dite_eq_left hneS]
       exact congrArg some ((leastOf_of_eq e hstage hneS hne).trans heq.symm)
     exact hu (followLabel e color default u) i hnamed
 
@@ -754,7 +754,7 @@ lemma branchPoint_lt {m : ℕ} {idx α : Type u} [LinearOrder idx] [WellFoundedL
     rw [follow_eq] at hfollow
     have hneI : ({x | ∀ t (ht : t < j), x ∈ follow e color default u t} : Set α).Nonempty :=
       ⟨u, fun t ht => survivor_in_follow e color default hu t⟩
-    simp only [dif_pos hneI] at hfollow
+    simp only [dite_eq_left hneI] at hfollow
     exact hfollow.2.1 (heq.trans (leastOf_eq e _ hneI _).symm)
   exact lt_of_le_of_ne (leastOf_le e _ _ hmem) (fun hEq => hne (e.injective hEq).symm)
 
@@ -782,7 +782,7 @@ lemma subsetColor_apply {m : ℕ} {idx α C : Type u} [LinearOrder idx]
       color ⟨insert v ((s.1.attach).map ⟨fun z => g ⟨z.1, hsub z.1 z.2⟩, hinj⟩), by
         rw [Finset.card_insert_of_notMem hnot, Finset.card_map, Finset.card_attach, s.2]⟩ := by
   unfold subsetColor
-  rw [dif_pos hsub, dif_pos hinj, dif_pos hnot]
+  rw [dite_eq_left hsub, dite_eq_left hinj, dite_eq_left hnot]
 
 lemma nodePrefix_point {m : ℕ} {idx α : Type u} [LinearOrder idx] [WellFoundedLT idx]
     {ξ : Cardinal.{u}} (e : α ≃ (#α).ord.ToType)

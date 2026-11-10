@@ -792,7 +792,7 @@ lemma shear_pos {g : Gamma δ} {factor : ℚ} {lower x : HOrder δ} (hf : 0 < fa
       simp [coeff_shear hgl, (hgt.trans hj).ne', hxj, hlj]
     have hlead : 0 < coeff (shear g factor lower x) r := by
       have hlj : coeff lower r = 0 := hl r hgt.le
-      rw [coeff_shear hgl, if_neg (Ne.symm hgt.ne), hlj, mul_zero, add_zero]
+      rw [coeff_shear hgl, ite_eq_right (Ne.symm hgt.ne), hlj, mul_zero, add_zero]
       exact hrpos
     rw [Colex.lt_iff]
     refine ⟨r, ?_, ?_⟩
@@ -813,7 +813,7 @@ lemma shear_left_inv {g : Gamma δ} {factor : ℚ} {lower : HOrder δ} (hf : fac
   · simp only [hi, ite_true]
     rw [← mul_assoc, inv_mul_cancel₀ hf, one_mul]
   · simp only [hi, ite_true, ite_false]
-    rw [coeff_shear hgl, if_neg hi]
+    rw [coeff_shear hgl, ite_eq_right hi]
     set c := coeff x g
     set L := coeff lower i
     have hcancel : factor * c * (-factor⁻¹ * L) = -(c * L) := by

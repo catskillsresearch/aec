@@ -277,7 +277,7 @@ private theorem active_eq_rec {η : Cardinal.{u}} {L : Set (Pt η)} {ξ : Stage 
     (f : Stage η → Sign) :
     activeL η L ξ (fun ζ => if _h : ζ < ξ then f ζ else sZero) = activeL η L ξ f := by
   ext a
-  simp only [activeL, mem_setOf]
+  simp only [activeL, mem_ofPred]
   constructor
   · exact fun ⟨ha, H⟩ => ⟨ha, fun ζ hζ => by simpa [hζ] using H ζ hζ⟩
   · exact fun ⟨ha, H⟩ => ⟨ha, fun ζ hζ => by simpa [hζ] using H ζ hζ⟩
@@ -286,7 +286,7 @@ private theorem activeR_eq_rec {η : Cardinal.{u}} {R : Set (Pt η)} {ξ : Stage
     (f : Stage η → Sign) :
     activeR η R ξ (fun ζ => if _h : ζ < ξ then f ζ else sZero) = activeR η R ξ f := by
   ext b
-  simp only [activeR, mem_setOf]
+  simp only [activeR, mem_ofPred]
   constructor
   · exact fun ⟨hb, H⟩ => ⟨hb, fun ζ hζ => by simpa [hζ] using H ζ hζ⟩
   · exact fun ⟨hb, H⟩ => ⟨hb, fun ζ hζ => by simpa [hζ] using H ζ hζ⟩
@@ -338,7 +338,7 @@ private theorem fillSignAt_left_only {η : Cardinal.{u}} {L R : Set (Pt η)}
     (hB : ¬(activeR η R ξ fun ζ => if h : ζ < ξ then rec ζ h else sZero).Nonempty) :
     fillSignAt η L R ξ rec = sPos := by
   dsimp [fillSignAt]
-  rw [dif_pos hA, dif_neg hB]
+  rw [dite_eq_left hA, dite_eq_right hB]
 
 private theorem fillSignAt_right_only {η : Cardinal.{u}} {L R : Set (Pt η)}
     {ξ : Stage η} {rec : ∀ ζ : Stage η, ζ < ξ → Sign}
@@ -346,7 +346,7 @@ private theorem fillSignAt_right_only {η : Cardinal.{u}} {L R : Set (Pt η)}
     (hB : (activeR η R ξ fun ζ => if h : ζ < ξ then rec ζ h else sZero).Nonempty) :
     fillSignAt η L R ξ rec = sNeg := by
   dsimp [fillSignAt]
-  rw [dif_neg hA, if_pos hB]
+  rw [dite_eq_right hA, ite_eq_left hB]
 
 theorem fill_ge_of_active_left (η : Cardinal.{u}) (L R : Set (Pt η)) (ξ : Stage η)
     (a : Pt η) (hA : a ∈ activeL η L ξ (fillSigns η L R)) :
@@ -477,13 +477,13 @@ theorem pt_fills_cuts (η : Cardinal.{u}) (hη : ℵ₀ ≤ η) (L R : Set (Pt �
           change a.1 j = x.1 j
           have : x.1 j = f j := by
             change (if j < ν then fillSigns η L R j else sZero) = f j
-            rw [if_pos hjν, show f = fillSigns η L R from rfl]
+            rw [ite_eq_left hjν, show f = fillSigns η L R from rfl]
           exact heq.trans this.symm
         · have hltSign : a.1 ξ0 < f ξ0 := fill_gt_of_active_left η L R ξ0 a hAct m.2
           change a.1 ξ0 < x.1 ξ0
           have : x.1 ξ0 = f ξ0 := by
             change (if ξ0 < ν then fillSigns η L R ξ0 else sZero) = f ξ0
-            rw [if_pos m.1, show f = fillSigns η L R from rfl]
+            rw [ite_eq_left m.1, show f = fillSigns η L R from rfl]
           rwa [this]
       · let D : Set (Stage η) := {ξ | ξ < ν ∧ b.1 ξ ≠ f ξ}
         have hD : D.Nonempty := by
@@ -534,14 +534,14 @@ theorem pt_fills_cuts (η : Cardinal.{u}) (hη : ℵ₀ ≤ η) (L R : Set (Pt �
           change x.1 j = b.1 j
           have : x.1 j = f j := by
             change (if j < ν then fillSigns η L R j else sZero) = f j
-            rw [if_pos hjν, show f = fillSigns η L R from rfl]
+            rw [ite_eq_left hjν, show f = fillSigns η L R from rfl]
           exact this.trans heq.symm
         · have hltSign : f ξ0 < b.1 ξ0 :=
             fill_lt_of_active_right η L R hcut ξ0 b hAct m.2.symm
           change x.1 ξ0 < b.1 ξ0
           have : x.1 ξ0 = f ξ0 := by
             change (if ξ0 < ν then fillSigns η L R ξ0 else sZero) = f ξ0
-            rw [if_pos m.1, show f = fillSigns η L R from rfl]
+            rw [ite_eq_left m.1, show f = fillSigns η L R from rfl]
           rwa [this]
 
 theorem one_le_of_aleph0 {κ : Cardinal.{u}} (h : ℵ₀ ≤ κ) : 1 ≤ κ :=
@@ -605,14 +605,14 @@ theorem mk_pt_ge (η : Cardinal.{u}) (hη : ℵ₀ ≤ η) : (2 : Cardinal.{u}) 
   let enc : (η.out → Bool) → Pt η := fun f =>
     ⟨fun s => if hs : s ∈ Set.range e then (if f (Classical.choose hs) then sPos else sNeg)
       else sZero,
-      ⟨γ, fun i hi => dif_neg fun ⟨x, hx⟩ =>
+      ⟨γ, fun i hi => dite_eq_right fun ⟨x, hx⟩ =>
         ((hx.symm ▸ hβ x).trans_lt hγ).not_ge hi⟩⟩
   have hinj : Function.Injective enc := by
     intro f g h
     funext x
     have := congrFun (Subtype.ext_iff.1 h) (e x)
     have hr : e x ∈ Set.range e := ⟨x, rfl⟩
-    simp only [enc, dif_pos hr] at this
+    simp only [enc, dite_eq_left hr] at this
     have hx : Classical.choose hr = x := e.injective (Classical.choose_spec hr)
     cases hf : f x <;> cases hg : g x <;> simp_all [sPos, sNeg, hx]
   have := mk_le_of_injective hinj

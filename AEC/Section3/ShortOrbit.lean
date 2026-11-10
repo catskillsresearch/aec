@@ -1325,7 +1325,7 @@ lemma exists_entry_between {ι : Type v} {α : Type v} [LinearOrder α]
     ∃ i, x < xs i ∧ xs i < y := by
   have hex : ∃ i, xs i < y ∧ ¬ xs i < x := by
     by_contra hall
-    push_neg at hall
+    push Not at hall
     apply hbelow
     ext i
     constructor
@@ -1358,7 +1358,7 @@ lemma orbitMap_entry {δ : _root_.Ordinal.{u}} (hδ : Order.IsSuccLimit δ)
     orbitMap hδ hcf hι xs ys hdiag hocc (xs i) = ys i := by
   have hx : ∃ j, xs j = xs i := ⟨i, rfl⟩
   unfold orbitMap
-  rw [dif_pos hx]
+  rw [dite_eq_left hx]
   exact (hdiag.1 _ _).mp (Classical.choose_spec hx)
 
 lemma slotIso_cast {δ : _root_.Ordinal.{u}} (hδ : Order.IsSuccLimit δ)
@@ -1394,12 +1394,12 @@ lemma orbitMap_strictMono {δ : _root_.Ordinal.{u}} (hδ : Order.IsSuccLimit δ)
       let j := Classical.choose hy
       have hj := Classical.choose_spec hy
       unfold orbitMap
-      rw [dif_pos hx, dif_pos hy]
+      rw [dite_eq_left hx, dite_eq_left hy]
       exact (hdiag.2 i j).mp (by rw [hi, hj]; exact hxy)
     · let i := Classical.choose hx
       have hi := Classical.choose_spec hx
       unfold orbitMap
-      rw [dif_pos hx, dif_neg hy]
+      rw [dite_eq_left hx, dite_eq_right hy]
       have hmem := (slotIso hδ hcf hι hdiag hocc {k | xs k < y} {k | y < xs k}
         ⟨y, mem_strictSlot_of_not_entry xs y hy⟩).2
       have hiLt : xs i < y := by
@@ -1411,7 +1411,7 @@ lemma orbitMap_strictMono {δ : _root_.Ordinal.{u}} (hδ : Order.IsSuccLimit δ)
     · let j := Classical.choose hy
       have hj := Classical.choose_spec hy
       unfold orbitMap
-      rw [dif_neg hx, dif_pos hy]
+      rw [dite_eq_right hx, dite_eq_left hy]
       have hmem := (slotIso hδ hcf hι hdiag hocc {k | xs k < x} {k | x < xs k}
         ⟨x, mem_strictSlot_of_not_entry xs x hx⟩).2
       have hjLt : x < xs j := by
@@ -1430,20 +1430,20 @@ lemma orbitMap_strictMono {δ : _root_.Ordinal.{u}} (hδ : Order.IsSuccLimit δ)
         have hxeq := slotIso_cast hδ hcf hι hdiag hocc hbelow habove
           (mem_strictSlot_of_not_entry xs x hx) hxmem
         unfold orbitMap
-        rw [dif_neg hx, dif_neg hy, hxeq]
+        rw [dite_eq_right hx, dite_eq_right hy, hxeq]
         rw [Subtype.coe_lt_coe]
         exact (slotIso hδ hcf hι hdiag hocc {i | xs i < y} {i | y < xs i}).lt_iff_lt.mpr
           (Subtype.mk_lt_mk.mpr hxy)
       · obtain ⟨i, hxi, hiy⟩ := exists_entry_between xs hxy hx hbelow
         have hleft : orbitMap hδ hcf hι xs ys hdiag hocc x < ys i := by
           unfold orbitMap
-          rw [dif_neg hx]
+          rw [dite_eq_right hx]
           have hmem := (slotIso hδ hcf hι hdiag hocc {k | xs k < x} {k | x < xs k}
             ⟨x, mem_strictSlot_of_not_entry xs x hx⟩).2
           exact hmem.2.2.2 (ys i) (mem_image_of_mem _ hxi)
         have hright : ys i < orbitMap hδ hcf hι xs ys hdiag hocc y := by
           unfold orbitMap
-          rw [dif_neg hy]
+          rw [dite_eq_right hy]
           have hmem := (slotIso hδ hcf hι hdiag hocc {k | xs k < y} {k | y < xs k}
             ⟨y, mem_strictSlot_of_not_entry xs y hy⟩).2
           exact hmem.2.2.1 (ys i) (mem_image_of_mem _ hiy)
@@ -1503,7 +1503,7 @@ lemma orbitMap_surjective {δ : _root_.Ordinal.{u}} (hδ : Order.IsSuccLimit δ)
     have hxeq := slotIso_cast hδ hcf hι hdiag hocc hbelow habove
       (mem_strictSlot_of_not_entry xs (xSub : HOrder δ) hxnot) hxmem
     unfold orbitMap
-    rw [dif_neg hxnot, hxeq]
+    rw [dite_eq_right hxnot, hxeq]
     have happ := (slotIso hδ hcf hι hdiag hocc lower upper).apply_symm_apply ⟨z, hmem⟩
     have hsubeq : (⟨(xSub : HOrder δ), hxmem⟩ :
         ↥(strictSlot (xs '' lower) (xs '' upper))) = xSub := Subtype.ext rfl

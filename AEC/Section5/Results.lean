@@ -184,7 +184,12 @@ theorem proposition_5_6 (K : AbstractElementaryClass.{u}) (D : StableDiagram K)
   sorry
 
 /-- **Proposition 5.7** (Naming bounded data). On an unbounded class of higher eligible levels,
-the diagram of a fixed bounded list is realized, and those levels carry a working scheme. -/
+the diagram of a fixed bounded list is realized, and those levels carry a working scheme.
+
+**Failed (this campaign).** Needs a named-scheme construction layer not present in Lean:
+`infra_template_fixed_support` (template `F(J+H)` with arity-0 names),
+`infra_named_working_scheme`, `infra_named_working_package`, and `infra_eligible_reclass`.
+`TermTemplate` today only has `present` / `onOrder`; there is no `WorkingScheme` constructor. -/
 theorem proposition_5_7 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
     (W : WorkingScheme K S) (hpack : IsWorkingPackage W)
     {μ0 : Cardinal.{u}} (hμ0 : μ0 ∈ W.eligible) (X0 : W.Object μ0 hμ0)
@@ -203,15 +208,20 @@ theorem proposition_5_7 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
 
 /-- **Proposition 5.8** (Obtaining the diagram clause). On a countably closed unbounded supply
 of levels at which objects are isomorphic by permitted arrows, equality of bounded diagrams is
-exactly the existence of a structural isomorphism carrying one list to the other. -/
+exactly the existence of a structural isomorphism carrying one list to the other.
+
+Lean residual form: once `W` already carries `diagram_iso` and `structural_iso`, the
+permitted-iso characterization of `DiagramEq` is immediate. The English construction that
+*builds* diagrams from reversal/orbit inputs is not this statement (and is not attempted here).
+The hypotheses `hcat` / `hα` / `hsub` match the English setup but are unused in this residual. -/
 theorem proposition_5_8 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
     (W : WorkingScheme K S) (T : Set Cardinal.{u})
     (hsub : EligibleSubclass W.eligible T)
-    (hcat : ∀ μ (hμ : μ ∈ T), ∀ X Y : W.Object μ (EligibleSubclass.mem_source hsub hμ),
+    (_hcat : ∀ μ (hμ : μ ∈ T), ∀ X Y : W.Object μ (EligibleSubclass.mem_source hsub hμ),
       ∃ f : SystemArrow K S (W.asSystem (EligibleSubclass.mem_source hsub hμ) X)
         (W.asSystem (EligibleSubclass.mem_source hsub hμ) Y),
         (∀ v, Function.Bijective (f.onVertex v)) ∧ W.permitted (X := X) (Y := Y) f) :
-    ∀ μ (hμ : μ ∈ T) {α : Type u} (hα : #α < μ)
+    ∀ μ (hμ : μ ∈ T) {α : Type u} (_hα : #α < μ)
       (X Y : W.Object μ (EligibleSubclass.mem_source hsub hμ))
       (xs : α → Occurrence K S (W.asSystem (EligibleSubclass.mem_source hsub hμ) X))
       (ys : α → Occurrence K S (W.asSystem (EligibleSubclass.mem_source hsub hμ) Y)),
@@ -221,7 +231,13 @@ theorem proposition_5_8 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
           (∀ v, Function.Bijective (f.onVertex v)) ∧
           W.permitted (X := X) (Y := Y) f ∧
           ∀ i, ys i = ⟨(xs i).1, f.onVertex (xs i).1 (xs i).2⟩ := by
-  sorry
+  intro μ hμ α _hα X Y xs ys
+  constructor
+  · intro hEq
+    obtain ⟨f, hfBij, hf⟩ := (W.diagram_iso (X := X) (Y := Y) xs ys).mp hEq
+    exact ⟨f, hfBij, W.structural_iso (X := X) (Y := Y) f hfBij, hf⟩
+  · rintro ⟨f, hfBij, _hfPerm, hf⟩
+    exact (W.diagram_iso (X := X) (Y := Y) xs ys).mpr ⟨f, hfBij, hf⟩
 
 /-- **Proposition 5.9** (Uniform coding of working diagrams). A monotone bound `b` computes
 working-diagram equality of lists of length at most `σ` by a back-and-forth of size `b(σ)`,

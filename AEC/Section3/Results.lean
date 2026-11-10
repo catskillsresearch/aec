@@ -440,11 +440,19 @@ theorem theorem_3_11 (K : AbstractElementaryClass.{u}) (θ : Cardinal.{u}) (hθ 
     have : ArbitrarilyLarge K := arbitrarilyLarge_of_unbounded_fails K θ hUnb
     obtain ⟨E, _, _⟩ := @theorem_2_6 K this
     let N := elimOrbitNaming K E θ hθ
-    -- Remaining (text.md 186–201): profile pigeonhole on `failingSequence` → a < μ with
-    -- common cofinal profile and asymmetric NamedArrow p→r; CommonProfileSetup + Prop 3.9;
-    -- θ⁺·a^θ renaming kill; killed_copy_impossible K θ a N ... .
+    -- Pigeonhole + asymmetric named arrows at both sizes (Elimination.lean).
+    obtain ⟨a, μ, haFail, hμFail, hale, hμle, hlt, hpow, hΦ, p, r,
+      hprA, hrpA, hprμ, hrpμ, hpOcc⟩ :=
+      exists_asymmetric_common_fail K E θ hθ N hUnb
+    -- Remaining open formalization (text.md 188–201):
+    -- 1. Build `CommonProfileSetup` from the shared `failProfileAt` assign /
+    --    categoricity ordinals (`lemma_3_10` for `Deltas`), then apply
+    --    `proposition_3_9` to get `AlignmentProperty`.
+    -- 2. θ⁺ · a^θ renaming-kill construction under that alignment, producing a
+    --    size-`a` copy with no name-`p` θ-tuple.
+    -- 3. `killed_copy_impossible K θ a N haFail.1 p hpOcc hkill`.
     exact False.elim (by
-      clear N
+      clear N a μ haFail hμFail hale hμle hlt hpow hΦ p r hprA hrpA hprμ hrpμ hpOcc
       sorry)
 
 end

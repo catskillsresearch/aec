@@ -542,7 +542,7 @@ theorem exists_proj_fail_below (K : AbstractElementaryClass.{u})
         SameDiagramAt K κ xs ys ∧ ¬ SameDiagramAt K γ xs ys := by
   classical
   unfold ProjectionInjective at hfail
-  push_neg at hfail
+  push Not at hfail
   obtain ⟨α, M, N, hα, xs, ys, hMc, hNc, hsameκ, hnotγ⟩ := hfail
   have hls : ls K ≤ γ := (le_max_left _ _).trans hleγ
   have hγinf : aleph0 ≤ γ := (isLSBound_ls K).1.trans hls
@@ -1185,7 +1185,17 @@ theorem proposition_4_2 (K : AbstractElementaryClass.{u}) [CategoricalUnbounded 
 
 /-- **Proposition 4.3** (Categoricity at countably cofinal closure points). A cardinal `ζ > ℓ`
 of countable cofinality strictly above `t(σ)` for every infinite `σ < ζ` is a categoricity
-cardinal, and a diagram match of bounded tuples extends to an isomorphism. -/
+cardinal, and a diagram match of bounded tuples extends to an isomorphism.
+
+English proof (text.md): countable alternating back-and-forth using Prop 4.2 at sizes
+`t(σ) < ζ`, then union of partial strong matches.
+
+**Blocker (failed this campaign):** needs (1) model existence at `ζ` (`E(I)` /
+`ArbitrarilyLarge` / `CategoricalUnbounded` — not in the current hypotheses);
+(2) a `StableDiagram` “realize” API exporting Prop 4.2 clause (2)
+(`D.same` at equal categoricity size ⇒ strong map) — abstract `D.same` alone is
+opaque; (3) countable exhaustion + alternating `SameStrongClass` chain +
+union-to-`≃[K.τ]` layer (not yet in-tree). -/
 theorem proposition_4_3 (K : AbstractElementaryClass.{u}) (D : StableDiagram K)
     (ζ : Cardinal.{u}) (hζ : ls K < ζ) (hcof : Ordinal.cof ζ.ord = aleph0)
     (hclosed : ∀ σ, aleph0 ≤ σ → σ < ζ → D.t σ < ζ) :
@@ -1201,7 +1211,12 @@ theorem proposition_4_3 (K : AbstractElementaryClass.{u}) (D : StableDiagram K)
 
 /-- **Lemma 4.5** (Orbits over parameters). If `χ ^ σ = χ` and `χ` is at least `ℓ + 2^{2^σ}`,
 then at every sufficiently large categoricity cardinal there are at most `χ` automorphism
-orbits of `σ`-tuples over any parameter set of size at most `χ`. -/
+orbits of `σ`-tuples over any parameter set of size at most `χ`.
+
+**Failed (this campaign).** Cardinality of relative codes and the Thm 3.5 wrapper are sketched in
+`OrbitsOverParameters.lean`, but equal `RelCode`s do not yet imply equal joint
+`canonicalOfTuple` / `SameOrbitOverParams` (needs `infra_relcode_joint_canonical` and
+`infra_relcode_orbit_record`). Wire `E` via `CategoricalUnbounded` once that bridge lands. -/
 theorem lemma_4_5 (K : AbstractElementaryClass.{u}) (σ χ : Cardinal.{u})
     (hσ : aleph0 ≤ σ) (hpow : χ ^ σ = χ)
     (hχ : ls K + (2 : Cardinal.{u}) ^ ((2 : Cardinal.{u}) ^ σ) ≤ χ) :

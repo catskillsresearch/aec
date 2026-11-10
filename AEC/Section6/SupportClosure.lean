@@ -166,7 +166,7 @@ lemma exists_chosen_witness {J : Type u} [LinearOrder J] (color : J → ℕ)
   have hEx : ∃ q' : Fin n → J, patternCode color r q' = c := ⟨q, rfl⟩
   refine ⟨Classical.choose hEx, fun i => ?_, Classical.choose_spec hEx⟩
   change Classical.choose hEx i ∈ witnessRange color r c
-  simp only [witnessRange, dif_pos hEx]
+  simp only [witnessRange, dite_eq_left hEx]
   exact ⟨i, rfl⟩
 
 lemma witnessRange_card_le {J : Type u} [LinearOrder J] (color : J → ℕ)

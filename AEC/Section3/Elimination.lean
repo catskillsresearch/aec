@@ -797,5 +797,62 @@ theorem exists_common_fail_profile (K : AbstractElementaryClass.{u}) (E : OrderP
       failingSequence_strict K θ hUnb hji, failingSequence_power_le K θ hUnb hji, ?_⟩
     change f j = f i; rw [hfj, hfi]
 
+/-- Shared fail-profiles carry the same named-arrow relation. -/
+theorem namedArrow_of_failProfile_eq (K : AbstractElementaryClass.{u}) (E : OrderPresentation K)
+    (θ : Cardinal.{u}) (hθ : aleph0 ≤ θ) (N : OrbitNaming K θ)
+    (a μ : Cardinal.{u})
+    (hale : max (ls K) (Order.succ θ) ≤ a) (hμle : max (ls K) (Order.succ θ) ≤ μ)
+    (hcatA : Categorical K a) (hcatμ : Categorical K μ)
+    (hΦ : failProfileAt K E θ hθ a hale hcatA N =
+            failProfileAt K E θ hθ μ hμle hcatμ N)
+    (p r : OrbitName K θ) :
+    NamedArrow K θ a N p r ↔ NamedArrow K θ μ N p r := by
+  classical
+  have harr :
+      (failProfileAt K E θ hθ a hale hcatA N).arrow p r =
+        (failProfileAt K E θ hθ μ hμle hcatμ N).arrow p r := by
+    rw [hΦ]
+  -- `arrow` is `decide` of `NamedArrow` under classical decidability.
+  dsimp [failProfileAt] at harr
+  constructor
+  · intro h
+    by_cases hμ : NamedArrow K θ μ N p r
+    · exact hμ
+    · have : (false : Bool) = true := by
+        simpa [h, hμ, Bool.decide_false, Bool.decide_true] using harr.symm
+      cases this
+  · intro h
+    by_cases ha' : NamedArrow K θ a N p r
+    · exact ha'
+    · have : (false : Bool) = true := by
+        simpa [h, ha', Bool.decide_false, Bool.decide_true] using harr
+      cases this
+
+/-- From the pigeonhole: two failing sizes with a shared profile and an asymmetric named arrow. -/
+theorem exists_asymmetric_common_fail (K : AbstractElementaryClass.{u}) (E : OrderPresentation K)
+    (θ : Cardinal.{u}) (hθ : aleph0 ≤ θ) (N : OrbitNaming K θ)
+    (hUnb : ∀ B : Cardinal.{u}, ∃ κ, FailsReversal K θ κ ∧ B < κ) :
+    ∃ (a μ : Cardinal.{u}) (haFail : FailsReversal K θ a) (hμFail : FailsReversal K θ μ)
+      (hale : max (ls K) (Order.succ θ) ≤ a) (hμle : max (ls K) (Order.succ θ) ≤ μ),
+      a < μ ∧ a ^ θ ≤ μ ∧
+        failProfileAt K E θ hθ a hale haFail.1 N =
+          failProfileAt K E θ hθ μ hμle hμFail.1 N ∧
+        ∃ p r : OrbitName K θ,
+          NamedArrow K θ a N p r ∧ ¬ NamedArrow K θ a N r p ∧
+            NamedArrow K θ μ N p r ∧ ¬ NamedArrow K θ μ N r p ∧
+            (∃ (M : Model K.τ) (hM : K.Mem M), Model.card M = a ∧
+              ∃ xs : Below θ → M.carrier, N.name hM xs (by rw [mk_ord_toType]) = p) := by
+  obtain ⟨a, μ, haFail, hμFail, hale, hμle, hlt, hpow, hΦ⟩ :=
+    exists_common_fail_profile K E θ hθ N hUnb
+  obtain ⟨p, r, hpr, hrp, hpOcc⟩ :=
+    exists_asymmetric_namedArrow K θ a N hθ haFail hale
+  have hprμ : NamedArrow K θ μ N p r :=
+    (namedArrow_of_failProfile_eq K E θ hθ N a μ hale hμle haFail.1 hμFail.1 hΦ p r).1 hpr
+  have hrpμ : ¬ NamedArrow K θ μ N r p := by
+    intro h
+    exact hrp
+      ((namedArrow_of_failProfile_eq K E θ hθ N a μ hale hμle haFail.1 hμFail.1 hΦ r p).2 h)
+  exact ⟨a, μ, haFail, hμFail, hale, hμle, hlt, hpow, hΦ, p, r, hpr, hrp, hprμ, hrpμ, hpOcc⟩
+
 end
 end AEC

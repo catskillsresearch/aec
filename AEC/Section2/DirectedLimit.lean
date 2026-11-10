@@ -661,7 +661,7 @@ lemma closeStep_card {τ : Tau.{u}} (S : DirectedSystem τ) (t : Set (Index S))
   have himg : Cardinal.mk img ≤ Cardinal.mk t * Cardinal.mk t :=
     (Cardinal.mk_le_of_surjective hsurj).trans_eq hprod
   have hmul : Cardinal.mk t * Cardinal.mk t ≤ μ :=
-    (mul_le_mul ht ht (Cardinal.zero_le _) (Cardinal.zero_le _)).trans_eq (Cardinal.mul_eq_self hμ)
+    (mul_le_mul ht ht bot_le bot_le).trans_eq (Cardinal.mul_eq_self hμ)
   have hunion : Cardinal.mk (t ∪ img : Set (Index S)) ≤ Cardinal.mk t + Cardinal.mk img :=
     Cardinal.mk_union_le t img
   have hadd : Cardinal.mk t + Cardinal.mk img ≤ μ := by
@@ -671,7 +671,7 @@ lemma closeStep_card {τ : Tau.{u}} (S : DirectedSystem τ) (t : Set (Index S))
     calc
       Cardinal.mk t + Cardinal.mk img ≤ μ + μ := add_le_add ht himgμ
       _ = 2 * μ := by rw [two_mul]
-      _ ≤ aleph0 * μ := mul_le_mul htwo le_rfl (Cardinal.zero_le μ) (Cardinal.zero_le aleph0)
+      _ ≤ aleph0 * μ := mul_le_mul htwo le_rfl bot_le bot_le
       _ = μ := by rw [mul_comm, Cardinal.mul_aleph0_eq hμ]
   have hstep : closeStep S t = t ∪ img := rfl
   rw [hstep]

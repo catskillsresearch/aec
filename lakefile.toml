@@ -12,6 +12,16 @@ moreLeanArgs = [
 [leanOptions]
 pp.unicode.fun = true
 relaxedAutoImplicit = true
+# Style noise (unused args / haveI / simpa); keep real failures and deprecations visible.
+linter.unusedVariables = false
+linter.unusedSimpArgs = false
+linter.unnecessarySimpa = false
+linter.unusedTactic = false
+linter.unreachableTactic = false
+linter.unnecessarySeqFocus = false
+linter.unusedSectionVars = false
+linter.style.haveILetI = false
+linter.defProp = false
 
 [[require]]
 name = "mathlib"

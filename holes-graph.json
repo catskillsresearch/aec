@@ -1,0 +1,1533 @@
+{
+  "updated": "2026-11-09",
+  "sorryCount": 74,
+  "legend": {
+    "open": "No unfinished required proof-deps \u2014 try next",
+    "blocked": "Waiting on incomplete or failed required proof-deps",
+    "failed": "Attempted or deferred; still shown with blocker note",
+    "done": "Proved (no sorry)"
+  },
+  "notes": [
+    "Edge B\u2192A means the English proof of A requires B (or a required Lean infra subgoal).",
+    "Blue = done. Green = open. Grey = blocked. Red = failed.",
+    "lemma_6_14 is independent order combinatorics \u2014 NOT dependent on Prop 6.13 (false paper-number edge removed).",
+    "Prop 4.3 has three open infra subgoals that are not named theorems in the paper.",
+    "Open: lemma_4_5 + Prop 4.3 infra nodes."
+  ],
+  "nodes": [
+    {
+      "id": "theorem_1_2",
+      "label": "Thm 1.2",
+      "section": 1,
+      "file": "AEC/Section1/Results.lean",
+      "status": "blocked",
+      "blocker": null
+    },
+    {
+      "id": "theorem_1_3",
+      "label": "Thm 1.3",
+      "section": 1,
+      "file": "AEC/Section1/Results.lean",
+      "status": "blocked",
+      "blocker": null
+    },
+    {
+      "id": "lemma_2_1",
+      "label": "Thm 2.1",
+      "section": 2,
+      "file": "AEC/Section2/Results.lean",
+      "status": "done",
+      "blocker": null
+    },
+    {
+      "id": "lemma_2_2",
+      "label": "Thm 2.2",
+      "section": 2,
+      "file": "AEC/Section2/Results.lean",
+      "status": "done",
+      "blocker": null
+    },
+    {
+      "id": "lemma_2_5",
+      "label": "Thm 2.5",
+      "section": 2,
+      "file": "AEC/Section2/Results.lean",
+      "status": "done",
+      "blocker": null
+    },
+    {
+      "id": "proposition_2_3",
+      "label": "Thm 2.3",
+      "section": 2,
+      "file": "AEC/Section2/Results.lean",
+      "status": "done",
+      "blocker": null
+    },
+    {
+      "id": "theorem_2_6",
+      "label": "Thm 2.6",
+      "section": 2,
+      "file": "AEC/Section2/Results.lean",
+      "status": "done",
+      "blocker": null
+    },
+    {
+      "id": "lemma_3_10",
+      "label": "Thm 3.10",
+      "section": 3,
+      "file": "AEC/Section3/Results.lean",
+      "status": "done",
+      "blocker": null
+    },
+    {
+      "id": "lemma_3_2",
+      "label": "Thm 3.2",
+      "section": 3,
+      "file": "AEC/Section3/Results.lean",
+      "status": "done",
+      "blocker": null
+    },
+    {
+      "id": "lemma_3_3",
+      "label": "Thm 3.3",
+      "section": 3,
+      "file": "AEC/Section3/Results.lean",
+      "status": "done",
+      "blocker": null
+    },
+    {
+      "id": "lemma_3_4",
+      "label": "Thm 3.4",
+      "section": 3,
+      "file": "AEC/Section3/Results.lean",
+      "status": "done",
+      "blocker": null
+    },
+    {
+      "id": "lemma_3_6",
+      "label": "Thm 3.6",
+      "section": 3,
+      "file": "AEC/Section3/Results.lean",
+      "status": "done",
+      "blocker": null
+    },
+    {
+      "id": "lemma_3_7",
+      "label": "Thm 3.7",
+      "section": 3,
+      "file": "AEC/Section3/Results.lean",
+      "status": "done",
+      "blocker": null
+    },
+    {
+      "id": "lemma_3_8",
+      "label": "Thm 3.8",
+      "section": 3,
+      "file": "AEC/Section3/Results.lean",
+      "status": "done",
+      "blocker": null
+    },
+    {
+      "id": "proposition_3_9",
+      "label": "Thm 3.9",
+      "section": 3,
+      "file": "AEC/Section3/Results.lean",
+      "status": "done",
+      "blocker": null
+    },
+    {
+      "id": "theorem_3_11",
+      "label": "Thm 3.11",
+      "section": 3,
+      "file": "AEC/Section3/Results.lean",
+      "status": "failed",
+      "blocker": "Deferred: profile mismatch vs CommonProfileSetup; assign/name; renaming kill"
+    },
+    {
+      "id": "theorem_3_5",
+      "label": "Thm 3.5",
+      "section": 3,
+      "file": "AEC/Section3/Results.lean",
+      "status": "done",
+      "blocker": null
+    },
+    {
+      "id": "infra_countable_back_and_forth",
+      "label": "Infra: \u03c9 back-and-forth \u2192 iso",
+      "section": 4,
+      "file": "AEC/Section4/",
+      "status": "open",
+      "blocker": null,
+      "detail": "Countable exhaustions, alternating SameStrongClass steps, union to \u2243[K.\u03c4]."
+    },
+    {
+      "id": "infra_stable_diagram_realize",
+      "label": "Infra: D.same \u21d2 strong map",
+      "section": 4,
+      "file": "AEC/Section4/StableDiagram.lean",
+      "status": "open",
+      "blocker": null,
+      "detail": "Export Prop 4.2 clause (2) on StableDiagram (or SameDiagramAt unpack)."
+    },
+    {
+      "id": "infra_zeta_model_existence",
+      "label": "Infra: \u2203 model size \u03b6",
+      "section": 4,
+      "file": "AEC/Section4/Results.lean",
+      "status": "open",
+      "blocker": null,
+      "detail": "Paper: existence via E(I). Lean needs ArbitrarilyLarge/CategoricalUnbounded or an explicit hyp."
+    },
+    {
+      "id": "lemma_4_1",
+      "label": "Thm 4.1",
+      "section": 4,
+      "file": "AEC/Section4/Results.lean",
+      "status": "done",
+      "blocker": null
+    },
+    {
+      "id": "lemma_4_10",
+      "label": "Lem 4.10",
+      "section": 4,
+      "file": "AEC/Section4/Results.lean",
+      "status": "blocked",
+      "blocker": null
+    },
+    {
+      "id": "lemma_4_5",
+      "label": "Lem 4.5",
+      "section": 4,
+      "file": "AEC/Section4/Results.lean",
+      "status": "failed",
+      "blocker": "Needs RelCode \u21d2 joint canonicalOfTuple / SameOrbit bridge (infra_relcode_joint_canonical + infra_relcode_orbit_record); cardinality shell exists in OrbitsOverParameters"
+    },
+    {
+      "id": "lemma_4_6",
+      "label": "Lem 4.6",
+      "section": 4,
+      "file": "AEC/Section4/Results.lean",
+      "status": "failed",
+      "blocker": "Needs SameNaturalDiagram API + block-swap pattern \u2192 D.same"
+    },
+    {
+      "id": "lemma_4_7",
+      "label": "Lem 4.7",
+      "section": 4,
+      "file": "AEC/Section4/Results.lean",
+      "status": "failed",
+      "blocker": "Needs infra_type_u_witness_set + infra_rank_slice + infra_pair_coloring_glue on top of lemma_2_5"
+    },
+    {
+      "id": "proposition_4_2",
+      "label": "Thm 4.2",
+      "section": 4,
+      "file": "AEC/Section4/Results.lean",
+      "status": "done",
+      "blocker": null
+    },
+    {
+      "id": "proposition_4_3",
+      "label": "Prop 4.3",
+      "section": 4,
+      "file": "AEC/Section4/Results.lean",
+      "status": "failed",
+      "blocker": "Needs infra subgoals: \u03b6-model existence, StableDiagram realize API, countable back-and-forth\u2192iso (see open infra nodes)."
+    },
+    {
+      "id": "proposition_4_8",
+      "label": "Prop 4.8",
+      "section": 4,
+      "file": "AEC/Section4/Results.lean",
+      "status": "blocked",
+      "blocker": null
+    },
+    {
+      "id": "proposition_4_9",
+      "label": "Prop 4.9",
+      "section": 4,
+      "file": "AEC/Section4/Results.lean",
+      "status": "blocked",
+      "blocker": null
+    },
+    {
+      "id": "theorem_4_11",
+      "label": "Thm 4.11",
+      "section": 4,
+      "file": "AEC/Section4/Results.lean",
+      "status": "blocked",
+      "blocker": null
+    },
+    {
+      "id": "lemma_5_4",
+      "label": "Lem 5.4",
+      "section": 5,
+      "file": "AEC/Section5/Results.lean",
+      "status": "done",
+      "blocker": null
+    },
+    {
+      "id": "lemma_5_5",
+      "label": "Lem 5.5",
+      "section": 5,
+      "file": "AEC/Section5/Results.lean",
+      "status": "done",
+      "blocker": null
+    },
+    {
+      "id": "proposition_5_6",
+      "label": "Prop 5.6",
+      "section": 5,
+      "file": "AEC/Section5/Results.lean",
+      "status": "blocked",
+      "blocker": null
+    },
+    {
+      "id": "proposition_5_7",
+      "label": "Prop 5.7",
+      "section": 5,
+      "file": "AEC/Section5/Results.lean",
+      "status": "failed",
+      "blocker": "Needs named-scheme construction: template F(J+H), NamedWorkingScheme, IsWorkingPackage transfer, eligible reclass"
+    },
+    {
+      "id": "proposition_5_8",
+      "label": "Prop 5.8",
+      "section": 5,
+      "file": "AEC/Section5/Results.lean",
+      "status": "done",
+      "blocker": null
+    },
+    {
+      "id": "proposition_5_9",
+      "label": "Prop 5.9",
+      "section": 5,
+      "file": "AEC/Section5/Results.lean",
+      "status": "done",
+      "blocker": null
+    },
+    {
+      "id": "corollary_6_16",
+      "label": "Cor 6.16",
+      "section": 6,
+      "file": "AEC/Section6/Results.lean",
+      "status": "blocked",
+      "blocker": null
+    },
+    {
+      "id": "corollary_6_7",
+      "label": "Cor 6.7",
+      "section": 6,
+      "file": "AEC/Section6/Results.lean",
+      "status": "blocked",
+      "blocker": null
+    },
+    {
+      "id": "lemma_6_1",
+      "label": "Lem 6.1",
+      "section": 6,
+      "file": "AEC/Section6/Results.lean",
+      "status": "blocked",
+      "blocker": null
+    },
+    {
+      "id": "lemma_6_11",
+      "label": "Lem 6.11",
+      "section": 6,
+      "file": "AEC/Section6/Results.lean",
+      "status": "blocked",
+      "blocker": null
+    },
+    {
+      "id": "lemma_6_14",
+      "label": "Thm 6.14",
+      "section": 6,
+      "file": "AEC/Section6/Results.lean",
+      "status": "done",
+      "blocker": null
+    },
+    {
+      "id": "lemma_6_17",
+      "label": "Lem 6.17",
+      "section": 6,
+      "file": "AEC/Section6/Results.lean",
+      "status": "blocked",
+      "blocker": null
+    },
+    {
+      "id": "lemma_6_4",
+      "label": "Lem 6.4",
+      "section": 6,
+      "file": "AEC/Section6/Results.lean",
+      "status": "blocked",
+      "blocker": null
+    },
+    {
+      "id": "lemma_6_5",
+      "label": "Lem 6.5",
+      "section": 6,
+      "file": "AEC/Section6/Results.lean",
+      "status": "blocked",
+      "blocker": null
+    },
+    {
+      "id": "lemma_6_9",
+      "label": "Lem 6.9",
+      "section": 6,
+      "file": "AEC/Section6/Results.lean",
+      "status": "blocked",
+      "blocker": null
+    },
+    {
+      "id": "proposition_6_12",
+      "label": "Prop 6.12",
+      "section": 6,
+      "file": "AEC/Section6/Results.lean",
+      "status": "blocked",
+      "blocker": null
+    },
+    {
+      "id": "proposition_6_13",
+      "label": "Prop 6.13",
+      "section": 6,
+      "file": "AEC/Section6/Results.lean",
+      "status": "blocked",
+      "blocker": null
+    },
+    {
+      "id": "proposition_6_15",
+      "label": "Prop 6.15",
+      "section": 6,
+      "file": "AEC/Section6/Results.lean",
+      "status": "blocked",
+      "blocker": null
+    },
+    {
+      "id": "proposition_6_3",
+      "label": "Prop 6.3",
+      "section": 6,
+      "file": "AEC/Section6/Results.lean",
+      "status": "blocked",
+      "blocker": null
+    },
+    {
+      "id": "theorem_6_10",
+      "label": "Thm 6.10",
+      "section": 6,
+      "file": "AEC/Section6/Results.lean",
+      "status": "blocked",
+      "blocker": null
+    },
+    {
+      "id": "theorem_6_6",
+      "label": "Thm 6.6",
+      "section": 6,
+      "file": "AEC/Section6/Results.lean",
+      "status": "blocked",
+      "blocker": null
+    },
+    {
+      "id": "lemma_7_11",
+      "label": "Lem 7.11",
+      "section": 7,
+      "file": "AEC/Section7/Results.lean",
+      "status": "blocked",
+      "blocker": null
+    },
+    {
+      "id": "lemma_7_12",
+      "label": "Lem 7.12",
+      "section": 7,
+      "file": "AEC/Section7/Results.lean",
+      "status": "blocked",
+      "blocker": null
+    },
+    {
+      "id": "lemma_7_2",
+      "label": "Lem 7.2",
+      "section": 7,
+      "file": "AEC/Section7/Results.lean",
+      "status": "blocked",
+      "blocker": null
+    },
+    {
+      "id": "lemma_7_6",
+      "label": "Lem 7.6",
+      "section": 7,
+      "file": "AEC/Section7/Results.lean",
+      "status": "blocked",
+      "blocker": null
+    },
+    {
+      "id": "proposition_7_3",
+      "label": "Prop 7.3",
+      "section": 7,
+      "file": "AEC/Section7/Results.lean",
+      "status": "blocked",
+      "blocker": null
+    },
+    {
+      "id": "proposition_7_5",
+      "label": "Prop 7.5",
+      "section": 7,
+      "file": "AEC/Section7/Results.lean",
+      "status": "blocked",
+      "blocker": null
+    },
+    {
+      "id": "proposition_7_8",
+      "label": "Prop 7.8",
+      "section": 7,
+      "file": "AEC/Section7/Results.lean",
+      "status": "blocked",
+      "blocker": null
+    },
+    {
+      "id": "theorem_7_13",
+      "label": "Thm 7.13",
+      "section": 7,
+      "file": "AEC/Section7/Results.lean",
+      "status": "blocked",
+      "blocker": null
+    },
+    {
+      "id": "theorem_7_9",
+      "label": "Thm 7.9",
+      "section": 7,
+      "file": "AEC/Section7/Results.lean",
+      "status": "blocked",
+      "blocker": null
+    },
+    {
+      "id": "lemma_8_2",
+      "label": "Lem 8.2",
+      "section": 8,
+      "file": "AEC/Section8/Results.lean",
+      "status": "blocked",
+      "blocker": null
+    },
+    {
+      "id": "lemma_8_3",
+      "label": "Lem 8.3",
+      "section": 8,
+      "file": "AEC/Section8/Results.lean",
+      "status": "blocked",
+      "blocker": null
+    },
+    {
+      "id": "lemma_8_4",
+      "label": "Lem 8.4",
+      "section": 8,
+      "file": "AEC/Section8/Results.lean",
+      "status": "blocked",
+      "blocker": null
+    },
+    {
+      "id": "lemma_8_5",
+      "label": "Lem 8.5",
+      "section": 8,
+      "file": "AEC/Section8/Results.lean",
+      "status": "blocked",
+      "blocker": null
+    },
+    {
+      "id": "theorem_8_6",
+      "label": "Thm 8.6",
+      "section": 8,
+      "file": "AEC/Section8/Results.lean",
+      "status": "blocked",
+      "blocker": null
+    },
+    {
+      "id": "corollary_9_2",
+      "label": "Cor 9.2",
+      "section": 9,
+      "file": "AEC/Section9/Results.lean",
+      "status": "blocked",
+      "blocker": null
+    },
+    {
+      "id": "lemma_9_5",
+      "label": "Lem 9.5",
+      "section": 9,
+      "file": "AEC/Section9/Results.lean",
+      "status": "blocked",
+      "blocker": null
+    },
+    {
+      "id": "lemma_9_7",
+      "label": "Lem 9.7",
+      "section": 9,
+      "file": "AEC/Section9/Results.lean",
+      "status": "blocked",
+      "blocker": null
+    },
+    {
+      "id": "proposition_9_1",
+      "label": "Prop 9.1",
+      "section": 9,
+      "file": "AEC/Section9/Results.lean",
+      "status": "blocked",
+      "blocker": null
+    },
+    {
+      "id": "theorem_9_3",
+      "label": "Thm 9.3",
+      "section": 9,
+      "file": "AEC/Section9/Results.lean",
+      "status": "blocked",
+      "blocker": null
+    },
+    {
+      "id": "theorem_9_6",
+      "label": "Thm 9.6",
+      "section": 9,
+      "file": "AEC/Section9/Results.lean",
+      "status": "blocked",
+      "blocker": null
+    },
+    {
+      "id": "theorem_9_8",
+      "label": "Thm 9.8",
+      "section": 9,
+      "file": "AEC/Section9/Results.lean",
+      "status": "blocked",
+      "blocker": null
+    },
+    {
+      "id": "corollary_10_10",
+      "label": "Cor 10.10",
+      "section": 10,
+      "file": "AEC/Section10/Results.lean",
+      "status": "blocked",
+      "blocker": null
+    },
+    {
+      "id": "lemma_10_1",
+      "label": "Lem 10.1",
+      "section": 10,
+      "file": "AEC/Section10/Results.lean",
+      "status": "blocked",
+      "blocker": null
+    },
+    {
+      "id": "lemma_10_4",
+      "label": "Lem 10.4",
+      "section": 10,
+      "file": "AEC/Section10/Results.lean",
+      "status": "blocked",
+      "blocker": null
+    },
+    {
+      "id": "lemma_10_8",
+      "label": "Lem 10.8",
+      "section": 10,
+      "file": "AEC/Section10/Results.lean",
+      "status": "blocked",
+      "blocker": null
+    },
+    {
+      "id": "proposition_10_2",
+      "label": "Prop 10.2",
+      "section": 10,
+      "file": "AEC/Section10/Results.lean",
+      "status": "blocked",
+      "blocker": null
+    },
+    {
+      "id": "proposition_10_6",
+      "label": "Prop 10.6",
+      "section": 10,
+      "file": "AEC/Section10/Results.lean",
+      "status": "blocked",
+      "blocker": null
+    },
+    {
+      "id": "proposition_10_7",
+      "label": "Prop 10.7",
+      "section": 10,
+      "file": "AEC/Section10/Results.lean",
+      "status": "blocked",
+      "blocker": null
+    },
+    {
+      "id": "theorem_10_5",
+      "label": "Thm 10.5",
+      "section": 10,
+      "file": "AEC/Section10/Results.lean",
+      "status": "blocked",
+      "blocker": null
+    },
+    {
+      "id": "theorem_10_9",
+      "label": "Thm 10.9",
+      "section": 10,
+      "file": "AEC/Section10/Results.lean",
+      "status": "blocked",
+      "blocker": null
+    },
+    {
+      "id": "claim_11_10",
+      "label": "Clm 11.10",
+      "section": 11,
+      "file": "AEC/Section11/Results.lean",
+      "status": "blocked",
+      "blocker": null
+    },
+    {
+      "id": "claim_11_11",
+      "label": "Clm 11.11",
+      "section": 11,
+      "file": "AEC/Section11/Results.lean",
+      "status": "blocked",
+      "blocker": null
+    },
+    {
+      "id": "claim_11_12",
+      "label": "Clm 11.12",
+      "section": 11,
+      "file": "AEC/Section11/Results.lean",
+      "status": "blocked",
+      "blocker": null
+    },
+    {
+      "id": "claim_11_13",
+      "label": "Clm 11.13",
+      "section": 11,
+      "file": "AEC/Section11/Results.lean",
+      "status": "blocked",
+      "blocker": null
+    },
+    {
+      "id": "lemma_11_2",
+      "label": "Lem 11.2",
+      "section": 11,
+      "file": "AEC/Section11/Results.lean",
+      "status": "blocked",
+      "blocker": null
+    },
+    {
+      "id": "lemma_11_4",
+      "label": "Thm 11.4",
+      "section": 11,
+      "file": "AEC/Section11/Results.lean",
+      "status": "done",
+      "blocker": null
+    },
+    {
+      "id": "lemma_11_5",
+      "label": "Thm 11.5",
+      "section": 11,
+      "file": "AEC/Section11/Results.lean",
+      "status": "done",
+      "blocker": null
+    },
+    {
+      "id": "proposition_11_6",
+      "label": "Prop 11.6",
+      "section": 11,
+      "file": "AEC/Section11/Results.lean",
+      "status": "blocked",
+      "blocker": null
+    },
+    {
+      "id": "proposition_11_7",
+      "label": "Prop 11.7",
+      "section": 11,
+      "file": "AEC/Section11/Results.lean",
+      "status": "blocked",
+      "blocker": null
+    },
+    {
+      "id": "theorem_11_9",
+      "label": "Thm 11.9",
+      "section": 11,
+      "file": "AEC/Section11/Results.lean",
+      "status": "blocked",
+      "blocker": null
+    },
+    {
+      "id": "lemma_12_3",
+      "label": "Lem 12.3",
+      "section": 12,
+      "file": "AEC/Section12/Results.lean",
+      "status": "blocked",
+      "blocker": null
+    },
+    {
+      "id": "lemma_12_5",
+      "label": "Lem 12.5",
+      "section": 12,
+      "file": "AEC/Section12/Results.lean",
+      "status": "blocked",
+      "blocker": null
+    },
+    {
+      "id": "lemma_12_6",
+      "label": "Lem 12.6",
+      "section": 12,
+      "file": "AEC/Section12/Results.lean",
+      "status": "blocked",
+      "blocker": null
+    },
+    {
+      "id": "theorem_12_2",
+      "label": "Thm 12.2",
+      "section": 12,
+      "file": "AEC/Section12/Results.lean",
+      "status": "blocked",
+      "blocker": null
+    },
+    {
+      "id": "lemma_13_2",
+      "label": "Thm 13.2",
+      "section": 13,
+      "file": "AEC/Section13/Results.lean",
+      "status": "done",
+      "blocker": null
+    },
+    {
+      "id": "lemma_13_3",
+      "label": "Thm 13.3",
+      "section": 13,
+      "file": "AEC/Section13/Results.lean",
+      "status": "done",
+      "blocker": null
+    },
+    {
+      "id": "lemma_13_4",
+      "label": "Thm 13.4",
+      "section": 13,
+      "file": "AEC/Section13/Results.lean",
+      "status": "done",
+      "blocker": null
+    },
+    {
+      "id": "proposition_13_1",
+      "label": "Thm 13.1",
+      "section": 13,
+      "file": "AEC/Section13/Results.lean",
+      "status": "done",
+      "blocker": null
+    },
+    {
+      "id": "theorem_13_5",
+      "label": "Thm 13.5",
+      "section": 13,
+      "file": "AEC/Section13/Results.lean",
+      "status": "done",
+      "blocker": null
+    },
+    {
+      "id": "corollary_14_4",
+      "label": "Cor 14.4",
+      "section": 14,
+      "file": "AEC/Section14/Results.lean",
+      "status": "blocked",
+      "blocker": null
+    },
+    {
+      "id": "lemma_14_2",
+      "label": "Lem 14.2",
+      "section": 14,
+      "file": "AEC/Section14/Results.lean",
+      "status": "blocked",
+      "blocker": null
+    },
+    {
+      "id": "theorem_14_3",
+      "label": "Thm 14.3",
+      "section": 14,
+      "file": "AEC/Section14/Results.lean",
+      "status": "blocked",
+      "blocker": null
+    },
+    {
+      "id": "theorem_14_5",
+      "label": "Thm 14.5",
+      "section": 14,
+      "file": "AEC/Section14/Results.lean",
+      "status": "blocked",
+      "blocker": null
+    },
+    {
+      "id": "infra_type_u_witness_set",
+      "label": "Infra: Type-u witness set",
+      "section": 4,
+      "file": "AEC/Section4/Results.lean",
+      "status": "open",
+      "blocker": "Package U\u2080 as \u03b9 : Type u with v : \u03b9 \u2192 C \u2192 Ordinal (mermaid witnesses node)",
+      "detail": "Lean packaging for Lemma 4.7 conclusion; planned in dependencies.mermaid"
+    },
+    {
+      "id": "infra_rank_slice",
+      "label": "Infra: rank-slice V_\u03b2",
+      "section": 4,
+      "file": "AEC/Section4/Results.lean",
+      "status": "open",
+      "blocker": "Rank-bounded generating family U \u2229 V_\u03b2 and upward generation",
+      "detail": "English proof\u2019s rank-slice layer before Erd\u0151s\u2013Rado"
+    },
+    {
+      "id": "infra_pair_coloring_glue",
+      "label": "Infra: pair-color glue",
+      "section": 4,
+      "file": "AEC/Section4/PairColoringGlue.lean",
+      "status": "done",
+      "blocker": null,
+      "detail": "pair_coloring_glue: Lemma 2.5 pair-homogeneous \u21d2 no \u03c9-descent on a coordinate"
+    },
+    {
+      "id": "infra_relcode_joint_canonical",
+      "label": "Infra: RelCode \u21d2 joint canon",
+      "section": 4,
+      "file": "AEC/Section4/OrbitsOverParameters.lean",
+      "status": "open",
+      "blocker": "Equal RelCodes \u21d2 equal joint canonicalOfTuple on P \u2295 \u03b9 (Thm 3.5 input)",
+      "detail": "Core gap in orbits_over_params_soft; cases hcode_eq; rfl is invalid"
+    },
+    {
+      "id": "infra_relcode_orbit_record",
+      "label": "Infra: RelCode = orbit record",
+      "section": 4,
+      "file": "AEC/Section4/OrbitsOverParameters.lean",
+      "status": "open",
+      "blocker": "relCodeOf must match joint orbitRecordOfTuple over params+tuple (not \u03c3-only canon)",
+      "detail": "Refactor or prove agreement of soft/eqOld/occ with soft presentation record"
+    },
+    {
+      "id": "infra_template_fixed_support",
+      "label": "Infra: template F(J+H)",
+      "section": 5,
+      "file": "AEC/Section5/TermTemplate.lean",
+      "status": "open",
+      "blocker": "Fixed support J, arity-0 name labels, presentations on J\u2295H, id-on-J order arrows",
+      "detail": "English Prop 5.7 template renaming; TermTemplate today has only present/onOrder"
+    },
+    {
+      "id": "infra_named_working_scheme",
+      "label": "Infra: named WorkingScheme",
+      "section": 5,
+      "file": "AEC/Section5/WorkingScheme.lean",
+      "status": "open",
+      "blocker": "Build S', W' from (W,X0,c): objects=named realizations, name-preserving arrows",
+      "detail": "No WorkingScheme constructor/instance exists yet"
+    },
+    {
+      "id": "infra_named_working_package",
+      "label": "Infra: named package xfer",
+      "section": 5,
+      "file": "AEC/Section5/PackageClauses.lean",
+      "status": "open",
+      "blocker": "IsWorkingPackage W \u2192 IsWorkingPackage W' for the named constructor",
+      "detail": "Chain unions, mixed downward, saturation, exhaustion with retained names"
+    },
+    {
+      "id": "infra_eligible_reclass",
+      "label": "Infra: eligible reclass T",
+      "section": 5,
+      "file": "AEC/Section5/EligibleSubclass.lean",
+      "status": "open",
+      "blocker": "Definable countably-sup-closed T \u2286 W.eligible above naming threshold",
+      "detail": "EligibleSubclass exists as Prop only; Convention 5.3 tails not constructed"
+    }
+  ],
+  "edges": [
+    {
+      "from": "lemma_4_7",
+      "to": "proposition_4_8",
+      "kind": "hard"
+    },
+    {
+      "from": "proposition_4_8",
+      "to": "proposition_4_9",
+      "kind": "hard"
+    },
+    {
+      "from": "proposition_4_9",
+      "to": "lemma_4_10",
+      "kind": "hard"
+    },
+    {
+      "from": "lemma_4_10",
+      "to": "theorem_4_11",
+      "kind": "hard"
+    },
+    {
+      "from": "theorem_4_11",
+      "to": "proposition_5_6",
+      "kind": "hard"
+    },
+    {
+      "from": "proposition_5_8",
+      "to": "lemma_6_1",
+      "kind": "hard"
+    },
+    {
+      "from": "lemma_6_1",
+      "to": "proposition_6_3",
+      "kind": "hard"
+    },
+    {
+      "from": "proposition_6_3",
+      "to": "lemma_6_4",
+      "kind": "hard"
+    },
+    {
+      "from": "lemma_6_4",
+      "to": "lemma_6_5",
+      "kind": "hard"
+    },
+    {
+      "from": "lemma_6_5",
+      "to": "theorem_6_6",
+      "kind": "hard"
+    },
+    {
+      "from": "theorem_6_6",
+      "to": "corollary_6_7",
+      "kind": "hard"
+    },
+    {
+      "from": "corollary_6_7",
+      "to": "lemma_6_9",
+      "kind": "hard"
+    },
+    {
+      "from": "lemma_6_9",
+      "to": "theorem_6_10",
+      "kind": "hard"
+    },
+    {
+      "from": "theorem_6_10",
+      "to": "lemma_6_11",
+      "kind": "hard"
+    },
+    {
+      "from": "lemma_6_11",
+      "to": "proposition_6_12",
+      "kind": "hard"
+    },
+    {
+      "from": "proposition_6_12",
+      "to": "proposition_6_13",
+      "kind": "hard"
+    },
+    {
+      "from": "proposition_6_13",
+      "to": "proposition_6_15",
+      "kind": "hard"
+    },
+    {
+      "from": "proposition_6_15",
+      "to": "corollary_6_16",
+      "kind": "hard"
+    },
+    {
+      "from": "corollary_6_16",
+      "to": "lemma_6_17",
+      "kind": "hard"
+    },
+    {
+      "from": "lemma_6_17",
+      "to": "lemma_7_2",
+      "kind": "hard"
+    },
+    {
+      "from": "lemma_7_2",
+      "to": "proposition_7_3",
+      "kind": "hard"
+    },
+    {
+      "from": "proposition_7_3",
+      "to": "proposition_7_5",
+      "kind": "hard"
+    },
+    {
+      "from": "proposition_7_5",
+      "to": "lemma_7_6",
+      "kind": "hard"
+    },
+    {
+      "from": "lemma_7_6",
+      "to": "proposition_7_8",
+      "kind": "hard"
+    },
+    {
+      "from": "proposition_7_8",
+      "to": "theorem_7_9",
+      "kind": "hard"
+    },
+    {
+      "from": "theorem_7_9",
+      "to": "lemma_7_11",
+      "kind": "hard"
+    },
+    {
+      "from": "lemma_7_11",
+      "to": "lemma_7_12",
+      "kind": "hard"
+    },
+    {
+      "from": "lemma_7_12",
+      "to": "theorem_7_13",
+      "kind": "hard"
+    },
+    {
+      "from": "theorem_7_13",
+      "to": "lemma_8_2",
+      "kind": "hard"
+    },
+    {
+      "from": "lemma_8_2",
+      "to": "lemma_8_3",
+      "kind": "hard"
+    },
+    {
+      "from": "lemma_8_3",
+      "to": "lemma_8_4",
+      "kind": "hard"
+    },
+    {
+      "from": "lemma_8_4",
+      "to": "lemma_8_5",
+      "kind": "hard"
+    },
+    {
+      "from": "lemma_8_5",
+      "to": "theorem_8_6",
+      "kind": "hard"
+    },
+    {
+      "from": "theorem_8_6",
+      "to": "proposition_9_1",
+      "kind": "hard"
+    },
+    {
+      "from": "proposition_9_1",
+      "to": "corollary_9_2",
+      "kind": "hard"
+    },
+    {
+      "from": "corollary_9_2",
+      "to": "theorem_9_3",
+      "kind": "hard"
+    },
+    {
+      "from": "theorem_9_3",
+      "to": "lemma_9_5",
+      "kind": "hard"
+    },
+    {
+      "from": "lemma_9_5",
+      "to": "theorem_9_6",
+      "kind": "hard"
+    },
+    {
+      "from": "theorem_9_6",
+      "to": "lemma_9_7",
+      "kind": "hard"
+    },
+    {
+      "from": "lemma_9_7",
+      "to": "theorem_9_8",
+      "kind": "hard"
+    },
+    {
+      "from": "theorem_9_8",
+      "to": "lemma_10_1",
+      "kind": "hard"
+    },
+    {
+      "from": "lemma_10_1",
+      "to": "proposition_10_2",
+      "kind": "hard"
+    },
+    {
+      "from": "proposition_10_2",
+      "to": "lemma_10_4",
+      "kind": "hard"
+    },
+    {
+      "from": "lemma_10_4",
+      "to": "theorem_10_5",
+      "kind": "hard"
+    },
+    {
+      "from": "theorem_10_5",
+      "to": "proposition_10_6",
+      "kind": "hard"
+    },
+    {
+      "from": "proposition_10_6",
+      "to": "proposition_10_7",
+      "kind": "hard"
+    },
+    {
+      "from": "proposition_10_7",
+      "to": "lemma_10_8",
+      "kind": "hard"
+    },
+    {
+      "from": "lemma_10_8",
+      "to": "theorem_10_9",
+      "kind": "hard"
+    },
+    {
+      "from": "theorem_10_9",
+      "to": "corollary_10_10",
+      "kind": "hard"
+    },
+    {
+      "from": "corollary_10_10",
+      "to": "lemma_11_2",
+      "kind": "hard"
+    },
+    {
+      "from": "lemma_11_2",
+      "to": "proposition_11_6",
+      "kind": "hard"
+    },
+    {
+      "from": "proposition_11_6",
+      "to": "proposition_11_7",
+      "kind": "hard"
+    },
+    {
+      "from": "proposition_11_7",
+      "to": "claim_11_10",
+      "kind": "hard"
+    },
+    {
+      "from": "claim_11_10",
+      "to": "claim_11_11",
+      "kind": "hard"
+    },
+    {
+      "from": "claim_11_11",
+      "to": "claim_11_12",
+      "kind": "hard"
+    },
+    {
+      "from": "claim_11_12",
+      "to": "claim_11_13",
+      "kind": "hard"
+    },
+    {
+      "from": "claim_11_13",
+      "to": "theorem_11_9",
+      "kind": "hard"
+    },
+    {
+      "from": "theorem_11_9",
+      "to": "theorem_12_2",
+      "kind": "hard"
+    },
+    {
+      "from": "theorem_12_2",
+      "to": "lemma_12_3",
+      "kind": "hard"
+    },
+    {
+      "from": "lemma_12_3",
+      "to": "lemma_12_5",
+      "kind": "hard"
+    },
+    {
+      "from": "lemma_12_5",
+      "to": "lemma_12_6",
+      "kind": "hard"
+    },
+    {
+      "from": "lemma_12_6",
+      "to": "lemma_14_2",
+      "kind": "hard"
+    },
+    {
+      "from": "lemma_14_2",
+      "to": "theorem_14_3",
+      "kind": "hard"
+    },
+    {
+      "from": "theorem_14_3",
+      "to": "corollary_14_4",
+      "kind": "hard"
+    },
+    {
+      "from": "corollary_14_4",
+      "to": "theorem_14_5",
+      "kind": "hard"
+    },
+    {
+      "from": "theorem_14_5",
+      "to": "theorem_1_2",
+      "kind": "hard"
+    },
+    {
+      "from": "theorem_14_5",
+      "to": "theorem_1_3",
+      "kind": "hard"
+    },
+    {
+      "from": "lemma_2_1",
+      "to": "lemma_2_2",
+      "kind": "hard"
+    },
+    {
+      "from": "lemma_2_2",
+      "to": "proposition_2_3",
+      "kind": "hard"
+    },
+    {
+      "from": "lemma_2_5",
+      "to": "theorem_2_6",
+      "kind": "hard"
+    },
+    {
+      "from": "proposition_2_3",
+      "to": "theorem_2_6",
+      "kind": "hard"
+    },
+    {
+      "from": "theorem_2_6",
+      "to": "lemma_3_6",
+      "kind": "hard"
+    },
+    {
+      "from": "theorem_2_6",
+      "to": "theorem_3_11",
+      "kind": "hard"
+    },
+    {
+      "from": "theorem_2_6",
+      "to": "lemma_4_6",
+      "kind": "hard"
+    },
+    {
+      "from": "lemma_2_5",
+      "to": "lemma_4_7",
+      "kind": "hard"
+    },
+    {
+      "from": "lemma_3_2",
+      "to": "lemma_3_3",
+      "kind": "hard"
+    },
+    {
+      "from": "lemma_3_3",
+      "to": "lemma_3_4",
+      "kind": "hard"
+    },
+    {
+      "from": "lemma_3_4",
+      "to": "theorem_3_5",
+      "kind": "hard"
+    },
+    {
+      "from": "theorem_3_5",
+      "to": "lemma_3_6",
+      "kind": "hard"
+    },
+    {
+      "from": "lemma_3_6",
+      "to": "lemma_3_7",
+      "kind": "hard"
+    },
+    {
+      "from": "lemma_3_7",
+      "to": "lemma_3_8",
+      "kind": "hard"
+    },
+    {
+      "from": "lemma_3_8",
+      "to": "proposition_3_9",
+      "kind": "hard"
+    },
+    {
+      "from": "lemma_3_10",
+      "to": "theorem_3_11",
+      "kind": "hard"
+    },
+    {
+      "from": "proposition_3_9",
+      "to": "theorem_3_11",
+      "kind": "hard"
+    },
+    {
+      "from": "lemma_3_6",
+      "to": "theorem_3_11",
+      "kind": "hard"
+    },
+    {
+      "from": "theorem_3_5",
+      "to": "lemma_4_5",
+      "kind": "hard"
+    },
+    {
+      "from": "proposition_3_9",
+      "to": "proposition_4_2",
+      "kind": "hard"
+    },
+    {
+      "from": "lemma_4_1",
+      "to": "proposition_4_2",
+      "kind": "hard"
+    },
+    {
+      "from": "proposition_4_2",
+      "to": "proposition_4_3",
+      "kind": "hard"
+    },
+    {
+      "from": "proposition_4_2",
+      "to": "proposition_4_8",
+      "kind": "hard"
+    },
+    {
+      "from": "proposition_5_9",
+      "to": "lemma_6_1",
+      "kind": "hard"
+    },
+    {
+      "from": "lemma_11_4",
+      "to": "lemma_11_5",
+      "kind": "hard"
+    },
+    {
+      "from": "lemma_11_5",
+      "to": "theorem_11_9",
+      "kind": "hard"
+    },
+    {
+      "from": "proposition_13_1",
+      "to": "lemma_13_2",
+      "kind": "hard"
+    },
+    {
+      "from": "lemma_13_2",
+      "to": "lemma_13_3",
+      "kind": "hard"
+    },
+    {
+      "from": "lemma_13_3",
+      "to": "lemma_13_4",
+      "kind": "hard"
+    },
+    {
+      "from": "lemma_13_4",
+      "to": "theorem_13_5",
+      "kind": "hard"
+    },
+    {
+      "from": "lemma_4_5",
+      "to": "lemma_4_6",
+      "kind": "hard"
+    },
+    {
+      "from": "proposition_4_3",
+      "to": "theorem_4_11",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_zeta_model_existence",
+      "to": "proposition_4_3",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_stable_diagram_realize",
+      "to": "proposition_4_3",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_countable_back_and_forth",
+      "to": "proposition_4_3",
+      "kind": "hard"
+    },
+    {
+      "from": "proposition_4_2",
+      "to": "proposition_5_6",
+      "kind": "hard"
+    },
+    {
+      "from": "proposition_4_3",
+      "to": "proposition_5_6",
+      "kind": "hard"
+    },
+    {
+      "from": "theorem_2_6",
+      "to": "proposition_5_6",
+      "kind": "hard"
+    },
+    {
+      "from": "lemma_5_4",
+      "to": "proposition_5_9",
+      "kind": "hard"
+    },
+    {
+      "from": "lemma_5_5",
+      "to": "proposition_5_9",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_type_u_witness_set",
+      "to": "lemma_4_7",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_rank_slice",
+      "to": "lemma_4_7",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_pair_coloring_glue",
+      "to": "lemma_4_7",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_relcode_joint_canonical",
+      "to": "lemma_4_5",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_relcode_orbit_record",
+      "to": "lemma_4_5",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_template_fixed_support",
+      "to": "proposition_5_7",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_named_working_scheme",
+      "to": "proposition_5_7",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_named_working_package",
+      "to": "proposition_5_7",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_eligible_reclass",
+      "to": "proposition_5_7",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_template_fixed_support",
+      "to": "infra_named_working_scheme",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_named_working_scheme",
+      "to": "infra_named_working_package",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_eligible_reclass",
+      "to": "infra_named_working_scheme",
+      "kind": "hard"
+    }
+  ],
+  "doneCount": 29
+}

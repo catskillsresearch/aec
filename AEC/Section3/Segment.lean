@@ -102,11 +102,11 @@ lemma half_right {a b c d : L} (hab : a < b) (hcd : c < d)
     halfTo hcd e (halfInv hab e x) = x := by
   ext
   by_cases h : (x : L) = d
-  · rw [halfInv, dif_pos h, halfTo, dif_pos rfl]
+  · rw [halfInv, dite_eq_left h, halfTo, dite_eq_left rfl]
     exact h.symm
   · have hopen : (halfInv hab e x : L) =
         e.symm ⟨x, x.2.1, lt_of_le_of_ne x.2.2 h⟩ := by
-      rw [halfInv, dif_neg h]
+      rw [halfInv, dite_eq_right h]
     have hne : (halfInv hab e x : L) ≠ b := by
       rw [hopen]
       exact (e.symm ⟨x, x.2.1, lt_of_le_of_ne x.2.2 h⟩).2.2.ne
@@ -213,7 +213,7 @@ lemma lowerTail_cofinality (c : Cut L) {p : L} (hp : p ∈ c.lower) :
 
 lemma card_Iic_toType_lt {ε : Cardinal.{u}} (hε : ℵ₀ ≤ ε) (i : ε.ord.ToType) :
     #(Iic i) < ε := by
-  have hio : #(Iio i) < ε := mk_Iio_toType_ord_lt i
+  have hio : #(Iio i) < ε := by simpa using mk_Iio_lt i
   have hIic : Iic i = Iio i ∪ {i} := by
     ext x
     simp only [mem_Iic, mem_union, mem_Iio, mem_singleton_iff, le_iff_lt_or_eq]
@@ -300,7 +300,7 @@ lemma aboveSpec {ε : Cardinal.{u}} (hε : ℵ₀ ≤ ε) {s : Set L} (hs : setC
     · exact hg j
   · rw [hs]
     exact prevSet_card hε g i (fun j hj => (rec j hj : L))
-      (mk_Iio_toType_ord_lt i) (card_Iic_toType_lt hε i)
+      (by simpa using mk_Iio_lt i) (card_Iic_toType_lt hε i)
 
 /-- Strictly increasing sequence through `s`, with value `p` at the zero index. At every later
 index the value lies above the earlier values and above the fixed enumeration. -/
@@ -316,14 +316,14 @@ noncomputable def strictSeq {ε : Cardinal.{u}} (hε : ℵ₀ ≤ ε) (s : Set L
 lemma strictSeq_bot {ε : Cardinal.{u}} (hε : ℵ₀ ≤ ε) {s : Set L} (hs : setCofinality s = ε)
     {p : L} (hp : p ∈ s) {g : ε.ord.ToType → L} (hg : ∀ i, g i ∈ s) {i : ε.ord.ToType}
     (hi : i = botIndex ε hε) : (strictSeq hε s hs p hp g hg i : L) = p := by
-  rw [strictSeq, WellFounded.fix_eq, dif_pos hi]
+  rw [strictSeq, WellFounded.fix_eq, dite_eq_left hi]
 
 lemma strictSeq_gt_prev {ε : Cardinal.{u}} (hε : ℵ₀ ≤ ε) {s : Set L}
     (hs : setCofinality s = ε) {p : L} (hp : p ∈ s) {g : ε.ord.ToType → L}
     (hg : ∀ i, g i ∈ s) {i : ε.ord.ToType} (hi : i ≠ botIndex ε hε) {y : L}
     (hy : y ∈ prevSet g i (fun j hj => (strictSeq hε s hs p hp g hg j : L))) :
     y < strictSeq hε s hs p hp g hg i := by
-  rw [strictSeq, WellFounded.fix_eq, dif_neg hi]
+  rw [strictSeq, WellFounded.fix_eq, dite_eq_right hi]
   exact (Classical.choose_spec
     (aboveSpec hε hs g hg i hi (fun j hj => strictSeq hε s hs p hp g hg j))).2 y hy
 
@@ -876,7 +876,7 @@ noncomputable def segmentBlockIso {κ : Cardinal.{u}} (setup : SegmentSetup L κ
         ((rightHalf (g (indexPred hε i α hα)) (g i)).orderIsoOfEq (seqBlock t g i) hbg.symm))⟩
   · let η : Cardinal.{u} := Order.cof (Iio i)
     have hηlt : η < ε :=
-      (Order.cof_le_cardinalMk (↥(Iio i))).trans_lt (mk_Iio_toType_ord_lt i)
+      (Order.cof_le_cardinalMk (↥(Iio i))).trans_lt (by simpa using mk_Iio_lt i)
     have hregη : Cardinal.IsRegular η := by
       show Cardinal.IsRegular (Order.cof (Iio i))
       rw [Order.cof_Iio i]
@@ -1068,7 +1068,7 @@ noncomputable def dualIoo {a b : Lᵒᵈ} (_hab : a < b) :
     · intro h
       exact (OrderDual.ofDual_le_ofDual).mpr h
 
-def dualSetup {κ : Cardinal.{u}} (setup : SegmentSetup L κ) : SegmentSetup Lᵒᵈ κ where
+theorem dualSetup {κ : Cardinal.{u}} (setup : SegmentSetup L κ) : SegmentSetup Lᵒᵈ κ where
   dense := by
     intro a b hab
     have hab' : OrderDual.ofDual b < OrderDual.ofDual a := by

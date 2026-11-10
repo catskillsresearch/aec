@@ -370,7 +370,9 @@ def SameStableDiagram (K : AbstractElementaryClass.{u}) [CategoricalUnbounded K]
 /-- Order embedding `Below κ ↪o Below γ` when `κ ≤ γ`. -/
 noncomputable def cardOrderEmbed {κ γ : Cardinal.{u}} (hle : κ ≤ γ) :
     Below κ ↪o Below γ :=
-  (Ordinal.initialSegToType (Cardinal.ord_le_ord.mpr hle)).toOrderEmbedding
+  (Classical.choice
+      (Ordinal.type_le_iff.mp (by
+        simpa [Below, Ordinal.type_toType] using Cardinal.ord_le_ord.mpr hle))).toOrderEmbedding
 
 /-- Extend a categoricity model of size `θ` to one of size `ρ ≥ θ` via the EM presentation
 (English Prop. 4.2, assertion 4: grow a `c_σ`-submodel to the target categoricity size). -/

@@ -564,7 +564,7 @@ theorem placeSucc_map {I J : Type u} [LinearOrder I] [LinearOrder J] (f : I ↪o
           (Finset.map_nonempty.mpr hs) (Finset.map_nonempty.mpr ht)) := by
   ext i
   simp only [placeSucc, indexCast, RelEmbedding.trans_apply, OrderIso.coe_toOrderEmbedding,
-    Fin.castOrderIso_apply, Fin.coe_cast, OrderIso.apply_symm_apply]
+    Fin.castOrderIso_apply, Fin.val_cast, OrderIso.apply_symm_apply]
   have hnat := congrFun (congrArg (⇑) (placeEmb_map f hsub))
     (Fin.cast (Nat.succ_pred (Finset.card_pos.mpr hs).ne') i)
   exact congrArg Fin.val hnat
@@ -932,7 +932,7 @@ noncomputable def emSub {I : Type u} [LinearOrder I] [Nonempty I] (s : Finset I)
 
 theorem emSub_eq {I : Type u} [LinearOrder I] [Nonempty I] (s : Finset I) (hs : s.Nonempty) :
     emSub (K := K) s = (emSystem (K := K) I).obj ⟨s, hs⟩ :=
-  dif_pos hs
+  dite_eq_left hs
 
 /-- Inclusion of the small finite-support model into the limit. -/
 noncomputable def emSubIncl {I : Type u} [LinearOrder I] [Nonempty I] (s : Finset I)

@@ -185,7 +185,7 @@ lemma gap_separated (R : Set β.ToType) {x y : β.ToType}
     | some r =>
       exfalso
       have hxabove : ∀ z ∈ R, z < x := by
-        rw [hcx, gapSet, gapAbove, Set.mem_setOf_eq] at hxgap
+        rw [hcx, gapSet, gapAbove, Set.mem_ofPred_eq] at hxgap
         exact hxgap
       have hy_lt : y < r.1 := by
         have : y ∈ gapBelow R r := by simpa [hcy, gapSet] using hygap
