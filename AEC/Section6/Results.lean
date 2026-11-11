@@ -471,43 +471,31 @@ English gloss. Clauses:
 4. (Code / free-from) A Lemma 6.9 code at `c(σ)` transports under arrows; `IsFreeFrom` means the
    type is the free lift of its restriction to `A`.
 
-**Statement repair.** Bare `WorkingScheme` was refutable; packaging matches Lemma 6.9
-(`AssemblesStructIso`, presentations, `hedge`, `hcat`, σ/χ/b).
+**Statement repair.** Same packaging as Lemma 6.9: `SingleModelData` at recursion-closed levels.
+Cross-scheme transfer of approximation sequences is not used.
 
-**Pinned.** Attempt A proves Lemma 6.9 for `SingleModelData` at recursion-closed levels
-(`lemma_6_9`). Theorem 6.10 still quantifies over a general `WorkingScheme`. The transfer
-stops at `infra_69_diagram_transport`: a categoricity equivalence of carriers is not a
-permitted arrow, and `DiagramEq` moves only along permitted arrows.
-No alternate free-lift proof is used. -/
-theorem theorem_6_10 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
-    [CategoricalUnbounded K]
-    (W : WorkingScheme K S) (F : TermTemplate K S) [hpres : HasPresentations W F]
-    [hpack : HasChainUnions W]
-    (hedge : ∀ i j, ¬ S.specified i j)
-    (hcat : ∀ μ ∈ W.eligible, Categorical K μ)
-    (σ χ b : Cardinal.{u}) (hσ : aleph0 ≤ σ)
-    (hpow : χ ^ σ = χ) (hb : b + σ < χ)
-    (hχ : ls K + (2 : Cardinal.{u}) ^ ((2 : Cardinal.{u}) ^ σ) ≤ χ)
-    (hiso : AssemblesStructIso W b) :
-    ∃ T, ∃ hT : Tail W.eligible T,
-      ∀ μ (hμ : μ ∈ T) (A B : W.Object μ (Tail.mem hT hμ))
-        (f : SystemArrow K S (W.asSystem _ A) (W.asSystem _ B))
-        (hf : W.permitted (X := A) (Y := B) f)
-        (p : TupleOver K S W (Tail.mem hT hμ) A),
+**Pinned.** The free-lift argument (`stationary_free_extension_exists`: majority, saturation,
+placement in a chart of `B`) stays open. Lemma 6.9 supplies the sequences. -/
+theorem theorem_6_10 {K : AbstractElementaryClass.{u}}
+    (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ) :
+    ∃ T, ∃ hT : Tail P.eligible T,
+      ∀ μ (hμ : μ ∈ T) (A B : P.scheme.Object μ (Tail.mem hT hμ))
+        (f : SystemArrow K oneVertexShape
+          (P.scheme.asSystem _ A) (P.scheme.asSystem _ B))
+        (hf : P.scheme.permitted (X := A) (Y := B) f)
+        (p : TupleOver K oneVertexShape P.scheme (Tail.mem hT hμ) A),
         #p.idx ≤ σ → #p.idx < μ →
-        ∃ q : TupleOver K S W (Tail.mem hT hμ) B, ∃ e : p.idx ≃ q.idx,
-          IsFreeLift p q f hf e := by
-  obtain ⟨κ0, _⟩ := W.exists_parameter_orbit_reps hedge hcat σ χ b hσ hpow hb hχ hiso
-  have hT : Tail W.eligible {μ | μ ∈ W.eligible ∧ κ0 ≤ μ ∧ χ < μ} := by
-    refine ⟨fun μ hμ => hμ.1, fun κ' => ?_⟩
-    obtain ⟨μ', hle, hμ'⟩ := W.eligible_unbounded (max κ' (max κ0 (Order.succ χ)))
-    exact ⟨μ', (le_max_left _ _).trans hle, hμ',
-      ((le_max_left _ _).trans (le_max_right _ _)).trans hle,
-      (Order.lt_succ χ).trans_le (((le_max_right _ _).trans (le_max_right _ _)).trans hle)⟩
-  refine ⟨_, hT, fun μ hμ A B f hf p hσidx hidx => ?_⟩
-  let hμ' := Tail.mem hT hμ
-  -- English proof step 1 needs a Lemma 6.9 approximation sequence; that chain is pinned.
-  exact stationary_free_extension_exists F hedge hcat σ χ b σ hσ hσ hpow hb hχ hiso f hf p
+        ∃ q : TupleOver K oneVertexShape P.scheme (Tail.mem hT hμ) B,
+          ∃ e : p.idx ≃ q.idx, IsFreeLift p q f hf e := by
+  let T : Set Cardinal.{u} :=
+    {μ | μ ∈ recursionClosedLevels P σ ∧ Order.succ σ ≤ μ}
+  have hT : Tail P.eligible T := by
+    refine ⟨fun μ hμ => hμ.1.1, fun κ => ?_⟩
+    obtain ⟨μ, hle, hμ, hrec⟩ :=
+      (infra_69_recursion_tail P hσ).2 (max κ (Order.succ σ))
+    exact ⟨μ, (le_max_left _ _).trans hle, ⟨⟨hμ, hrec⟩, (le_max_right _ _).trans hle⟩⟩
+  refine ⟨T, hT, fun μ hμ A B f hf p hσidx hidx => ?_⟩
+  exact stationary_free_extension_exists P σ hσ (Tail.mem hT hμ) f hf p hσidx hidx
 
 /-- **Lemma 6.11** (An average criterion for descent). A type whose restrictions to a long
 sequence in `A` have the stated majority is the free lift of its restriction to `A`. -/

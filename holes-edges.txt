@@ -1,7 +1,7 @@
 # Hard edges from holes-graph.json
 # Convention: FROM --> TO means the English proof of TO requires FROM.
-# Nodes: 154  Hard edges: 191
-# Lem 6.9 is done for SingleModelData on infra_69_recursion_tail. Open tip: infra_69_diagram_transport. theorem_6_10 and infra_69_transfer_sequence are blocked on it.
+# Nodes: 154  Hard edges: 190
+# Lem 6.9 and Thm 6.10 packaging are SingleModelData. Open tip: stationary_free_extension_exists (free lift). infra_69_diagram_transport is done inside P.scheme.
 
 claim_11_10 --> claim_11_11
 claim_11_11 --> claim_11_12
@@ -20,9 +20,8 @@ infra_69_chart_iso --> infra_69_place_type
 infra_69_choose_supports --> infra_69_whole_block_diff
 infra_69_copy_cluster --> infra_69_interpret_copies
 infra_69_cut_clusters --> infra_69_separators
-infra_69_diagram_transport --> infra_69_transfer_sequence
-infra_69_diagram_transport --> theorem_6_10
 infra_69_disjoint_regions --> infra_69_copy_cluster
+stationary_free_extension_exists --> theorem_6_10
 infra_69_finitary_exceptions --> infra_69_subtuple_uniform
 infra_69_hit_bound --> infra_69_finitary_exceptions
 infra_69_include_shared --> infra_69_anchor_bound

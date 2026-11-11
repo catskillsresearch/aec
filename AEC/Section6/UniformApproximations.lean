@@ -3177,29 +3177,10 @@ theorem WorkingScheme.exists_approximationSequence
     (hμτ : τ < μ) (hκμ : κ < μ) (hμκ : κ * #p.idx < μ)
     (hχμ : χ < μ) :
     ∃ seq : ApproximationSequence p, seq.τ = τ ∧ #(seq.κIndex) = κ := by
-  /- Attempt A is `SingleModelData.exists_approximationSequence`. It does not apply:
-     nothing identifies `W` with `P.scheme`. Attempt B stops at `infra_69_diagram_transport`:
-     a categoricity equivalence of carriers is not a permitted arrow, and `DiagramEq` is
-     preserved only along permitted arrows. Not a constant family. -/
+  /- Cross-scheme transfer is not the path. Use `SingleModelData.exists_approximationSequence`
+     (Attempt A / Lemma 6.9). A general `WorkingScheme.DiagramEq` is not the image of
+     `P.scheme.DiagramEq` under a categoricity carrier equivalence. Not a constant family. -/
   sorry
-
-/-- **Infra `infra_69_cat_iso`.** At a categoricity cardinal, a one-vertex scheme object and a
-single-model object have isomorphic carriers. -/
-theorem infra_69_cat_iso
-    (P : SingleModelData K)
-    (W : WorkingScheme K oneVertexShape)
-    {μ : Cardinal.{u}} (hμW : μ ∈ W.eligible) (hμP : μ ∈ P.eligible)
-    (A : W.Object μ hμW) (B : P.scheme.Object μ hμP)
-    (hcat : Categorical K μ) :
-    Nonempty (((W.asSystem hμW A).obj PUnit.unit).carrier ≃[K.τ]
-      ((P.scheme.asSystem hμP B).obj PUnit.unit).carrier) :=
-  hcat.unique_model
-    ((W.asSystem hμW A).obj PUnit.unit)
-    ((P.scheme.asSystem hμP B).obj PUnit.unit)
-    ((W.asSystem hμW A).inK PUnit.unit)
-    ((P.scheme.asSystem hμP B).inK PUnit.unit)
-    (W.vertex_card hμW A PUnit.unit)
-    (P.scheme.vertex_card hμP B PUnit.unit)
 
 /-- Push a one-vertex occurrence along a carrier equivalence. The vertex is `PUnit.unit`. -/
 def infra_69_pushOcc {SP SW : SystemObject K oneVertexShape}
@@ -3208,31 +3189,66 @@ def infra_69_pushOcc {SP SW : SystemObject K oneVertexShape}
   ⟨PUnit.unit,
     e (cast (congrArg (fun v => (SP.obj v).carrier) (Subsingleton.elim x.1 PUnit.unit)) x.2)⟩
 
-/-- **Infra `infra_69_diagram_transport`.** Scheme diagram equality is not the image of
-single-model diagram equality under a categoricity equivalence of carriers.
+/-- The `SystemArrow` of a one-vertex carrier equivalence between single-model objects. -/
+noncomputable def infra_69_equivArrow
+    (P : SingleModelData K) {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
+    (A B : P.scheme.Object μ hμ)
+    (e : ((P.scheme.asSystem hμ B).obj PUnit.unit).carrier ≃[K.τ]
+      ((P.scheme.asSystem hμ A).obj PUnit.unit).carrier) :
+    SystemArrow K oneVertexShape (P.scheme.asSystem hμ B) (P.scheme.asSystem hμ A) :=
+  oneVertexArrow e.toEmbedding (strong_of_equiv K e B.mem)
 
-`WorkingScheme.diagram_preserved` moves `DiagramEq` along a permitted arrow.
-`Categorical.unique_model` supplies a carrier equivalence, not a permitted arrow of `W`.
-Nothing identifies `W.DiagramEq` with `P.scheme.DiagramEq`. This is not split further. -/
+theorem infra_69_pushOcc_equivArrow
+    (P : SingleModelData K) {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
+    (A B : P.scheme.Object μ hμ)
+    (e : ((P.scheme.asSystem hμ B).obj PUnit.unit).carrier ≃[K.τ]
+      ((P.scheme.asSystem hμ A).obj PUnit.unit).carrier)
+    (x : Occurrence K oneVertexShape (P.scheme.asSystem hμ B)) :
+    infra_69_pushOcc e x =
+      ⟨x.1, (infra_69_equivArrow P hμ A B e).onVertex x.1 x.2⟩ := by
+  refine Sigma.ext (Subsingleton.elim _ _) ?_
+  cases x with
+  | mk v a =>
+    have hv : v = PUnit.unit := Subsingleton.elim _ _
+    cases hv
+    rfl
+
+/-- **Infra `infra_69_diagram_transport`.** Inside `P.scheme`, a carrier equivalence of
+one-vertex objects is a permitted bijective arrow, so it moves `DiagramEq`.
+
+This is not claimed for a general `WorkingScheme`: `Categorical.unique_model` is only a
+language equivalence of carriers, and an arbitrary scheme's `DiagramEq` is not the image of
+`P.D.same`. -/
 theorem infra_69_diagram_transport
     (P : SingleModelData K)
-    (W : WorkingScheme K oneVertexShape)
-    {μ : Cardinal.{u}} (hμW : μ ∈ W.eligible) (hμP : μ ∈ P.eligible)
-    (A : W.Object μ hμW) (B : P.scheme.Object μ hμP)
-    (e : ((P.scheme.asSystem hμP B).obj PUnit.unit).carrier ≃[K.τ]
-      ((W.asSystem hμW A).obj PUnit.unit).carrier)
+    {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
+    (A B : P.scheme.Object μ hμ)
+    (e : ((P.scheme.asSystem hμ B).obj PUnit.unit).carrier ≃[K.τ]
+      ((P.scheme.asSystem hμ A).obj PUnit.unit).carrier)
     {α : Type u}
-    (xs ys : α → Occurrence K oneVertexShape (P.scheme.asSystem hμP B))
+    (xs ys : α → Occurrence K oneVertexShape (P.scheme.asSystem hμ B))
+    (hα : #α < μ)
     (h : P.scheme.DiagramEq (X := B) (Y := B) xs ys) :
-    W.DiagramEq (X := A) (Y := A)
+    P.scheme.DiagramEq (X := A) (Y := A)
       (fun i => infra_69_pushOcc e (xs i))
       (fun i => infra_69_pushOcc e (ys i)) := by
-  /- Pinned. See the docstring. -/
-  sorry
+  let f := infra_69_equivArrow P hμ A B e
+  have hpush (zs : α → Occurrence K oneVertexShape (P.scheme.asSystem hμ B)) :
+      (fun i => infra_69_pushOcc e (zs i)) =
+        fun i => ⟨(zs i).1, f.onVertex (zs i).1 (zs i).2⟩ :=
+    funext fun i => infra_69_pushOcc_equivArrow P hμ A B e (zs i)
+  have hxs : P.scheme.DiagramEq (X := B) (Y := A) xs
+      (fun i => infra_69_pushOcc e (xs i)) := by
+    rw [hpush]
+    exact P.scheme.diagram_preserved B A f trivial xs hα hα
+  have hys : P.scheme.DiagramEq (X := B) (Y := A) ys
+      (fun i => infra_69_pushOcc e (ys i)) := by
+    rw [hpush]
+    exact P.scheme.diagram_preserved B A f trivial ys hα hα
+  exact (hxs.symm.trans h).trans hys
 
-/-- **Infra `infra_69_transfer_tuple`.** A one-vertex occurrence list pushes along the
-carrier equivalence of `infra_69_cat_iso`. This does not produce a permitted arrow, so it
-does not move `DiagramEq`. -/
+/-- **Infra `infra_69_transfer_tuple`.** Push a one-vertex occurrence list along a carrier
+equivalence. Inside `P.scheme` this matches the arrow of `infra_69_equivArrow`. -/
 def infra_69_transfer_tuple
     {SP SW : SystemObject K oneVertexShape}
     (e : (SP.obj PUnit.unit).carrier ≃[K.τ] (SW.obj PUnit.unit).carrier)
@@ -3240,30 +3256,21 @@ def infra_69_transfer_tuple
     α → Occurrence K oneVertexShape SW :=
   fun i => infra_69_pushOcc e (xs i)
 
-/-- **Infra `infra_69_transfer_sequence`.** An approximation sequence on the single-model
-scheme pushes to a one-vertex scheme only together with `few_exceptions`. That clause is
-`infra_69_diagram_transport`: the joint comparison is `DiagramEq` between the host and the
-base, and a carrier equivalence does not preserve it. -/
+/-- Cross-scheme sequence transfer is not used. Approximation sequences for Theorem 6.10 are
+`SingleModelData.exists_approximationSequence`. -/
 theorem infra_69_transfer_sequence
     (P : SingleModelData K)
-    (W : WorkingScheme K oneVertexShape)
-    {μ : Cardinal.{u}} (hμW : μ ∈ W.eligible) (hμP : μ ∈ P.eligible)
-    (A : W.Object μ hμW) (B : P.scheme.Object μ hμP)
-    (pW : TupleOver K oneVertexShape W hμW A)
-    (pP : TupleOver K oneVertexShape P.scheme hμP B)
-    (seq : ApproximationSequence pP)
-    (e : ((P.scheme.asSystem hμP B).obj PUnit.unit).carrier ≃[K.τ]
-      ((W.asSystem hμW A).obj PUnit.unit).carrier)
-    (hdiag : ∀ {α : Type u}
-      (xs ys : α → Occurrence K oneVertexShape (P.scheme.asSystem hμP B)),
-      P.scheme.DiagramEq (X := B) (Y := B) xs ys →
-        W.DiagramEq (X := A) (Y := A)
-          (fun i => infra_69_pushOcc e (xs i))
-          (fun i => infra_69_pushOcc e (ys i))) :
-    ∃ seqW : ApproximationSequence pW, seqW.τ = seq.τ ∧ #(seqW.κIndex) = #(seq.κIndex) := by
-  /- `hdiag` is `infra_69_diagram_transport`. `few_exceptions` compares a joint on `p.host`
-     with a joint on `base`, not two lists on one object, and `pW` is not the image of `pP`
-     under `e`. The comparison is not split further. -/
+    {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
+    (A B : P.scheme.Object μ hμ)
+    (pA : TupleOver K oneVertexShape P.scheme hμ A)
+    (pB : TupleOver K oneVertexShape P.scheme hμ B)
+    (seq : ApproximationSequence pB)
+    (e : ((P.scheme.asSystem hμ B).obj PUnit.unit).carrier ≃[K.τ]
+      ((P.scheme.asSystem hμ A).obj PUnit.unit).carrier) :
+    ∃ seqA : ApproximationSequence pA, seqA.τ = seq.τ ∧ #(seqA.κIndex) = #(seq.κIndex) := by
+  /- Not the path to Theorem 6.10. `pA` is not the image of `pB` under `e`, and
+     `few_exceptions` compares a host joint to a base joint. Use the single-model assemble
+     chain instead. -/
   sorry
 
 end
