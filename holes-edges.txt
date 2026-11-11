@@ -1,7 +1,7 @@
 # Hard edges from holes-graph.json
 # Convention: FROM --> TO means the English proof of TO requires FROM.
-# Nodes: 142  Hard edges: 179
-# Lem 6.9: assemble glue is written on SingleModelData and blocked on infra_69_place_on_fills (Lem 6.4 padded clause). Each profile step is < μ. Under absorption of closureBound by one power set, the relative tower from any β₀ in [θ₀, μ) has supremum μ (iSup_profileTower_eq_of_ge); the zero-bound closure point is beth_ω (not_profileSup_lt_const_closurePoint). exists_approximationSequence stays sorry (general scheme). lemma_6_9 and theorem_6_10 stay blocked.
+# Nodes: 149  Hard edges: 189
+# Lem 6.9: place_on_fills and assemble are done on SingleModelData under infra_69_pad_recursion_closed (σ⁺ profile recursion strictly below the level). A {t,g}-closure point need not satisfy it. exists_approximationSequence stays sorry (general scheme). lemma_6_9 and theorem_6_10 stay blocked.
 
 claim_11_10 --> claim_11_11
 claim_11_11 --> claim_11_12
@@ -28,6 +28,15 @@ infra_69_interpret_copies --> infra_69_choose_supports
 infra_69_lem61_off_hits --> infra_69_off_hit_diagramEq
 infra_69_no_internal_hits --> infra_69_lem61_off_hits
 infra_69_off_hit_diagramEq --> infra_69_assemble
+infra_69_pad_recursion --> infra_69_pad_recursion_closed
+infra_69_pad_recursion_closed --> infra_69_pad_exists_closed
+infra_69_pad_recursion_closed --> infra_69_pad_stage_card
+infra_69_pad_downset --> infra_69_pad_count
+infra_69_pad_count --> infra_69_pad_stage_card
+infra_69_pad_count --> infra_69_pad_obstruction
+infra_69_pad_stage_card --> infra_69_pad_obstruction
+infra_69_pad_recursion_closed --> infra_69_place_on_fills
+infra_69_pad_obstruction --> infra_69_place_on_fills
 infra_69_place_on_fills --> infra_69_assemble
 infra_69_present_padded --> infra_69_assemble
 infra_69_present_padded --> infra_69_chart_iso

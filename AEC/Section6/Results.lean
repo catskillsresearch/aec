@@ -352,16 +352,11 @@ The proof-side uniformity sentence is `infra_69_uniformity_bounds`.
 Theorem 6.10. This lemma does not prove that transport.
 
 **English gloss** (`UniformApproximations.lean`). On `SingleModelData`,
-`infra_69_assemble` is the support-copy chain, blocked on `infra_69_place_on_fills`
-(Lemma 6.4's padded non-well-ordered clause: one placement of `p` over the cut-filling
-chart). Each profile step lies below an eligible level. Eligible `μ` is a closure point
-of `{D.t, g}` (`closureTower`: one power set per countable step). When `closureBound`
-is absorbed by that power set, the relative tower from any `β₀` in `[θ₀, μ)` has
-supremum `μ` (`iSup_profileTower_eq_of_ge`); the zero bounds realize this and equal
-`ℶ_ω` (`exists_closurePoint_profileSup_eq`). `exists_local_placement` needs that
-supremum strictly below `μ`. `infra_69_place_type` places over the well-ordered
-skeleton, which does not fill cuts. `WorkingScheme.exists_approximationSequence` is
-still sorry: a general scheme is not `SingleModelData`. Corollary 6.7 is not used.
+`infra_69_assemble` is the support-copy chain on `SingleModelData`, and it requires
+`infra_69_pad_recursion_closed` (the `σ⁺` profile recursion of Lemma 6.4's padded clause
+lies strictly below the level). A `{D.t, g}`-closure point need not (`iSup_profileTower_eq_of_ge`).
+`WorkingScheme.exists_approximationSequence` is still sorry: a general scheme is not
+`SingleModelData`. Corollary 6.7 is not used.
 `TupleOver.InBase` and `ApproximationSequence.ofConstFamily` are **not** a Lemma 6.9
 proof. -/
 theorem lemma_6_9 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
@@ -502,8 +497,9 @@ English gloss. Clauses:
 (`AssemblesStructIso`, presentations, `hedge`, `hcat`, σ/χ/b).
 
 **Pinned.** 1:1 English translation stops on the Lemma 6.9 support-copy chain.
-On `SingleModelData` that chain is `infra_69_assemble`, blocked on `infra_69_place_on_fills`.
-`WorkingScheme.exists_approximationSequence` is still sorry for a general scheme.
+On `SingleModelData` that chain is `infra_69_assemble`, which needs
+`infra_69_pad_recursion_closed`. `WorkingScheme.exists_approximationSequence` is still
+sorry for a general scheme.
 No alternate free-lift proof is used. -/
 theorem theorem_6_10 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
     [CategoricalUnbounded K]

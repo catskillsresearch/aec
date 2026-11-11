@@ -1,6 +1,7 @@
 module
 
 public import AEC.Section6.ApproximationSequence
+public import AEC.Section6.PaddedPlacement
 public import AEC.Section6.OffHitBlock
 public import AEC.Section6.ParameterOrbits
 public import AEC.Section5.PackageClauses
@@ -23,15 +24,10 @@ English steps:
 1. By the rich-order and padding constructions of Lemmas 5.5 and 5.4, present `A` on a padded
    chart (`exists_denseRichOrder`, `exists_richPaddedOrder`, `lemma_5_4`).
 2. Lemma 6.5 places `p` on the well-ordered skeleton (`infra_69_place_type`). The copy
-   chain needs the same placement on the padded chart itself. That is the padded
-   non-well-ordered clause of Lemma 6.4 (`infra_69_place_on_fills`), which is pinned.
-   Each profile step stays below a strong limit (`profileStep_lt_of_strongLimit`).
-   Eligible `μ` is a closure point of `{D.t, g}`, the supremum of `closureTower`
-   (one power set, plus `closureBound`, per countable step). When that bound is
-   absorbed by the power set, the relative tower from any `β₀` in `[θ₀, μ)` has
-   supremum `μ` (`iSup_profileTower_eq_of_ge`). The zero bounds realize this and
-   equal `ℶ_ω` (`exists_closurePoint_profileSup_eq`). The stage-ω union is that
-   supremum, so `exists_local_placement` does not apply. The skeleton does not fill cuts.
+   chain needs the same placement on the padded chart. That is Lemma 6.4's padded
+   clause (`infra_69_place_on_fills`): down-set profiles and the `σ⁺` recursion
+   `β ↦ 2^β + σ + b`, under the hypothesis that the supremum lies strictly below `μ`
+   (`infra_69_pad_recursion_closed`). A `{D.t, g}`-closure point need not satisfy it.
 3. Keep shared old-chart supports; partition other supports by cuts; anchors have size at most
    `σ + ℵ₀` (`ChartSupport`, the pure-order infras below).
 4. In each anchor slot, choose `κ` pairwise disjoint convex regions and put a copy of the
@@ -606,9 +602,10 @@ and does not do so for a bounded sequence. The zero bounds are absorbed; their c
 point is `ℶ_ω`, and every infinite `β₀` below it fails the strict inequality
 (`exists_closurePoint_profileSup_eq`, `not_profileSup_lt_const_closurePoint`). The proved
 lower bound `σ⁺ ≤ D.t σ` still lies under `2^σ` (`succ_le_two_pow`), so it does not force
-`closureBound` past one power set. `exists_local_placement` needs the stage union strictly
-below `μ`. Keeping only the `θ`-sized profiles inside a single power `2^θ` does not run
-`σ⁺` stages: the next old set has size `2^θ`, and the next profile count is `2^{2^θ}`.
+`closureBound` past one power set. The proof is `infra_69_pad_obstruction` under `infra_69_pad_recursion_closed`: the `σ⁺`
+supremum of `β ↦ 2^β + σ + b` lies strictly below `μ`. That hypothesis is not true of every
+`{D.t, g}`-closure point (`iSup_profileTower_eq_of_ge`). `infra_69_pad_exists_closed` shows
+strong limits of cofinality `ℵ₀` satisfying it are unbounded.
 
 `TupleOver.InBase` and `ApproximationSequence.ofConstFamily` are not a substitute. -/
 theorem infra_69_place_on_fills
@@ -625,19 +622,95 @@ theorem infra_69_place_on_fills
     (d : p.idx → p.host.model.carrier)
     (hstrong : K.Strong incl)
     (hincl : ∀ a, incl a = (p.incl.onVertex PUnit.unit) (e a))
-    (hd : ∀ a, d a = p.host.val (p.val a)) :
+    (hd : ∀ a, d a = p.host.val (p.val a))
+    (hclosed : infra_69_pad_recursion_closed σ (max (ls K) ℵ₀)
+      (max (max σ τ) (max (ls K) ℵ₀)) μ) :
     ∃ Q : Placement P.E.lab P.E.arity I p.idx,
       ∀ {β : Type u} (ρ : Cardinal.{u}), ℵ₀ ≤ ρ → ρ ≤ max σ τ →
         ∀ (q : β → (P.E.obj I).carrier) (hj : #(p.idx ⊕ β) ≤ ρ),
           Q.Lifts P.E P.D p.host.mem incl d ρ hj q := by
-  /- Pinned. Each step is below a strong limit (`profileStep_lt_of_strongLimit`).
-     `iSup_profileTower_eq_of_ge`: under absorption of `closureBound` by one power set,
-     a relative tower from any `β₀` with `θ₀ ≤ β₀ < μ` has supremum `μ`.
-     `not_profileSup_lt_const_closurePoint`: the zero-bound closure point is `ℶ_ω`
-     and an `IsClosurePoint`, and that supremum is not strictly below it.
-     `exists_local_placement` needs the stage union strictly below `μ`.
-     Not `exists_placement_lifting`: `I` is not `WellFoundedLT`. -/
-  sorry
+  haveI : CategoricalUnbounded K := P.D.categoricalUnbounded
+  let b : Cardinal.{u} := max (ls K) ℵ₀
+  let β₀ : Cardinal.{u} := max (max σ τ) b
+  have hb : ℵ₀ ≤ b := le_max_right _ _
+  have hσβ : σ ≤ β₀ := (le_max_left σ τ).trans (le_max_left _ _)
+  have hbβ : b ≤ β₀ := le_max_right _ _
+  have hlab : #P.E.lab ≤ b := by
+    have hℓ : #P.E.lab ≤ ls K := by simpa [P.E.ell_eq] using P.E.lab_small
+    exact hℓ.trans (le_max_left _ _)
+  let γ : Cardinal.{u} := infra_69_pad_recursion σ b β₀ (Order.succ σ).ord
+  have hγ : γ < μ := hclosed
+  have hμinf : ℵ₀ ≤ μ := P.aleph0_le hμ
+  have hγμ : σ + γ < μ := add_lt_of_lt hμinf hσμ hγ
+  have hρinf : ℵ₀ ≤ σ + γ := hσ.trans le_self_add
+  have ht : P.D.t (σ + γ) ≤ μ := (P.t_lt hμ hρinf hγμ).le
+  have hcardB : Model.card p.host.model = μ := by simpa [hνμ] using p.host.card
+  have hcardI : Model.card (P.E.obj I) = μ := P.card_obj_eq hμ I hI
+  have hcB : P.D.t (σ + γ) ≤ Model.card p.host.model := ht.trans hcardB.ge
+  have hcI : P.D.t (σ + γ) ≤ Model.card (P.E.obj I) := ht.trans hcardI.ge
+  have hmemI : K.Mem (P.E.obj I) := orderPresentation_obj_mem P.E I
+  have hex : ∀ (β : Type u) (_ : #β ≤ γ) (qv : β → (P.E.obj I).carrier),
+      ∃ φ : Language.Embedding K.τ p.host.model.carrier (P.E.obj I).carrier,
+        K.Strong φ ∧ ∀ x, φ (incl (qv x)) = qv x :=
+    fun β hβ qv => exists_paramFixing (hB := p.host.mem) hstrong (P.categorical hμ)
+      hcardB hcardI hρinf ht (hβ.trans (by rw [add_comm]; exact le_self_add)) qv
+  choose φ hφ hφp using hex
+  have hpres : ∀ {β : Type u} (hβ : #β ≤ γ) (qv : β → (P.E.obj I).carrier)
+      (hj : #(p.idx ⊕ β) ≤ σ + γ),
+      P.D.same hj p.host.mem hmemI hcB hcI (Sum.elim d (fun x => incl (qv x)))
+        (Sum.elim (fun a => φ β hβ qv (d a)) qv) := by
+    intro β hβ qv hj
+    refine P.D.of_strong hj p.host.mem hmemI hcB hcI _ _ (φ β hβ qv) hρinf (hφ β hβ qv) ?_
+    rintro (a | x)
+    · rfl
+    · exact hφp β hβ qv x
+  obtain ⟨Q, hQ⟩ := infra_69_pad_obstruction (E := P.E) (D := P.D) σ b β₀ hσ hb hσβ hbβ
+    hidx hlab hcI
+    (fun {β} hβ qv => Sum.elim (fun a => φ β hβ qv (d a)) qv)
+    (fun {β} hβ qv hβ' => P.D.refl hβ' hmemI hcI qv)
+    (fun {β β'} hβ hβ' qv ι hj => by
+      have h1 : P.D.same hj p.host.mem hmemI hcB hcI
+          (Sum.elim d (fun x => incl (qv (ι x))))
+          (fun i => Sum.elim (fun a => φ β hβ qv (d a)) qv (Sum.map id ι i)) := by
+        refine P.D.of_strong hj p.host.mem hmemI hcB hcI _ _ (φ β hβ qv) hρinf (hφ β hβ qv) ?_
+        rintro (a | x)
+        · rfl
+        · exact hφp β hβ qv (ι x)
+      exact P.D.trans hj hmemI p.host.mem hmemI hcI hcB hcI _ _ _
+        (P.D.symm hj p.host.mem hmemI hcB hcI _ _ h1) (hpres hβ' (fun x => qv (ι x)) hj))
+  refine ⟨Q, fun {β} ρ hρinf' hρτ qv hj => ?_⟩
+  have hβ : #β ≤ β₀ := by
+    refine le_trans ?_ (hρτ.trans (le_max_left _ b))
+    refine le_trans ?_ hj
+    rw [mk_sum, lift_id, lift_id, add_comm]
+    exact le_self_add
+  have hj0 : #(p.idx ⊕ β) ≤ σ + β₀ := by
+    rw [mk_sum, lift_id, lift_id]
+    exact add_le_add hidx hβ
+  have hJc0 : P.D.t (σ + γ) ≤ Model.card (P.E.obj Q.J) :=
+    hcI.trans (mk_le_of_injective (P.E.map Q.f).injective)
+  have h1 := SameNaturalDiagram.same hρinf (hQ hβ qv hj0) hJc0 hcI
+    (orderPresentation_obj_mem P.E Q.J) hmemI
+  simp only [realize_supportTermOf] at h1
+  have hbig : Q.Lifts P.E P.D p.host.mem incl d (σ + γ)
+      (hj0.trans (add_le_add_right (infra_69_pad_recursion_ge_start σ b β₀ _) σ)) qv := by
+    intro hBc' hJc'
+    exact P.D.trans (hj0.trans (add_le_add_right
+        (infra_69_pad_recursion_ge_start σ b β₀ _) σ)) p.host.mem hmemI
+      (orderPresentation_obj_mem P.E Q.J) hBc' hcI hJc' _ _ _
+      (hpres (hβ.trans (infra_69_pad_recursion_ge_start σ b β₀ _)) qv _)
+      (P.D.symm _ (orderPresentation_obj_mem P.E Q.J) hmemI hJc' hcI _ _ h1)
+  have hle : ρ ≤ σ + γ := by
+    calc ρ ≤ max σ τ := hρτ
+      _ ≤ β₀ := le_max_left _ _
+      _ ≤ σ + β₀ := by rw [add_comm]; exact le_self_add
+      _ ≤ σ + γ := add_le_add_right (infra_69_pad_recursion_ge_start σ b β₀ _) σ
+  have hls : ls K ≤ σ + γ := by
+    calc ls K ≤ b := le_max_left _ _
+      _ ≤ β₀ := hbβ
+      _ ≤ γ := infra_69_pad_recursion_ge_start σ b β₀ _
+      _ ≤ σ + γ := by rw [add_comm]; exact le_self_add
+  exact hbig.relevel hρinf hρinf' le_rfl hle hls hcB hJc0 hj id
 
 /-! ## Support copies on a linear order (English Lem 6.9, the anchor paragraphs)
 
@@ -2932,7 +3005,8 @@ at `σ + κ`). Read `p` across the chart equivalence. Place it by the padded cla
 
 A general `WorkingScheme` has no order presentation and no `Placement`. This statement is
 the single-model chain. `TupleOver.InBase` and `ApproximationSequence.ofConstFamily` are
-not used. The only unfinished step is `infra_69_place_on_fills`. -/
+not used. The level must be closed under the `σ⁺` profile recursion; a `{D.t, g}`-closure
+point need not be. -/
 theorem infra_69_assemble
     (P : SingleModelData K)
     {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
@@ -2943,7 +3017,9 @@ theorem infra_69_assemble
     (hσ : ℵ₀ ≤ σ) (hσμ : σ < μ) (hidx : #p.idx ≤ σ)
     (hτ : ℵ₀ ≤ τ) (hτμ : τ < μ)
     (hκ : ℵ₀ ≤ κ) (hκμ : κ < μ)
-    (hprod : κ * #p.idx < μ) :
+    (hprod : κ * #p.idx < μ)
+    (hclosed : infra_69_pad_recursion_closed σ (max (ls K) ℵ₀)
+      (max (max σ τ) (max (ls K) ℵ₀)) μ) :
     ∃ seq : ApproximationSequence p, seq.τ = τ ∧ #(seq.κIndex) = κ := by
   have hμSL : μ.IsStrongLimit := hμ.1.working.strongLimit
   have hη : ℵ₀ ≤ σ + κ := hσ.trans (self_le_add_right σ κ)
@@ -2964,7 +3040,7 @@ theorem infra_69_assemble
       (strong_of_equiv K e (P.hE I)) (p.incl.onVertex_strong PUnit.unit)
   obtain ⟨Q, hQ⟩ :=
     infra_69_place_on_fills P hμ base p hνμ hσ hσμ hidx hτ hτμ hIcard e incl d
-      hstrong (fun _ => rfl) (fun _ => rfl)
+      hstrong (fun _ => rfl) (fun _ => rfl) hclosed
   have hfill : OrderFillsCuts (σ + κ) I := hfills (σ + κ) le_rfl
   exact infra_69_support_copy_sequence P hμ base p hνμ σ τ κ hσ hσμ hidx hτ hτμ hκ hκμ
     hprod hIcard hfill e incl d (fun _ => rfl) (fun _ => rfl) Q hQ
@@ -2997,9 +3073,9 @@ theorem WorkingScheme.exists_approximationSequence
     (hμτ : τ < μ) (hκμ : κ < μ) (hμκ : κ * #p.idx < μ)
     (hχμ : χ < μ) :
     ∃ seq : ApproximationSequence p, seq.τ = τ ∧ #(seq.κIndex) = κ := by
-  /- The proved packaging is `infra_69_assemble` on `SingleModelData`. Nothing here identifies
-     `W` with `P.scheme`, and `infra_69_place_on_fills` is still pinned, so the general
-     existence stays open. Not a constant family. -/
+  /- `infra_69_assemble` is the single-model chain, and it needs
+     `infra_69_pad_recursion_closed`. Nothing here identifies `W` with `P.scheme`, so the
+     general existence stays open. Not a constant family. -/
   sorry
 
 end
