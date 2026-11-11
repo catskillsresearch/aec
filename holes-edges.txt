@@ -1,8 +1,9 @@
 # Hard edges from holes-graph.json
 # Convention: FROM --> TO means the English proof of TO requires FROM.
 # Apex: theorem_1_2, theorem_1_3
-# Nodes: 115  Hard edges: 143  Reach apex: 115/115
-# All nodes reach theorem_1_2 or theorem_1_3.
+# Nodes: 115  Hard edges: 146  Reach apex: 110/115
+# Not reaching theorem_1_2 or theorem_1_3 by hard edges: lemma_5_4, lemma_5_5, proposition_5_8,
+# proposition_5_9, lemma_6_1 (lemma_6_1 has only the soft edge to proposition_6_3). With soft edges all reach.
 
 claim_11_10 --> claim_11_11
 claim_11_11 --> claim_11_12
@@ -57,6 +58,7 @@ lemma_3_6 --> theorem_3_11
 lemma_3_7 --> lemma_3_8
 lemma_3_8 --> proposition_3_9
 lemma_4_1 --> proposition_4_2
+lemma_4_10 --> lemma_6_5
 lemma_4_10 --> theorem_4_11
 lemma_4_5 --> lemma_4_6
 lemma_4_5 --> lemma_6_1
@@ -102,6 +104,7 @@ proposition_4_3 --> lemma_4_10
 proposition_4_3 --> proposition_5_6
 proposition_4_3 --> theorem_4_11
 proposition_4_8 --> lemma_4_10
+proposition_4_8 --> lemma_6_5
 proposition_4_8 --> proposition_4_9
 proposition_4_8 --> proposition_6_3
 proposition_4_8 --> theorem_4_11
@@ -117,6 +120,7 @@ proposition_5_9 --> lemma_6_1
 proposition_6_12 --> proposition_6_13
 proposition_6_13 --> proposition_6_15
 proposition_6_15 --> corollary_6_16
+proposition_6_3 --> lemma_6_5
 proposition_7_3 --> proposition_7_5
 proposition_7_5 --> lemma_7_6
 proposition_7_8 --> theorem_7_9

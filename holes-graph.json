@@ -1,6 +1,6 @@
 {
   "updated": "2026-11-10",
-  "sorryCount": 60,
+  "sorryCount": 59,
   "legend": {
     "open": "No unfinished required proof-deps \u2014 try next",
     "blocked": "Waiting on incomplete required proof-deps",
@@ -23,7 +23,8 @@
     "Prop 5.6 is done (SingleModelScheme.lean, SingleModelPackage.lean), with a strengthened statement: a one-vertex working package with presentations and an object at every eligible level, on an unbounded class of closure points of {D.t, g}. Definition 5.2 was repaired first, because the planned statement was refutable (Lean-checked obstructions). (1) WorkingScheme.diagram_iso is for lists with #\u03b1 < \u03bc, and WorkingScheme.diagram_preserved for lists with #\u03b1 < \u03bc and #\u03b1 < \u03bd: unbounded, the two fields applied to the list of all occurrences of an object make every permitted arrow between objects at one level vertexwise bijective, and the stable diagram D only controls bounded lists. (2) IsSaturated.saturated assumes \u2200 i, ext (Sum.inl i) = base i: the witness extends the list whose diagram is that of the actual list (otherwise ext was unrelated to base and xs). (3) HasChainUnions.union assumes the cocone condition \u2200 i j, comp (le i j) (toZ j) = toZ i in its universal property: without it a two-element constant family identifies any two permitted arrows X \u2192 Z, which with mixed downward closure refutes every package having an object. diagram_trans / diagram_reindex / diagram_restrict / diagram_refl / diagram_symm / diagram_empty are unchanged (unbounded). Callers updated: namedWorkingScheme now takes #\u03b9 < \u03bc0 and the tail bounds \u03bc0 \u2264 \u03bc, \u2135\u2080 \u2264 \u03bc; Props 5.7, 5.8, 5.9 remain proved. Known residual: HasChainUnions.union quantifies over arrows le i j for every ordered pair (i, j) with strict composition, so its families consist of mutually inverse isomorphisms and, with the cocone condition, the clause holds in every scheme (take U := obj i\u2080); a faithful clause would index le over i \u2264 j in a directed order. Left unchanged; the real content for single models is SingleModelData.exists_directed_union. Sections 6\u201311 that consume chain unions should re-index the clause when they need it.",
     "Lemma 6.1 is done (ParameterOrbits.lean), with a repaired statement. The bare-scheme statement was refutable, and assuming a working package with presentations is not enough: nothing there makes the automorphisms of the vertex models (Lemma 4.5) structural isomorphisms of the scheme (counterexample pattern, not formalized: isomorphisms that preserve a colouring by more than \u03c7 colours). The link is the new hypothesis AssemblesStructIso W b; the English bound b is kept (hb : b + \u03c3 < \u03c7), together with the Lemma 4.5 bound h\u03c7, categoricity at the eligible levels hcat and [CategoricalUnbounded K]. The shape must have no specified map (hedge): vertex automorphisms from Lemma 4.5 need not commute with the maps of a system. This replaces a one-vertex hypothesis, which is not needed (any finite number of vertices is covered) and does not suffice for this proof (a vertex with a specified map to itself). AssemblesStructIso holds for the Prop 5.6 scheme with b = 0 and for the Prop 5.7 named scheme with b + #names. Hard edge lemma_4_5 \u2192 lemma_6_1 added. Prop 6.3 is unblocked.",
     "Prop 6.3 is done (LayoutTesting.lean): restated away from SameGaloisType/Tail/WorkingScheme (amalgamation circular with Thm 6.6; English is placed comparisons, bound independent of level) to \u2203 g : TestingFunction layout, (\u2200 \u03c3, \u2135\u2080 \u2264 g.g \u03c3) \u2227 PlacedTester K E D g.g, from exists_placedTester with g.g \u03c3 = max \u03c3 (g0 \u03c3). Layout is a descriptor tag (NaturalParameterLayout has no placement data). Hard edges: softened false lemma_6_1 \u2192 proposition_6_3 and proposition_6_3 \u2192 lemma_6_4 (English Lem 6.4 uses 6.1/4.6); added proposition_4_8 \u2192 proposition_6_3 and lemma_4_7 \u2192 proposition_6_3.",
-    "Lem 6.4 is done: restated as packaging of proposition_4_9 / compact_placement over a well-ordered presentation (hnat, hcoh; h\u03c7 = ls K + \u03c3 < \u03c7). Dropped bare WorkingScheme (refutable without coherence) and unused b. Hard edge proposition_4_9 \u2192 lemma_6_4; soft lemma_4_6 \u2192 lemma_6_4 via Prop 4.9. Softened proposition_6_3 \u2192 lemma_6_4 already."
+    "Lem 6.4 is done: restated as packaging of proposition_4_9 / compact_placement over a well-ordered presentation (hnat, hcoh; h\u03c7 = ls K + \u03c3 < \u03c7). Dropped bare WorkingScheme (refutable without coherence) and unused b. Hard edge proposition_4_9 \u2192 lemma_6_4; soft lemma_4_6 \u2192 lemma_6_4 via Prop 4.9. Softened proposition_6_3 \u2192 lemma_6_4 already.",
+    "Lem 6.5 is done (PlacedComparisons.lean), with a repaired statement. The old form had SameGaloisType (scheme amalgamation, which is Thm 6.6) on the left of the iff, a merely monotone g (the iff fails for small g), and a bare WorkingScheme with no presentation to place a tuple in; English Lem 6.5 does not use an amalgamation relation on types. It is now at the level of a presentation, under hL : ClosedLevel K E D g \u03bc with I a well-order of size \u03bc, A = E(I), and tuples d\u2080, d\u2081 of length \u2264 \u03c3 < \u03bc in strong \u03bc-extensions B\u2080, B\u2081 of A: (1) some placement lifts the bounded diagrams of d\u2080 (Placement.LiftsBounded); (2) any two such placements agree over all of A (Placement.AgreeOn \u2026 Set.univ); (3) for lifts P\u2080 of d\u2080 and P\u2081 of d\u2081, P\u2080.AgreeOn P\u2081 Set.univ iff the diagrams of d\u2080 and d\u2081 agree at the bounded levels \u03c1 < \u03bc over all parameter lists p : \u03b2 \u2192 A with #\u03b2 \u2264 g \u03c3 + ls K (the right side of Thm 4.11 clause 2). \u03c3 is any infinite bound on the length, in place of |v| + \u2135\u2080. The last sentence of the English statement (other natural parameter layouts) is not formalized: NaturalParameterLayout has no placement data. Proof: (1), (2) are Lemma 4.10 (exists_boundedDiagramLift, Placement.LiftsBounded.agreeOn_univ); (3) \u2190 is the placed tester (agreeOn_univ_of_tests), (3) \u2192 is new (Placement.LiftsBounded.same_of_agreeOn: equal comparisons make the placement of d\u2080 lift d\u2081, by Placement.LiftsBounded.of_agreeOn, so both tuples have the diagram of its placed tuple; this holds for every bounded query). Hard edges added: lemma_4_10 \u2192 lemma_6_5, proposition_4_8 \u2192 lemma_6_5, and proposition_6_3 \u2192 lemma_6_5 (the English proof says Proposition 6.3 identifies the full placed comparisons; in Lean its PlacedTester is the tester of ClosedLevel). lemma_6_4 \u2192 lemma_6_5 stays hard: the English proof applies Lemma 6.4, and the Lean proof reaches the same compact_placement through Lemma 4.10. Thm 6.6 is unblocked (its only hard dep was Lem 6.5); its Lean statement is still the bare-WorkingScheme / SameGaloisType form."
   ],
   "nodes": [
     {
@@ -408,8 +409,9 @@
       "label": "Lem 6.5",
       "section": 6,
       "file": "AEC/Section6/Results.lean",
-      "status": "open",
-      "blocker": null
+      "status": "done",
+      "blocker": null,
+      "detail": "PlacedComparisons.lean: placedComparisons = exists_placedComparison (exists_boundedDiagramLift) + placedComparison_unique (Placement.LiftsBounded.agreeOn_univ) + placedComparison_agree_iff_tests (\u2190 agreeOn_univ_of_tests; \u2192 Placement.LiftsBounded.same_of_agreeOn via Placement.LiftsBounded.of_agreeOn, D.trans, D.symm). Statement repair: dropped SameGaloisType/Tail/WorkingScheme and the monotone-only g; presentation-level under ClosedLevel K E D g \u03bc with existence, uniqueness over all of A, and the testing iff at bounded levels \u03c1 < \u03bc with #\u03b2 \u2264 g \u03c3 + ls K. hs\u2081 is not used by the proof. No sorry (axioms: propext, Classical.choice, Quot.sound)."
     },
     {
       "id": "lemma_6_9",
@@ -465,8 +467,9 @@
       "label": "Thm 6.6",
       "section": 6,
       "file": "AEC/Section6/Results.lean",
-      "status": "blocked",
-      "blocker": null
+      "status": "open",
+      "blocker": null,
+      "detail": " Unblocked: hard dep lemma_6_5 closed."
     },
     {
       "id": "lemma_7_11",
@@ -1051,7 +1054,8 @@
     {
       "from": "lemma_6_4",
       "to": "lemma_6_5",
-      "kind": "hard"
+      "kind": "hard",
+      "note": "English proof applies Lemma 6.4 at \u03c7 = c(|v| + \u2135\u2080, \u03c4). Lean: exists_boundedDiagramLift \u2192 exists_placement_lifting \u2192 compact_placement, which is proposition_4_9 = lemma_6_4."
     },
     {
       "from": "lemma_6_5",
@@ -1710,7 +1714,25 @@
       "to": "lemma_6_4",
       "kind": "soft",
       "note": "Via proposition_4_9 / compact_placement block interchange."
+    },
+    {
+      "from": "lemma_4_10",
+      "to": "lemma_6_5",
+      "kind": "hard",
+      "note": "Lean: exists_boundedDiagramLift (existence of the placed comparison) and Placement.LiftsBounded.agreeOn_univ (uniqueness over all of A)."
+    },
+    {
+      "from": "proposition_4_8",
+      "to": "lemma_6_5",
+      "kind": "hard",
+      "note": "Placed tester (ClosedLevel.tester) in agreeOn_univ_of_tests: agreement on tests of size \u2264 g(\u03c3) + \u2113 gives equal comparisons."
+    },
+    {
+      "from": "proposition_6_3",
+      "to": "lemma_6_5",
+      "kind": "hard",
+      "note": "English: Proposition 6.3 identifies the full placed comparisons of two outputs of Lemma 6.4. Lean: the PlacedTester of proposition_6_3 is the tester of ClosedLevel."
     }
   ],
-  "doneCount": 52
+  "doneCount": 53
 }

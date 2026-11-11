@@ -116,6 +116,7 @@ public import AEC.Section6.MajorityValue
 public import AEC.Section6.LayoutTesting
 public import AEC.Section6.NaturalParameterLayout
 public import AEC.Section6.ParameterOrbits
+public import AEC.Section6.PlacedComparisons
 public import AEC.Section6.ProductType
 public import AEC.Section6.Query
 public import AEC.Section6.Results

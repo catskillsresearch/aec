@@ -10,6 +10,7 @@ public import AEC.Section6.LayoutTesting
 public import AEC.Section5.PackageClauses
 public import AEC.Section6.SupportClosure
 public import AEC.Section6.ParameterOrbits
+public import AEC.Section6.PlacedComparisons
 
 @[expose] public section
 
@@ -96,8 +97,8 @@ needs Theorem 6.6 and is not the English statement; English Prop 6.3 is the ordi
 tester of Proposition 4.8 for placed comparisons (cf. Lemma 6.5: amalgamation is not required).
 With `NaturalParameterLayout` still a descriptor skeleton, the conclusion is
 `PlacedTester K E D g.g` packaged as `TestingFunction layout` (`LayoutTesting.lean`), from
-`exists_placedTester`. Lemma 6.1 is not used. The Galois-type form for actual tuples is
-Lemma 6.5. -/
+`exists_placedTester`. Lemma 6.1 is not used. The placed comparisons of actual tuples are
+Lemma 6.5; the Galois-type form is Theorem 6.6. -/
 theorem proposition_6_3 (K : AbstractElementaryClass.{u})
     [CategoricalUnbounded K]
     (E : OrderPresentation K) (D : StableDiagram K)
@@ -143,22 +144,68 @@ theorem lemma_6_4 (K : AbstractElementaryClass.{u}) [CategoricalUnbounded K]
             (fun b => E.map f (q hβ p (Sum.inr b)))) :=
   proposition_4_9 K E D σ χ hσinf hσ hχ hpow hI q hnat hcoh
 
-/-- **Lemma 6.5** (Placed comparisons of actual tuples). The diagrams of a bounded tuple over
-bounded subsets of the base have one placed comparison, and two tuples have the same
-comparison if and only if their diagrams agree on queries of size at most `g(|v| + ℵ₀)`. -/
-theorem lemma_6_5 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
-    (W : WorkingScheme K S) (g : Cardinal.{u} → Cardinal.{u})
-    (hg : ∀ σ τ, σ ≤ τ → g σ ≤ g τ) :
-    ∃ T, ∃ hT : Tail W.eligible T,
-      ∀ μ (hμ : μ ∈ T) (A : W.Object μ (Tail.mem hT hμ))
-        (p q : TupleOver K S W (Tail.mem hT hμ) A) (e : p.idx ≃ q.idx),
-        #p.idx < μ →
-        SameGaloisType p q (Equiv.refl p.idx) e.symm ↔
-          ∀ {ι : Type u} (Z : ι → Occurrence K S (W.asSystem _ A)),
-            #ι ≤ g (#p.idx + aleph0) →
-            W.DiagramEq (X := p.host) (Y := q.host) (typeJoint (p := p) Z)
-              (reindexJoint e.symm (typeJoint (p := q) Z)) := by
-  sorry
+/-- **Lemma 6.5** (Placed comparisons of actual tuples). Let `A = E(I)` be a well-ordered
+presentation of a `μ`-model at a closed level `μ`, and let `d₀`, `d₁` be tuples of length at
+most `σ < μ` in strong extensions `B₀`, `B₁` of `A` of size `μ`. Then:
+
+1. the diagrams of `d₀` over the bounded subsets of `A` have a placed comparison: a placement
+   over `I` lifting them (`Placement.LiftsBounded`);
+2. this comparison is unique as a diagram over all of `A` (`Placement.AgreeOn … Set.univ`);
+3. the comparisons of `d₀` and `d₁` are equal if and only if the diagrams of `d₀` and `d₁`
+   agree over the queries in `A` of size at most `g(σ) + ℓ`.
+
+The old Lean form had `SameGaloisType` (scheme amalgamation) on the left of the iff. That is
+Theorem 6.6, and English Lemma 6.5 does not use an amalgamation relation on types. Its `g`
+was only monotone, so the iff failed for small `g`, and a bare `WorkingScheme` has no
+presentation in which to place a tuple. The statement is now at the level of a presentation,
+as for Proposition 6.3 and Lemma 6.4, with the hypotheses of Lemma 4.10 and Theorem 4.11 (2):
+
+* `hL : ClosedLevel K E D g μ` (`g` is a `PlacedTester`, `μ > ℓ` is a closure point of
+  `{t, g}` and a categoricity cardinal) replaces the tail of eligible levels;
+* the tests are at the bounded levels `ρ < μ`, over all parameter lists `p : β → A` with
+  `#β ≤ g σ + ls K` (`β` is quantified inside the iff; `+ ls K` because `PlacedTester` bounds
+  positions of `I`, and at most `g(σ)` positions support at most `g(σ) + ℓ` elements);
+* `σ` is any infinite bound on the length, in place of `|v| + ℵ₀`.
+
+`hs₁` is not used by the proof: a comparison of `d₁` is assumed in clause 3, and its existence
+is clause 1 with the two extensions exchanged. The last sentence of the English statement
+(other natural parameter layouts) is not formalized, since `NaturalParameterLayout` carries no
+placement data.
+
+Proof: `placedComparisons` (`PlacedComparisons.lean`). Existence and uniqueness are Lemma 4.10
+(`exists_boundedDiagramLift`, `Placement.LiftsBounded.agreeOn_univ`). In clause 3, sufficiency
+is the placed tester of Proposition 4.8 (`agreeOn_univ_of_tests`); for necessity, equal
+comparisons make the placement of `d₀` lift `d₁` as well, so both tuples have the diagram of
+its placed tuple (`Placement.LiftsBounded.same_of_agreeOn`). -/
+theorem lemma_6_5 (K : AbstractElementaryClass.{u}) [CategoricalUnbounded K]
+    (E : OrderPresentation K) (D : StableDiagram K)
+    (g : Cardinal.{u} → Cardinal.{u})
+    {μ : Cardinal.{u}} (hL : ClosedLevel K E D g μ)
+    {I : Type u} [LinearOrder I] [Nonempty I] [WellFoundedLT I] (hI : #I = μ)
+    {B₀ B₁ : Model K.τ}
+    (incl₀ : Language.Embedding K.τ (E.obj I).carrier B₀.carrier)
+    (incl₁ : Language.Embedding K.τ (E.obj I).carrier B₁.carrier)
+    (hB₀ : K.Mem B₀) (hB₁ : K.Mem B₁)
+    (hs₀ : K.Strong incl₀) (hs₁ : K.Strong incl₁)
+    (hc₀ : Model.card B₀ = μ) (hc₁ : Model.card B₁ = μ)
+    {α : Type u} {σ : Cardinal.{u}} (hσinf : aleph0 ≤ σ) (hσ : σ < μ) (hα : #α ≤ σ)
+    (d₀ : α → B₀.carrier) (d₁ : α → B₁.carrier) :
+    (∃ P₀ : Placement E.lab E.arity I α, P₀.LiftsBounded E D hB₀ incl₀ d₀ μ) ∧
+    (∀ P P' : Placement E.lab E.arity I α,
+      P.LiftsBounded E D hB₀ incl₀ d₀ μ → P'.LiftsBounded E D hB₀ incl₀ d₀ μ →
+      P.AgreeOn E D P' Set.univ) ∧
+    (∀ P₀ P₁ : Placement E.lab E.arity I α,
+      P₀.LiftsBounded E D hB₀ incl₀ d₀ μ →
+      P₁.LiftsBounded E D hB₁ incl₁ d₁ μ →
+      (P₀.AgreeOn E D P₁ Set.univ ↔
+        ∀ {β : Type u}, #β ≤ g σ + ls K → ∀ (ρ : Cardinal.{u}),
+          aleph0 ≤ ρ → ρ < μ → ∀ (p : β → (E.obj I).carrier)
+            (hj : #(α ⊕ β) ≤ ρ)
+            (ht₀ : D.t ρ ≤ Model.card B₀) (ht₁ : D.t ρ ≤ Model.card B₁),
+          D.same hj hB₀ hB₁ ht₀ ht₁
+            (Sum.elim d₀ (fun b => incl₀ (p b)))
+            (Sum.elim d₁ (fun b => incl₁ (p b))))) :=
+  placedComparisons hL hI hs₀ hc₀ hc₁ hσinf hσ hα d₀ d₁
 
 /-- **Theorem 6.6** (Amalgamation and types for a scheme). At sufficiently closed levels the
 scheme has amalgamation, and an amalgam identifying two bounded tuples exists if and only if
