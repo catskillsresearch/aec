@@ -20,7 +20,7 @@ English steps:
 1. By the rich-order and padding constructions of Lemmas 5.5 and 5.4, present `A` on a padded
    chart (`exists_denseRichOrder`, `exists_richPaddedOrder`, `lemma_5_4`).
 2. Lemma 6.5 / compact placement places `p = tp(v/A)` at query size `τ`
-   (`infra_69_place_type` is pinned: the padded index is not a well-order).
+   on the well-ordered skeleton of the padded chart (`infra_69_place_type`).
 3. Keep shared old-chart supports; partition other supports by cuts; anchors have size at most
    `σ + ℵ₀` (`ChartSupport`, the pure-order infras below).
 4. In each anchor slot, choose `κ` pairwise disjoint convex regions and put a copy of the
@@ -215,61 +215,99 @@ chart, places `p` correctly at size `τ`.
 English (eventual.pdf §6.2): "Lemma 6.5, or its compact-placement proof in the padded chart,
 places `p` correctly at size `τ`."
 
-On `SingleModelData` the padded chart is an order presentation: `HasPresentations.present_equiv`
-(categoricity) identifies `E(I)` with the base, and `p.incl` carries that chart into the host of
-`p`. The tuple `d` is `p` read in the host. `τ < μ`, so a `Placement.LiftsBounded` witness is
-correct for every query of size `τ`.
+Lemma 5.5's padded chart `I` is dense. `IsPadded` supplies a skeleton `s ⊆ I` with
+`#s = #I = μ` and `WellFoundedLT s` (the inclusion into the padded chart is
+`OrderEmbedding.subtype (· ∈ s)`). Categoricity identifies `E(s)` with the base, and `p.incl`
+carries that chart into the host of `p`. The tuple `d` is `p` read in the host. So `s` is a
+well-ordered presentation of `A` of size `μ`, in the sense of Lemma 6.5, sitting inside the
+padded index. The placement is over `s`. It is not a placement over the dense order `I`, and
+`I` is not treated as `WellFoundedLT`.
 
-Pinned. The Lean API does not supply that witness on the padded index.
+`exists_boundedDiagramLift` needs one function that is both a `PlacedTester` and a strict
+closure bound of `μ`. `exists_placedTester P.E P.D` gives `placedTestBound`, while
+`μ ∈ P.eligible` is only `IsClosurePoint {P.D.t, P.g}` (`P.g` is the closure bound of the
+eligible levels). Nothing puts `placedTestBound θ < μ` for every infinite `θ < μ`, so the full
+`LiftsBounded` witness (every query of size `< μ`) is not obtained from these APIs. Compact
+placement (`exists_placement_lifting`) at one `χ` with `τ ≤ χ < μ`, `χ ^ σ = χ`, and
+`ℓ + σ < χ` does not need a tester. The resulting placement realizes every query of size at
+most `τ`.
 
-* `exists_boundedDiagramLift`, `compact_placement`, and `lemma_6_4` (`proposition_4_9`) all
-  require `[WellFoundedLT I]`. Lemma 5.5's padded chart is dense, so it is not a well-order.
-* English Lemma 6.4's clause for a padded order that need not be well-ordered, at one test
-  size, is not formalized.
-* `exists_boundedDiagramLift` also needs a `PlacedTester`. `SingleModelData.g` is only the
-  closure bound of the eligible levels.
-* `HasPresentations.present_equiv` is a carrier equivalence. `TermTemplate` has no
-  `OrderPresentation.realize` and no `SupportTerm` data, so a general `WorkingScheme` does not
-  produce a `Placement`. `WorkingScheme.DiagramEq` is not `StableDiagram.same`.
-* `SingleModelData.chart` identifies an object with `E(lvlOrder μ)`. There is no API transporting
-  a `Placement` along a categoricity isomorphism onto the supporting positions of a different
-  index order.
-
-No free-lift or constant-family substitute is used. -/
+A general `WorkingScheme` still has no `Placement`: this statement is for `SingleModelData`,
+whose template is the order presentation `E`. No constant-family substitute is used. -/
 theorem infra_69_place_type
     (P : SingleModelData K)
     {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
     (base : P.scheme.Object μ hμ)
     (p : TupleOver K oneVertexShape P.scheme hμ base)
     (hνμ : p.ν = μ)
-    {σ τ : Cardinal.{u}} (_hσ : ℵ₀ ≤ σ) (_hσμ : σ < μ) (_hidx : #p.idx ≤ σ)
-    (_hτ : ℵ₀ ≤ τ) (hτμ : τ < μ)
+    {σ τ : Cardinal.{u}} (hσ : ℵ₀ ≤ σ) (hσμ : σ < μ) (hidx : #p.idx ≤ σ)
+    (hτ : ℵ₀ ≤ τ) (hτμ : τ < μ)
     (I : Type u) [LinearOrder I] [Nonempty I] [IsPadded I] (hI : #I = μ) :
-    ∃ (e : (P.E.obj I).carrier ≃[K.τ] base.model.carrier)
-      (incl : Language.Embedding K.τ (P.E.obj I).carrier p.host.model.carrier)
-      (d : p.idx → p.host.model.carrier),
-      K.Strong incl ∧
-      (∀ a, incl a = (p.incl.onVertex PUnit.unit) (e a)) ∧
-      (∀ i, d i = p.host.val (p.val i)) ∧
-      Model.card p.host.model = μ ∧
-      τ < μ ∧
-      ∃ Q : Placement P.E.lab P.E.arity I p.idx,
-        Q.LiftsBounded P.E P.D p.host.mem incl d μ := by
-  obtain ⟨e⟩ := P.hasPresentations.present_equiv hμ base I hI PUnit.unit
-  refine ⟨e, (p.incl.onVertex PUnit.unit).comp e.toEmbedding, fun i => p.host.val (p.val i),
-      ?_, fun _ => rfl, fun _ => rfl, ?_, hτμ, ?_⟩
-  · exact K.strong_trans e.toEmbedding (p.incl.onVertex PUnit.unit)
-      (strong_of_equiv K e (P.hE I)) (p.incl.onVertex_strong PUnit.unit)
-  · simpa [hνμ] using p.host.card
-  · -- `LiftsBounded` is `exists_boundedDiagramLift` on `I`. That lemma needs `WellFoundedLT I`
-    -- and a `PlacedTester`; this padded `I` supplies neither. See the docstring.
-    sorry
+    ∃ (s : Set I) (_ : Nonempty s) (_ : WellFoundedLT s),
+      #s = μ ∧
+      ∃ (e : (P.E.obj s).carrier ≃[K.τ] base.model.carrier)
+        (incl : Language.Embedding K.τ (P.E.obj s).carrier p.host.model.carrier)
+        (d : p.idx → p.host.model.carrier),
+        K.Strong incl ∧
+        (∀ a, incl a = (p.incl.onVertex PUnit.unit) (e a)) ∧
+        (∀ i, d i = p.host.val (p.val i)) ∧
+        Model.card p.host.model = μ ∧
+        ∃ Q : Placement P.E.lab P.E.arity s p.idx,
+          ∀ {β : Type u} (ρ : Cardinal.{u}), ℵ₀ ≤ ρ → ρ ≤ τ →
+            ∀ (q : β → (P.E.obj s).carrier) (hj : #(p.idx ⊕ β) ≤ ρ),
+              Q.Lifts P.E P.D p.host.mem incl d ρ hj q := by
+  obtain ⟨s, hsCard, hsWF⟩ := IsPadded.padded (I := I)
+  have hsμ : #s = μ := hsCard.trans hI
+  let _ : WellFoundedLT s := hsWF
+  have hsNe : Nonempty s :=
+    mk_ne_zero_iff.mp (by
+      rw [hsμ]
+      exact ne_of_gt (aleph0_pos.trans_le (P.aleph0_le hμ)))
+  let _ : Nonempty s := hsNe
+  have : CategoricalUnbounded K := P.D.categoricalUnbounded
+  obtain ⟨e⟩ := P.hasPresentations.present_equiv hμ base s hsμ PUnit.unit
+  let incl : Language.Embedding K.τ (P.E.obj s).carrier p.host.model.carrier :=
+    (p.incl.onVertex PUnit.unit).comp e.toEmbedding
+  let d : p.idx → p.host.model.carrier := fun i => p.host.val (p.val i)
+  have hstrong : K.Strong incl :=
+    K.strong_trans e.toEmbedding (p.incl.onVertex PUnit.unit)
+      (strong_of_equiv K e (P.hE s)) (p.incl.onVertex_strong PUnit.unit)
+  have hcardB : Model.card p.host.model = μ := by simpa [hνμ] using p.host.card
+  have hcardS : Model.card (P.E.obj s) = μ := P.card_obj_eq hμ s hsμ
+  have hμinf : ℵ₀ ≤ μ := P.aleph0_le hμ
+  have hsum : ls K + σ < μ := add_lt_of_lt hμinf (P.ls_lt hμ) hσμ
+  have hκμ : max τ (ls K + σ) < μ := max_lt hτμ hsum
+  obtain ⟨χ, hχgt, hχμ, hpow⟩ :=
+    exists_power_fixed_below hμ.1.working.strongLimit hσ hσμ hκμ
+  have hτχ : τ < χ := (le_max_left τ (ls K + σ)).trans_lt hχgt
+  have hlsχ : ls K + σ < χ := (le_max_right τ (ls K + σ)).trans_lt hχgt
+  have hρχμ : σ + χ < μ := add_lt_of_lt hμinf hσμ hχμ
+  have hρinf : ℵ₀ ≤ σ + χ := (hτ.trans hτχ.le).trans (self_le_add_left χ σ)
+  have ht : P.D.t (σ + χ) ≤ μ := (P.t_lt hμ hρinf hρχμ).le
+  obtain ⟨Q, hQ⟩ := exists_placement_lifting (hB := p.host.mem) (incl := incl) (d := d)
+    hstrong (P.categorical hμ) hcardB hcardS hσ hidx hlsχ hpow ht
+  refine ⟨s, hsNe, hsWF, hsμ, e, incl, d, hstrong, fun _ => rfl, fun _ => rfl, hcardB, Q, ?_⟩
+  intro β ρ hρinf' hρτ q hj
+  have hβχ : #β ≤ χ := by
+    refine le_trans ?_ (hj.trans (hρτ.trans hτχ.le))
+    rw [mk_sum, lift_id, lift_id]
+    exact self_le_add_left _ _
+  have hjχ : #(p.idx ⊕ β) ≤ σ + χ :=
+    hj.trans (hρτ.trans (hτχ.le.trans (self_le_add_left χ σ)))
+  have hls : ls K ≤ σ + χ :=
+    (self_le_add_right (ls K) σ).trans (hlsχ.le.trans (self_le_add_left χ σ))
+  have hBc : P.D.t (σ + χ) ≤ Model.card p.host.model := ht.trans hcardB.ge
+  have hJc : P.D.t (σ + χ) ≤ Model.card (P.E.obj Q.J) :=
+    (ht.trans hcardS.ge).trans (mk_le_of_injective (P.E.map Q.f).injective)
+  exact (hQ hβχ q hjχ).relevel hρinf hρinf' le_rfl
+    (hρτ.trans (hτχ.le.trans (self_le_add_left χ σ))) hls hBc hJc hj id
 
 /-! ## Support copies on a linear order (English Lem 6.9, the anchor paragraphs)
 
 `ChartSupport` is the old chart `I ↪o J` together with the supporting positions of a placed
 tuple. The infras below are the order combinatorics of those positions. They do not use a
-`Placement`: `infra_69_place_type` is what would supply the positions, and it is pinned. -/
+`Placement`. `infra_69_place_type` places `p` over the skeleton of a padded chart, correctly
+for queries of size at most `τ`; these combinatorics do not read that placement. -/
 
 open Function Set Classical
 
@@ -1377,9 +1415,8 @@ theorem infra_69_lem61_off_hits
   /- English (eventual.pdf §6.2): "Their anchor slots are disjoint, so Lemma 6.1 gives
      `D(vᵢ, Z) = p↾Z`."
      Missing API:
-     * `infra_69_place_type` does not produce `Placement.LiftsBounded` on the padded chart
-       (`WellFoundedLT`, `PlacedTester`, and transport of a `Placement` along categoricity
-       are absent);
+     * `infra_69_place_type` places `p` over the well-ordered skeleton, for queries of size at
+       most `τ` (`Placement.Lifts`). It does not produce a `WorkingScheme.DiagramEq`;
      * there is no reading of an order-support copy as an `Occurrence` list for which
        `WorkingScheme.DiagramEq` is `StableDiagram.same`;
      * `lemma_6_1` / `WorkingScheme.exists_parameter_orbit_reps` bounds the number of diagrams
@@ -1488,7 +1525,8 @@ theorem infra_69_assemble
   /- English (eventual.pdf §6.2, Definition 6.8): package the support-copy family into an
      approximation sequence (`concat_bounded`, `few_exceptions`).
      Missing API:
-     * `infra_69_place_type` supplies no `Placement.LiftsBounded` witness on the padded chart;
+     * `infra_69_place_type` places `p` over the skeleton for queries of size at most `τ`, and
+       supplies no `Occurrence` family;
      * `infra_69_lem61_off_hits` is the missing `WorkingScheme.DiagramEq` for indices whose
        supports avoid the copy regions, which is what `few_exceptions` asks for.
      `infra_69_copy_cluster`, `infra_69_hit_bound`, `infra_69_finitary_exceptions`, and
@@ -1504,8 +1542,9 @@ abbrev support_copy_exception_and_assembly := @infra_69_assemble
 /-- Uniform approximation sequences for `p = tp(v/A)` with `#p.idx ≤ σ` (English Lemma 6.9).
 
 Hypotheses match Lemma 6.1 packaging. The proof follows the English paragraphs above; it is
-pinned at `infra_69_assemble` (`infra_69_place_type`'s `LiftsBounded` witness and
-`infra_69_lem61_off_hits`). Steps 1–2 invoke Lemmas 5.5 and 5.4. -/
+pinned at `infra_69_assemble` (`infra_69_lem61_off_hits` is the missing `DiagramEq`).
+On `SingleModelData`, `infra_69_place_type` places `p` over the skeleton at size `τ`.
+Steps 1–2 invoke Lemmas 5.5 and 5.4. -/
 theorem WorkingScheme.exists_approximationSequence
     [CategoricalUnbounded K] (F : TermTemplate K S) [hpres : HasPresentations W F]
     [hpack : HasChainUnions W]
@@ -1532,10 +1571,11 @@ theorem WorkingScheme.exists_approximationSequence
       trivial
     · -- Without `μ` a strong limit, English cites cut filling at `2^τ` only.
       trivial
-  -- English step 2: `infra_69_place_type` unpacks `p` on the padded chart and is pinned at
-  -- `exists_boundedDiagramLift` (`WellFoundedLT` / `PlacedTester`).
-  -- English steps 3–4: `ChartSupport` proves the anchor and pattern-arity infras. Copying into
-  -- the regions still needs the pinned placement.
+  -- English step 2, on `SingleModelData`: `infra_69_place_type` places `p` over the
+  -- well-ordered skeleton of the padded chart, for queries of size at most `τ`. This
+  -- general-scheme existence has no `SingleModelData`, so the placement is not unpacked here.
+  -- English steps 3–4: `ChartSupport` proves the anchor and pattern-arity infras. The copy
+  -- family is still packaged by `infra_69_assemble`.
   have hη : aleph0 ≤ max τ σ := le_trans hτ (le_max_left τ σ)
   have hpattern : EnglishOrderPatternRealized (max τ σ) :=
     english_orderPattern_realized_over_old (max τ σ) hη

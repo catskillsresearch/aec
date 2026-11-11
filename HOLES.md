@@ -109,7 +109,7 @@ counterexample refutes the program.
 **Dependency rule:** edge B→A only if the English proof of A requires B, or A
 needs an explicit Lean infra subgoal B (not a paper-number chain).
 
-**Open (frontier):** `infra_69_place_type` (pinned: `LiftsBounded` / well-order / `PlacedTester`), `infra_69_lem61_off_hits` (pinned: DiagramEq-from-copy). `infra_69_assemble` blocked on those; `lemma_6_9` blocked on `infra_69_assemble`; `theorem_6_10` blocked on `lemma_6_9`. Statement onto English (S1–S5) done; `infra_55_*` and ChartSupport order/copy/combinatorial infras done.
+**Open (frontier):** `infra_69_lem61_off_hits` (pinned: DiagramEq-from-copy). `infra_69_place_type` **done** (placement ≤τ on IsPadded well-ordered skeleton). `infra_69_assemble` / `lemma_6_9` / `theorem_6_10` blocked. Statement onto English (S1–S5) done.
 **Note:** `lemma_6_1`, `theorem_3_11`, `proposition_5_6`, `proposition_5_7`, `lemma_4_6`, `lemma_6_14`, `proposition_4_3`, `lemma_4_5`, `lemma_4_7`, `proposition_4_8`, `proposition_4_9`, `lemma_4_10`, `theorem_4_11`, `theorem_6_6`, `corollary_6_7`, `proposition_5_8`, `proposition_5_9`,
 `infra_pair_coloring_glue`, `infra_rank_slice`, `infra_type_u_witness_set`, `infra_countable_back_and_forth`, `infra_stable_diagram_realize`, `infra_zeta_model_existence`, `infra_eligible_reclass`, `infra_template_fixed_support`, `infra_named_working_scheme`, `infra_named_working_package`, `infra_single_model_scheme`, `infra_single_model_package` are done.
 Lean 5.8 is the residual `diagram_iso`+`structural_iso` form.
