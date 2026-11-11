@@ -18,8 +18,8 @@ with same-level host `p.ν = μ`. `IsFreeLift` queries are bounded by the sequen
 (English testing cost), not every `#ι < ν`. Cross-scheme transfer is not used.
 
 **Open tips.** English E5 `infra_610_chart_prescriptions`, majority clause
-`infra_610_majority_of_placement`, E7 tests `infra_610_galois_tests_of_placement`
-(assembled by `infra_610_majority_prescription`). E6 `infra_610_place_prescriptions` and
+`infra_610_majority_of_placement` (assembled by `infra_610_majority_prescription`).
+E6 `infra_610_place_prescriptions`, E7 `infra_610_galois_tests_of_placement`, and
 `infra_610_closed_level` are done.
 -/
 
@@ -257,11 +257,16 @@ English path (see `FreeExtension.md`): well-ordered chart of `B` → majority pr
 via `move_query` (E5) → `proposition_4_9` / `lemma_6_4` → wrap as `TupleOver` over `B` (E6) →
 Thm 6.6 diagram tests (E7). Split so each English step is its own tip. -/
 
-/-- English E5 data: Prop 4.9 `q` / `hnat` / `hcoh` package on a well-ordered chart of `B`. -/
+/-- English E5 data: Prop 4.9 `q` / `hnat` / `hcoh` package on a well-ordered chart of `B`,
+plus the Thm 6.6 diagram tests of `p` against the chart-root free-lift representative. -/
 structure Infra610ChartPrescriptions
     {K : AbstractElementaryClass.{u}} (P : SingleModelData K) (σ : Cardinal.{u})
     {μ : Cardinal.{u}} {hμ : μ ∈ P.eligible}
-    (B : P.scheme.Object μ hμ) (α : Type u) (τBound : Cardinal.{u}) where
+    {A B : P.scheme.Object μ hμ}
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ B))
+    (hf : P.scheme.permitted (X := A) (Y := B) f)
+    (p : TupleOver K oneVertexShape P.scheme hμ A)
+    (τBound : Cardinal.{u}) where
   I : Type u
   linOrder : LinearOrder I
   nonempty : Nonempty I
@@ -273,10 +278,12 @@ structure Infra610ChartPrescriptions
   hχμ : χ < μ
   hpow : χ ^ σ = χ
   hτχ : τBound ≤ χ
+  /-- Testing bound of Thm 6.6 fits under the Prop 4.9 `χ`. -/
+  htestχ : P.g σ + ls K ≤ χ
   eB : (@OrderPresentation.obj K P.E I linOrder nonempty).carrier ≃[K.τ] B.model.carrier
   qPres : ∀ {β : Type u}, #β ≤ χ →
     (β → (@OrderPresentation.obj K P.E I linOrder nonempty).carrier) →
-    α ⊕ β → (@OrderPresentation.obj K P.E I linOrder nonempty).carrier
+    p.idx ⊕ β → (@OrderPresentation.obj K P.E I linOrder nonempty).carrier
   hnat : ∀ {β : Type u} (hβ : #β ≤ χ)
     (params : β → (@OrderPresentation.obj K P.E I linOrder nonempty).carrier)
     (hpar : #β ≤ σ + χ)
@@ -286,15 +293,48 @@ structure Infra610ChartPrescriptions
       (fun b => qPres hβ params (Sum.inr b)) params
   hcoh : ∀ {β β' : Type u} (hβ : #β ≤ χ) (hβ' : #β' ≤ χ)
     (params : β → (@OrderPresentation.obj K P.E I linOrder nonempty).carrier)
-    (ι : β' → β) (hjoint : #(α ⊕ β') ≤ σ + χ)
+    (ι : β' → β) (hjoint : #(p.idx ⊕ β') ≤ σ + χ)
     (hcardI : P.D.t (σ + χ) ≤
       Model.card (@OrderPresentation.obj K P.E I linOrder nonempty)),
     P.D.same hjoint hImem hImem hcardI hcardI
       (fun i => qPres hβ params (Sum.map id ι i))
       (qPres hβ' (fun b => params (ι b)))
+  /-- Chart-root coordinates on `B` (empty-parameter free lift, pushed by `eB`). -/
+  root : p.idx → B.model.carrier
+  /-- Thm 6.6 tests: `p` vs the chart-root `TupleOver` on `B` (identity reindexing).
+  Stated against `chartRoot`-shaped data so E7 is packaging-only. -/
+  hgalois : ∀ {β : Type u} (_ : #β ≤ P.g σ + ls K) (ρ : Cardinal.{u}) (_ : aleph0 ≤ ρ)
+    (_ : ρ < μ) (params : β → A.model.carrier) (hjoint : #(p.idx ⊕ β) ≤ ρ)
+    (h₀ : P.D.t ρ ≤ Model.card p.host.model)
+    (h₁ : P.D.t ρ ≤ Model.card B.model),
+    P.D.same hjoint p.host.mem B.mem h₀ h₁
+      (Sum.elim (fun i => p.host.val (p.val ((Equiv.refl p.idx).symm i)))
+        (fun b => p.incl.onVertex PUnit.unit (params b)))
+      (Sum.elim (fun i => B.val (B.occ (root i)))
+        (fun b =>
+          (SystemArrow.comp f (SystemArrow.refl (P.scheme.asSystem hμ B))).onVertex
+            PUnit.unit (params b)))
 
-/-- **Open (E5).** Well-ordered chart of `B` and majority prescriptions as Prop 4.9
-`q`/`hnat`/`hcoh` data (via `move_query` + uniqueness). No placement yet. -/
+/-- Chart-root free-lift representative on `B` (E6 wrap). -/
+noncomputable def Infra610ChartPrescriptions.chartRoot
+    {K : AbstractElementaryClass.{u}} {P : SingleModelData K} {σ : Cardinal.{u}}
+    {μ : Cardinal.{u}} {hμ : μ ∈ P.eligible}
+    {A B : P.scheme.Object μ hμ}
+    {f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ B)}
+    {hf : P.scheme.permitted (X := A) (Y := B) f}
+    {p : TupleOver K oneVertexShape P.scheme hμ A} {τBound : Cardinal.{u}}
+    (data : Infra610ChartPrescriptions (hμ := hμ) P σ f hf p τBound) :
+    TupleOver K oneVertexShape P.scheme hμ B where
+  ν := μ
+  hν := hμ
+  host := B
+  incl := SystemArrow.refl (P.scheme.asSystem hμ B)
+  incl_arrow := trivial
+  idx := p.idx
+  val := fun a => B.occ (data.root a)
+
+/-- **Open (E5).** Well-ordered chart of `B`, majority prescriptions as Prop 4.9 data, and
+Thm 6.6 diagram tests of `p` vs the chart-root (via `move_query` + uniqueness). -/
 theorem infra_610_chart_prescriptions
     (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ)
     {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
@@ -305,46 +345,29 @@ theorem infra_610_chart_prescriptions
     (p : TupleOver K oneVertexShape P.scheme hμ A)
     (hνμ : p.ν = μ) (hidx : #p.idx ≤ σ) (hidxμ : #p.idx < μ)
     (seq : ApproximationSequence p) (hτμ : seq.τ < μ) :
-    Nonempty (Infra610ChartPrescriptions (hμ := hμ) P σ B p.idx seq.τ) := by
+    Nonempty (Infra610ChartPrescriptions (hμ := hμ) P σ f hf p seq.τ) := by
   sorry
 
-/-- **E6.** Feed E5 data into `proposition_4_9` / Lem 6.4, then represent the placed type as a
-same-level `TupleOver` over `B` (`q.ν = μ`) by the chart-root of the prescriptions (English:
-local majority prescriptions are already realized in the chart of `B`). -/
+/-- **E6.** Feed E5 data into `proposition_4_9` / Lem 6.4, then take the chart-root
+`TupleOver` over `B`. -/
 theorem infra_610_place_prescriptions
     (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ)
     {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
     (_hrec : μ ∈ recursionClosedLevels P σ) (_hσμ : Order.succ σ ≤ μ)
     {A B : P.scheme.Object μ hμ}
-    (_f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ B))
-    (_hf : P.scheme.permitted (X := A) (Y := B) _f)
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ B))
+    (hf : P.scheme.permitted (X := A) (Y := B) f)
     (p : TupleOver K oneVertexShape P.scheme hμ A)
     (_hνμ : p.ν = μ) (hidx : #p.idx ≤ σ) (_hidxμ : #p.idx < μ)
     (seq : ApproximationSequence p) (_hτμ : seq.τ < μ)
-    (data : Infra610ChartPrescriptions (hμ := hμ) P σ B p.idx seq.τ) :
-    ∃ q : TupleOver K oneVertexShape P.scheme hμ B,
-      ∃ e : p.idx ≃ q.idx, q.ν = μ := by
+    (data : Infra610ChartPrescriptions (hμ := hμ) P σ f hf p seq.τ) :
+    ∃ q : TupleOver K oneVertexShape P.scheme hμ B, q.ν = μ ∧ q = data.chartRoot := by
   classical
   haveI : CategoricalUnbounded K := P.D.categoricalUnbounded
-  -- English Lem 6.4: the majority prescriptions cohere in an order enlargement.
-  -- Instances are the structure fields (not `haveI`), so they match `data.hImem` / `qPres`.
   obtain ⟨_J, _, _, _fIJ, _z, _hJ, _hPlace⟩ :=
     @proposition_4_9 K _ P.E P.D data.I data.linOrder data.nonempty data.wf
       p.idx σ data.χ hσ hidx data.hχls data.hpow data.hImem data.qPres data.hnat data.hcoh
-  -- Chart-root representative on `B` (local realizations already live in the chart).
-  have hβ0 : #(PEmpty.{u + 1}) ≤ data.χ := by
-    simpa using (zero_le data.χ : (0 : Cardinal.{u}) ≤ data.χ)
-  let root : p.idx → B.model.carrier := fun a =>
-    data.eB (data.qPres hβ0 PEmpty.elim (Sum.inl a))
-  let q : TupleOver K oneVertexShape P.scheme hμ B :=
-    { ν := μ
-      hν := hμ
-      host := B
-      incl := SystemArrow.refl (P.scheme.asSystem hμ B)
-      incl_arrow := trivial
-      idx := p.idx
-      val := fun a => B.occ (root a) }
-  exact ⟨q, Equiv.refl _, rfl⟩
+  exact ⟨data.chartRoot, rfl, rfl⟩
 
 /-- **Open (majority clause).** After E6 placement, queries from `B` of size `≤ seq.τ` are
 answered by majority transport of `seq` (English E2–E3). -/
@@ -358,7 +381,7 @@ theorem infra_610_majority_of_placement
     (p : TupleOver K oneVertexShape P.scheme hμ A)
     (hνμ : p.ν = μ) (hidx : #p.idx ≤ σ) (hidxμ : #p.idx < μ)
     (seq : ApproximationSequence p) (hτμ : seq.τ < μ)
-    (data : Infra610ChartPrescriptions (hμ := hμ) P σ B p.idx seq.τ)
+    (data : Infra610ChartPrescriptions (hμ := hμ) P σ f hf p seq.τ)
     (q : TupleOver K oneVertexShape P.scheme hμ B)
     (e : p.idx ≃ q.idx) (hqν : q.ν = μ) :
     ∀ {ι : Type u} (Z : ι → Occurrence K oneVertexShape (P.scheme.asSystem hμ B)),
@@ -368,27 +391,30 @@ theorem infra_610_majority_of_placement
           (typeJoint (p := q) Z ∘ Sum.map e id) := by
   sorry
 
-/-- **Open (E7 tests).** Diagram tests of `p` vs `q.restrict f` for Thm 6.6 / `same_galois`. -/
+/-- **E7 tests.** Diagram tests of `p` vs `data.chartRoot.restrict f` (identity reindexing). -/
 theorem infra_610_galois_tests_of_placement
-    (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ)
+    (P : SingleModelData K) (σ : Cardinal.{u}) (_hσ : aleph0 ≤ σ)
     {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
     {A B : P.scheme.Object μ hμ}
     (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ B))
     (hf : P.scheme.permitted (X := A) (Y := B) f)
     (p : TupleOver K oneVertexShape P.scheme hμ A)
-    (q : TupleOver K oneVertexShape P.scheme hμ B)
-    (e : p.idx ≃ q.idx) (hνμ : p.ν = μ) (hqν : q.ν = μ)
-    (hidx : #p.idx ≤ σ) :
+    (seq : ApproximationSequence p)
+    (data : Infra610ChartPrescriptions (hμ := hμ) P σ f hf p seq.τ) :
     ∀ {β : Type u} (_ : #β ≤ P.g σ + ls K) (ρ : Cardinal.{u}) (_ : aleph0 ≤ ρ)
-      (_ : ρ < μ) (params : β → A.model.carrier) (hjoint : #(q.idx ⊕ β) ≤ ρ)
+      (_ : ρ < μ) (params : β → A.model.carrier)
+      (hjoint : #(data.chartRoot.idx ⊕ β) ≤ ρ)
       (h₀ : P.D.t ρ ≤ Model.card p.host.model)
-      (h₁ : P.D.t ρ ≤ Model.card q.host.model),
-      P.D.same hjoint p.host.mem q.host.mem h₀ h₁
-        (Sum.elim (fun i => p.host.val (p.val (e.symm i)))
+      (h₁ : P.D.t ρ ≤ Model.card data.chartRoot.host.model),
+      P.D.same hjoint p.host.mem data.chartRoot.host.mem h₀ h₁
+        (Sum.elim (fun i => p.host.val (p.val ((Equiv.refl p.idx).symm i)))
           (fun b => p.incl.onVertex PUnit.unit (params b)))
-        (Sum.elim (fun i => q.host.val (q.val i))
-          (fun b => (q.restrict f hf).incl.onVertex PUnit.unit (params b))) := by
-  sorry
+        (Sum.elim (fun i => data.chartRoot.host.val (data.chartRoot.val i))
+          (fun b => (data.chartRoot.restrict f hf).incl.onVertex PUnit.unit (params b))) := by
+  intro β hβ ρ hρinf hρμ params hjoint h₀ h₁
+  -- Unfold `chartRoot` so `idx`/`host`/`restrict` match the `hgalois` packaging defeq.
+  simp only [Infra610ChartPrescriptions.chartRoot, TupleOver.restrict] at hjoint h₁ ⊢
+  exact data.hgalois hβ ρ hρinf hρμ params hjoint h₀ h₁
 
 /-- Assembler of English E5–E7: chart prescriptions → Lem 6.4 placement → majority → Galois
 tests. -/
@@ -421,12 +447,14 @@ theorem infra_610_majority_prescription
               (typeJoint (p := q) Z ∘ Sum.map e id) := by
   obtain ⟨data⟩ :=
     infra_610_chart_prescriptions P σ hσ hμ hrec hσμ f hf p hνμ hidx hidxμ seq hτμ
-  obtain ⟨q, e, hqν⟩ :=
+  obtain ⟨q, hqν, hq⟩ :=
     infra_610_place_prescriptions P σ hσ hμ hrec hσμ f hf p hνμ hidx hidxμ seq hτμ data
-  refine ⟨q, e, hqν, ?_, ?_⟩
-  · exact infra_610_galois_tests_of_placement P σ hσ hμ f hf p q e hνμ hqν hidx
+  -- Specialize to the chart-root so `q.idx` is definitionally `p.idx`.
+  subst hq
+  refine ⟨data.chartRoot, Equiv.refl p.idx, hqν, ?_, ?_⟩
+  · exact infra_610_galois_tests_of_placement P σ hσ hμ f hf p seq data
   · exact infra_610_majority_of_placement P σ hσ hμ hrec hσμ f hf p hνμ hidx hidxμ
-      seq hτμ data q e hqν
+      seq hτμ data data.chartRoot (Equiv.refl p.idx) hqν
 
 /-- Packaging of `infra_610_majority_prescription` (English E5–E7 on a chart of `B`). -/
 theorem infra_610_place_on_B

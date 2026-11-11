@@ -4,7 +4,7 @@ Inventory of Lean `sorry` holes in this repository, ordered **prove-first**: Lay
 are holes with no remaining unfinished prerequisites; later layers wait on earlier
 ones. Apex theorems 1.2 and 1.3 are **last**.
 
-**Count:** 60 `sorry`, 0 `admit`.
+**Count:** 59 `sorry`, 0 `admit`.
 Sections **2**, **3**, **4**, and **13** have no holes.
 
 **Dependency basis:** paper/logical order from `dependencies.mermaid`
@@ -45,8 +45,8 @@ Section 13 is complete and was never on that chain.
 | **Total** | **56** | |
 
 The table is the previous `Results.lean` rollup. The live token count is **60**,
-including the Thm 6.10 open tips (`chart_prescriptions` / `majority_of_placement` /
-`galois_tests_of_placement`) and `WorkingScheme.exists_approximationSequence`.
+including the Thm 6.10 open tips (`chart_prescriptions` / `majority_of_placement`)
+and `WorkingScheme.exists_approximationSequence`.
 
 ---
 
@@ -113,7 +113,7 @@ counterexample refutes the program.
 **Dependency rule:** edge B→A only if the English proof of A requires B, or A
 needs an explicit Lean infra subgoal B (not a paper-number chain).
 
-**Open (frontier):** English E5 `infra_610_chart_prescriptions`, majority clause `infra_610_majority_of_placement`, E7 tests `infra_610_galois_tests_of_placement`. Map: [`AEC/Section6/FreeExtension.md`](AEC/Section6/FreeExtension.md). E6 `infra_610_place_prescriptions` and `infra_610_closed_level` are **done** (`P.tester` / `ClosedLevel.of_closurePoint`; `SingleModelData` carries `PlacedTester`). `infra_610_move_query` and `infra_610_same_galois` are **done**. `infra_610_majority_prescription` is the assembler; `infra_610_place_on_B` wraps it. `stationary_free_extension_exists` is assembled (caller arity `τ = testCardinal b P.g σ`) and blocked on the three open tips. Majority uniqueness is proved. Cross-scheme transfer is retired. `TupleOver.InBase` and `ApproximationSequence.ofConstFamily` are not used.
+**Open (frontier):** English E5 `infra_610_chart_prescriptions`, majority clause `infra_610_majority_of_placement`. Map: [`AEC/Section6/FreeExtension.md`](AEC/Section6/FreeExtension.md). E6 `infra_610_place_prescriptions`, E7 `infra_610_galois_tests_of_placement`, and `infra_610_closed_level` are **done** (`P.tester` / `ClosedLevel.of_closurePoint`; chart-root `hgalois` packaging). `infra_610_move_query` and `infra_610_same_galois` are **done**. `infra_610_majority_prescription` is the assembler; `infra_610_place_on_B` wraps it. `stationary_free_extension_exists` is assembled (caller arity `τ = testCardinal b P.g σ`) and blocked on the two open tips. Majority uniqueness is proved. Cross-scheme transfer is retired. `TupleOver.InBase` and `ApproximationSequence.ofConstFamily` are not used.
 **Note:** `lemma_6_1`, `theorem_3_11`, `proposition_5_6`, `proposition_5_7`, `lemma_4_6`, `lemma_6_14`, `proposition_4_3`, `lemma_4_5`, `lemma_4_7`, `proposition_4_8`, `proposition_4_9`, `lemma_4_10`, `theorem_4_11`, `theorem_6_6`, `corollary_6_7`, `proposition_5_8`, `proposition_5_9`,
 `infra_pair_coloring_glue`, `infra_rank_slice`, `infra_type_u_witness_set`, `infra_countable_back_and_forth`, `infra_stable_diagram_realize`, `infra_zeta_model_existence`, `infra_eligible_reclass`, `infra_template_fixed_support`, `infra_named_working_scheme`, `infra_named_working_package`, `infra_single_model_scheme`, `infra_single_model_package` are done.
 Lean 5.8 is the residual `diagram_iso`+`structural_iso` form.
@@ -154,10 +154,10 @@ Callers: `namedWorkingScheme` now takes `hι : #ι < μ0`, `hTail : ∀ μ ∈ T
 
 Proof of clause 2. Identify `N` with its chart `E(Below μ)` (categoricity at `μ`). The images of `A` and `z` are at most `ν` terms, so they lie in `N₀ = E(S)` for a suborder `S ⊆ Below μ` of size `ν` (`exists_suborder_cover`), and `A → N₀` is strong by coherence. `B` and `N₀` are `ν`-sized strong extensions of `A` whose tuples pass the tests, so Theorem 4.11 (2) at `ν` (`ClosedLevel.exists_tuple_amalgam`) gives a `ν`-sized amalgam `P` over `A` identifying `d` with `z`. Now `N₀ → N` is an order map of the presentation and `μ ≥ t(ν)` is a categoricity cardinal, so the countable tower of Theorem 4.11 at the source level `ν` (`exists_strong_embedding_over`, with target chart `J = Below μ`) embeds `P` into `N` over `N₀`; the target is not enlarged. The English proof runs the exhaustion of Theorem 6.6 directly into `N`: it places each new tuple in a chart of `N` and uses saturation at `μ` to realize the joint diagram of the placed tuple, `A` and the previously assigned list back in `N`. That saturation step is not formalized. A direct Lean version by lift extensions was tried and not closed: a lift found over the chart of `A` lives in a presentation `E(J₁)`, and `D.exists_transport` into `N` matches the previously assigned list but not the image of `A`; fixing all of `A` would take a comparison of length `ν` between its images in `N` and in `E(J₁)`, and `D.of_strong` from the `ν`-model `A` does not give one (`t(ν) > ν`). Passing through `N₀ = E(S)` makes the inclusion into `N` an order map, where the level-`ν` comparisons of Theorem 4.11 apply. Hard edge `4.11 → 6.7`; `6.6 → 6.7` softened (the English proof reuses the exhaustion of Theorem 6.6; the Lean proof calls `ClosedLevel.exists_tuple_amalgam` and `exists_strong_embedding_over`, not `theorem_6_6`). Soft edge `corollary_6_7 → lemma_6_9` (English 6.9 does not use Cor 6.7). Theorem 6.10 is unblocked (hard `lemma_6_9 → theorem_6_10`).
 
-**Lemma 6.9 is done for `SingleModelData`.** The chain is `infra_69_recursion_tail`, then `infra_69_assemble` at a same-level tuple `p.ν = μ`. Theorem 6.10 is restated the same way; `stationary_free_extension_exists` is assembled and blocked on E5 / majority-of-placement / E7 tests (E6 place_prescriptions and `infra_610_closed_level` done via `P.tester`; `same_galois` and `place_on_B` packaging done). Majority uniqueness is proved. No constant-family alternate.
+**Lemma 6.9 is done for `SingleModelData`.** The chain is `infra_69_recursion_tail`, then `infra_69_assemble` at a same-level tuple `p.ν = μ`. Theorem 6.10 is restated the same way; `stationary_free_extension_exists` is assembled and blocked on E5 / majority-of-placement (E6 place_prescriptions, E7 galois tests, and `infra_610_closed_level` done via `P.tester`; `same_galois` and `place_on_B` packaging done). Majority uniqueness is proved. No constant-family alternate.
 
 **Wired (intended use, reach apex):** `5.6 → 9.3, 10.2`; `5.7 → 9.3, 10.6, 10.8`;
-`2.3 → 1.2`; `3.11 → 4.2, 5.8`; `4.2 → 4.9, 4.10, 4.11`; `4.3 → 4.10, 4.11`; `4.5 → 6.1`; `4.6 → 4.9`; `4.7 → 4.8, 12.5`; `4.8 → 4.10, 4.11, 6.3, 6.5`; `4.10 → 4.11, 6.5`; `6.3 → 6.5`; `6.4 → 6.5`; `4.11 → 5.6, 6.6, 6.7`; `infra_69_place_on_fills → infra_69_assemble → 6.9` (hard; 6.9 done for `SingleModelData`); `infra_610_move_query → infra_610_chart_prescriptions → infra_610_place_prescriptions → infra_610_majority_of_placement → infra_610_majority_prescription → infra_610_place_on_B → stationary_free_extension_exists → 6.10` and `infra_610_galois_tests_of_placement → infra_610_majority_prescription` with `infra_610_closed_level → infra_610_same_galois → stationary_free_extension_exists` (hard; move-query, E6 place, closed-level, assembler, and same-galois done; open tips E5, majority-of-placement, E7 tests); paper `5.4/5.5/6.1/6.5/4.6` → matching `infra_69_*` / `infra_55_*`; `6.9 → 6.10`; `6.14 → 12.6`; `13.5 → 10.9, 14.2`.
+`2.3 → 1.2`; `3.11 → 4.2, 5.8`; `4.2 → 4.9, 4.10, 4.11`; `4.3 → 4.10, 4.11`; `4.5 → 6.1`; `4.6 → 4.9`; `4.7 → 4.8, 12.5`; `4.8 → 4.10, 4.11, 6.3, 6.5`; `4.10 → 4.11, 6.5`; `6.3 → 6.5`; `6.4 → 6.5`; `4.11 → 5.6, 6.6, 6.7`; `infra_69_place_on_fills → infra_69_assemble → 6.9` (hard; 6.9 done for `SingleModelData`); `infra_610_move_query → infra_610_chart_prescriptions → infra_610_place_prescriptions → infra_610_majority_of_placement → infra_610_majority_prescription → infra_610_place_on_B → stationary_free_extension_exists → 6.10` and `infra_610_galois_tests_of_placement → infra_610_majority_prescription` with `infra_610_closed_level → infra_610_same_galois → stationary_free_extension_exists` (hard; move-query, E6 place, E7 galois tests, closed-level, assembler, and same-galois done; open tips E5, majority-of-placement); paper `5.4/5.5/6.1/6.5/4.6` → matching `infra_69_*` / `infra_55_*`; `6.9 → 6.10`; `6.14 → 12.6`; `13.5 → 10.9, 14.2`.
 Full hard-edge list: [`holes-edges.txt`](holes-edges.txt). Target: every Results/paper
 node reaches Thm 1.2 or 1.3; completed work should admit dead-code analysis of each edge.
 
@@ -247,12 +247,12 @@ Waits on Section 5 working package. Lean: later Results import this module.
 | `infra_610_chart_prescriptions` | Infra: E5 chart prescriptions on B | `AEC/Section6/StationaryFreeExtension.lean` (**open**: Prop 4.9 `q`/`hnat`/`hcoh` on a chart of `B` via `move_query`) |
 | `infra_610_place_prescriptions` | Infra: E6 Lem 6.4 place prescriptions | `AEC/Section6/StationaryFreeExtension.lean` (**done**: `proposition_4_9` + chart-root `TupleOver` over `B` with `q.ν = μ`) |
 | `infra_610_majority_of_placement` | Infra: majority clause after placement | `AEC/Section6/StationaryFreeExtension.lean` (**open**: English E2–E3 majority transport for the placed `TupleOver`) |
-| `infra_610_galois_tests_of_placement` | Infra: E7 Galois diagram tests | `AEC/Section6/StationaryFreeExtension.lean` (**open**: diagram tests for Thm 6.6 / `same_galois`) |
+| `infra_610_galois_tests_of_placement` | Infra: E7 Galois diagram tests | `AEC/Section6/StationaryFreeExtension.lean` (**done**: unfold chart-root packaging of `data.hgalois`) |
 | `infra_610_majority_prescription` | Infra: E5–E7 assembler | `AEC/Section6/StationaryFreeExtension.lean` (**done**: thin assembler; no own `sorry`) |
 | `infra_610_place_on_B` | Infra: place majority on B | `AEC/Section6/StationaryFreeExtension.lean` (**done**: packaging wrapper of `infra_610_majority_prescription`) |
 | `infra_610_closed_level` | Infra: ClosedLevel for `P.g` | `AEC/Section6/StationaryFreeExtension.lean` (**done**: `ClosedLevel.of_closurePoint P.tester`; `SingleModelData` carries `PlacedTester`) |
 | `infra_610_same_galois` | Infra: SameGaloisType free lift | `AEC/Section6/StationaryFreeExtension.lean` (**done**: `exists_tuple_amalgam` + `SMObject.ofModel` under `ClosedLevel` and diagram tests) |
-| `stationary_free_extension_exists` | Infra: free-lift existence | `AEC/Section6/StationaryFreeExtension.lean` (**blocked** on E5–E7 and `infra_610_closed_level`; majority uniqueness and same-galois done; caller arity `c(σ)`) |
+| `stationary_free_extension_exists` | Infra: free-lift existence | `AEC/Section6/StationaryFreeExtension.lean` (**blocked** on E5 / majority-of-placement; E6, E7, closed-level, majority uniqueness, and same-galois done; caller arity `c(σ)`) |
 | `theorem_6_10` | Theorem 6.10 | `AEC/Section6/Results.lean` (**blocked** on `stationary_free_extension_exists`) |
 | `lemma_6_11` | Lemma 6.11 | `AEC/Section6/Results.lean:349` |
 | `proposition_6_12` | Proposition 6.12 | `AEC/Section6/Results.lean:367` |
