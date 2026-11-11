@@ -3,6 +3,7 @@ module
 public import AEC.Section5.PackageClauses
 public import AEC.Section5.PaddedOrder
 public import AEC.Section5.RichPaddedOrder
+public import AEC.Section5.OrderPatternRealization
 public import AEC.Section5.EligibleSubclass
 public import AEC.Section5.TermTemplate
 public import AEC.Section5.NamedWorkingScheme
@@ -145,8 +146,10 @@ theorem lemma_5_4 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
 
 /-- **Lemma 5.5** (Rich padded orders). For infinite `η` there is a dense endpoint-free linear
 order of cardinality `2^η` in which every cut given by at most `η` parameters on either side
-is filled. A strong limit `μ > η` carries a padded order of cardinality `μ` with the same
-property. -/
+is filled. Equivalently (`OrderPatternRealization.lean`), every order-pattern extension with at
+most `η` old and at most `η` added positions is realized over its old positions on any order with
+this cut-filling property. A strong limit `μ > η` carries a padded order of cardinality `μ` with
+the same properties. -/
 theorem lemma_5_5 (η : Cardinal.{u}) (hη : aleph0 ≤ η) :
     (∃ (Q : Type u) (_ : LinearOrder Q),
       #Q = (2 : Cardinal.{u}) ^ η ∧

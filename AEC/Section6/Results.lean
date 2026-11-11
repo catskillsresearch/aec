@@ -14,6 +14,7 @@ public import AEC.Section6.PlacedComparisons
 public import AEC.Section4.ClosedLevelTypes
 public import AEC.Section6.LargerLevelRealization
 public import AEC.Section6.UniformApproximations
+public import AEC.Section6.StationaryFreeExtension
 
 @[expose] public section
 
@@ -332,11 +333,11 @@ and support-copy; it depends only on `b, σ, τ, κ` via the definitions of `χ`
 **Statement repair.** The old bare-scheme form was refutable. Added the Lemma 6.1
 package, plus presentations for Lemma 5.4.
 
-**Residual packaging (see `UniformApproximations.lean` and `HOLES.md`).** The proved engine
-`exists_approximationSequence` gives constant `κ`-families for in-base types
-(`TupleOver.InBase` / `d.toOver`). English support-copy (5.5/5.4/6.5/4.6/6.1) for cross-level
-hosts and distinct approximants remains open; Lem 5.5 wrappers are exported for that extension.
-Corollary 6.7 is not used. -/
+**English translation (see `UniformApproximations.lean`).** Statement restored to general
+`p : TupleOver … A` with `#p.idx ≤ σ`. The proof is a 1:1 gloss of English support-copy;
+step 4 uses `english_orderPattern_realized_over_old` (`OrderPatternRealization.lean`; embedding
+`order_pattern_realized_over_old` still sorry). Steps 5–6 `support_copy_exception_and_assembly`
+sorry. Steps 1–2 call Lemmas 5.5, 5.4; placement (6.5) cited in gloss. Corollary 6.7 is not used. -/
 theorem lemma_6_9 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
     [CategoricalUnbounded K]
     (W : WorkingScheme K S) (F : TermTemplate K S) [hpres : HasPresentations W F]
@@ -349,11 +350,11 @@ theorem lemma_6_9 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
     (hiso : AssemblesStructIso W b) :
     ∃ T, ∃ hT : Tail W.eligible T,
       ∀ μ (hμ : μ ∈ T) (A : W.Object μ (Tail.mem hT hμ))
-        (d : TupleOver.InBase (base := A)) (τ κ : Cardinal.{u}),
-        #d.idx ≤ σ → #d.idx < μ →
+        (p : TupleOver K S W (Tail.mem hT hμ) A) (τ κ : Cardinal.{u}),
+        #p.idx ≤ σ → #p.idx < μ →
         aleph0 ≤ τ → τ < μ → aleph0 ≤ κ → κ < μ →
-        κ * #d.idx < μ →
-        ∃ seq : ApproximationSequence d.toOver, seq.τ = τ ∧ #(seq.κIndex) = κ := by
+        κ * #p.idx < μ →
+        ∃ seq : ApproximationSequence p, seq.τ = τ ∧ #(seq.κIndex) = κ := by
   obtain ⟨κ0, _⟩ := W.exists_parameter_orbit_reps hedge hcat σ χ b hσ hpow hb hχ hiso
   have hT : Tail W.eligible {μ | μ ∈ W.eligible ∧ κ0 ≤ μ ∧ χ < μ} := by
     refine ⟨fun μ hμ => hμ.1, fun κ' => ?_⟩
@@ -361,28 +362,61 @@ theorem lemma_6_9 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
     exact ⟨μ', (le_max_left _ _).trans hle, hμ',
       ((le_max_left _ _).trans (le_max_right _ _)).trans hle,
       (Order.lt_succ χ).trans_le (((le_max_right _ _).trans (le_max_right _ _)).trans hle)⟩
-  refine ⟨_, hT, fun μ hμ A d τ κ hσidx hidx hτ hμτ hκ hκμ hμκ => ?_⟩
+  refine ⟨_, hT, fun μ hμ A p τ κ hσidx hidx hτ hμτ hκ hκμ hμκ => ?_⟩
   let hμ' := Tail.mem hT hμ
   have hχμ : χ < μ := hμ.2.2
   obtain ⟨seq, hτ', hκ'⟩ :=
-  @WorkingScheme.exists_approximationSequence K S W _ F hpres hpack hedge hcat
-    σ χ b τ κ hσ hτ hκ hpow hb hχ hiso (μ := μ) (hμ := hμ') A d hσidx hidx hμτ hκμ hμκ hχμ
+    @WorkingScheme.exists_approximationSequence K S W _ F hpres hpack hedge hcat
+      σ χ b τ κ hσ hτ hκ hpow hb hχ hiso (μ := μ) (hμ := hμ') A p hσidx hidx hμτ hκμ hμκ hχμ
   exact ⟨seq, hτ', hκ'⟩
 
-/-- **Theorem 6.10** (Stationary free extension). A type over `A` has a free lift to any arrow
-`A → B` at a sufficiently closed level, and an actual type is free from `A` precisely when it
-is that free lift. -/
+/-- **Theorem 6.10** (Stationary free extension). See `StationaryFreeExtension.lean` for the
+English gloss. Clauses:
+
+1. (Existence) At sufficiently closed levels, `p = tp(v/A)` with `#p.idx ≤ σ` has a free lift
+   `p_B` over `B` along `A → B`.
+2. (Transport) Bounded query/testing costs at `A` are computed by transporting long approximation
+   sequences in `A` (`IsFreeLift` / `IsMajorityValue`).
+3. (Scope) Single-level: every bounded query size; mixed-level: costs below the level of `A`
+   (English uses Corollary 6.7 for the actual ν-restriction).
+4. (Code / free-from) A Lemma 6.9 code at `c(σ)` transports under arrows; `IsFreeFrom` means the
+   type is the free lift of its restriction to `A`.
+
+**Statement repair.** Bare `WorkingScheme` was refutable; packaging matches Lemma 6.9
+(`AssemblesStructIso`, presentations, `hedge`, `hcat`, σ/χ/b).
+
+**Pinned.** 1:1 English translation stops on the Lemma 6.9 support-copy chain
+(`order_pattern_realized_over_old` / `support_copy_exception_and_assembly`). No alternate free-lift
+proof is used. -/
 theorem theorem_6_10 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
-    (W : WorkingScheme K S) :
+    [CategoricalUnbounded K]
+    (W : WorkingScheme K S) (F : TermTemplate K S) [hpres : HasPresentations W F]
+    [hpack : HasChainUnions W]
+    (hedge : ∀ i j, ¬ S.specified i j)
+    (hcat : ∀ μ ∈ W.eligible, Categorical K μ)
+    (σ χ b : Cardinal.{u}) (hσ : aleph0 ≤ σ)
+    (hpow : χ ^ σ = χ) (hb : b + σ < χ)
+    (hχ : ls K + (2 : Cardinal.{u}) ^ ((2 : Cardinal.{u}) ^ σ) ≤ χ)
+    (hiso : AssemblesStructIso W b) :
     ∃ T, ∃ hT : Tail W.eligible T,
       ∀ μ (hμ : μ ∈ T) (A B : W.Object μ (Tail.mem hT hμ))
         (f : SystemArrow K S (W.asSystem _ A) (W.asSystem _ B))
         (hf : W.permitted (X := A) (Y := B) f)
         (p : TupleOver K S W (Tail.mem hT hμ) A),
-        #p.idx < μ →
+        #p.idx ≤ σ → #p.idx < μ →
         ∃ q : TupleOver K S W (Tail.mem hT hμ) B, ∃ e : p.idx ≃ q.idx,
           IsFreeLift p q f hf e := by
-  sorry
+  obtain ⟨κ0, _⟩ := W.exists_parameter_orbit_reps hedge hcat σ χ b hσ hpow hb hχ hiso
+  have hT : Tail W.eligible {μ | μ ∈ W.eligible ∧ κ0 ≤ μ ∧ χ < μ} := by
+    refine ⟨fun μ hμ => hμ.1, fun κ' => ?_⟩
+    obtain ⟨μ', hle, hμ'⟩ := W.eligible_unbounded (max κ' (max κ0 (Order.succ χ)))
+    exact ⟨μ', (le_max_left _ _).trans hle, hμ',
+      ((le_max_left _ _).trans (le_max_right _ _)).trans hle,
+      (Order.lt_succ χ).trans_le (((le_max_right _ _).trans (le_max_right _ _)).trans hle)⟩
+  refine ⟨_, hT, fun μ hμ A B f hf p hσidx hidx => ?_⟩
+  let hμ' := Tail.mem hT hμ
+  -- English proof step 1 needs a Lemma 6.9 approximation sequence; that chain is pinned.
+  exact stationary_free_extension_exists F hedge hcat σ χ b σ hσ hσ hpow hb hχ hiso f hf p
 
 /-- **Lemma 6.11** (An average criterion for descent). A type whose restrictions to a long
 sequence in `A` have the stated majority is the free lift of its restriction to `A`. -/

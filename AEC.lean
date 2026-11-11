@@ -99,6 +99,7 @@ public import AEC.Section5.NamedPackageTransfer
 public import AEC.Section5.NamedRealizationExistence
 public import AEC.Section5.PackageClauses
 public import AEC.Section5.PaddedOrder
+public import AEC.Section5.OrderPatternRealization
 public import AEC.Section5.PatternCode
 public import AEC.Section5.Results
 public import AEC.Section5.SingleModelPackage
@@ -126,6 +127,7 @@ public import AEC.Section6.TestCardinal
 public import AEC.Section6.TestingFunction
 public import AEC.Section6.TupleOver
 public import AEC.Section6.UniformApproximations
+public import AEC.Section6.StationaryFreeExtension
 public import AEC.Section7.AllDominated
 public import AEC.Section7.ContinuityCondition
 public import AEC.Section7.ProductIndependent
