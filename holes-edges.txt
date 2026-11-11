@@ -1,7 +1,7 @@
 # Hard edges from holes-graph.json
 # Convention: FROM --> TO means the English proof of TO requires FROM.
-# Nodes: 140  Hard edges: 176
-# Lem 6.9: pins at place_type, lem61_off_hits, assemble; lemma_6_9 blocked.
+# Nodes: 141  Hard edges: 178
+# Lem 6.9: lem61_off_hits done (SameNaturalDiagram); pin at off_hit_diagramEq; assemble and lemma_6_9 blocked.
 
 claim_11_10 --> claim_11_11
 claim_11_11 --> claim_11_12
@@ -25,8 +25,9 @@ infra_69_finitary_exceptions --> infra_69_subtuple_uniform
 infra_69_hit_bound --> infra_69_finitary_exceptions
 infra_69_include_shared --> infra_69_anchor_bound
 infra_69_interpret_copies --> infra_69_choose_supports
-infra_69_lem61_off_hits --> infra_69_assemble
+infra_69_lem61_off_hits --> infra_69_off_hit_diagramEq
 infra_69_no_internal_hits --> infra_69_lem61_off_hits
+infra_69_off_hit_diagramEq --> infra_69_assemble
 infra_69_place_type --> infra_69_assemble
 infra_69_present_padded --> infra_69_chart_iso
 infra_69_richness_arity --> infra_69_copy_cluster
@@ -84,6 +85,7 @@ lemma_4_10 --> lemma_6_5
 lemma_4_10 --> theorem_4_11
 lemma_4_5 --> lemma_4_6
 lemma_4_5 --> lemma_6_1
+lemma_4_6 --> infra_69_lem61_off_hits
 lemma_4_6 --> infra_69_whole_block_diff
 lemma_4_6 --> proposition_4_9
 lemma_4_7 --> lemma_12_5

@@ -1,6 +1,7 @@
 module
 
 public import AEC.Section6.ApproximationSequence
+public import AEC.Section6.OffHitBlock
 public import AEC.Section6.ParameterOrbits
 public import AEC.Section5.PackageClauses
 public import AEC.Section5.Results
@@ -25,8 +26,9 @@ English steps:
    `σ + ℵ₀` (`ChartSupport`, the pure-order infras below).
 4. In each anchor slot, choose `κ` pairwise disjoint convex regions and put a copy of the
    pattern; richness realizes the needed order patterns (English: Lemma 5.5 equivalence).
-5. If supports avoid every region, Lemma 6.1 gives `D(vᵢ,Z) = p↾Z` for all but at most
-   `|Z|+ℵ₀` indices; block interchange (Lemma 4.6) for the copy-region bookkeeping.
+5. If supports avoid every region, the copy and the original differ by simultaneous disjoint
+   block transpositions. Lemma 4.6 (`infra_69_lem61_off_hits`) keeps the natural diagram.
+   The scheme sentence `D(vᵢ, Z) = p↾Z` is the obligation `OffHitCopyDiagramEq`.
 6. Assemble an `ApproximationSequence` (bounded concatenation, `few_exceptions`, subtuples).
 
 Step 4 uses `english_orderPattern_realized_over_old` (cut filling ⇒ pattern realization;
@@ -1388,40 +1390,309 @@ theorem infra_69_no_internal_hits {I J : Type u} [LinearOrder I] [LinearOrder J]
     have hcut : C.SameCut y z := C.sameCut_trans (C.sameCut_symm hy.2) hz.2
     exact not_lt_of_gt hyl ((hcut i).2 hiz)
 
+namespace ChartSupport
+
+variable {I J : Type u} [LinearOrder I] [LinearOrder J] (C : ChartSupport I J)
+
+/-- One point of a cut-cluster. -/
+noncomputable def clusterRepPoint (q : C.Cluster) : C.unshared :=
+  Classical.choose (Quotient.exists_rep q)
+
+theorem clusterRepPoint_spec (q : C.Cluster) : C.clusterMk (C.clusterRepPoint q) = q :=
+  Classical.choose_spec (Quotient.exists_rep q)
+
+/-- Its position in the placement order. -/
+noncomputable def clusterRep (q : C.Cluster) : J := (C.clusterRepPoint q).1
+
+theorem clusterRep_injective : Function.Injective C.clusterRep := by
+  intro q₁ q₂ h
+  have hs : C.clusterRepPoint q₁ = C.clusterRepPoint q₂ := Subtype.ext h
+  rw [← C.clusterRepPoint_spec q₁, ← C.clusterRepPoint_spec q₂, hs]
+
+noncomputable instance : LinearOrder C.Cluster :=
+  LinearOrder.lift' C.clusterRep C.clusterRep_injective
+
+theorem cluster_lt_iff {q₁ q₂ : C.Cluster} : q₁ < q₂ ↔ C.clusterRep q₁ < C.clusterRep q₂ :=
+  Iff.rfl
+
+/-- An anchor lies strictly between two unshared points of different cuts, with the left
+point first. -/
+theorem exists_anchor_between {y z : C.unshared} (hlt : y.1 < z.1)
+    (hcut : ¬ C.SameCut y.1 z.1) :
+    ∃ a : C.anchorIdx, y.1 < C.old a.1 ∧ C.old a.1 < z.1 := by
+  let p : C.sepIndex := ⟨(y.1, z.1), y.2, z.2, hcut⟩
+  have hspec := C.sepAt_spec p
+  have ha : C.old (C.sepAt p) ∈ C.anchors := Or.inr ⟨p, rfl⟩
+  let a : C.anchorIdx := ⟨C.sepAt p, ha⟩
+  have hyne : y.1 ≠ C.old a.1 := fun h => y.2.2 ⟨a.1, h.symm⟩
+  by_cases hy : C.old a.1 < y.1
+  · have hnot : ¬ C.old a.1 < z.1 := by
+      intro hz
+      exact hspec (propext (iff_of_true hy hz))
+    exact absurd (hy.trans (hlt.trans_le (le_of_not_gt hnot))) (lt_irrefl _)
+  · have hy' : y.1 < C.old a.1 := lt_of_le_of_ne (le_of_not_gt hy) hyne
+    have hz : C.old a.1 < z.1 := by
+      by_contra hnot
+      exact hspec (propext (iff_of_false hy hnot))
+    exact ⟨a, hy', hz⟩
+
+/-- Distinct cuts are separated by an anchor, so the left cut lies entirely left of the right. -/
+theorem cluster_points_lt {y z : C.unshared} (hlt : y.1 < z.1)
+    (hcut : C.clusterMk y ≠ C.clusterMk z) (y' z' : C.unshared)
+    (hy : C.clusterMk y' = C.clusterMk y) (hz : C.clusterMk z' = C.clusterMk z) :
+    y'.1 < z'.1 := by
+  have hne : ¬ C.SameCut y.1 z.1 := fun hsame => hcut (Quotient.sound hsame)
+  obtain ⟨a, hyl, hzr⟩ := C.exists_anchor_between hlt hne
+  have hyS : C.SameCut y'.1 y.1 := Quotient.exact hy
+  have hzS : C.SameCut z'.1 z.1 := Quotient.exact hz
+  have hnoty : ¬ C.old a.1 < y.1 := not_lt_of_gt hyl
+  have hnoty' : ¬ C.old a.1 < y'.1 := fun h => hnoty ((hyS a.1).mp h)
+  have hy' : y'.1 < C.old a.1 := by
+    exact lt_of_le_of_ne (le_of_not_gt hnoty') (fun h => y'.2.2 ⟨a.1, h.symm⟩)
+  exact hy'.trans ((hzS a.1).mpr hzr)
+
+theorem clusterMk_mono : Monotone C.clusterMk := by
+  intro y z hle
+  rcases lt_or_eq_of_le hle with hlt | heq
+  · by_cases hs : C.clusterMk y = C.clusterMk z
+    · exact le_of_eq hs
+    · have hrep : C.clusterRep (C.clusterMk y) < C.clusterRep (C.clusterMk z) :=
+        C.cluster_points_lt hlt hs
+          (C.clusterRepPoint (C.clusterMk y)) (C.clusterRepPoint (C.clusterMk z))
+          (C.clusterRepPoint_spec (C.clusterMk y)) (C.clusterRepPoint_spec (C.clusterMk z))
+      exact (C.cluster_lt_iff.mpr hrep).le
+  · exact le_of_eq (congrArg C.clusterMk heq)
+
+theorem unshared_lt_of_cluster_lt {y z : C.unshared} (h : C.clusterMk y < C.clusterMk z) :
+    y.1 < z.1 := by
+  have hrep : C.clusterRep (C.clusterMk y) < C.clusterRep (C.clusterMk z) :=
+    C.cluster_lt_iff.mp h
+  exact C.cluster_points_lt
+    (y := C.clusterRepPoint (C.clusterMk y)) (z := C.clusterRepPoint (C.clusterMk z)) hrep
+    (fun heq => ne_of_lt h
+      ((C.clusterRepPoint_spec _).symm.trans (heq.trans (C.clusterRepPoint_spec _))))
+    y z (C.clusterRepPoint_spec _).symm (C.clusterRepPoint_spec _).symm
+
+end ChartSupport
+
+/-- One index of the off-hit copy: the unshared supports, their copies in disjoint convex
+regions, and the parameter positions (the query, together with the anchors). -/
+structure ChartOffHit (I J : Type u) [LinearOrder I] [LinearOrder J] where
+  C : ChartSupport I J
+  copy : C.unshared ↪o I
+  /-- Both sides of the anchor comparison. `infra_69_copy_cluster` exports the left-hand
+  side; the same construction also proves the right-hand side. -/
+  hslot : ∀ (y : C.unshared) (a : C.anchorIdx),
+    (a.1 < copy y ↔ C.old a.1 < y.1) ∧ (copy y < a.1 ↔ y.1 < C.old a.1)
+  region : C.Cluster → Set I
+  copy_mem : ∀ y, (copy y : I) ∈ region (C.clusterMk y)
+  convex : ∀ q, IsConvexRegion (region q)
+  disjoint_region : ∀ q q', q ≠ q' → Disjoint (region q) (region q')
+  query : Set I
+  query_off : ∀ q, Disjoint query (region q)
+  nonempty_unshared : Nonempty C.unshared
+
+namespace ChartOffHit
+
+variable {I J : Type u} [LinearOrder I] [LinearOrder J] (H : ChartOffHit I J)
+
+instance : Nonempty H.C.unshared := H.nonempty_unshared
+
+/-- Query indices and anchor indices. These are the parameter positions of the interchange. -/
+abbrev Parm : Type u := {i : I // i ∈ H.query ∨ H.C.old i ∈ H.C.anchors}
+
+def embCl : H.C.unshared ↪o J :=
+  OrderEmbedding.subtype (· ∈ H.C.unshared)
+
+def embParm : H.Parm ↪o J :=
+  (OrderEmbedding.subtype (fun i => i ∈ H.query ∨ H.C.old i ∈ H.C.anchors)).trans H.C.old
+
+def embCopy : H.C.unshared ↪o J := H.copy.trans H.C.old
+
+@[simp] theorem embCl_apply (c : H.C.unshared) : H.embCl c = c.1 := rfl
+
+@[simp] theorem embParm_apply (p : H.Parm) : H.embParm p = H.C.old p.1 := rfl
+
+@[simp] theorem embCopy_apply (c : H.C.unshared) : H.embCopy c = H.C.old (H.copy c) := rfl
+
+theorem disjCl (c : H.C.unshared) (p : H.Parm) : H.embCl c ≠ H.embParm p := by
+  intro h
+  rw [embCl_apply, embParm_apply] at h
+  exact c.2.2 ⟨p.1, h.symm⟩
+
+theorem disjCopy (c : H.C.unshared) (p : H.Parm) : H.embCopy c ≠ H.embParm p := by
+  intro h
+  have hidx : H.copy c = p.1 := H.C.old.injective (by
+    rw [← embCopy_apply, ← embParm_apply]; exact h)
+  rcases p.2 with hq | ha
+  · exact (Set.disjoint_left.mp (H.query_off (H.C.clusterMk c)) hq) (hidx ▸ H.copy_mem c)
+  · let a : H.C.anchorIdx := ⟨p.1, ha⟩
+    have hslot := H.hslot c a
+    have hnotL : ¬ a.1 < H.copy c := by
+      rw [← hidx]
+      exact lt_irrefl _
+    have hnotR : ¬ H.copy c < a.1 := by
+      rw [hidx]
+      exact lt_irrefl _
+    have hnot1 : ¬ H.C.old a.1 < c.1 := fun hlt => hnotL (hslot.1.mpr hlt)
+    have hnot2 : ¬ c.1 < H.C.old a.1 := fun hlt => hnotR (hslot.2.mpr hlt)
+    have heq : c.1 = H.C.old a.1 := by
+      rcases lt_trichotomy c.1 (H.C.old a.1) with hlt | heq | hgt
+      · exact absurd hlt hnot2
+      · exact heq
+      · exact absurd hgt hnot1
+    exact c.2.2 ⟨a.1, heq.symm⟩
+
+theorem blockOrig {c₁ c₂ : H.C.unshared} (hs : H.C.clusterMk c₁ = H.C.clusterMk c₂)
+    (p : H.Parm) :
+    H.embParm p < H.embCl c₁ ↔ H.embParm p < H.embCl c₂ := by
+  have hcut : H.C.SameCut c₁.1 c₂.1 := Quotient.exact hs
+  simpa [embParm_apply, embCl_apply] using hcut p.1
+
+theorem point_lt_anchor_iff (c : H.C.unshared) (p : H.Parm) (ha : H.C.old p.1 ∈ H.C.anchors) :
+    c.1 < H.C.old p.1 ↔ ¬ H.C.old p.1 < c.1 := by
+  constructor
+  · exact fun h => not_lt_of_gt h
+  · intro hnot
+    rcases lt_trichotomy c.1 (H.C.old p.1) with hlt | heq | hgt
+    · exact hlt
+    · exact (c.2.2 ⟨p.1, heq.symm⟩).elim
+    · exact absurd hgt hnot
+
+theorem blockCopy {c₁ c₂ : H.C.unshared} (hs : H.C.clusterMk c₁ = H.C.clusterMk c₂)
+    (p : H.Parm) :
+    H.embParm p < H.embCopy c₁ ↔ H.embParm p < H.embCopy c₂ := by
+  simp only [embParm_apply, embCopy_apply, H.C.old.lt_iff_lt]
+  rcases p.2 with hq | ha
+  · have hmem₁ : H.copy c₁ ∈ H.region (H.C.clusterMk c₁) := H.copy_mem c₁
+    have hmem₂ : H.copy c₂ ∈ H.region (H.C.clusterMk c₁) := by
+      simpa [hs] using H.copy_mem c₂
+    constructor
+    · intro hlt
+      by_contra hnot
+      rcases lt_or_eq_of_le (le_of_not_gt hnot) with h2 | heq
+      · exact (Set.disjoint_left.mp (H.query_off (H.C.clusterMk c₁)) hq)
+          (H.convex _ (H.copy c₂) hmem₂ (H.copy c₁) hmem₁ p.1 (le_of_lt h2) (le_of_lt hlt))
+      · exact (Set.disjoint_left.mp (H.query_off (H.C.clusterMk c₁)) hq) (heq.symm ▸ hmem₂)
+    · intro hlt
+      by_contra hnot
+      rcases lt_or_eq_of_le (le_of_not_gt hnot) with h1 | heq
+      · exact (Set.disjoint_left.mp (H.query_off (H.C.clusterMk c₁)) hq)
+          (H.convex _ (H.copy c₁) hmem₁ (H.copy c₂) hmem₂ p.1 (le_of_lt h1) (le_of_lt hlt))
+      · exact (Set.disjoint_left.mp (H.query_off (H.C.clusterMk c₁)) hq) (heq.symm ▸ hmem₁)
+  · let a : H.C.anchorIdx := ⟨p.1, ha⟩
+    have hcut : H.C.SameCut c₁.1 c₂.1 := Quotient.exact hs
+    have hside : c₁.1 < H.C.old p.1 ↔ c₂.1 < H.C.old p.1 := by
+      rw [H.point_lt_anchor_iff c₁ p ha, H.point_lt_anchor_iff c₂ p ha, hcut p.1]
+    have hflip (c : H.C.unshared) : H.C.old p.1 < c.1 ↔ ¬ c.1 < H.C.old p.1 := by
+      constructor
+      · exact fun h => not_lt_of_gt h
+      · intro hnot
+        rcases lt_trichotomy (H.C.old p.1) c.1 with hlt | heq | hgt
+        · exact hlt
+        · exact (c.2.2 ⟨p.1, heq⟩).elim
+        · exact absurd hgt hnot
+    have horig : H.C.old p.1 < c₁.1 ↔ H.C.old p.1 < c₂.1 :=
+      (hflip c₁).trans (hside.not.trans (hflip c₂).symm)
+    exact (H.hslot c₁ a).1.trans (horig.trans (H.hslot c₂ a).1.symm)
+
+/-- A parameter that crosses one cluster lies on the same side of every other cluster in the
+original order and in the copy. -/
+theorem stable (c₁ c₂ : H.C.unshared) (p : H.Parm)
+    (hcross : (H.embParm p < H.embCl c₁) ≠ (H.embParm p < H.embCopy c₁))
+    (hne : H.C.clusterMk c₁ ≠ H.C.clusterMk c₂) :
+    H.embParm p < H.embCl c₂ ↔ H.embParm p < H.embCopy c₂ := by
+  have hcross' : (H.C.old p.1 < c₁.1) ≠ (p.1 < H.copy c₁) := by
+    simpa [embParm_apply, embCl_apply, embCopy_apply, H.C.old.lt_iff_lt] using hcross
+  rcases lt_or_gt_of_ne hne with hlt | hgt
+  · have hpts : c₁.1 < c₂.1 := H.C.unshared_lt_of_cluster_lt hlt
+    obtain ⟨a, hleft, hright⟩ := H.C.exists_anchor_between hpts
+      (fun hsame => ne_of_lt hlt (Quotient.sound hsame))
+    have hcopyL : H.copy c₁ < a.1 := (H.hslot c₁ a).2.mpr hleft
+    have hcopyR : a.1 < H.copy c₂ := (H.hslot c₂ a).1.mpr hright
+    have hp : p.1 < a.1 := by
+      by_contra hge
+      have hle : a.1 ≤ p.1 := le_of_not_gt hge
+      have hnotCopy : ¬ p.1 < H.copy c₁ := not_lt_of_gt (hcopyL.trans_le hle)
+      have hnotOrig : ¬ H.C.old p.1 < c₁.1 :=
+        not_lt_of_gt (hleft.trans_le ((H.C.old.le_iff_le).mpr hle))
+      exact hcross' (propext (iff_of_false hnotOrig hnotCopy))
+    have horig : H.C.old p.1 < c₂.1 := ((H.C.old.lt_iff_lt).mpr hp).trans hright
+    have hcopy : p.1 < H.copy c₂ := hp.trans hcopyR
+    simp only [embParm_apply, embCl_apply, embCopy_apply, H.C.old.lt_iff_lt]
+    exact iff_of_true horig hcopy
+  · have hpts : c₂.1 < c₁.1 := H.C.unshared_lt_of_cluster_lt hgt
+    obtain ⟨a, hleft, hright⟩ := H.C.exists_anchor_between hpts
+      (fun hsame => ne_of_lt hgt (Quotient.sound hsame))
+    have hcopyL : H.copy c₂ < a.1 := (H.hslot c₂ a).2.mpr hleft
+    have hcopyR : a.1 < H.copy c₁ := (H.hslot c₁ a).1.mpr hright
+    have hp : a.1 < p.1 := by
+      by_contra hge
+      have hle : p.1 ≤ a.1 := le_of_not_gt hge
+      have hcopyYes : p.1 < H.copy c₁ := lt_of_le_of_lt hle hcopyR
+      have horigYes : H.C.old p.1 < c₁.1 :=
+        lt_of_le_of_lt ((H.C.old.le_iff_le).mpr hle) hright
+      exact hcross' (propext (iff_of_true horigYes hcopyYes))
+    have hnotOrig : ¬ H.C.old p.1 < c₂.1 :=
+      not_lt_of_gt (lt_trans hleft ((H.C.old.lt_iff_lt).mpr hp))
+    have hnotCopy : ¬ p.1 < H.copy c₂ := not_lt_of_gt (lt_trans hcopyL hp)
+    simp only [embParm_apply, embCl_apply, embCopy_apply, H.C.old.lt_iff_lt]
+    exact iff_of_false hnotOrig hnotCopy
+
+/-- The chart copy as one block interchange: each cut-cluster is a block, and the parameters
+it passes are the other block of that region. -/
+noncomputable def interchange : CopyInterchange H.C.unshared H.Parm J H.C.Cluster where
+  embCl := H.embCl
+  embCopy := H.embCopy
+  embParm := H.embParm
+  slot := H.C.clusterMk
+  slot_mono := H.C.clusterMk_mono
+  slot_reflect := fun h => H.C.unshared_lt_of_cluster_lt h
+  disjCl := H.disjCl
+  disjCopy := H.disjCopy
+  blockOrig := H.blockOrig
+  blockCopy := H.blockCopy
+  stable := H.stable
+
+end ChartOffHit
+
 /-- **Infra `infra_69_lem61_off_hits`:** Their anchor slots are disjoint, so Lemma 6.1 gives
 `D(vᵢ, Z) = p↾Z`.
 
-Pinned. The order half is the disjointness of the anchor slots (`hoff`). Identifying the
-off-hit copy with `p ↾ Z` is a `WorkingScheme.DiagramEq`, and the development does not supply
-it. -/
+The transposition sentence of that lemma is Lemma 4.6. An off-hit copy moves each cluster
+across a whole block of parameter positions, the blocks of distinct slots are disjoint, and
+the natural diagram is unchanged. The scheme identification itself is `OffHitCopyDiagramEq`:
+`lemma_6_1` only counts orbits, and nothing reads this copy as an `Occurrence` list. -/
 theorem infra_69_lem61_off_hits
     [CategoricalUnbounded K]
-    (hedge : ∀ i j, ¬ S.specified i j)
-    (hcat : ∀ μ' ∈ W.eligible, Categorical K μ')
-    (σ χ b : Cardinal.{u}) (hσ : ℵ₀ ≤ σ) (hpow : χ ^ σ = χ) (hb : b + σ < χ)
-    (hχ : ls K + (2 : Cardinal.{u}) ^ ((2 : Cardinal.{u}) ^ σ) ≤ χ)
-    (hiso : AssemblesStructIso W b)
+    (E : OrderPresentation K) (D : StableDiagram K)
+    {I J : Type u} [LinearOrder I] [LinearOrder J]
+    (H : ChartOffHit I J)
+    {α β : Type u} (σ : Cardinal.{u}) (hjoint : #(α ⊕ β) ≤ σ) (hσ : ℵ₀ ≤ σ)
+    (t : α → SupportTerm E.lab E.arity (CopyInterchange.Src H.interchange))
+    (s : β → SupportTerm E.lab E.arity (CopyInterchange.Src H.interchange))
+    (ht : ∀ a k, (t a).pos k ∉ H.interchange.regions.second)
+    (hs : ∀ b k, (s b).pos k ∉ H.interchange.regions.first) :
+    SameNaturalDiagram K E D σ hjoint (Sum.elim t s)
+      (Sum.elim (fun a => H.interchange.interchange.move (t a) (Or.inl (ht a)))
+        (fun b => H.interchange.interchange.move (s b) (Or.inr (hs b)))) :=
+  H.interchange.sameNaturalDiagram K E D σ hjoint hσ t s ht hs
+
+/-- English (eventual.pdf §6.2): "Their anchor slots are disjoint, so Lemma 6.1 gives
+`D(vᵢ, Z) = p↾Z`."
+
+`lemma_6_1` counts orbits of `σ`-tuples and does not identify the two diagrams.
+`infra_69_lem61_off_hits` is the transposition half (Lemma 4.6) for support terms on the
+chart copy. Nothing reads that copy as an `Occurrence` list, and nothing transports
+`SameNaturalDiagram` to `WorkingScheme.DiagramEq`. -/
+def OffHitCopyDiagramEq
     {μ : Cardinal.{u}} {hμ : μ ∈ W.eligible} {base : W.Object μ hμ}
     (p : TupleOver K S W hμ base)
-    {I J : Type u} [LinearOrder I] [LinearOrder J] (C : ChartSupport I J)
-    {κIndex ι : Type u} (region : κIndex → Set I)
-    (hdisj : ∀ i j, i ≠ j → Disjoint (region i) (region j))
+    {κIndex ι : Type u}
     (family : κIndex → p.idx → Occurrence K S (W.asSystem hμ base))
-    (Z : ι → Occurrence K S (W.asSystem hμ base))
-    (supportZ : ι → Set J) (i : κIndex)
-    (hoff : ∀ z, Disjoint (supportZ z) (⇑C.old '' region i)) :
-    W.DiagramEq (X := p.host) (Y := base)
-      (typeJoint (p := p) Z) (seqJoint (family i) Z) := by
-  /- English (eventual.pdf §6.2): "Their anchor slots are disjoint, so Lemma 6.1 gives
-     `D(vᵢ, Z) = p↾Z`."
-     Missing API:
-     * `infra_69_place_type` places `p` over the well-ordered skeleton, for queries of size at
-       most `τ` (`Placement.Lifts`). It does not produce a `WorkingScheme.DiagramEq`;
-     * there is no reading of an order-support copy as an `Occurrence` list for which
-       `WorkingScheme.DiagramEq` is `StableDiagram.same`;
-     * `lemma_6_1` / `WorkingScheme.exists_parameter_orbit_reps` bounds the number of diagrams
-       of `σ`-tuples over parameters, and does not identify `D(vᵢ, Z)` with `p ↾ Z`. -/
-  sorry
+    (Z : ι → Occurrence K S (W.asSystem hμ base)) (i : κIndex) : Prop :=
+  W.DiagramEq (X := p.host) (Y := base)
+    (typeJoint (p := p) Z) (seqJoint (family i) Z)
 
 /-- **Infra `infra_69_hit_bound`:** Every supporting position of `Z` belongs to at most one of
 the regions, and therefore excludes at most one index `i`. -/
@@ -1527,8 +1798,9 @@ theorem infra_69_assemble
      Missing API:
      * `infra_69_place_type` places `p` over the skeleton for queries of size at most `τ`, and
        supplies no `Occurrence` family;
-     * `infra_69_lem61_off_hits` is the missing `WorkingScheme.DiagramEq` for indices whose
+     * `OffHitCopyDiagramEq` is the missing `WorkingScheme.DiagramEq` for indices whose
        supports avoid the copy regions, which is what `few_exceptions` asks for.
+       `infra_69_lem61_off_hits` gives the natural-diagram half (Lemma 4.6).
      `infra_69_copy_cluster`, `infra_69_hit_bound`, `infra_69_finitary_exceptions`, and
      `infra_69_subtuple_uniform` do not produce the `Occurrence` family.
      `TupleOver.InBase` and `ApproximationSequence.ofConstFamily` are not used. -/
@@ -1542,7 +1814,7 @@ abbrev support_copy_exception_and_assembly := @infra_69_assemble
 /-- Uniform approximation sequences for `p = tp(v/A)` with `#p.idx ≤ σ` (English Lemma 6.9).
 
 Hypotheses match Lemma 6.1 packaging. The proof follows the English paragraphs above; it is
-pinned at `infra_69_assemble` (`infra_69_lem61_off_hits` is the missing `DiagramEq`).
+pinned at `infra_69_assemble` (`OffHitCopyDiagramEq` is the missing `DiagramEq`).
 On `SingleModelData`, `infra_69_place_type` places `p` over the skeleton at size `τ`.
 Steps 1–2 invoke Lemmas 5.5 and 5.4. -/
 theorem WorkingScheme.exists_approximationSequence

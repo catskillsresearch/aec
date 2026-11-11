@@ -1,6 +1,6 @@
 {
   "updated": "2026-11-11",
-  "sorryCount": 58,
+  "sorryCount": 57,
   "legend": {
     "open": "No unfinished required proof-deps — try next",
     "blocked": "Waiting on incomplete required proof-deps",
@@ -27,7 +27,7 @@
     "Lem 6.5 is done (PlacedComparisons.lean), with a repaired statement. The old form had SameGaloisType (scheme amalgamation, which is Thm 6.6) on the left of the iff, a merely monotone g (the iff fails for small g), and a bare WorkingScheme with no presentation to place a tuple in; English Lem 6.5 does not use an amalgamation relation on types. It is now at the level of a presentation, under hL : ClosedLevel K E D g μ with I a well-order of size μ, A = E(I), and tuples d₀, d₁ of length ≤ σ < μ in strong μ-extensions B₀, B₁ of A: (1) some placement lifts the bounded diagrams of d₀ (Placement.LiftsBounded); (2) any two such placements agree over all of A (Placement.AgreeOn … Set.univ); (3) for lifts P₀ of d₀ and P₁ of d₁, P₀.AgreeOn P₁ Set.univ iff the diagrams of d₀ and d₁ agree at the bounded levels ρ < μ over all parameter lists p : β → A with #β ≤ g σ + ls K (the right side of Thm 4.11 clause 2). σ is any infinite bound on the length, in place of |v| + ℵ₀. The last sentence of the English statement (other natural parameter layouts) is not formalized: NaturalParameterLayout has no placement data. Proof: (1), (2) are Lemma 4.10 (exists_boundedDiagramLift, Placement.LiftsBounded.agreeOn_univ); (3) ← is the placed tester (agreeOn_univ_of_tests), (3) → is new (Placement.LiftsBounded.same_of_agreeOn: equal comparisons make the placement of d₀ lift d₁, by Placement.LiftsBounded.of_agreeOn, so both tuples have the diagram of its placed tuple; this holds for every bounded query). Hard edges added: lemma_4_10 → lemma_6_5, proposition_4_8 → lemma_6_5, and proposition_6_3 → lemma_6_5 (the English proof says Proposition 6.3 identifies the full placed comparisons; in Lean its PlacedTester is the tester of ClosedLevel). lemma_6_4 → lemma_6_5 stays hard: the English proof applies Lemma 6.4, and the Lean proof reaches the same compact_placement through Lemma 4.10. Thm 6.6 is done by packaging ClosedLevel.amalgamation / tuple_amalgamation_iff; see the Thm 6.6 note.",
     "Thm 6.6 is done by packaging ClosedLevel.amalgamation and ClosedLevel.tuple_amalgamation_iff (ClosedLevelTypes.lean / Thm 4.11). Statement repair: dropped bare WorkingScheme / SameGaloisType / unconstrained g; presentation-level under ClosedLevel K E D g μ with amalgamation of strong μ-extensions and the tuple-amalgamation iff at bounded σ < μ with #β ≤ g σ + ls K. Hard edge theorem_4_11 → theorem_6_6; lemma_6_5 → theorem_6_6 softened (English ω-tower / Lem 6.4–6.5 narrative; Lean path is Thm 4.11). Cor 6.7 is done; see the Cor 6.7 note.",
     "Cor 6.7 is done (LargerLevelRealization.lean), with a repaired statement. The old form quantified over a bare WorkingScheme (Tail / SystemArrow / permitted) with no closed levels, strongness, sizes or testing bound for the Thm 4.11 engine to use, and had neither the prescribed tuple nor the type clause. It is now presentation-level under ClosedLevel K E D g ν, ClosedLevel K E D g μ, ν < μ, for a strong f : A → B of ν-models and a strong i : A → N into a μ-model: (1) a strong B → N extends i; (2) the image of a tuple d of B of length < ν may be prescribed as z in N when the diagrams of (d, f p) and (z, i p) agree at the bounds ρ < ν for all p : β → A with #β ≤ g(#α ⊔ ℵ₀) + ls K; (3) a tuple of N of length < ν lies in a strong ν-submodel B' of N containing A, with the same diagrams over A at ρ < ν. Proof of (2): N ≅ E(Below μ) by categoricity at μ; the images of A and z use ≤ ν positions, so they lie in N₀ = E(S), S a suborder of size ν (exists_suborder_cover), and A → N₀ is strong by coherence; ClosedLevel.exists_tuple_amalgam at ν gives a ν-amalgam P of B and N₀ over A identifying d with z; N₀ → N is an order map of the presentation and μ ≥ t(ν) is a categoricity cardinal, so exists_strong_embedding_over (the Thm 4.11 tower at source level ν, target chart Below μ) embeds P into N over N₀. The target is not enlarged and no comparison of length ν is made in a ν-model. The English proof instead runs the exhaustion of Thm 6.6 directly into N, with compact placement in a chart of N and saturation at μ; that saturation step is not formalized. A direct Lean version by lift extensions was tried and not closed: D.exists_transport into N matches the previously assigned list but not the image of A, and D.of_strong from the ν-model A gives no comparison of length ν (t(ν) > ν). Hard edge theorem_4_11 → corollary_6_7; theorem_6_6 → corollary_6_7 softened (English shared exhaustion; theorem_6_6 is not called). Lemma 6.9 is unblocked (its only hard dep was 6.7); its bare-scheme statement remains for a later repair.",
-    "infra_69_place_type done via well-ordered IsPadded skeleton + compact placement at one χ for queries ≤τ. Remaining open pin: infra_69_lem61_off_hits; assemble/lemma_6_9 blocked."
+    "infra_69_place_type done via well-ordered IsPadded skeleton + compact placement at one χ for queries ≤τ. infra_69_lem61_off_hits done as SameNaturalDiagram via Lemma 4.6 on ChartOffHit (OffHitBlock.lean); statement narrowed off WorkingScheme.DiagramEq. Remaining open pin: infra_69_off_hit_diagramEq (OffHitCopyDiagramEq). assemble/lemma_6_9 blocked on that Prop."
   ],
   "nodes": [
     {
@@ -424,7 +424,7 @@
       "file": "AEC/Section6/Results.lean",
       "status": "blocked",
       "blocker": "infra_69_assemble",
-      "detail": "Blocked on infra_69_assemble. place_type done (skeleton placement ≤τ). Remaining pins: lem61_off_hits (DiagramEq-from-copy), assemble."
+      "detail": "Blocked on infra_69_assemble. place_type done (skeleton placement ≤τ). lem61_off_hits done (SameNaturalDiagram, Lemma 4.6). Remaining pin: infra_69_off_hit_diagramEq (OffHitCopyDiagramEq), then assemble."
     },
     {
       "id": "proposition_6_12",
@@ -1158,9 +1158,18 @@
       "label": "Infra: Lem 6.1 off hits",
       "section": 6,
       "file": "AEC/Section6/UniformApproximations.lean",
+      "status": "done",
+      "blocker": null,
+      "detail": "SameNaturalDiagram of the chart copy with the original, by lemma_4_6_blockInterchange on CopyInterchange (OffHitBlock.lean) built from ChartOffHit. Statement change: the old sorry identified D(vᵢ, Z) with p↾Z as WorkingScheme.DiagramEq. lemma_6_1 only counts orbits. The scheme sentence is the open obligation OffHitCopyDiagramEq."
+    },
+    {
+      "id": "infra_69_off_hit_diagramEq",
+      "label": "Infra: off-hit DiagramEq",
+      "section": 6,
+      "file": "AEC/Section6/UniformApproximations.lean",
       "status": "open",
       "blocker": null,
-      "detail": "Pinned: English Lem 6.1 DiagramEq from order-support copy; lemma_6_1 only counts orbits, no DiagramEq-from-copy API."
+      "detail": "Pinned: OffHitCopyDiagramEq, i.e. WorkingScheme.DiagramEq of typeJoint Z with seqJoint (family i) Z. English: their anchor slots are disjoint, so Lemma 6.1 gives D(vᵢ, Z) = p↾Z. The transposition half is done (infra_69_lem61_off_hits, SameNaturalDiagram). Missing Lean clause: an Occurrence reading of the order-support copy, and block-transposition invariance of DiagramEq. SameNaturalDiagram does not yield DiagramEq."
     },
     {
       "id": "infra_69_hit_bound",
@@ -1204,8 +1213,8 @@
       "section": 6,
       "file": "AEC/Section6/UniformApproximations.lean",
       "status": "blocked",
-      "blocker": "infra_69_lem61_off_hits",
-      "detail": "Pinned: Def 6.8 assembly needs place_type LiftsBounded + lem61 DiagramEq."
+      "blocker": "infra_69_off_hit_diagramEq",
+      "detail": "Pinned: Def 6.8 assembly needs OffHitCopyDiagramEq. place_type done. lem61_off_hits done as the Lemma 4.6 natural-diagram half."
     }
   ],
   "edges": [
@@ -2134,13 +2143,19 @@
       "from": "lemma_6_1",
       "to": "infra_69_lem61_off_hits",
       "kind": "hard",
-      "note": "English cite routed into the matching Lem 6.9 infra atom."
+      "note": "English cite of the sentence. The orbit bound is not the identification; the proved half is Lemma 4.6."
     },
     {
       "from": "lemma_4_6",
       "to": "infra_69_whole_block_diff",
       "kind": "hard",
       "note": "English cite routed into the matching Lem 6.9 infra atom."
+    },
+    {
+      "from": "lemma_4_6",
+      "to": "infra_69_lem61_off_hits",
+      "kind": "hard",
+      "note": "The proof calls lemma_4_6_blockInterchange on the ChartOffHit copy."
     },
     {
       "from": "infra_69_place_type",
@@ -2150,10 +2165,16 @@
     },
     {
       "from": "infra_69_lem61_off_hits",
+      "to": "infra_69_off_hit_diagramEq",
+      "kind": "hard",
+      "note": "The scheme sentence still needs an Occurrence reading of the copy. SameNaturalDiagram is the transposition half."
+    },
+    {
+      "from": "infra_69_off_hit_diagramEq",
       "to": "infra_69_assemble",
       "kind": "hard",
-      "note": "Assembly needs off-hit DiagramEq."
+      "note": "Assembly needs OffHitCopyDiagramEq."
     }
   ],
-  "doneCount": 54
+  "doneCount": 55
 }
