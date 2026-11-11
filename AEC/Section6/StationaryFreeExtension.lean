@@ -4,6 +4,7 @@ public import AEC.Section6.FreeExtension
 public import AEC.Section6.TupleOver
 public import AEC.Section6.UniformApproximations
 public import AEC.Section6.TestCardinal
+public import AEC.Section4.ClosedLevelTypes
 
 @[expose] public section
 
@@ -26,10 +27,11 @@ English clauses (from `FreeExtension.md`):
 with same-level host `p.ν = μ`. `IsFreeLift` queries are bounded by the sequence arity `I.τ`
 (English testing cost), not every `#ι < ν`. Cross-scheme transfer is not used.
 
-**Infra.** Majority uniqueness/existence and `infra_610_move_query` (saturate + `diagram_iso`
-pullback into `A`) are proved. Open tips: `infra_610_majority_prescription` (English Lem 6.4
-path: chart of `B`, DiagramEq→`D.same` prescriptions, place, wrap as `TupleOver`) and
-`infra_610_same_galois`. `infra_610_place_on_B` is the packaging wrapper of that pin.
+**Infra.** Majority uniqueness/existence, `infra_610_move_query`, and `infra_610_same_galois`
+(ClosedLevel amalgam + `SMObject.ofModel` wrap under diagram tests) are proved.
+`infra_610_place_on_B` packages `infra_610_majority_prescription`. Open tips:
+`infra_610_majority_prescription` (placement, `q.ν = μ`, Galois tests) and
+`infra_610_closed_level` (`PlacedTester` / `ClosedLevel` for `P.g`).
 -/
 
 namespace AEC
@@ -274,12 +276,14 @@ prescription glue, the eligible-card wrap of `E(J)`, and the majority clause are
    outside `#β + ℵ₀` exceptions; `q X = Sum.elim (chart∘f∘vᵢ) X` (`hnat` / `hcoh` via
    majority uniqueness + `diagramEq_iff_sameD`).
 4. `lemma_6_4` / `proposition_4_9` → `z` in an order enlargement `E(J)`.
-5. Wrap as `TupleOver` over `B`; majority clause by move_query + uniqueness vs placed joints.
+5. Wrap as same-level `TupleOver` over `B` (`q.ν = μ`); majority clause by move_query +
+   uniqueness; Thm 6.6 diagram tests of `p` vs `q.restrict` for Galois.
 
 **Why pinned.** (i) Scheme `DiagramEq` majority classes → presentation `D.same` at every
 `#β ≤ χ` (plan takes `χ > seq.τ`, while `few_exceptions` only covers `#ι ≤ seq.τ`).
 (ii) `E(J)` typically has card a categoricity size `≥ μ` not necessarily in `P.eligible`, so
-it is not an `SMObject` host without an extra hull/push. -/
+it is not an `SMObject` host without an extra hull/push.
+(iii) Same-level host and Galois `htest` are part of the English free-lift placement. -/
 theorem infra_610_majority_prescription
     (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ)
     {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
@@ -292,6 +296,16 @@ theorem infra_610_majority_prescription
     (seq : ApproximationSequence p) (hτμ : seq.τ < μ) :
     ∃ q : TupleOver K oneVertexShape P.scheme hμ B,
       ∃ e : p.idx ≃ q.idx,
+        q.ν = μ ∧
+        (∀ {β : Type u} (_ : #β ≤ P.g σ + ls K) (ρ : Cardinal.{u}) (_ : aleph0 ≤ ρ)
+          (_ : ρ < μ) (params : β → A.model.carrier) (hjoint : #(q.idx ⊕ β) ≤ ρ)
+          (h₀ : P.D.t ρ ≤ Model.card p.host.model)
+          (h₁ : P.D.t ρ ≤ Model.card q.host.model),
+          P.D.same hjoint p.host.mem q.host.mem h₀ h₁
+            (Sum.elim (fun i => p.host.val (p.val (e.symm i)))
+              (fun b => p.incl.onVertex PUnit.unit (params b)))
+            (Sum.elim (fun i => q.host.val (q.val i))
+              (fun b => (q.restrict f hf).incl.onVertex PUnit.unit (params b)))) ∧
         ∀ {ι : Type u} (Z : ι → Occurrence K oneVertexShape (P.scheme.asSystem hμ B)),
           #ι ≤ seq.τ →
           ∃ Z0 : ι → Occurrence K oneVertexShape (P.scheme.asSystem hμ A),
@@ -300,7 +314,7 @@ theorem infra_610_majority_prescription
   sorry
 
 /-- Packaging of `infra_610_majority_prescription` (English Lem 6.4 placement on a chart of
-`B`). -/
+`B`), including same-level host and Galois diagram tests. -/
 theorem infra_610_place_on_B
     (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ)
     {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
@@ -313,6 +327,16 @@ theorem infra_610_place_on_B
     (seq : ApproximationSequence p) (hτμ : seq.τ < μ) :
     ∃ q : TupleOver K oneVertexShape P.scheme hμ B,
       ∃ e : p.idx ≃ q.idx,
+        q.ν = μ ∧
+        (∀ {β : Type u} (_ : #β ≤ P.g σ + ls K) (ρ : Cardinal.{u}) (_ : aleph0 ≤ ρ)
+          (_ : ρ < μ) (params : β → A.model.carrier) (hjoint : #(q.idx ⊕ β) ≤ ρ)
+          (h₀ : P.D.t ρ ≤ Model.card p.host.model)
+          (h₁ : P.D.t ρ ≤ Model.card q.host.model),
+          P.D.same hjoint p.host.mem q.host.mem h₀ h₁
+            (Sum.elim (fun i => p.host.val (p.val (e.symm i)))
+              (fun b => p.incl.onVertex PUnit.unit (params b)))
+            (Sum.elim (fun i => q.host.val (q.val i))
+              (fun b => (q.restrict f hf).incl.onVertex PUnit.unit (params b)))) ∧
         ∀ {ι : Type u} (Z : ι → Occurrence K oneVertexShape (P.scheme.asSystem hμ B)),
           #ι ≤ seq.τ →
           ∃ Z0 : ι → Occurrence K oneVertexShape (P.scheme.asSystem hμ A),
@@ -320,10 +344,22 @@ theorem infra_610_place_on_B
               (typeJoint (p := q) Z ∘ Sum.map e id) :=
   infra_610_majority_prescription P σ hσ hμ hrec hσμ f hf p hνμ hidx hidxμ seq hτμ
 
-/-- **Pinned.** Scheme-level `SameGaloisType` of `p` with `q.restrict f` on `P.scheme`.
-English uses uniqueness of the actual type from testing at `τ ≥ g(σ)` (Theorem 6.6 /
-`ClosedLevel.exists_tuple_amalgam`). Needs `PlacedTester` packaging beyond bare
-`{D.t, g}`-eligibility, and test agreement from the majority placement. -/
+/-! ## Same Galois type from ClosedLevel tests -/
+
+/-- **Pinned.** `ClosedLevel` for the scheme bound `P.g` at a recursion-closed eligible `μ`.
+
+`exists_placedTester P.E P.D` yields some `g0`, not `P.g`. Eligibility is only
+`IsClosurePoint {P.D.t, P.g}`, so it does not force `placedTestBound θ < μ`. Do not substitute
+`g0` or weaken the Thm 6.6 testing bound. -/
+theorem infra_610_closed_level
+    (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ)
+    {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
+    (_hrec : μ ∈ recursionClosedLevels P σ) :
+    ClosedLevel K P.E P.D P.g μ := by
+  sorry
+
+/-- Scheme `SameGaloisType` of `p` with `q.restrict f` from Thm 6.6 / `exists_tuple_amalgam`
+under diagram tests, wrapped by `SMObject.ofModel`. -/
 theorem infra_610_same_galois
     {P : SingleModelData K}
     {μ : Cardinal.{u}} {hμ : μ ∈ P.eligible}
@@ -333,15 +369,79 @@ theorem infra_610_same_galois
     (p : TupleOver K oneVertexShape P.scheme hμ A)
     (q : TupleOver K oneVertexShape P.scheme hμ B)
     (e : p.idx ≃ q.idx)
-    (hνμ : p.ν = μ) :
+    (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ) (hσμ : σ < μ) (hidx : #p.idx ≤ σ)
+    (hνμ : p.ν = μ) (hqν : q.ν = μ)
+    (hL : ClosedLevel K P.E P.D P.g μ)
+    (htest : ∀ {β : Type u} (_ : #β ≤ P.g σ + ls K) (ρ : Cardinal.{u}) (_ : aleph0 ≤ ρ)
+      (_ : ρ < μ) (params : β → A.model.carrier) (hjoint : #(q.idx ⊕ β) ≤ ρ)
+      (h₀ : P.D.t ρ ≤ Model.card p.host.model)
+      (h₁ : P.D.t ρ ≤ Model.card q.host.model),
+      P.D.same hjoint p.host.mem q.host.mem h₀ h₁
+        (Sum.elim (fun i => p.host.val (p.val (e.symm i)))
+          (fun b => p.incl.onVertex PUnit.unit (params b)))
+        (Sum.elim (fun i => q.host.val (q.val i))
+          (fun b => (q.restrict f hf).incl.onVertex PUnit.unit (params b)))) :
     SameGaloisType p (q.restrict f hf) e (Equiv.refl q.idx) := by
-  sorry
+  classical
+  haveI : CategoricalUnbounded K := P.D.categoricalUnbounded
+  let d₀ : q.idx → p.host.model.carrier :=
+    fun i => p.host.val (p.val (e.symm i))
+  let d₁ : q.idx → q.host.model.carrier :=
+    fun i => q.host.val (q.val i)
+  let f₀ : Language.Embedding K.τ A.model.carrier p.host.model.carrier :=
+    p.incl.onVertex PUnit.unit
+  let f₁ : Language.Embedding K.τ A.model.carrier q.host.model.carrier :=
+    (q.restrict f hf).incl.onVertex PUnit.unit
+  have hcA : Model.card A.model = μ := A.card
+  have hc₀ : Model.card p.host.model = μ := by simpa [hνμ] using p.host.card
+  have hc₁ : Model.card q.host.model = μ := by simpa [hqν] using q.host.card
+  have hα : #q.idx ≤ σ := (Cardinal.mk_congr e).symm.trans_le hidx
+  obtain ⟨P₀, g₀, g₁, hP₀, hg₀, hg₁, hcP₀, hbase, hd⟩ :=
+    hL.exists_tuple_amalgam hσ hσμ hα A.model p.host.model q.host.model f₀ f₁ d₀ d₁
+      A.mem p.host.mem q.host.mem (p.incl.onVertex_strong PUnit.unit)
+      ((q.restrict f hf).incl.onVertex_strong PUnit.unit) hcA hc₀ hc₁ htest
+  let top : SMObject K μ := SMObject.ofModel P₀ hP₀ hcP₀
+  let φ : P₀.carrier ≃[K.τ] top.model.carrier := SMObject.ofModelEquiv P₀ hP₀ hcP₀
+  have hφ : K.Strong φ.toEmbedding := strong_of_equiv K φ hP₀
+  let emb₁ : Language.Embedding K.τ p.host.model.carrier top.model.carrier :=
+    φ.toEmbedding.comp g₀
+  let emb₂ : Language.Embedding K.τ q.host.model.carrier top.model.carrier :=
+    φ.toEmbedding.comp g₁
+  have hs₁ : K.Strong emb₁ := K.strong_trans _ _ hg₀ hφ
+  have hs₂ : K.Strong emb₂ := K.strong_trans _ _ hg₁ hφ
+  let arr₁ : SystemArrow K oneVertexShape (P.scheme.asSystem p.hν p.host)
+      (P.scheme.asSystem hμ top) :=
+    oneVertexArrow emb₁ hs₁
+  let arr₂ : SystemArrow K oneVertexShape
+      (P.scheme.asSystem (q.restrict f hf).hν (q.restrict f hf).host)
+      (P.scheme.asSystem hμ top) :=
+    oneVertexArrow emb₂ hs₂
+  refine ⟨μ, hμ, top, arr₁, arr₂, trivial, trivial, ?_, ?_⟩
+  · intro v
+    refine DFunLike.ext _ _ fun x => ?_
+    change φ (g₀ (p.incl.onVertex v x)) = φ (g₁ ((q.restrict f hf).incl.onVertex v x))
+    have hv : v = PUnit.unit := Subsingleton.elim _ _
+    subst hv
+    exact congrArg φ (hbase x)
+  · intro i
+    change
+      (⟨(p.val (e.symm i)).1, emb₁ (p.val (e.symm i)).2⟩ :
+        Occurrence K oneVertexShape (P.scheme.asSystem hμ top)) =
+      ⟨((q.restrict f hf).val ((Equiv.refl q.idx).symm i)).1,
+        emb₂ ((q.restrict f hf).val ((Equiv.refl q.idx).symm i)).2⟩
+    have hv : (p.val (e.symm i)).1 = PUnit.unit := Subsingleton.elim _ _
+    have hw : (q.val i).1 = PUnit.unit := Subsingleton.elim _ _
+    simp only [Equiv.refl_symm, TupleOver.restrict, hv, hw]
+    change (⟨PUnit.unit, φ (g₀ (d₀ i))⟩ :
+        Occurrence K oneVertexShape (P.scheme.asSystem hμ top)) =
+      ⟨PUnit.unit, φ (g₁ (d₁ i))⟩
+    rw [hd i]
 
 /-! ## Existence -/
 
 /-- English clause 1: existence of a free lift along a permitted arrow of `P.scheme`.
 Packaging matches Lemma 6.9 (`p.ν = μ`, recursion-closed level, code arity `c(σ)`).
-Open tips are `infra_610_majority_prescription` / `infra_610_same_galois`. -/
+Open tips are `infra_610_majority_prescription` / `infra_610_closed_level`. -/
 theorem stationary_free_extension_exists
     (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ)
     {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
@@ -395,9 +495,10 @@ theorem stationary_free_extension_exists
   obtain ⟨seq, hseqτ, _⟩ :=
     P.exists_approximationSequence hμ A p hνμ σ τ κ hσ hσlt hidx hτ hτμ hκ hκμ hprod hclosed
   have hseqτμ : seq.τ < μ := hseqτ ▸ hτμ
-  obtain ⟨q, e, hmaj⟩ :=
+  obtain ⟨q, e, hqν, htest, hmaj⟩ :=
     infra_610_place_on_B P σ hσ hμ hrec hσμ f hf p hνμ hidx hidxμ seq hseqτμ
-  refine ⟨q, e, ⟨infra_610_same_galois f hf p q e hνμ, ⟨seq, ?_⟩⟩⟩
+  have hL := infra_610_closed_level P σ hσ hμ hrec
+  refine ⟨q, e, ⟨infra_610_same_galois f hf p q e σ hσ hσlt hidx hνμ hqν hL htest, ⟨seq, ?_⟩⟩⟩
   intro ι Z hι
   obtain ⟨Z0, hZ0⟩ := hmaj Z hι
   refine ⟨Z0, typeJoint (p := q) Z ∘ Sum.map e id, hZ0, ?_⟩

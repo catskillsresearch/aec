@@ -475,8 +475,9 @@ English gloss. Clauses:
 same-level host `p.ν = μ`. Cross-scheme transfer is not used.
 
 **Pinned.** Packaging calls `stationary_free_extension_exists`, which is blocked on
-`infra_610_place_on_B` / `infra_610_same_galois` / `infra_610_move_query`. Majority
-uniqueness from `few_exceptions` is proved. -/
+`infra_610_majority_prescription` / `infra_610_closed_level`. Move-query, place packaging,
+and same-galois (`exists_tuple_amalgam` wrap) are proved. Majority uniqueness from
+`few_exceptions` is proved. -/
 theorem theorem_6_10 {K : AbstractElementaryClass.{u}}
     (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ) :
     ∃ T, ∃ hT : Tail P.eligible T,
