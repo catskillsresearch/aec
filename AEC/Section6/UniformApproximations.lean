@@ -25,10 +25,13 @@ English steps:
 2. Lemma 6.5 places `p` on the well-ordered skeleton (`infra_69_place_type`). The copy
    chain needs the same placement on the padded chart itself. That is the padded
    non-well-ordered clause of Lemma 6.4 (`infra_69_place_on_fills`), which is pinned.
-   Each profile step `2^β + σ + b` stays below a strong limit (`profileStep_lt_of_strongLimit`).
-   The English iteration also takes the supremum of those steps along `ω`, and a strong
-   limit of cofinality `ω` need not lie above that supremum (`iSup_nat_beth_eq_beth_omega`,
-   `cof_ord_beth_omega`). The skeleton does not fill cuts, and it is not a substitute.
+   Each profile step stays below a strong limit (`profileStep_lt_of_strongLimit`).
+   Eligible `μ` is a closure point of `{D.t, g}`, the supremum of `closureTower`
+   (one power set, plus `closureBound`, per countable step). When that bound is
+   absorbed by the power set, the relative tower from any `β₀` in `[θ₀, μ)` has
+   supremum `μ` (`iSup_profileTower_eq_of_ge`). The zero bounds realize this and
+   equal `ℶ_ω` (`exists_closurePoint_profileSup_eq`). The stage-ω union is that
+   supremum, so `exists_local_placement` does not apply. The skeleton does not fill cuts.
 3. Keep shared old-chart supports; partition other supports by cuts; anchors have size at most
    `σ + ℵ₀` (`ChartSupport`, the pure-order infras below).
 4. In each anchor slot, choose `κ` pairwise disjoint convex regions and put a copy of the
@@ -320,11 +323,16 @@ theorem infra_69_place_type
 The padded clause of Lemma 6.4 counts profiles by down-sets, at most `2^{|X| + σ + b}` many,
 and iterates `β₀` above the test size, `β_{i+1} = 2^{β_i} + σ + b`, through `i ≤ σ⁺`.
 `exists_local_placement` applies to the stage union only when that union is strictly below
-the level (`D.t ρ ≤ ‖E(I)‖`). A strong limit kills each single power. It does not kill the
-supremum of the `ω`-iteration: `ℶ_ω` is a strong limit of cofinality `ℵ₀` and equals
-`supₙ ℶₙ`. Eligible levels are closure points of `{D.t, g}`, built by one power set (and
-`t`, `g`) at each step of a countable tower, so that construction does not place the level
-strictly above this supremum. -/
+the level (`D.t ρ ≤ ‖E(I)‖`). A strong limit kills each single power. The stage-`ω`
+supremum is the relative tower `profileTower β₀`. Eligible `μ` is a closure point of
+`{D.t, g}`: `exists_closurePoint_ge` builds it as `⨆ n, closureTower t g κ`, one power
+set and one `closureBound` per step. If that bound is absorbed by the power set, every
+relative tower that starts in `[θ₀, μ)` is cofinal in `μ` (`iSup_profileTower_eq_of_ge`).
+Cofinality `ℵ₀` then forces the supremum to equal `μ`; it does not do so for a tower that
+stays bounded. The zero bounds are absorbed, the resulting closure point is `ℶ_ω`, and
+every infinite `β₀ < ℶ_ω` has relative supremum `ℶ_ω`
+(`exists_closurePoint_profileSup_eq`). A start below `θ₀` is a different tower.
+`D.t σ ≥ σ⁺` does not escape one power set (`succ_le_two_pow`). -/
 
 /-- One English profile step stays strictly below a strong limit. -/
 theorem profileStep_lt_of_strongLimit {μ β σ b : Cardinal.{u}} (hμ : μ.IsStrongLimit)
@@ -369,6 +377,194 @@ theorem cof_ord_beth_omega :
   rw [Order.cof_nat, Cardinal.lift_uzero, Cardinal.lift_aleph0] at h
   exact h
 
+/-- The relative power-set tower from `β`: `β`, `2^β`, `2^(2^β)`, …. -/
+def profileTower (β : Cardinal.{u}) : ℕ → Cardinal.{u}
+  | 0 => β
+  | n + 1 => (2 : Cardinal.{u}) ^ profileTower β n
+
+theorem profileTower_mono_start {a b : Cardinal.{u}} (h : a ≤ b) (n : ℕ) :
+    profileTower a n ≤ profileTower b n := by
+  induction n with
+  | zero => exact h
+  | succ _ ih => exact power_le_power_left two_ne_zero ih
+
+theorem profileTower_aleph0 (n : ℕ) : profileTower ℵ₀ n = beth (n : Ordinal.{u}) := by
+  induction n with
+  | zero => simp [profileTower, beth_zero]
+  | succ n ih =>
+    rw [show profileTower ℵ₀ (n + 1) = (2 : Cardinal.{u}) ^ profileTower ℵ₀ n from rfl, ih,
+      ← beth_add_one]
+    simp [Nat.cast_succ]
+
+/-- The absolute tower from `ℵ₀` is `ℶ_ω`. -/
+theorem iSup_profileTower_aleph0_eq_beth_omega :
+    (⨆ n, profileTower (ℵ₀ : Cardinal.{u}) n) = beth (Ordinal.omega0 : Ordinal.{u}) := by
+  rw [← iSup_nat_beth_eq_beth_omega]
+  refine le_antisymm ?_ ?_
+  · refine ciSup_le fun n => ?_
+    rw [profileTower_aleph0]
+    exact le_ciSup (f := fun n : ℕ => beth (n : Ordinal.{u})) bddAbove_of_small n
+  · refine ciSup_le fun n => ?_
+    rw [← profileTower_aleph0]
+    exact le_ciSup (f := fun n : ℕ => profileTower (ℵ₀ : Cardinal.{u}) n) bddAbove_of_small n
+
+/-- A cardinal successor lies under one power set. `σ⁺ ≤ D.t σ` does not exceed `2^σ`. -/
+theorem succ_le_two_pow (a : Cardinal.{u}) : Order.succ a ≤ (2 : Cardinal.{u}) ^ a :=
+  Order.succ_le_of_lt (cantor a)
+
+theorem closureTower_succ_of_absorbed (t g : Cardinal.{u} → Cardinal.{u}) (κ : Cardinal.{u})
+    (n : ℕ) (habs : closureBound t g (closureTower t g κ n) ≤
+      (2 : Cardinal.{u}) ^ closureTower t g κ n) :
+    closureTower t g κ (n + 1) =
+      Order.succ ((2 : Cardinal.{u}) ^ closureTower t g κ n) := by
+  have hmax : (2 : Cardinal.{u}) ^ closureTower t g κ n ⊔
+      closureBound t g (closureTower t g κ n) =
+      (2 : Cardinal.{u}) ^ closureTower t g κ n := max_eq_left habs
+  have hdef : closureTower t g κ (n + 1) =
+      Order.succ ((2 : Cardinal.{u}) ^ closureTower t g κ n ⊔
+        closureBound t g (closureTower t g κ n)) := rfl
+  rw [hdef, hmax]
+
+theorem profileTower_le_closureTower (t g : Cardinal.{u} → Cardinal.{u}) {κ : Cardinal.{u}}
+    (hκ : ℵ₀ ≤ κ)
+    (habs : ∀ n, closureBound t g (closureTower t g κ n) ≤
+      (2 : Cardinal.{u}) ^ closureTower t g κ n)
+    (n : ℕ) : profileTower κ n ≤ closureTower t g κ n := by
+  induction n with
+  | zero =>
+    have h0 : closureTower t g κ 0 = κ := by
+      change max κ ℵ₀ = κ
+      exact max_eq_left hκ
+    rw [show profileTower κ 0 = κ from rfl, h0]
+  | succ n ih =>
+    change (2 : Cardinal.{u}) ^ profileTower κ n ≤ closureTower t g κ (n + 1)
+    exact (power_le_power_left two_ne_zero ih).trans (by
+      rw [closureTower_succ_of_absorbed t g κ n (habs n)]
+      exact (Order.lt_succ _).le)
+
+theorem closureTower_le_profileTower_even (t g : Cardinal.{u} → Cardinal.{u})
+    {κ : Cardinal.{u}} (hκ : ℵ₀ ≤ κ)
+    (habs : ∀ n, closureBound t g (closureTower t g κ n) ≤
+      (2 : Cardinal.{u}) ^ closureTower t g κ n)
+    (n : ℕ) : closureTower t g κ n ≤ profileTower κ (2 * n) := by
+  induction n with
+  | zero =>
+    have h0 : closureTower t g κ 0 = κ := by
+      change max κ ℵ₀ = κ
+      exact max_eq_left hκ
+    rw [h0]
+    exact le_of_eq (show κ = profileTower κ 0 from rfl)
+  | succ n ih =>
+    rw [closureTower_succ_of_absorbed t g κ n (habs n)]
+    refine le_trans (Order.succ_le_succ (power_le_power_left two_ne_zero ih)) ?_
+    refine le_trans (Order.succ_le_of_lt (cantor _)) ?_
+    have hstep : (2 : Cardinal.{u}) ^ ((2 : Cardinal.{u}) ^ profileTower κ (2 * n)) =
+        profileTower κ (2 * (n + 1)) := by
+      have h1 : (2 : Cardinal.{u}) ^ profileTower κ (2 * n) =
+          profileTower κ (2 * n + 1) := rfl
+      have h2 : (2 : Cardinal.{u}) ^ profileTower κ (2 * n + 1) =
+          profileTower κ (2 * n + 2) := rfl
+      have h3 : 2 * n + 2 = 2 * (n + 1) := (Nat.mul_succ 2 n).symm
+      rw [h1, h2, h3]
+    exact le_of_eq hstep
+
+/-- Under absorption, the relative tower from the base of a closure tower is the closure point. -/
+theorem iSup_profileTower_eq_iSup_closureTower (t g : Cardinal.{u} → Cardinal.{u})
+    {κ : Cardinal.{u}} (hκ : ℵ₀ ≤ κ)
+    (habs : ∀ n, closureBound t g (closureTower t g κ n) ≤
+      (2 : Cardinal.{u}) ^ closureTower t g κ n) :
+    (⨆ n, profileTower κ n) = ⨆ n, closureTower t g κ n := by
+  refine le_antisymm
+      (ciSup_le fun n => (profileTower_le_closureTower t g hκ habs n).trans
+        (closureTower_le_iSup t g κ n)) ?_
+  refine ciSup_le fun n => (closureTower_le_profileTower_even t g hκ habs n).trans ?_
+  exact le_ciSup (f := profileTower κ) bddAbove_of_small (2 * n)
+
+/-- A relative tower that starts at or above the base of an absorbed closure tower, and
+strictly below the closure point, is cofinal: its supremum equals the closure point.
+Cofinality `ℵ₀` is used only through that equality. A start below `θ₀` is not claimed. -/
+theorem iSup_profileTower_eq_of_ge (t g : Cardinal.{u} → Cardinal.{u})
+    {κ β₀ : Cardinal.{u}} (hκ : ℵ₀ ≤ κ)
+    (habs : ∀ n, closureBound t g (closureTower t g κ n) ≤
+      (2 : Cardinal.{u}) ^ closureTower t g κ n)
+    (hβ : κ ≤ β₀) (hβμ : β₀ < ⨆ n, closureTower t g κ n) :
+    (⨆ n, profileTower β₀ n) = ⨆ n, closureTower t g κ n := by
+  have hSL : (⨆ n, closureTower t g κ n).IsStrongLimit :=
+    (closureTower_iSup_isWorkingLevel t g κ).strongLimit
+  have hstep : ∀ n, profileTower β₀ n < ⨆ k, closureTower t g κ k := by
+    intro n
+    induction n with
+    | zero => exact hβμ
+    | succ _ ih => exact hSL.isStrongPrelimit ih
+  refine le_antisymm (ciSup_le fun n => (hstep n).le) ?_
+  rw [← iSup_profileTower_eq_iSup_closureTower t g hκ habs]
+  refine ciSup_le fun n => (profileTower_mono_start hβ n).trans ?_
+  exact le_ciSup (f := profileTower β₀) bddAbove_of_small n
+
+theorem closureBound_aleph0 (κ : Cardinal.{u}) :
+    closureBound (fun _ : Cardinal.{u} => ℵ₀) (fun _ : Cardinal.{u} => ℵ₀) κ = ℵ₀ := by
+  have : Nonempty (Set.Iic κ) := ⟨⟨κ, Set.mem_Iic.mpr le_rfl⟩⟩
+  unfold closureBound
+  simp only [sup_idem]
+  exact ciSup_const
+
+theorem absorbed_const_aleph0 (n : ℕ) :
+    closureBound (fun _ : Cardinal.{u} => ℵ₀) (fun _ : Cardinal.{u} => ℵ₀)
+        (closureTower (fun _ : Cardinal.{u} => ℵ₀) (fun _ : Cardinal.{u} => ℵ₀) ℵ₀ n) ≤
+      (2 : Cardinal.{u}) ^
+        closureTower (fun _ : Cardinal.{u} => ℵ₀) (fun _ : Cardinal.{u} => ℵ₀) ℵ₀ n := by
+  rw [closureBound_aleph0]
+  have h0 : ℵ₀ ≤ closureTower (fun _ : Cardinal.{u} => ℵ₀) (fun _ : Cardinal.{u} => ℵ₀) ℵ₀ 0 := by
+    change ℵ₀ ≤ max ℵ₀ ℵ₀
+    exact le_max_left _ _
+  have hθ : ℵ₀ ≤
+      closureTower (fun _ : Cardinal.{u} => ℵ₀) (fun _ : Cardinal.{u} => ℵ₀) ℵ₀ n :=
+    h0.trans ((closureTower_strictMono (fun _ : Cardinal.{u} => ℵ₀)
+      (fun _ : Cardinal.{u} => ℵ₀) ℵ₀).monotone (Nat.zero_le n))
+  exact hθ.trans (le_of_lt (cantor _))
+
+theorem iSup_const_closureTower_eq_beth_omega :
+    (⨆ n, closureTower (fun _ : Cardinal.{u} => ℵ₀) (fun _ : Cardinal.{u} => ℵ₀) ℵ₀ n) =
+      beth (Ordinal.omega0 : Ordinal.{u}) := by
+  rw [← iSup_profileTower_eq_iSup_closureTower (fun _ : Cardinal.{u} => ℵ₀)
+      (fun _ : Cardinal.{u} => ℵ₀) le_rfl absorbed_const_aleph0]
+  exact iSup_profileTower_aleph0_eq_beth_omega
+
+theorem isClosurePoint_const_aleph0 :
+    IsClosurePoint {(fun _ : Cardinal.{u} => ℵ₀), (fun _ : Cardinal.{u} => ℵ₀)}
+      (⨆ n, closureTower (fun _ : Cardinal.{u} => ℵ₀) (fun _ : Cardinal.{u} => ℵ₀) ℵ₀ n) := by
+  let t : Cardinal.{u} → Cardinal.{u} := fun _ => ℵ₀
+  let g : Cardinal.{u} → Cardinal.{u} := fun _ => ℵ₀
+  refine ⟨closureTower_iSup_isWorkingLevel t g ℵ₀, fun u hu => ⟨fun θ _ hθμ => ?_⟩⟩
+  have h := closureTower_iSup_closed t g ℵ₀ θ hθμ
+  rcases Set.mem_insert_iff.mp hu with rfl | hu
+  · exact le_sup_left.trans_lt h
+  · rw [Set.mem_singleton_iff] at hu
+    subst hu
+    exact le_sup_right.trans_lt h
+
+/-- The zero-bound closure point is `ℶ_ω`. Every infinite `β₀` below it has relative
+power-set supremum equal to the closure point, not strictly below it. -/
+theorem exists_closurePoint_profileSup_eq :
+    ∃ (t g : Cardinal.{u} → Cardinal.{u}) (μ : Cardinal.{u}),
+      IsClosurePoint {t, g} μ ∧
+      μ = beth (Ordinal.omega0 : Ordinal.{u}) ∧
+      ∀ β₀, ℵ₀ ≤ β₀ → β₀ < μ → (⨆ n, profileTower β₀ n) = μ := by
+  let t : Cardinal.{u} → Cardinal.{u} := fun _ => ℵ₀
+  let g : Cardinal.{u} → Cardinal.{u} := fun _ => ℵ₀
+  refine ⟨t, g, ⨆ n, closureTower t g ℵ₀ n, isClosurePoint_const_aleph0,
+    iSup_const_closureTower_eq_beth_omega, fun β₀ hβ hβμ => ?_⟩
+  exact iSup_profileTower_eq_of_ge t g le_rfl absorbed_const_aleph0 hβ hβμ
+
+theorem not_profileSup_lt_const_closurePoint {β₀ : Cardinal.{u}} (hβ : ℵ₀ ≤ β₀)
+    (hβμ : β₀ < ⨆ n, closureTower (fun _ : Cardinal.{u} => ℵ₀)
+      (fun _ : Cardinal.{u} => ℵ₀) ℵ₀ n) :
+    ¬ (⨆ n, profileTower β₀ n) <
+        ⨆ n, closureTower (fun _ : Cardinal.{u} => ℵ₀) (fun _ : Cardinal.{u} => ℵ₀) ℵ₀ n := by
+  rw [iSup_profileTower_eq_of_ge (fun _ : Cardinal.{u} => ℵ₀) (fun _ : Cardinal.{u} => ℵ₀)
+      le_rfl absorbed_const_aleph0 hβ hβμ]
+  exact lt_irrefl _
+
 /-- **Infra `infra_69_place_on_fills`:** Lemma 6.4, padded clause, at one test size.
 
 English (Lemma 6.4, last sentence): for a padded order that need not be well-ordered, locally
@@ -401,14 +597,18 @@ Two bridges from `infra_69_place_type` do not supply this witness.
 elements of subsets of `I`, so they assume `WellFoundedLT I`. Replacing those codes by
 down-sets changes the profile bound from `χ` with `χ ^ σ = χ` to `2^{|X| + σ + b}`. One
 step of that bound lies below every eligible `μ` (`eligible_pow_lt`,
-`profileStep_lt_of_strongLimit`). The iteration through `i ≤ σ⁺` also takes a supremum at
-stage `ω`. That supremum is not strictly below every strong limit of cofinality `ℵ₀`
-(`isStrongLimit_beth_omega`, `iSup_nat_beth_eq_beth_omega`, `cof_ord_beth_omega`). Eligible
-`μ` is only a closure point of `{D.t, g}`; the closure tower applies one power set per
-countable step and does not add this supremum as a strict bound. The stage union of the
-obstruction is that supremum, and `exists_local_placement` needs it strictly below `μ`.
-Keeping only the `θ`-sized profiles inside a single power `2^θ` does not run `σ⁺` stages:
-the next old set has size `2^θ`, and the next profile count is `2^{2^θ}`.
+`profileStep_lt_of_strongLimit`). The iteration through `i ≤ σ⁺` takes a supremum at
+stage `ω`, the relative tower `profileTower β₀`. Eligible `μ` is a closure point of
+`{D.t, g}`, built by `closureTower`. When `closureBound` is absorbed by one power set,
+every relative tower from `β₀` with `θ₀ ≤ β₀ < μ` has supremum `μ`
+(`iSup_profileTower_eq_of_ge`): cofinality `ℵ₀` equates that cofinal sequence with `μ`,
+and does not do so for a bounded sequence. The zero bounds are absorbed; their closure
+point is `ℶ_ω`, and every infinite `β₀` below it fails the strict inequality
+(`exists_closurePoint_profileSup_eq`, `not_profileSup_lt_const_closurePoint`). The proved
+lower bound `σ⁺ ≤ D.t σ` still lies under `2^σ` (`succ_le_two_pow`), so it does not force
+`closureBound` past one power set. `exists_local_placement` needs the stage union strictly
+below `μ`. Keeping only the `θ`-sized profiles inside a single power `2^θ` does not run
+`σ⁺` stages: the next old set has size `2^θ`, and the next profile count is `2^{2^θ}`.
 
 `TupleOver.InBase` and `ApproximationSequence.ofConstFamily` are not a substitute. -/
 theorem infra_69_place_on_fills
@@ -430,10 +630,13 @@ theorem infra_69_place_on_fills
       ∀ {β : Type u} (ρ : Cardinal.{u}), ℵ₀ ≤ ρ → ρ ≤ max σ τ →
         ∀ (q : β → (P.E.obj I).carrier) (hj : #(p.idx ⊕ β) ≤ ρ),
           Q.Lifts P.E P.D p.host.mem incl d ρ hj q := by
-  /- Pinned. Each profile step stays below `μ` (`profileStep_lt_of_strongLimit`), but the
-     stage union is the `ω`-supremum of those steps, which `ℶ_ω` shows need not lie below a
-     countable-cofinality strong limit. Not `exists_placement_lifting`: `I` is not
-     `WellFoundedLT`. -/
+  /- Pinned. Each step is below a strong limit (`profileStep_lt_of_strongLimit`).
+     `iSup_profileTower_eq_of_ge`: under absorption of `closureBound` by one power set,
+     a relative tower from any `β₀` with `θ₀ ≤ β₀ < μ` has supremum `μ`.
+     `not_profileSup_lt_const_closurePoint`: the zero-bound closure point is `ℶ_ω`
+     and an `IsClosurePoint`, and that supremum is not strictly below it.
+     `exists_local_placement` needs the stage union strictly below `μ`.
+     Not `exists_placement_lifting`: `I` is not `WellFoundedLT`. -/
   sorry
 
 /-! ## Support copies on a linear order (English Lem 6.9, the anchor paragraphs)

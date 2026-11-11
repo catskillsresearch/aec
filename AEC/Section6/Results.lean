@@ -354,12 +354,16 @@ Theorem 6.10. This lemma does not prove that transport.
 **English gloss** (`UniformApproximations.lean`). On `SingleModelData`,
 `infra_69_assemble` is the support-copy chain, blocked on `infra_69_place_on_fills`
 (Lemma 6.4's padded non-well-ordered clause: one placement of `p` over the cut-filling
-chart). Each profile step `2^β + σ + b` lies below an eligible level; the `ω`-supremum of
-those steps equals `ℶ_ω`, so it is not below every countable-cofinality strong limit.
-`infra_69_place_type` places over the well-ordered skeleton, which does not fill
-cuts. `WorkingScheme.exists_approximationSequence` is still sorry: a general scheme is not
-`SingleModelData`. Corollary 6.7 is not used. `TupleOver.InBase` and
-`ApproximationSequence.ofConstFamily` are **not** a Lemma 6.9 proof. -/
+chart). Each profile step lies below an eligible level. Eligible `μ` is a closure point
+of `{D.t, g}` (`closureTower`: one power set per countable step). When `closureBound`
+is absorbed by that power set, the relative tower from any `β₀` in `[θ₀, μ)` has
+supremum `μ` (`iSup_profileTower_eq_of_ge`); the zero bounds realize this and equal
+`ℶ_ω` (`exists_closurePoint_profileSup_eq`). `exists_local_placement` needs that
+supremum strictly below `μ`. `infra_69_place_type` places over the well-ordered
+skeleton, which does not fill cuts. `WorkingScheme.exists_approximationSequence` is
+still sorry: a general scheme is not `SingleModelData`. Corollary 6.7 is not used.
+`TupleOver.InBase` and `ApproximationSequence.ofConstFamily` are **not** a Lemma 6.9
+proof. -/
 theorem lemma_6_9 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
     [CategoricalUnbounded K]
     (W : WorkingScheme K S) (F : TermTemplate K S) [hpres : HasPresentations W F]

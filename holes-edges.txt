@@ -1,7 +1,7 @@
 # Hard edges from holes-graph.json
 # Convention: FROM --> TO means the English proof of TO requires FROM.
 # Nodes: 142  Hard edges: 179
-# Lem 6.9: assemble glue is written on SingleModelData and blocked on infra_69_place_on_fills (Lem 6.4 padded clause). Each profile step 2^β+σ+b is < μ; the ω-supremum of those steps is not below every cf-ω strong limit (beth_ω). exists_approximationSequence stays sorry (general scheme). lemma_6_9 and theorem_6_10 stay blocked.
+# Lem 6.9: assemble glue is written on SingleModelData and blocked on infra_69_place_on_fills (Lem 6.4 padded clause). Each profile step is < μ. Under absorption of closureBound by one power set, the relative tower from any β₀ in [θ₀, μ) has supremum μ (iSup_profileTower_eq_of_ge); the zero-bound closure point is beth_ω (not_profileSup_lt_const_closurePoint). exists_approximationSequence stays sorry (general scheme). lemma_6_9 and theorem_6_10 stay blocked.
 
 claim_11_10 --> claim_11_11
 claim_11_11 --> claim_11_12
