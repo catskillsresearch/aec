@@ -351,8 +351,14 @@ The proof-side uniformity sentence is `infra_69_uniformity_bounds`.
 **S6.** A code at `c(σ)` (`lemma_6_9_code`) is a code for `p` in the transport sense of
 Theorem 6.10. This lemma does not prove that transport.
 
-**English gloss** (`UniformApproximations.lean`). Existence is the support-copy chain, still
-pinned at `infra_69_assemble`. Corollary 6.7 is not used. `TupleOver.InBase` and
+**English gloss** (`UniformApproximations.lean`). On `SingleModelData`,
+`infra_69_assemble` is the support-copy chain, blocked on `infra_69_place_on_fills`
+(Lemma 6.4's padded non-well-ordered clause: one placement of `p` over the cut-filling
+chart). Each profile step `2^β + σ + b` lies below an eligible level; the `ω`-supremum of
+those steps equals `ℶ_ω`, so it is not below every countable-cofinality strong limit.
+`infra_69_place_type` places over the well-ordered skeleton, which does not fill
+cuts. `WorkingScheme.exists_approximationSequence` is still sorry: a general scheme is not
+`SingleModelData`. Corollary 6.7 is not used. `TupleOver.InBase` and
 `ApproximationSequence.ofConstFamily` are **not** a Lemma 6.9 proof. -/
 theorem lemma_6_9 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
     [CategoricalUnbounded K]
@@ -491,9 +497,10 @@ English gloss. Clauses:
 **Statement repair.** Bare `WorkingScheme` was refutable; packaging matches Lemma 6.9
 (`AssemblesStructIso`, presentations, `hedge`, `hcat`, σ/χ/b).
 
-**Pinned.** 1:1 English translation stops on the Lemma 6.9 support-copy chain
-(`order_pattern_realized_over_old` / `support_copy_exception_and_assembly`). No alternate free-lift
-proof is used. -/
+**Pinned.** 1:1 English translation stops on the Lemma 6.9 support-copy chain.
+On `SingleModelData` that chain is `infra_69_assemble`, blocked on `infra_69_place_on_fills`.
+`WorkingScheme.exists_approximationSequence` is still sorry for a general scheme.
+No alternate free-lift proof is used. -/
 theorem theorem_6_10 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
     [CategoricalUnbounded K]
     (W : WorkingScheme K S) (F : TermTemplate K S) [hpres : HasPresentations W F]

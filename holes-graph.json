@@ -1,6 +1,6 @@
 {
   "updated": "2026-11-11",
-  "sorryCount": 57,
+  "sorryCount": 58,
   "legend": {
     "open": "No unfinished required proof-deps — try next",
     "blocked": "Waiting on incomplete required proof-deps",
@@ -27,7 +27,7 @@
     "Lem 6.5 is done (PlacedComparisons.lean), with a repaired statement. The old form had SameGaloisType (scheme amalgamation, which is Thm 6.6) on the left of the iff, a merely monotone g (the iff fails for small g), and a bare WorkingScheme with no presentation to place a tuple in; English Lem 6.5 does not use an amalgamation relation on types. It is now at the level of a presentation, under hL : ClosedLevel K E D g μ with I a well-order of size μ, A = E(I), and tuples d₀, d₁ of length ≤ σ < μ in strong μ-extensions B₀, B₁ of A: (1) some placement lifts the bounded diagrams of d₀ (Placement.LiftsBounded); (2) any two such placements agree over all of A (Placement.AgreeOn … Set.univ); (3) for lifts P₀ of d₀ and P₁ of d₁, P₀.AgreeOn P₁ Set.univ iff the diagrams of d₀ and d₁ agree at the bounded levels ρ < μ over all parameter lists p : β → A with #β ≤ g σ + ls K (the right side of Thm 4.11 clause 2). σ is any infinite bound on the length, in place of |v| + ℵ₀. The last sentence of the English statement (other natural parameter layouts) is not formalized: NaturalParameterLayout has no placement data. Proof: (1), (2) are Lemma 4.10 (exists_boundedDiagramLift, Placement.LiftsBounded.agreeOn_univ); (3) ← is the placed tester (agreeOn_univ_of_tests), (3) → is new (Placement.LiftsBounded.same_of_agreeOn: equal comparisons make the placement of d₀ lift d₁, by Placement.LiftsBounded.of_agreeOn, so both tuples have the diagram of its placed tuple; this holds for every bounded query). Hard edges added: lemma_4_10 → lemma_6_5, proposition_4_8 → lemma_6_5, and proposition_6_3 → lemma_6_5 (the English proof says Proposition 6.3 identifies the full placed comparisons; in Lean its PlacedTester is the tester of ClosedLevel). lemma_6_4 → lemma_6_5 stays hard: the English proof applies Lemma 6.4, and the Lean proof reaches the same compact_placement through Lemma 4.10. Thm 6.6 is done by packaging ClosedLevel.amalgamation / tuple_amalgamation_iff; see the Thm 6.6 note.",
     "Thm 6.6 is done by packaging ClosedLevel.amalgamation and ClosedLevel.tuple_amalgamation_iff (ClosedLevelTypes.lean / Thm 4.11). Statement repair: dropped bare WorkingScheme / SameGaloisType / unconstrained g; presentation-level under ClosedLevel K E D g μ with amalgamation of strong μ-extensions and the tuple-amalgamation iff at bounded σ < μ with #β ≤ g σ + ls K. Hard edge theorem_4_11 → theorem_6_6; lemma_6_5 → theorem_6_6 softened (English ω-tower / Lem 6.4–6.5 narrative; Lean path is Thm 4.11). Cor 6.7 is done; see the Cor 6.7 note.",
     "Cor 6.7 is done (LargerLevelRealization.lean), with a repaired statement. The old form quantified over a bare WorkingScheme (Tail / SystemArrow / permitted) with no closed levels, strongness, sizes or testing bound for the Thm 4.11 engine to use, and had neither the prescribed tuple nor the type clause. It is now presentation-level under ClosedLevel K E D g ν, ClosedLevel K E D g μ, ν < μ, for a strong f : A → B of ν-models and a strong i : A → N into a μ-model: (1) a strong B → N extends i; (2) the image of a tuple d of B of length < ν may be prescribed as z in N when the diagrams of (d, f p) and (z, i p) agree at the bounds ρ < ν for all p : β → A with #β ≤ g(#α ⊔ ℵ₀) + ls K; (3) a tuple of N of length < ν lies in a strong ν-submodel B' of N containing A, with the same diagrams over A at ρ < ν. Proof of (2): N ≅ E(Below μ) by categoricity at μ; the images of A and z use ≤ ν positions, so they lie in N₀ = E(S), S a suborder of size ν (exists_suborder_cover), and A → N₀ is strong by coherence; ClosedLevel.exists_tuple_amalgam at ν gives a ν-amalgam P of B and N₀ over A identifying d with z; N₀ → N is an order map of the presentation and μ ≥ t(ν) is a categoricity cardinal, so exists_strong_embedding_over (the Thm 4.11 tower at source level ν, target chart Below μ) embeds P into N over N₀. The target is not enlarged and no comparison of length ν is made in a ν-model. The English proof instead runs the exhaustion of Thm 6.6 directly into N, with compact placement in a chart of N and saturation at μ; that saturation step is not formalized. A direct Lean version by lift extensions was tried and not closed: D.exists_transport into N matches the previously assigned list but not the image of A, and D.of_strong from the ν-model A gives no comparison of length ν (t(ν) > ν). Hard edge theorem_4_11 → corollary_6_7; theorem_6_6 → corollary_6_7 softened (English shared exhaustion; theorem_6_6 is not called). Lemma 6.9 is unblocked (its only hard dep was 6.7); its bare-scheme statement remains for a later repair.",
-    "infra_69_place_type done via well-ordered IsPadded skeleton + compact placement at one χ for queries ≤τ. infra_69_lem61_off_hits done as SameNaturalDiagram via Lemma 4.6 on ChartOffHit. infra_69_off_hit_diagramEq done on SingleModelData: ChartOffHit.readCopy (dstEmb then pullback along the old chart) is the Occurrence reading; Placement.Lifts + SameNaturalDiagram.same + diagramEq_iff_sameD give OffHitCopyDiagramEq. assemble is open: it still lacks the Src list, hplaced, and the κ-family built from that reading."
+    "infra_69_place_on_fills is the open pin: Lemma 6.4's padded non-well-ordered clause, one Placement over the cut-filling chart lifting joints of size ≤ max σ τ. profileStep_lt_of_strongLimit and eligible_pow_lt: each step 2^β+σ+b stays below an eligible strong limit. iSup_nat_beth_eq_beth_omega and cof_ord_beth_omega: sup_n beth_n = beth_ω, a strong limit of cofinality ℵ₀, so the English σ⁺-iteration's stage-ω supremum is not below every such cardinal. Eligible μ is only a closure point of {D.t, g}; the closure tower does not add that supremum as a strict bound. Down-set codes replace WellFoundedLT but still produce this bound. exists_local_placement needs the stage union strictly below μ. Skeleton transport does not give Placement.Lifts for parameters of E(I). infra_69_assemble is blocked only on this pin. exists_approximationSequence stays sorry, so lemma_6_9 and theorem_6_10 stay blocked. No new frontier tip. InBase/ofConstFamily not used."
   ],
   "nodes": [
     {
@@ -424,7 +424,7 @@
       "file": "AEC/Section6/Results.lean",
       "status": "blocked",
       "blocker": "infra_69_assemble",
-      "detail": "Blocked on infra_69_assemble. place_type done. lem61_off_hits done (SameNaturalDiagram). off_hit_diagramEq done on SingleModelData (readCopy + diagramEq_iff_sameD). assemble is the remaining pin: the occurrence family is not built."
+      "detail": "Still blocked. SingleModelData glue is infra_69_assemble, blocked on infra_69_place_on_fills (Lemma 6.4 padded clause). WorkingScheme.exists_approximationSequence is sorry: a general scheme has no Placement, so it does not call that glue. theorem_6_10 stays blocked. InBase/ofConstFamily not used."
     },
     {
       "id": "proposition_6_12",
@@ -1208,13 +1208,22 @@
       "detail": "English ¶4: Only bounded support patterns, fixed labels, rich orders at bounded arities, and compact-placement bounds were used."
     },
     {
-      "id": "infra_69_assemble",
-      "label": "Infra: assemble approx seq",
+      "id": "infra_69_place_on_fills",
+      "label": "Infra: place on cut-filling chart",
       "section": 6,
       "file": "AEC/Section6/UniformApproximations.lean",
       "status": "open",
       "blocker": null,
-      "detail": "Pinned: Def 6.8 still needs the occurrence family. off_hit_diagramEq discharges OffHitCopyDiagramEq once the placed joint is along srcEmb of an off-hit Src list and the family is e ∘ E.realize ∘ ChartOffHit.readCopy ∘ movedJoint. Missing before few_exceptions: that Src list and hplaced from place_type, the κ copies as that reading, and the hit indices via infra_69_finitary_exceptions. InBase/ofConstFamily not used."
+      "detail": "Pinned, narrower. One Placement over the cut-filling chart lifting joints of size ≤ max σ τ. Proved: profileStep_lt_of_strongLimit and eligible_pow_lt (each 2^β+σ+b < μ). Proved: isStrongLimit_beth_omega, iSup_nat_beth_eq_beth_omega, cof_ord_beth_omega (the ω-supremum of β ↦ 2^β equals ℶ_ω, cofinality ℵ₀). Eligible μ is a closure point of {D.t, g} only, so it does not bound that supremum. The obstruction's stage union is the supremum, and exists_local_placement needs it < μ. Not a separate infra tip. InBase/ofConstFamily not used."
+    },
+    {
+      "id": "infra_69_assemble",
+      "label": "Infra: assemble approx seq",
+      "section": 6,
+      "file": "AEC/Section6/UniformApproximations.lean",
+      "status": "blocked",
+      "blocker": "infra_69_place_on_fills",
+      "detail": "Glue written on SingleModelData, no local sorry: infra_69_present_padded at σ+κ, chart equivalence, infra_69_place_on_fills, infra_69_support_copy_sequence. sorryAx remains only through the pin. place_type is not the input (its skeleton does not fill cuts). A general WorkingScheme is exists_approximationSequence, still sorry."
     }
   ],
   "edges": [
@@ -2158,10 +2167,16 @@
       "note": "The proof calls lemma_4_6_blockInterchange on the ChartOffHit copy."
     },
     {
-      "from": "infra_69_place_type",
+      "from": "infra_69_place_on_fills",
       "to": "infra_69_assemble",
       "kind": "hard",
-      "note": "Assembly needs the placement witness."
+      "note": "The glue calls the padded-chart placement. The skeleton placement is not an input."
+    },
+    {
+      "from": "infra_69_present_padded",
+      "to": "infra_69_assemble",
+      "kind": "hard",
+      "note": "The glue presents A on the padded chart at η = σ + κ."
     },
     {
       "from": "infra_69_lem61_off_hits",
@@ -2173,7 +2188,7 @@
       "from": "infra_69_off_hit_diagramEq",
       "to": "infra_69_assemble",
       "kind": "hard",
-      "note": "Assembly still needs the occurrence family that off_hit_diagramEq consumes."
+      "note": "support_copy_sequence, which the glue calls, sends off-hit indices through off_hit_diagramEq."
     }
   ],
   "doneCount": 56

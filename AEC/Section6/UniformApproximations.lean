@@ -7,6 +7,8 @@ public import AEC.Section5.PackageClauses
 public import AEC.Section5.Results
 public import Mathlib.Order.Prod.Lex.Basic
 public import Mathlib.Order.Sum.Order
+public import Mathlib.SetTheory.Cardinal.Aleph
+public import Mathlib.SetTheory.Cardinal.Cofinality.Ordinal
 
 @[expose] public section
 
@@ -20,8 +22,13 @@ English steps:
 
 1. By the rich-order and padding constructions of Lemmas 5.5 and 5.4, present `A` on a padded
    chart (`exists_denseRichOrder`, `exists_richPaddedOrder`, `lemma_5_4`).
-2. Lemma 6.5 / compact placement places `p = tp(v/A)` at query size `τ`
-   on the well-ordered skeleton of the padded chart (`infra_69_place_type`).
+2. Lemma 6.5 places `p` on the well-ordered skeleton (`infra_69_place_type`). The copy
+   chain needs the same placement on the padded chart itself. That is the padded
+   non-well-ordered clause of Lemma 6.4 (`infra_69_place_on_fills`), which is pinned.
+   Each profile step `2^β + σ + b` stays below a strong limit (`profileStep_lt_of_strongLimit`).
+   The English iteration also takes the supremum of those steps along `ω`, and a strong
+   limit of cofinality `ω` need not lie above that supremum (`iSup_nat_beth_eq_beth_omega`,
+   `cof_ord_beth_omega`). The skeleton does not fill cuts, and it is not a substitute.
 3. Keep shared old-chart supports; partition other supports by cuts; anchors have size at most
    `σ + ℵ₀` (`ChartSupport`, the pure-order infras below).
 4. In each anchor slot, choose `κ` pairwise disjoint convex regions and put a copy of the
@@ -232,9 +239,9 @@ closure bound of `μ`. `exists_placedTester P.E P.D` gives `placedTestBound`, wh
 `μ ∈ P.eligible` is only `IsClosurePoint {P.D.t, P.g}` (`P.g` is the closure bound of the
 eligible levels). Nothing puts `placedTestBound θ < μ` for every infinite `θ < μ`, so the full
 `LiftsBounded` witness (every query of size `< μ`) is not obtained from these APIs. Compact
-placement (`exists_placement_lifting`) at one `χ` with `τ ≤ χ < μ`, `χ ^ σ = χ`, and
-`ℓ + σ < χ` does not need a tester. The resulting placement realizes every query of size at
-most `τ`.
+placement (`exists_placement_lifting`) at one `χ` with `max σ τ ≤ χ < μ`, `χ ^ σ = χ`, and
+`ℓ + σ < χ` does not need a tester. The resulting placement realizes every joint of size at
+most `max σ τ`, hence every query of size at most `τ` together with `p`.
 
 A general `WorkingScheme` still has no `Placement`: this statement is for `SingleModelData`,
 whose template is the order presentation `E`. No constant-family substitute is used. -/
@@ -257,7 +264,7 @@ theorem infra_69_place_type
         (∀ i, d i = p.host.val (p.val i)) ∧
         Model.card p.host.model = μ ∧
         ∃ Q : Placement P.E.lab P.E.arity s p.idx,
-          ∀ {β : Type u} (ρ : Cardinal.{u}), ℵ₀ ≤ ρ → ρ ≤ τ →
+          ∀ {β : Type u} (ρ : Cardinal.{u}), ℵ₀ ≤ ρ → ρ ≤ max σ τ →
             ∀ (q : β → (P.E.obj s).carrier) (hj : #(p.idx ⊕ β) ≤ ρ),
               Q.Lifts P.E P.D p.host.mem incl d ρ hj q := by
   obtain ⟨s, hsCard, hsWF⟩ := IsPadded.padded (I := I)
@@ -285,6 +292,8 @@ theorem infra_69_place_type
     exists_power_fixed_below hμ.1.working.strongLimit hσ hσμ hκμ
   have hτχ : τ < χ := (le_max_left τ (ls K + σ)).trans_lt hχgt
   have hlsχ : ls K + σ < χ := (le_max_right τ (ls K + σ)).trans_lt hχgt
+  have hσχ : σ < χ := (self_le_add_left σ (ls K)).trans_lt hlsχ
+  have hmaxχ : max σ τ < χ := max_lt hσχ hτχ
   have hρχμ : σ + χ < μ := add_lt_of_lt hμinf hσμ hχμ
   have hρinf : ℵ₀ ≤ σ + χ := (hτ.trans hτχ.le).trans (self_le_add_left χ σ)
   have ht : P.D.t (σ + χ) ≤ μ := (P.t_lt hμ hρinf hρχμ).le
@@ -293,18 +302,139 @@ theorem infra_69_place_type
   refine ⟨s, hsNe, hsWF, hsμ, e, incl, d, hstrong, fun _ => rfl, fun _ => rfl, hcardB, Q, ?_⟩
   intro β ρ hρinf' hρτ q hj
   have hβχ : #β ≤ χ := by
-    refine le_trans ?_ (hj.trans (hρτ.trans hτχ.le))
+    refine le_trans ?_ (hj.trans (hρτ.trans hmaxχ.le))
     rw [mk_sum, lift_id, lift_id]
     exact self_le_add_left _ _
   have hjχ : #(p.idx ⊕ β) ≤ σ + χ :=
-    hj.trans (hρτ.trans (hτχ.le.trans (self_le_add_left χ σ)))
+    hj.trans (hρτ.trans (hmaxχ.le.trans (self_le_add_left χ σ)))
   have hls : ls K ≤ σ + χ :=
     (self_le_add_right (ls K) σ).trans (hlsχ.le.trans (self_le_add_left χ σ))
   have hBc : P.D.t (σ + χ) ≤ Model.card p.host.model := ht.trans hcardB.ge
   have hJc : P.D.t (σ + χ) ≤ Model.card (P.E.obj Q.J) :=
     (ht.trans hcardS.ge).trans (mk_le_of_injective (P.E.map Q.f).injective)
   exact (hQ hβχ q hjχ).relevel hρinf hρinf' le_rfl
-    (hρτ.trans (hτχ.le.trans (self_le_add_left χ σ))) hls hBc hJc hj id
+    (hρτ.trans (hmaxχ.le.trans (self_le_add_left χ σ))) hls hBc hJc hj id
+
+/-! ## Profile-count cardinals
+
+The padded clause of Lemma 6.4 counts profiles by down-sets, at most `2^{|X| + σ + b}` many,
+and iterates `β₀` above the test size, `β_{i+1} = 2^{β_i} + σ + b`, through `i ≤ σ⁺`.
+`exists_local_placement` applies to the stage union only when that union is strictly below
+the level (`D.t ρ ≤ ‖E(I)‖`). A strong limit kills each single power. It does not kill the
+supremum of the `ω`-iteration: `ℶ_ω` is a strong limit of cofinality `ℵ₀` and equals
+`supₙ ℶₙ`. Eligible levels are closure points of `{D.t, g}`, built by one power set (and
+`t`, `g`) at each step of a countable tower, so that construction does not place the level
+strictly above this supremum. -/
+
+/-- One English profile step stays strictly below a strong limit. -/
+theorem profileStep_lt_of_strongLimit {μ β σ b : Cardinal.{u}} (hμ : μ.IsStrongLimit)
+    (hβ : β < μ) (hσ : σ < μ) (hb : b < μ) :
+    (2 : Cardinal.{u}) ^ β + σ + b < μ := by
+  have h2 : (2 : Cardinal.{u}) ^ β < μ := hμ.isStrongPrelimit hβ
+  exact add_lt_of_lt hμ.aleph0_le (add_lt_of_lt hμ.aleph0_le h2 hσ) hb
+
+/-- Eligible levels kill each single power set. -/
+theorem eligible_pow_lt (P : SingleModelData K) {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
+    {β : Cardinal.{u}} (hβ : β < μ) : (2 : Cardinal.{u}) ^ β < μ :=
+  hμ.1.working.strongLimit.isStrongPrelimit hβ
+
+/-- `ℶ_ω` is a strong limit. -/
+theorem isStrongLimit_beth_omega : IsStrongLimit (beth (Ordinal.omega0 : Ordinal.{u})) :=
+  isStrongLimit_beth.mpr Ordinal.isSuccLimit_omega0.isSuccPrelimit
+
+/-- The `ω`-iteration of the beth function is `ℶ_ω` itself. -/
+theorem iSup_nat_beth_eq_beth_omega :
+    (⨆ n : ℕ, beth (n : Ordinal.{u})) = beth (Ordinal.omega0 : Ordinal.{u}) := by
+  refine le_antisymm
+      (ciSup_le fun n => beth_mono (le_of_lt (Ordinal.natCast_lt_omega0 n))) ?_
+  rw [beth_limit Ordinal.isSuccLimit_omega0]
+  have : Nonempty ↑(Set.Iio (Ordinal.omega0 : Ordinal.{u})) :=
+    ⟨⟨(0 : ℕ), Ordinal.natCast_lt_omega0 0⟩⟩
+  refine ciSup_le fun a => ?_
+  rcases Ordinal.eq_natCast_or_omega0_le a.1 with ⟨n, hn⟩ | hω
+  · rw [hn]
+    exact le_ciSup (f := fun n : ℕ => beth (n : Ordinal.{u})) bddAbove_of_small n
+  · exact absurd hω (not_le_of_gt a.2)
+
+/-- `ℶ_ω` has cofinality `ℵ₀`, as a cardinal. -/
+theorem cof_ord_beth_omega :
+    Ordinal.cof (beth (Ordinal.omega0 : Ordinal.{u})).ord = ℵ₀ := by
+  have hEq : (beth (Ordinal.omega0 : Ordinal.{u})).ord =
+      ⨆ n : ℕ, (beth (n : Ordinal.{u})).ord := by
+    rw [← Ordinal.iSup_ord, iSup_nat_beth_eq_beth_omega]
+  rw [hEq]
+  have h := Ordinal.lift_cof_iSup (β := ℕ)
+    (f := fun n => (beth (n : Ordinal.{u})).ord)
+    (fun a b hab => Cardinal.ord_lt_ord.mpr (beth_strictMono (Nat.cast_lt.mpr hab)))
+  rw [Order.cof_nat, Cardinal.lift_uzero, Cardinal.lift_aleph0] at h
+  exact h
+
+/-- **Infra `infra_69_place_on_fills`:** Lemma 6.4, padded clause, at one test size.
+
+English (Lemma 6.4, last sentence): for a padded order that need not be well-ordered, locally
+possible coherent prescriptions on every bounded subset, closed under the profile-count growth
+of the compact-placement proof, are realized simultaneously at any one specified bounded test
+size.
+
+This is the placement `infra_69_support_copy_sequence` consumes. `I` is the padded chart of
+`infra_69_present_padded` (dense, `IsPadded`, and, in the caller, `OrderFillsCuts (σ + κ)`).
+The conclusion is one `Placement` over that same `I` lifting every joint of size at most
+`max σ τ`. `WellFoundedLT I` is not assumed, and `I` is not pretended to be well-ordered.
+
+Two bridges from `infra_69_place_type` do not supply this witness.
+
+* Transport along the skeleton inclusion. `place_type` returns a placement over the
+  well-ordered skeleton `s ⊆ I`. `exists_linearOrder_amalgam` pushes that placement along
+  `OrderEmbedding.subtype (· ∈ s)` to an extension of `I`, so the old chart can be `I`.
+  `Placement.Lifts` does not travel with it: the skeleton lift knows parameters of `E(s)`
+  only, while `infra_69_off_hit_diagramEq` quantifies parameters of `E(I)`. An arbitrary
+  element of `E(I)` need not lie in the image of `E.map` of the subtype, and freeness that
+  would move it is Theorem 6.10, which depends on this chain.
+* A split input to the copy. `ChartOffHit.copy` lands in the old chart and
+  `embCopy = copy.trans old` lands in the placement order. `readCopy` pulls the moved term
+  back along that same old chart, and `infra_69_off_hit_diagramEq` requires
+  `H : ChartOffHit I Q.J` with `Q : Placement … I`. Copies in `I \ s` are not on the
+  skeleton chart, and a skeleton chart does not fill cuts, so the region step has nowhere
+  to put them.
+
+`exists_placement_lifting` and `compact_placement` do not apply: their cut codes take least
+elements of subsets of `I`, so they assume `WellFoundedLT I`. Replacing those codes by
+down-sets changes the profile bound from `χ` with `χ ^ σ = χ` to `2^{|X| + σ + b}`. One
+step of that bound lies below every eligible `μ` (`eligible_pow_lt`,
+`profileStep_lt_of_strongLimit`). The iteration through `i ≤ σ⁺` also takes a supremum at
+stage `ω`. That supremum is not strictly below every strong limit of cofinality `ℵ₀`
+(`isStrongLimit_beth_omega`, `iSup_nat_beth_eq_beth_omega`, `cof_ord_beth_omega`). Eligible
+`μ` is only a closure point of `{D.t, g}`; the closure tower applies one power set per
+countable step and does not add this supremum as a strict bound. The stage union of the
+obstruction is that supremum, and `exists_local_placement` needs it strictly below `μ`.
+Keeping only the `θ`-sized profiles inside a single power `2^θ` does not run `σ⁺` stages:
+the next old set has size `2^θ`, and the next profile count is `2^{2^θ}`.
+
+`TupleOver.InBase` and `ApproximationSequence.ofConstFamily` are not a substitute. -/
+theorem infra_69_place_on_fills
+    (P : SingleModelData K)
+    {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
+    (base : P.scheme.Object μ hμ)
+    (p : TupleOver K oneVertexShape P.scheme hμ base)
+    (hνμ : p.ν = μ)
+    {σ τ : Cardinal.{u}} (hσ : ℵ₀ ≤ σ) (hσμ : σ < μ) (hidx : #p.idx ≤ σ)
+    (hτ : ℵ₀ ≤ τ) (hτμ : τ < μ)
+    {I : Type u} [LinearOrder I] [Nonempty I] [IsPadded I] (hI : #I = μ)
+    (e : (P.E.obj I).carrier ≃[K.τ] base.model.carrier)
+    (incl : Language.Embedding K.τ (P.E.obj I).carrier p.host.model.carrier)
+    (d : p.idx → p.host.model.carrier)
+    (hstrong : K.Strong incl)
+    (hincl : ∀ a, incl a = (p.incl.onVertex PUnit.unit) (e a))
+    (hd : ∀ a, d a = p.host.val (p.val a)) :
+    ∃ Q : Placement P.E.lab P.E.arity I p.idx,
+      ∀ {β : Type u} (ρ : Cardinal.{u}), ℵ₀ ≤ ρ → ρ ≤ max σ τ →
+        ∀ (q : β → (P.E.obj I).carrier) (hj : #(p.idx ⊕ β) ≤ ρ),
+          Q.Lifts P.E P.D p.host.mem incl d ρ hj q := by
+  /- Pinned. Each profile step stays below `μ` (`profileStep_lt_of_strongLimit`), but the
+     stage union is the `ω`-supremum of those steps, which `ℶ_ω` shows need not lie below a
+     countable-cofinality strong limit. Not `exists_placement_lifting`: `I` is not
+     `WellFoundedLT`. -/
+  sorry
 
 /-! ## Support copies on a linear order (English Lem 6.9, the anchor paragraphs)
 
@@ -1122,7 +1252,8 @@ theorem infra_69_copy_cluster {I J : Type u} [LinearOrder I] [LinearOrder J]
       (∀ i, region i ⊆ C.slotCarrier x) ∧
       (∀ i, IsConvexRegion (region i)) ∧
       (∀ i j, i ≠ j → Disjoint (region i) (region j)) ∧
-      (∀ i y (a : C.anchorIdx), a.1 < copy i y ↔ C.old a.1 < x) := by
+      (∀ i y (a : C.anchorIdx),
+        (a.1 < copy i y ↔ C.old a.1 < x) ∧ (copy i y < a.1 ↔ x < C.old a.1)) := by
   classical
   obtain ⟨hAnch, hCl, _⟩ := infra_69_richness_arity C hσ hκ hsup x hx
   have hη : ℵ₀ ≤ σ + κ := hσ.trans (self_le_add_right σ κ)
@@ -1245,6 +1376,22 @@ theorem infra_69_copy_cluster {I J : Type u} [LinearOrder I] [LinearOrder J]
       exact iff_of_false (by
         have : copyFun i y < a.1 := by simpa [hcoe] using hpt
         exact not_lt_of_gt this) (not_lt_of_gt hR)
+  have hanchorR : ∀ i y (a : C.anchorIdx), copyFun i y < a.1 ↔ x < C.old a.1 := by
+    intro i y a
+    rcases lt_trichotomy (C.old a.1) x with hL | heq | hR
+    · have hlt : a.1 < copyFun i y := (hanchor i y a).mpr hL
+      exact iff_of_false (not_lt_of_gt hlt) (not_lt_of_gt hL)
+    · exact absurd heq (fun h => hx.2 ⟨a.1, h⟩)
+    · let ar : Right := ⟨a, hR⟩
+      have henc : (SupportCopy.Pos.copy i y : SupportCopy.Pos κIndex Cluster Left Right) <
+          SupportCopy.includeEmb (SupportCopy.Old.right ar) :=
+        SupportCopy.encode_copy_lt_right i y ar
+      have hpt : copyFun i y < oldPoint (SupportCopy.Old.right ar) := by
+        have hlt : copyFun i y < g (SupportCopy.includeEmb (SupportCopy.Old.right ar)) :=
+          (g.lt_iff_lt).2 henc
+        simpa [hgo (SupportCopy.Old.right ar)] using hlt
+      have hcoe : oldPoint (SupportCopy.Old.right ar) = a.1 := rfl
+      exact iff_of_true (by simpa [hcoe] using hpt) hR
   have hcopySlot : ∀ i y, copyFun i y ∈ C.slotCarrier x := by
     intro i y u hu
     obtain ⟨j, hj⟩ := C.exists_old_index hu
@@ -1276,7 +1423,8 @@ theorem infra_69_copy_cluster {I J : Type u} [LinearOrder I] [LinearOrder J]
   · intro i y
     exact subset_convexHull _ ⟨y, rfl⟩
   · intro i y a
-    simpa [copy, OrderEmbedding.coe_ofStrictMono] using hanchor i y a
+    exact ⟨by simpa [copy, OrderEmbedding.coe_ofStrictMono] using hanchor i y a,
+      by simpa [copy, OrderEmbedding.coe_ofStrictMono] using hanchorR i y a⟩
 
 /-- **Infra `infra_69_interpret_copies`:** Use the original labels and the unchanged shared
 positions to obtain `vᵢ ∈ A`.
@@ -1482,8 +1630,7 @@ regions, and the parameter positions (the query, together with the anchors). -/
 structure ChartOffHit (I J : Type u) [LinearOrder I] [LinearOrder J] where
   C : ChartSupport I J
   copy : C.unshared ↪o I
-  /-- Both sides of the anchor comparison. `infra_69_copy_cluster` exports the left-hand
-  side; the same construction also proves the right-hand side. -/
+  /-- Both sides of the anchor comparison, as exported by `infra_69_copy_cluster`. -/
   hslot : ∀ (y : C.unshared) (a : C.anchorIdx),
     (a.1 < copy y ↔ C.old a.1 < y.1) ∧ (copy y < a.1 ↔ y.1 < C.old a.1)
   region : C.Cluster → Set I
@@ -1959,32 +2106,665 @@ theorem infra_69_uniformity_bounds (b σ τ κ χ : Cardinal.{u})
   · intro z hz
     exact add_le_add hz le_rfl
 
-/-- **Infra `infra_69_assemble`:** Package the support-copy family into an
-`ApproximationSequence` (Def 6.8: `concat_bounded`, `few_exceptions`). -/
-theorem infra_69_assemble
-    [CategoricalUnbounded K] (_F : TermTemplate K S) [_hpres : HasPresentations W _F]
-    [_hpack : HasChainUnions W]
-    (_hedge : ∀ i j, ¬ S.specified i j)
-    (_hcat : ∀ μ' ∈ W.eligible, Categorical K μ')
-    (_σ _χ _b τ κ : Cardinal.{u}) (_hχ : ls K + (2 : Cardinal.{u}) ^ ((2 : Cardinal.{u}) ^ _σ) ≤ _χ)
-    (_hiso : AssemblesStructIso W _b)
+/-! ## The κ-family (support copies, then the finitary hit set) -/
+
+/-- The `κ` copies of one cut-cluster, chosen by `infra_69_copy_cluster`. -/
+noncomputable def infra_69_copyHex
+    {I J : Type u} [LinearOrder I] [LinearOrder J]
+    (C : ChartSupport I J) {σ κ : Cardinal.{u}} (hσ : ℵ₀ ≤ σ) (hκ : ℵ₀ ≤ κ)
+    (hsup : #C.support ≤ σ) (hfill : OrderFillsCuts (σ + κ) I)
+    (κIndex : Type u) (hκI : #κIndex ≤ κ) (q : C.Cluster) :=
+  infra_69_copy_cluster C hσ hκ hsup hfill (x := C.clusterRep q) (C.clusterRepPoint q).2
+    κIndex hκI
+
+noncomputable def infra_69_clusterRegion
+    {I J : Type u} [LinearOrder I] [LinearOrder J]
+    (C : ChartSupport I J) {σ κ : Cardinal.{u}} (hσ : ℵ₀ ≤ σ) (hκ : ℵ₀ ≤ κ)
+    (hsup : #C.support ≤ σ) (hfill : OrderFillsCuts (σ + κ) I)
+    (κIndex : Type u) (hκI : #κIndex ≤ κ) (q : C.Cluster) : κIndex → Set I :=
+  Classical.choose (Classical.choose_spec
+    (infra_69_copyHex C hσ hκ hsup hfill κIndex hκI q))
+
+noncomputable def infra_69_clusterCopy
+    {I J : Type u} [LinearOrder I] [LinearOrder J]
+    (C : ChartSupport I J) {σ κ : Cardinal.{u}} (hσ : ℵ₀ ≤ σ) (hκ : ℵ₀ ≤ κ)
+    (hsup : #C.support ≤ σ) (hfill : OrderFillsCuts (σ + κ) I)
+    (κIndex : Type u) (hκI : #κIndex ≤ κ) (q : C.Cluster) :
+    κIndex → (↥(C.clusterAt (C.clusterRep q)) ↪o I) :=
+  Classical.choose (Classical.choose_spec (Classical.choose_spec
+    (infra_69_copyHex C hσ hκ hsup hfill κIndex hκI q)))
+
+theorem infra_69_clusterCopy_spec
+    {I J : Type u} [LinearOrder I] [LinearOrder J]
+    (C : ChartSupport I J) {σ κ : Cardinal.{u}} (hσ : ℵ₀ ≤ σ) (hκ : ℵ₀ ≤ κ)
+    (hsup : #C.support ≤ σ) (hfill : OrderFillsCuts (σ + κ) I)
+    (κIndex : Type u) (hκI : #κIndex ≤ κ) (q : C.Cluster) :
+    (∀ i y, (infra_69_clusterCopy C hσ hκ hsup hfill κIndex hκI q i y : I) ∈
+        infra_69_clusterRegion C hσ hκ hsup hfill κIndex hκI q i) ∧
+    (∀ i, infra_69_clusterRegion C hσ hκ hsup hfill κIndex hκI q i ⊆
+        C.slotCarrier (C.clusterRep q)) ∧
+    (∀ i, IsConvexRegion (infra_69_clusterRegion C hσ hκ hsup hfill κIndex hκI q i)) ∧
+    (∀ i j, i ≠ j → Disjoint (infra_69_clusterRegion C hσ hκ hsup hfill κIndex hκI q i)
+        (infra_69_clusterRegion C hσ hκ hsup hfill κIndex hκI q j)) ∧
+    (∀ i y (a : C.anchorIdx),
+      (a.1 < infra_69_clusterCopy C hσ hκ hsup hfill κIndex hκI q i y ↔
+          C.old a.1 < C.clusterRep q) ∧
+      (infra_69_clusterCopy C hσ hκ hsup hfill κIndex hκI q i y < a.1 ↔
+          C.clusterRep q < C.old a.1)) := by
+  let hex := infra_69_copyHex C hσ hκ hsup hfill κIndex hκI q
+  rcases Classical.choose_spec (Classical.choose_spec (Classical.choose_spec hex)) with
+    ⟨_, _, _, _, hmem, hslot, hconv, hdisj, hanchor⟩
+  exact ⟨hmem, hslot, hconv, hdisj, hanchor⟩
+
+/-- Package a family whose bad indices sit inside a finitary hit set of pairwise disjoint
+regions. `infra_69_hit_bound` makes each position exclude at most one index, and
+`infra_69_finitary_exceptions` bounds the union by `|Z| + ℵ₀`. -/
+theorem infra_69_sequence_of_hits
     {μ : Cardinal.{u}} {hμ : μ ∈ W.eligible} {base : W.Object μ hμ}
-    (p : TupleOver K S W hμ base) (_hχμ : _χ < μ)
-    (hpattern : EnglishOrderPatternRealized (max τ _σ)) :
-  ∃ seq : ApproximationSequence p, seq.τ = τ ∧ #(seq.κIndex) = κ := by
-  /- English (eventual.pdf §6.2, Definition 6.8): package the support-copy family into an
-     approximation sequence (`concat_bounded`, `few_exceptions`).
-     `infra_69_off_hit_diagramEq` discharges `OffHitCopyDiagramEq` on `SingleModelData` once
-     the placed joint is `SupportTerm.along srcEmb` of an off-hit `Src` list and the family
-     is the occurrence reading `e ∘ E.realize ∘ ChartOffHit.readCopy ∘ movedJoint`.
-     Missing API, still required before `few_exceptions`:
-     * a `Src` support list for the placed tuple, with `hplaced` against
-       `infra_69_place_type`'s placement (`place_type` supplies no `Occurrence` family);
-     * the `κ` chart copies as that reading;
-     * the identification of the indices that fail `ht`/`hs` with the finitary hit set of
-       `infra_69_finitary_exceptions`.
-     `TupleOver.InBase` and `ApproximationSequence.ofConstFamily` are not used. -/
-  sorry
+    (p : TupleOver K S W hμ base) (τ κ : Cardinal.{u})
+    (κIndex : Type u) (hκ : #κIndex = κ)
+    (family : κIndex → p.idx → Occurrence K S (W.asSystem hμ base))
+    (hconcat : #(κIndex × p.idx) < μ)
+    {α : Type u} (region : κIndex → Set α)
+    (hdisj : ∀ i j, i ≠ j → Disjoint (region i) (region j))
+    (supportOf : ∀ {ι : Type u},
+      (ι → Occurrence K S (W.asSystem hμ base)) → ι → Set α)
+    (hfin : ∀ {ι : Type u}
+      (Z : ι → Occurrence K S (W.asSystem hμ base)) (z : ι), (supportOf Z z).Finite)
+    (hgood : ∀ {ι : Type u}
+      (Z : ι → Occurrence K S (W.asSystem hμ base)) (_hι : #ι ≤ τ) (i : κIndex),
+      (∀ z, ∀ x ∈ supportOf Z z, x ∉ region i) →
+      W.DiagramEq (X := p.host) (Y := base)
+        (typeJoint (p := p) Z) (seqJoint (family i) Z)) :
+    ∃ seq : ApproximationSequence p, seq.τ = τ ∧ #(seq.κIndex) = κ := by
+  refine ⟨{
+    τ := τ
+    κIndex := κIndex
+    family := family
+    concat_bounded := hconcat
+    few_exceptions := ?_ }, rfl, hκ⟩
+  intro ι Z hι
+  have hsub : ∀ i : κIndex,
+      ¬ W.DiagramEq (X := p.host) (Y := base)
+          (typeJoint (p := p) Z) (seqJoint (family i) Z) →
+      ∃ z, ∃ x ∈ supportOf Z z, x ∈ region i := by
+    intro i hbad
+    by_contra hmiss
+    exact hbad (hgood Z hι i (fun z x hx hreg => hmiss ⟨z, x, hx, hreg⟩))
+  exact (mk_subtype_mono hsub).trans
+    (infra_69_finitary_exceptions region (infra_69_hit_bound region hdisj).1
+      (supportOf Z) (hfin Z))
+
+/-- A placement whose support already lies on the old chart is its own copy: the pullback
+along `Q.f` realizes `D(v, Z) = p ↾ Z` for every query that the placement lifts. -/
+theorem infra_69_shared_diagramEq
+    (P : SingleModelData K)
+    {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
+    (base : P.scheme.Object μ hμ)
+    (p : TupleOver K oneVertexShape P.scheme hμ base)
+    (hνμ : p.ν = μ)
+    {I : Type u} [LinearOrder I] [Nonempty I] (hI : #I = μ)
+    (e : (P.E.obj I).carrier ≃[K.τ] base.model.carrier)
+    (incl : Language.Embedding K.τ (P.E.obj I).carrier p.host.model.carrier)
+    (d : p.idx → p.host.model.carrier)
+    (hincl : ∀ a, incl a = (p.incl.onVertex PUnit.unit) (e a))
+    (hd : ∀ a, d a = p.host.val (p.val a))
+    (Q : Placement P.E.lab P.E.arity I p.idx)
+    (hshared : ∀ a, termSupport (Q.z a) ⊆ Set.range (⇑Q.f))
+    (family : p.idx → Occurrence K oneVertexShape (P.scheme.asSystem hμ base))
+    (hfam : ∀ a, family a =
+      base.occ (e (P.E.realize ((Q.z a).pullback Q.f (hshared a)))))
+    {ι : Type u} (Z : ι → Occurrence K oneVertexShape (P.scheme.asSystem hμ base))
+    {ρ : Cardinal.{u}} (hρ : ℵ₀ ≤ ρ) (hρμ : ρ < μ)
+    (hjoint : #(p.idx ⊕ ι) ≤ ρ)
+    (q : ι → (P.E.obj I).carrier)
+    (hpar : ∀ j, e (q j) = base.val (Z j))
+    (hlifts : Q.Lifts P.E P.D p.host.mem incl d ρ hjoint q) :
+    P.scheme.DiagramEq (X := p.host) (Y := base)
+      (typeJoint (p := p) Z) (seqJoint family Z) := by
+  let xs : (p.idx ⊕ ι) → p.host.model.carrier :=
+    fun c => p.host.val (typeJoint (p := p) Z c)
+  let ys : (p.idx ⊕ ι) → base.model.carrier :=
+    fun c => base.val (seqJoint family Z c)
+  let realizedPull : (p.idx ⊕ ι) → (P.E.obj I).carrier := fun c =>
+    match c with
+    | Sum.inl a => P.E.realize ((Q.z a).pullback Q.f (hshared a))
+    | Sum.inr b => q b
+  let realizedJoint : (p.idx ⊕ ι) → (P.E.obj Q.J).carrier :=
+    fun c => P.E.realize (Q.joint (fun b => supportTermOf P.E (q b)) c)
+  have hcardI : Model.card (P.E.obj I) = μ := P.card_obj_eq hμ I hI
+  have hcardHost : Model.card p.host.model = μ := by simpa [hνμ] using p.host.card
+  have hcardBase : Model.card base.model = μ := base.card
+  have htρ : P.D.t ρ ≤ μ := (P.t_lt hμ hρ hρμ).le
+  have hBc : P.D.t ρ ≤ Model.card p.host.model := htρ.trans hcardHost.ge
+  have hBasec : P.D.t ρ ≤ Model.card base.model := htρ.trans hcardBase.ge
+  have hIc : P.D.t ρ ≤ Model.card (P.E.obj I) := htρ.trans hcardI.ge
+  have hJc : P.D.t ρ ≤ Model.card (P.E.obj Q.J) :=
+    hIc.trans (mk_le_of_injective (P.E.map Q.f).injective)
+  have hxs : xs = Sum.elim d (fun b => incl (q b)) := by
+    funext c
+    cases c with
+    | inl a =>
+      simp [xs, typeJoint, hd]
+    | inr j =>
+      simp only [xs, typeJoint]
+      have hunit : (Z j).1 = PUnit.unit := Subsingleton.elim _ _
+      rw [hunit]
+      change (p.incl.onVertex PUnit.unit) (Z j).2 = incl (q j)
+      rw [hincl]
+      apply congrArg (p.incl.onVertex PUnit.unit)
+      rw [hpar j]
+      rfl
+  have hys : ∀ c, ys c = e (realizedPull c) := by
+    intro c
+    cases c with
+    | inl a =>
+      change base.val (family a) =
+        e (P.E.realize ((Q.z a).pullback Q.f (hshared a)))
+      rw [hfam a]
+      exact SMObject.val_occ base _
+    | inr j =>
+      change base.val (Z j) = e (q j)
+      exact (hpar j).symm
+  have hmap : ∀ c, P.E.map Q.f (realizedPull c) = realizedJoint c := by
+    intro c
+    cases c with
+    | inl a =>
+      change P.E.map Q.f (P.E.realize ((Q.z a).pullback Q.f (hshared a))) =
+        P.E.realize (Q.z a)
+      rw [P.E.realize_along, SupportTerm.along_pullback]
+    | inr b =>
+      change P.E.map Q.f (q b) =
+        P.E.realize (SupportTerm.along Q.f (supportTermOf P.E (q b)))
+      conv_lhs => rw [← realize_supportTermOf P.E (q b)]
+      rw [P.E.realize_along]
+  have hMJ : K.Mem (P.E.obj Q.J) := orderPresentation_obj_mem P.E Q.J
+  have hMI : K.Mem (P.E.obj I) := P.hE I
+  have h1 := hlifts hBc hJc
+  rw [← hxs] at h1
+  have h3 := P.D.of_strong hjoint hMI hMJ hIc hJc realizedPull realizedJoint
+    (P.E.map Q.f) hρ (P.E.map_strong Q.f) hmap
+  have h4 := P.D.of_strong hjoint hMI base.mem hIc hBasec realizedPull ys
+    e.toEmbedding hρ (strong_of_equiv K e hMI) fun c => (hys c).symm
+  have h13 := P.D.trans hjoint p.host.mem hMJ hMI hBc hJc hIc xs realizedJoint
+    realizedPull h1 (P.D.symm hjoint hMI hMJ hIc hJc realizedPull realizedJoint h3)
+  have hfin := P.D.trans hjoint p.host.mem hMI base.mem hBc hIc hBasec xs realizedPull ys
+    h13 h4
+  let τ0 : Cardinal.{u} := max #(p.idx ⊕ ι) ℵ₀
+  let σ' : Cardinal.{u} := max ρ (ls K)
+  have hτ0inf : ℵ₀ ≤ τ0 := le_max_right _ _
+  have hτ0ρ : τ0 ≤ ρ := max_le hjoint hρ
+  have hσ'inf : ℵ₀ ≤ σ' := hρ.trans (le_max_left _ _)
+  have hσ'μ : σ' < μ := max_lt hρμ (P.ls_lt hμ)
+  have htσ' : P.D.t σ' ≤ μ := (P.t_lt hμ hσ'inf hσ'μ).le
+  have hBc' : P.D.t σ' ≤ Model.card p.host.model := htσ'.trans hcardHost.ge
+  have hBase' : P.D.t σ' ≤ Model.card base.model := htσ'.trans hcardBase.ge
+  have hBcτ : P.D.t τ0 ≤ Model.card p.host.model := (P.D.mono _ _ hτ0ρ).trans hBc
+  have hBaseτ : P.D.t τ0 ≤ Model.card base.model := (P.D.mono _ _ hτ0ρ).trans hBasec
+  have hsameτ := P.D.same_relevel hjoint hρ hτ0inf (le_max_left ρ (ls K))
+    (hτ0ρ.trans (le_max_left ρ (ls K))) (le_max_right ρ (ls K)) p.host.mem base.mem
+    hBc hBasec hBc' hBase' hBcτ hBaseτ xs ys hfin (le_max_left _ _)
+    (id : (p.idx ⊕ ι) → p.idx ⊕ ι)
+  simp only [id] at hsameτ
+  have hSame : P.D.SameD p.host.model base.model xs ys :=
+    ⟨p.host.mem, base.mem, hBcτ, hBaseτ, hsameτ⟩
+  have hαμ : #(p.idx ⊕ ι) < μ := hjoint.trans_lt hρμ
+  have hαν : #(p.idx ⊕ ι) < p.ν := by simpa [hνμ] using hαμ
+  have hDeq :=
+    (SingleModelData.diagramEq_iff_sameD (hμ := p.hν) (hν := hμ) p.host base xs ys hαν
+      hαμ).mpr hSame
+  simpa [SingleModelData.scheme, xs, ys] using hDeq
+
+/-- Build the support-copy sequence on a chart that already carries both the placement and
+the room for the copies. `Q` lifts every joint of size at most `max σ τ`, and `I` fills cuts
+of size `σ + κ`, so each unshared cluster can be copied into `κ` disjoint regions of `I`.
+An index whose query supports miss those regions is off-hit, and
+`infra_69_off_hit_diagramEq` gives `D(vᵢ, Z) = p ↾ Z`. The remaining indices are bounded by
+`infra_69_finitary_exceptions`. When every support already lies on `I`, the pullback of `Q`
+is the copy and there are no exceptions. -/
+theorem infra_69_support_copy_sequence
+    (P : SingleModelData K)
+    {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
+    (base : P.scheme.Object μ hμ)
+    (p : TupleOver K oneVertexShape P.scheme hμ base)
+    (hνμ : p.ν = μ)
+    (σ τ κ : Cardinal.{u})
+    (hσ : ℵ₀ ≤ σ) (hσμ : σ < μ) (hidx : #p.idx ≤ σ)
+    (hτ : ℵ₀ ≤ τ) (hτμ : τ < μ)
+    (hκ : ℵ₀ ≤ κ) (hκμ : κ < μ)
+    (hprod : κ * #p.idx < μ)
+    {I : Type u} [LinearOrder I] [Nonempty I] (hI : #I = μ)
+    (hfill : OrderFillsCuts (σ + κ) I)
+    (e : (P.E.obj I).carrier ≃[K.τ] base.model.carrier)
+    (incl : Language.Embedding K.τ (P.E.obj I).carrier p.host.model.carrier)
+    (d : p.idx → p.host.model.carrier)
+    (hincl : ∀ a, incl a = (p.incl.onVertex PUnit.unit) (e a))
+    (hd : ∀ a, d a = p.host.val (p.val a))
+    (Q : Placement P.E.lab P.E.arity I p.idx)
+    (hlifts : ∀ {β : Type u} (ρ : Cardinal.{u}), ℵ₀ ≤ ρ → ρ ≤ max σ τ →
+      ∀ (q : β → (P.E.obj I).carrier) (hj : #(p.idx ⊕ β) ≤ ρ),
+        Q.Lifts P.E P.D p.host.mem incl d ρ hj q) :
+    ∃ seq : ApproximationSequence p, seq.τ = τ ∧ #(seq.κIndex) = κ := by
+  classical
+  let C : ChartSupport I Q.J := { old := Q.f, support := tupleSupport Q.z }
+  have hsup : #C.support ≤ σ := by
+    calc #C.support ≤ max ℵ₀ σ := by simpa [C] using mk_tupleSupport_le hidx Q.z
+      _ = σ := max_eq_right hσ
+  let κIndex : Type u := (ord κ).ToType
+  have hκcard : #κIndex = κ := Cardinal.mk_ord_toType κ
+  have hκI : #κIndex ≤ κ := le_of_eq hκcard
+  have hconcat : #(κIndex × p.idx) < μ := by
+    rw [mk_prod, lift_id, lift_id, hκcard]
+    exact hprod
+  by_cases hne : Nonempty C.unshared
+  · let spec (q : C.Cluster) :=
+      infra_69_clusterCopy_spec C hσ hκ hsup hfill κIndex hκI q
+    have hmem (q : C.Cluster) := (spec q).1
+    have hsub (q : C.Cluster) := (spec q).2.1
+    have hconv (q : C.Cluster) := (spec q).2.2.1
+    have hdisjC (q : C.Cluster) := (spec q).2.2.2.1
+    have hside (q : C.Cluster) := (spec q).2.2.2.2
+    let ypt (y : C.unshared) : ↥(C.clusterAt (C.clusterRep (C.clusterMk y))) :=
+      ⟨y.1, ⟨y.2, Quotient.exact (C.clusterRepPoint_spec (C.clusterMk y))⟩⟩
+    let glue (i : κIndex) (y : C.unshared) : I :=
+      infra_69_clusterCopy C hσ hκ hsup hfill κIndex hκI (C.clusterMk y) i (ypt y)
+    have hsideY (i : κIndex) (y : C.unshared) (a : C.anchorIdx) :
+        (a.1 < glue i y ↔ C.old a.1 < y.1) ∧ (glue i y < a.1 ↔ y.1 < C.old a.1) := by
+      let q := C.clusterMk y
+      have hs := hside q i (ypt y) a
+      have hcut : C.SameCut (C.clusterRep q) y.1 := (ypt y).2.2
+      have hL : C.old a.1 < C.clusterRep q ↔ C.old a.1 < y.1 := hcut a.1
+      have hrne : C.clusterRep q ≠ C.old a.1 := by
+        intro h
+        exact (C.clusterRepPoint q).2.2 ⟨a.1, h.symm⟩
+      have hyne : y.1 ≠ C.old a.1 := by
+        intro h
+        exact y.2.2 ⟨a.1, h.symm⟩
+      have hRep : C.clusterRep q < C.old a.1 ↔ ¬ C.old a.1 < C.clusterRep q := by
+        constructor
+        · exact fun h => not_lt_of_gt h
+        · intro hnot
+          rcases lt_trichotomy (C.clusterRep q) (C.old a.1) with hlt | heq | hgt
+          · exact hlt
+          · exact absurd heq hrne
+          · exact absurd hgt hnot
+      have hPt : y.1 < C.old a.1 ↔ ¬ C.old a.1 < y.1 := by
+        constructor
+        · exact fun h => not_lt_of_gt h
+        · intro hnot
+          rcases lt_trichotomy y.1 (C.old a.1) with hlt | heq | hgt
+          · exact hlt
+          · exact absurd heq hyne
+          · exact absurd hgt hnot
+      refine ⟨?_, ?_⟩
+      · have hglue : a.1 < glue i y ↔ C.old a.1 < C.clusterRep q := by
+          simpa [glue, q] using hs.1
+        exact hglue.trans hL
+      · have hglue : glue i y < a.1 ↔ C.clusterRep q < C.old a.1 := by
+          simpa [glue, q] using hs.2
+        exact hglue.trans (hRep.trans (hL.not.trans hPt.symm))
+    have hslots (q q' : C.Cluster) (hq : q ≠ q') :
+        Disjoint (C.slotCarrier (C.clusterRep q)) (C.slotCarrier (C.clusterRep q')) := by
+      suffices hlt : ∀ {q q' : C.Cluster}, q < q' →
+          Disjoint (C.slotCarrier (C.clusterRep q)) (C.slotCarrier (C.clusterRep q')) by
+        rcases lt_trichotomy q q' with hlt' | heq | hgt
+        · exact hlt hlt'
+        · exact absurd heq hq
+        · exact (hlt hgt).symm
+      intro q q' hlt
+      let y := C.clusterRepPoint q
+      let z := C.clusterRepPoint q'
+      have hltJ : y.1 < z.1 := C.cluster_lt_iff.mp hlt
+      have hcut : ¬ C.SameCut y.1 z.1 := by
+        intro hs
+        exact ne_of_lt hlt (by
+          have hmk : C.clusterMk y = C.clusterMk z := Quotient.sound hs
+          have hyq : C.clusterMk y = q := C.clusterRepPoint_spec q
+          have hzq : C.clusterMk z = q' := C.clusterRepPoint_spec q'
+          exact hyq.symm.trans (hmk.trans hzq))
+      obtain ⟨a, hy, hz⟩ := C.exists_anchor_between hltJ hcut
+      rw [Set.disjoint_left]
+      intro i hiQ hiQ'
+      have hb : C.old a.1 ∈ C.anchors := a.2
+      have hnot : ¬ C.old a.1 < y.1 := not_lt_of_gt hy
+      have hnoti : ¬ C.old a.1 < C.old i := (hiQ _ hb).not.mpr hnot
+      have hzi : C.old a.1 < C.old i := (hiQ' _ hb).mpr hz
+      exact not_lt_of_ge (le_of_not_gt hnoti) hzi
+    have hglueMono (i : κIndex) : StrictMono (glue i) := by
+      intro y z hyz
+      by_cases hcut : C.clusterMk y = C.clusterMk z
+      · have hS : C.SameCut (C.clusterRep (C.clusterMk y)) z.1 := by
+          rw [hcut]
+          exact (ypt z).2.2
+        let zpt : ↥(C.clusterAt (C.clusterRep (C.clusterMk y))) := ⟨z.1, ⟨z.2, hS⟩⟩
+        have hltp : ypt y < zpt := Subtype.coe_lt_coe.mp (Subtype.coe_lt_coe.mpr hyz)
+        have himg :=
+          (infra_69_clusterCopy C hσ hκ hsup hfill κIndex hκI (C.clusterMk y) i).strictMono hltp
+        have hmemiff : ∀ x : Q.J,
+            x ∈ C.clusterAt (C.clusterRep (C.clusterMk y)) ↔
+            x ∈ C.clusterAt (C.clusterRep (C.clusterMk z)) := by
+          intro x
+          rw [hcut]
+        have hpt : zpt ≍ ypt z := (Subtype.heq_iff_coe_eq hmemiff).mpr rfl
+        have hfun := congr_arg_heq
+          (fun q : C.Cluster =>
+            (infra_69_clusterCopy C hσ hκ hsup hfill κIndex hκI q i :
+              ↥(C.clusterAt (C.clusterRep q)) → I)) hcut
+        have himgeq := congr_heq hfun hpt
+        calc glue i y
+            = (infra_69_clusterCopy C hσ hκ hsup hfill κIndex hκI (C.clusterMk y) i) (ypt y) := rfl
+          _ < (infra_69_clusterCopy C hσ hκ hsup hfill κIndex hκI (C.clusterMk y) i) zpt := himg
+          _ = (infra_69_clusterCopy C hσ hκ hsup hfill κIndex hκI (C.clusterMk z) i) (ypt z) :=
+              himgeq
+          _ = glue i z := rfl
+      · have hmk : C.clusterMk y < C.clusterMk z :=
+          lt_of_le_of_ne (C.clusterMk_mono hyz.le) hcut
+        have hneCut : ¬ C.SameCut y.1 z.1 := fun hs => hcut (Quotient.sound hs)
+        obtain ⟨a, hleft, hright⟩ :=
+          C.exists_anchor_between (Subtype.coe_lt_coe.mpr hyz) hneCut
+        exact ((hsideY i y a).2.mpr hleft).trans ((hsideY i z a).1.mpr hright)
+    let glueEmb (i : κIndex) : C.unshared ↪o I :=
+      OrderEmbedding.ofStrictMono (glue i) (hglueMono i)
+    let toU (j : Q.J) (hj : j ∈ tupleSupport Q.z) (hn : ¬ ∃ t : I, C.old t = j) : C.unshared :=
+      ⟨j, ⟨hj, by simpa [Set.mem_range] using hn⟩⟩
+    let locPos (i : κIndex) (j : Q.J) (hj : j ∈ tupleSupport Q.z) : I :=
+      if h : ∃ t : I, C.old t = j then Classical.choose h else glue i (toU j hj h)
+    have hloc (i : κIndex) {j j' : Q.J} (hj : j ∈ tupleSupport Q.z) (hj' : j' ∈ tupleSupport Q.z)
+        (hlt : j < j') : locPos i j hj < locPos i j' hj' := by
+      by_cases h : ∃ t : I, C.old t = j
+      · by_cases h' : ∃ t : I, C.old t = j'
+        · have h1 := Classical.choose_spec h
+          have h2 := Classical.choose_spec h'
+          have : C.old (Classical.choose h) < C.old (Classical.choose h') := by
+            rw [h1, h2]; exact hlt
+          simpa [locPos, dif_pos h, dif_pos h'] using (C.old.lt_iff_lt).mp this
+        · have h1 := Classical.choose_spec h
+          have hsh : j ∈ C.shared := ⟨hj, ⟨Classical.choose h, h1⟩⟩
+          have ha : C.old (Classical.choose h) ∈ C.anchors := by
+            rw [h1]
+            exact Set.mem_union_left C.sepImage hsh
+          let a : C.anchorIdx := ⟨Classical.choose h, ha⟩
+          have hlt' : C.old a.1 < (toU j' hj' h').1 := by
+            have hpre : C.old (Classical.choose h) < j' := by simpa [h1] using hlt
+            simpa [a, toU] using hpre
+          have hcmp := (hsideY i (toU j' hj' h') a).1.mpr hlt'
+          simpa [locPos, dif_pos h, dif_neg h', a] using hcmp
+      · by_cases h' : ∃ t : I, C.old t = j'
+        · have h2 := Classical.choose_spec h'
+          have hsh : j' ∈ C.shared := ⟨hj', ⟨Classical.choose h', h2⟩⟩
+          have ha : C.old (Classical.choose h') ∈ C.anchors := by
+            rw [h2]
+            exact Set.mem_union_left C.sepImage hsh
+          let a : C.anchorIdx := ⟨Classical.choose h', ha⟩
+          have hlt' : (toU j hj h).1 < C.old a.1 := by
+            have hpre : j < C.old (Classical.choose h') := by simpa [h2] using hlt
+            simpa [a, toU] using hpre
+          have hcmp := (hsideY i (toU j hj h) a).2.mpr hlt'
+          simpa [locPos, dif_neg h, dif_pos h', a] using hcmp
+        · have hpts : toU j hj h < toU j' hj' h' := Subtype.coe_lt_coe.mp hlt
+          simpa [locPos, dif_neg h, dif_neg h'] using hglueMono i hpts
+    let copyTerm (i : κIndex) (a : p.idx) : SupportTerm P.E.lab P.E.arity I :=
+      { label := (Q.z a).label
+        pos := fun k => locPos i ((Q.z a).pos k)
+          (termSupport_subset_tupleSupport Q.z a (Set.mem_range_self k))
+        increasing := fun k k' hk =>
+          hloc i
+            (termSupport_subset_tupleSupport Q.z a (Set.mem_range_self k))
+            (termSupport_subset_tupleSupport Q.z a (Set.mem_range_self k'))
+            ((Q.z a).increasing hk) }
+    let family (i : κIndex) (a : p.idx) : Occurrence K oneVertexShape (P.scheme.asSystem hμ base) :=
+      base.occ (e (P.E.realize (copyTerm i a)))
+    let hitRegion (i : κIndex) : Set I :=
+      ⋃ q : C.Cluster, infra_69_clusterRegion C hσ hκ hsup hfill κIndex hκI q i
+    have hdisjHit : ∀ i j, i ≠ j → Disjoint (hitRegion i) (hitRegion j) := by
+      intro i j hneij
+      rw [Set.disjoint_left]
+      intro z hzi hzj
+      rcases Set.mem_iUnion.mp hzi with ⟨q, hq⟩
+      rcases Set.mem_iUnion.mp hzj with ⟨q', hq'⟩
+      by_cases hqq : q = q'
+      · subst hqq
+        exact (Set.disjoint_left.mp (hdisjC q i j hneij) hq) hq'
+      · exact (Set.disjoint_left.mp (hslots q q' hqq) (hsub q i hq)) (hsub q' j hq')
+    exact @infra_69_sequence_of_hits K oneVertexShape P.scheme μ hμ base
+      p τ κ κIndex hκcard family hconcat I hitRegion hdisjHit
+      (fun {_} Z z => termSupport (supportTermOf P.E (e.symm (base.val (Z z)))))
+      (fun {_} Z z =>
+        Set.finite_range (supportTermOf P.E (e.symm (base.val (Z z)))).pos)
+      (fun {ι} Z hι i hmiss => by
+        let qv : _ → (P.E.obj I).carrier := fun j => e.symm (base.val (Z j))
+        let querySet : Set I :=
+          ⋃ j, termSupport (supportTermOf P.E (qv j))
+        let H : ChartOffHit I Q.J := {
+          C := C
+          copy := glueEmb i
+          hslot := fun y a => by
+            simpa [glueEmb, OrderEmbedding.coe_ofStrictMono] using hsideY i y a
+          region := fun q => infra_69_clusterRegion C hσ hκ hsup hfill κIndex hκI q i
+          copy_mem := fun y => by
+            simpa [glue, glueEmb, OrderEmbedding.coe_ofStrictMono] using
+              hmem (C.clusterMk y) i (ypt y)
+          convex := fun q => hconv q i
+          disjoint_region := fun q q' hqq => by
+            rw [Set.disjoint_left]
+            intro x hx hx'
+            exact (Set.disjoint_left.mp (hslots q q' hqq) (hsub q i hx)) (hsub q' i hx')
+          query := querySet
+          query_off := fun q => by
+            rw [Set.disjoint_left]
+            intro x hx hxR
+            rcases Set.mem_iUnion.mp hx with ⟨j, hj⟩
+            exact hmiss j x hj (Set.mem_iUnion.mpr ⟨q, hxR⟩)
+          nonempty_unshared := hne }
+        have hposMem (a : p.idx) (k : Fin (P.E.arity (Q.z a).label)) :
+            (Q.z a).pos k ∈ tupleSupport Q.z :=
+          termSupport_subset_tupleSupport Q.z a (Set.mem_range_self k)
+        let parmOf (j : Q.J) (hj : j ∈ tupleSupport Q.z) (h : ∃ t : I, C.old t = j) : H.Parm :=
+          ⟨Classical.choose h, Or.inr (by
+            have hsh : j ∈ C.shared := ⟨hj, h⟩
+            rw [Classical.choose_spec h]
+            exact Set.mem_union_left C.sepImage hsh)⟩
+        let posSrc (j : Q.J) (hj : j ∈ tupleSupport Q.z) :
+            CopyInterchange.Src H.interchange :=
+          if h : ∃ t : I, C.old t = j then ⟨Sum.inr (parmOf j hj h)⟩
+          else ⟨Sum.inl (toU j hj h)⟩
+        have hsrcEmb (j : Q.J) (hj : j ∈ tupleSupport Q.z) :
+            H.interchange.srcEmb (posSrc j hj) = j := by
+          by_cases h : ∃ t : I, C.old t = j
+          · unfold posSrc
+            rw [dif_pos h]
+            simp only [CopyInterchange.srcEmb_apply, CopyInterchange.sumOrig_inr,
+              ChartOffHit.embParm_apply]
+            exact Classical.choose_spec h
+          · unfold posSrc
+            rw [dif_neg h]
+            rfl
+        let t (a : p.idx) :
+            SupportTerm P.E.lab P.E.arity (CopyInterchange.Src H.interchange) :=
+          { label := (Q.z a).label
+            pos := fun k => posSrc ((Q.z a).pos k) (hposMem a k)
+            increasing := fun k k' hk => by
+              rw [← H.interchange.srcEmb.lt_iff_lt]
+              rw [hsrcEmb _ (hposMem a k), hsrcEmb _ (hposMem a k')]
+              exact (Q.z a).increasing hk }
+        let s (b : ι) :
+            SupportTerm P.E.lab P.E.arity (CopyInterchange.Src H.interchange) :=
+          { label := (supportTermOf P.E (qv b)).label
+            pos := fun k =>
+              ⟨Sum.inr ⟨(supportTermOf P.E (qv b)).pos k,
+                Or.inl (Set.mem_iUnion.mpr ⟨b, Set.mem_range_self k⟩)⟩⟩
+            increasing := fun k k' hk => by
+              simp only [CopyInterchange.src_lt_iff, CopyInterchange.sumOrig_inr,
+                ChartOffHit.embParm_apply]
+              exact (C.old.lt_iff_lt).mpr ((supportTermOf P.E (qv b)).increasing hk) }
+        have hs : ∀ b k, (s b).pos k ∉ H.interchange.regions.first := by
+          intro b k hf
+          rcases hf with ⟨c, hc⟩
+          simp only [s] at hc
+          cases hc
+        have ht : ∀ a k, (t a).pos k ∉ H.interchange.regions.second := by
+          intro a k hsec
+          rcases hsec with ⟨p, hpval, ⟨c, hcross⟩⟩
+          by_cases hex : ∃ t0 : I, C.old t0 = (Q.z a).pos k
+          · have hval : ((t a).pos k).val = Sum.inr (parmOf _ (hposMem a k) hex) := by
+              simp [t, posSrc, dif_pos hex]
+            rw [hval] at hpval
+            injection hpval with hpeq
+            have hp1 : p.1 = Classical.choose hex := by
+              rw [← hpeq]
+            have hsh : (Q.z a).pos k ∈ C.shared := ⟨hposMem a k, hex⟩
+            have ha : C.old p.1 ∈ C.anchors := by
+              rw [hp1, Classical.choose_spec hex]
+              exact Set.mem_union_left C.sepImage hsh
+            have hiff : H.interchange.leftOrig c p ↔ H.interchange.leftCopy c p := by
+              change C.old p.1 < c.1 ↔ C.old p.1 < C.old (H.copy c)
+              rw [C.old.lt_iff_lt]
+              exact (H.hslot c ⟨p.1, ha⟩).1.symm
+            exact hcross (propext hiff)
+          · simp [t, posSrc, dif_neg hex] at hpval
+        have hplaced : ∀ c,
+            SupportTerm.along H.interchange.srcEmb ((Sum.elim t s) c) =
+              Q.joint (fun b => supportTermOf P.E (qv b)) c := by
+          intro c
+          cases c with
+          | inl a =>
+            refine SupportTerm.ext_of_label_eq rfl fun k => ?_
+            simp only [SupportTerm.along, Sum.elim_inl, t, Placement.joint]
+            exact hsrcEmb _ (hposMem a k)
+          | inr b =>
+            refine SupportTerm.ext_of_label_eq rfl fun k => ?_
+            simp only [SupportTerm.along, Sum.elim_inr, s, Placement.joint,
+              CopyInterchange.srcEmb_apply, CopyInterchange.sumOrig_inr,
+              ChartOffHit.embParm_apply]
+            rfl
+        have hread : ∀ c, seqJoint (family i) Z c =
+            base.occ (e (P.E.realize
+              (H.readCopy (H.interchange.movedJoint t s ht hs c)))) := by
+          intro c
+          cases c with
+          | inl a =>
+            have hterm : copyTerm i a =
+                H.readCopy (H.interchange.movedJoint t s ht hs (Sum.inl a)) := by
+              refine SupportTerm.ext_of_label_eq rfl fun k => ?_
+              apply C.old.injective
+              let u := H.interchange.movedJoint t s ht hs (Sum.inl a)
+              have hEq : C.old ((H.readCopy u).pos k) =
+                  H.interchange.dstEmb (u.pos k) :=
+                Classical.choose_spec
+                  (H.dstAlong_support_subset_old u (Set.mem_range_self k))
+              suffices hL : C.old ((copyTerm i a).pos k) =
+                  H.interchange.dstEmb (u.pos k) from hL.trans hEq.symm
+              have hmove : u.pos k = H.interchange.srcDstEquiv ((t a).pos k) := rfl
+              rw [hmove, CopyInterchange.dstEmb_apply, CopyInterchange.srcDstEquiv_val]
+              by_cases hex : ∃ t0 : I, C.old t0 = (Q.z a).pos k
+              · simp only [t, posSrc, copyTerm, locPos, dif_pos hex, parmOf,
+                  CopyInterchange.sumCopy_inr, ChartOffHit.embParm_apply]
+                rfl
+              · simp only [t, posSrc, copyTerm, locPos, dif_neg hex, glue, glueEmb,
+                  OrderEmbedding.coe_ofStrictMono, CopyInterchange.sumCopy_inl,
+                  ChartOffHit.embCopy_apply]
+                rfl
+            simp [seqJoint, family, hterm]
+            rfl
+          | inr b =>
+            have hterm : H.readCopy (H.interchange.movedJoint t s ht hs (Sum.inr b)) =
+                supportTermOf P.E (qv b) := by
+              refine SupportTerm.ext_of_label_eq rfl fun k => ?_
+              apply C.old.injective
+              let u := H.interchange.movedJoint t s ht hs (Sum.inr b)
+              have hEq : C.old ((H.readCopy u).pos k) =
+                  H.interchange.dstEmb (u.pos k) :=
+                Classical.choose_spec
+                  (H.dstAlong_support_subset_old u (Set.mem_range_self k))
+              have hmove : u.pos k = H.interchange.srcDstEquiv ((s b).pos k) := rfl
+              rw [hEq, hmove, CopyInterchange.dstEmb_apply, CopyInterchange.srcDstEquiv_val]
+              apply congrArg (⇑C.old)
+              apply congrArg (supportTermOf P.E (qv b)).pos
+              exact (Fin.ext rfl).symm
+            simp [seqJoint, hterm, realize_supportTermOf, qv, e.apply_symm_apply]
+            exact (SMObject.occ_val base (Z b)).symm
+        let ρ : Cardinal.{u} := max σ τ
+        have hρ : ℵ₀ ≤ ρ := hσ.trans (le_max_left _ _)
+        have hρμ : ρ < μ := max_lt hσμ hτμ
+        have hjoint : #(p.idx ⊕ ι) ≤ ρ := by
+          calc #(p.idx ⊕ ι) = #p.idx + #ι := by simp [mk_sum, lift_id]
+            _ ≤ σ + τ := add_le_add hidx hι
+            _ = max σ τ := add_eq_max hσ
+        simpa [OffHitCopyDiagramEq] using
+          infra_69_off_hit_diagramEq P hμ base p hνμ i family Z hI e Q H
+            hρ hρμ hjoint qv t s ht hs hplaced hread
+            (fun j => e.apply_symm_apply (base.val (Z j)))
+            incl d hincl hd (hlifts ρ hρ le_rfl qv hjoint))
+  · have hshared : ∀ a, termSupport (Q.z a) ⊆ Set.range (⇑Q.f) := by
+      intro a x hx
+      by_contra hnot
+      exact hne ⟨⟨x, ⟨termSupport_subset_tupleSupport Q.z a hx, hnot⟩⟩⟩
+    let pull (a : p.idx) : Occurrence K oneVertexShape (P.scheme.asSystem hμ base) :=
+      base.occ (e (P.E.realize ((Q.z a).pullback Q.f (hshared a))))
+    exact @infra_69_sequence_of_hits K oneVertexShape P.scheme μ hμ base
+      p τ κ κIndex hκcard (fun _ a => pull a) hconcat I
+      (fun _ => (∅ : Set I)) (fun _ _ _ => empty_disjoint _)
+      (fun {_} _ _ => (∅ : Set I)) (fun {_} _ _ => Set.finite_empty)
+      (fun {ι} Z hι _ _ => by
+        let ρ : Cardinal.{u} := max σ τ
+        have hρ : ℵ₀ ≤ ρ := hσ.trans (le_max_left _ _)
+        have hρμ : ρ < μ := max_lt hσμ hτμ
+        have hjoint : #(p.idx ⊕ ι) ≤ ρ := by
+          calc #(p.idx ⊕ ι) = #p.idx + #ι := by simp [mk_sum, lift_id]
+            _ ≤ σ + τ := add_le_add hidx hι
+            _ = max σ τ := add_eq_max hσ
+        let qv : ι → (P.E.obj I).carrier := fun j => e.symm (base.val (Z j))
+        exact infra_69_shared_diagramEq P hμ base p hνμ hI e incl d hincl hd Q hshared
+          pull (fun _ => rfl) Z hρ hρμ hjoint qv (fun j => e.apply_symm_apply _)
+          (hlifts ρ hρ le_rfl qv hjoint))
+
+/-- **Infra `infra_69_assemble`:** Package the support-copy family into an
+`ApproximationSequence` (Def 6.8: `concat_bounded`, `few_exceptions`).
+
+On `SingleModelData`, matching `infra_69_place_type` and `infra_69_off_hit_diagramEq`.
+Present `A` on the padded chart (`infra_69_present_padded`: Lemmas 5.5 and 5.4, cut filling
+at `σ + κ`). Read `p` across the chart equivalence. Place it by the padded clause
+`infra_69_place_on_fills` — not by `infra_69_place_type`, whose skeleton does not fill cuts.
+`infra_69_support_copy_sequence` is the `κ`-family (`concat_bounded`, `few_exceptions`).
+
+A general `WorkingScheme` has no order presentation and no `Placement`. This statement is
+the single-model chain. `TupleOver.InBase` and `ApproximationSequence.ofConstFamily` are
+not used. The only unfinished step is `infra_69_place_on_fills`. -/
+theorem infra_69_assemble
+    (P : SingleModelData K)
+    {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
+    (base : P.scheme.Object μ hμ)
+    (p : TupleOver K oneVertexShape P.scheme hμ base)
+    (hνμ : p.ν = μ)
+    (σ τ κ : Cardinal.{u})
+    (hσ : ℵ₀ ≤ σ) (hσμ : σ < μ) (hidx : #p.idx ≤ σ)
+    (hτ : ℵ₀ ≤ τ) (hτμ : τ < μ)
+    (hκ : ℵ₀ ≤ κ) (hκμ : κ < μ)
+    (hprod : κ * #p.idx < μ) :
+    ∃ seq : ApproximationSequence p, seq.τ = τ ∧ #(seq.κIndex) = κ := by
+  have hμSL : μ.IsStrongLimit := hμ.1.working.strongLimit
+  have hη : ℵ₀ ≤ σ + κ := hσ.trans (self_le_add_right σ κ)
+  have hημ : σ + κ < μ := add_lt_of_lt (P.aleph0_le hμ) hσμ hκμ
+  obtain ⟨I, lo, neI, pad, hIcard, _, hfills, hex⟩ :=
+    infra_69_present_padded (S := oneVertexShape) (W := P.scheme) (F := P.template)
+      (hpres := P.hasPresentations) P.hasChainUnions hμ hμSL (η := σ + κ) hη hημ base
+  letI : LinearOrder I := lo
+  letI : Nonempty I := neI
+  letI : IsPadded I := pad
+  obtain ⟨_, _, hIA⟩ := hex
+  obtain ⟨e⟩ := hIA PUnit.unit
+  let incl : Language.Embedding K.τ (P.E.obj I).carrier p.host.model.carrier :=
+    (p.incl.onVertex PUnit.unit).comp e.toEmbedding
+  let d : p.idx → p.host.model.carrier := fun i => p.host.val (p.val i)
+  have hstrong : K.Strong incl :=
+    K.strong_trans e.toEmbedding (p.incl.onVertex PUnit.unit)
+      (strong_of_equiv K e (P.hE I)) (p.incl.onVertex_strong PUnit.unit)
+  obtain ⟨Q, hQ⟩ :=
+    infra_69_place_on_fills P hμ base p hνμ hσ hσμ hidx hτ hτμ hIcard e incl d
+      hstrong (fun _ => rfl) (fun _ => rfl)
+  have hfill : OrderFillsCuts (σ + κ) I := hfills (σ + κ) le_rfl
+  exact infra_69_support_copy_sequence P hμ base p hνμ σ τ κ hσ hσμ hidx hτ hτμ hκ hκμ
+    hprod hIcard hfill e incl d (fun _ => rfl) (fun _ => rfl) Q hQ
 
 /-- Deprecated mega-name: use `infra_69_assemble`. -/
 abbrev support_copy_exception_and_assembly := @infra_69_assemble
@@ -1993,11 +2773,11 @@ abbrev support_copy_exception_and_assembly := @infra_69_assemble
 
 /-- Uniform approximation sequences for `p = tp(v/A)` with `#p.idx ≤ σ` (English Lemma 6.9).
 
-Hypotheses match Lemma 6.1 packaging. The proof follows the English paragraphs above; it is
-pinned at `infra_69_assemble` (the occurrence family of the chart copies is not built;
-`infra_69_off_hit_diagramEq` is the `DiagramEq` step once that reading is supplied).
-On `SingleModelData`, `infra_69_place_type` places `p` over the skeleton at size `τ`.
-Steps 1–2 invoke Lemmas 5.5 and 5.4. -/
+Hypotheses match Lemma 6.1 packaging. On `SingleModelData` the chain is
+`infra_69_assemble`: padded chart, `infra_69_place_on_fills`, `infra_69_support_copy_sequence`.
+A general `WorkingScheme` has no order presentation and no `Placement`, so it is not that
+chain. `infra_69_place_type` places over a well-ordered skeleton and does not fill cuts.
+`TupleOver.InBase` and `ApproximationSequence.ofConstFamily` are not a proof. -/
 theorem WorkingScheme.exists_approximationSequence
     [CategoricalUnbounded K] (F : TermTemplate K S) [hpres : HasPresentations W F]
     [hpack : HasChainUnions W]
@@ -2014,25 +2794,10 @@ theorem WorkingScheme.exists_approximationSequence
     (hμτ : τ < μ) (hκμ : κ < μ) (hμκ : κ * #p.idx < μ)
     (hχμ : χ < μ) :
     ∃ seq : ApproximationSequence p, seq.τ = τ ∧ #(seq.κIndex) = κ := by
-  -- English step 1: rich padded chart for `A` (Lemmas 5.5, 5.4).
-  obtain ⟨_, _, _, _, _, _, _⟩ := exists_denseRichOrder τ hτ
-  have _step1 : True := by
-    by_cases hμSL : μ.IsStrongLimit
-    · obtain ⟨I, _loI, _neI, _padI, hIcard, _, _, _, _, _⟩ :=
-        infra_69_present_padded F hpack hμ hμSL hτ hμτ base
-      obtain ⟨_, _, _, _⟩ := infra_69_chart_iso F hpack hcat hμ I hIcard base
-      trivial
-    · -- Without `μ` a strong limit, English cites cut filling at `2^τ` only.
-      trivial
-  -- English step 2, on `SingleModelData`: `infra_69_place_type` places `p` over the
-  -- well-ordered skeleton of the padded chart, for queries of size at most `τ`. This
-  -- general-scheme existence has no `SingleModelData`, so the placement is not unpacked here.
-  -- English steps 3–4: `ChartSupport` proves the anchor and pattern-arity infras. The copy
-  -- family is still packaged by `infra_69_assemble`.
-  have hη : aleph0 ≤ max τ σ := le_trans hτ (le_max_left τ σ)
-  have hpattern : EnglishOrderPatternRealized (max τ σ) :=
-    english_orderPattern_realized_over_old (max τ σ) hη
-  exact infra_69_assemble F hedge hcat σ χ b τ κ hχ hiso p hχμ hpattern
+  /- The proved packaging is `infra_69_assemble` on `SingleModelData`. Nothing here identifies
+     `W` with `P.scheme`, and `infra_69_place_on_fills` is still pinned, so the general
+     existence stays open. Not a constant family. -/
+  sorry
 
 end
 end AEC

@@ -175,7 +175,7 @@ theorem ApproximationSequence.subtuple_uniform {p : TupleOver K S W hμ base}
     have hR := seqJoint_reindex (seq.family i) ρ Z
     unfold TupleOver.reindex at hL ⊢
     exact hL.symm ▸ hR.symm ▸ hpre
-  exact (mk_subtype_le_of_subset hsub).trans (seq.few_exceptions Z hβ)
+  exact (mk_subtype_mono hsub).trans (seq.few_exceptions Z hβ)
 
 end
 end AEC

@@ -1,7 +1,7 @@
 # Hard edges from holes-graph.json
 # Convention: FROM --> TO means the English proof of TO requires FROM.
-# Nodes: 141  Hard edges: 178
-# Lem 6.9: off_hit_diagramEq done (SingleModelData reading); assemble open; lemma_6_9 blocked.
+# Nodes: 142  Hard edges: 179
+# Lem 6.9: assemble glue is written on SingleModelData and blocked on infra_69_place_on_fills (Lem 6.4 padded clause). Each profile step 2^β+σ+b is < μ; the ω-supremum of those steps is not below every cf-ω strong limit (beth_ω). exists_approximationSequence stays sorry (general scheme). lemma_6_9 and theorem_6_10 stay blocked.
 
 claim_11_10 --> claim_11_11
 claim_11_11 --> claim_11_12
@@ -28,7 +28,8 @@ infra_69_interpret_copies --> infra_69_choose_supports
 infra_69_lem61_off_hits --> infra_69_off_hit_diagramEq
 infra_69_no_internal_hits --> infra_69_lem61_off_hits
 infra_69_off_hit_diagramEq --> infra_69_assemble
-infra_69_place_type --> infra_69_assemble
+infra_69_place_on_fills --> infra_69_assemble
+infra_69_present_padded --> infra_69_assemble
 infra_69_present_padded --> infra_69_chart_iso
 infra_69_richness_arity --> infra_69_copy_cluster
 infra_69_separators --> infra_69_include_shared
