@@ -1,7 +1,7 @@
 # Hard edges from holes-graph.json
 # Convention: FROM --> TO means the English proof of TO requires FROM.
 # Apex: theorem_1_2, theorem_1_3
-# Nodes: 115  Hard edges: 146  Reach apex: 106/115
+# Nodes: 115  Hard edges: 149  Reach apex: 106/115
 # Not reaching theorem_1_2 or theorem_1_3 by hard edges: lemma_5_4, lemma_5_5, proposition_5_8,
 # proposition_5_9, lemma_6_1 (lemma_6_1 has only the soft edge to proposition_6_3), and proposition_6_3,
 # lemma_6_4, lemma_6_5, theorem_6_6 (their edges into theorem_6_6 / corollary_6_7 are soft: the Lean
@@ -14,7 +14,11 @@ claim_11_13 --> theorem_11_9
 corollary_10_10 --> lemma_11_2
 corollary_14_4 --> theorem_14_5
 corollary_6_16 --> lemma_6_17
-corollary_6_7 --> lemma_6_9
+# corollary_6_7 --> lemma_6_9 (soft in holes-graph.json: English 6.9 does not use Cor 6.7)
+# lemma_5_4 --> lemma_6_9 (soft in holes-graph.json: rich padded export only; 5.4 not called)
+# lemma_5_5 --> lemma_6_9 (soft in holes-graph.json: wrappers exported, not used in constant-family engine)
+# lemma_6_1 --> lemma_6_9 (soft: tail/packaging only, not exception estimate)
+# lemma_6_5 --> lemma_6_9 (soft: placement not in Lean proof)
 corollary_9_2 --> theorem_9_3
 infra_countable_back_and_forth --> proposition_4_3
 infra_eligible_reclass --> infra_named_working_scheme

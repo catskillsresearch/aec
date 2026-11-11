@@ -125,6 +125,7 @@ public import AEC.Section6.SchemeAmalgam
 public import AEC.Section6.TestCardinal
 public import AEC.Section6.TestingFunction
 public import AEC.Section6.TupleOver
+public import AEC.Section6.UniformApproximations
 public import AEC.Section7.AllDominated
 public import AEC.Section7.ContinuityCondition
 public import AEC.Section7.ProductIndependent

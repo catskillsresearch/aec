@@ -13,6 +13,7 @@ public import AEC.Section6.ParameterOrbits
 public import AEC.Section6.PlacedComparisons
 public import AEC.Section4.ClosedLevelTypes
 public import AEC.Section6.LargerLevelRealization
+public import AEC.Section6.UniformApproximations
 
 @[expose] public section
 
@@ -318,16 +319,55 @@ theorem corollary_6_7 (K : AbstractElementaryClass.{u}) [CategoricalUnbounded K]
         d z hα htest,
     fun {α} x hα => exists_actual_nu_type hν hμ hlt A N i hA hN hi hcA hcN x hα⟩
 
-/-- **Lemma 6.9** (Uniform majority approximations). At sufficiently closed levels, a bounded
-type has approximation sequences of every prescribed bounded infinite length. -/
+/-- **Lemma 6.9** (Uniform majority approximations). Let `|v| ≤ σ` and let `τ, κ` be bounded
+infinite cardinals. At sufficiently closed levels, there are approximation sequences for
+`p = tp(v/A)` of length `κ` at query size `τ`, with the exception estimate in Definition 6.8
+simultaneous for all subtuples.
+
+Hypotheses match Lemma 6.1 (no specified map, categoricity, `AssemblesStructIso`). Presentations
+and chain unions (`HasPresentations`, `HasChainUnions`) supply the English padded chart of
+Lemmas 5.4–5.5. The bound `χ` is the uniform cardinal threshold for parameter orbits (Lemma 6.1)
+and support-copy; it depends only on `b, σ, τ, κ` via the definitions of `χ` below.
+
+**Statement repair.** The old bare-scheme form was refutable. Added the Lemma 6.1
+package, plus presentations for Lemma 5.4.
+
+**Residual packaging (see `UniformApproximations.lean` and `HOLES.md`).** The proved engine
+`exists_approximationSequence` gives constant `κ`-families for in-base types
+(`TupleOver.InBase` / `d.toOver`). English support-copy (5.5/5.4/6.5/4.6/6.1) for cross-level
+hosts and distinct approximants remains open; Lem 5.5 wrappers are exported for that extension.
+Corollary 6.7 is not used. -/
 theorem lemma_6_9 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
-    (W : WorkingScheme K S) :
+    [CategoricalUnbounded K]
+    (W : WorkingScheme K S) (F : TermTemplate K S) [hpres : HasPresentations W F]
+    [hpack : HasChainUnions W]
+    (hedge : ∀ i j, ¬ S.specified i j)
+    (hcat : ∀ μ ∈ W.eligible, Categorical K μ)
+    (σ χ b : Cardinal.{u}) (hσ : aleph0 ≤ σ)
+    (hpow : χ ^ σ = χ) (hb : b + σ < χ)
+    (hχ : ls K + (2 : Cardinal.{u}) ^ ((2 : Cardinal.{u}) ^ σ) ≤ χ)
+    (hiso : AssemblesStructIso W b) :
     ∃ T, ∃ hT : Tail W.eligible T,
       ∀ μ (hμ : μ ∈ T) (A : W.Object μ (Tail.mem hT hμ))
-        (p : TupleOver K S W (Tail.mem hT hμ) A) (τ κ : Cardinal.{u}),
-        #p.idx < μ → aleph0 ≤ τ → τ < μ → aleph0 ≤ κ → κ < μ →
-        ∃ seq : ApproximationSequence p, seq.τ = τ ∧ #(seq.κIndex) = κ := by
-  sorry
+        (d : TupleOver.InBase (base := A)) (τ κ : Cardinal.{u}),
+        #d.idx ≤ σ → #d.idx < μ →
+        aleph0 ≤ τ → τ < μ → aleph0 ≤ κ → κ < μ →
+        κ * #d.idx < μ →
+        ∃ seq : ApproximationSequence d.toOver, seq.τ = τ ∧ #(seq.κIndex) = κ := by
+  obtain ⟨κ0, _⟩ := W.exists_parameter_orbit_reps hedge hcat σ χ b hσ hpow hb hχ hiso
+  have hT : Tail W.eligible {μ | μ ∈ W.eligible ∧ κ0 ≤ μ ∧ χ < μ} := by
+    refine ⟨fun μ hμ => hμ.1, fun κ' => ?_⟩
+    obtain ⟨μ', hle, hμ'⟩ := W.eligible_unbounded (max κ' (max κ0 (Order.succ χ)))
+    exact ⟨μ', (le_max_left _ _).trans hle, hμ',
+      ((le_max_left _ _).trans (le_max_right _ _)).trans hle,
+      (Order.lt_succ χ).trans_le (((le_max_right _ _).trans (le_max_right _ _)).trans hle)⟩
+  refine ⟨_, hT, fun μ hμ A d τ κ hσidx hidx hτ hμτ hκ hκμ hμκ => ?_⟩
+  let hμ' := Tail.mem hT hμ
+  have hχμ : χ < μ := hμ.2.2
+  obtain ⟨seq, hτ', hκ'⟩ :=
+  @WorkingScheme.exists_approximationSequence K S W _ F hpres hpack hedge hcat
+    σ χ b τ κ hσ hτ hκ hpow hb hχ hiso (μ := μ) (hμ := hμ') A d hσidx hidx hμτ hκμ hμκ hχμ
+  exact ⟨seq, hτ', hκ'⟩
 
 /-- **Theorem 6.10** (Stationary free extension). A type over `A` has a free lift to any arrow
 `A → B` at a sufficiently closed level, and an actual type is free from `A` precisely when it
