@@ -1,11 +1,7 @@
 # Hard edges from holes-graph.json
 # Convention: FROM --> TO means the English proof of TO requires FROM.
-# Apex: theorem_1_2, theorem_1_3
-# Nodes: 115  Hard edges: 149  Reach apex: 106/115
-# Not reaching theorem_1_2 or theorem_1_3 by hard edges: lemma_5_4, lemma_5_5, proposition_5_8,
-# proposition_5_9, lemma_6_1 (lemma_6_1 has only the soft edge to proposition_6_3), and proposition_6_3,
-# lemma_6_4, lemma_6_5, theorem_6_6 (their edges into theorem_6_6 / corollary_6_7 are soft: the Lean
-# proofs of Thm 6.6 and Cor 6.7 go through theorem_4_11). With soft edges all reach.
+# Nodes: 140  Hard edges: 176
+# Lem 6.9: pins at place_type, lem61_off_hits, assemble; lemma_6_9 blocked.
 
 claim_11_10 --> claim_11_11
 claim_11_11 --> claim_11_12
@@ -14,13 +10,32 @@ claim_11_13 --> theorem_11_9
 corollary_10_10 --> lemma_11_2
 corollary_14_4 --> theorem_14_5
 corollary_6_16 --> lemma_6_17
-# corollary_6_7 --> lemma_6_9 (soft in holes-graph.json: English 6.9 does not use Cor 6.7)
-lemma_5_4 --> lemma_6_9
-lemma_5_5 --> lemma_6_9
-lemma_6_1 --> lemma_6_9
-lemma_6_5 --> lemma_6_9
-lemma_4_6 --> lemma_6_9
 corollary_9_2 --> theorem_9_3
+infra_55_enumerate_added --> infra_55_pattern_realize
+infra_55_one_point_cut --> infra_55_pattern_realize
+infra_55_pattern_realize --> infra_69_richness_arity
+infra_69_anchor_bound --> infra_69_slot_assignment
+infra_69_assemble --> lemma_6_9
+infra_69_chart_iso --> infra_69_place_type
+infra_69_choose_supports --> infra_69_whole_block_diff
+infra_69_copy_cluster --> infra_69_interpret_copies
+infra_69_cut_clusters --> infra_69_separators
+infra_69_disjoint_regions --> infra_69_copy_cluster
+infra_69_finitary_exceptions --> infra_69_subtuple_uniform
+infra_69_hit_bound --> infra_69_finitary_exceptions
+infra_69_include_shared --> infra_69_anchor_bound
+infra_69_interpret_copies --> infra_69_choose_supports
+infra_69_lem61_off_hits --> infra_69_assemble
+infra_69_no_internal_hits --> infra_69_lem61_off_hits
+infra_69_place_type --> infra_69_assemble
+infra_69_present_padded --> infra_69_chart_iso
+infra_69_richness_arity --> infra_69_copy_cluster
+infra_69_separators --> infra_69_include_shared
+infra_69_shared_supports --> infra_69_cut_clusters
+infra_69_slot_assignment --> infra_69_disjoint_regions
+infra_69_subtuple_uniform --> infra_69_uniformity_bounds
+infra_69_uniformity_bounds --> infra_69_assemble
+infra_69_whole_block_diff --> infra_69_no_internal_hits
 infra_countable_back_and_forth --> proposition_4_3
 infra_eligible_reclass --> infra_named_working_scheme
 infra_eligible_reclass --> proposition_5_7
@@ -69,16 +84,22 @@ lemma_4_10 --> lemma_6_5
 lemma_4_10 --> theorem_4_11
 lemma_4_5 --> lemma_4_6
 lemma_4_5 --> lemma_6_1
+lemma_4_6 --> infra_69_whole_block_diff
 lemma_4_6 --> proposition_4_9
 lemma_4_7 --> lemma_12_5
 lemma_4_7 --> proposition_4_8
 lemma_4_7 --> proposition_6_3
+lemma_5_4 --> infra_69_present_padded
 lemma_5_4 --> proposition_5_9
+lemma_5_5 --> infra_55_pattern_realize
+lemma_5_5 --> infra_69_present_padded
 lemma_5_5 --> proposition_5_9
+lemma_6_1 --> infra_69_lem61_off_hits
 lemma_6_11 --> proposition_6_12
 lemma_6_14 --> lemma_12_6
 lemma_6_17 --> lemma_7_2
 lemma_6_4 --> lemma_6_5
+lemma_6_5 --> infra_69_place_type
 lemma_6_9 --> theorem_6_10
 lemma_7_11 --> lemma_7_12
 lemma_7_12 --> theorem_7_13
