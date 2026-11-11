@@ -22,7 +22,7 @@ Proof body is in `source/eventual.pdf` §6.2. Lean decls live in [`StationaryFre
 | E7 Theorem 6.6 uniqueness / Galois diagram tests for $p_B$ | `infra_610_galois_tests_of_placement` (tests); `infra_610_same_galois` (amalgam) | tests **open**, amalgam done |
 | E5–E7 packaged | `infra_610_majority_prescription` → `infra_610_place_on_B` | assembler / wrapper |
 | E8–E11 Mixed queries, restrict, iso, transitivity, Lem 6.9 code | deferred / narrowed in `IsFreeLift` ([`FreeExtension.lean`](FreeExtension.lean)) | later |
-| *(no English step)* ClosedLevel for scheme bound $P.g$ | `infra_610_closed_level` | **open**, Lean-only packaging for Thm 6.6 at $P.g$ |
+| *(no English step)* ClosedLevel for scheme bound $P.g$ | `infra_610_closed_level` | **done** (`ClosedLevel.of_closurePoint` via `P.tester`) |
 
 Hard chain: `move_query → chart_prescriptions → place_prescriptions → majority_of_placement → majority_prescription → place_on_B → stationary_free_extension_exists → theorem_6_10`, with `galois_tests_of_placement → majority_prescription` and `closed_level → same_galois → stationary_free_extension_exists` separate.
 

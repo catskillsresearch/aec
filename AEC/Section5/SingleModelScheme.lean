@@ -219,7 +219,8 @@ theorem lvlEmb_trans {μ ρ κ : Cardinal.{u}} (h₁ : μ ≤ ρ) (h₂ : ρ ≤
 /-! ## The data of the single-model scheme -/
 
 /-- The data of the single-model scheme of Proposition 5.6: a stable-diagram function, a bound
-`g`, and an order presentation. -/
+`g`, and an order presentation. The bound `g` is required to be a `PlacedTester` so closed
+levels (`ClosedLevel K E D g μ`) are available at every eligible `μ` (Thm 4.11 / 6.6). -/
 structure SingleModelData (K : AbstractElementaryClass.{u}) where
   /-- The stable-diagram function of Proposition 4.2. -/
   D : StableDiagram K
@@ -229,6 +230,8 @@ structure SingleModelData (K : AbstractElementaryClass.{u}) where
   E : OrderPresentation K
   /-- The presentations are models of `K`. -/
   hE : ∀ (I : Type u) [LinearOrder I] [Nonempty I], K.Mem (E.obj I)
+  /-- `g` is a placed testing bound (Proposition 4.8). -/
+  tester : PlacedTester K E D g
 
 namespace SingleModelData
 

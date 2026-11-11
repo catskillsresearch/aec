@@ -19,8 +19,8 @@ with same-level host `p.ν = μ`. `IsFreeLift` queries are bounded by the sequen
 
 **Open tips.** English E5 `infra_610_chart_prescriptions`, majority clause
 `infra_610_majority_of_placement`, E7 tests `infra_610_galois_tests_of_placement`
-(assembled by `infra_610_majority_prescription`). E6 `infra_610_place_prescriptions` is done.
-Lean-only: `infra_610_closed_level` (`PlacedTester` / `ClosedLevel` for `P.g`).
+(assembled by `infra_610_majority_prescription`). E6 `infra_610_place_prescriptions` and
+`infra_610_closed_level` are done.
 -/
 
 namespace AEC
@@ -460,19 +460,15 @@ theorem infra_610_place_on_B
 
 /-! ## Same Galois type from ClosedLevel tests -/
 
-/-- **Open (Lean-only).** `ClosedLevel` for the scheme bound `P.g` at a recursion-closed
-eligible `μ`. Not an English Thm 6.10 step: packaging so Thm 6.6 / `same_galois` can run at
-`P.g`.
-
-`exists_placedTester P.E P.D` yields some `g0`, not `P.g`. Eligibility is only
-`IsClosurePoint {P.D.t, P.g}`, so it does not force `placedTestBound θ < μ`. Do not substitute
-`g0` or weaken the Thm 6.6 testing bound. -/
+/-- `ClosedLevel` for the scheme bound `P.g` at an eligible `μ`. Lean packaging so Thm 6.6 /
+`same_galois` can run at `P.g`. Uses `P.tester` (a `PlacedTester` field of `SingleModelData`). -/
 theorem infra_610_closed_level
     (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ)
     {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
     (_hrec : μ ∈ recursionClosedLevels P σ) :
     ClosedLevel K P.E P.D P.g μ := by
-  sorry
+  haveI : CategoricalUnbounded K := P.D.categoricalUnbounded
+  exact ClosedLevel.of_closurePoint P.tester hμ.1 hμ.2
 
 /-- Scheme `SameGaloisType` of `p` with `q.restrict f` from Thm 6.6 / `exists_tuple_amalgam`
 under diagram tests, wrapped by `SMObject.ofModel`. -/

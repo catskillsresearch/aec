@@ -185,10 +185,26 @@ theorem proposition_5_6 (K : AbstractElementaryClass.{u}) (D : StableDiagram K)
       ∀ μ ∈ W.eligible, IsClosurePoint {D.t, g} μ := by
   haveI : CategoricalUnbounded K := D.categoricalUnbounded
   obtain ⟨E, hE, -⟩ := exists_orderPresentation_of_categoricalUnbounded K
-  let P : SingleModelData K := ⟨D, g, E, hE⟩
-  exact ⟨oneVertexShape, P.scheme, P.isWorkingPackage, P.hasPresentations,
+  obtain ⟨g0, -, -, htest0⟩ := exists_placedTester E D
+  -- Enlarge `g` so the scheme bound is a `PlacedTester` (needed for `ClosedLevel` / Thm 6.6).
+  let g' : Cardinal.{u} → Cardinal.{u} := fun σ => max (g σ) (g0 σ)
+  have htest : PlacedTester K E D g' :=
+    PlacedTester.mono htest0 fun σ => le_max_right _ _
+  let P : SingleModelData K := ⟨D, g', E, hE, htest⟩
+  refine ⟨oneVertexShape, P.scheme, P.isWorkingPackage, P.hasPresentations,
     fun μ hμ => SingleModelData.nonempty_object hμ, inferInstance, inferInstance,
-    P.exists_ge, fun μ hμ => hμ.1⟩
+    P.exists_ge, fun μ hμ => ?_⟩
+  -- Eligible for `g'` implies closure under the original (pointwise smaller) `g`.
+  refine ⟨hμ.1.working, fun u hu => ?_⟩
+  have hg : StrictlyClosed g μ :=
+    ⟨fun θ hθinf hθμ =>
+      (le_max_left (g θ) (g0 θ)).trans_lt
+        ((hμ.1.closed g' (Set.mem_insert_of_mem _ rfl)).below θ hθinf hθμ)⟩
+  have hu' : u = D.t ∨ u = g := by
+    simpa [Set.mem_insert_iff, Set.mem_singleton_iff] using hu
+  rcases hu' with rfl | rfl
+  · exact hμ.1.closed D.t (Set.mem_insert _ _)
+  · exact hg
 
 /-- **Proposition 5.7** (Naming bounded data). On an unbounded class of higher eligible levels,
 the diagram of a fixed bounded list is realized, and those levels carry a working scheme.
