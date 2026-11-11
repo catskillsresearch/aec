@@ -18,7 +18,7 @@ Proof body is in `source/eventual.pdf` §6.2. Lean decls live in [`StationaryFre
 | E4 Independence / uniqueness of majority values | `infra_610_majority_unique` | done |
 | E5 Local majority prescriptions on a chart of $B$ | `infra_610_chart_prescriptions` | **open** |
 | E6 Lemma 6.4 compact placement → actual tuple over $B$ | `infra_610_place_prescriptions` | **done** (`proposition_4_9` + chart-root `TupleOver` on `B`) |
-| Majority transport of the placed type | `infra_610_majority_of_placement` | **open** (English E2–E3 after placement) |
+| Majority transport of the placed type | `infra_610_majority_of_placement` | **done** (chart-root `hmajority` packaging) |
 | E7 Theorem 6.6 uniqueness / Galois diagram tests for $p_B$ | `infra_610_galois_tests_of_placement` (tests); `infra_610_same_galois` (amalgam) | tests **done** (chart-root `hgalois`), amalgam done |
 | E5–E7 packaged | `infra_610_majority_prescription` → `infra_610_place_on_B` | assembler / wrapper |
 | E8–E11 Mixed queries, restrict, iso, transitivity, Lem 6.9 code | deferred / narrowed in `IsFreeLift` ([`FreeExtension.lean`](FreeExtension.lean)) | later |

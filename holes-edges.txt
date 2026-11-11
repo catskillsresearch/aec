@@ -1,7 +1,7 @@
 # Hard edges from holes-graph.json
 # Convention: FROM --> TO means the English proof of TO requires FROM.
 # Nodes: 163  Hard edges: 205
-# Open tips: infra_610_chart_prescriptions / infra_610_majority_of_placement.
+# Open tips: infra_610_chart_prescriptions.
 
 claim_11_10 --> claim_11_11
 claim_11_11 --> claim_11_12
