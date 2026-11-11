@@ -72,7 +72,6 @@ lemma_6_11 --> proposition_6_12
 lemma_6_14 --> lemma_12_6
 lemma_6_17 --> lemma_7_2
 lemma_6_4 --> lemma_6_5
-lemma_6_5 --> theorem_6_6
 lemma_6_9 --> theorem_6_10
 lemma_7_11 --> lemma_7_12
 lemma_7_12 --> theorem_7_13
@@ -143,6 +142,7 @@ theorem_3_11 --> proposition_5_8
 theorem_3_5 --> lemma_3_6
 theorem_3_5 --> lemma_4_5
 theorem_4_11 --> proposition_5_6
+theorem_4_11 --> theorem_6_6
 theorem_6_10 --> lemma_6_11
 theorem_6_6 --> corollary_6_7
 theorem_7_13 --> lemma_8_2

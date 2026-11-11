@@ -11,6 +11,7 @@ public import AEC.Section5.PackageClauses
 public import AEC.Section6.SupportClosure
 public import AEC.Section6.ParameterOrbits
 public import AEC.Section6.PlacedComparisons
+public import AEC.Section4.ClosedLevelTypes
 
 @[expose] public section
 
@@ -207,40 +208,48 @@ theorem lemma_6_5 (K : AbstractElementaryClass.{u}) [CategoricalUnbounded K]
             (Sum.elim d₁ (fun b => incl₁ (p b))))) :=
   placedComparisons hL hI hs₀ hc₀ hc₁ hσinf hσ hα d₀ d₁
 
-/-- **Theorem 6.6** (Amalgamation and types for a scheme). At sufficiently closed levels the
-scheme has amalgamation, and an amalgam identifying two bounded tuples exists if and only if
-their diagrams agree on queries of size at most `g(|v| + ℵ₀)`. -/
-theorem theorem_6_6 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
-    (W : WorkingScheme K S) (g : Cardinal.{u} → Cardinal.{u}) :
-    ∃ T, ∃ hT : Tail W.eligible T,
-      ∀ μ (hμ : μ ∈ T) (A B₀ B₁ : W.Object μ (Tail.mem hT hμ))
-        (f₀ : SystemArrow K S (W.asSystem _ A) (W.asSystem _ B₀))
-        (f₁ : SystemArrow K S (W.asSystem _ A) (W.asSystem _ B₁)),
-        W.permitted (X := A) (Y := B₀) f₀ → W.permitted (X := A) (Y := B₁) f₁ →
-        (∃ (C : W.Object μ (Tail.mem hT hμ))
-            (g₀ : SystemArrow K S (W.asSystem _ B₀) (W.asSystem _ C))
-            (g₁ : SystemArrow K S (W.asSystem _ B₁) (W.asSystem _ C)),
-            W.permitted (X := B₀) (Y := C) g₀ ∧ W.permitted (X := B₁) (Y := C) g₁ ∧
-            ∀ v, (g₀.onVertex v).comp (f₀.onVertex v) =
-              (g₁.onVertex v).comp (f₁.onVertex v)) ∧
-        ∀ {idx : Type u} (v₀ : idx → Occurrence K S (W.asSystem _ B₀))
-          (v₁ : idx → Occurrence K S (W.asSystem _ B₁)),
-          #idx < μ →
-          (∃ (C : W.Object μ (Tail.mem hT hμ))
-              (g₀ : SystemArrow K S (W.asSystem _ B₀) (W.asSystem _ C))
-              (g₁ : SystemArrow K S (W.asSystem _ B₁) (W.asSystem _ C)),
-              W.permitted (X := B₀) (Y := C) g₀ ∧ W.permitted (X := B₁) (Y := C) g₁ ∧
-              (∀ v, (g₀.onVertex v).comp (f₀.onVertex v) =
-                (g₁.onVertex v).comp (f₁.onVertex v)) ∧
-              ∀ i, ∃ x, v₁ i = ⟨(v₀ i).1, x⟩ ∧
-                g₀.onVertex (v₀ i).1 (v₀ i).2 = g₁.onVertex (v₀ i).1 x) ↔
-          (∀ {ι : Type u} (Z : ι → Occurrence K S (W.asSystem _ A)), #ι ≤ g (#idx + aleph0) →
-            W.DiagramEq (X := B₀) (Y := B₁)
-              (fun j : idx ⊕ ι => Sum.elim v₀
-                (fun k => ⟨(Z k).1, f₀.onVertex (Z k).1 (Z k).2⟩) j)
-              (fun j : idx ⊕ ι => Sum.elim v₁
-                (fun k => ⟨(Z k).1, f₁.onVertex (Z k).1 (Z k).2⟩) j)) := by
-  sorry
+/-- **Theorem 6.6** (Amalgamation and types for a scheme). At a closed level `μ`, strong
+extensions of a `μ`-model amalgamate, and an amalgam identifying two bounded tuples exists if
+and only if their diagrams agree on parameter queries of size at most `g(σ) + ℓ`.
+
+The old Lean form quantified over a bare `WorkingScheme` with an unconstrained `g`, which is
+refutable (small `g`; arbitrary `DiagramEq`). English Theorem 6.6 works at sufficiently closed
+levels with the testing bound of Proposition 6.3 / 4.8; its ω-tower argument is the engine of
+Theorem 4.11 (2) in `ClosedLevelAmalgam` / `ClosedLevelTypes`. This is that packaging under
+Section 6 numbering: `ClosedLevel.amalgamation` and `ClosedLevel.tuple_amalgamation_iff`.
+Scheme-level `SameGaloisType` / `SchemeAmalgam` forms are deferred. -/
+theorem theorem_6_6 (K : AbstractElementaryClass.{u}) [CategoricalUnbounded K]
+    (E : OrderPresentation K) (D : StableDiagram K)
+    (g : Cardinal.{u} → Cardinal.{u})
+    {μ : Cardinal.{u}} (hL : ClosedLevel K E D g μ)
+    (A B₀ B₁ : Model K.τ)
+    (f₀ : Language.Embedding K.τ A.carrier B₀.carrier)
+    (f₁ : Language.Embedding K.τ A.carrier B₁.carrier)
+    (hA : K.Mem A) (hB₀ : K.Mem B₀) (hB₁ : K.Mem B₁)
+    (hf₀ : K.Strong f₀) (hf₁ : K.Strong f₁)
+    (hcA : Model.card A = μ) (hc₀ : Model.card B₀ = μ) (hc₁ : Model.card B₁ = μ) :
+    (∃ (P : Model K.τ) (g₀ : Language.Embedding K.τ B₀.carrier P.carrier)
+        (g₁ : Language.Embedding K.τ B₁.carrier P.carrier),
+        K.Mem P ∧ K.Strong g₀ ∧ K.Strong g₁ ∧ Model.card P = μ ∧
+        ∀ x, g₀ (f₀ x) = g₁ (f₁ x)) ∧
+    ∀ {σ : Cardinal.{u}} (hσinf : aleph0 ≤ σ) (hσ : σ < μ)
+      {α : Type u} (hα : #α ≤ σ)
+      (d₀ : α → B₀.carrier) (d₁ : α → B₁.carrier),
+      (∃ (P : Model K.τ) (g₀ : Language.Embedding K.τ B₀.carrier P.carrier)
+          (g₁ : Language.Embedding K.τ B₁.carrier P.carrier),
+          K.Mem P ∧ K.Strong g₀ ∧ K.Strong g₁ ∧
+          (∀ x, g₀ (f₀ x) = g₁ (f₁ x)) ∧ ∀ i, g₀ (d₀ i) = g₁ (d₁ i)) ↔
+        ∀ {β : Type u} (_ : #β ≤ g σ + ls K) (ρ : Cardinal.{u})
+          (_ : aleph0 ≤ ρ) (_ : ρ < μ) (p : β → A.carrier)
+          (hjoint : #(α ⊕ β) ≤ ρ)
+          (h₀ : D.t ρ ≤ Model.card B₀) (h₁ : D.t ρ ≤ Model.card B₁),
+          D.same hjoint hB₀ hB₁ h₀ h₁
+            (Sum.elim d₀ (fun b => f₀ (p b)))
+            (Sum.elim d₁ (fun b => f₁ (p b))) :=
+  ⟨hL.amalgamation A B₀ B₁ f₀ f₁ hA hB₀ hB₁ hf₀ hf₁ hcA hc₀ hc₁,
+    fun {σ} hσinf hσ {α} hα d₀ d₁ =>
+      hL.tuple_amalgamation_iff (σ := σ) hσinf hσ (α := α) hα A B₀ B₁ f₀ f₁ d₀ d₁
+        hA hB₀ hB₁ hf₀ hf₁ hcA hc₀ hc₁⟩
 
 /-- **Corollary 6.7** (Realization into a larger level). An arrow `A → B` at level `ν` and an
 arrow `A → N` at a larger level `μ` extend to an arrow `B → N`. -/
