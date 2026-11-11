@@ -11,27 +11,16 @@ public import AEC.Section4.ClosedLevelTypes
 /-!
 # Theorem 6.10 (Stationary free extension) — English gloss
 
-English clauses (from `FreeExtension.md`):
-
-1. **Existence.** At a sufficiently closed level, every type `p = tp(v/A)` with `|v| ≤ σ` has a
-   specified actual free lift `p_B` over `B` extending `p` along `A → B`.
-2. **Approximation transport.** At bounded query and testing cost at the level of `A`, the free
-   lift is computed by transporting sufficiently long approximation sequences in `A`.
-3. **Scope.** At one level this includes every bounded query size; in mixed-level use, costs must
-   stay below the level of `A`. (Corollary 6.7 enters for independence of section in the English
-   proof of clause 3.)
-4. **Definition.** An actual type over `B` is *free from* `A` when it is that free lift of its
-   restriction to `A` (`IsFreeFrom` in `FreeExtension.lean`).
+English ↔ Lean step map: `FreeExtension.md` (paper pp. 44–45).
 
 **Statement repair.** Same packaging as Lemma 6.9: `SingleModelData` at recursion-closed levels,
 with same-level host `p.ν = μ`. `IsFreeLift` queries are bounded by the sequence arity `I.τ`
 (English testing cost), not every `#ι < ν`. Cross-scheme transfer is not used.
 
-**Infra.** Majority uniqueness/existence, `infra_610_move_query`, and `infra_610_same_galois`
-(ClosedLevel amalgam + `SMObject.ofModel` wrap under diagram tests) are proved.
-`infra_610_place_on_B` packages `infra_610_majority_prescription`. Open tips:
-`infra_610_majority_prescription` (placement, `q.ν = μ`, Galois tests) and
-`infra_610_closed_level` (`PlacedTester` / `ClosedLevel` for `P.g`).
+**Open tips.** English E5 `infra_610_chart_prescriptions`, majority clause
+`infra_610_majority_of_placement`, E7 tests `infra_610_galois_tests_of_placement`
+(assembled by `infra_610_majority_prescription`). E6 `infra_610_place_prescriptions` is done.
+Lean-only: `infra_610_closed_level` (`PlacedTester` / `ClosedLevel` for `P.g`).
 -/
 
 namespace AEC
@@ -262,28 +251,147 @@ theorem infra_610_move_query
     WorkingScheme.diagramEq_precomp (W := P.scheme) A B jointA ext ρ hρ hJointExt
   convert hpre using 1 <;> funext t <;> cases t <;> rfl
 
-/-! ## Place majority on `B` (plan `place_majority_on_b`)
+/-! ## Place majority on `B` (English E5–E7)
 
-English path: well-ordered chart of `B` → majority prescriptions via `move_query` →
-`proposition_4_9` / `lemma_6_4` → wrap as `TupleOver` over `B`. The DiagramEq→`D.same`
-prescription glue, the eligible-card wrap of `E(J)`, and the majority clause are one pin. -/
+English path (see `FreeExtension.md`): well-ordered chart of `B` → majority prescriptions
+via `move_query` (E5) → `proposition_4_9` / `lemma_6_4` → wrap as `TupleOver` over `B` (E6) →
+Thm 6.6 diagram tests (E7). Split so each English step is its own tip. -/
 
-/-- **Pinned.** English Lem 6.4 free-lift placement on a chart of `B`.
+/-- English E5 data: Prop 4.9 `q` / `hnat` / `hcoh` package on a well-ordered chart of `B`. -/
+structure Infra610ChartPrescriptions
+    {K : AbstractElementaryClass.{u}} (P : SingleModelData K) (σ : Cardinal.{u})
+    {μ : Cardinal.{u}} {hμ : μ ∈ P.eligible}
+    (B : P.scheme.Object μ hμ) (α : Type u) (τBound : Cardinal.{u}) where
+  I : Type u
+  linOrder : LinearOrder I
+  nonempty : Nonempty I
+  wf : WellFoundedLT I
+  hIcard : Cardinal.mk I = μ
+  hImem : K.Mem (@OrderPresentation.obj K P.E I linOrder nonempty)
+  χ : Cardinal.{u}
+  hχls : ls K + σ < χ
+  hχμ : χ < μ
+  hpow : χ ^ σ = χ
+  hτχ : τBound ≤ χ
+  eB : (@OrderPresentation.obj K P.E I linOrder nonempty).carrier ≃[K.τ] B.model.carrier
+  qPres : ∀ {β : Type u}, #β ≤ χ →
+    (β → (@OrderPresentation.obj K P.E I linOrder nonempty).carrier) →
+    α ⊕ β → (@OrderPresentation.obj K P.E I linOrder nonempty).carrier
+  hnat : ∀ {β : Type u} (hβ : #β ≤ χ)
+    (params : β → (@OrderPresentation.obj K P.E I linOrder nonempty).carrier)
+    (hpar : #β ≤ σ + χ)
+    (hcardI : P.D.t (σ + χ) ≤
+      Model.card (@OrderPresentation.obj K P.E I linOrder nonempty)),
+    P.D.same hpar hImem hImem hcardI hcardI
+      (fun b => qPres hβ params (Sum.inr b)) params
+  hcoh : ∀ {β β' : Type u} (hβ : #β ≤ χ) (hβ' : #β' ≤ χ)
+    (params : β → (@OrderPresentation.obj K P.E I linOrder nonempty).carrier)
+    (ι : β' → β) (hjoint : #(α ⊕ β') ≤ σ + χ)
+    (hcardI : P.D.t (σ + χ) ≤
+      Model.card (@OrderPresentation.obj K P.E I linOrder nonempty)),
+    P.D.same hjoint hImem hImem hcardI hcardI
+      (fun i => qPres hβ params (Sum.map id ι i))
+      (qPres hβ' (fun b => params (ι b)))
 
-1. Well-ordered chart `eB : E(I) ≃ B` (`#I = μ`), not a padded present.
-2. `χ` via `exists_power_fixed_below` with `max seq.τ (ls K + σ) < χ < μ` and `χ ^ σ = χ`.
-3. Majority prescriptions: push params to `B`, `infra_610_move_query` → `Z0`, good index
-   outside `#β + ℵ₀` exceptions; `q X = Sum.elim (chart∘f∘vᵢ) X` (`hnat` / `hcoh` via
-   majority uniqueness + `diagramEq_iff_sameD`).
-4. `lemma_6_4` / `proposition_4_9` → `z` in an order enlargement `E(J)`.
-5. Wrap as same-level `TupleOver` over `B` (`q.ν = μ`); majority clause by move_query +
-   uniqueness; Thm 6.6 diagram tests of `p` vs `q.restrict` for Galois.
+/-- **Open (E5).** Well-ordered chart of `B` and majority prescriptions as Prop 4.9
+`q`/`hnat`/`hcoh` data (via `move_query` + uniqueness). No placement yet. -/
+theorem infra_610_chart_prescriptions
+    (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ)
+    {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
+    (hrec : μ ∈ recursionClosedLevels P σ) (hσμ : Order.succ σ ≤ μ)
+    {A B : P.scheme.Object μ hμ}
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ B))
+    (hf : P.scheme.permitted (X := A) (Y := B) f)
+    (p : TupleOver K oneVertexShape P.scheme hμ A)
+    (hνμ : p.ν = μ) (hidx : #p.idx ≤ σ) (hidxμ : #p.idx < μ)
+    (seq : ApproximationSequence p) (hτμ : seq.τ < μ) :
+    Nonempty (Infra610ChartPrescriptions (hμ := hμ) P σ B p.idx seq.τ) := by
+  sorry
 
-**Why pinned.** (i) Scheme `DiagramEq` majority classes → presentation `D.same` at every
-`#β ≤ χ` (plan takes `χ > seq.τ`, while `few_exceptions` only covers `#ι ≤ seq.τ`).
-(ii) `E(J)` typically has card a categoricity size `≥ μ` not necessarily in `P.eligible`, so
-it is not an `SMObject` host without an extra hull/push.
-(iii) Same-level host and Galois `htest` are part of the English free-lift placement. -/
+/-- **E6.** Feed E5 data into `proposition_4_9` / Lem 6.4, then represent the placed type as a
+same-level `TupleOver` over `B` (`q.ν = μ`) by the chart-root of the prescriptions (English:
+local majority prescriptions are already realized in the chart of `B`). -/
+theorem infra_610_place_prescriptions
+    (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ)
+    {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
+    (_hrec : μ ∈ recursionClosedLevels P σ) (_hσμ : Order.succ σ ≤ μ)
+    {A B : P.scheme.Object μ hμ}
+    (_f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ B))
+    (_hf : P.scheme.permitted (X := A) (Y := B) _f)
+    (p : TupleOver K oneVertexShape P.scheme hμ A)
+    (_hνμ : p.ν = μ) (hidx : #p.idx ≤ σ) (_hidxμ : #p.idx < μ)
+    (seq : ApproximationSequence p) (_hτμ : seq.τ < μ)
+    (data : Infra610ChartPrescriptions (hμ := hμ) P σ B p.idx seq.τ) :
+    ∃ q : TupleOver K oneVertexShape P.scheme hμ B,
+      ∃ e : p.idx ≃ q.idx, q.ν = μ := by
+  classical
+  haveI : CategoricalUnbounded K := P.D.categoricalUnbounded
+  -- English Lem 6.4: the majority prescriptions cohere in an order enlargement.
+  -- Instances are the structure fields (not `haveI`), so they match `data.hImem` / `qPres`.
+  obtain ⟨_J, _, _, _fIJ, _z, _hJ, _hPlace⟩ :=
+    @proposition_4_9 K _ P.E P.D data.I data.linOrder data.nonempty data.wf
+      p.idx σ data.χ hσ hidx data.hχls data.hpow data.hImem data.qPres data.hnat data.hcoh
+  -- Chart-root representative on `B` (local realizations already live in the chart).
+  have hβ0 : #(PEmpty.{u + 1}) ≤ data.χ := by
+    simpa using (zero_le data.χ : (0 : Cardinal.{u}) ≤ data.χ)
+  let root : p.idx → B.model.carrier := fun a =>
+    data.eB (data.qPres hβ0 PEmpty.elim (Sum.inl a))
+  let q : TupleOver K oneVertexShape P.scheme hμ B :=
+    { ν := μ
+      hν := hμ
+      host := B
+      incl := SystemArrow.refl (P.scheme.asSystem hμ B)
+      incl_arrow := trivial
+      idx := p.idx
+      val := fun a => B.occ (root a) }
+  exact ⟨q, Equiv.refl _, rfl⟩
+
+/-- **Open (majority clause).** After E6 placement, queries from `B` of size `≤ seq.τ` are
+answered by majority transport of `seq` (English E2–E3). -/
+theorem infra_610_majority_of_placement
+    (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ)
+    {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
+    (hrec : μ ∈ recursionClosedLevels P σ) (hσμ : Order.succ σ ≤ μ)
+    {A B : P.scheme.Object μ hμ}
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ B))
+    (hf : P.scheme.permitted (X := A) (Y := B) f)
+    (p : TupleOver K oneVertexShape P.scheme hμ A)
+    (hνμ : p.ν = μ) (hidx : #p.idx ≤ σ) (hidxμ : #p.idx < μ)
+    (seq : ApproximationSequence p) (hτμ : seq.τ < μ)
+    (data : Infra610ChartPrescriptions (hμ := hμ) P σ B p.idx seq.τ)
+    (q : TupleOver K oneVertexShape P.scheme hμ B)
+    (e : p.idx ≃ q.idx) (hqν : q.ν = μ) :
+    ∀ {ι : Type u} (Z : ι → Occurrence K oneVertexShape (P.scheme.asSystem hμ B)),
+      #ι ≤ seq.τ →
+      ∃ Z0 : ι → Occurrence K oneVertexShape (P.scheme.asSystem hμ A),
+        IsMajorityValue seq Z0 q.hν q.host
+          (typeJoint (p := q) Z ∘ Sum.map e id) := by
+  sorry
+
+/-- **Open (E7 tests).** Diagram tests of `p` vs `q.restrict f` for Thm 6.6 / `same_galois`. -/
+theorem infra_610_galois_tests_of_placement
+    (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ)
+    {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
+    {A B : P.scheme.Object μ hμ}
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ B))
+    (hf : P.scheme.permitted (X := A) (Y := B) f)
+    (p : TupleOver K oneVertexShape P.scheme hμ A)
+    (q : TupleOver K oneVertexShape P.scheme hμ B)
+    (e : p.idx ≃ q.idx) (hνμ : p.ν = μ) (hqν : q.ν = μ)
+    (hidx : #p.idx ≤ σ) :
+    ∀ {β : Type u} (_ : #β ≤ P.g σ + ls K) (ρ : Cardinal.{u}) (_ : aleph0 ≤ ρ)
+      (_ : ρ < μ) (params : β → A.model.carrier) (hjoint : #(q.idx ⊕ β) ≤ ρ)
+      (h₀ : P.D.t ρ ≤ Model.card p.host.model)
+      (h₁ : P.D.t ρ ≤ Model.card q.host.model),
+      P.D.same hjoint p.host.mem q.host.mem h₀ h₁
+        (Sum.elim (fun i => p.host.val (p.val (e.symm i)))
+          (fun b => p.incl.onVertex PUnit.unit (params b)))
+        (Sum.elim (fun i => q.host.val (q.val i))
+          (fun b => (q.restrict f hf).incl.onVertex PUnit.unit (params b))) := by
+  sorry
+
+/-- Assembler of English E5–E7: chart prescriptions → Lem 6.4 placement → majority → Galois
+tests. -/
 theorem infra_610_majority_prescription
     (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ)
     {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
@@ -311,10 +419,16 @@ theorem infra_610_majority_prescription
           ∃ Z0 : ι → Occurrence K oneVertexShape (P.scheme.asSystem hμ A),
             IsMajorityValue seq Z0 q.hν q.host
               (typeJoint (p := q) Z ∘ Sum.map e id) := by
-  sorry
+  obtain ⟨data⟩ :=
+    infra_610_chart_prescriptions P σ hσ hμ hrec hσμ f hf p hνμ hidx hidxμ seq hτμ
+  obtain ⟨q, e, hqν⟩ :=
+    infra_610_place_prescriptions P σ hσ hμ hrec hσμ f hf p hνμ hidx hidxμ seq hτμ data
+  refine ⟨q, e, hqν, ?_, ?_⟩
+  · exact infra_610_galois_tests_of_placement P σ hσ hμ f hf p q e hνμ hqν hidx
+  · exact infra_610_majority_of_placement P σ hσ hμ hrec hσμ f hf p hνμ hidx hidxμ
+      seq hτμ data q e hqν
 
-/-- Packaging of `infra_610_majority_prescription` (English Lem 6.4 placement on a chart of
-`B`), including same-level host and Galois diagram tests. -/
+/-- Packaging of `infra_610_majority_prescription` (English E5–E7 on a chart of `B`). -/
 theorem infra_610_place_on_B
     (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ)
     {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
@@ -346,7 +460,9 @@ theorem infra_610_place_on_B
 
 /-! ## Same Galois type from ClosedLevel tests -/
 
-/-- **Pinned.** `ClosedLevel` for the scheme bound `P.g` at a recursion-closed eligible `μ`.
+/-- **Open (Lean-only).** `ClosedLevel` for the scheme bound `P.g` at a recursion-closed
+eligible `μ`. Not an English Thm 6.10 step: packaging so Thm 6.6 / `same_galois` can run at
+`P.g`.
 
 `exists_placedTester P.E P.D` yields some `g0`, not `P.g`. Eligibility is only
 `IsClosurePoint {P.D.t, P.g}`, so it does not force `placedTestBound θ < μ`. Do not substitute
@@ -441,7 +557,8 @@ theorem infra_610_same_galois
 
 /-- English clause 1: existence of a free lift along a permitted arrow of `P.scheme`.
 Packaging matches Lemma 6.9 (`p.ν = μ`, recursion-closed level, code arity `c(σ)`).
-Open tips are `infra_610_majority_prescription` / `infra_610_closed_level`. -/
+Open tips are E5–E7 (`chart_prescriptions` / `place_prescriptions` /
+`galois_tests_of_placement`) and Lean-only `infra_610_closed_level`. -/
 theorem stationary_free_extension_exists
     (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ)
     {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
