@@ -12,6 +12,7 @@ public import AEC.Section6.SupportClosure
 public import AEC.Section6.ParameterOrbits
 public import AEC.Section6.PlacedComparisons
 public import AEC.Section4.ClosedLevelTypes
+public import AEC.Section6.LargerLevelRealization
 
 @[expose] public section
 
@@ -251,20 +252,71 @@ theorem theorem_6_6 (K : AbstractElementaryClass.{u}) [CategoricalUnbounded K]
       hL.tuple_amalgamation_iff (σ := σ) hσinf hσ (α := α) hα A B₀ B₁ f₀ f₁ d₀ d₁
         hA hB₀ hB₁ hf₀ hf₁ hcA hc₀ hc₁⟩
 
-/-- **Corollary 6.7** (Realization into a larger level). An arrow `A → B` at level `ν` and an
-arrow `A → N` at a larger level `μ` extend to an arrow `B → N`. -/
-theorem corollary_6_7 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
-    (W : WorkingScheme K S) :
-    ∃ T, ∃ hT : Tail W.eligible T,
-      ∀ ν (hν : ν ∈ T) μ (hμ : μ ∈ T), ν < μ →
-        ∀ (A : W.Object ν (Tail.mem hT hν)) (B : W.Object ν (Tail.mem hT hν))
-          (N : W.Object μ (Tail.mem hT hμ))
-          (f : SystemArrow K S (W.asSystem _ A) (W.asSystem _ B))
-          (g : SystemArrow K S (W.asSystem _ A) (W.asSystem _ N)),
-          W.permitted (X := A) (Y := B) f → W.permitted (X := A) (Y := N) g →
-          ∃ h : SystemArrow K S (W.asSystem _ B) (W.asSystem _ N),
-            W.permitted (X := B) (Y := N) h ∧ SystemArrow.comp f h = g := by
-  sorry
+/-- **Corollary 6.7** (Realization into a larger level). Let `ν < μ` be closed levels, `f : A → B`
+a strong map of `ν`-models and `i : A → N` a strong map into a `μ`-model. Then:
+
+1. a strong map `B → N` extends `i`;
+2. the image of a tuple `d` of `B` of length less than `ν` may be prescribed as a tuple `z` of
+   `N` whose diagrams over the queries in `A` of size at most `g(|d| + ℵ₀) + ℓ`, at the bounds
+   `ρ < ν`, already match those of `d`;
+3. a tuple of `N` of length less than `ν` lies in a strong `ν`-submodel `B'` of `N` containing
+   `A` (an actual `ν`-type over `A`), and its diagrams with the parameters of `A` at the bounds
+   `ρ < ν` are the same in `N` and in `B'` (the mixed comparisons agree).
+
+The old Lean form quantified over a bare `WorkingScheme` (`Tail` / `SystemArrow` / `permitted`)
+with no closed levels, strongness, sizes or testing bound, which is refutable, and it had
+neither the prescribed tuple nor the type clause. The statement is now at the level of a
+presentation under two closed levels, as for Theorem 6.6. The scheme-level form is deferred.
+
+Proof: `exists_strong_embedding_into_larger`, `exists_strong_embedding_into_larger_base` and
+`exists_actual_nu_type` (`LargerLevelRealization.lean`). For clause 2, identify `N` with its
+chart `E(Below μ)`; the images of `A` and `z` lie in `N₀ = E(S)` for a suborder `S` of size `ν`
+(`exists_suborder_cover`). Theorem 4.11 (2) at `ν` (`ClosedLevel.exists_tuple_amalgam`)
+amalgamates `B` and `N₀` over `A`, identifying `d` with `z`, in a `ν`-model `P`. Since
+`N₀ → N` is an order map of the presentation and `μ ≥ t(ν)` is a categoricity cardinal, the
+countable tower of Theorem 4.11 at the source level `ν` (`exists_strong_embedding_over`) embeds
+`P` into `N` over `N₀`, without enlarging the target. Clause 1 is the case of the empty tuple.
+Clause 3 is an exact-size strong hull, coherence and `D.of_strong`. `theorem_6_6` is not
+called. -/
+theorem corollary_6_7 (K : AbstractElementaryClass.{u}) [CategoricalUnbounded K]
+    (E : OrderPresentation K) (D : StableDiagram K)
+    (g : Cardinal.{u} → Cardinal.{u})
+    {ν μ : Cardinal.{u}} (hν : ClosedLevel K E D g ν) (hμ : ClosedLevel K E D g μ)
+    (hlt : ν < μ)
+    (A B N : Model K.τ)
+    (f : Language.Embedding K.τ A.carrier B.carrier)
+    (i : Language.Embedding K.τ A.carrier N.carrier)
+    (hA : K.Mem A) (hB : K.Mem B) (hN : K.Mem N)
+    (hf : K.Strong f) (hi : K.Strong i)
+    (hcA : Model.card A = ν) (hcB : Model.card B = ν) (hcN : Model.card N = μ) :
+    (∃ F : Language.Embedding K.τ B.carrier N.carrier,
+        K.Strong F ∧ ∀ a, F (f a) = i a) ∧
+    (∀ {α : Type u} (d : α → B.carrier) (z : α → N.carrier) (hα : #α < ν),
+        (∀ {β : Type u} (_ : #β ≤ g (#α ⊔ aleph0) + ls K) (ρ : Cardinal.{u})
+          (_ : aleph0 ≤ ρ) (_ : ρ < ν) (p : β → A.carrier)
+          (hjoint : #(α ⊕ β) ≤ ρ)
+          (h₀ : D.t ρ ≤ Model.card B) (h₁ : D.t ρ ≤ Model.card N),
+          D.same hjoint hB hN h₀ h₁
+            (Sum.elim d (fun b => f (p b)))
+            (Sum.elim z (fun b => i (p b)))) →
+        ∃ F : Language.Embedding K.τ B.carrier N.carrier,
+          K.Strong F ∧ (∀ a, F (f a) = i a) ∧ ∀ j, F (d j) = z j) ∧
+    (∀ {α : Type u} (x : α → N.carrier) (hα : #α < ν),
+        ∃ (B' : Model K.τ) (hB' : K.Mem B')
+          (j : Language.Embedding K.τ A.carrier B'.carrier)
+          (y : α → B'.carrier),
+          K.Strong j ∧ Model.card B' = ν ∧
+          (∀ {β : Type u} (ρ : Cardinal.{u}) (_ : aleph0 ≤ ρ) (_ : ρ < ν)
+            (p : β → A.carrier) (hjoint : #(α ⊕ β) ≤ ρ)
+            (h₀ : D.t ρ ≤ Model.card N) (h₁ : D.t ρ ≤ Model.card B'),
+            D.same hjoint hN hB' h₀ h₁
+              (Sum.elim x (fun b => i (p b)))
+              (Sum.elim y (fun b => j (p b))))) :=
+  ⟨exists_strong_embedding_into_larger_base hν hμ hlt A B N f i hA hB hN hf hi hcA hcB hcN,
+    fun {α} d z hα htest =>
+      exists_strong_embedding_into_larger hν hμ hlt A B N f i hA hB hN hf hi hcA hcB hcN
+        d z hα htest,
+    fun {α} x hα => exists_actual_nu_type hν hμ hlt A N i hA hN hi hcA hcN x hα⟩
 
 /-- **Lemma 6.9** (Uniform majority approximations). At sufficiently closed levels, a bounded
 type has approximation sequences of every prescribed bounded infinite length. -/

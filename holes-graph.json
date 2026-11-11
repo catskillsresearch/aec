@@ -1,6 +1,6 @@
 {
   "updated": "2026-11-10",
-  "sorryCount": 58,
+  "sorryCount": 57,
   "legend": {
     "open": "No unfinished required proof-deps — try next",
     "blocked": "Waiting on incomplete required proof-deps",
@@ -25,7 +25,8 @@
     "Prop 6.3 is done (LayoutTesting.lean): restated away from SameGaloisType/Tail/WorkingScheme (amalgamation circular with Thm 6.6; English is placed comparisons, bound independent of level) to ∃ g : TestingFunction layout, (∀ σ, ℵ₀ ≤ g.g σ) ∧ PlacedTester K E D g.g, from exists_placedTester with g.g σ = max σ (g0 σ). Layout is a descriptor tag (NaturalParameterLayout has no placement data). Hard edges: softened false lemma_6_1 → proposition_6_3 and proposition_6_3 → lemma_6_4 (English Lem 6.4 uses 6.1/4.6); added proposition_4_8 → proposition_6_3 and lemma_4_7 → proposition_6_3.",
     "Lem 6.4 is done: restated as packaging of proposition_4_9 / compact_placement over a well-ordered presentation (hnat, hcoh; hχ = ls K + σ < χ). Dropped bare WorkingScheme (refutable without coherence) and unused b. Hard edge proposition_4_9 → lemma_6_4; soft lemma_4_6 → lemma_6_4 via Prop 4.9. Softened proposition_6_3 → lemma_6_4 already.",
     "Lem 6.5 is done (PlacedComparisons.lean), with a repaired statement. The old form had SameGaloisType (scheme amalgamation, which is Thm 6.6) on the left of the iff, a merely monotone g (the iff fails for small g), and a bare WorkingScheme with no presentation to place a tuple in; English Lem 6.5 does not use an amalgamation relation on types. It is now at the level of a presentation, under hL : ClosedLevel K E D g μ with I a well-order of size μ, A = E(I), and tuples d₀, d₁ of length ≤ σ < μ in strong μ-extensions B₀, B₁ of A: (1) some placement lifts the bounded diagrams of d₀ (Placement.LiftsBounded); (2) any two such placements agree over all of A (Placement.AgreeOn … Set.univ); (3) for lifts P₀ of d₀ and P₁ of d₁, P₀.AgreeOn P₁ Set.univ iff the diagrams of d₀ and d₁ agree at the bounded levels ρ < μ over all parameter lists p : β → A with #β ≤ g σ + ls K (the right side of Thm 4.11 clause 2). σ is any infinite bound on the length, in place of |v| + ℵ₀. The last sentence of the English statement (other natural parameter layouts) is not formalized: NaturalParameterLayout has no placement data. Proof: (1), (2) are Lemma 4.10 (exists_boundedDiagramLift, Placement.LiftsBounded.agreeOn_univ); (3) ← is the placed tester (agreeOn_univ_of_tests), (3) → is new (Placement.LiftsBounded.same_of_agreeOn: equal comparisons make the placement of d₀ lift d₁, by Placement.LiftsBounded.of_agreeOn, so both tuples have the diagram of its placed tuple; this holds for every bounded query). Hard edges added: lemma_4_10 → lemma_6_5, proposition_4_8 → lemma_6_5, and proposition_6_3 → lemma_6_5 (the English proof says Proposition 6.3 identifies the full placed comparisons; in Lean its PlacedTester is the tester of ClosedLevel). lemma_6_4 → lemma_6_5 stays hard: the English proof applies Lemma 6.4, and the Lean proof reaches the same compact_placement through Lemma 4.10. Thm 6.6 is done by packaging ClosedLevel.amalgamation / tuple_amalgamation_iff; see the Thm 6.6 note.",
-    "Thm 6.6 is done by packaging ClosedLevel.amalgamation and ClosedLevel.tuple_amalgamation_iff (ClosedLevelTypes.lean / Thm 4.11). Statement repair: dropped bare WorkingScheme / SameGaloisType / unconstrained g; presentation-level under ClosedLevel K E D g μ with amalgamation of strong μ-extensions and the tuple-amalgamation iff at bounded σ < μ with #β ≤ g σ + ls K. Hard edge theorem_4_11 → theorem_6_6; lemma_6_5 → theorem_6_6 softened (English ω-tower / Lem 6.4–6.5 narrative; Lean path is Thm 4.11). Cor 6.7 unblocked (its only hard dep was 6.6); its bare-scheme statement remains for a later repair."
+    "Thm 6.6 is done by packaging ClosedLevel.amalgamation and ClosedLevel.tuple_amalgamation_iff (ClosedLevelTypes.lean / Thm 4.11). Statement repair: dropped bare WorkingScheme / SameGaloisType / unconstrained g; presentation-level under ClosedLevel K E D g μ with amalgamation of strong μ-extensions and the tuple-amalgamation iff at bounded σ < μ with #β ≤ g σ + ls K. Hard edge theorem_4_11 → theorem_6_6; lemma_6_5 → theorem_6_6 softened (English ω-tower / Lem 6.4–6.5 narrative; Lean path is Thm 4.11). Cor 6.7 is done; see the Cor 6.7 note.",
+    "Cor 6.7 is done (LargerLevelRealization.lean), with a repaired statement. The old form quantified over a bare WorkingScheme (Tail / SystemArrow / permitted) with no closed levels, strongness, sizes or testing bound for the Thm 4.11 engine to use, and had neither the prescribed tuple nor the type clause. It is now presentation-level under ClosedLevel K E D g ν, ClosedLevel K E D g μ, ν < μ, for a strong f : A → B of ν-models and a strong i : A → N into a μ-model: (1) a strong B → N extends i; (2) the image of a tuple d of B of length < ν may be prescribed as z in N when the diagrams of (d, f p) and (z, i p) agree at the bounds ρ < ν for all p : β → A with #β ≤ g(#α ⊔ ℵ₀) + ls K; (3) a tuple of N of length < ν lies in a strong ν-submodel B' of N containing A, with the same diagrams over A at ρ < ν. Proof of (2): N ≅ E(Below μ) by categoricity at μ; the images of A and z use ≤ ν positions, so they lie in N₀ = E(S), S a suborder of size ν (exists_suborder_cover), and A → N₀ is strong by coherence; ClosedLevel.exists_tuple_amalgam at ν gives a ν-amalgam P of B and N₀ over A identifying d with z; N₀ → N is an order map of the presentation and μ ≥ t(ν) is a categoricity cardinal, so exists_strong_embedding_over (the Thm 4.11 tower at source level ν, target chart Below μ) embeds P into N over N₀. The target is not enlarged and no comparison of length ν is made in a ν-model. The English proof instead runs the exhaustion of Thm 6.6 directly into N, with compact placement in a chart of N and saturation at μ; that saturation step is not formalized. A direct Lean version by lift extensions was tried and not closed: D.exists_transport into N matches the previously assigned list but not the image of A, and D.of_strong from the ν-model A gives no comparison of length ν (t(ν) > ν). Hard edge theorem_4_11 → corollary_6_7; theorem_6_6 → corollary_6_7 softened (English shared exhaustion; theorem_6_6 is not called). Lemma 6.9 is unblocked (its only hard dep was 6.7); its bare-scheme statement remains for a later repair."
   ],
   "nodes": [
     {
@@ -360,9 +361,9 @@
       "label": "Cor 6.7",
       "section": 6,
       "file": "AEC/Section6/Results.lean",
-      "status": "open",
+      "status": "done",
       "blocker": null,
-      "detail": "Unblocked: hard dep theorem_6_6 closed. Bare WorkingScheme statement still needs repair."
+      "detail": "LargerLevelRealization.lean: exists_strong_embedding_into_larger (clause 2), exists_strong_embedding_into_larger_base (clause 1, the empty tuple), exists_actual_nu_type (clause 3). Clause 2: chart N ≅ E(Below μ) by categoricity at μ; the images of A and of the prescribed tuple lie in N₀ = E(S) for a suborder S of size ν (exists_suborder_cover, the supports of ≤ ν terms); ClosedLevel.exists_tuple_amalgam at ν amalgamates B and N₀ over A identifying d with z in a ν-model P; exists_strong_embedding_over at the source level ν with target chart J = Below μ (μ a categoricity cardinal ≥ t(ν)) embeds P into N over N₀. Clause 3: exact-size strong hull of range i ∪ range x, coherence, D.of_strong. Statement repair: dropped bare WorkingScheme / Tail / SystemArrow / permitted; presentation-level under ClosedLevel K E D g ν, ClosedLevel K E D g μ, ν < μ, with strong maps and sizes, the prescribed-tuple clause (tests #β ≤ g(#α ⊔ ℵ₀) + ls K at ρ < ν) and the actual ν-type clause. No sorry (axioms: propext, Classical.choice, Quot.sound)."
     },
     {
       "id": "lemma_6_1",
@@ -420,8 +421,9 @@
       "label": "Lem 6.9",
       "section": 6,
       "file": "AEC/Section6/Results.lean",
-      "status": "blocked",
-      "blocker": null
+      "status": "open",
+      "blocker": null,
+      "detail": "Unblocked: hard dep corollary_6_7 closed. Bare WorkingScheme statement still needs repair."
     },
     {
       "id": "proposition_6_12",
@@ -1074,7 +1076,14 @@
     {
       "from": "theorem_6_6",
       "to": "corollary_6_7",
-      "kind": "hard"
+      "kind": "soft",
+      "note": "English Cor 6.7 reuses the countable exhaustion of the proof of Thm 6.6. Lean: ClosedLevel.exists_tuple_amalgam and exists_strong_embedding_over (Thm 4.11 infra); theorem_6_6 is not called."
+    },
+    {
+      "from": "theorem_4_11",
+      "to": "corollary_6_7",
+      "kind": "hard",
+      "note": "Lean proof: ClosedLevel.exists_tuple_amalgam (Thm 4.11 (2)) at ν, then the tower exists_strong_embedding_over at ν into the chart E(Below μ) of the μ-model."
     },
     {
       "from": "corollary_6_7",
@@ -1743,5 +1752,5 @@
       "note": "English: Proposition 6.3 identifies the full placed comparisons of two outputs of Lemma 6.4. Lean: the PlacedTester of proposition_6_3 is the tester of ClosedLevel."
     }
   ],
-  "doneCount": 53
+  "doneCount": 54
 }
