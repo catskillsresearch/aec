@@ -26,10 +26,9 @@ English clauses (from `FreeExtension.md`):
 with same-level host `p.ν = μ`. `IsFreeLift` queries are bounded by the sequence arity `I.τ`
 (English testing cost), not every `#ι < ν`. Cross-scheme transfer is not used.
 
-**Infra.** Majority uniqueness/existence from `few_exceptions` is proved. Open tips:
-`infra_610_move_query` (realize saturated query inside `A`), `infra_610_place_on_B`
-(majority → `lemma_6_4` prescriptions on a chart of `B`), `infra_610_same_galois`
-(scheme `SameGaloisType` via closed-level amalgamation).
+**Infra.** Majority uniqueness/existence and `infra_610_move_query` (saturate + `diagram_iso`
+pullback into `A`) are proved. Open tips: `infra_610_place_on_B` (majority → `lemma_6_4`
+prescriptions on a chart of `B`), `infra_610_same_galois` (scheme `SameGaloisType`).
 -/
 
 namespace AEC
@@ -156,10 +155,8 @@ theorem infra_610_concat_push_diagramEq
     (fun ij : seq.κIndex × p.idx => seq.family ij.1 ij.2)
     seq.concat_bounded seq.concat_bounded
 
-/-- **Pinned.** Saturation moves a query `Z` from `B` into a same-level extension of `A` over
-the concatenated sequence. English wants the realizing parameters inside `A` itself
-(`Z0 : ι → Occurrence … A`). The package `IsSaturated.saturated` returns a new μ-host;
-pulling the query half back into `A` while fixing the concat is the remaining step. -/
+/-- Saturation moves a query `Z` from `B` into `A` over the concatenated sequence: saturate to
+a μ-extension, then `diagram_iso` pulls the query half back into `A` while fixing the concat. -/
 theorem infra_610_move_query
     {P : SingleModelData K}
     {μ : Cardinal.{u}} {hμ : μ ∈ P.eligible}
@@ -170,7 +167,7 @@ theorem infra_610_move_query
     (seq : ApproximationSequence p)
     {ι : Type u}
     (Z : ι → Occurrence K oneVertexShape (P.scheme.asSystem hμ B))
-    (hι : #ι ≤ seq.τ) :
+    (hι : #ι ≤ seq.τ) (hιμ : #ι < μ) :
     ∃ Z0 : ι → Occurrence K oneVertexShape (P.scheme.asSystem hμ A),
       ∀ i : seq.κIndex,
         P.scheme.DiagramEq (X := A) (Y := B)
@@ -179,8 +176,88 @@ theorem infra_610_move_query
             (fun j =>
               ⟨(seq.family i j).1, f.onVertex (seq.family i j).1 (seq.family i j).2⟩)
             Z) := by
-  /- Saturate with `α = κIndex × p.idx`, `β = ι`, then realize the query half inside `A`. -/
-  sorry
+  classical
+  let α : Type u := seq.κIndex × p.idx
+  let xs : α → Occurrence K oneVertexShape (P.scheme.asSystem hμ A) :=
+    fun ij => seq.family ij.1 ij.2
+  let base : α → Occurrence K oneVertexShape (P.scheme.asSystem hμ B) :=
+    fun ij => ⟨(xs ij).1, f.onVertex (xs ij).1 (xs ij).2⟩
+  let ext : α ⊕ ι → Occurrence K oneVertexShape (P.scheme.asSystem hμ B) :=
+    Sum.elim base Z
+  have hα : #α < μ := seq.concat_bounded
+  have hEqPush : P.scheme.DiagramEq (X := A) (Y := B) xs base :=
+    infra_610_concat_push_diagramEq f hf seq
+  obtain ⟨Z', g, zs, -, hzs, hzsEq⟩ :=
+    (SingleModelData.isSaturated (P := P)).saturated
+      A B xs base ext hα hιμ (fun i => rfl) hEqPush
+  have hPushG : P.scheme.DiagramEq (X := A) (Y := Z') xs
+      (fun ij => ⟨(xs ij).1, g.onVertex (xs ij).1 (xs ij).2⟩) :=
+    P.scheme.diagram_preserved A Z' g trivial xs hα hα
+  have hxsZs : (fun ij => ⟨(xs ij).1, g.onVertex (xs ij).1 (xs ij).2⟩) =
+      fun ij => zs (Sum.inl ij) := by
+    funext ij
+    exact (hzs ij).symm
+  have hEqZsInl : P.scheme.DiagramEq (X := A) (Y := Z') xs (fun ij => zs (Sum.inl ij)) := by
+    rw [← hxsZs]
+    exact hPushG
+  obtain ⟨φ, hφiso, hφ⟩ :=
+    (P.scheme.diagram_iso A Z' xs (fun ij => zs (Sum.inl ij)) hα).mp hEqZsInl
+  have hφbij : Function.Bijective (φ.onVertex PUnit.unit) := hφiso PUnit.unit
+  let eφ : A.model.carrier ≃ Z'.model.carrier := Equiv.ofBijective _ hφbij
+  let Z0 : ι → Occurrence K oneVertexShape (P.scheme.asSystem hμ A) :=
+    fun j => A.occ (eφ.symm (Z'.val (zs (Sum.inr j))))
+  let jointA : α ⊕ ι → Occurrence K oneVertexShape (P.scheme.asSystem hμ A) :=
+    Sum.elim xs Z0
+  have hφjoint : ∀ t, zs t =
+      ⟨(jointA t).1, φ.onVertex (jointA t).1 (jointA t).2⟩ := by
+    intro t
+    cases t with
+    | inl ij =>
+      change zs (Sum.inl ij) = ⟨(xs ij).1, φ.onVertex (xs ij).1 (xs ij).2⟩
+      exact hφ ij
+    | inr j =>
+      have happly : φ.onVertex PUnit.unit (eφ.symm (Z'.val (zs (Sum.inr j)))) =
+          Z'.val (zs (Sum.inr j)) := eφ.apply_symm_apply _
+      change zs (Sum.inr j) = ⟨(Z0 j).1, φ.onVertex (Z0 j).1 (Z0 j).2⟩
+      refine Eq.trans (SMObject.occ_val Z' (zs (Sum.inr j))).symm ?_
+      refine Eq.trans (congrArg Z'.occ happly.symm) ?_
+      simp only [Z0, SMObject.occ, oneVertexOcc, SMObject.val, oneVertexVal]
+      rfl
+  have hPushφ : P.scheme.DiagramEq (X := A) (Y := Z') jointA zs := by
+    have hcard : #(α ⊕ ι) < μ := by
+      rw [Cardinal.mk_sum, Cardinal.lift_id, Cardinal.lift_id]
+      exact add_lt_of_lt (P.aleph0_le hμ) hα hιμ
+    have h := P.scheme.diagram_preserved A Z' φ trivial jointA hcard hcard
+    have heq : (fun t => ⟨(jointA t).1, φ.onVertex (jointA t).1 (jointA t).2⟩) = zs :=
+      funext fun t => (hφjoint t).symm
+    rwa [heq] at h
+  have hJointExt : P.scheme.DiagramEq (X := A) (Y := B) jointA ext :=
+    P.scheme.diagram_trans A Z' B jointA zs ext hPushφ hzsEq
+  refine ⟨Z0, fun i => ?_⟩
+  let ρ : p.idx ⊕ ι → α ⊕ ι := fun t =>
+    match t with
+    | Sum.inl j => Sum.inl (i, j)
+    | Sum.inr k => Sum.inr k
+  have hρ : Function.Injective ρ := by
+    intro x y hxy
+    cases x with
+    | inl j =>
+      cases y with
+      | inl j' =>
+        simp only [ρ] at hxy
+        exact congrArg Sum.inl (Prod.ext_iff.mp (Sum.inl.inj hxy)).2
+      | inr k =>
+        simp [ρ] at hxy
+    | inr k =>
+      cases y with
+      | inl j =>
+        simp [ρ] at hxy
+      | inr k' =>
+        simp only [ρ] at hxy
+        exact congrArg Sum.inr (Sum.inr.inj hxy)
+  have hpre :=
+    WorkingScheme.diagramEq_precomp (W := P.scheme) A B jointA ext ρ hρ hJointExt
+  convert hpre using 1 <;> funext t <;> cases t <;> rfl
 
 /-- **Pinned.** On a chart of `B`, turn majority answers of `seq` into coherent carrier
 prescriptions for `lemma_6_4` / `compact_placement`, place the tuple, and wrap it as
@@ -229,7 +306,7 @@ theorem infra_610_same_galois
 
 /-- English clause 1: existence of a free lift along a permitted arrow of `P.scheme`.
 Packaging matches Lemma 6.9 (`p.ν = μ`, recursion-closed level). Open tips are
-`infra_610_move_query` / `infra_610_place_on_B` / `infra_610_same_galois`. -/
+`infra_610_place_on_B` / `infra_610_same_galois`. -/
 theorem stationary_free_extension_exists
     (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ)
     {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)

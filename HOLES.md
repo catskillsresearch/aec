@@ -112,7 +112,7 @@ counterexample refutes the program.
 **Dependency rule:** edge B→A only if the English proof of A requires B, or A
 needs an explicit Lean infra subgoal B (not a paper-number chain).
 
-**Open (frontier):** `infra_610_move_query` / `infra_610_same_galois`. `stationary_free_extension_exists` is assembled for `SingleModelData` (`p.ν = μ`, recursion-closed) and blocked on `infra_610_place_on_B` (itself blocked on move-query) and `infra_610_same_galois`. Majority uniqueness from `few_exceptions` is proved. `infra_69_diagram_transport` is done inside `P.scheme`. Cross-scheme transfer is retired. `TupleOver.InBase` and `ApproximationSequence.ofConstFamily` are not used.
+**Open (frontier):** `infra_610_place_on_B` / `infra_610_same_galois`. `infra_610_move_query` is **done** (saturate over the concat, `diagram_iso` pullback into `A`). `stationary_free_extension_exists` is assembled and blocked on place-on-B and same-galois. Majority uniqueness is proved. Cross-scheme transfer is retired. `TupleOver.InBase` and `ApproximationSequence.ofConstFamily` are not used.
 **Note:** `lemma_6_1`, `theorem_3_11`, `proposition_5_6`, `proposition_5_7`, `lemma_4_6`, `lemma_6_14`, `proposition_4_3`, `lemma_4_5`, `lemma_4_7`, `proposition_4_8`, `proposition_4_9`, `lemma_4_10`, `theorem_4_11`, `theorem_6_6`, `corollary_6_7`, `proposition_5_8`, `proposition_5_9`,
 `infra_pair_coloring_glue`, `infra_rank_slice`, `infra_type_u_witness_set`, `infra_countable_back_and_forth`, `infra_stable_diagram_realize`, `infra_zeta_model_existence`, `infra_eligible_reclass`, `infra_template_fixed_support`, `infra_named_working_scheme`, `infra_named_working_package`, `infra_single_model_scheme`, `infra_single_model_package` are done.
 Lean 5.8 is the residual `diagram_iso`+`structural_iso` form.
@@ -156,7 +156,7 @@ Proof of clause 2. Identify `N` with its chart `E(Below μ)` (categoricity at `�
 **Lemma 6.9 is done for `SingleModelData`.** The chain is `infra_69_recursion_tail`, then `infra_69_assemble` at a same-level tuple `p.ν = μ`. Theorem 6.10 is restated the same way; `stationary_free_extension_exists` is assembled and blocked on `infra_610_place_on_B` / `infra_610_same_galois`. Majority uniqueness is proved. No constant-family alternate.
 
 **Wired (intended use, reach apex):** `5.6 → 9.3, 10.2`; `5.7 → 9.3, 10.6, 10.8`;
-`2.3 → 1.2`; `3.11 → 4.2, 5.8`; `4.2 → 4.9, 4.10, 4.11`; `4.3 → 4.10, 4.11`; `4.5 → 6.1`; `4.6 → 4.9`; `4.7 → 4.8, 12.5`; `4.8 → 4.10, 4.11, 6.3, 6.5`; `4.10 → 4.11, 6.5`; `6.3 → 6.5`; `6.4 → 6.5`; `4.11 → 5.6, 6.6, 6.7`; `infra_69_place_on_fills → infra_69_assemble → 6.9` (hard; 6.9 done for `SingleModelData`); `infra_610_move_query → infra_610_place_on_B → stationary_free_extension_exists → 6.10` and `infra_610_same_galois → stationary_free_extension_exists` (hard; open tips move-query / same-galois); paper `5.4/5.5/6.1/6.5/4.6` → matching `infra_69_*` / `infra_55_*`; `6.9 → 6.10`; `6.14 → 12.6`; `13.5 → 10.9, 14.2`.
+`2.3 → 1.2`; `3.11 → 4.2, 5.8`; `4.2 → 4.9, 4.10, 4.11`; `4.3 → 4.10, 4.11`; `4.5 → 6.1`; `4.6 → 4.9`; `4.7 → 4.8, 12.5`; `4.8 → 4.10, 4.11, 6.3, 6.5`; `4.10 → 4.11, 6.5`; `6.3 → 6.5`; `6.4 → 6.5`; `4.11 → 5.6, 6.6, 6.7`; `infra_69_place_on_fills → infra_69_assemble → 6.9` (hard; 6.9 done for `SingleModelData`); `infra_610_move_query → infra_610_place_on_B → stationary_free_extension_exists → 6.10` and `infra_610_same_galois → stationary_free_extension_exists` (hard; move-query done; open tips place-on-B / same-galois); paper `5.4/5.5/6.1/6.5/4.6` → matching `infra_69_*` / `infra_55_*`; `6.9 → 6.10`; `6.14 → 12.6`; `13.5 → 10.9, 14.2`.
 Full hard-edge list: [`holes-edges.txt`](holes-edges.txt). Target: every Results/paper
 node reaches Thm 1.2 or 1.3; completed work should admit dead-code analysis of each edge.
 
@@ -242,8 +242,8 @@ Waits on Section 5 working package. Lean: later Results import this module.
 | `infra_69_diagram_transport` | Infra: diagram transport | `AEC/Section6/UniformApproximations.lean` (**done** inside `P.scheme`: carrier equiv → permitted bijective arrow → `DiagramEq`) |
 | `infra_69_transfer_sequence` | Infra: transfer approximation sequence | `AEC/Section6/UniformApproximations.lean` (**done**/retired: not the path to Theorem 6.10) |
 | `lemma_6_9` | Lemma 6.9 | `AEC/Section6/Results.lean` (**done** for `SingleModelData` on `infra_69_recursion_tail`, by `infra_69_assemble`) |
-| `infra_610_move_query` | Infra: move query B→A | `AEC/Section6/StationaryFreeExtension.lean` (**open**: saturation lands in a new μ-host; need Z0 inside `A`) |
-| `infra_610_place_on_B` | Infra: place majority on B | `AEC/Section6/StationaryFreeExtension.lean` (**blocked** on `infra_610_move_query`: majority → `lemma_6_4` prescriptions) |
+| `infra_610_move_query` | Infra: move query B→A | `AEC/Section6/StationaryFreeExtension.lean` (**done**: saturate over concat, `diagram_iso` pullback into `A`) |
+| `infra_610_place_on_B` | Infra: place majority on B | `AEC/Section6/StationaryFreeExtension.lean` (**open**: majority → `lemma_6_4` prescriptions on a chart of `B`) |
 | `infra_610_same_galois` | Infra: SameGaloisType free lift | `AEC/Section6/StationaryFreeExtension.lean` (**open**: scheme amalgam via ClosedLevel / PlacedTester) |
 | `stationary_free_extension_exists` | Infra: free-lift existence | `AEC/Section6/StationaryFreeExtension.lean` (**blocked** on `infra_610_place_on_B` / `infra_610_same_galois`; majority uniqueness done) |
 | `theorem_6_10` | Theorem 6.10 | `AEC/Section6/Results.lean` (**blocked** on `stationary_free_extension_exists`) |

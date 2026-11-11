@@ -1,7 +1,7 @@
 # Hard edges from holes-graph.json
 # Convention: FROM --> TO means the English proof of TO requires FROM.
 # Nodes: 157  Hard edges: 193
-# Open tips: infra_610_move_query / infra_610_same_galois. stationary_free_extension_exists assembled, blocked on place_on_B / same_galois.
+# Open tips: infra_610_place_on_B / infra_610_same_galois. infra_610_move_query is done.
 
 claim_11_10 --> claim_11_11
 claim_11_11 --> claim_11_12
