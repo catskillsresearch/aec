@@ -1,7 +1,7 @@
 # Hard edges from holes-graph.json
 # Convention: FROM --> TO means the English proof of TO requires FROM.
-# Nodes: 157  Hard edges: 193
-# Open tips: infra_610_place_on_B / infra_610_same_galois. infra_610_move_query is done.
+# Nodes: 158  Hard edges: 194
+# Open tips: infra_610_majority_prescription / infra_610_same_galois. place_on_B is packaging of the prescription pin.
 
 claim_11_10 --> claim_11_11
 claim_11_11 --> claim_11_12
@@ -14,7 +14,8 @@ corollary_9_2 --> theorem_9_3
 infra_55_enumerate_added --> infra_55_pattern_realize
 infra_55_one_point_cut --> infra_55_pattern_realize
 infra_55_pattern_realize --> infra_69_richness_arity
-infra_610_move_query --> infra_610_place_on_B
+infra_610_majority_prescription --> infra_610_place_on_B
+infra_610_move_query --> infra_610_majority_prescription
 infra_610_place_on_B --> stationary_free_extension_exists
 infra_610_same_galois --> stationary_free_extension_exists
 infra_69_anchor_bound --> infra_69_slot_assignment

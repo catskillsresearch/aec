@@ -27,7 +27,7 @@
     "Lem 6.5 is done (PlacedComparisons.lean), with a repaired statement. The old form had SameGaloisType (scheme amalgamation, which is Thm 6.6) on the left of the iff, a merely monotone g (the iff fails for small g), and a bare WorkingScheme with no presentation to place a tuple in; English Lem 6.5 does not use an amalgamation relation on types. It is now at the level of a presentation, under hL : ClosedLevel K E D g \u03bc with I a well-order of size \u03bc, A = E(I), and tuples d\u2080, d\u2081 of length \u2264 \u03c3 < \u03bc in strong \u03bc-extensions B\u2080, B\u2081 of A: (1) some placement lifts the bounded diagrams of d\u2080 (Placement.LiftsBounded); (2) any two such placements agree over all of A (Placement.AgreeOn \u2026 Set.univ); (3) for lifts P\u2080 of d\u2080 and P\u2081 of d\u2081, P\u2080.AgreeOn P\u2081 Set.univ iff the diagrams of d\u2080 and d\u2081 agree at the bounded levels \u03c1 < \u03bc over all parameter lists p : \u03b2 \u2192 A with #\u03b2 \u2264 g \u03c3 + ls K (the right side of Thm 4.11 clause 2). \u03c3 is any infinite bound on the length, in place of |v| + \u2135\u2080. The last sentence of the English statement (other natural parameter layouts) is not formalized: NaturalParameterLayout has no placement data. Proof: (1), (2) are Lemma 4.10 (exists_boundedDiagramLift, Placement.LiftsBounded.agreeOn_univ); (3) \u2190 is the placed tester (agreeOn_univ_of_tests), (3) \u2192 is new (Placement.LiftsBounded.same_of_agreeOn: equal comparisons make the placement of d\u2080 lift d\u2081, by Placement.LiftsBounded.of_agreeOn, so both tuples have the diagram of its placed tuple; this holds for every bounded query). Hard edges added: lemma_4_10 \u2192 lemma_6_5, proposition_4_8 \u2192 lemma_6_5, and proposition_6_3 \u2192 lemma_6_5 (the English proof says Proposition 6.3 identifies the full placed comparisons; in Lean its PlacedTester is the tester of ClosedLevel). lemma_6_4 \u2192 lemma_6_5 stays hard: the English proof applies Lemma 6.4, and the Lean proof reaches the same compact_placement through Lemma 4.10. Thm 6.6 is done by packaging ClosedLevel.amalgamation / tuple_amalgamation_iff; see the Thm 6.6 note.",
     "Thm 6.6 is done by packaging ClosedLevel.amalgamation and ClosedLevel.tuple_amalgamation_iff (ClosedLevelTypes.lean / Thm 4.11). Statement repair: dropped bare WorkingScheme / SameGaloisType / unconstrained g; presentation-level under ClosedLevel K E D g \u03bc with amalgamation of strong \u03bc-extensions and the tuple-amalgamation iff at bounded \u03c3 < \u03bc with #\u03b2 \u2264 g \u03c3 + ls K. Hard edge theorem_4_11 \u2192 theorem_6_6; lemma_6_5 \u2192 theorem_6_6 softened (English \u03c9-tower / Lem 6.4\u20136.5 narrative; Lean path is Thm 4.11). Cor 6.7 is done; see the Cor 6.7 note.",
     "Cor 6.7 is done (LargerLevelRealization.lean), with a repaired statement. The old form quantified over a bare WorkingScheme (Tail / SystemArrow / permitted) with no closed levels, strongness, sizes or testing bound for the Thm 4.11 engine to use, and had neither the prescribed tuple nor the type clause. It is now presentation-level under ClosedLevel K E D g \u03bd, ClosedLevel K E D g \u03bc, \u03bd < \u03bc, for a strong f : A \u2192 B of \u03bd-models and a strong i : A \u2192 N into a \u03bc-model: (1) a strong B \u2192 N extends i; (2) the image of a tuple d of B of length < \u03bd may be prescribed as z in N when the diagrams of (d, f p) and (z, i p) agree at the bounds \u03c1 < \u03bd for all p : \u03b2 \u2192 A with #\u03b2 \u2264 g(#\u03b1 \u2294 \u2135\u2080) + ls K; (3) a tuple of N of length < \u03bd lies in a strong \u03bd-submodel B' of N containing A, with the same diagrams over A at \u03c1 < \u03bd. Proof of (2): N \u2245 E(Below \u03bc) by categoricity at \u03bc; the images of A and z use \u2264 \u03bd positions, so they lie in N\u2080 = E(S), S a suborder of size \u03bd (exists_suborder_cover), and A \u2192 N\u2080 is strong by coherence; ClosedLevel.exists_tuple_amalgam at \u03bd gives a \u03bd-amalgam P of B and N\u2080 over A identifying d with z; N\u2080 \u2192 N is an order map of the presentation and \u03bc \u2265 t(\u03bd) is a categoricity cardinal, so exists_strong_embedding_over (the Thm 4.11 tower at source level \u03bd, target chart Below \u03bc) embeds P into N over N\u2080. The target is not enlarged and no comparison of length \u03bd is made in a \u03bd-model. The English proof instead runs the exhaustion of Thm 6.6 directly into N, with compact placement in a chart of N and saturation at \u03bc; that saturation step is not formalized. A direct Lean version by lift extensions was tried and not closed: D.exists_transport into N matches the previously assigned list but not the image of A, and D.of_strong from the \u03bd-model A gives no comparison of length \u03bd (t(\u03bd) > \u03bd). Hard edge theorem_4_11 \u2192 corollary_6_7; theorem_6_6 \u2192 corollary_6_7 softened (English shared exhaustion; theorem_6_6 is not called). Lemma 6.9 is unblocked (its only hard dep was 6.7); its bare-scheme statement remains for a later repair.",
-    "infra_69_place_on_fills is done under infra_69_pad_recursion_closed: the \u03c3\u207a supremum of \u03b2 \u21a6 2^\u03b2+\u03c3+b lies strictly below \u03bc. That is not true of every {D.t, g}-closure point (iSup_profileTower_eq_of_ge, zero bounds beth_\u03c9). infra_69_pad_exists_closed builds cofinality-\u2135\u2080 strong limits above one full recursion. The obstruction uses down-set profile codes (no leastElt), at most 2^{|S|+\u03c3+b} of them, and \u03c3\u207a stages whose union stays under the recursion. It reuses exists_inert_continuation, sameNaturalDiagram_of_sameProfile_noEvent, mk_eventCode_le, and exists_local_placement. infra_69_assemble threads the same hypothesis into present_padded, the chart equivalence, that placement, and support_copy_sequence. lemma_6_9 and theorem_6_10 packaging are SingleModelData at recursion-closed levels with p.\u03bd = \u03bc. Majority uniqueness from few_exceptions is proved. stationary_free_extension_exists is assembled and blocked on infra_610_place_on_B / infra_610_same_galois. infra_610_move_query is done (saturate + diagram_iso pullback). Open tips: infra_610_place_on_B / infra_610_same_galois. InBase/ofConstFamily not used."
+    "lemma_6_9 and theorem_6_10 packaging are SingleModelData at recursion-closed levels with p.\u03bd = \u03bc and code arity c(\u03c3). Majority uniqueness and infra_610_move_query are proved. infra_610_place_on_B is a packaging wrapper; open tips: infra_610_majority_prescription (DiagramEq\u2192D.same / place / wrap) and infra_610_same_galois. InBase/ofConstFamily not used."
   ],
   "nodes": [
     {
@@ -440,9 +440,9 @@
       "label": "Infra: place majority on chart of B",
       "section": 6,
       "file": "AEC/Section6/StationaryFreeExtension.lean",
-      "status": "open",
+      "status": "done",
       "blocker": null,
-      "detail": "Open. Majority DiagramEq classes \u2192 lemma_6_4 D.same prescriptions (hnat/hcoh) on a chart of B; wrap TupleOver. Move-query is available."
+      "detail": "Packaging wrapper of infra_610_majority_prescription (English Lem 6.4 path)."
     },
     {
       "id": "infra_610_same_galois",
@@ -459,8 +459,8 @@
       "section": 6,
       "file": "AEC/Section6/StationaryFreeExtension.lean",
       "status": "blocked",
-      "blocker": "infra_610_place_on_B",
-      "detail": "Assembled for SingleModelData at recursion-closed levels with p.\u03bd = \u03bc. Majority uniqueness proved. Blocked on place_on_B and same_galois."
+      "blocker": "infra_610_majority_prescription",
+      "detail": "Assembled for SingleModelData at recursion-closed levels with p.\u03bd = \u03bc and caller arity \u03c4 = testCardinal b P.g \u03c3. Majority uniqueness proved. Blocked on majority_prescription and same_galois; place_on_B packaging done."
     },
     {
       "id": "infra_69_recursion_tail",
@@ -1359,6 +1359,15 @@
       "status": "done",
       "blocker": null,
       "detail": "Done under infra_69_pad_recursion_closed: present_padded at \u03c3+\u03ba, chart equivalence, place_on_fills, support_copy_sequence. place_type is not the input. A general WorkingScheme is exists_approximationSequence, still sorry."
+    },
+    {
+      "id": "infra_610_majority_prescription",
+      "label": "Infra: majority prescriptions on chart of B",
+      "section": 6,
+      "file": "AEC/Section6/StationaryFreeExtension.lean",
+      "status": "open",
+      "blocker": null,
+      "detail": "Open. DiagramEq majority \u2192 D.same prescriptions, lemma_6_4 place, wrap E(J) as TupleOver over B."
     }
   ],
   "edges": [
@@ -1470,12 +1479,6 @@
       "to": "lemma_6_9",
       "kind": "soft",
       "note": "English Lem 6.9 cites 5.5, 5.4, 6.5, 6.1\u2014not Cor 6.7; Cor 6.7 appears in Thm 6.10(3). Lean proof does not call corollary_6_7."
-    },
-    {
-      "from": "infra_610_move_query",
-      "to": "infra_610_place_on_B",
-      "kind": "hard",
-      "note": "Placement of majority answers needs queries from B moved into A over the approximation sequence."
     },
     {
       "from": "infra_610_place_on_B",
@@ -2408,7 +2411,19 @@
       "to": "infra_69_assemble",
       "kind": "hard",
       "note": "support_copy_sequence, which the glue calls, sends off-hit indices through off_hit_diagramEq."
+    },
+    {
+      "from": "infra_610_move_query",
+      "to": "infra_610_majority_prescription",
+      "kind": "hard",
+      "note": "Prescriptions use move_query for each chart query."
+    },
+    {
+      "from": "infra_610_majority_prescription",
+      "to": "infra_610_place_on_B",
+      "kind": "hard",
+      "note": "place_on_B is the packaging wrapper of the prescription pin."
     }
   ],
-  "doneCount": 56
+  "doneCount": 57
 }

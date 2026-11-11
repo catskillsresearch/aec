@@ -27,8 +27,9 @@ with same-level host `p.ν = μ`. `IsFreeLift` queries are bounded by the sequen
 (English testing cost), not every `#ι < ν`. Cross-scheme transfer is not used.
 
 **Infra.** Majority uniqueness/existence and `infra_610_move_query` (saturate + `diagram_iso`
-pullback into `A`) are proved. Open tips: `infra_610_place_on_B` (majority → `lemma_6_4`
-prescriptions on a chart of `B`), `infra_610_same_galois` (scheme `SameGaloisType`).
+pullback into `A`) are proved. Open tips: `infra_610_majority_prescription` (English Lem 6.4
+path: chart of `B`, DiagramEq→`D.same` prescriptions, place, wrap as `TupleOver`) and
+`infra_610_same_galois`. `infra_610_place_on_B` is the packaging wrapper of that pin.
 -/
 
 namespace AEC
@@ -36,7 +37,7 @@ section
 
 universe u
 
-open Cardinal
+open Cardinal FirstOrder
 
 variable {K : AbstractElementaryClass.{u}}
 
@@ -259,12 +260,47 @@ theorem infra_610_move_query
     WorkingScheme.diagramEq_precomp (W := P.scheme) A B jointA ext ρ hρ hJointExt
   convert hpre using 1 <;> funext t <;> cases t <;> rfl
 
-/-- **Pinned.** On a chart of `B`, turn majority answers of `seq` into coherent carrier
-prescriptions for `lemma_6_4` / `compact_placement`, place the tuple, and wrap it as
-`q : TupleOver … B` with the same index as `p`. The bridge from scheme `DiagramEq` majority
-classes to presentation `D.same` prescriptions (`hnat` / `hcoh`) is the API gap. The majority
-clause records that `typeJoint q` matches the majority of `seq` after moving the query into
-`A` (uses `infra_610_move_query` in the eventual proof). -/
+/-! ## Place majority on `B` (plan `place_majority_on_b`)
+
+English path: well-ordered chart of `B` → majority prescriptions via `move_query` →
+`proposition_4_9` / `lemma_6_4` → wrap as `TupleOver` over `B`. The DiagramEq→`D.same`
+prescription glue, the eligible-card wrap of `E(J)`, and the majority clause are one pin. -/
+
+/-- **Pinned.** English Lem 6.4 free-lift placement on a chart of `B`.
+
+1. Well-ordered chart `eB : E(I) ≃ B` (`#I = μ`), not a padded present.
+2. `χ` via `exists_power_fixed_below` with `max seq.τ (ls K + σ) < χ < μ` and `χ ^ σ = χ`.
+3. Majority prescriptions: push params to `B`, `infra_610_move_query` → `Z0`, good index
+   outside `#β + ℵ₀` exceptions; `q X = Sum.elim (chart∘f∘vᵢ) X` (`hnat` / `hcoh` via
+   majority uniqueness + `diagramEq_iff_sameD`).
+4. `lemma_6_4` / `proposition_4_9` → `z` in an order enlargement `E(J)`.
+5. Wrap as `TupleOver` over `B`; majority clause by move_query + uniqueness vs placed joints.
+
+**Why pinned.** (i) Scheme `DiagramEq` majority classes → presentation `D.same` at every
+`#β ≤ χ` (plan takes `χ > seq.τ`, while `few_exceptions` only covers `#ι ≤ seq.τ`).
+(ii) `E(J)` typically has card a categoricity size `≥ μ` not necessarily in `P.eligible`, so
+it is not an `SMObject` host without an extra hull/push. -/
+theorem infra_610_majority_prescription
+    (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ)
+    {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
+    (hrec : μ ∈ recursionClosedLevels P σ) (hσμ : Order.succ σ ≤ μ)
+    {A B : P.scheme.Object μ hμ}
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ B))
+    (hf : P.scheme.permitted (X := A) (Y := B) f)
+    (p : TupleOver K oneVertexShape P.scheme hμ A)
+    (hνμ : p.ν = μ) (hidx : #p.idx ≤ σ) (hidxμ : #p.idx < μ)
+    (seq : ApproximationSequence p) (hτμ : seq.τ < μ) :
+    ∃ q : TupleOver K oneVertexShape P.scheme hμ B,
+      ∃ e : p.idx ≃ q.idx,
+        ∀ {ι : Type u} (Z : ι → Occurrence K oneVertexShape (P.scheme.asSystem hμ B)),
+          #ι ≤ seq.τ →
+          ∃ Z0 : ι → Occurrence K oneVertexShape (P.scheme.asSystem hμ A),
+            IsMajorityValue seq Z0 q.hν q.host
+              (typeJoint (p := q) Z ∘ Sum.map e id) := by
+  sorry
+
+/-- Packaging of `infra_610_majority_prescription` (English Lem 6.4 placement on a chart of
+`B`). -/
 theorem infra_610_place_on_B
     (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ)
     {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
@@ -274,16 +310,15 @@ theorem infra_610_place_on_B
     (hf : P.scheme.permitted (X := A) (Y := B) f)
     (p : TupleOver K oneVertexShape P.scheme hμ A)
     (hνμ : p.ν = μ) (hidx : #p.idx ≤ σ) (hidxμ : #p.idx < μ)
-    (seq : ApproximationSequence p) :
+    (seq : ApproximationSequence p) (hτμ : seq.τ < μ) :
     ∃ q : TupleOver K oneVertexShape P.scheme hμ B,
       ∃ e : p.idx ≃ q.idx,
         ∀ {ι : Type u} (Z : ι → Occurrence K oneVertexShape (P.scheme.asSystem hμ B)),
           #ι ≤ seq.τ →
           ∃ Z0 : ι → Occurrence K oneVertexShape (P.scheme.asSystem hμ A),
             IsMajorityValue seq Z0 q.hν q.host
-              (typeJoint (p := q) Z ∘ Sum.map e id) := by
-  /- Present `B`, form majority prescriptions, apply `lemma_6_4`, wrap; majority via move. -/
-  sorry
+              (typeJoint (p := q) Z ∘ Sum.map e id) :=
+  infra_610_majority_prescription P σ hσ hμ hrec hσμ f hf p hνμ hidx hidxμ seq hτμ
 
 /-- **Pinned.** Scheme-level `SameGaloisType` of `p` with `q.restrict f` on `P.scheme`.
 English uses uniqueness of the actual type from testing at `τ ≥ g(σ)` (Theorem 6.6 /
@@ -305,8 +340,8 @@ theorem infra_610_same_galois
 /-! ## Existence -/
 
 /-- English clause 1: existence of a free lift along a permitted arrow of `P.scheme`.
-Packaging matches Lemma 6.9 (`p.ν = μ`, recursion-closed level). Open tips are
-`infra_610_place_on_B` / `infra_610_same_galois`. -/
+Packaging matches Lemma 6.9 (`p.ν = μ`, recursion-closed level, code arity `c(σ)`).
+Open tips are `infra_610_majority_prescription` / `infra_610_same_galois`. -/
 theorem stationary_free_extension_exists
     (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ)
     {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
@@ -319,10 +354,23 @@ theorem stationary_free_extension_exists
     ∃ q : TupleOver K oneVertexShape P.scheme hμ B, ∃ e : p.idx ≃ q.idx,
       IsFreeLift p q f hf e := by
   have hσlt : σ < μ := (Order.lt_succ σ).trans_le hσμ
-  let τ : Cardinal.{u} := max σ ℵ₀
+  let b : Cardinal.{u} := max (ls K) ℵ₀
+  let τ : Cardinal.{u} := testCardinal b P.g σ
   let κ : Cardinal.{u} := Order.succ τ
-  have hτ : ℵ₀ ≤ τ := le_max_right _ _
-  have hτμ : τ < μ := max_lt hσlt (P.aleph0_lt hμ)
+  have hτ : ℵ₀ ≤ τ := by
+    change ℵ₀ ≤ (2 : Cardinal.{u}) ^ (P.g σ + b + σ + aleph0)
+    exact le_trans (cantor aleph0).le
+      (power_le_power_left two_ne_zero
+        (le_add_self : aleph0 ≤ (P.g σ + b + σ) + aleph0))
+  have hexp : P.g σ + b + σ + aleph0 < μ := by
+    have hg : P.g σ < μ :=
+      (hμ.1.closed P.g (Set.mem_insert_of_mem _ rfl)).below σ hσ hσlt
+    have hb : b < μ := max_lt (P.ls_lt hμ) (P.aleph0_lt hμ)
+    have h1 : P.g σ + b < μ := add_lt_of_lt (P.aleph0_le hμ) hg hb
+    have h2 : P.g σ + b + σ < μ := add_lt_of_lt (P.aleph0_le hμ) h1 hσlt
+    exact add_lt_of_lt (P.aleph0_le hμ) h2 (P.aleph0_lt hμ)
+  have hτμ : τ < μ :=
+    hμ.1.working.strongLimit.isStrongPrelimit hexp
   have hκ : ℵ₀ ≤ κ := hτ.trans (Order.le_succ _)
   have hκμ : κ < μ :=
     (Order.succ_le_of_lt (cantor τ)).trans_lt
@@ -331,22 +379,28 @@ theorem stationary_free_extension_exists
     have hmul : κ * #p.idx ≤ κ * σ := mul_le_mul' le_rfl hidx
     have hκσ : κ * σ = κ := by
       refine mul_eq_left hκ ?_ (aleph0_pos.trans_le hσ).ne'
-      exact (le_max_left σ ℵ₀).trans (Order.le_succ _)
+      have hστ : σ < τ := by
+        change σ < (2 : Cardinal.{u}) ^ (P.g σ + b + σ + aleph0)
+        exact lt_of_lt_of_le (cantor σ)
+          (power_le_power_left two_ne_zero
+            (le_trans (le_add_self : σ ≤ (P.g σ + b) + σ)
+              (le_self_add : (P.g σ + b) + σ ≤ ((P.g σ + b) + σ) + aleph0)))
+      exact hστ.le.trans (Order.le_succ _)
     exact hmul.trans_lt (by rw [hκσ]; exact hκμ)
   have hclosed : infra_69_pad_recursion_closed σ (max (ls K) ℵ₀)
       (max (max σ τ) (max (ls K) ℵ₀)) μ := by
     have hβ : max (max σ τ) (max (ls K) ℵ₀) < μ :=
       max_lt (max_lt hσlt hτμ) (max_lt (P.ls_lt hμ) (P.aleph0_lt hμ))
     exact hrec.2 _ hβ
-  obtain ⟨seq, _, _⟩ :=
+  obtain ⟨seq, hseqτ, _⟩ :=
     P.exists_approximationSequence hμ A p hνμ σ τ κ hσ hσlt hidx hτ hτμ hκ hκμ hprod hclosed
+  have hseqτμ : seq.τ < μ := hseqτ ▸ hτμ
   obtain ⟨q, e, hmaj⟩ :=
-    infra_610_place_on_B P σ hσ hμ hrec hσμ f hf p hνμ hidx hidxμ seq
+    infra_610_place_on_B P σ hσ hμ hrec hσμ f hf p hνμ hidx hidxμ seq hseqτμ
   refine ⟨q, e, ⟨infra_610_same_galois f hf p q e hνμ, ⟨seq, ?_⟩⟩⟩
   intro ι Z hι
   obtain ⟨Z0, hZ0⟩ := hmaj Z hι
   refine ⟨Z0, typeJoint (p := q) Z ∘ Sum.map e id, hZ0, ?_⟩
-  -- `reindexJoint e (typeJoint q ∘ Sum.map e id) = typeJoint q`
   have hre : reindexJoint e (typeJoint (p := q) Z ∘ Sum.map e id) =
       typeJoint (p := q) Z := by
     funext t
