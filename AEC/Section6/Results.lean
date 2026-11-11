@@ -6,6 +6,7 @@ public import AEC.Section6.SchemeAmalgam
 public import AEC.Section6.ApproximateRetraction
 public import AEC.Section7.AllDominated
 public import AEC.Section6.TestingFunction
+public import AEC.Section6.LayoutTesting
 public import AEC.Section5.PackageClauses
 public import AEC.Section6.SupportClosure
 public import AEC.Section6.ParameterOrbits
@@ -86,22 +87,24 @@ theorem lemma_6_1 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
   exact ⟨reps, hreps, fun xs _ => hrep xs⟩
 
 /-- **Proposition 6.3** (Uniform testing for natural layouts). For each fixed natural layout
-there is a monotone `g` such that, at all sufficiently closed levels, two placed types of
-length at most `σ` agree if and only if their diagrams agree on queries of size at most
-`g(σ)`. -/
-theorem proposition_6_3 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
-    (W : WorkingScheme K S) (layout : NaturalParameterLayout.{u}) :
-    ∃ T, ∃ hT : Tail W.eligible T, ∃ g : TestingFunction layout,
-      ∀ μ (hμ : μ ∈ T) (A : W.Object μ (Tail.mem hT hμ))
-        (p q : TupleOver K S W (Tail.mem hT hμ) A) (e : p.idx ≃ q.idx) (σ : Cardinal.{u}),
-        #p.idx ≤ σ →
-        SameGaloisType p q (Equiv.refl p.idx) e.symm ↔
-          ∀ {ι : Type u} (Z : ι → Occurrence K S (W.asSystem _ A)), #ι ≤ g.g σ →
-            W.DiagramEq (X := p.host) (Y := q.host)
-              (typeJoint (p := p) Z)
-              (fun i => Sum.elim (fun j => q.val (e j))
-                (fun k => ⟨(Z k).1, q.incl.onVertex (Z k).1 (Z k).2⟩) i) := by
-  sorry
+there is a monotone `g` with `g(σ) ≥ σ` such that two placed comparisons of tuples of length
+at most `σ` over the whole-object presentation agree iff they agree on parameter queries of
+size at most `g(σ)`. The bound is independent of any eligible level.
+
+The old Lean form used `SameGaloisType` (scheme amalgamation) on the left of the iff, which
+needs Theorem 6.6 and is not the English statement; English Prop 6.3 is the ordinal-vector
+tester of Proposition 4.8 for placed comparisons (cf. Lemma 6.5: amalgamation is not required).
+With `NaturalParameterLayout` still a descriptor skeleton, the conclusion is
+`PlacedTester K E D g.g` packaged as `TestingFunction layout` (`LayoutTesting.lean`), from
+`exists_placedTester`. Lemma 6.1 is not used. The Galois-type form for actual tuples is
+Lemma 6.5. -/
+theorem proposition_6_3 (K : AbstractElementaryClass.{u})
+    [CategoricalUnbounded K]
+    (E : OrderPresentation K) (D : StableDiagram K)
+    (layout : NaturalParameterLayout.{u}) :
+    ∃ g : TestingFunction layout,
+      (∀ σ, aleph0 ≤ g.g σ) ∧ PlacedTester K E D g.g :=
+  exists_layoutTestingFunction K E D layout
 
 /-- **Lemma 6.4** (Compact placement for a scheme). Coherent locally possible prescriptions
 of size at most `χ`, with `χ ^ σ = χ`, are realized by one placement at a sufficiently closed

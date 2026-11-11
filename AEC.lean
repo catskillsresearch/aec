@@ -113,6 +113,7 @@ public import AEC.Section6.ApproximateRetraction
 public import AEC.Section6.ApproximationSequence
 public import AEC.Section6.FreeExtension
 public import AEC.Section6.MajorityValue
+public import AEC.Section6.LayoutTesting
 public import AEC.Section6.NaturalParameterLayout
 public import AEC.Section6.ParameterOrbits
 public import AEC.Section6.ProductType
