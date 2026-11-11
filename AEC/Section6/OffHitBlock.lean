@@ -327,6 +327,20 @@ theorem src_lt_iff (x y : Src X) : x < y ↔ X.sumOrig x.val < X.sumOrig y.val :
 theorem dst_lt_iff (x y : Dst X) : x < y ↔ X.sumCopy x.val < X.sumCopy y.val := by
   rfl
 
+/-- Original positions of the joint support, in the ambient order. -/
+def srcEmb : Src X ↪o Amb :=
+  OrderEmbedding.ofStrictMono (fun s => X.sumOrig s.val)
+    (fun a b hab => (X.src_lt_iff a b).mp hab)
+
+/-- Copy positions of the joint support, in the ambient order. Parameters stay. -/
+def dstEmb : Dst X ↪o Amb :=
+  OrderEmbedding.ofStrictMono (fun d => X.sumCopy d.val)
+    (fun a b hab => (X.dst_lt_iff a b).mp hab)
+
+@[simp] theorem srcEmb_apply (s : Src X) : X.srcEmb s = X.sumOrig s.val := rfl
+
+@[simp] theorem dstEmb_apply (d : Dst X) : X.dstEmb d = X.sumCopy d.val := rfl
+
 def srcDstEquiv : Src X ≃ Dst X where
   toFun s := ⟨s.val⟩
   invFun d := ⟨d.val⟩
@@ -654,6 +668,16 @@ instance : Nonempty (Src X) :=
 
 instance : Nonempty (Dst X) :=
   ⟨⟨Sum.inl (Classical.choice ‹Nonempty Cl›)⟩⟩
+
+/-- The joint list after the block interchange: clusters move, parameters stay. -/
+noncomputable def movedJoint {lab : Type u} {arity : lab → ℕ} {α β : Type u}
+    (t : α → SupportTerm lab arity (Src X))
+    (s : β → SupportTerm lab arity (Src X))
+    (ht : ∀ a k, (t a).pos k ∉ X.regions.second)
+    (hs : ∀ b k, (s b).pos k ∉ X.regions.first) :
+    α ⊕ β → SupportTerm lab arity (Dst X) :=
+  Sum.elim (fun a => X.interchange.move (t a) (Or.inl (ht a)))
+    (fun b => X.interchange.move (s b) (Or.inr (hs b)))
 
 /-- English Lemma 6.1, second sentence: natural diagrams are unchanged by simultaneous
 disjoint block transpositions. Each slot is one region, and a parameter crosses at most

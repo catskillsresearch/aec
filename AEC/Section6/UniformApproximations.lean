@@ -28,7 +28,9 @@ English steps:
    pattern; richness realizes the needed order patterns (English: Lemma 5.5 equivalence).
 5. If supports avoid every region, the copy and the original differ by simultaneous disjoint
    block transpositions. Lemma 4.6 (`infra_69_lem61_off_hits`) keeps the natural diagram.
-   The scheme sentence `D(vᵢ, Z) = p↾Z` is the obligation `OffHitCopyDiagramEq`.
+   On `SingleModelData`, `infra_69_off_hit_diagramEq` reads that copy back onto the skeleton
+   (`ChartOffHit.readCopy`) and turns the natural diagram into `D(vᵢ, Z) = p↾Z`
+   (`OffHitCopyDiagramEq`).
 6. Assemble an `ApproximationSequence` (bounded concatenation, `few_exceptions`, subtuples).
 
 Step 4 uses `english_orderPattern_realized_over_old` (cut filling ⇒ pattern realization;
@@ -1661,8 +1663,8 @@ end ChartOffHit
 
 The transposition sentence of that lemma is Lemma 4.6. An off-hit copy moves each cluster
 across a whole block of parameter positions, the blocks of distinct slots are disjoint, and
-the natural diagram is unchanged. The scheme identification itself is `OffHitCopyDiagramEq`:
-`lemma_6_1` only counts orbits, and nothing reads this copy as an `Occurrence` list. -/
+the natural diagram is unchanged. The scheme identification `OffHitCopyDiagramEq` is
+`infra_69_off_hit_diagramEq`: `lemma_6_1` only counts orbits. -/
 theorem infra_69_lem61_off_hits
     [CategoricalUnbounded K]
     (E : OrderPresentation K) (D : StableDiagram K)
@@ -1682,9 +1684,9 @@ theorem infra_69_lem61_off_hits
 `D(vᵢ, Z) = p↾Z`."
 
 `lemma_6_1` counts orbits of `σ`-tuples and does not identify the two diagrams.
-`infra_69_lem61_off_hits` is the transposition half (Lemma 4.6) for support terms on the
-chart copy. Nothing reads that copy as an `Occurrence` list, and nothing transports
-`SameNaturalDiagram` to `WorkingScheme.DiagramEq`. -/
+`infra_69_lem61_off_hits` is the transposition half (Lemma 4.6). On `SingleModelData`,
+`ChartOffHit.readCopy` is the occurrence reading of the moved support, and
+`infra_69_off_hit_diagramEq` transports `SameNaturalDiagram` to `DiagramEq`. -/
 def OffHitCopyDiagramEq
     {μ : Cardinal.{u}} {hμ : μ ∈ W.eligible} {base : W.Object μ hμ}
     (p : TupleOver K S W hμ base)
@@ -1693,6 +1695,183 @@ def OffHitCopyDiagramEq
     (Z : ι → Occurrence K S (W.asSystem hμ base)) (i : κIndex) : Prop :=
   W.DiagramEq (X := p.host) (Y := base)
     (typeJoint (p := p) Z) (seqJoint (family i) Z)
+
+/-- Every position of a term pushed along `dstEmb` lies on the old chart.
+Clusters move by `copy`; parameters stay at their old indices. -/
+theorem ChartOffHit.dstAlong_support_subset_old
+    {I J : Type u} [LinearOrder I] [LinearOrder J]
+    {lab : Type u} {arity : lab → ℕ}
+    (H : ChartOffHit I J)
+    (u : SupportTerm lab arity (CopyInterchange.Dst H.interchange)) :
+    termSupport (SupportTerm.along H.interchange.dstEmb u) ⊆ Set.range (⇑H.C.old) := by
+  intro x hx
+  obtain ⟨k, rfl⟩ := hx
+  change H.interchange.dstEmb (u.pos k) ∈ Set.range (⇑H.C.old)
+  rw [CopyInterchange.dstEmb_apply]
+  rcases (u.pos k) with ⟨v⟩
+  cases v with
+  | inl c =>
+    exact ⟨H.copy c, (ChartOffHit.embCopy_apply H c).symm⟩
+  | inr p =>
+    exact ⟨p.1, (ChartOffHit.embParm_apply H p).symm⟩
+
+/-- The moved support, read as a term over the old chart. -/
+noncomputable def ChartOffHit.readCopy
+    {I J : Type u} [LinearOrder I] [LinearOrder J]
+    {lab : Type u} {arity : lab → ℕ}
+    (H : ChartOffHit I J)
+    (u : SupportTerm lab arity (CopyInterchange.Dst H.interchange)) :
+    SupportTerm lab arity I :=
+  (SupportTerm.along H.interchange.dstEmb u).pullback H.C.old
+    (H.dstAlong_support_subset_old u)
+
+theorem ChartOffHit.along_old_readCopy
+    {I J : Type u} [LinearOrder I] [LinearOrder J]
+    {lab : Type u} {arity : lab → ℕ}
+    (H : ChartOffHit I J)
+    (u : SupportTerm lab arity (CopyInterchange.Dst H.interchange)) :
+    SupportTerm.along H.C.old (H.readCopy u) =
+      SupportTerm.along H.interchange.dstEmb u :=
+  SupportTerm.along_pullback H.C.old _
+    (H.dstAlong_support_subset_old u)
+
+/-- **Infra `infra_69_off_hit_diagramEq`:** On `SingleModelData`, an off-hit chart copy
+satisfies `D(vᵢ, Z) = p↾Z`.
+
+`Placement.Lifts` identifies `typeJoint Z` with the placed joint. `infra_69_lem61_off_hits`
+keeps the natural diagram of that joint after the block interchange, and
+`SameNaturalDiagram.same` is `D.same` of the realizations in `E(Q.J)`. `readCopy` pulls the
+moved terms back along the old chart; the skeleton chart `e` is their occurrence reading in
+the base. `diagramEq_iff_sameD` is `DiagramEq`. -/
+theorem infra_69_off_hit_diagramEq
+    (P : SingleModelData K)
+    {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
+    (base : P.scheme.Object μ hμ)
+    (p : TupleOver K oneVertexShape P.scheme hμ base)
+    (hνμ : p.ν = μ)
+    {κIndex ι : Type u} (i : κIndex)
+    (family : κIndex → p.idx → Occurrence K oneVertexShape (P.scheme.asSystem hμ base))
+    (Z : ι → Occurrence K oneVertexShape (P.scheme.asSystem hμ base))
+    {I : Type u} [LinearOrder I] [Nonempty I] (hI : #I = μ)
+    (e : (P.E.obj I).carrier ≃[K.τ] base.model.carrier)
+    (Q : Placement P.E.lab P.E.arity I p.idx)
+    (H : ChartOffHit I Q.J)
+    {ρ : Cardinal.{u}} (hρ : ℵ₀ ≤ ρ) (hρμ : ρ < μ)
+    (hjoint : #(p.idx ⊕ ι) ≤ ρ)
+    (q : ι → (P.E.obj I).carrier)
+    (t : p.idx → SupportTerm P.E.lab P.E.arity (CopyInterchange.Src H.interchange))
+    (s : ι → SupportTerm P.E.lab P.E.arity (CopyInterchange.Src H.interchange))
+    (ht : ∀ a k, (t a).pos k ∉ H.interchange.regions.second)
+    (hs : ∀ b k, (s b).pos k ∉ H.interchange.regions.first)
+    (hplaced : ∀ c,
+      SupportTerm.along H.interchange.srcEmb ((Sum.elim t s) c) =
+        Q.joint (fun b => supportTermOf P.E (q b)) c)
+    (hread : ∀ c, seqJoint (family i) Z c =
+      base.occ (e (P.E.realize
+        (H.readCopy (H.interchange.movedJoint t s ht hs c)))))
+    (hpar : ∀ j, e (q j) = base.val (Z j))
+    (incl : Language.Embedding K.τ (P.E.obj I).carrier p.host.model.carrier)
+    (d : p.idx → p.host.model.carrier)
+    (hincl : ∀ a, incl a = (p.incl.onVertex PUnit.unit) (e a))
+    (hd : ∀ a, d a = p.host.val (p.val a))
+    (hlifts : Q.Lifts P.E P.D p.host.mem incl d ρ hjoint q) :
+    OffHitCopyDiagramEq (S := oneVertexShape) (W := P.scheme) p family Z i := by
+  haveI : CategoricalUnbounded K := P.D.categoricalUnbounded
+  let moved := H.interchange.movedJoint t s ht hs
+  let xs : (p.idx ⊕ ι) → p.host.model.carrier :=
+    fun c => p.host.val (typeJoint (p := p) Z c)
+  let ys : (p.idx ⊕ ι) → base.model.carrier :=
+    fun c => base.val (seqJoint (family i) Z c)
+  let realizedCopy : (p.idx ⊕ ι) → (P.E.obj I).carrier :=
+    fun c => P.E.realize (H.readCopy (moved c))
+  let realizedJoint : (p.idx ⊕ ι) → (P.E.obj Q.J).carrier :=
+    fun c => P.E.realize (Q.joint (fun b => supportTermOf P.E (q b)) c)
+  let realizedMoved : (p.idx ⊕ ι) → (P.E.obj Q.J).carrier :=
+    fun c => P.E.realize (SupportTerm.along H.interchange.dstEmb (moved c))
+  have hcardI : Model.card (P.E.obj I) = μ := P.card_obj_eq hμ I hI
+  have hcardHost : Model.card p.host.model = μ := by simpa [hνμ] using p.host.card
+  have hcardBase : Model.card base.model = μ := base.card
+  have htρ : P.D.t ρ ≤ μ := (P.t_lt hμ hρ hρμ).le
+  have hBc : P.D.t ρ ≤ Model.card p.host.model := htρ.trans hcardHost.ge
+  have hBasec : P.D.t ρ ≤ Model.card base.model := htρ.trans hcardBase.ge
+  have hIc : P.D.t ρ ≤ Model.card (P.E.obj I) := htρ.trans hcardI.ge
+  have hJc : P.D.t ρ ≤ Model.card (P.E.obj Q.J) :=
+    hIc.trans (mk_le_of_injective (P.E.map Q.f).injective)
+  have hxs : xs = Sum.elim d (fun b => incl (q b)) := by
+    funext c
+    cases c with
+    | inl a =>
+      simp [xs, typeJoint, hd]
+    | inr j =>
+      simp only [xs, typeJoint]
+      have hunit : (Z j).1 = PUnit.unit := Subsingleton.elim _ _
+      rw [hunit]
+      change (p.incl.onVertex PUnit.unit) (Z j).2 = incl (q j)
+      rw [hincl]
+      apply congrArg (p.incl.onVertex PUnit.unit)
+      rw [hpar j]
+      rfl
+  have hys : ∀ c, ys c = e (realizedCopy c) := by
+    intro c
+    change base.val (seqJoint (family i) Z c) =
+      e (P.E.realize (H.readCopy (H.interchange.movedJoint t s ht hs c)))
+    exact (congrArg base.val (hread c)).trans
+      (SMObject.val_occ base
+        (e (P.E.realize (H.readCopy (H.interchange.movedJoint t s ht hs c)))))
+  have hMJ : K.Mem (P.E.obj Q.J) := orderPresentation_obj_mem P.E Q.J
+  have hMI : K.Mem (P.E.obj I) := P.hE I
+  have h1 := hlifts hBc hJc
+  rw [← hxs] at h1
+  have hplacedFun :
+      (fun c => SupportTerm.along H.interchange.srcEmb ((Sum.elim t s) c)) =
+        Q.joint (fun b => supportTermOf P.E (q b)) :=
+    funext hplaced
+  have hnat :=
+    (infra_69_lem61_off_hits (E := P.E) (D := P.D) H ρ hjoint hρ t s ht hs).along
+      hρ H.interchange.srcEmb H.interchange.dstEmb
+  have hnat' : SameNaturalDiagram K P.E P.D ρ hjoint
+      (Q.joint (fun b => supportTermOf P.E (q b)))
+      (fun c => SupportTerm.along H.interchange.dstEmb (moved c)) := by
+    simpa [hplacedFun, moved, CopyInterchange.movedJoint] using hnat
+  have h2 := SameNaturalDiagram.same hρ hnat' hJc hJc hMJ hMJ
+  have hmap : ∀ c, P.E.map H.C.old (realizedCopy c) = realizedMoved c := by
+    intro c
+    unfold realizedCopy realizedMoved
+    rw [P.E.realize_along, ChartOffHit.along_old_readCopy]
+  have h3 := P.D.of_strong hjoint hMI hMJ hIc hJc realizedCopy realizedMoved
+    (P.E.map H.C.old) hρ (P.E.map_strong H.C.old) hmap
+  have h4 := P.D.of_strong hjoint hMI base.mem hIc hBasec realizedCopy ys
+    e.toEmbedding hρ (strong_of_equiv K e hMI) fun c => (hys c).symm
+  have h23 := P.D.trans hjoint hMJ hMJ hMI hJc hJc hIc realizedJoint realizedMoved
+    realizedCopy h2 (P.D.symm hjoint hMI hMJ hIc hJc realizedCopy realizedMoved h3)
+  have h123 := P.D.trans hjoint p.host.mem hMJ hMI hBc hJc hIc xs realizedJoint
+    realizedCopy h1 h23
+  have hfin := P.D.trans hjoint p.host.mem hMI base.mem hBc hIc hBasec xs realizedCopy ys
+    h123 h4
+  let τ0 : Cardinal.{u} := max #(p.idx ⊕ ι) ℵ₀
+  let σ' : Cardinal.{u} := max ρ (ls K)
+  have hτ0inf : ℵ₀ ≤ τ0 := le_max_right _ _
+  have hτ0ρ : τ0 ≤ ρ := max_le hjoint hρ
+  have hσ'inf : ℵ₀ ≤ σ' := hρ.trans (le_max_left _ _)
+  have hσ'μ : σ' < μ := max_lt hρμ (P.ls_lt hμ)
+  have htσ' : P.D.t σ' ≤ μ := (P.t_lt hμ hσ'inf hσ'μ).le
+  have hBc' : P.D.t σ' ≤ Model.card p.host.model := htσ'.trans hcardHost.ge
+  have hBase' : P.D.t σ' ≤ Model.card base.model := htσ'.trans hcardBase.ge
+  have hBcτ : P.D.t τ0 ≤ Model.card p.host.model := (P.D.mono _ _ hτ0ρ).trans hBc
+  have hBaseτ : P.D.t τ0 ≤ Model.card base.model := (P.D.mono _ _ hτ0ρ).trans hBasec
+  have hsameτ := P.D.same_relevel hjoint hρ hτ0inf (le_max_left ρ (ls K))
+    (hτ0ρ.trans (le_max_left ρ (ls K))) (le_max_right ρ (ls K)) p.host.mem base.mem
+    hBc hBasec hBc' hBase' hBcτ hBaseτ xs ys hfin (le_max_left _ _)
+    (id : (p.idx ⊕ ι) → p.idx ⊕ ι)
+  simp only [id] at hsameτ
+  have hSame : P.D.SameD p.host.model base.model xs ys :=
+    ⟨p.host.mem, base.mem, hBcτ, hBaseτ, hsameτ⟩
+  have hαμ : #(p.idx ⊕ ι) < μ := hjoint.trans_lt hρμ
+  have hαν : #(p.idx ⊕ ι) < p.ν := by simpa [hνμ] using hαμ
+  have hDeq :=
+    (SingleModelData.diagramEq_iff_sameD (hμ := p.hν) (hν := hμ) p.host base xs ys hαν
+      hαμ).mpr hSame
+  simpa [OffHitCopyDiagramEq, SingleModelData.scheme, xs, ys] using hDeq
 
 /-- **Infra `infra_69_hit_bound`:** Every supporting position of `Z` belongs to at most one of
 the regions, and therefore excludes at most one index `i`. -/
@@ -1795,14 +1974,15 @@ theorem infra_69_assemble
   ∃ seq : ApproximationSequence p, seq.τ = τ ∧ #(seq.κIndex) = κ := by
   /- English (eventual.pdf §6.2, Definition 6.8): package the support-copy family into an
      approximation sequence (`concat_bounded`, `few_exceptions`).
-     Missing API:
-     * `infra_69_place_type` places `p` over the skeleton for queries of size at most `τ`, and
-       supplies no `Occurrence` family;
-     * `OffHitCopyDiagramEq` is the missing `WorkingScheme.DiagramEq` for indices whose
-       supports avoid the copy regions, which is what `few_exceptions` asks for.
-       `infra_69_lem61_off_hits` gives the natural-diagram half (Lemma 4.6).
-     `infra_69_copy_cluster`, `infra_69_hit_bound`, `infra_69_finitary_exceptions`, and
-     `infra_69_subtuple_uniform` do not produce the `Occurrence` family.
+     `infra_69_off_hit_diagramEq` discharges `OffHitCopyDiagramEq` on `SingleModelData` once
+     the placed joint is `SupportTerm.along srcEmb` of an off-hit `Src` list and the family
+     is the occurrence reading `e ∘ E.realize ∘ ChartOffHit.readCopy ∘ movedJoint`.
+     Missing API, still required before `few_exceptions`:
+     * a `Src` support list for the placed tuple, with `hplaced` against
+       `infra_69_place_type`'s placement (`place_type` supplies no `Occurrence` family);
+     * the `κ` chart copies as that reading;
+     * the identification of the indices that fail `ht`/`hs` with the finitary hit set of
+       `infra_69_finitary_exceptions`.
      `TupleOver.InBase` and `ApproximationSequence.ofConstFamily` are not used. -/
   sorry
 
@@ -1814,7 +1994,8 @@ abbrev support_copy_exception_and_assembly := @infra_69_assemble
 /-- Uniform approximation sequences for `p = tp(v/A)` with `#p.idx ≤ σ` (English Lemma 6.9).
 
 Hypotheses match Lemma 6.1 packaging. The proof follows the English paragraphs above; it is
-pinned at `infra_69_assemble` (`OffHitCopyDiagramEq` is the missing `DiagramEq`).
+pinned at `infra_69_assemble` (the occurrence family of the chart copies is not built;
+`infra_69_off_hit_diagramEq` is the `DiagramEq` step once that reading is supplied).
 On `SingleModelData`, `infra_69_place_type` places `p` over the skeleton at size `τ`.
 Steps 1–2 invoke Lemmas 5.5 and 5.4. -/
 theorem WorkingScheme.exists_approximationSequence

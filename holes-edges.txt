@@ -1,7 +1,7 @@
 # Hard edges from holes-graph.json
 # Convention: FROM --> TO means the English proof of TO requires FROM.
 # Nodes: 141  Hard edges: 178
-# Lem 6.9: lem61_off_hits done (SameNaturalDiagram); pin at off_hit_diagramEq; assemble and lemma_6_9 blocked.
+# Lem 6.9: off_hit_diagramEq done (SingleModelData reading); assemble open; lemma_6_9 blocked.
 
 claim_11_10 --> claim_11_11
 claim_11_11 --> claim_11_12
