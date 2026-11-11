@@ -1,6 +1,6 @@
 {
   "updated": "2026-11-10",
-  "sorryCount": 61,
+  "sorryCount": 60,
   "legend": {
     "open": "No unfinished required proof-deps \u2014 try next",
     "blocked": "Waiting on incomplete required proof-deps",
@@ -22,7 +22,8 @@
     "Thm 4.11 is done (ClosedLevels.lean, ClosedLevelAmalgam.lean, ClosedLevelTypes.lean); Section 4 is complete (no sorry in AEC/Section4), and Prop 5.6 is unblocked. S = closure points \u03bc > \u2113 of {t, g}. Statement changes: added [CategoricalUnbounded K], E : OrderPresentation K, hg : PlacedTester K E D g (replacing the monotone-only g). Clause 2: added \u2135\u2080 \u2264 \u03c3; the old right side was vacuous (tests at level \u03bc under D.t \u03bc \u2264 Model.card B\u1d62 = \u03bc < D.t \u03bc); it is now the tests at the bounded levels \u03c1 < \u03bc (as in lemma_4_10) over all parameter lists p : \u03b2 \u2192 A with #\u03b2 \u2264 g \u03c3 + ls K. \u03b2 is quantified inside the iff, since for one fixed \u03b2 the iff fails when \u03b2 is small; the bound is g \u03c3 + ls K because PlacedTester bounds positions of I and \u2264 g(\u03c3) positions support \u2264 g(\u03c3) + \u2113 elements of A. Clause 3: the old form compared x, y \u2208 A under g\u2080 = g\u2081 on A, which forces x = y and holds for any injection A \u2192 \u03bc; it is now a code for the elements of all \u03bc-extensions (B, f) of A, with code B\u2080 f\u2080 x = code B\u2081 f\u2081 y iff an amalgam over A identifies x with y (the old form is the case B\u2080 = B\u2081 = A). Hard edges proposition_4_2 \u2192 theorem_4_11 (strong-map clause, StableDiagram.to_strong) and proposition_4_8 \u2192 theorem_4_11 (placed tester) added.",
     "Prop 5.6 is done (SingleModelScheme.lean, SingleModelPackage.lean), with a strengthened statement: a one-vertex working package with presentations and an object at every eligible level, on an unbounded class of closure points of {D.t, g}. Definition 5.2 was repaired first, because the planned statement was refutable (Lean-checked obstructions). (1) WorkingScheme.diagram_iso is for lists with #\u03b1 < \u03bc, and WorkingScheme.diagram_preserved for lists with #\u03b1 < \u03bc and #\u03b1 < \u03bd: unbounded, the two fields applied to the list of all occurrences of an object make every permitted arrow between objects at one level vertexwise bijective, and the stable diagram D only controls bounded lists. (2) IsSaturated.saturated assumes \u2200 i, ext (Sum.inl i) = base i: the witness extends the list whose diagram is that of the actual list (otherwise ext was unrelated to base and xs). (3) HasChainUnions.union assumes the cocone condition \u2200 i j, comp (le i j) (toZ j) = toZ i in its universal property: without it a two-element constant family identifies any two permitted arrows X \u2192 Z, which with mixed downward closure refutes every package having an object. diagram_trans / diagram_reindex / diagram_restrict / diagram_refl / diagram_symm / diagram_empty are unchanged (unbounded). Callers updated: namedWorkingScheme now takes #\u03b9 < \u03bc0 and the tail bounds \u03bc0 \u2264 \u03bc, \u2135\u2080 \u2264 \u03bc; Props 5.7, 5.8, 5.9 remain proved. Known residual: HasChainUnions.union quantifies over arrows le i j for every ordered pair (i, j) with strict composition, so its families consist of mutually inverse isomorphisms and, with the cocone condition, the clause holds in every scheme (take U := obj i\u2080); a faithful clause would index le over i \u2264 j in a directed order. Left unchanged; the real content for single models is SingleModelData.exists_directed_union. Sections 6\u201311 that consume chain unions should re-index the clause when they need it.",
     "Lemma 6.1 is done (ParameterOrbits.lean), with a repaired statement. The bare-scheme statement was refutable, and assuming a working package with presentations is not enough: nothing there makes the automorphisms of the vertex models (Lemma 4.5) structural isomorphisms of the scheme (counterexample pattern, not formalized: isomorphisms that preserve a colouring by more than \u03c7 colours). The link is the new hypothesis AssemblesStructIso W b; the English bound b is kept (hb : b + \u03c3 < \u03c7), together with the Lemma 4.5 bound h\u03c7, categoricity at the eligible levels hcat and [CategoricalUnbounded K]. The shape must have no specified map (hedge): vertex automorphisms from Lemma 4.5 need not commute with the maps of a system. This replaces a one-vertex hypothesis, which is not needed (any finite number of vertices is covered) and does not suffice for this proof (a vertex with a specified map to itself). AssemblesStructIso holds for the Prop 5.6 scheme with b = 0 and for the Prop 5.7 named scheme with b + #names. Hard edge lemma_4_5 \u2192 lemma_6_1 added. Prop 6.3 is unblocked.",
-    "Prop 6.3 is done (LayoutTesting.lean): restated away from SameGaloisType/Tail/WorkingScheme (amalgamation circular with Thm 6.6; English is placed comparisons, bound independent of level) to \u2203 g : TestingFunction layout, (\u2200 \u03c3, \u2135\u2080 \u2264 g.g \u03c3) \u2227 PlacedTester K E D g.g, from exists_placedTester with g.g \u03c3 = max \u03c3 (g0 \u03c3). Layout is a descriptor tag (NaturalParameterLayout has no placement data). Hard edges: softened false lemma_6_1 \u2192 proposition_6_3 and proposition_6_3 \u2192 lemma_6_4 (English Lem 6.4 uses 6.1/4.6); added proposition_4_8 \u2192 proposition_6_3 and lemma_4_7 \u2192 proposition_6_3."
+    "Prop 6.3 is done (LayoutTesting.lean): restated away from SameGaloisType/Tail/WorkingScheme (amalgamation circular with Thm 6.6; English is placed comparisons, bound independent of level) to \u2203 g : TestingFunction layout, (\u2200 \u03c3, \u2135\u2080 \u2264 g.g \u03c3) \u2227 PlacedTester K E D g.g, from exists_placedTester with g.g \u03c3 = max \u03c3 (g0 \u03c3). Layout is a descriptor tag (NaturalParameterLayout has no placement data). Hard edges: softened false lemma_6_1 \u2192 proposition_6_3 and proposition_6_3 \u2192 lemma_6_4 (English Lem 6.4 uses 6.1/4.6); added proposition_4_8 \u2192 proposition_6_3 and lemma_4_7 \u2192 proposition_6_3.",
+    "Lem 6.4 is done: restated as packaging of proposition_4_9 / compact_placement over a well-ordered presentation (hnat, hcoh; h\u03c7 = ls K + \u03c3 < \u03c7). Dropped bare WorkingScheme (refutable without coherence) and unused b. Hard edge proposition_4_9 \u2192 lemma_6_4; soft lemma_4_6 \u2192 lemma_6_4 via Prop 4.9. Softened proposition_6_3 \u2192 lemma_6_4 already."
   ],
   "nodes": [
     {
@@ -398,16 +399,16 @@
       "label": "Lem 6.4",
       "section": 6,
       "file": "AEC/Section6/Results.lean",
-      "status": "open",
+      "status": "done",
       "blocker": null,
-      "detail": " Unblocked: Prop 6.3 soft edge only; hard deps closed."
+      "detail": "Alias of proposition_4_9 (CompactPlacement.lean). Statement repair: presentation-level with hnat/hcoh; dropped bare WorkingScheme and unused b; h\u03c7 = ls K + \u03c3 < \u03c7. No sorry (axioms: propext, Classical.choice, Quot.sound)."
     },
     {
       "id": "lemma_6_5",
       "label": "Lem 6.5",
       "section": 6,
       "file": "AEC/Section6/Results.lean",
-      "status": "blocked",
+      "status": "open",
       "blocker": null
     },
     {
@@ -1698,7 +1699,18 @@
       "to": "proposition_6_3",
       "kind": "hard",
       "note": "English ordinal-vector argument; Lean via exists_placedTester which uses Lem 4.7."
+    },
+    {
+      "from": "proposition_4_9",
+      "to": "lemma_6_4",
+      "kind": "hard"
+    },
+    {
+      "from": "lemma_4_6",
+      "to": "lemma_6_4",
+      "kind": "soft",
+      "note": "Via proposition_4_9 / compact_placement block interchange."
     }
   ],
-  "doneCount": 51
+  "doneCount": 52
 }

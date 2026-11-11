@@ -106,29 +106,42 @@ theorem proposition_6_3 (K : AbstractElementaryClass.{u})
       (∀ σ, aleph0 ≤ g.g σ) ∧ PlacedTester K E D g.g :=
   exists_layoutTestingFunction K E D layout
 
-/-- **Lemma 6.4** (Compact placement for a scheme). Coherent locally possible prescriptions
-of size at most `χ`, with `χ ^ σ = χ`, are realized by one placement at a sufficiently closed
-level. -/
-theorem lemma_6_4 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
-    (W : WorkingScheme K S) (σ χ b : Cardinal.{u})
-    (hσ : aleph0 ≤ σ) (hb : b + σ < χ) (hpow : χ ^ σ = χ) :
-    ∃ T, ∃ hT : Tail W.eligible T,
-      ∀ μ (hμ : μ ∈ T) (A : W.Object μ (Tail.mem hT hμ))
-        {idx : Type u} (hidx : #idx ≤ σ)
-        (q : ∀ {β : Type u}, #β ≤ χ →
-          (β → Occurrence K S (W.asSystem _ A)) → idx ⊕ β → Occurrence K S (W.asSystem _ A)),
-        (∀ {β : Type u} (hβ : #β ≤ χ) (p : β → Occurrence K S (W.asSystem _ A)),
-          ∃ z : (idx → Occurrence K S (W.asSystem _ A)),
-            W.DiagramEq (X := A) (Y := A) (Sum.elim z p) (q hβ p)) →
-        ∃ (B : W.Object μ (Tail.mem hT hμ))
-          (f : SystemArrow K S (W.asSystem _ A) (W.asSystem _ B))
-          (hf : W.permitted (X := A) (Y := B) f)
-          (z : idx → Occurrence K S (W.asSystem _ B)),
-          ∀ {β : Type u} (hβ : #β ≤ χ) (p : β → Occurrence K S (W.asSystem _ A)),
-            W.DiagramEq (X := B) (Y := A)
-              (Sum.elim z (fun b => ⟨(p b).1, f.onVertex (p b).1 (p b).2⟩))
-              (q hβ p) := by
-  sorry
+/-- **Lemma 6.4** (Compact placement for a scheme). Coherent prescriptions of diagrams for a
+tuple of length at most `σ` over every parameter list of length at most `χ`, with
+`χ ^ σ = χ` and `ls K + σ < χ`, are realized by one order enlargement of a well-ordered
+presentation.
+
+The old Lean form quantified over a bare `WorkingScheme` without coherence, which is
+refutable (conflicting local prescriptions). English Lemma 6.4 works in a well-ordered
+presentation chart; its combinatorial engine is Proposition 4.9 /
+`compact_placement` (profiles, inert continuations, Lemma 4.6, σ⁺-obstruction). This is
+that packaging under Section 6 numbering: same hypotheses and conclusion as
+`proposition_4_9`. Unused English `b` is absorbed by Prop 4.9’s `hχ`. -/
+theorem lemma_6_4 (K : AbstractElementaryClass.{u}) [CategoricalUnbounded K]
+    (E : OrderPresentation K)
+    (D : StableDiagram K) {I : Type u} [LinearOrder I] [Nonempty I] [WellFoundedLT I]
+    {α : Type u} (σ χ : Cardinal.{u}) (hσinf : aleph0 ≤ σ) (hσ : #α ≤ σ)
+    (hχ : ls K + σ < χ) (hpow : χ ^ σ = χ) (hI : K.Mem (E.obj I))
+    (q : ∀ {β : Type u}, #β ≤ χ → (β → (E.obj I).carrier) → α ⊕ β → (E.obj I).carrier)
+    (hnat : ∀ {β : Type u} (hβ : #β ≤ χ) (p : β → (E.obj I).carrier)
+      (hpar : #β ≤ σ + χ) (hcardI : D.t (σ + χ) ≤ Model.card (E.obj I)),
+      D.same hpar hI hI hcardI hcardI (fun b => q hβ p (Sum.inr b)) p)
+    (hcoh : ∀ {β β' : Type u} (hβ : #β ≤ χ) (hβ' : #β' ≤ χ) (p : β → (E.obj I).carrier)
+      (ι : β' → β) (hjoint : #(α ⊕ β') ≤ σ + χ)
+      (hcardI : D.t (σ + χ) ≤ Model.card (E.obj I)),
+      D.same hjoint hI hI hcardI hcardI
+        (fun i => q hβ p (Sum.map id ι i)) (q hβ' (fun b => p (ι b)))) :
+    ∃ (J : Type u) (_ : LinearOrder J) (_ : Nonempty J) (f : I ↪o J)
+      (z : α → (E.obj J).carrier) (hJ : K.Mem (E.obj J)),
+      ∀ {β : Type u} (hβ : #β ≤ χ) (p : β → (E.obj I).carrier)
+        (hjoint : #(α ⊕ β) ≤ σ + χ)
+        (hcardI : D.t (σ + χ) ≤ Model.card (E.obj I))
+        (hcardJ : D.t (σ + χ) ≤ Model.card (E.obj J)),
+        D.same hjoint hJ hJ hcardJ hcardJ
+          (Sum.elim z (fun b => E.map f (p b)))
+          (Sum.elim (fun a => E.map f (q hβ p (Sum.inl a)))
+            (fun b => E.map f (q hβ p (Sum.inr b)))) :=
+  proposition_4_9 K E D σ χ hσinf hσ hχ hpow hI q hnat hcoh
 
 /-- **Lemma 6.5** (Placed comparisons of actual tuples). The diagrams of a bounded tuple over
 bounded subsets of the base have one placed comparison, and two tuples have the same
