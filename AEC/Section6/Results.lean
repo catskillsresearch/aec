@@ -351,71 +351,57 @@ The proof-side uniformity sentence is `infra_69_uniformity_bounds`.
 **S6.** A code at `c(σ)` (`lemma_6_9_code`) is a code for `p` in the transport sense of
 Theorem 6.10. This lemma does not prove that transport.
 
-**English gloss** (`UniformApproximations.lean`). On `SingleModelData`,
-`infra_69_assemble` is the support-copy chain on `SingleModelData`, and it requires
-`infra_69_pad_recursion_closed` (the `σ⁺` profile recursion of Lemma 6.4's padded clause
-lies strictly below the level). A `{D.t, g}`-closure point need not (`iSup_profileTower_eq_of_ge`).
-`WorkingScheme.exists_approximationSequence` is still sorry: a general scheme is not
-`SingleModelData`. Corollary 6.7 is not used.
+**English gloss** (`UniformApproximations.lean`). The construction is the single-model
+chain `infra_69_assemble`, at levels in `infra_69_recursion_tail` where the `σ⁺` profile
+recursion lies below the level. A general `WorkingScheme` is not that chain.
 `TupleOver.InBase` and `ApproximationSequence.ofConstFamily` are **not** a Lemma 6.9
 proof. -/
-theorem lemma_6_9 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
-    [CategoricalUnbounded K]
-    (W : WorkingScheme K S) (F : TermTemplate K S) [hpres : HasPresentations W F]
-    [hpack : HasChainUnions W]
-    (hedge : ∀ i j, ¬ S.specified i j)
-    (hcat : ∀ μ ∈ W.eligible, Categorical K μ)
-    (σ χ b : Cardinal.{u}) (hσ : aleph0 ≤ σ)
-    (hpow : χ ^ σ = χ) (hb : b + σ < χ)
-    (hχ : ls K + (2 : Cardinal.{u}) ^ ((2 : Cardinal.{u}) ^ σ) ≤ χ)
-    (hiso : AssemblesStructIso W b) :
-    ∃ T, ∃ hT : Tail W.eligible T,
-      ∀ μ (hμ : μ ∈ T) (A : W.Object μ (Tail.mem hT hμ))
-        (p : TupleOver K S W (Tail.mem hT hμ) A) (τ κ : Cardinal.{u}),
+theorem lemma_6_9 {K : AbstractElementaryClass.{u}}
+    (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ) :
+    ∃ T, ∃ hT : Tail P.eligible T,
+      ∀ μ (hμ : μ ∈ T) (A : P.scheme.Object μ (Tail.mem hT hμ))
+        (p : TupleOver K oneVertexShape P.scheme (Tail.mem hT hμ) A) (τ κ : Cardinal.{u}),
+        p.ν = μ →
         #p.idx ≤ σ → #p.idx < μ →
         aleph0 ≤ τ → τ < μ → aleph0 ≤ κ → κ < μ →
         κ * #p.idx < μ →
         ∃ seq : ApproximationSequence p, seq.τ = τ ∧ #(seq.κIndex) = κ ∧
           seq.HasSubtupleBound := by
-  obtain ⟨κ0, _⟩ := W.exists_parameter_orbit_reps hedge hcat σ χ b hσ hpow hb hχ hiso
-  have hT : Tail W.eligible {μ | μ ∈ W.eligible ∧ κ0 ≤ μ ∧ χ < μ} := by
-    refine ⟨fun μ hμ => hμ.1, fun κ' => ?_⟩
-    obtain ⟨μ', hle, hμ'⟩ := W.eligible_unbounded (max κ' (max κ0 (Order.succ χ)))
-    exact ⟨μ', (le_max_left _ _).trans hle, hμ',
-      ((le_max_left _ _).trans (le_max_right _ _)).trans hle,
-      (Order.lt_succ χ).trans_le (((le_max_right _ _).trans (le_max_right _ _)).trans hle)⟩
-  refine ⟨_, hT, fun μ hμ A p τ κ hσidx hidx hτ hμτ hκ hκμ hμκ => ?_⟩
-  let hμ' := Tail.mem hT hμ
-  have hχμ : χ < μ := hμ.2.2
+  let T : Set Cardinal.{u} :=
+    {μ | μ ∈ recursionClosedLevels P σ ∧ Order.succ σ ≤ μ}
+  have hT : Tail P.eligible T := by
+    refine ⟨fun μ hμ => hμ.1.1, fun κ => ?_⟩
+    obtain ⟨μ, hle, hμ, hrec⟩ :=
+      (infra_69_recursion_tail P hσ).2 (max κ (Order.succ σ))
+    exact ⟨μ, (le_max_left _ _).trans hle, ⟨⟨hμ, hrec⟩, (le_max_right _ _).trans hle⟩⟩
+  refine ⟨T, hT, fun μ hμ A p τ κ hνμ hσidx hidx hτ hμτ hκ hκμ hμκ => ?_⟩
+  have hσμ : σ < μ := (Order.lt_succ σ).trans_le hμ.2
+  let b : Cardinal.{u} := max (ls K) ℵ₀
+  let β₀ : Cardinal.{u} := max (max σ τ) b
+  have hβ : β₀ < μ :=
+    max_lt (max_lt hσμ hμτ) (max_lt (P.ls_lt (Tail.mem hT hμ)) (P.aleph0_lt (Tail.mem hT hμ)))
+  have hclosed : infra_69_pad_recursion_closed σ b β₀ μ := hμ.1.2 β₀ hβ
   obtain ⟨seq, hτ', hκ'⟩ :=
-    @WorkingScheme.exists_approximationSequence K S W _ F hpres hpack hedge hcat
-      σ χ b τ κ hσ hτ hκ hpow hb hχ hiso (μ := μ) (hμ := hμ') A p hσidx hidx hμτ hκμ hμκ hχμ
+    P.exists_approximationSequence (Tail.mem hT hμ) A p hνμ σ τ κ hσ hσμ hσidx hτ hμτ hκ
+      hκμ hμκ hclosed
   exact ⟨seq, hτ', hκ', seq.subtuple_uniform⟩
 
 /-- **Lemma 6.9, subtuples (S3).** The sequence from `lemma_6_9` satisfies Definition 6.8(2)
 for every injective reindexing, by `ApproximationSequence.subtuple_uniform`. -/
-theorem lemma_6_9_subtuple {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
-    [CategoricalUnbounded K]
-    (W : WorkingScheme K S) (F : TermTemplate K S) [hpres : HasPresentations W F]
-    [hpack : HasChainUnions W]
-    (hedge : ∀ i j, ¬ S.specified i j)
-    (hcat : ∀ μ ∈ W.eligible, Categorical K μ)
-    (σ χ b : Cardinal.{u}) (hσ : aleph0 ≤ σ)
-    (hpow : χ ^ σ = χ) (hb : b + σ < χ)
-    (hχ : ls K + (2 : Cardinal.{u}) ^ ((2 : Cardinal.{u}) ^ σ) ≤ χ)
-    (hiso : AssemblesStructIso W b) :
-    ∃ T, ∃ hT : Tail W.eligible T,
-      ∀ μ (hμ : μ ∈ T) (A : W.Object μ (Tail.mem hT hμ))
-        (p : TupleOver K S W (Tail.mem hT hμ) A) (τ κ : Cardinal.{u}),
+theorem lemma_6_9_subtuple {K : AbstractElementaryClass.{u}}
+    (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ) :
+    ∃ T, ∃ hT : Tail P.eligible T,
+      ∀ μ (hμ : μ ∈ T) (A : P.scheme.Object μ (Tail.mem hT hμ))
+        (p : TupleOver K oneVertexShape P.scheme (Tail.mem hT hμ) A) (τ κ : Cardinal.{u}),
+        p.ν = μ →
         #p.idx ≤ σ → #p.idx < μ →
         aleph0 ≤ τ → τ < μ → aleph0 ≤ κ → κ < μ →
         κ * #p.idx < μ →
         ∃ seq : ApproximationSequence p, seq.τ = τ ∧ #(seq.κIndex) = κ ∧
           seq.HasSubtupleBound := by
-  obtain ⟨T, hT, h⟩ :=
-    lemma_6_9 (W := W) (F := F) hedge hcat σ χ b hσ hpow hb hχ hiso
-  refine ⟨T, hT, fun μ hμ A p τ κ hσidx hidx hτ hμτ hκ hκμ hμκ => ?_⟩
-  obtain ⟨seq, hτ', hκ', _⟩ := h μ hμ A p τ κ hσidx hidx hτ hμτ hκ hκμ hμκ
+  obtain ⟨T, hT, h⟩ := lemma_6_9 (P := P) σ hσ
+  refine ⟨T, hT, fun μ hμ A p τ κ hνμ hσidx hidx hτ hμτ hκ hκμ hμκ => ?_⟩
+  obtain ⟨seq, hτ', hκ', _⟩ := h μ hμ A p τ κ hνμ hσidx hidx hτ hμτ hκ hκμ hμκ
   exact ⟨seq, hτ', hκ', seq.subtuple_uniform⟩
 
 /-- **Lemma 6.9, code at `c(σ)` (S5).** Same packaging as `lemma_6_9`, plus a testing
@@ -429,20 +415,13 @@ data `b` and `g`, not on the level or the type:
 
 **S6.** The concatenated diagram is a code for `p` in the transport sense of Theorem 6.10.
 This theorem only bounds the length; it does not prove the transport. -/
-theorem lemma_6_9_code {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
-    [CategoricalUnbounded K]
-    (W : WorkingScheme K S) (F : TermTemplate K S) [hpres : HasPresentations W F]
-    [hpack : HasChainUnions W]
-    (hedge : ∀ i j, ¬ S.specified i j)
-    (hcat : ∀ μ ∈ W.eligible, Categorical K μ)
-    (σ χ b : Cardinal.{u}) (hσ : aleph0 ≤ σ)
-    (hpow : χ ^ σ = χ) (hb : b + σ < χ)
-    (hχ : ls K + (2 : Cardinal.{u}) ^ ((2 : Cardinal.{u}) ^ σ) ≤ χ)
-    (hiso : AssemblesStructIso W b)
-    (g : Cardinal.{u} → Cardinal.{u}) :
-    ∃ T, ∃ hT : Tail W.eligible T,
-      ∀ μ (hμ : μ ∈ T) (A : W.Object μ (Tail.mem hT hμ))
-        (p : TupleOver K S W (Tail.mem hT hμ) A),
+theorem lemma_6_9_code {K : AbstractElementaryClass.{u}}
+    (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ)
+    (b : Cardinal.{u}) (g : Cardinal.{u} → Cardinal.{u}) :
+    ∃ T, ∃ hT : Tail P.eligible T,
+      ∀ μ (hμ : μ ∈ T) (A : P.scheme.Object μ (Tail.mem hT hμ))
+        (p : TupleOver K oneVertexShape P.scheme (Tail.mem hT hμ) A),
+        p.ν = μ →
         #p.idx ≤ σ → #p.idx < μ →
         testCardinal b g σ < μ →
         Order.succ (testCardinal b g σ) < μ →
@@ -451,9 +430,8 @@ theorem lemma_6_9_code {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
           seq.τ = testCardinal b g σ ∧
           #(seq.κIndex) = Order.succ (testCardinal b g σ) ∧
           #(seq.κIndex × p.idx) ≤ Order.succ (testCardinal b g σ) := by
-  obtain ⟨T, hT, h⟩ :=
-    lemma_6_9 (W := W) (F := F) hedge hcat σ χ b hσ hpow hb hχ hiso
-  refine ⟨T, hT, fun μ hμ A p hidxσ hidxμ hτμ hκμ hprod => ?_⟩
+  obtain ⟨T, hT, h⟩ := lemma_6_9 (P := P) σ hσ
+  refine ⟨T, hT, fun μ hμ A p hνμ hidxσ hidxμ hτμ hκμ hprod => ?_⟩
   have hτInf : aleph0 ≤ testCardinal b g σ := by
     rw [testCardinal, testPair]
     exact le_trans (cantor aleph0).le
@@ -472,7 +450,7 @@ theorem lemma_6_9_code {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
   have hσne : σ ≠ 0 := (aleph0_pos.trans_le hσ).ne'
   obtain ⟨seq, hτeq, hκeq, _⟩ :=
     h μ hμ A p (testCardinal b g σ) (Order.succ (testCardinal b g σ))
-      hidxσ hidxμ hτInf hτμ hκInf hκμ hprod
+      hνμ hidxσ hidxμ hτInf hτμ hκInf hκμ hprod
   refine ⟨seq, hτeq, hκeq, ?_⟩
   have hcard : #(seq.κIndex × p.idx) = #(seq.κIndex) * #p.idx := by
     simp [mk_prod, lift_id]
@@ -496,10 +474,10 @@ English gloss. Clauses:
 **Statement repair.** Bare `WorkingScheme` was refutable; packaging matches Lemma 6.9
 (`AssemblesStructIso`, presentations, `hedge`, `hcat`, σ/χ/b).
 
-**Pinned.** 1:1 English translation stops on the Lemma 6.9 support-copy chain.
-On `SingleModelData` that chain is `infra_69_assemble`, which needs
-`infra_69_pad_recursion_closed`. `WorkingScheme.exists_approximationSequence` is still
-sorry for a general scheme.
+**Pinned.** Attempt A proves Lemma 6.9 for `SingleModelData` at recursion-closed levels
+(`lemma_6_9`). Theorem 6.10 still quantifies over a general `WorkingScheme`. The transfer
+stops at `infra_69_diagram_transport`: a categoricity equivalence of carriers is not a
+permitted arrow, and `DiagramEq` moves only along permitted arrows.
 No alternate free-lift proof is used. -/
 theorem theorem_6_10 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
     [CategoricalUnbounded K]

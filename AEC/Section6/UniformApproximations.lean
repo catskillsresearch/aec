@@ -958,7 +958,7 @@ def clusterAt (x : J) : Set J :=
 noncomputable abbrev anchorIdx : Type u := {i : I // C.old i ∈ C.anchors}
 
 /-- Anchors together with one unshared cluster, in the order induced from `J`. -/
-def patternCarrier (x : J) : Set J := C.anchors ∪ C.clusterAt x
+noncomputable def patternCarrier (x : J) : Set J := C.anchors ∪ C.clusterAt x
 
 /-- The anchor indices, as an order embedding into the pattern carrier. -/
 def anchorIncl (x : J) : C.anchorIdx ↪o ↥(C.patternCarrier x) :=
@@ -970,7 +970,7 @@ def anchorIncl (x : J) : C.anchorIdx ↪o ↥(C.patternCarrier x) :=
 theorem anchor_card_le {σ : Cardinal.{u}} (hσ : ℵ₀ ≤ σ) (hsup : #C.support ≤ σ) :
     #C.anchors ≤ σ + ℵ₀ := by
   have hshared : #C.shared ≤ σ :=
-    (mk_le_mk_of_subset (fun _ hx => hx.1)).trans hsup
+    (mk_le_mk_of_subset (fun _ hx => mem_of_mem_inter_left hx)).trans hsup
   have hidx : #C.sepIndex ≤ σ := by
     let f : C.sepIndex → C.support × C.support := fun p =>
       (⟨p.1.1, p.2.1.1⟩, ⟨p.1.2, p.2.2.1.1⟩)
@@ -3048,6 +3048,110 @@ theorem infra_69_assemble
 /-- Deprecated mega-name: use `infra_69_assemble`. -/
 abbrev support_copy_exception_and_assembly := @infra_69_assemble
 
+/-! ## Recursion-closed eligible levels -/
+
+/-- Countable iteration that closes under `{t, g}` and under one full `σ⁺` profile recursion. -/
+noncomputable def recursionTailTower (t g : Cardinal.{u} → Cardinal.{u})
+    (σ b κ : Cardinal.{u}) : ℕ → Cardinal.{u}
+  | 0 => max κ (max σ (max b ℵ₀))
+  | n + 1 =>
+      Order.succ (max
+        ((2 : Cardinal.{u}) ^ recursionTailTower t g σ b κ n ⊔
+          closureBound t g (recursionTailTower t g σ b κ n))
+        (infra_69_pad_recursion σ b (recursionTailTower t g σ b κ n) (Order.succ σ).ord))
+
+theorem recursionTailTower_strictMono (t g : Cardinal.{u} → Cardinal.{u})
+    (σ b κ : Cardinal.{u}) : StrictMono (recursionTailTower t g σ b κ) := by
+  refine strictMono_nat_of_lt_succ fun n => ?_
+  have hlt : recursionTailTower t g σ b κ n <
+      max ((2 : Cardinal.{u}) ^ recursionTailTower t g σ b κ n ⊔
+          closureBound t g (recursionTailTower t g σ b κ n))
+        (infra_69_pad_recursion σ b (recursionTailTower t g σ b κ n) (Order.succ σ).ord) :=
+    (cantor _).trans_le (le_sup_left.trans (le_max_left _ _))
+  exact hlt.trans (Order.lt_succ _)
+
+theorem recursionTailTower_le_iSup (t g : Cardinal.{u} → Cardinal.{u})
+    (σ b κ : Cardinal.{u}) (n : ℕ) :
+    recursionTailTower t g σ b κ n ≤ ⨆ n, recursionTailTower t g σ b κ n :=
+  le_ciSup (f := recursionTailTower t g σ b κ) bddAbove_of_small n
+
+/-- Eligible levels on which every smaller test size is profile-recursion closed. -/
+def recursionClosedLevels (P : SingleModelData K) (σ : Cardinal.{u}) : Set Cardinal.{u} :=
+  {μ | μ ∈ P.eligible ∧ ∀ β₀, β₀ < μ →
+    infra_69_pad_recursion_closed σ (max (ls K) ℵ₀) β₀ μ}
+
+/-- **Infra `infra_69_recursion_tail`.** Above any start there is an eligible level closed
+under the `σ⁺` profile recursion at every smaller test size. The tail used by Lemma 6.9
+is this class. A closure point of `{D.t, g}` alone need not belong to it. -/
+theorem infra_69_recursion_tail (P : SingleModelData K) {σ : Cardinal.{u}} (hσ : ℵ₀ ≤ σ) :
+    recursionClosedLevels P σ ⊆ P.eligible ∧
+      ∀ κ : Cardinal.{u}, ∃ μ, κ ≤ μ ∧ μ ∈ recursionClosedLevels P σ := by
+  refine ⟨fun μ hμ => hμ.1, fun κ => ?_⟩
+  let b : Cardinal.{u} := max (ls K) ℵ₀
+  let t := P.D.t
+  let g := P.g
+  let tower := recursionTailTower t g σ b (max κ (Order.succ (ls K)))
+  let μ : Cardinal.{u} := ⨆ n, tower n
+  have hμge : max κ (Order.succ (ls K)) ≤ μ :=
+    (le_max_left _ _).trans (recursionTailTower_le_iSup t g σ b _ 0)
+  have hinf : ℵ₀ ≤ μ :=
+    (le_max_right _ _).trans ((le_max_right _ _).trans
+      ((le_max_right _ _).trans (recursionTailTower_le_iSup t g σ b _ 0)))
+  have hSL : μ.IsStrongLimit := by
+    refine ⟨(aleph0_pos.trans_le hinf).ne', fun x hx => ?_⟩
+    obtain ⟨n, hn⟩ := (lt_ciSup_iff' (f := tower) bddAbove_of_small).mp hx
+    exact (power_le_power_left two_ne_zero (le_of_lt hn)).trans_lt
+      (((le_sup_left : (2 : Cardinal.{u}) ^ tower n ≤ _).trans (le_max_left _ _)).trans_lt
+        ((Order.lt_succ _).trans_le (recursionTailTower_le_iSup t g σ b _ (n + 1))))
+  have hcof : Ordinal.cof μ.ord = ℵ₀ := by
+    rw [Ordinal.iSup_ord]
+    exact cof_iSup_nat_of_strictMono (fun n => (tower n).ord)
+      fun i j hij => ord_lt_ord.mpr
+        (recursionTailTower_strictMono t g σ b (max κ (Order.succ (ls K))) hij)
+  have hworking : IsWorkingLevel μ := ⟨hinf, hSL, hcof⟩
+  have hclosed : IsClosurePoint {t, g} μ := by
+    refine ⟨hworking, fun u hu => ⟨fun θ hθinf hθμ => ?_⟩⟩
+    obtain ⟨n, hn⟩ := (lt_ciSup_iff' (f := tower) bddAbove_of_small).mp hθμ
+    have hbound : t θ ⊔ g θ ≤ closureBound t g (tower n) :=
+      le_closureBound t g (le_of_lt hn)
+    have hstep : closureBound t g (tower n) < tower (n + 1) :=
+      ((le_sup_right : closureBound t g (tower n) ≤ _).trans (le_max_left _ _)).trans_lt
+        (Order.lt_succ _)
+    rcases Set.mem_insert_iff.mp hu with rfl | hu
+    · exact (le_sup_left.trans hbound).trans_lt (hstep.trans_le
+        (recursionTailTower_le_iSup t g σ b _ (n + 1)))
+    · rw [Set.mem_singleton_iff] at hu
+      subst hu
+      exact (le_sup_right.trans hbound).trans_lt (hstep.trans_le
+        (recursionTailTower_le_iSup t g σ b _ (n + 1)))
+  have hls : ls K < μ :=
+    (Order.lt_succ (ls K)).trans_le ((le_max_right κ _).trans hμge)
+  have hrec : ∀ β₀, β₀ < μ → infra_69_pad_recursion_closed σ b β₀ μ := by
+    intro β₀ hβ
+    obtain ⟨n, hn⟩ := (lt_ciSup_iff' (f := tower) bddAbove_of_small).mp hβ
+    exact (infra_69_pad_recursion_mono_start (le_of_lt hn) _).trans_lt
+      ((le_max_right _ _).trans_lt
+        ((Order.lt_succ _).trans_le (recursionTailTower_le_iSup t g σ b _ (n + 1))))
+  exact ⟨μ, (le_max_left _ _).trans hμge, ⟨hclosed, hls⟩, hrec⟩
+
+/-- **Single-model Lemma 6.9.** At a recursion-closed eligible level, `infra_69_assemble`
+supplies the approximation sequence. -/
+theorem SingleModelData.exists_approximationSequence
+    (P : SingleModelData K)
+    {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
+    (base : P.scheme.Object μ hμ)
+    (p : TupleOver K oneVertexShape P.scheme hμ base)
+    (hνμ : p.ν = μ)
+    (σ τ κ : Cardinal.{u})
+    (hσ : ℵ₀ ≤ σ) (hσμ : σ < μ) (hidx : #p.idx ≤ σ)
+    (hτ : ℵ₀ ≤ τ) (hτμ : τ < μ)
+    (hκ : ℵ₀ ≤ κ) (hκμ : κ < μ)
+    (hprod : κ * #p.idx < μ)
+    (hclosed : infra_69_pad_recursion_closed σ (max (ls K) ℵ₀)
+      (max (max σ τ) (max (ls K) ℵ₀)) μ) :
+    ∃ seq : ApproximationSequence p, seq.τ = τ ∧ #(seq.κIndex) = κ :=
+  infra_69_assemble P hμ base p hνμ σ τ κ hσ hσμ hidx hτ hτμ hκ hκμ hprod hclosed
+
 /-! ## Main existence (English support-copy gloss) -/
 
 /-- Uniform approximation sequences for `p = tp(v/A)` with `#p.idx ≤ σ` (English Lemma 6.9).
@@ -3073,9 +3177,93 @@ theorem WorkingScheme.exists_approximationSequence
     (hμτ : τ < μ) (hκμ : κ < μ) (hμκ : κ * #p.idx < μ)
     (hχμ : χ < μ) :
     ∃ seq : ApproximationSequence p, seq.τ = τ ∧ #(seq.κIndex) = κ := by
-  /- `infra_69_assemble` is the single-model chain, and it needs
-     `infra_69_pad_recursion_closed`. Nothing here identifies `W` with `P.scheme`, so the
-     general existence stays open. Not a constant family. -/
+  /- Attempt A is `SingleModelData.exists_approximationSequence`. It does not apply:
+     nothing identifies `W` with `P.scheme`. Attempt B stops at `infra_69_diagram_transport`:
+     a categoricity equivalence of carriers is not a permitted arrow, and `DiagramEq` is
+     preserved only along permitted arrows. Not a constant family. -/
+  sorry
+
+/-- **Infra `infra_69_cat_iso`.** At a categoricity cardinal, a one-vertex scheme object and a
+single-model object have isomorphic carriers. -/
+theorem infra_69_cat_iso
+    (P : SingleModelData K)
+    (W : WorkingScheme K oneVertexShape)
+    {μ : Cardinal.{u}} (hμW : μ ∈ W.eligible) (hμP : μ ∈ P.eligible)
+    (A : W.Object μ hμW) (B : P.scheme.Object μ hμP)
+    (hcat : Categorical K μ) :
+    Nonempty (((W.asSystem hμW A).obj PUnit.unit).carrier ≃[K.τ]
+      ((P.scheme.asSystem hμP B).obj PUnit.unit).carrier) :=
+  hcat.unique_model
+    ((W.asSystem hμW A).obj PUnit.unit)
+    ((P.scheme.asSystem hμP B).obj PUnit.unit)
+    ((W.asSystem hμW A).inK PUnit.unit)
+    ((P.scheme.asSystem hμP B).inK PUnit.unit)
+    (W.vertex_card hμW A PUnit.unit)
+    (P.scheme.vertex_card hμP B PUnit.unit)
+
+/-- Push a one-vertex occurrence along a carrier equivalence. The vertex is `PUnit.unit`. -/
+def infra_69_pushOcc {SP SW : SystemObject K oneVertexShape}
+    (e : (SP.obj PUnit.unit).carrier ≃[K.τ] (SW.obj PUnit.unit).carrier)
+    (x : Occurrence K oneVertexShape SP) : Occurrence K oneVertexShape SW :=
+  ⟨PUnit.unit,
+    e (cast (congrArg (fun v => (SP.obj v).carrier) (Subsingleton.elim x.1 PUnit.unit)) x.2)⟩
+
+/-- **Infra `infra_69_diagram_transport`.** Scheme diagram equality is not the image of
+single-model diagram equality under a categoricity equivalence of carriers.
+
+`WorkingScheme.diagram_preserved` moves `DiagramEq` along a permitted arrow.
+`Categorical.unique_model` supplies a carrier equivalence, not a permitted arrow of `W`.
+Nothing identifies `W.DiagramEq` with `P.scheme.DiagramEq`. This is not split further. -/
+theorem infra_69_diagram_transport
+    (P : SingleModelData K)
+    (W : WorkingScheme K oneVertexShape)
+    {μ : Cardinal.{u}} (hμW : μ ∈ W.eligible) (hμP : μ ∈ P.eligible)
+    (A : W.Object μ hμW) (B : P.scheme.Object μ hμP)
+    (e : ((P.scheme.asSystem hμP B).obj PUnit.unit).carrier ≃[K.τ]
+      ((W.asSystem hμW A).obj PUnit.unit).carrier)
+    {α : Type u}
+    (xs ys : α → Occurrence K oneVertexShape (P.scheme.asSystem hμP B))
+    (h : P.scheme.DiagramEq (X := B) (Y := B) xs ys) :
+    W.DiagramEq (X := A) (Y := A)
+      (fun i => infra_69_pushOcc e (xs i))
+      (fun i => infra_69_pushOcc e (ys i)) := by
+  /- Pinned. See the docstring. -/
+  sorry
+
+/-- **Infra `infra_69_transfer_tuple`.** A one-vertex occurrence list pushes along the
+carrier equivalence of `infra_69_cat_iso`. This does not produce a permitted arrow, so it
+does not move `DiagramEq`. -/
+def infra_69_transfer_tuple
+    {SP SW : SystemObject K oneVertexShape}
+    (e : (SP.obj PUnit.unit).carrier ≃[K.τ] (SW.obj PUnit.unit).carrier)
+    {α : Type u} (xs : α → Occurrence K oneVertexShape SP) :
+    α → Occurrence K oneVertexShape SW :=
+  fun i => infra_69_pushOcc e (xs i)
+
+/-- **Infra `infra_69_transfer_sequence`.** An approximation sequence on the single-model
+scheme pushes to a one-vertex scheme only together with `few_exceptions`. That clause is
+`infra_69_diagram_transport`: the joint comparison is `DiagramEq` between the host and the
+base, and a carrier equivalence does not preserve it. -/
+theorem infra_69_transfer_sequence
+    (P : SingleModelData K)
+    (W : WorkingScheme K oneVertexShape)
+    {μ : Cardinal.{u}} (hμW : μ ∈ W.eligible) (hμP : μ ∈ P.eligible)
+    (A : W.Object μ hμW) (B : P.scheme.Object μ hμP)
+    (pW : TupleOver K oneVertexShape W hμW A)
+    (pP : TupleOver K oneVertexShape P.scheme hμP B)
+    (seq : ApproximationSequence pP)
+    (e : ((P.scheme.asSystem hμP B).obj PUnit.unit).carrier ≃[K.τ]
+      ((W.asSystem hμW A).obj PUnit.unit).carrier)
+    (hdiag : ∀ {α : Type u}
+      (xs ys : α → Occurrence K oneVertexShape (P.scheme.asSystem hμP B)),
+      P.scheme.DiagramEq (X := B) (Y := B) xs ys →
+        W.DiagramEq (X := A) (Y := A)
+          (fun i => infra_69_pushOcc e (xs i))
+          (fun i => infra_69_pushOcc e (ys i))) :
+    ∃ seqW : ApproximationSequence pW, seqW.τ = seq.τ ∧ #(seqW.κIndex) = #(seq.κIndex) := by
+  /- `hdiag` is `infra_69_diagram_transport`. `few_exceptions` compares a joint on `p.host`
+     with a joint on `base`, not two lists on one object, and `pW` is not the image of `pP`
+     under `e`. The comparison is not split further. -/
   sorry
 
 end

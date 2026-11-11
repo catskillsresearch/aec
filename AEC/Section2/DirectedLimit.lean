@@ -606,7 +606,7 @@ lemma closeIter_mono {τ : Tau.{u}} (S : DirectedSystem τ) (seed : Set (Index S
   exact closeIter_mono_add S seed n k
 
 /-- The indices reachable from `seed` by finitely many chosen upper bounds. -/
-def closeOf {τ : Tau.{u}} (S : DirectedSystem τ) (seed : Set (Index S)) : Set (Index S) :=
+noncomputable def closeOf {τ : Tau.{u}} (S : DirectedSystem τ) (seed : Set (Index S)) : Set (Index S) :=
   ⋃ n, closeIter S seed n
 
 lemma closeIter_subset_close {τ : Tau.{u}} (S : DirectedSystem τ) (seed : Set (Index S)) (n : ℕ) :

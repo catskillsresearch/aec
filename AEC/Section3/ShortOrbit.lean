@@ -910,7 +910,7 @@ lemma entryImage_eq_empty_iff {ι : Type v} {α β : Type v} {xs : ι → α} {y
 lemma entryImage_card_le {δ : _root_.Ordinal.{u}} {θ : Cardinal.{u}} {ι : Type (u + 1)}
     (xs : ι → HOrder δ) (lower : Set ι) (hι : #ι ≤ Cardinal.lift.{u + 1} θ) :
     #(xs '' lower) ≤ Cardinal.lift.{u + 1} θ :=
-  (Cardinal.mk_image_le (f := xs) (s := lower)).trans ((Cardinal.mk_subtype_le lower).trans hι)
+  (Cardinal.mk_image_le (f := xs) (s := lower)).trans ((Cardinal.mk_set_le lower).trans hι)
 
 lemma entry_cofinality {ι : Type v} {α β : Type v} [LinearOrder α] [LinearOrder β]
     {xs : ι → α} {ys : ι → β} (h : SameOrderDiagram xs ys) (lower : Set ι) :

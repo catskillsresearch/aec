@@ -55,9 +55,9 @@ theorem tupleCode_subtype {α : Type u} [LinearOrder α] {M : Model K.τ} (hM : 
     (base : α → M.carrier) (hbase : Function.Injective base) {H : Set α} {m : ℕ}
     (s : Finset (↥H)) (hs : s.card = m) :
     tupleCode hM (fun x : ↥H => base x.1) (fun x y hxy => Subtype.ext (hbase hxy)) s hs =
-      tupleCode hM base hbase (s.map (Function.Embedding.subtype H))
+      tupleCode hM base hbase (s.map (Function.Embedding.subtype (· ∈ H)))
         (by rw [Finset.card_map, hs]) := by
-  let sα : Finset α := s.map (Function.Embedding.subtype H)
+  let sα : Finset α := s.map (Function.Embedding.subtype (· ∈ H))
   have hsα : sα.card = m := by rw [Finset.card_map, hs]
   have henum : (fun i => (s.orderEmbOfFin hs i).1) = ⇑(sα.orderEmbOfFin hsα) :=
     Finset.orderEmbOfFin_unique hsα
@@ -146,7 +146,7 @@ theorem exists_extend {n : ℕ} (T : Tower K n) :
         · simpa using hbigH
         · intro m hm hm0 s hs
           have hcode := tupleCode_subtype hM base hbase s hs
-          let sα : Finset α := s.map (Function.Embedding.subtype H)
+          let sα : Finset α := s.map (Function.Embedding.subtype (· ∈ H))
           have hsα : sα.card = m := by rw [Finset.card_map, hs]
           by_cases hle : m ≤ n
           · have hprev : tupleCode hM base hbase sα hsα = T.color m hle hm0 :=

@@ -2290,7 +2290,7 @@ theorem orbits_over_params_soft {K : AbstractElementaryClass.{u}} (E : OrderPres
     relFingerprintOf E hχinf hσ eISO T hT S hS hι xs
   let F : Set (RelFingerprint E.lab E.arity σ χ) := Set.range fpOf
   have hF : #F ≤ χ :=
-    (mk_subtype_le F).trans (mk_relFingerprint_le hlab hσ hχinf hpow h2)
+    (mk_set_le F).trans (mk_relFingerprint_le hlab hσ hχinf hpow h2)
   let sec : ↥F → ι → (E.obj I).carrier := fun f =>
     Classical.choose (Set.mem_range.mp f.property)
   have hsec (f : ↥F) : fpOf (sec f) = (f : RelFingerprint _ _ _ _) :=

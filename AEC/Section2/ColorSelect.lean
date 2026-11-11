@@ -113,7 +113,7 @@ theorem exists_mono_color (n : ℕ) (hn : 0 < n) [ArbitrarilyLarge K] :
           exact Subtype.ext (emb.injective hxy)
         · simpa using hbigH
         · intro s hs
-          let sα : Finset α := s.map (Function.Embedding.subtype H)
+          let sα : Finset α := s.map (Function.Embedding.subtype (· ∈ H))
           have hsα : sα.card = n := by
             rw [Finset.card_map, hs]
           have hsub : ∀ x ∈ sα, x ∈ H := by

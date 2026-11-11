@@ -50,7 +50,7 @@ theorem canonical_record_card_index {lab : Type u} {arity : lab → ℕ} {θ : C
     (r : CanonicalRecord lab arity θ) :
     # ((CanonicalRecord.toOrbitRecord r).index) ≤ θ := by
   dsimp [CanonicalRecord.toOrbitRecord]
-  have h := Cardinal.mk_subtype_le r.idx
+  have h := Cardinal.mk_set_le r.idx
   rw [mk_ord_toType] at h
   exact h
 
@@ -58,7 +58,7 @@ theorem canonical_record_card_slot {lab : Type u} {arity : lab → ℕ} {θ : Ca
     (r : CanonicalRecord lab arity θ) :
     # ((CanonicalRecord.toOrbitRecord r).slot) ≤ θ := by
   dsimp [CanonicalRecord.toOrbitRecord]
-  have h := Cardinal.mk_subtype_le r.slt
+  have h := Cardinal.mk_set_le r.slt
   rw [mk_ord_toType] at h
   exact h
 

@@ -28,7 +28,7 @@ theorem indecomposable_cofinal (κ τ : Cardinal.{u}) (hκ : aleph0 ≤ κ) (hτ
       ∃ δ : _root_.Ordinal.{u}, α ≤ δ ∧ δ < (Order.succ κ).ord ∧
         AdditivelyIndecomposable δ ∧ δ.card = κ ∧ Ordinal.cof δ = τ := by
   intro α hα
-  have hαcard : α.card ≤ κ := Cardinal.card_le_iff.mpr hα
+  have hαcard : α.card ≤ κ := Ordinal.card_le_iff.mpr hα
   let ρ : _root_.Ordinal.{u} := α + κ.ord + τ.ord
   have hτlim : Order.IsSuccLimit τ.ord := Cardinal.isSuccLimit_ord hτ
   have hρlim : Order.IsSuccLimit ρ := Ordinal.isSuccLimit_add (α + κ.ord) hτlim
@@ -43,7 +43,7 @@ theorem indecomposable_cofinal (κ τ : Cardinal.{u}) (hκ : aleph0 ≤ κ) (hτ
   · exact (le_self_add : α ≤ α + κ.ord).trans
       ((le_self_add : α + κ.ord ≤ α + κ.ord + τ.ord).trans
         (Ordinal.right_le_opow ρ Ordinal.one_lt_omega0))
-  · apply Cardinal.card_le_iff.mp
+  · apply Ordinal.card_le_iff.mp
     rw [Ordinal.card_omega0_opow hρlim.ne_bot, hρcard, max_eq_right hκ]
   · rw [Ordinal.card_omega0_opow hρlim.ne_bot, hρcard, max_eq_right hκ]
   · rw [Ordinal.cof_map_of_isNormal (Ordinal.isNormal_opow Ordinal.one_lt_omega0) hρlim, hcofρ]

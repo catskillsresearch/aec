@@ -486,14 +486,14 @@ theorem key_mono : Monotone (X.key) := by
   · rfl
 
 /-- Cluster points: the blocks used by the tuple. -/
-def firstSet : Set (Src X) := fun s => ∃ c, s.val = Sum.inl c
+def firstSet : Set (Src X) := {s | ∃ c, s.val = Sum.inl c}
 
 /-- Parameters that pass a cluster: the blocks used only on the other side of the copy. -/
-def secondSet : Set (Src X) := fun s => ∃ p, s.val = Sum.inr p ∧ ∃ c, X.crosses c p
+def secondSet : Set (Src X) := {s | ∃ p, s.val = Sum.inr p ∧ ∃ c, X.crosses c p}
 
 /-- Slots whose cluster sits to the right of the parameters it passes. -/
 def firstOnRightSet : Set Amb :=
-  fun r => ∃ c, r = X.keyCl c ∧ ∃ p, X.crosses c p ∧ X.leftOrig c p
+  {r | ∃ c, r = X.keyCl c ∧ ∃ p, X.crosses c p ∧ X.leftOrig c p}
 
 theorem key_of_region {x : Src X} (hx : x ∈ X.firstSet ∪ X.secondSet) :
     ∃ c, X.key x = X.keyCl c := by

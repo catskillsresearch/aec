@@ -128,7 +128,7 @@ theorem lemma_5_4 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
     have huCard : #u = ν := by
       apply le_antisymm
       · calc
-          #u ≤ #J := Cardinal.mk_subtype_le _
+          #u ≤ #J := Cardinal.mk_set_le u
           _ = ν := hJ
       · calc
           ν = #t := htJ.symm

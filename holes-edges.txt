@@ -1,7 +1,7 @@
 # Hard edges from holes-graph.json
 # Convention: FROM --> TO means the English proof of TO requires FROM.
-# Nodes: 149  Hard edges: 189
-# Lem 6.9: place_on_fills and assemble are done on SingleModelData under infra_69_pad_recursion_closed (σ⁺ profile recursion strictly below the level). A {t,g}-closure point need not satisfy it. exists_approximationSequence stays sorry (general scheme). lemma_6_9 and theorem_6_10 stay blocked.
+# Nodes: 154  Hard edges: 191
+# Lem 6.9 is done for SingleModelData on infra_69_recursion_tail. Open tip: infra_69_diagram_transport. theorem_6_10 and infra_69_transfer_sequence are blocked on it.
 
 claim_11_10 --> claim_11_11
 claim_11_11 --> claim_11_12
@@ -20,6 +20,8 @@ infra_69_chart_iso --> infra_69_place_type
 infra_69_choose_supports --> infra_69_whole_block_diff
 infra_69_copy_cluster --> infra_69_interpret_copies
 infra_69_cut_clusters --> infra_69_separators
+infra_69_diagram_transport --> infra_69_transfer_sequence
+infra_69_diagram_transport --> theorem_6_10
 infra_69_disjoint_regions --> infra_69_copy_cluster
 infra_69_finitary_exceptions --> infra_69_subtuple_uniform
 infra_69_hit_bound --> infra_69_finitary_exceptions
@@ -39,6 +41,7 @@ infra_69_pad_recursion_closed --> infra_69_place_on_fills
 infra_69_pad_obstruction --> infra_69_place_on_fills
 infra_69_place_on_fills --> infra_69_assemble
 infra_69_present_padded --> infra_69_assemble
+infra_69_recursion_tail --> lemma_6_9
 infra_69_present_padded --> infra_69_chart_iso
 infra_69_richness_arity --> infra_69_copy_cluster
 infra_69_separators --> infra_69_include_shared

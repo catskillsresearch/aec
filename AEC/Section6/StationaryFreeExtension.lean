@@ -21,10 +21,10 @@ English clauses (from `FreeExtension.md`):
 4. **Definition.** An actual type over `B` is *free from* `A` when it is that free lift of its
    restriction to `A` (`IsFreeFrom` in `FreeExtension.lean`).
 
-Proof plan (eventual.pdf §6.2): Lemma 6.9 supplies long uniform approximation sequences; majority
-values determine the free extension (`IsFreeLift` / `IsMajorityValue`). Pinned at
-`WorkingScheme.exists_approximationSequence` (Lemma 6.9 support-copy) until step 4 pattern
-placement and steps 5–6 exception bookkeeping close.
+Proof plan (eventual.pdf §6.2): Lemma 6.9 supplies long uniform approximation sequences on
+`SingleModelData`. A general scheme still needs `infra_69_diagram_transport`. Majority
+values determine the free extension (`IsFreeLift` / `IsMajorityValue`). The free-lift
+argument is not part of the Lemma 6.9 transfer.
 -/
 
 namespace AEC

@@ -69,7 +69,7 @@ theorem typeLT_lt_succ_ord {a : Cardinal.{u}} {β : _root_.Ordinal.{u}}
   have hle : (typeLT (↥T0)).card ≤ a := by
     rw [Ordinal.card_type (· < ·)]
     exact hcard
-  exact (Cardinal.card_le_iff).mp hle
+  exact (Ordinal.card_le_iff).mp hle
 
 /-- Embed a set of order type strictly below `δ` into an initial segment of `δ`. -/
 theorem exists_otp_embedding {β δ : _root_.Ordinal.{u}}
@@ -89,7 +89,7 @@ theorem exists_otp_embedding {β δ : _root_.Ordinal.{u}}
     (Ordinal.type_eq).mp hty
   let iso : ↥T0 ≃o ↥(Iio b) := OrderIso.ofRelIsoLT (Classical.choice hrel)
   let emb : ↥T0 ↪o δ.ToType :=
-    iso.toOrderEmbedding.trans (OrderEmbedding.subtype (Iio b))
+    iso.toOrderEmbedding.trans (OrderEmbedding.subtype (· ∈ Iio b))
   refine ⟨emb, b, fun x => (iso x).property⟩
 
 /-- Transport a Hausdorff-order embedding between soft copies of `H(δ)` and `H(β)`. -/

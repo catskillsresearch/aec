@@ -43,7 +43,7 @@ set_option linter.unusedVariables false
 /-! ### Index-normalized orbit namings -/
 
 theorem mk_subBelow_le {θ : Cardinal.{u}} (S : Set (Below θ)) : #(↥S) ≤ θ := by
-  have h := Cardinal.mk_subtype_le S
+  have h := Cardinal.mk_set_le S
   rw [mk_ord_toType] at h
   exact h
 

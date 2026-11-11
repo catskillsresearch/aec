@@ -228,7 +228,7 @@ theorem sameNaturalDiagram_restrict_iff (hσinf : aleph0 ≤ σ) (hσ : #α ≤ 
     (OrderEmbedding.subtype (· ∈ X)) (OrderEmbedding.subtype (· ∈ X))).symm
 
 /-- The joint support of two placements, with one extra point so that it is nonempty. -/
-def testingSet (t s : α → SupportTerm E.lab E.arity I) : Set I :=
+noncomputable def testingSet (t s : α → SupportTerm E.lab E.arity I) : Set I :=
   tupleSupport t ∪ tupleSupport s ∪ {Classical.arbitrary I}
 
 theorem testingSet_nonempty (t s : α → SupportTerm E.lab E.arity I) :
