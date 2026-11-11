@@ -36,7 +36,8 @@ def reindexJoint {pIdx qIdx ι : Type u} {X : SystemObject K S}
 
 /-- **Theorem 6.10.** `q` over `B` is the free lift of `p` along `A → B` when `p` is the
 restriction of `q` and some approximation sequence for `p` has majority value `q` on every
-bounded query from `B`. -/
+query from `B` of size at most the sequence's testing arity `I.τ` (English: approximation and
+testing costs bounded at the originating level; not every list of length `< ν`). -/
 def IsFreeLift {μ ν : Cardinal.{u}} {hμ : μ ∈ W.eligible} {hν : ν ∈ W.eligible}
     {A : W.Object μ hμ} {B : W.Object ν hν}
     (p : TupleOver K S W hμ A) (q : TupleOver K S W hν B)
@@ -46,7 +47,7 @@ def IsFreeLift {μ ν : Cardinal.{u}} {hμ : μ ∈ W.eligible} {hν : ν ∈ W.
   SameGaloisType p (q.restrict f hf) e (Equiv.refl q.idx) ∧
   ∃ I : ApproximationSequence p,
     ∀ {ι : Type u} (Z : ι → Occurrence K S (W.asSystem hν B)),
-      #ι < ν →
+      #ι ≤ I.τ →
       ∃ (Z0 : ι → Occurrence K S (W.asSystem hμ A))
         (xs : p.idx ⊕ ι → Occurrence K S (W.asSystem q.hν q.host)),
         IsMajorityValue I Z0 q.hν q.host xs ∧

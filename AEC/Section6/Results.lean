@@ -471,11 +471,12 @@ English gloss. Clauses:
 4. (Code / free-from) A Lemma 6.9 code at `c(σ)` transports under arrows; `IsFreeFrom` means the
    type is the free lift of its restriction to `A`.
 
-**Statement repair.** Same packaging as Lemma 6.9: `SingleModelData` at recursion-closed levels.
-Cross-scheme transfer of approximation sequences is not used.
+**Statement repair.** Same packaging as Lemma 6.9: `SingleModelData` at recursion-closed levels,
+same-level host `p.ν = μ`. Cross-scheme transfer is not used.
 
-**Pinned.** The free-lift argument (`stationary_free_extension_exists`: majority, saturation,
-placement in a chart of `B`) stays open. Lemma 6.9 supplies the sequences. -/
+**Pinned.** Packaging calls `stationary_free_extension_exists`, which is blocked on
+`infra_610_place_on_B` / `infra_610_same_galois` / `infra_610_move_query`. Majority
+uniqueness from `few_exceptions` is proved. -/
 theorem theorem_6_10 {K : AbstractElementaryClass.{u}}
     (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ) :
     ∃ T, ∃ hT : Tail P.eligible T,
@@ -484,7 +485,7 @@ theorem theorem_6_10 {K : AbstractElementaryClass.{u}}
           (P.scheme.asSystem _ A) (P.scheme.asSystem _ B))
         (hf : P.scheme.permitted (X := A) (Y := B) f)
         (p : TupleOver K oneVertexShape P.scheme (Tail.mem hT hμ) A),
-        #p.idx ≤ σ → #p.idx < μ →
+        p.ν = μ → #p.idx ≤ σ → #p.idx < μ →
         ∃ q : TupleOver K oneVertexShape P.scheme (Tail.mem hT hμ) B,
           ∃ e : p.idx ≃ q.idx, IsFreeLift p q f hf e := by
   let T : Set Cardinal.{u} :=
@@ -494,8 +495,9 @@ theorem theorem_6_10 {K : AbstractElementaryClass.{u}}
     obtain ⟨μ, hle, hμ, hrec⟩ :=
       (infra_69_recursion_tail P hσ).2 (max κ (Order.succ σ))
     exact ⟨μ, (le_max_left _ _).trans hle, ⟨⟨hμ, hrec⟩, (le_max_right _ _).trans hle⟩⟩
-  refine ⟨T, hT, fun μ hμ A B f hf p hσidx hidx => ?_⟩
-  exact stationary_free_extension_exists P σ hσ (Tail.mem hT hμ) f hf p hσidx hidx
+  refine ⟨T, hT, fun μ hμ A B f hf p hνμ hσidx hidx => ?_⟩
+  exact stationary_free_extension_exists P σ hσ (Tail.mem hT hμ) hμ.1 hμ.2 f hf p
+    hνμ hσidx hidx
 
 /-- **Lemma 6.11** (An average criterion for descent). A type whose restrictions to a long
 sequence in `A` have the stated majority is the free lift of its restriction to `A`. -/

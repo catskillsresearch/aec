@@ -1,7 +1,7 @@
 # Hard edges from holes-graph.json
 # Convention: FROM --> TO means the English proof of TO requires FROM.
-# Nodes: 154  Hard edges: 190
-# Lem 6.9 and Thm 6.10 packaging are SingleModelData. Open tip: stationary_free_extension_exists (free lift). infra_69_diagram_transport is done inside P.scheme.
+# Nodes: 157  Hard edges: 193
+# Open tips: infra_610_move_query / infra_610_same_galois. stationary_free_extension_exists assembled, blocked on place_on_B / same_galois.
 
 claim_11_10 --> claim_11_11
 claim_11_11 --> claim_11_12
@@ -14,6 +14,9 @@ corollary_9_2 --> theorem_9_3
 infra_55_enumerate_added --> infra_55_pattern_realize
 infra_55_one_point_cut --> infra_55_pattern_realize
 infra_55_pattern_realize --> infra_69_richness_arity
+infra_610_move_query --> infra_610_place_on_B
+infra_610_place_on_B --> stationary_free_extension_exists
+infra_610_same_galois --> stationary_free_extension_exists
 infra_69_anchor_bound --> infra_69_slot_assignment
 infra_69_assemble --> lemma_6_9
 infra_69_chart_iso --> infra_69_place_type
@@ -21,7 +24,6 @@ infra_69_choose_supports --> infra_69_whole_block_diff
 infra_69_copy_cluster --> infra_69_interpret_copies
 infra_69_cut_clusters --> infra_69_separators
 infra_69_disjoint_regions --> infra_69_copy_cluster
-stationary_free_extension_exists --> theorem_6_10
 infra_69_finitary_exceptions --> infra_69_subtuple_uniform
 infra_69_hit_bound --> infra_69_finitary_exceptions
 infra_69_include_shared --> infra_69_anchor_bound
@@ -29,19 +31,19 @@ infra_69_interpret_copies --> infra_69_choose_supports
 infra_69_lem61_off_hits --> infra_69_off_hit_diagramEq
 infra_69_no_internal_hits --> infra_69_lem61_off_hits
 infra_69_off_hit_diagramEq --> infra_69_assemble
+infra_69_pad_count --> infra_69_pad_obstruction
+infra_69_pad_count --> infra_69_pad_stage_card
+infra_69_pad_downset --> infra_69_pad_count
+infra_69_pad_obstruction --> infra_69_place_on_fills
 infra_69_pad_recursion --> infra_69_pad_recursion_closed
 infra_69_pad_recursion_closed --> infra_69_pad_exists_closed
 infra_69_pad_recursion_closed --> infra_69_pad_stage_card
-infra_69_pad_downset --> infra_69_pad_count
-infra_69_pad_count --> infra_69_pad_stage_card
-infra_69_pad_count --> infra_69_pad_obstruction
-infra_69_pad_stage_card --> infra_69_pad_obstruction
 infra_69_pad_recursion_closed --> infra_69_place_on_fills
-infra_69_pad_obstruction --> infra_69_place_on_fills
+infra_69_pad_stage_card --> infra_69_pad_obstruction
 infra_69_place_on_fills --> infra_69_assemble
 infra_69_present_padded --> infra_69_assemble
-infra_69_recursion_tail --> lemma_6_9
 infra_69_present_padded --> infra_69_chart_iso
+infra_69_recursion_tail --> lemma_6_9
 infra_69_richness_arity --> infra_69_copy_cluster
 infra_69_separators --> infra_69_include_shared
 infra_69_shared_supports --> infra_69_cut_clusters
@@ -166,6 +168,7 @@ proposition_7_3 --> proposition_7_5
 proposition_7_5 --> lemma_7_6
 proposition_7_8 --> theorem_7_9
 proposition_9_1 --> corollary_9_2
+stationary_free_extension_exists --> theorem_6_10
 theorem_10_5 --> proposition_10_6
 theorem_10_9 --> corollary_10_10
 theorem_11_9 --> theorem_12_2
