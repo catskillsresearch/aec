@@ -26,7 +26,7 @@ infra_610_closed_level --> stationary_free_extension_exists
 infra_610_free_root --> infra_610_chart_support
 infra_610_galois_tests_of_placement --> infra_610_majority_prescription
 infra_610_galois_tests_of_placement --> infra_610_same_galois
-infra_610_majority_matches_root --> infra_610_root_majority
+infra_610_majority_matches_root --> infra_610_majority_prescription
 infra_610_majority_of_placement --> infra_610_majority_prescription
 infra_610_majority_prescription --> infra_610_place_on_B
 infra_610_majority_prescription --> infra_610_same_galois

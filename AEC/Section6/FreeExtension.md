@@ -23,9 +23,9 @@ Proof body is in `source/eventual.pdf` §6.2. Lean decls live in [`StationaryFre
 | E5c Support package | `infra_610_chart_support` (`Infra610ChartSupport`) | **done** |
 | E5d Moved majority (good `vi` push) | `infra_610_moved_majority` | **done** |
 | E5d′ Match moved majority to fixed root | `infra_610_majority_matches_root` | **open** |
-| E5d″ Root majority field | `infra_610_root_majority` | assembler (blocked on E5d′) |
+| E5d″ Root majority field | `infra_610_root_majority` | **done** (packaging of `moved_majority`) |
 | E5e Root Galois / Thm 6.6 tests | `infra_610_root_galois` | **open** |
-| E5 Local majority prescriptions (assembler) | `infra_610_chart_prescriptions` | assembler (blocked on E5d′–E5e) |
+| E5 Local majority prescriptions (assembler) | `infra_610_chart_prescriptions` | assembler (blocked on E5e) |
 | E6 Lemma 6.4 compact placement → actual tuple over $B$ | `infra_610_place_prescriptions` | **done** (`proposition_4_9` + chart-root `TupleOver` on `B`) |
 | Majority transport of the placed type | `infra_610_majority_of_placement` | **done** (chart-root `hmajority` packaging) |
 | E7 Theorem 6.6 uniqueness / Galois diagram tests for $p_B$ | `infra_610_galois_tests_of_placement` (tests); `infra_610_same_galois` (amalgam) | tests **done** (chart-root `hgalois`), amalgam done |
@@ -33,7 +33,7 @@ Proof body is in `source/eventual.pdf` §6.2. Lean decls live in [`StationaryFre
 | E8–E11 Mixed queries, restrict, iso, transitivity, Lem 6.9 code | deferred / narrowed in `IsFreeLift` ([`FreeExtension.lean`](FreeExtension.lean)) | later |
 | *(no English step)* ClosedLevel for scheme bound $P.g$ | `infra_610_closed_level` | **done** (`ClosedLevel.of_closurePoint` via `P.tester`) |
 
-Hard chain: `move_query → free_root / param_freeing_qPres → chart_support → moved_majority → majority_matches_root → root_majority + root_galois → chart_prescriptions → … → theorem_6_10`. Open tips: `infra_610_majority_matches_root`, `infra_610_root_galois`.
+Hard chain: `move_query → free_root / param_freeing_qPres → chart_support → moved_majority → root_majority + root_galois → chart_prescriptions → …` and `majority_matches_root → majority_prescription → … → theorem_6_10`. Open tips: `infra_610_majority_matches_root`, `infra_610_root_galois`.
 
 **[FreeExtension.lean](FreeExtension.lean)**
 
