@@ -19,9 +19,10 @@ with same-level host `p.ν = μ`. `IsFreeLift` queries are bounded by the sequen
 (English testing cost), not every `#ι < ν`. Cross-scheme transfer is not used.
 
 **E5–E7 tips.** Majority prescriptions and reflected `eB∘qPres` follow §6.2. The free-lift
-root `pB` is Prop 4.9 / Lem 6.4 placement `z` (English: “Lemma 6.4 gives a placement…
-This type is pB”), transported to `B` as `chartRoot`. Path A empty→params DiagramEq pad is
-retired (no English sentence). Open tip: `infra_610_place_z_as_free_lift`.
+root `pB` is Prop 4.9 / Lem 6.4 placement `z` on `B` (`placeRoot` /
+`infra_610_placement_root_on_B`). Soft-pad bridges stay retired. Board-open:
+`infra_610_placement_root_on_B`. Tip `infra_610_place_z_as_free_lift` blocked on
+`reflected_matches_chartRoot` blocked on that open.
 -/
 
 namespace AEC
@@ -346,10 +347,19 @@ structure Infra610ChartPrescriptions
     ∃ (Z0 : ι → Occurrence K oneVertexShape (P.scheme.asSystem hμ A))
       (xs : p.idx ⊕ ι → Occurrence K oneVertexShape (P.scheme.asSystem hμ B)),
       IsMajorityValue seq Z0 hμ B xs
+  /-- Lem 6.4 / Prop 4.9 placement root on `B` (English pB coordinates). -/
+  placeRoot : p.idx → B.model.carrier
+  /-- `placeRoot` realizes all chart prescriptions on `B`. -/
+  hPlaceRoot : ∀ {β : Type u} (hβ : #β ≤ χ)
+    (paramsI : β → (@OrderPresentation.obj K P.E I linOrder nonempty).carrier)
+    (hjoint : #(p.idx ⊕ β) ≤ σ + χ)
+    (h₁ : P.D.t (σ + χ) ≤ Model.card B.model),
+    P.D.same hjoint B.mem B.mem h₁ h₁
+      (Sum.elim placeRoot (fun b => eB (paramsI b)))
+      (fun t => B.val (B.occ (eB (qPres hβ paramsI t))))
 
-/-- `B`-representative of the free-lift root: empty-query majority prescription pulled along
-the chart iso. English identifies this with Prop 4.9 / Lem 6.4 placement `z` via
-`infra_610_place_z_as_free_lift` / `hPlace` (not Path A soft join). -/
+/-- `B`-representative of the free-lift root: Lem 6.4 / Prop 4.9 placement coordinates on `B`
+(`placeRoot`), not empty-query `qPres`. -/
 noncomputable def Infra610ChartPrescriptions.chartRoot
     {K : AbstractElementaryClass.{u}} {P : SingleModelData K} {σ : Cardinal.{u}}
     {μ : Cardinal.{u}} {hμ : μ ∈ P.eligible}
@@ -365,11 +375,7 @@ noncomputable def Infra610ChartPrescriptions.chartRoot
   incl := SystemArrow.refl (P.scheme.asSystem hμ B)
   incl_arrow := trivial
   idx := p.idx
-  val := fun a =>
-    B.occ (data.eB (data.qPres
-      (β := PEmpty.{u + 1})
-      (by simpa [mk_eq_zero] using (bot_le : (0 : Cardinal.{u}) ≤ data.χ))
-      PEmpty.elim (Sum.inl a)))
+  val := fun a => B.occ (data.placeRoot a)
 
 /-- Well-ordered chart of `B` at level `μ`: `E(I) ≃ B` with `#I = μ`. -/
 noncomputable def infra_610_chart_of_B
@@ -1073,106 +1079,168 @@ theorem infra_610_hPlace_full
   funext t
   cases t <;> rfl
 
-/-- **place_z / onI.** On `E(I)`: `qPres ~ Sum.elim (qPres ∅ ∘ inl) paramsI`. -/
-theorem infra_610_qPres_matches_empty_joint
+/-! ### Retired: `infra_610_qPres_matches_empty_joint`
+
+Lean soft-pad of empty `hPlace` with shared params. No §6.2 sentence. Stay retired.
+-/
+
+/-- **Done helper.** Empty reindex of a prescription matches the empty-query prescription head. -/
+theorem infra_610_qPres_inl_matches_empty
     {P : SingleModelData K} {σ : Cardinal.{u}} (hσ : aleph0 ≤ σ)
     {μ : Cardinal.{u}} {hμ : μ ∈ P.eligible}
     {A B : P.scheme.Object μ hμ}
     {f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ B)}
     {hf : P.scheme.permitted (X := A) (Y := B) f}
     {p : TupleOver K oneVertexShape P.scheme hμ A} {seq : ApproximationSequence p}
-    (data : Infra610ChartPrescriptions (hμ := hμ) P σ f hf p seq)
-    (hidx : #p.idx ≤ σ) (hσμ : σ < μ)
-    {β : Type u} (hβχ : #β ≤ data.χ)
-    (paramsI : β → (@OrderPresentation.obj K P.E data.I data.linOrder data.nonempty).carrier)
-    (hjoint : #(p.idx ⊕ β) ≤ σ + data.χ)
+    (data : Infra610ChartSupport (hμ := hμ) P σ f hf p seq)
+    (hidx : #p.idx ≤ σ)
+    {β : Type u} (hβ : #β ≤ data.χ)
+    (params : β → (@OrderPresentation.obj K P.E data.I data.linOrder data.nonempty).carrier)
     (hcardI : P.D.t (σ + data.χ) ≤
       Model.card (@OrderPresentation.obj K P.E data.I data.linOrder data.nonempty)) :
-    P.D.same hjoint data.hImem data.hImem hcardI hcardI
-      (data.qPres hβχ paramsI)
-      (Sum.elim
-        (fun a => data.qPres (β := PEmpty.{u + 1})
-          (by simpa [mk_eq_zero] using (bot_le : (0 : Cardinal.{u}) ≤ data.χ))
-          PEmpty.elim (Sum.inl a))
-        paramsI) := by
+    letI := data.linOrder
+    letI := data.nonempty
+    P.D.same (α := p.idx) (hidx.trans (self_le_add_right σ data.χ))
+      data.hImem data.hImem hcardI hcardI
+      (fun a => data.qPres hβ params (Sum.inl a))
+      (fun a => data.qPres
+        (β := PEmpty.{u + 1})
+        (by simpa [mk_eq_zero] using (bot_le : (0 : Cardinal.{u}) ≤ data.χ))
+        PEmpty.elim (Sum.inl a)) := by
   classical
   letI := data.linOrder
   letI := data.nonempty
-  have hσχinf : aleph0 ≤ σ + data.χ := hσ.trans (self_le_add_right σ data.χ)
-  obtain ⟨J, linJ, nonJ, fIJ, z, hJ, hPlace⟩ := infra_610_place_z_prop49 hσ data hidx
-  letI := linJ
-  letI := nonJ
-  have hσχμ : σ + data.χ < μ := add_lt_of_lt (P.aleph0_le hμ) hσμ data.hχμ
-  have hIc : Model.card (P.E.obj data.I) = μ :=
-    SingleModelData.card_obj_eq (P := P) hμ data.I data.hIcard
-  have hcardI' : P.D.t (σ + data.χ) ≤ Model.card (P.E.obj data.I) :=
-    (P.t_lt hμ hσχinf hσχμ).le.trans hIc.ge
-  have hcardJ : P.D.t (σ + data.χ) ≤ Model.card (P.E.obj J) :=
-    hcardI'.trans (mk_le_of_injective (P.E.map fIJ).injective)
-  have hFull := hPlace hβχ paramsI hjoint hcardI' hcardJ
   have hβ0 : #(PEmpty.{u + 1}) ≤ data.χ := by
     simpa [mk_eq_zero] using (bot_le : (0 : Cardinal.{u}) ≤ data.χ)
   have hjoint0 : #(p.idx ⊕ PEmpty.{u + 1}) ≤ σ + data.χ := by
     simp [mk_sum, mk_eq_zero, add_zero]
     exact hidx.trans (self_le_add_right σ data.χ)
-  have hP0 := hPlace hβ0 (PEmpty.elim : PEmpty.{u + 1} → _) hjoint0 hcardI' hcardJ
-  have hα : #p.idx ≤ σ + data.χ := hidx.trans (self_le_add_right σ data.χ)
+  have hσχinf : aleph0 ≤ σ + data.χ := hσ.trans (self_le_add_right σ data.χ)
   have hls : ls K ≤ σ + data.χ := by
     have h1 : ls K ≤ ls K + σ := le_self_add
     have h2 : ls K + σ < data.χ := data.hχτ ▸ data.hχls
     exact h1.trans (h2.le.trans (by rw [add_comm]; exact self_le_add_right data.χ σ))
-  have hEmpty : P.D.same (α := p.idx) hα hJ hJ hcardJ hcardJ z
-      (fun a => P.E.map fIJ (data.qPres hβ0 PEmpty.elim (Sum.inl a))) :=
-    P.D.same_relevel hjoint0 hσχinf hσχinf le_rfl le_rfl hls hJ hJ hcardJ hcardJ
-      hcardJ hcardJ hcardJ hcardJ _ _ hP0 hα Sum.inl
-  have hPushQ :
-      P.D.same hjoint data.hImem hJ hcardI hcardJ
-        (data.qPres hβχ paramsI)
-        (fun t => P.E.map fIJ (data.qPres hβχ paramsI t)) :=
-    P.D.of_strong hjoint data.hImem hJ hcardI hcardJ _ _
-      (P.E.map fIJ) hσχinf (P.E.map_strong fIJ) (fun _ => rfl)
-  have hPushE :
-      P.D.same hjoint data.hImem hJ hcardI hcardJ
-        (Sum.elim (fun a => data.qPres hβ0 PEmpty.elim (Sum.inl a)) paramsI)
-        (Sum.elim (fun a => P.E.map fIJ (data.qPres hβ0 PEmpty.elim (Sum.inl a)))
-          (fun b => P.E.map fIJ (paramsI b))) :=
-    P.D.of_strong hjoint data.hImem hJ hcardI hcardJ _ _
-      (P.E.map fIJ) hσχinf (P.E.map_strong fIJ) (by intro t; cases t <;> rfl)
-  have hFull' :
-      P.D.same hjoint hJ hJ hcardJ hcardJ
-        (Sum.elim z (fun b => P.E.map fIJ (paramsI b)))
-        (fun t => P.E.map fIJ (data.qPres hβχ paramsI t)) := by
-    convert hFull using 1
-    funext t; cases t <;> rfl
-  -- Soft-pad gap: promote `hEmpty` (α: z ~ E.map (qPres∅∘inl)) to the joint with
-  -- shared `paramsI` on J. Not a `StableDiagram` axiom (`preserves_atomic` only goes
-  -- the other way). Same combinatorial hole as retired Path A `diagramEq_sum_elim_inl`.
-  -- Candidates: wire two `LiftsTuple` witnesses + `LiftsTuple.same_of_lifts`, or realize
-  -- `tp(z / E(I))` in `B` (Path B). `hEmpty` is the α-premise; `hFull'` is the other joint.
-  have hPlaceMeet :
-      P.D.same hjoint hJ hJ hcardJ hcardJ
-        (Sum.elim z (fun b => P.E.map fIJ (paramsI b)))
-        (Sum.elim (fun a => P.E.map fIJ (data.qPres hβ0 PEmpty.elim (Sum.inl a)))
-          (fun b => P.E.map fIJ (paramsI b))) := by
-    exact sorry
-  have _hEmptyα := hEmpty
+  have hcoh0 := data.hcoh hβ hβ0 params (PEmpty.elim : PEmpty.{u + 1} → β) hjoint0 hcardI
+  have hα : #p.idx ≤ σ + data.χ := hidx.trans (self_le_add_right σ data.χ)
+  have hparams : (fun b : PEmpty.{u + 1} => params (PEmpty.elim b)) = PEmpty.elim :=
+    funext fun b => nomatch b
+  have hre := P.D.same_relevel hjoint0 hσχinf hσχinf le_rfl le_rfl hls data.hImem data.hImem
+    hcardI hcardI hcardI hcardI hcardI hcardI _ _ hcoh0 hα Sum.inl
+  convert hre using 1
+  · funext a; rfl
+  · funext a; simp only [hparams]
 
-  have hOnJ :
-      P.D.same hjoint hJ hJ hcardJ hcardJ
-        (fun t => P.E.map fIJ (data.qPres hβχ paramsI t))
-        (Sum.elim (fun a => P.E.map fIJ (data.qPres hβ0 PEmpty.elim (Sum.inl a)))
-          (fun b => P.E.map fIJ (paramsI b))) :=
-    P.D.trans hjoint hJ hJ hJ hcardJ hcardJ hcardJ _ _ _
-      (P.D.symm hjoint hJ hJ hcardJ hcardJ _ _ hFull') hPlaceMeet
-  exact P.D.trans hjoint data.hImem hJ data.hImem hcardI hcardJ hcardI _ _ _
-    hPushQ
-    (P.D.trans hjoint hJ hJ data.hImem hcardJ hcardJ hcardI _ _ _
-      hOnJ (P.D.symm hjoint data.hImem hJ hcardI hcardJ _ _ hPushE))
+/-- **Done.** μ-hull of Prop 4.9 chart image ∪ `z` inside `E(J)`, with chart factor and
+`zN` section. -/
+theorem infra_610_placement_mu_hull
+    {P : SingleModelData K} {σ : Cardinal.{u}} (_hσ : aleph0 ≤ σ)
+    {μ : Cardinal.{u}} {hμ : μ ∈ P.eligible}
+    {A B : P.scheme.Object μ hμ}
+    {f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ B)}
+    {hf : P.scheme.permitted (X := A) (Y := B) f}
+    {p : TupleOver K oneVertexShape P.scheme hμ A} {seq : ApproximationSequence p}
+    (data : Infra610ChartSupport (hμ := hμ) P σ f hf p seq)
+    (hidx : #p.idx ≤ σ) (hσμ : σ < μ)
+    {J : Type u} [LinearOrder J] [Nonempty J]
+    (emb : Language.Embedding K.τ
+      (@OrderPresentation.obj K P.E data.I data.linOrder data.nonempty).carrier
+      (P.E.obj J).carrier)
+    (hemb : K.Strong emb) (z : p.idx → (P.E.obj J).carrier) (hJ : K.Mem (P.E.obj J)) :
+    ∃ (N : Model K.τ) (i : Language.Embedding K.τ N.carrier (P.E.obj J).carrier)
+      (j : Language.Embedding K.τ
+        (@OrderPresentation.obj K P.E data.I data.linOrder data.nonempty).carrier N.carrier)
+      (zN : p.idx → N.carrier),
+      K.Mem N ∧ Model.card N = μ ∧ K.Strong i ∧ K.Strong j ∧
+        (∀ a, i (j a) = emb a) ∧ ∀ a, i (zN a) = z a := by
+  classical
+  letI := data.linOrder
+  letI := data.nonempty
+  have hμinf : aleph0 ≤ μ := P.aleph0_le hμ
+  have hIc : Model.card
+      (@OrderPresentation.obj K P.E data.I data.linOrder data.nonempty) = μ :=
+    SingleModelData.card_obj_eq (P := P) hμ data.I data.hIcard
+  have hEJ : μ ≤ Model.card (P.E.obj J) :=
+    hIc.symm.trans_le (mk_le_of_injective emb.injective)
+  have hT : #↥(Set.range emb ∪ Set.range z) ≤ μ := by
+    refine (mk_union_le _ _).trans ?_
+    have h1 : #(Set.range emb) ≤ μ := (mk_range_le (f := ⇑emb)).trans hIc.le
+    have h2 : #(Set.range z) ≤ μ := (mk_range_le (f := z)).trans (hidx.trans hσμ.le)
+    have hsum := add_le_add h1 h2
+    rwa [add_eq_self hμinf] at hsum
+  obtain ⟨N, i, hN, hi, hcN, hcov⟩ :=
+    exists_strong_hull_exact_card K μ (P.ls_lt hμ).le hμinf (P.E.obj J) hJ hEJ _ hT
+  have himgA : ∀ a, ∃ x, i x = emb a := fun a => hcov _ (Or.inl ⟨a, rfl⟩)
+  have himgZ : ∀ a, ∃ x, i x = z a := fun a => hcov _ (Or.inr ⟨a, rfl⟩)
+  let j : Language.Embedding K.τ
+      (@OrderPresentation.obj K P.E data.I data.linOrder data.nonempty).carrier N.carrier :=
+    factorEmbedding emb i himgA
+  have hj : K.Strong j := strong_factorEmbedding emb i hemb hi himgA
+  choose zN hzN using himgZ
+  exact ⟨N, i, j, zN, hN, hcN, hi, hj, fun a => factorEmbedding_apply emb i himgA a, hzN⟩
 
-/-- **Open tip (English Lem 6.4 / Prop 4.9).** Placement `z` realizes every majority
-prescription: on `B`, `eB∘qPres` matches the chart-root joint
-`Sum.elim chartRoot (eB∘params)`. Assembles `qPres_matches_empty_joint` + `reflect_joint_eB`. -/
-theorem infra_610_place_z_as_free_lift
+/-! ### Retired: `infra_610_placement_to_B`
+
+Global strong `φ : N → B` with `φ ∘ j = eB` on the full chart. Impossible: `eB` is an
+`Equiv` (onto) while hull factor `j` need not be; full-chart `to_strong` also needs
+`D.t μ ≤ μ`, contradicting eligibility. No §6.2 sentence. Stay retired — use saturation
+pullback (`infra_610_placement_saturate_to_B`) instead.
+-/
+
+/-- **Board-open.** English §8: saturate Prop 4.9 placement joints (length &lt; `μ`) back into `B`.
+Produces `placeRoot` realizing all chart prescriptions. -/
+theorem infra_610_placement_saturate_to_B
+    {P : SingleModelData K} {σ : Cardinal.{u}} (hσ : aleph0 ≤ σ)
+    {μ : Cardinal.{u}} {hμ : μ ∈ P.eligible}
+    {A B : P.scheme.Object μ hμ}
+    {f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ B)}
+    {hf : P.scheme.permitted (X := A) (Y := B) f}
+    {p : TupleOver K oneVertexShape P.scheme hμ A} {seq : ApproximationSequence p}
+    (data : Infra610ChartSupport (hμ := hμ) P σ f hf p seq)
+    (hidx : #p.idx ≤ σ) (hσμ : σ < μ) :
+    ∃ (root : p.idx → B.model.carrier),
+      ∀ {β : Type u} (hβ : #β ≤ data.χ)
+        (paramsI : β →
+          (@OrderPresentation.obj K P.E data.I data.linOrder data.nonempty).carrier)
+        (hjoint : #(p.idx ⊕ β) ≤ σ + data.χ)
+        (h₁ : P.D.t (σ + data.χ) ≤ Model.card B.model),
+        P.D.same hjoint B.mem B.mem h₁ h₁
+          (Sum.elim root (fun b => data.eB (paramsI b)))
+          (fun t => B.val (B.occ (data.eB (data.qPres hβ paramsI t)))) := by
+  classical
+  letI := data.linOrder
+  letI := data.nonempty
+  haveI : CategoricalUnbounded K := P.D.categoricalUnbounded
+  -- Prop 4.9 placement in an order enlargement; pull short joints into `B` by saturation
+  -- (`exists_saturation` / `same_of_common_hull` at length `σ+χ < μ`).
+  obtain ⟨_J, _linJ, _nonJ, _fIJ, _z, _hJ, _hPlace⟩ :=
+    @proposition_4_9 K _ P.E P.D data.I data.linOrder data.nonempty data.wf
+      p.idx σ data.χ hσ hidx data.hχls data.hpow data.hImem data.qPres data.hnat data.hcoh
+  exact sorry
+
+/-- **Blocked** on `placement_saturate_to_B`. Lem 6.4 / Prop 4.9 placement root on `B`.
+English: placement type over `B` is pB. -/
+theorem infra_610_placement_root_on_B
+    {P : SingleModelData K} {σ : Cardinal.{u}} (hσ : aleph0 ≤ σ)
+    {μ : Cardinal.{u}} {hμ : μ ∈ P.eligible}
+    {A B : P.scheme.Object μ hμ}
+    {f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ B)}
+    {hf : P.scheme.permitted (X := A) (Y := B) f}
+    {p : TupleOver K oneVertexShape P.scheme hμ A} {seq : ApproximationSequence p}
+    (data : Infra610ChartSupport (hμ := hμ) P σ f hf p seq)
+    (hidx : #p.idx ≤ σ) (hσμ : σ < μ) :
+    ∃ (root : p.idx → B.model.carrier),
+      ∀ {β : Type u} (hβ : #β ≤ data.χ)
+        (paramsI : β →
+          (@OrderPresentation.obj K P.E data.I data.linOrder data.nonempty).carrier)
+        (hjoint : #(p.idx ⊕ β) ≤ σ + data.χ)
+        (h₁ : P.D.t (σ + data.χ) ≤ Model.card B.model),
+        P.D.same hjoint B.mem B.mem h₁ h₁
+          (Sum.elim root (fun b => data.eB (paramsI b)))
+          (fun t => B.val (B.occ (data.eB (data.qPres hβ paramsI t)))) :=
+  infra_610_placement_saturate_to_B hσ (hμ := hμ) data hidx hσμ
+
+/-- **E5 glue (B).** Reflected `eB∘qPres` matches the `chartRoot` / `placeRoot` joint. -/
+theorem infra_610_reflected_matches_chartRoot
     {P : SingleModelData K} {σ : Cardinal.{u}} (hσ : aleph0 ≤ σ)
     {μ : Cardinal.{u}} {hμ : μ ∈ P.eligible}
     {A B : P.scheme.Object μ hμ}
@@ -1192,101 +1260,21 @@ theorem infra_610_place_z_as_free_lift
   classical
   letI := data.linOrder
   letI := data.nonempty
-  have hσχinf : aleph0 ≤ σ + data.χ := hσ.trans (self_le_add_right σ data.χ)
-  have hσχμ : σ + data.χ < μ := add_lt_of_lt (P.aleph0_le hμ) hσμ data.hχμ
-  have hIc : Model.card (P.E.obj data.I) = μ :=
-    SingleModelData.card_obj_eq (P := P) hμ data.I data.hIcard
-  have hcardI : P.D.t (σ + data.χ) ≤ Model.card (P.E.obj data.I) :=
-    (P.t_lt hμ hσχinf hσχμ).le.trans hIc.ge
-  have hI := infra_610_qPres_matches_empty_joint hσ data hidx hσμ hβχ paramsI hjoint hcardI
-  have hB := infra_610_reflect_joint_eB hσ data hjoint
-    (data.qPres hβχ paramsI)
-    (Sum.elim
-      (fun a => data.qPres (β := PEmpty.{u + 1})
-        (by simpa [mk_eq_zero] using (bot_le : (0 : Cardinal.{u}) ≤ data.χ))
-        PEmpty.elim (Sum.inl a))
-      paramsI)
-    hcardI h₁ hI
-  have hq :
-      (fun t => B.val (B.occ (data.eB (data.qPres hβχ paramsI t)))) =
-      (fun t => B.val (B.occ (data.eB (data.qPres hβχ paramsI t)))) := rfl
-  have htail :
-      (fun t => B.val (B.occ (data.eB
-          (Sum.elim
-            (fun a => data.qPres (β := PEmpty.{u + 1})
-              (by simpa [mk_eq_zero] using (bot_le : (0 : Cardinal.{u}) ≤ data.χ))
-              PEmpty.elim (Sum.inl a))
-            paramsI t)))) =
+  have h := data.hPlaceRoot hβχ paramsI hjoint h₁
+  have hroot :
+      (Sum.elim data.placeRoot (fun b => data.eB (paramsI b))) =
       Sum.elim (fun a => B.val (data.chartRoot.val a)) (fun b => data.eB (paramsI b)) := by
     funext t
     cases t with
     | inl a =>
       simp only [Sum.elim_inl, Infra610ChartPrescriptions.chartRoot]
-    | inr b =>
-      simp only [Sum.elim_inr]
-      exact SMObject.val_occ B _
-  -- `reflect_joint_eB` applies `B.val (B.occ (eB ·))` pointwise to both sides.
-  have hB' :
-      P.D.same hjoint B.mem B.mem h₁ h₁
-        (fun t => B.val (B.occ (data.eB (data.qPres hβχ paramsI t))))
-        (fun t => B.val (B.occ (data.eB
-          (Sum.elim
-            (fun a => data.qPres (β := PEmpty.{u + 1})
-              (by simpa [mk_eq_zero] using (bot_le : (0 : Cardinal.{u}) ≤ data.χ))
-              PEmpty.elim (Sum.inl a))
-            paramsI t)))) := hB
-  exact hq ▸ htail ▸ hB'
+      exact (SMObject.val_occ B _).symm
+    | inr b => rfl
+  exact hroot ▸ P.D.symm hjoint B.mem B.mem h₁ h₁ _ _ h
 
-/-- **E5 glue (B).** Reflected `eB∘qPres` matches the chart-root joint, by Lem 6.4 / Prop 4.9
-placement (`infra_610_place_z_as_free_lift`) — not Path A soft join. -/
-theorem infra_610_reflected_matches_chartRoot
-    {P : SingleModelData K} {σ : Cardinal.{u}} (hσ : aleph0 ≤ σ)
-    {μ : Cardinal.{u}} {hμ : μ ∈ P.eligible}
-    {A B : P.scheme.Object μ hμ}
-    {f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ B)}
-    {hf : P.scheme.permitted (X := A) (Y := B) f}
-    {p : TupleOver K oneVertexShape P.scheme hμ A} {seq : ApproximationSequence p}
-    (data : Infra610ChartPrescriptions (hμ := hμ) P σ f hf p seq)
-    (_hκ : seq.τ + aleph0 < #seq.κIndex)
-    (hidx : #p.idx ≤ σ) (hσμ : σ < μ)
-    {β : Type u} (hβg : #β ≤ P.g σ + ls K) (params : β → A.model.carrier)
-    (hjoint : #(p.idx ⊕ β) ≤ σ + data.χ)
-    (_h₀ : P.D.t (σ + data.χ) ≤ Model.card p.host.model)
-    (h₁ : P.D.t (σ + data.χ) ≤ Model.card B.model) :
-    P.D.same hjoint B.mem B.mem h₁ h₁
-      (fun t => B.val (B.occ (data.eB (data.qPres (hβg.trans data.htestχ)
-        (fun b => data.eB.symm (f.onVertex PUnit.unit (params b))) t))))
-      (Sum.elim (fun a => B.val (data.chartRoot.val a))
-        (fun b => f.onVertex PUnit.unit (params b))) := by
-  classical
-  letI := data.linOrder
-  letI := data.nonempty
-  let paramsI : β → (P.E.obj data.I).carrier :=
-    fun b => data.eB.symm (f.onVertex PUnit.unit (params b))
-  have hβχ : #β ≤ data.χ := hβg.trans data.htestχ
-  have h := infra_610_place_z_as_free_lift hσ data hidx hσμ hβχ paramsI hjoint h₁
-  have hq :
-      (fun t => B.val (B.occ (data.eB (data.qPres (hβg.trans data.htestχ)
-        (fun b => data.eB.symm (f.onVertex PUnit.unit (params b))) t)))) =
-      (fun t => B.val (B.occ (data.eB (data.qPres hβχ paramsI t)))) := by
-    funext t
-    rfl
-  have htail :
-      (Sum.elim (fun a => B.val (data.chartRoot.val a))
-        (fun b => data.eB (paramsI b))) =
-      Sum.elim (fun a => B.val (data.chartRoot.val a))
-        (fun b => f.onVertex PUnit.unit (params b)) := by
-    funext t
-    cases t with
-    | inl _ => rfl
-    | inr b =>
-      dsimp [paramsI]
-      exact Language.Equiv.apply_symm_apply data.eB _
-  exact hq ▸ htail ▸ h
-
-/-- **E7 glue.** Galois tests for `SameGaloisType`: reflected RHS replaced by `chartRoot` joint.
-Uses `Equiv.refl` on `chartRoot.idx = p.idx`. -/
-theorem infra_610_same_galois_tests_chartRoot
+/-- **Tip (English Lem 6.4 / Thm 6.6; board-blocked).** Galois tests of `p` vs `chartRoot`.
+Blocked on `reflected_matches_chartRoot` / open `placement_root_on_B`. -/
+theorem infra_610_place_z_as_free_lift
     (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ)
     {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
     {A B : P.scheme.Object μ hμ}
@@ -1295,8 +1283,8 @@ theorem infra_610_same_galois_tests_chartRoot
     (p : TupleOver K oneVertexShape P.scheme hμ A)
     (seq : ApproximationSequence p)
     (data : Infra610ChartPrescriptions (hμ := hμ) P σ f hf p seq)
-    (hκ : seq.τ + aleph0 < #seq.κIndex)
-    (hidx : #p.idx ≤ σ) (hσμ : σ < μ) (hνμ : p.ν = μ) (_hqν : data.chartRoot.ν = μ) :
+    (_hκ : seq.τ + aleph0 < #seq.κIndex)
+    (hidx : #p.idx ≤ σ) (hσμ : σ < μ) (_hνμ : p.ν = μ) (_hqν : data.chartRoot.ν = μ) :
     ∀ {β : Type u} (hβg : #β ≤ P.g σ + ls K) (ρ : Cardinal.{u}) (hρinf : aleph0 ≤ ρ)
       (hρμ : ρ < μ) (params : β → A.model.carrier) (hjoint : #(data.chartRoot.idx ⊕ β) ≤ ρ)
       (h₀ : P.D.t ρ ≤ Model.card p.host.model)
@@ -1307,47 +1295,55 @@ theorem infra_610_same_galois_tests_chartRoot
         (Sum.elim (fun i => data.chartRoot.host.val (data.chartRoot.val i))
           (fun b => (data.chartRoot.restrict f hf).incl.onVertex PUnit.unit (params b))) := by
   intro β hβg ρ hρinf hρμ params hjoint h₀ h₁
+  classical
   letI := data.linOrder
   letI := data.nonempty
+  have hβχ : #β ≤ data.χ := hβg.trans data.htestχ
   have hσjoint : #(p.idx ⊕ β) ≤ σ + data.χ := by
-    simpa [mk_sum, lift_id] using add_le_add hidx (hβg.trans data.htestχ)
-  have hσχinf : ℵ₀ ≤ σ + data.χ := hσ.trans (self_le_add_right σ data.χ)
-  have hσμχ : σ + data.χ < μ :=
-    add_lt_of_lt (P.aleph0_le hμ) hσμ data.hχμ
-  have hσ₀ : P.D.t (σ + data.χ) ≤ Model.card p.host.model := by
-    have hc : Model.card p.host.model = μ := by simpa [hνμ] using p.host.card
-    exact (P.t_lt hμ hσχinf hσμχ).le.trans hc.ge
+    simpa [mk_sum, lift_id] using add_le_add hidx hβχ
+  have hσχinf : aleph0 ≤ σ + data.χ := hσ.trans (self_le_add_right σ data.χ)
+  have hσχμ : σ + data.χ < μ := add_lt_of_lt (P.aleph0_le hμ) hσμ data.hχμ
   have hσ₁ : P.D.t (σ + data.χ) ≤ Model.card B.model :=
-    (P.t_lt hμ hσχinf hσμχ).le.trans B.card.ge
+    (P.t_lt hμ hσχinf hσχμ).le.trans B.card.ge
+  let paramsI : β → (P.E.obj data.I).carrier :=
+    fun b => data.eB.symm (f.onVertex PUnit.unit (params b))
   have hgalois : P.D.same hjoint p.host.mem B.mem h₀ h₁
       (Sum.elim (fun i => p.host.val (p.val ((Equiv.refl p.idx).symm i)))
         (fun b => p.incl.onVertex PUnit.unit (params b)))
-      (fun t => B.val (B.occ (data.eB (data.qPres (hβg.trans data.htestχ)
-        (fun b => data.eB.symm (f.onVertex PUnit.unit (params b))) t)))) :=
+      (fun t => B.val (B.occ (data.eB (data.qPres hβχ paramsI t)))) :=
     data.hgalois hβg ρ hρinf hρμ params hjoint h₀ h₁
   have hchartσ :=
-    infra_610_reflected_matches_chartRoot hσ data hκ hidx hσμ hβg params hσjoint hσ₀ hσ₁
-  let reflected := fun t => B.val (B.occ (data.eB (data.qPres (hβg.trans data.htestχ)
-    (fun b => data.eB.symm (f.onVertex PUnit.unit (params b))) t)))
+    infra_610_reflected_matches_chartRoot hσ data hidx hσμ hβχ paramsI hσjoint hσ₁
+  let reflected := fun t => B.val (B.occ (data.eB (data.qPres hβχ paramsI t)))
   let chartRHS := Sum.elim (fun i => B.val (data.chartRoot.val i))
     (fun b => f.onVertex PUnit.unit (params b))
   let final := Sum.elim (fun i => data.chartRoot.host.val (data.chartRoot.val i))
     (fun b => (data.chartRoot.restrict f hf).incl.onVertex PUnit.unit (params b))
+  have htail :
+      Sum.elim (fun a => B.val (data.chartRoot.val a)) (fun b => data.eB (paramsI b)) =
+      chartRHS := by
+    funext t
+    cases t with
+    | inl _ => rfl
+    | inr b =>
+      dsimp [paramsI, chartRHS]
+      exact Language.Equiv.apply_symm_apply data.eB _
+  have hls : ls K ≤ max ρ (σ + data.χ) := by
+    have h1 : ls K ≤ ls K + σ := le_self_add
+    have h2 : ls K + σ < data.χ := data.hχτ ▸ data.hχls
+    have h3 : data.χ ≤ σ + data.χ := by rw [add_comm]; exact self_le_add_right data.χ σ
+    exact h1.trans (h2.le.trans (h3.trans (le_max_right _ _)))
   let ρ' : Cardinal.{u} := max ρ (σ + data.χ)
   have hρ'inf : aleph0 ≤ ρ' := hρinf.trans (le_max_left _ _)
   have hρle' : ρ ≤ ρ' := le_max_left _ _
   have hσle' : σ + data.χ ≤ ρ' := le_max_right _ _
-  have hls : ls K ≤ ρ' := by
-    have h1 : ls K ≤ ls K + σ := le_self_add
-    have h2 : ls K + σ < data.χ := data.hχτ ▸ data.hχls
-    have h3 : data.χ ≤ σ + data.χ := by rw [add_comm]; exact self_le_add_right data.χ σ
-    exact h1.trans (h2.le.trans (h3.trans hσle'))
-  have hρ'μ : ρ' < μ := max_lt hρμ hσμχ
+  have hρ'μ : ρ' < μ := max_lt hρμ hσχμ
   have hMc' : P.D.t ρ' ≤ Model.card B.model :=
     (P.t_lt hμ hρ'inf hρ'μ).le.trans B.card.ge
   have hchart' : P.D.same hjoint B.mem B.mem h₁ h₁ reflected chartRHS :=
-    P.D.same_relevel (σ := σ + data.χ) (τ := ρ) (σ' := ρ') hσjoint hσχinf hρinf hσle' hρle' hls
-      B.mem B.mem hσ₁ hσ₁ hMc' hMc' h₁ h₁ reflected chartRHS hchartσ hjoint id
+    htail ▸
+      P.D.same_relevel (σ := σ + data.χ) (τ := ρ) (σ' := ρ') hσjoint hσχinf hρinf hσle' hρle'
+        hls B.mem B.mem hσ₁ hσ₁ hMc' hMc' h₁ h₁ reflected _ hchartσ hjoint id
   have hbridge : P.D.same hjoint B.mem data.chartRoot.host.mem h₁ h₁ chartRHS final := by
     simp only [final, chartRHS, Infra610ChartPrescriptions.chartRoot, TupleOver.restrict,
       SystemArrow.comp, SystemArrow.refl]
@@ -1356,6 +1352,29 @@ theorem infra_610_same_galois_tests_chartRoot
     _ reflected final hgalois
     (P.D.trans hjoint B.mem B.mem data.chartRoot.host.mem h₁ h₁ h₁
       reflected chartRHS final hchart' hbridge)
+
+/-- **E7 glue.** Thin wrapper: tip Galois tests of `p` vs `chartRoot`. -/
+theorem infra_610_same_galois_tests_chartRoot
+    (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ)
+    {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
+    {A B : P.scheme.Object μ hμ}
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ B))
+    (hf : P.scheme.permitted (X := A) (Y := B) f)
+    (p : TupleOver K oneVertexShape P.scheme hμ A)
+    (seq : ApproximationSequence p)
+    (data : Infra610ChartPrescriptions (hμ := hμ) P σ f hf p seq)
+    (hκ : seq.τ + aleph0 < #seq.κIndex)
+    (hidx : #p.idx ≤ σ) (hσμ : σ < μ) (hνμ : p.ν = μ) (hqν : data.chartRoot.ν = μ) :
+    ∀ {β : Type u} (hβg : #β ≤ P.g σ + ls K) (ρ : Cardinal.{u}) (hρinf : aleph0 ≤ ρ)
+      (hρμ : ρ < μ) (params : β → A.model.carrier) (hjoint : #(data.chartRoot.idx ⊕ β) ≤ ρ)
+      (h₀ : P.D.t ρ ≤ Model.card p.host.model)
+      (h₁ : P.D.t ρ ≤ Model.card data.chartRoot.host.model),
+      P.D.same hjoint p.host.mem data.chartRoot.host.mem h₀ h₁
+        (Sum.elim (fun i => p.host.val (p.val ((Equiv.refl p.idx).symm i)))
+          (fun b => p.incl.onVertex PUnit.unit (params b)))
+        (Sum.elim (fun i => data.chartRoot.host.val (data.chartRoot.val i))
+          (fun b => (data.chartRoot.restrict f hf).incl.onVertex PUnit.unit (params b))) :=
+  infra_610_place_z_as_free_lift P σ hσ hμ f hf p seq data hκ hidx hσμ hνμ hqν
 
 /-! ## Same Galois type from ClosedLevel tests -/
 
@@ -1718,10 +1737,14 @@ theorem infra_610_chart_prescriptions
     Nonempty (Infra610ChartPrescriptions (hμ := hμ) P σ f hf p seq) := by
   obtain ⟨supp⟩ :=
     infra_610_chart_support P σ hσ hμ hσμ f hf p hidx seq hτμ hκ hχls hpow htestχ
+  have hσlt : σ < μ := (Order.lt_succ σ).trans_le hσμ
+  obtain ⟨placeRoot, hPlaceRoot⟩ := infra_610_placement_root_on_B hσ supp hidx hσlt
   exact ⟨{
     toInfra610ChartSupport := supp
     hgalois := infra_610_root_galois supp hνμ hτμ hκ
     hmajority := infra_610_root_majority supp hτμ hκ
+    placeRoot := placeRoot
+    hPlaceRoot := hPlaceRoot
   }⟩
 
 /-- **E6.** Feed E5 data into `proposition_4_9` / Lem 6.4; free-lift `TupleOver` over `B`

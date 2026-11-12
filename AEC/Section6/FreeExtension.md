@@ -27,20 +27,26 @@ Proof body is in `source/eventual.pdf` §6.2. Lean decls live in [`StationaryFre
 | E5e Root Galois tests | `infra_610_root_galois` | **done** (reflected `eB∘qPres` RHS; majority transport) |
 | E5 soft join to empty `chartRoot` (Path A) | `infra_610_diagramEq_sum_elim_inl` / `chartRoot_joint_majority` | **retired** (no English sentence) |
 | E5 Local majority prescriptions (assembler) | `infra_610_chart_prescriptions` | **done** |
-| E6 Lemma 6.4 placement $z$ as $p_B$ | `infra_610_place_z_as_free_lift` → `infra_610_reflected_matches_chartRoot` | **blocked** on qPres soft-pad |
+| E6 μ-hull of chart∪$z$ | `infra_610_placement_mu_hull` | **done** |
+| E6 global $\varphi:N\to B$ fixing $eB$ | `infra_610_placement_to_B` | **retired** (impossible; no §6.2 sentence) |
+| E6 saturate Prop 4.9 placement into $B$ | `infra_610_placement_saturate_to_B` | **open** (board tip; English §8) |
+| E6 Lem 6.4 placement root on $B$ | `infra_610_placement_root_on_B` | **blocked** on `placement_saturate_to_B` |
+| E6 place_z: qPres head ~ empty | `infra_610_qPres_inl_matches_empty` | **done** (`hcoh`) |
+| E5 glue reflected vs `chartRoot` | `infra_610_reflected_matches_chartRoot` | **blocked** on `placement_root_on_B` (`placeRoot`) |
+| E6 Lemma 6.4 / Thm 6.6: type is $p_B$ | `infra_610_place_z_as_free_lift` → `infra_610_same_galois_tests_chartRoot` | **blocked** on `reflected_matches_chartRoot` |
 | E6 place_z: Prop 4.9 package | `infra_610_place_z_prop49` | **done** |
 | E6 place_z: empty hPlace | `infra_610_hPlace_empty` | **done** |
 | E6 place_z: full hPlace | `infra_610_hPlace_full` | **done** |
-| E6 place_z: qPres~empty on $E(I)$ | `infra_610_qPres_matches_empty_joint` | **open** (soft-pad of empty hPlace on $J$) |
+| E6 place_z: qPres~empty on $E(I)$ | `infra_610_qPres_matches_empty_joint` | **retired** (no §6.2 sentence; soft-pad) |
 | E6 place_z: reflect $E(I)\to B$ | `infra_610_reflect_joint_eB` | **done** |
-| E6 wrap placement as `TupleOver` over $B$ | `infra_610_place_prescriptions` | **done** (`chartRoot` = $B$-rep of $z$; retains Prop 4.9 `z`) |
+| E6 wrap placement as `TupleOver` over $B$ | `infra_610_place_prescriptions` | **done** (`chartRoot` = `placeRoot`) |
 | Majority transport of the placed type | `infra_610_majority_of_placement` | **done** |
-| E7 Theorem 6.6 uniqueness / Galois diagram tests for $p_B$ | `infra_610_same_galois_tests_chartRoot`; `infra_610_same_galois` | **done** (modulo place_z tip) |
+| E7 Theorem 6.6 uniqueness / Galois diagram tests for $p_B$ | `infra_610_same_galois_tests_chartRoot` (thin wrap of tip); `infra_610_same_galois` | **done** (modulo place_z tip) |
 | E5–E7 packaged | `infra_610_majority_prescription` → `infra_610_place_on_B` | **done** (`SameGaloisType` + majority; modulo place_z) |
 | E8–E11 Mixed queries, restrict, iso, transitivity, Lem 6.9 code | deferred / narrowed in `IsFreeLift` | later |
 | ClosedLevel for scheme bound $P.g` | `infra_610_closed_level` | **done** |
 
-Hard chain follows English §6.2: majority prescriptions → Lem 6.4 / Prop 4.9 placement → Thm 6.6 uniqueness. Open tip: `infra_610_qPres_matches_empty_joint` — promote empty `hPlace` α-equality to the joint with shared params on `J` (not a `StableDiagram` axiom; same combinatorial gap as retired Path A).
+Hard chain follows English §6.2/§8: majority prescriptions → Prop 4.9 enlargement → saturation pullback into $B$ → Lem 6.4 placement root → Thm 6.6 Galois tests. Open tip: `infra_610_placement_saturate_to_B`. Blocked: `placement_root_on_B` → `reflected_matches_chartRoot` → `place_z_as_free_lift`. Retired: global `placement_to_B`, soft-pad.
 
 **[FreeExtension.lean](FreeExtension.lean)**
 

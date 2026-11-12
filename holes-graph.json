@@ -7,7 +7,7 @@
     "done": "Proved (no sorry)"
   },
   "notes": [
-    "Open tip: infra_610_qPres_matches_empty_joint (soft-pad of empty hPlace on J). Done place_z helpers: prop49, hPlace_empty, hPlace_full, reflect_joint_eB. Map: AEC/Section6/FreeExtension.md.",
+    "Open tip: infra_610_placement_root_on_B (Lem 6.4 placement root on B). Blocked: reflected_matches_chartRoot \u2192 place_z_as_free_lift (Galois tests). Done: qPres_inl_matches_empty. Soft-pad stays retired. Map: AEC/Section6/FreeExtension.md.",
     "Edge B\u2192A means the English proof of A requires B (or a required Lean infra subgoal).",
     "Blue = done. Green = open. Grey = blocked. No separate failed status unless a counterexample refutes the program.",
     "lemma_6_14 is independent of Prop 6.13 (false paper-number edge removed); it feeds lemma_12_6."
@@ -1478,8 +1478,8 @@
       "status": "blocked",
       "file": "AEC/Section6/StationaryFreeExtension.lean",
       "section": 6,
-      "blocker": "infra_610_place_z_as_free_lift",
-      "detail": "Wired to place_z tip."
+      "blocker": "infra_610_placement_root_on_B",
+      "detail": "Revived: uses placeRoot/hPlaceRoot from placement_root_on_B. No soft-pad."
     },
     {
       "id": "infra_610_same_galois_tests_chartRoot",
@@ -1488,7 +1488,7 @@
       "file": "AEC/Section6/StationaryFreeExtension.lean",
       "section": 6,
       "blocker": "infra_610_place_z_as_free_lift",
-      "detail": "Trans chain to chartRoot RHS; blocked on place_z tip."
+      "detail": "Thin wrapper of tip place_z_as_free_lift; blocked on open tip."
     },
     {
       "id": "infra_610_isFreeLift_same_galois",
@@ -1533,12 +1533,12 @@
     },
     {
       "id": "infra_610_place_z_as_free_lift",
-      "label": "E6 Lem 6.4 placement z as pB",
+      "label": "E6 Lem 6.4 / Thm 6.6 p vs chartRoot",
       "status": "blocked",
       "file": "AEC/Section6/StationaryFreeExtension.lean",
       "section": 6,
-      "blocker": "infra_610_qPres_matches_empty_joint",
-      "detail": "Assembles reflect_joint_eB + qPres_matches_empty_joint; soft-pad gap on J."
+      "detail": "Galois tests assembly: hgalois + reflected_matches + bridge. Blocked on reflected_matches.",
+      "blocker": "infra_610_reflected_matches_chartRoot"
     },
     {
       "id": "infra_610_place_z_prop49",
@@ -1567,10 +1567,11 @@
     {
       "id": "infra_610_qPres_matches_empty_joint",
       "label": "place_z: qPres~empty joint on E(I)",
-      "status": "open",
+      "status": "retired",
       "file": "AEC/Section6/StationaryFreeExtension.lean",
       "section": 6,
-      "detail": "Assembles empty+full hPlace + of_strong J\u2192I; blocked on \u03b1-head soft pad (Sum.elim z params ~ Sum.elim (E.map qPres\u2205) params). Same gap as retired Path A same_sum_elim; not a StableDiagram axiom. LiftsTuple.same_of_lifts route not yet wired."
+      "detail": "Retired: no \u00a76.2 sentence; Lean soft-pad of empty hPlace (same gap as Path A diagramEq_sum_elim_inl). English tip is infra_610_place_z_as_free_lift (Path B).",
+      "blocker": null
     },
     {
       "id": "infra_610_reflect_joint_eB",
@@ -1579,6 +1580,51 @@
       "file": "AEC/Section6/StationaryFreeExtension.lean",
       "section": 6,
       "detail": "of_strong along eB; proved."
+    },
+    {
+      "id": "infra_610_qPres_inl_matches_empty",
+      "file": "AEC/Section6/StationaryFreeExtension.lean",
+      "section": 6,
+      "label": "place_z: qPres head ~ empty via hcoh",
+      "status": "done",
+      "blocker": null,
+      "detail": "Done helper: hcoh empty reindex + same_relevel. \u03b1-head only."
+    },
+    {
+      "id": "infra_610_placement_root_on_B",
+      "file": "AEC/Section6/StationaryFreeExtension.lean",
+      "section": 6,
+      "label": "E6 Lem 6.4 placement root on B",
+      "status": "blocked",
+      "blocker": "infra_610_placement_saturate_to_B",
+      "detail": "Thin wrap of placement_saturate_to_B."
+    },
+    {
+      "id": "infra_610_placement_mu_hull",
+      "file": "AEC/Section6/StationaryFreeExtension.lean",
+      "section": 6,
+      "label": "E6 \u03bc-hull of chart\u222az in E(J)",
+      "status": "done",
+      "blocker": null,
+      "detail": "Done: exists_strong_hull_exact_card + factorEmbedding."
+    },
+    {
+      "id": "infra_610_placement_to_B",
+      "file": "AEC/Section6/StationaryFreeExtension.lean",
+      "section": 6,
+      "label": "E6 retired: global \u03c6 N\u2192B fixing eB",
+      "status": "retired",
+      "blocker": null,
+      "detail": "Retired: \u03c6\u2218j=eB impossible (eB Equiv onto; j not; t \u03bc>\u03bc). No \u00a76.2 sentence."
+    },
+    {
+      "id": "infra_610_placement_saturate_to_B",
+      "file": "AEC/Section6/StationaryFreeExtension.lean",
+      "section": 6,
+      "label": "E6 saturate Prop 4.9 placement into B",
+      "status": "open",
+      "blocker": null,
+      "detail": "Board-open: English \u00a78 saturation pullback of Prop 4.9 joints (length <\u03bc) into B as placeRoot."
     }
   ],
   "edges": [
@@ -1706,11 +1752,6 @@
     {
       "from": "infra_610_qPres_matches_empty_root",
       "to": "infra_610_isFreeLift_same_galois",
-      "kind": "hard"
-    },
-    {
-      "from": "infra_610_reflected_matches_chartRoot",
-      "to": "infra_610_same_galois_tests_chartRoot",
       "kind": "hard"
     },
     {
@@ -2780,12 +2821,6 @@
     },
     {
       "from": "infra_610_place_z_as_free_lift",
-      "to": "infra_610_reflected_matches_chartRoot",
-      "kind": "hard",
-      "note": "English Lem 6.4/Prop 4.9 hPlace identifies reflected qPres with chartRoot joint."
-    },
-    {
-      "from": "infra_610_place_z_as_free_lift",
       "to": "infra_610_isFreeLift_same_galois",
       "kind": "hard",
       "note": "SameGaloisType packaging blocked on place_z tip."
@@ -2803,29 +2838,90 @@
       "note": "full hPlace needs Prop 4.9 package"
     },
     {
-      "from": "infra_610_hPlace_empty",
-      "to": "infra_610_qPres_matches_empty_joint",
-      "kind": "hard",
-      "note": "onI uses empty hPlace"
-    },
-    {
-      "from": "infra_610_hPlace_full",
-      "to": "infra_610_qPres_matches_empty_joint",
-      "kind": "hard",
-      "note": "onI uses full hPlace"
-    },
-    {
-      "from": "infra_610_qPres_matches_empty_joint",
-      "to": "infra_610_place_z_as_free_lift",
-      "kind": "hard",
-      "note": "place_z assembles onI"
-    },
-    {
       "from": "infra_610_reflect_joint_eB",
       "to": "infra_610_place_z_as_free_lift",
       "kind": "hard",
       "note": "place_z assembles onB reflect"
+    },
+    {
+      "from": "infra_610_hPlace_empty",
+      "to": "infra_610_place_z_as_free_lift",
+      "kind": "hard",
+      "note": "empty hPlace witness for Path B tip"
+    },
+    {
+      "from": "infra_610_hPlace_full",
+      "to": "infra_610_place_z_as_free_lift",
+      "kind": "hard",
+      "note": "full hPlace witness for Path B tip"
+    },
+    {
+      "from": "infra_610_place_z_as_free_lift",
+      "to": "infra_610_same_galois_tests_chartRoot",
+      "kind": "hard",
+      "note": "thin wrapper of tip Galois tests"
+    },
+    {
+      "from": "infra_610_placement_root_on_B",
+      "to": "infra_610_reflected_matches_chartRoot",
+      "kind": "hard",
+      "note": "placeRoot fills hPlaceRoot"
+    },
+    {
+      "from": "infra_610_reflected_matches_chartRoot",
+      "to": "infra_610_place_z_as_free_lift",
+      "kind": "hard",
+      "note": "hchart in tip assembly"
+    },
+    {
+      "from": "infra_610_place_z_prop49",
+      "to": "infra_610_placement_mu_hull",
+      "kind": "hard",
+      "note": "hull needs Prop 4.9 z on E(J)"
+    },
+    {
+      "from": "infra_610_hPlace_full",
+      "to": "infra_610_placement_mu_hull",
+      "kind": "hard",
+      "note": "full hPlace supplies z/chart image"
+    },
+    {
+      "from": "infra_610_placement_mu_hull",
+      "to": "infra_610_placement_root_on_B",
+      "kind": "hard",
+      "note": "hull supplies N,i,j,zN"
+    },
+    {
+      "from": "infra_610_place_z_prop49",
+      "to": "infra_610_placement_saturate_to_B",
+      "kind": "hard",
+      "note": "saturation pullback of Prop 4.9 z"
+    },
+    {
+      "from": "infra_610_hPlace_full",
+      "to": "infra_610_placement_saturate_to_B",
+      "kind": "hard",
+      "note": "full hPlace joints to saturate"
+    },
+    {
+      "from": "infra_610_placement_mu_hull",
+      "to": "infra_610_placement_saturate_to_B",
+      "kind": "hard",
+      "note": "optional hull coding for saturation ambient"
+    },
+    {
+      "from": "infra_610_closed_level",
+      "to": "infra_610_placement_saturate_to_B",
+      "kind": "hard",
+      "note": "categoricity / saturation at \u03bc"
+    },
+    {
+      "from": "infra_610_placement_saturate_to_B",
+      "to": "infra_610_placement_root_on_B",
+      "kind": "hard",
+      "note": "root thin-wraps saturate"
     }
   ],
-  "doneCount": 117
+  "doneCount": 117,
+  "meta": "Open tip: infra_610_placement_saturate_to_B (English \u00a78 saturation pullback into B). Retired: placement_to_B (global \u03c6 impossible). Done: placement_mu_hull. Blocked: placement_root_on_B \u2192 reflected_matches \u2192 place_z. Soft-pad stays retired. Map: AEC/Section6/FreeExtension.md."
 }

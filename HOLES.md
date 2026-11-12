@@ -46,7 +46,7 @@ Section 13 is complete and was never on that chain.
 
 The table is the previous `Results.lean` rollup. The live token count is **60**,
 including residual infra such as `WorkingScheme.exists_approximationSequence`
-(Thm 6.10 packaging closed modulo English place_z tip; open tip `infra_610_qPres_matches_empty_joint`).
+(Thm 6.10 packaging closed modulo English place_z tip; open tip `infra_610_placement_saturate_to_B`; `placement_root_on_B` blocked on it; `place_z_as_free_lift` blocked on `reflected_matches_chartRoot`).
 
 ---
 
@@ -113,7 +113,7 @@ counterexample refutes the program.
 **Dependency rule:** edge B→A only if the English proof of A requires B, or A
 needs an explicit Lean infra subgoal B (not a paper-number chain).
 
-**Open (frontier):** `infra_610_qPres_matches_empty_joint` — empty+full `hPlace` + `of_strong` J→I assembled; blocked on α-head soft pad of empty `hPlace` on `J` (same gap as retired Path A `same_sum_elim`). Helpers done: `place_z_prop49`, `hPlace_empty`, `hPlace_full`, `reflect_joint_eB`. Tip `place_z_as_free_lift` blocked on that. English Lem 6.4 / Prop 4.9. Map: [`AEC/Section6/FreeExtension.md`](AEC/Section6/FreeExtension.md).
+**Open (frontier):** `infra_610_placement_saturate_to_B` — English §8 saturation pullback of Prop 4.9 joints (length &lt; `μ`) into `B` as `placeRoot`. Retired: `placement_to_B` (global φ). Done: `placement_mu_hull`. Blocked: `placement_root_on_B` → `reflected_matches_chartRoot` → `place_z_as_free_lift`. Map: [`AEC/Section6/FreeExtension.md`](AEC/Section6/FreeExtension.md).
 
 **Definition 5.2 repairs (made for Proposition 5.6).** The planned statement of Proposition 5.6 (a working package with an object at every eligible level) was refutable from the definitions; each obstruction was checked in Lean before the repair.
 1. `WorkingScheme.diagram_iso` is now for lists with `#α < μ`, and `WorkingScheme.diagram_preserved` for lists with `#α < μ` and `#α < ν` (`AEC/Section5/WorkingScheme.lean`). Unbounded, the two fields applied to the list of all occurrences of an object made every permitted arrow between objects at one level vertexwise bijective; the stable diagram `D` only controls bounded lists. `diagram_refl`, `diagram_symm`, `diagram_trans`, `diagram_reindex`, `diagram_restrict`, `diagram_empty` are unchanged.
@@ -147,7 +147,7 @@ Callers: `namedWorkingScheme` now takes `hι : #ι < μ0`, `hTail : ∀ μ ∈ T
 
 Proof of clause 2. Identify `N` with its chart `E(Below μ)` (categoricity at `μ`). The images of `A` and `z` are at most `ν` terms, so they lie in `N₀ = E(S)` for a suborder `S ⊆ Below μ` of size `ν` (`exists_suborder_cover`), and `A → N₀` is strong by coherence. `B` and `N₀` are `ν`-sized strong extensions of `A` whose tuples pass the tests, so Theorem 4.11 (2) at `ν` (`ClosedLevel.exists_tuple_amalgam`) gives a `ν`-sized amalgam `P` over `A` identifying `d` with `z`. Now `N₀ → N` is an order map of the presentation and `μ ≥ t(ν)` is a categoricity cardinal, so the countable tower of Theorem 4.11 at the source level `ν` (`exists_strong_embedding_over`, with target chart `J = Below μ`) embeds `P` into `N` over `N₀`; the target is not enlarged. The English proof runs the exhaustion of Theorem 6.6 directly into `N`: it places each new tuple in a chart of `N` and uses saturation at `μ` to realize the joint diagram of the placed tuple, `A` and the previously assigned list back in `N`. That saturation step is not formalized. A direct Lean version by lift extensions was tried and not closed: a lift found over the chart of `A` lives in a presentation `E(J₁)`, and `D.exists_transport` into `N` matches the previously assigned list but not the image of `A`; fixing all of `A` would take a comparison of length `ν` between its images in `N` and in `E(J₁)`, and `D.of_strong` from the `ν`-model `A` does not give one (`t(ν) > ν`). Passing through `N₀ = E(S)` makes the inclusion into `N` an order map, where the level-`ν` comparisons of Theorem 4.11 apply. Hard edge `4.11 → 6.7`; `6.6 → 6.7` softened (the English proof reuses the exhaustion of Theorem 6.6; the Lean proof calls `ClosedLevel.exists_tuple_amalgam` and `exists_strong_embedding_over`, not `theorem_6_6`). Soft edge `corollary_6_7 → lemma_6_9` (English 6.9 does not use Cor 6.7). Theorem 6.10 is unblocked (hard `lemma_6_9 → theorem_6_10`).
 
-**Lemma 6.9 is done for `SingleModelData`.** The chain is `infra_69_recursion_tail`, then `infra_69_assemble` at a same-level tuple `p.ν = μ`. Theorem 6.10 is restated the same way; `stationary_free_extension_exists` packages full `IsFreeLift` but is **blocked** on `infra_610_qPres_matches_empty_joint` (soft-pad of empty Prop 4.9 `hPlace`; Lem 6.4). Majority uniqueness is proved. No constant-family alternate.
+**Lemma 6.9 is done for `SingleModelData`.** The chain is `infra_69_recursion_tail`, then `infra_69_assemble` at a same-level tuple `p.ν = μ`. Theorem 6.10 is restated the same way; `stationary_free_extension_exists` packages full `IsFreeLift` but is **blocked** on `infra_610_placement_saturate_to_B` → `placement_root_on_B` → `reflected_matches` → `place_z_as_free_lift`. Soft-pad / global `placement_to_B` stay retired. Majority uniqueness is proved. No constant-family alternate.
 
 **Wired (intended use, reach apex):** `5.6 → 9.3, 10.2`; `5.7 → 9.3, 10.6, 10.8`;
 `2.3 → 1.2`; `3.11 → 4.2, 5.8`; `4.2 → 4.9, 4.10, 4.11`; `4.3 → 4.10, 4.11`; `4.5 → 6.1`; `4.6 → 4.9`; `4.7 → 4.8, 12.5`; `4.8 → 4.10, 4.11, 6.3, 6.5`; `4.10 → 4.11, 6.5`; `6.3 → 6.5`; `6.4 → 6.5`; `4.11 → 5.6, 6.6, 6.7`; `infra_69_place_on_fills → infra_69_assemble → 6.9` (hard; 6.9 done for `SingleModelData`); `infra_610_move_query → infra_610_free_root / infra_610_param_freeing_qPres → infra_610_chart_support → infra_610_moved_majority → infra_610_root_majority + infra_610_root_galois → infra_610_chart_prescriptions → infra_610_place_prescriptions → infra_610_majority_of_placement → infra_610_majority_prescription → infra_610_place_on_B → stationary_free_extension_exists → 6.10` with `infra_610_majority_matches_root → infra_610_majority_prescription` and `infra_610_galois_tests_of_placement → infra_610_majority_prescription` with `infra_610_closed_level → infra_610_same_galois → infra_610_isFreeLift_same_galois` (hard restore tip; majority path soft on same_galois; E5 tipport / moved_majority / root_majority done; E5d′/E5e reflected done; `IsFreeLift` majority-only)
@@ -259,10 +259,16 @@ Waits on Section 5 working package. Lean: later Results import this module.
 | `infra_610_place_z_prop49` | Infra: Prop 4.9 z/hPlace package | `AEC/Section6/StationaryFreeExtension.lean` (**done**) |
 | `infra_610_hPlace_empty` | Infra: empty hPlace z~qPres0 | `AEC/Section6/StationaryFreeExtension.lean` (**done**) |
 | `infra_610_hPlace_full` | Infra: full hPlace joint | `AEC/Section6/StationaryFreeExtension.lean` (**done**) |
-| `infra_610_qPres_matches_empty_joint` | Infra: qPres~empty joint on E(I) | `AEC/Section6/StationaryFreeExtension.lean` (**open**: soft-pad of empty hPlace on J) |
+| `infra_610_qPres_matches_empty_joint` | Infra: qPres~empty joint on E(I) | `AEC/Section6/StationaryFreeExtension.lean` (**retired**: no §6.2 sentence; soft-pad) |
+| `infra_610_qPres_inl_matches_empty` | Infra: qPres head ~ empty via hcoh | `AEC/Section6/StationaryFreeExtension.lean` (**done**) |
+| `infra_610_placement_mu_hull` | Infra: μ-hull of chart∪z in E(J) | `AEC/Section6/StationaryFreeExtension.lean` (**done**) |
+| `infra_610_placement_to_B` | Infra: global φ : N → B fixing eB | `AEC/Section6/StationaryFreeExtension.lean` (**retired**: impossible; no §6.2 sentence) |
+| `infra_610_placement_saturate_to_B` | Infra: saturate Prop 4.9 into B | `AEC/Section6/StationaryFreeExtension.lean` (**open**: English §8) |
+| `infra_610_placement_root_on_B` | Infra: Lem 6.4 placement root on B | `AEC/Section6/StationaryFreeExtension.lean` (**blocked**: placement_saturate_to_B) |
 | `infra_610_reflect_joint_eB` | Infra: reflect joint E(I)→B | `AEC/Section6/StationaryFreeExtension.lean` (**done**) |
-| `infra_610_place_z_as_free_lift` | Infra: Lem 6.4 placement z as pB | `AEC/Section6/StationaryFreeExtension.lean` (**blocked**: qPres_matches_empty_joint) |
-| `infra_610_isFreeLift_same_galois` | Infra: restore SameGaloisType in IsFreeLift | `AEC/Section6/StationaryFreeExtension.lean` (**blocked**: place_z tip) |
+| `infra_610_reflected_matches_chartRoot` | Infra: reflected vs chartRoot/placeRoot | `AEC/Section6/StationaryFreeExtension.lean` (**blocked**: placement_root_on_B) |
+| `infra_610_place_z_as_free_lift` | Infra: Lem 6.4 / Thm 6.6 p vs chartRoot | `AEC/Section6/StationaryFreeExtension.lean` (**blocked**: reflected_matches_chartRoot) |
+| `infra_610_isFreeLift_same_galois` | Infra: restore SameGaloisType in IsFreeLift | `AEC/Section6/StationaryFreeExtension.lean` (**blocked**: placement_root_on_B) |
 | `stationary_free_extension_exists` | Infra: free-lift existence | `AEC/Section6/StationaryFreeExtension.lean` (**done** modulo place_z tip; caller arity `c(σ)`) |
 | `theorem_6_10` | Theorem 6.10 | `AEC/Section6/Results.lean` (**done** for `SingleModelData`; modulo place_z) |
 | `lemma_6_11` | Lemma 6.11 | `AEC/Section6/Results.lean:349` |
