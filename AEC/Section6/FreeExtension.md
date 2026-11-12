@@ -16,7 +16,16 @@ Proof body is in `source/eventual.pdf` §6.2. Lean decls live in [`StationaryFre
 | E2 Move query $Z$ in $B$ into $A$ over the sequence | `infra_610_move_query` | done |
 | E3 Majority answer on $Z$ equals $p\upharpoonright Z_0$ | `infra_610_majority_eq_type` / `infra_610_exists_majority` | done |
 | E4 Independence / uniqueness of majority values | `infra_610_majority_unique` | done |
-| E5 Local majority prescriptions on a chart of $B$ | `infra_610_chart_prescriptions` | **partial** (chart/`χ`/free-root/`qPres`/`hnat`/`hcoh`; `hgalois`/`hmajority` open) |
+| E5a Chart of $B$ | `infra_610_chart_of_B` | **done** |
+| E5a′ Power-fixed $\chi$ | `infra_610_choose_chi` | **done** |
+| E5a″ Empty-good free-root | `infra_610_free_root` | **done** |
+| E5b Param-freeing Prop 4.9 `q`/`hnat`/`hcoh` | `infra_610_param_freeing_qPres` | **done** |
+| E5c Support package | `infra_610_chart_support` (`Infra610ChartSupport`) | **done** |
+| E5d Moved majority (good `vi` push) | `infra_610_moved_majority` | **done** |
+| E5d′ Match moved majority to fixed root | `infra_610_majority_matches_root` | **open** |
+| E5d″ Root majority field | `infra_610_root_majority` | assembler (blocked on E5d′) |
+| E5e Root Galois / Thm 6.6 tests | `infra_610_root_galois` | **open** |
+| E5 Local majority prescriptions (assembler) | `infra_610_chart_prescriptions` | assembler (blocked on E5d′–E5e) |
 | E6 Lemma 6.4 compact placement → actual tuple over $B$ | `infra_610_place_prescriptions` | **done** (`proposition_4_9` + chart-root `TupleOver` on `B`) |
 | Majority transport of the placed type | `infra_610_majority_of_placement` | **done** (chart-root `hmajority` packaging) |
 | E7 Theorem 6.6 uniqueness / Galois diagram tests for $p_B$ | `infra_610_galois_tests_of_placement` (tests); `infra_610_same_galois` (amalgam) | tests **done** (chart-root `hgalois`), amalgam done |
@@ -24,7 +33,7 @@ Proof body is in `source/eventual.pdf` §6.2. Lean decls live in [`StationaryFre
 | E8–E11 Mixed queries, restrict, iso, transitivity, Lem 6.9 code | deferred / narrowed in `IsFreeLift` ([`FreeExtension.lean`](FreeExtension.lean)) | later |
 | *(no English step)* ClosedLevel for scheme bound $P.g$ | `infra_610_closed_level` | **done** (`ClosedLevel.of_closurePoint` via `P.tester`) |
 
-Hard chain: `move_query → chart_prescriptions → place_prescriptions → majority_of_placement → majority_prescription → place_on_B → stationary_free_extension_exists → theorem_6_10`, with `galois_tests_of_placement → majority_prescription` and `closed_level → same_galois → stationary_free_extension_exists` separate.
+Hard chain: `move_query → free_root / param_freeing_qPres → chart_support → moved_majority → majority_matches_root → root_majority + root_galois → chart_prescriptions → … → theorem_6_10`. Open tips: `infra_610_majority_matches_root`, `infra_610_root_galois`.
 
 **[FreeExtension.lean](FreeExtension.lean)**
 
