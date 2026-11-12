@@ -33,6 +33,7 @@ infra_610_majority_prescription --> infra_610_same_galois
 infra_610_moved_majority --> infra_610_root_majority
 infra_610_move_query --> infra_610_free_root
 infra_610_move_query --> infra_610_moved_majority
+infra_610_majority_qPres --> infra_610_chart_support
 infra_610_param_freeing_qPres --> infra_610_chart_support
 infra_610_place_on_B --> stationary_free_extension_exists
 infra_610_place_prescriptions --> infra_610_galois_tests_of_placement

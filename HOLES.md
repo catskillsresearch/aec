@@ -113,7 +113,7 @@ counterexample refutes the program.
 **Dependency rule:** edge B→A only if the English proof of A requires B, or A
 needs an explicit Lean infra subgoal B (not a paper-number chain).
 
-**Open (frontier):** E5d′ `infra_610_majority_matches_root`, E5e `infra_610_root_galois`. Map: [`AEC/Section6/FreeExtension.md`](AEC/Section6/FreeExtension.md). E5d `infra_610_moved_majority`, E5d″ `infra_610_root_majority`, and E5 support are **done**. Assembler `chart_prescriptions` blocked on E5e; `majority_prescription` blocked on E5d′. E6–E7 packaging, `closed_level`, `move_query`, `same_galois`, `place_on_B` **done**. Existence wired (`τ = c(σ)`, `κ=τ⁺`).
+**Open (frontier):** E5d′ `infra_610_majority_matches_root` (statement repaired to placed empty-majority root; residual `DiagramEq` join of `hinr`+`hcoh`), E5e `infra_610_root_galois` (retargeted to placed root). Map: [`AEC/Section6/FreeExtension.md`](AEC/Section6/FreeExtension.md). Majority `qPres` / `chart_support` (`χ = seq.τ`), E5d `moved_majority`, E5d″ `root_majority` **done**. Assembler `chart_prescriptions` blocked on E5e; `majority_prescription` blocked on E5d′ join. E6–E7 packaging, `closed_level`, `move_query`, `same_galois`, `place_on_B` **done**. Existence picks power-fixed `χ` then builds `seq` with `τ = χ`.
 **Note:** `lemma_6_1`, `theorem_3_11`, `proposition_5_6`, `proposition_5_7`, `lemma_4_6`, `lemma_6_14`, `proposition_4_3`, `lemma_4_5`, `lemma_4_7`, `proposition_4_8`, `proposition_4_9`, `lemma_4_10`, `theorem_4_11`, `theorem_6_6`, `corollary_6_7`, `proposition_5_8`, `proposition_5_9`,
 `infra_pair_coloring_glue`, `infra_rank_slice`, `infra_type_u_witness_set`, `infra_countable_back_and_forth`, `infra_stable_diagram_realize`, `infra_zeta_model_existence`, `infra_eligible_reclass`, `infra_template_fixed_support`, `infra_named_working_scheme`, `infra_named_working_package`, `infra_single_model_scheme`, `infra_single_model_package` are done.
 Lean 5.8 is the residual `diagram_iso`+`structural_iso` form.
@@ -247,12 +247,13 @@ Waits on Section 5 working package. Lean: later Results import this module.
 | `infra_610_chart_of_B` | Infra: E5a chart of B | `AEC/Section6/StationaryFreeExtension.lean` (**done**) |
 | `infra_610_choose_chi` | Infra: E5a′ power-fixed χ | `AEC/Section6/StationaryFreeExtension.lean` (**done**) |
 | `infra_610_free_root` | Infra: E5a″ empty-good free-root | `AEC/Section6/StationaryFreeExtension.lean` (**done**) |
-| `infra_610_param_freeing_qPres` | Infra: E5b param-freeing q/hnat/hcoh | `AEC/Section6/StationaryFreeExtension.lean` (**done**) |
-| `infra_610_chart_support` | Infra: E5c support package | `AEC/Section6/StationaryFreeExtension.lean` (**done**) |
+| `infra_610_param_freeing_qPres` | Infra: E5b legacy param-freeing q/hnat/hcoh | `AEC/Section6/StationaryFreeExtension.lean` (**done**; retired from support) |
+| `infra_610_majority_qPres` | Infra: E5b majority-valued q/hnat/hcoh/hinr | `AEC/Section6/StationaryFreeExtension.lean` (**done**) |
+| `infra_610_chart_support` | Infra: E5c support package | `AEC/Section6/StationaryFreeExtension.lean` (**done**: majority `qPres`, `χ = seq.τ`) |
 | `infra_610_moved_majority` | Infra: E5d moved majority | `AEC/Section6/StationaryFreeExtension.lean` (**done**) |
-| `infra_610_majority_matches_root` | Infra: E5d′ match majority to root | `AEC/Section6/StationaryFreeExtension.lean` (**open**) |
+| `infra_610_majority_matches_root` | Infra: E5d′ match majority to placed root | `AEC/Section6/StationaryFreeExtension.lean` (**open**: returns `qPres` majority witness vs empty-majority joint; residual `DiagramEq` join) |
 | `infra_610_root_majority` | Infra: E5d″ root majority field | `AEC/Section6/StationaryFreeExtension.lean` (**done**: packaging of `moved_majority`) |
-| `infra_610_root_galois` | Infra: E5e root Galois tests | `AEC/Section6/StationaryFreeExtension.lean` (**open**) |
+| `infra_610_root_galois` | Infra: E5e placed-root Galois tests | `AEC/Section6/StationaryFreeExtension.lean` (**open**) |
 | `infra_610_chart_prescriptions` | Infra: E5 assembler | `AEC/Section6/StationaryFreeExtension.lean` (**assembler**; blocked on E5e) |
 | `infra_610_place_prescriptions` | Infra: E6 Lem 6.4 place prescriptions | `AEC/Section6/StationaryFreeExtension.lean` (**done**: `proposition_4_9` + chart-root `TupleOver` over `B` with `q.ν = μ`) |
 | `infra_610_majority_of_placement` | Infra: majority clause after placement | `AEC/Section6/StationaryFreeExtension.lean` (**done**: packaging of chart-root `hmajority`) |
