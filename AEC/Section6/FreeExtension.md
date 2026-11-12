@@ -16,7 +16,7 @@ Proof body is in `source/eventual.pdf` §6.2. Lean decls live in [`StationaryFre
 | E2 Move query $Z$ in $B$ into $A$ over the sequence | `infra_610_move_query` | done |
 | E3 Majority answer on $Z$ equals $p\upharpoonright Z_0$ | `infra_610_majority_eq_type` / `infra_610_exists_majority` | done |
 | E4 Independence / uniqueness of majority values | `infra_610_majority_unique` | done |
-| E5 Local majority prescriptions on a chart of $B$ | `infra_610_chart_prescriptions` | **open** |
+| E5 Local majority prescriptions on a chart of $B$ | `infra_610_chart_prescriptions` | **partial** (chart/`χ`/free-root/`qPres`/`hnat`/`hcoh`; `hgalois`/`hmajority` open) |
 | E6 Lemma 6.4 compact placement → actual tuple over $B$ | `infra_610_place_prescriptions` | **done** (`proposition_4_9` + chart-root `TupleOver` on `B`) |
 | Majority transport of the placed type | `infra_610_majority_of_placement` | **done** (chart-root `hmajority` packaging) |
 | E7 Theorem 6.6 uniqueness / Galois diagram tests for $p_B$ | `infra_610_galois_tests_of_placement` (tests); `infra_610_same_galois` (amalgam) | tests **done** (chart-root `hgalois`), amalgam done |
