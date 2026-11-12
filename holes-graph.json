@@ -7,7 +7,7 @@
     "done": "Proved (no sorry)"
   },
   "notes": [
-    "Path A soft join: empty chartRoot as d1; IsFreeLift has SameGaloisType. OPEN tip: infra_610_diagramEq_sum_elim_inl (DiagramEq head pad). Map: AEC/Section6/FreeExtension.md.",
+    "Open tip: infra_610_qPres_matches_empty_joint (soft-pad of empty hPlace on J). Done place_z helpers: prop49, hPlace_empty, hPlace_full, reflect_joint_eB. Map: AEC/Section6/FreeExtension.md.",
     "Edge B\u2192A means the English proof of A requires B (or a required Lean infra subgoal).",
     "Blue = done. Green = open. Grey = blocked. No separate failed status unless a counterexample refutes the program.",
     "lemma_6_14 is independent of Prop 6.13 (false paper-number edge removed); it feeds lemma_12_6."
@@ -442,8 +442,8 @@
       "section": 6,
       "file": "AEC/Section6/StationaryFreeExtension.lean",
       "status": "blocked",
-      "blocker": "infra_610_isFreeLift_same_galois",
-      "detail": "Calls infra_610_isFreeLift_same_galois (SameGaloisType \u2227 majority); blocked in practice by Path A pad sorry."
+      "blocker": "infra_610_place_z_as_free_lift",
+      "detail": "Calls infra_610_isFreeLift_same_galois (SameGaloisType \u2227 majority); blocked in practice by place_z tip sorry."
     },
     {
       "id": "infra_69_recursion_tail",
@@ -521,7 +521,7 @@
       "file": "AEC/Section6/Results.lean",
       "status": "blocked",
       "blocker": "stationary_free_extension_exists",
-      "detail": "Packaging calls stationary_free_extension_exists; blocked on Path A pad."
+      "detail": "Packaging calls stationary_free_extension_exists; blocked on place_z tip."
     },
     {
       "id": "theorem_6_6",
@@ -1349,8 +1349,8 @@
       "section": 6,
       "file": "AEC/Section6/StationaryFreeExtension.lean",
       "status": "blocked",
-      "blocker": "infra_610_isFreeLift_same_galois",
-      "detail": "Assembler returns full IsFreeLift via tip; blocked on Path A pad."
+      "blocker": "infra_610_place_z_as_free_lift",
+      "detail": "Assembler returns full IsFreeLift via tip; blocked on place_z tip."
     },
     {
       "id": "infra_610_closed_level",
@@ -1478,8 +1478,8 @@
       "status": "blocked",
       "file": "AEC/Section6/StationaryFreeExtension.lean",
       "section": 6,
-      "blocker": "infra_610_diagramEq_sum_elim_inl",
-      "detail": "Path A: majority uniqueness soft join; proof ready modulo diagramEq_sum_elim_inl pad."
+      "blocker": "infra_610_place_z_as_free_lift",
+      "detail": "Wired to place_z tip."
     },
     {
       "id": "infra_610_same_galois_tests_chartRoot",
@@ -1487,8 +1487,8 @@
       "status": "blocked",
       "file": "AEC/Section6/StationaryFreeExtension.lean",
       "section": 6,
-      "blocker": "infra_610_reflected_matches_chartRoot",
-      "detail": "Trans chain to chartRoot RHS done; blocked only by Path A pad."
+      "blocker": "infra_610_place_z_as_free_lift",
+      "detail": "Trans chain to chartRoot RHS; blocked on place_z tip."
     },
     {
       "id": "infra_610_isFreeLift_same_galois",
@@ -1496,8 +1496,8 @@
       "status": "blocked",
       "file": "AEC/Section6/StationaryFreeExtension.lean",
       "section": 6,
-      "blocker": "infra_610_diagramEq_sum_elim_inl",
-      "detail": "Packaging/IsFreeLift SameGaloisType wired with chartRoot=d\u2081; blocked by Path A pad sorry."
+      "blocker": "infra_610_place_z_as_free_lift",
+      "detail": "SameGaloisType packaging blocked on place_z tip."
     },
     {
       "id": "infra_610_chart_of_B",
@@ -1516,20 +1516,69 @@
     {
       "id": "infra_610_diagramEq_sum_elim_inl",
       "label": "Path A DiagramEq head pad",
-      "status": "open",
+      "status": "retired",
       "file": "AEC/Section6/StationaryFreeExtension.lean",
       "section": 6,
       "blocker": null,
-      "detail": "Pad DiagramEq of p.idx-heads along a common \u03b2-tail on B. Blocks finishing Path A soft join (sorry)."
+      "detail": "Retired: no English sentence; underaxiomatized same-tail DiagramEq pad. Replaced by infra_610_place_z_as_free_lift."
     },
     {
       "id": "infra_610_chartRoot_joint_majority",
       "label": "Path A chartRoot joint majority",
+      "status": "retired",
+      "file": "AEC/Section6/StationaryFreeExtension.lean",
+      "section": 6,
+      "blocker": null,
+      "detail": "Retired with Path A soft join; English uses Lem 6.4/Prop 4.9 hPlace instead."
+    },
+    {
+      "id": "infra_610_place_z_as_free_lift",
+      "label": "E6 Lem 6.4 placement z as pB",
       "status": "blocked",
       "file": "AEC/Section6/StationaryFreeExtension.lean",
       "section": 6,
-      "blocker": "infra_610_diagramEq_sum_elim_inl",
-      "detail": "Empty-good exceptions \u21d2 IsMajorityValue of Sum.elim chartRoot ZB; needs head pad."
+      "blocker": "infra_610_qPres_matches_empty_joint",
+      "detail": "Assembles reflect_joint_eB + qPres_matches_empty_joint; soft-pad gap on J."
+    },
+    {
+      "id": "infra_610_place_z_prop49",
+      "label": "place_z: Prop 4.9 z/hPlace package",
+      "status": "done",
+      "file": "AEC/Section6/StationaryFreeExtension.lean",
+      "section": 6,
+      "detail": "Thin wrapper of proposition_4_9 on chart qPres/hnat/hcoh."
+    },
+    {
+      "id": "infra_610_hPlace_empty",
+      "label": "place_z: empty hPlace z~qPres0",
+      "status": "done",
+      "file": "AEC/Section6/StationaryFreeExtension.lean",
+      "section": 6,
+      "detail": "Empty \u03b2 specialization of hPlace + same_relevel Sum.inl."
+    },
+    {
+      "id": "infra_610_hPlace_full",
+      "label": "place_z: full hPlace joint",
+      "status": "done",
+      "file": "AEC/Section6/StationaryFreeExtension.lean",
+      "section": 6,
+      "detail": "Full hPlace joint Sum.elim z (E.map params) ~ E.map \u2218 qPres."
+    },
+    {
+      "id": "infra_610_qPres_matches_empty_joint",
+      "label": "place_z: qPres~empty joint on E(I)",
+      "status": "open",
+      "file": "AEC/Section6/StationaryFreeExtension.lean",
+      "section": 6,
+      "detail": "Assembles empty+full hPlace + of_strong J\u2192I; blocked on \u03b1-head soft pad (Sum.elim z params ~ Sum.elim (E.map qPres\u2205) params). Same gap as retired Path A same_sum_elim; not a StableDiagram axiom. LiftsTuple.same_of_lifts route not yet wired."
+    },
+    {
+      "id": "infra_610_reflect_joint_eB",
+      "label": "place_z: reflect joint E(I)\u2192B",
+      "status": "done",
+      "file": "AEC/Section6/StationaryFreeExtension.lean",
+      "section": 6,
+      "detail": "of_strong along eB; proved."
     }
   ],
   "edges": [
@@ -2730,20 +2779,52 @@
       "to": "infra_610_moved_majority"
     },
     {
-      "from": "infra_610_diagramEq_sum_elim_inl",
-      "to": "infra_610_chartRoot_joint_majority",
-      "kind": "hard"
-    },
-    {
-      "from": "infra_610_chartRoot_joint_majority",
+      "from": "infra_610_place_z_as_free_lift",
       "to": "infra_610_reflected_matches_chartRoot",
-      "kind": "hard"
+      "kind": "hard",
+      "note": "English Lem 6.4/Prop 4.9 hPlace identifies reflected qPres with chartRoot joint."
     },
     {
-      "from": "infra_610_diagramEq_sum_elim_inl",
+      "from": "infra_610_place_z_as_free_lift",
       "to": "infra_610_isFreeLift_same_galois",
       "kind": "hard",
-      "note": "Path A pad is the open tip under chartRoot=d\u2081."
+      "note": "SameGaloisType packaging blocked on place_z tip."
+    },
+    {
+      "from": "infra_610_place_z_prop49",
+      "to": "infra_610_hPlace_empty",
+      "kind": "hard",
+      "note": "empty hPlace needs Prop 4.9 package"
+    },
+    {
+      "from": "infra_610_place_z_prop49",
+      "to": "infra_610_hPlace_full",
+      "kind": "hard",
+      "note": "full hPlace needs Prop 4.9 package"
+    },
+    {
+      "from": "infra_610_hPlace_empty",
+      "to": "infra_610_qPres_matches_empty_joint",
+      "kind": "hard",
+      "note": "onI uses empty hPlace"
+    },
+    {
+      "from": "infra_610_hPlace_full",
+      "to": "infra_610_qPres_matches_empty_joint",
+      "kind": "hard",
+      "note": "onI uses full hPlace"
+    },
+    {
+      "from": "infra_610_qPres_matches_empty_joint",
+      "to": "infra_610_place_z_as_free_lift",
+      "kind": "hard",
+      "note": "place_z assembles onI"
+    },
+    {
+      "from": "infra_610_reflect_joint_eB",
+      "to": "infra_610_place_z_as_free_lift",
+      "kind": "hard",
+      "note": "place_z assembles onB reflect"
     }
   ],
   "doneCount": 117

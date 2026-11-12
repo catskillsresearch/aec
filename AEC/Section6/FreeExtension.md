@@ -25,16 +25,22 @@ Proof body is in `source/eventual.pdf` §6.2. Lean decls live in [`StationaryFre
 | E5d′ Match majority prescription to placed root | `infra_610_majority_matches_root` | **done** (reflected `eB∘qPres`; `diagram_refl`) |
 | E5d″ Root majority field | `infra_610_root_majority` | **done** |
 | E5e Root Galois tests | `infra_610_root_galois` | **done** (reflected `eB∘qPres` RHS; majority transport) |
-| E5 soft join to empty `chartRoot` (Path A) | `infra_610_chartRoot_joint_majority` → `infra_610_reflected_matches_chartRoot` | **open pad**: `infra_610_diagramEq_sum_elim_inl` |
+| E5 soft join to empty `chartRoot` (Path A) | `infra_610_diagramEq_sum_elim_inl` / `chartRoot_joint_majority` | **retired** (no English sentence) |
 | E5 Local majority prescriptions (assembler) | `infra_610_chart_prescriptions` | **done** |
-| E6 Lemma 6.4 compact placement → actual tuple over $B$ | `infra_610_place_prescriptions` | **done** (`chartRoot` as `d₁`) |
+| E6 Lemma 6.4 placement $z$ as $p_B$ | `infra_610_place_z_as_free_lift` → `infra_610_reflected_matches_chartRoot` | **blocked** on qPres soft-pad |
+| E6 place_z: Prop 4.9 package | `infra_610_place_z_prop49` | **done** |
+| E6 place_z: empty hPlace | `infra_610_hPlace_empty` | **done** |
+| E6 place_z: full hPlace | `infra_610_hPlace_full` | **done** |
+| E6 place_z: qPres~empty on $E(I)$ | `infra_610_qPres_matches_empty_joint` | **open** (soft-pad of empty hPlace on $J$) |
+| E6 place_z: reflect $E(I)\to B$ | `infra_610_reflect_joint_eB` | **done** |
+| E6 wrap placement as `TupleOver` over $B$ | `infra_610_place_prescriptions` | **done** (`chartRoot` = $B$-rep of $z$; retains Prop 4.9 `z`) |
 | Majority transport of the placed type | `infra_610_majority_of_placement` | **done** |
-| E7 Theorem 6.6 uniqueness / Galois diagram tests for $p_B$ | `infra_610_same_galois_tests_chartRoot`; `infra_610_same_galois` | **done** (modulo Path A pad) |
-| E5–E7 packaged | `infra_610_majority_prescription` → `infra_610_place_on_B` | **done** (`SameGaloisType` + majority; Path A) |
+| E7 Theorem 6.6 uniqueness / Galois diagram tests for $p_B$ | `infra_610_same_galois_tests_chartRoot`; `infra_610_same_galois` | **done** (modulo place_z tip) |
+| E5–E7 packaged | `infra_610_majority_prescription` → `infra_610_place_on_B` | **done** (`SameGaloisType` + majority; modulo place_z) |
 | E8–E11 Mixed queries, restrict, iso, transitivity, Lem 6.9 code | deferred / narrowed in `IsFreeLift` | later |
 | ClosedLevel for scheme bound $P.g` | `infra_610_closed_level` | **done** |
 
-Hard chain closed through E5e / packaging / `theorem_6_10` with Path A soft join to empty `chartRoot` as amalgam `d₁`. Open tip: `infra_610_diagramEq_sum_elim_inl` — pad `DiagramEq` of heads along a common parameter tail (blocks finishing Path A without `sorry`).
+Hard chain follows English §6.2: majority prescriptions → Lem 6.4 / Prop 4.9 placement → Thm 6.6 uniqueness. Open tip: `infra_610_qPres_matches_empty_joint` — promote empty `hPlace` α-equality to the joint with shared params on `J` (not a `StableDiagram` axiom; same combinatorial gap as retired Path A).
 
 **[FreeExtension.lean](FreeExtension.lean)**
 

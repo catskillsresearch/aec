@@ -1,7 +1,7 @@
 # Hard edges from holes-graph.json
 # Convention: FROM --> TO means the English proof of TO requires FROM.
-# Nodes: 179  Hard edges: 212
-# Open tips: infra_610_diagramEq_sum_elim_inl.
+# Nodes: 185  Hard edges: 217
+# Open tips: infra_610_qPres_matches_empty_joint.
 
 claim_11_10 --> claim_11_11
 claim_11_11 --> claim_11_12
@@ -14,15 +14,14 @@ corollary_9_2 --> theorem_9_3
 infra_55_enumerate_added --> infra_55_pattern_realize
 infra_55_one_point_cut --> infra_55_pattern_realize
 infra_55_pattern_realize --> infra_69_richness_arity
-infra_610_chartRoot_joint_majority --> infra_610_reflected_matches_chartRoot
 infra_610_chart_prescriptions --> infra_610_majority_prescription
 infra_610_chart_prescriptions --> infra_610_place_prescriptions
 infra_610_closed_level --> infra_610_same_galois
 infra_610_closed_level --> stationary_free_extension_exists
-infra_610_diagramEq_sum_elim_inl --> infra_610_chartRoot_joint_majority
-infra_610_diagramEq_sum_elim_inl --> infra_610_isFreeLift_same_galois
 infra_610_galois_tests_of_placement --> infra_610_majority_prescription
 infra_610_galois_tests_of_placement --> infra_610_same_galois
+infra_610_hPlace_empty --> infra_610_qPres_matches_empty_joint
+infra_610_hPlace_full --> infra_610_qPres_matches_empty_joint
 infra_610_majority_of_placement --> infra_610_majority_prescription
 infra_610_majority_prescription --> infra_610_place_on_B
 infra_610_majority_prescription --> infra_610_same_galois
@@ -30,7 +29,13 @@ infra_610_place_on_B --> stationary_free_extension_exists
 infra_610_place_prescriptions --> infra_610_galois_tests_of_placement
 infra_610_place_prescriptions --> infra_610_majority_of_placement
 infra_610_place_prescriptions --> infra_610_majority_prescription
+infra_610_place_z_as_free_lift --> infra_610_isFreeLift_same_galois
+infra_610_place_z_as_free_lift --> infra_610_reflected_matches_chartRoot
+infra_610_place_z_prop49 --> infra_610_hPlace_empty
+infra_610_place_z_prop49 --> infra_610_hPlace_full
+infra_610_qPres_matches_empty_joint --> infra_610_place_z_as_free_lift
 infra_610_qPres_matches_empty_root --> infra_610_isFreeLift_same_galois
+infra_610_reflect_joint_eB --> infra_610_place_z_as_free_lift
 infra_610_reflected_matches_chartRoot --> infra_610_same_galois_tests_chartRoot
 infra_610_root_galois --> infra_610_isFreeLift_same_galois
 infra_610_same_galois --> infra_610_isFreeLift_same_galois

@@ -39,8 +39,8 @@ approximation sequence for `p` has a majority value on every query from `B` of s
 `I.τ`.
 
 The majority answer is the Prop 4.9–reflected joint `eB ∘ qPres` (freeness with identical
-params on the majority clause). Same Galois type is Thm 6.6 amalgam via chart-root tests
-(`infra_610_same_galois_tests_chartRoot`). -/
+params on the majority clause). Same Galois type is Thm 6.6 amalgam via the Lem 6.4 / Prop 4.9
+placement root (`infra_610_place_z_as_free_lift`, chart-root tests). -/
 def IsFreeLift {μ ν : Cardinal.{u}} {hμ : μ ∈ W.eligible} {hν : ν ∈ W.eligible}
     {A : W.Object μ hμ} {B : W.Object ν hν}
     (p : TupleOver K S W hμ A) (q : TupleOver K S W hν B)
