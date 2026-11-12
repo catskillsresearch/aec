@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-11",
+  "updated": "2026-11-12",
   "sorryCount": 58,
   "legend": {
     "open": "No unfinished required proof-deps \u2014 try next",
@@ -7,27 +7,10 @@
     "done": "Proved (no sorry)"
   },
   "notes": [
+    "Path A soft join: empty chartRoot as d1; IsFreeLift has SameGaloisType. OPEN tip: infra_610_diagramEq_sum_elim_inl (DiagramEq head pad). Map: AEC/Section6/FreeExtension.md.",
     "Edge B\u2192A means the English proof of A requires B (or a required Lean infra subgoal).",
     "Blue = done. Green = open. Grey = blocked. No separate failed status unless a counterexample refutes the program.",
-    "lemma_6_14 is independent of Prop 6.13 (false paper-number edge removed); it feeds lemma_12_6.",
-    "Prop 4.3 is done (hull back-and-forth, Prop43BAF.lean); StableDiagram gained a trans field, supplied by proposition_4_2.",
-    "Prop 5.6 / 5.7 wired by intended English use: 5.6 feeds Thm 9.3 and Prop 10.2; 5.7 feeds Thm 9.3, Prop 10.6, and Lem 10.8.",
-    "Prop 2.3 \u2192 Thm 1.2 is the set-coding reduction; Thm 14.5 supplies qualitative content for both apex theorems.",
-    "Also wired: Thm 3.11 \u2192 Prop 4.2 / 5.8; Lem 4.6 \u2192 Prop 4.9; Lem 6.14 \u2192 Lem 12.6; Thm 13.5 \u2192 Thm 10.9 / Lem 14.2.",
-    "Target: every Results/paper node reaches Thm 1.2 or 1.3; dead-code analysis should eventually justify each hard edge.",
-    "sorryCount is the live count of sorry tokens under AEC/ (ABSTRACT_WIP in scripts/build_aec_tex.py may lag).",
-    "Prop 4.8 is done on the support encoding (UniformTesting.lean): g \u03c3 = max \u2135\u2080 \u03c3, test set = joint support, for infinite \u03c3. The Lean proof does not use Lemma 4.7, so lemma_4_7 \u2192 proposition_4_8 is soft (English-only); lemma_4_7 stays wired through its English use in Lem 12.5.",
-    "Prop 4.9 is done by the English support-profile obstruction (CompactPlacement.lean). Statement changes: [CategoricalUnbounded K], \u2135\u2080 \u2264 \u03c3, natural-parameter clause hnat, coherence clause hcoh; the prescription for p is the diagram of a tuple q p of E(I), so possibility needs no hypothesis. Hard edge proposition_4_2 \u2192 proposition_4_9 added (strong-map clause of Prop 4.2). Lemma 4.10 is unblocked: its only hard dep is Prop 4.9; a natural instantiation of q p is via a strong map B \u2192 E(I) fixing p (Prop 4.2 at \u03bc), which satisfies hnat and hcoh.",
-    "Lemma 4.10 is done (BoundedDiagramLift.lean, PlacedTesting.lean). Statement changes: the old statement was vacuous, since each test clause carried D.t \u03bc \u2264 Model.card B while Model.card B = \u03bc < D.t \u03bc (StableDiagram.above). Now the lift clauses are at the bounded levels \u03c1 < \u03bc (the diagrams D(d, X; B), |X| < \u03bc, whose thresholds lie below \u03bc), J is produced with D.t \u03bc \u2264 \u2016E(J)\u2016, and uniqueness is the level-\u03bc comparison over all of A; added [CategoricalUnbounded K], hcat : Categorical K \u03bc, \u2135\u2080 \u2264 \u03c3, and hg : PlacedTester K E D g. PlacedTester is the English Prop 4.8 over the base (placements of a \u03c3-tuple over E(I) that differ over A differ over \u2264 g(\u03c3) positions of I); it is proved as proposition_4_8_over_base / exists_placedTester from Lemma 4.7 (type_u_witness_set) by the frozen-data / ordinal-vector argument, because proposition_4_8 on the support encoding only tests two full lists on their own joint support. So lemma_4_7 \u2192 proposition_4_8 is hard again, and proposition_4_8, proposition_4_2 (strong maps B \u2192 E(I) fixing parameters), proposition_4_3 (common hulls, categoricity at \u03bc) \u2192 lemma_4_10 are hard.",
-    "Thm 4.11 is done (ClosedLevels.lean, ClosedLevelAmalgam.lean, ClosedLevelTypes.lean); Section 4 is complete (no sorry in AEC/Section4), and Prop 5.6 is unblocked. S = closure points \u03bc > \u2113 of {t, g}. Statement changes: added [CategoricalUnbounded K], E : OrderPresentation K, hg : PlacedTester K E D g (replacing the monotone-only g). Clause 2: added \u2135\u2080 \u2264 \u03c3; the old right side was vacuous (tests at level \u03bc under D.t \u03bc \u2264 Model.card B\u1d62 = \u03bc < D.t \u03bc); it is now the tests at the bounded levels \u03c1 < \u03bc (as in lemma_4_10) over all parameter lists p : \u03b2 \u2192 A with #\u03b2 \u2264 g \u03c3 + ls K. \u03b2 is quantified inside the iff, since for one fixed \u03b2 the iff fails when \u03b2 is small; the bound is g \u03c3 + ls K because PlacedTester bounds positions of I and \u2264 g(\u03c3) positions support \u2264 g(\u03c3) + \u2113 elements of A. Clause 3: the old form compared x, y \u2208 A under g\u2080 = g\u2081 on A, which forces x = y and holds for any injection A \u2192 \u03bc; it is now a code for the elements of all \u03bc-extensions (B, f) of A, with code B\u2080 f\u2080 x = code B\u2081 f\u2081 y iff an amalgam over A identifies x with y (the old form is the case B\u2080 = B\u2081 = A). Hard edges proposition_4_2 \u2192 theorem_4_11 (strong-map clause, StableDiagram.to_strong) and proposition_4_8 \u2192 theorem_4_11 (placed tester) added.",
-    "Prop 5.6 is done (SingleModelScheme.lean, SingleModelPackage.lean), with a strengthened statement: a one-vertex working package with presentations and an object at every eligible level, on an unbounded class of closure points of {D.t, g}. Definition 5.2 was repaired first, because the planned statement was refutable (Lean-checked obstructions). (1) WorkingScheme.diagram_iso is for lists with #\u03b1 < \u03bc, and WorkingScheme.diagram_preserved for lists with #\u03b1 < \u03bc and #\u03b1 < \u03bd: unbounded, the two fields applied to the list of all occurrences of an object make every permitted arrow between objects at one level vertexwise bijective, and the stable diagram D only controls bounded lists. (2) IsSaturated.saturated assumes \u2200 i, ext (Sum.inl i) = base i: the witness extends the list whose diagram is that of the actual list (otherwise ext was unrelated to base and xs). (3) HasChainUnions.union assumes the cocone condition \u2200 i j, comp (le i j) (toZ j) = toZ i in its universal property: without it a two-element constant family identifies any two permitted arrows X \u2192 Z, which with mixed downward closure refutes every package having an object. diagram_trans / diagram_reindex / diagram_restrict / diagram_refl / diagram_symm / diagram_empty are unchanged (unbounded). Callers updated: namedWorkingScheme now takes #\u03b9 < \u03bc0 and the tail bounds \u03bc0 \u2264 \u03bc, \u2135\u2080 \u2264 \u03bc; Props 5.7, 5.8, 5.9 remain proved. Known residual: HasChainUnions.union quantifies over arrows le i j for every ordered pair (i, j) with strict composition, so its families consist of mutually inverse isomorphisms and, with the cocone condition, the clause holds in every scheme (take U := obj i\u2080); a faithful clause would index le over i \u2264 j in a directed order. Left unchanged; the real content for single models is SingleModelData.exists_directed_union. Sections 6\u201311 that consume chain unions should re-index the clause when they need it.",
-    "Lemma 6.1 is done (ParameterOrbits.lean), with a repaired statement. The bare-scheme statement was refutable, and assuming a working package with presentations is not enough: nothing there makes the automorphisms of the vertex models (Lemma 4.5) structural isomorphisms of the scheme (counterexample pattern, not formalized: isomorphisms that preserve a colouring by more than \u03c7 colours). The link is the new hypothesis AssemblesStructIso W b; the English bound b is kept (hb : b + \u03c3 < \u03c7), together with the Lemma 4.5 bound h\u03c7, categoricity at the eligible levels hcat and [CategoricalUnbounded K]. The shape must have no specified map (hedge): vertex automorphisms from Lemma 4.5 need not commute with the maps of a system. This replaces a one-vertex hypothesis, which is not needed (any finite number of vertices is covered) and does not suffice for this proof (a vertex with a specified map to itself). AssemblesStructIso holds for the Prop 5.6 scheme with b = 0 and for the Prop 5.7 named scheme with b + #names. Hard edge lemma_4_5 \u2192 lemma_6_1 added. Prop 6.3 is unblocked.",
-    "Prop 6.3 is done (LayoutTesting.lean): restated away from SameGaloisType/Tail/WorkingScheme (amalgamation circular with Thm 6.6; English is placed comparisons, bound independent of level) to \u2203 g : TestingFunction layout, (\u2200 \u03c3, \u2135\u2080 \u2264 g.g \u03c3) \u2227 PlacedTester K E D g.g, from exists_placedTester with g.g \u03c3 = max \u03c3 (g0 \u03c3). Layout is a descriptor tag (NaturalParameterLayout has no placement data). Hard edges: softened false lemma_6_1 \u2192 proposition_6_3 and proposition_6_3 \u2192 lemma_6_4 (English Lem 6.4 uses 6.1/4.6); added proposition_4_8 \u2192 proposition_6_3 and lemma_4_7 \u2192 proposition_6_3.",
-    "Lem 6.4 is done: restated as packaging of proposition_4_9 / compact_placement over a well-ordered presentation (hnat, hcoh; h\u03c7 = ls K + \u03c3 < \u03c7). Dropped bare WorkingScheme (refutable without coherence) and unused b. Hard edge proposition_4_9 \u2192 lemma_6_4; soft lemma_4_6 \u2192 lemma_6_4 via Prop 4.9. Softened proposition_6_3 \u2192 lemma_6_4 already.",
-    "Lem 6.5 is done (PlacedComparisons.lean), with a repaired statement. The old form had SameGaloisType (scheme amalgamation, which is Thm 6.6) on the left of the iff, a merely monotone g (the iff fails for small g), and a bare WorkingScheme with no presentation to place a tuple in; English Lem 6.5 does not use an amalgamation relation on types. It is now at the level of a presentation, under hL : ClosedLevel K E D g \u03bc with I a well-order of size \u03bc, A = E(I), and tuples d\u2080, d\u2081 of length \u2264 \u03c3 < \u03bc in strong \u03bc-extensions B\u2080, B\u2081 of A: (1) some placement lifts the bounded diagrams of d\u2080 (Placement.LiftsBounded); (2) any two such placements agree over all of A (Placement.AgreeOn \u2026 Set.univ); (3) for lifts P\u2080 of d\u2080 and P\u2081 of d\u2081, P\u2080.AgreeOn P\u2081 Set.univ iff the diagrams of d\u2080 and d\u2081 agree at the bounded levels \u03c1 < \u03bc over all parameter lists p : \u03b2 \u2192 A with #\u03b2 \u2264 g \u03c3 + ls K (the right side of Thm 4.11 clause 2). \u03c3 is any infinite bound on the length, in place of |v| + \u2135\u2080. The last sentence of the English statement (other natural parameter layouts) is not formalized: NaturalParameterLayout has no placement data. Proof: (1), (2) are Lemma 4.10 (exists_boundedDiagramLift, Placement.LiftsBounded.agreeOn_univ); (3) \u2190 is the placed tester (agreeOn_univ_of_tests), (3) \u2192 is new (Placement.LiftsBounded.same_of_agreeOn: equal comparisons make the placement of d\u2080 lift d\u2081, by Placement.LiftsBounded.of_agreeOn, so both tuples have the diagram of its placed tuple; this holds for every bounded query). Hard edges added: lemma_4_10 \u2192 lemma_6_5, proposition_4_8 \u2192 lemma_6_5, and proposition_6_3 \u2192 lemma_6_5 (the English proof says Proposition 6.3 identifies the full placed comparisons; in Lean its PlacedTester is the tester of ClosedLevel). lemma_6_4 \u2192 lemma_6_5 stays hard: the English proof applies Lemma 6.4, and the Lean proof reaches the same compact_placement through Lemma 4.10. Thm 6.6 is done by packaging ClosedLevel.amalgamation / tuple_amalgamation_iff; see the Thm 6.6 note.",
-    "Thm 6.6 is done by packaging ClosedLevel.amalgamation and ClosedLevel.tuple_amalgamation_iff (ClosedLevelTypes.lean / Thm 4.11). Statement repair: dropped bare WorkingScheme / SameGaloisType / unconstrained g; presentation-level under ClosedLevel K E D g \u03bc with amalgamation of strong \u03bc-extensions and the tuple-amalgamation iff at bounded \u03c3 < \u03bc with #\u03b2 \u2264 g \u03c3 + ls K. Hard edge theorem_4_11 \u2192 theorem_6_6; lemma_6_5 \u2192 theorem_6_6 softened (English \u03c9-tower / Lem 6.4\u20136.5 narrative; Lean path is Thm 4.11). Cor 6.7 is done; see the Cor 6.7 note.",
-    "Cor 6.7 is done (LargerLevelRealization.lean), with a repaired statement. The old form quantified over a bare WorkingScheme (Tail / SystemArrow / permitted) with no closed levels, strongness, sizes or testing bound for the Thm 4.11 engine to use, and had neither the prescribed tuple nor the type clause. It is now presentation-level under ClosedLevel K E D g \u03bd, ClosedLevel K E D g \u03bc, \u03bd < \u03bc, for a strong f : A \u2192 B of \u03bd-models and a strong i : A \u2192 N into a \u03bc-model: (1) a strong B \u2192 N extends i; (2) the image of a tuple d of B of length < \u03bd may be prescribed as z in N when the diagrams of (d, f p) and (z, i p) agree at the bounds \u03c1 < \u03bd for all p : \u03b2 \u2192 A with #\u03b2 \u2264 g(#\u03b1 \u2294 \u2135\u2080) + ls K; (3) a tuple of N of length < \u03bd lies in a strong \u03bd-submodel B' of N containing A, with the same diagrams over A at \u03c1 < \u03bd. Proof of (2): N \u2245 E(Below \u03bc) by categoricity at \u03bc; the images of A and z use \u2264 \u03bd positions, so they lie in N\u2080 = E(S), S a suborder of size \u03bd (exists_suborder_cover), and A \u2192 N\u2080 is strong by coherence; ClosedLevel.exists_tuple_amalgam at \u03bd gives a \u03bd-amalgam P of B and N\u2080 over A identifying d with z; N\u2080 \u2192 N is an order map of the presentation and \u03bc \u2265 t(\u03bd) is a categoricity cardinal, so exists_strong_embedding_over (the Thm 4.11 tower at source level \u03bd, target chart Below \u03bc) embeds P into N over N\u2080. The target is not enlarged and no comparison of length \u03bd is made in a \u03bd-model. The English proof instead runs the exhaustion of Thm 6.6 directly into N, with compact placement in a chart of N and saturation at \u03bc; that saturation step is not formalized. A direct Lean version by lift extensions was tried and not closed: D.exists_transport into N matches the previously assigned list but not the image of A, and D.of_strong from the \u03bd-model A gives no comparison of length \u03bd (t(\u03bd) > \u03bd). Hard edge theorem_4_11 \u2192 corollary_6_7; theorem_6_6 \u2192 corollary_6_7 softened (English shared exhaustion; theorem_6_6 is not called). Lemma 6.9 is unblocked (its only hard dep was 6.7); its bare-scheme statement remains for a later repair.",
-    "lemma_6_9 and theorem_6_10 packaging are SingleModelData at recursion-closed levels with p.\u03bd = \u03bc. Majority qPres + chart_support (\u03c7 = seq.\u03c4), moved_majority, root_majority, placed chartRoot, E6\u2013E7 packaging, closed_level done. Open tips: infra_610_majority_matches_root (E5d\u2032 DiagramEq join), infra_610_root_galois (E5e). Map: AEC/Section6/FreeExtension.md. Existence picks power-fixed \u03c7 then seq with \u03c4 = \u03c7."
+    "lemma_6_14 is independent of Prop 6.13 (false paper-number edge removed); it feeds lemma_12_6."
   ],
   "nodes": [
     {
@@ -451,7 +434,7 @@
       "file": "AEC/Section6/StationaryFreeExtension.lean",
       "status": "done",
       "blocker": null,
-      "detail": "Done: ClosedLevel.exists_tuple_amalgam + SMObject.ofModel + oneVertexArrow under diagram tests and q.\u03bd=\u03bc."
+      "detail": "Lemma done: exists_tuple_amalgam + SMObject.ofModel. Wired into IsFreeLift via tip once pad closes."
     },
     {
       "id": "stationary_free_extension_exists",
@@ -459,8 +442,8 @@
       "section": 6,
       "file": "AEC/Section6/StationaryFreeExtension.lean",
       "status": "blocked",
-      "blocker": "infra_610_majority_matches_root",
-      "detail": "Assembled for SingleModelData at recursion-closed levels with p.\u03bd=\u03bc and caller arity \u03c4=testCardinal b P.g \u03c3. Blocked on E5d\u2032 matches_root and E5e root_galois; root_majority / E6/majority/E7/closed_level done."
+      "blocker": "infra_610_isFreeLift_same_galois",
+      "detail": "Calls infra_610_isFreeLift_same_galois (SameGaloisType \u2227 majority); blocked in practice by Path A pad sorry."
     },
     {
       "id": "infra_69_recursion_tail",
@@ -538,7 +521,7 @@
       "file": "AEC/Section6/Results.lean",
       "status": "blocked",
       "blocker": "stationary_free_extension_exists",
-      "detail": "Restated for SingleModelData with p.\u03bd = \u03bc on the recursion-closed tail. Calls stationary_free_extension_exists."
+      "detail": "Packaging calls stationary_free_extension_exists; blocked on Path A pad."
     },
     {
       "id": "theorem_6_6",
@@ -1366,8 +1349,8 @@
       "section": 6,
       "file": "AEC/Section6/StationaryFreeExtension.lean",
       "status": "blocked",
-      "blocker": "infra_610_majority_matches_root",
-      "detail": "Assembler of English E5\u2013E7 (IsFreeLift shape). No own sorry; blocked on majority_matches_root for DiagramEq to typeJoint."
+      "blocker": "infra_610_isFreeLift_same_galois",
+      "detail": "Assembler returns full IsFreeLift via tip; blocked on Path A pad."
     },
     {
       "id": "infra_610_closed_level",
@@ -1383,9 +1366,9 @@
       "label": "Infra: E5 chart prescriptions on B",
       "section": 6,
       "file": "AEC/Section6/StationaryFreeExtension.lean",
-      "status": "blocked",
-      "blocker": "infra_610_root_galois",
-      "detail": "Assembler of support + root_majority + root_galois. Blocked on E5e root_galois; root_majority done."
+      "status": "done",
+      "blocker": null,
+      "detail": "Done: support + root_majority + reflected root_galois."
     },
     {
       "id": "infra_610_place_prescriptions",
@@ -1456,11 +1439,11 @@
     {
       "id": "infra_610_majority_matches_root",
       "label": "E5d match majority to placed root",
-      "status": "open",
+      "status": "done",
       "file": "AEC/Section6/StationaryFreeExtension.lean",
       "section": 6,
       "blocker": null,
-      "detail": "Statement repaired: returns majority qPres witness vs empty-majority chartRoot joint. Residual: DiagramEq join of hinr+hcoh (or Prop 4.9 empty-vs-params)."
+      "detail": "Done: majority qPres witness vs reflected eB\u2218qPres joint (definitionally xs; diagram_refl). No empty-majority soft join."
     },
     {
       "id": "infra_610_majority_qPres",
@@ -1469,16 +1452,52 @@
       "file": "AEC/Section6/StationaryFreeExtension.lean",
       "section": 6,
       "blocker": null,
-      "detail": "Done: per-query moved majority prescriptions with hnat/hinr/hcoh/hmajPres; chart_support uses χ = seq.τ."
+      "detail": "Done: per-query moved majority prescriptions with hnat/hinr/hcoh/hmajPres; chart_support uses \u03c7 = seq.\u03c4."
     },
     {
       "id": "infra_610_root_galois",
       "label": "E5e placed-root galois",
-      "status": "open",
+      "status": "done",
       "file": "AEC/Section6/StationaryFreeExtension.lean",
       "section": 6,
       "blocker": null,
-      "detail": "Open: Thm 6.6 tests of p vs empty-majority placed root on B."
+      "detail": "Done: D.same of p\u2295params vs reflected eB\u2218qPres(f\u2218params) by majority transport; no Thm 6.6; no empty-majority soft join."
+    },
+    {
+      "id": "infra_610_qPres_matches_empty_root",
+      "label": "E5 glue: qPres vs empty root",
+      "status": "done",
+      "file": "AEC/Section6/StationaryFreeExtension.lean",
+      "section": 6,
+      "blocker": null,
+      "detail": "Retired under Path A (majority uniqueness); empty-root D.same pad abandoned."
+    },
+    {
+      "id": "infra_610_reflected_matches_chartRoot",
+      "label": "E5 glue: reflected vs chartRoot",
+      "status": "blocked",
+      "file": "AEC/Section6/StationaryFreeExtension.lean",
+      "section": 6,
+      "blocker": "infra_610_diagramEq_sum_elim_inl",
+      "detail": "Path A: majority uniqueness soft join; proof ready modulo diagramEq_sum_elim_inl pad."
+    },
+    {
+      "id": "infra_610_same_galois_tests_chartRoot",
+      "label": "E7 glue: chartRoot Galois tests",
+      "status": "blocked",
+      "file": "AEC/Section6/StationaryFreeExtension.lean",
+      "section": 6,
+      "blocker": "infra_610_reflected_matches_chartRoot",
+      "detail": "Trans chain to chartRoot RHS done; blocked only by Path A pad."
+    },
+    {
+      "id": "infra_610_isFreeLift_same_galois",
+      "label": "E5 restore SameGaloisType in IsFreeLift",
+      "status": "blocked",
+      "file": "AEC/Section6/StationaryFreeExtension.lean",
+      "section": 6,
+      "blocker": "infra_610_diagramEq_sum_elim_inl",
+      "detail": "Packaging/IsFreeLift SameGaloisType wired with chartRoot=d\u2081; blocked by Path A pad sorry."
     },
     {
       "id": "infra_610_chart_of_B",
@@ -1493,6 +1512,24 @@
       "status": "done",
       "file": "AEC/Section6/StationaryFreeExtension.lean",
       "section": 6
+    },
+    {
+      "id": "infra_610_diagramEq_sum_elim_inl",
+      "label": "Path A DiagramEq head pad",
+      "status": "open",
+      "file": "AEC/Section6/StationaryFreeExtension.lean",
+      "section": 6,
+      "blocker": null,
+      "detail": "Pad DiagramEq of p.idx-heads along a common \u03b2-tail on B. Blocks finishing Path A soft join (sorry)."
+    },
+    {
+      "id": "infra_610_chartRoot_joint_majority",
+      "label": "Path A chartRoot joint majority",
+      "status": "blocked",
+      "file": "AEC/Section6/StationaryFreeExtension.lean",
+      "section": 6,
+      "blocker": "infra_610_diagramEq_sum_elim_inl",
+      "detail": "Empty-good exceptions \u21d2 IsMajorityValue of Sum.elim chartRoot ZB; needs head pad."
     }
   ],
   "edges": [
@@ -1614,8 +1651,47 @@
     {
       "from": "infra_610_same_galois",
       "to": "stationary_free_extension_exists",
+      "kind": "soft",
+      "note": "Majority-only IsFreeLift no longer requires SameGaloisType; restore path is infra_610_isFreeLift_same_galois."
+    },
+    {
+      "from": "infra_610_qPres_matches_empty_root",
+      "to": "infra_610_isFreeLift_same_galois",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_610_reflected_matches_chartRoot",
+      "to": "infra_610_same_galois_tests_chartRoot",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_610_same_galois_tests_chartRoot",
+      "to": "infra_610_isFreeLift_same_galois",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_610_root_galois",
+      "to": "infra_610_isFreeLift_same_galois",
       "kind": "hard",
-      "note": "IsFreeLift requires SameGaloisType of p with q.restrict."
+      "note": "Reflected Galois tests are scaffolding; chartRoot tests replace root_galois for SameGaloisType wiring."
+    },
+    {
+      "from": "infra_610_same_galois",
+      "to": "infra_610_isFreeLift_same_galois",
+      "kind": "hard",
+      "note": "Lemma exists; wiring into IsFreeLift needs a fixed empty-root d\u2081."
+    },
+    {
+      "from": "proposition_4_9",
+      "to": "infra_610_isFreeLift_same_galois",
+      "kind": "hard",
+      "note": "Prop 4.9 z on B is the candidate params-independent root."
+    },
+    {
+      "from": "infra_610_isFreeLift_same_galois",
+      "to": "theorem_6_10",
+      "kind": "soft",
+      "note": "Strengthens Thm 6.10 packaging from majority-only IsFreeLift to full SameGaloisType."
     },
     {
       "from": "stationary_free_extension_exists",
@@ -2652,7 +2728,23 @@
     {
       "from": "infra_610_move_query",
       "to": "infra_610_moved_majority"
+    },
+    {
+      "from": "infra_610_diagramEq_sum_elim_inl",
+      "to": "infra_610_chartRoot_joint_majority",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_610_chartRoot_joint_majority",
+      "to": "infra_610_reflected_matches_chartRoot",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_610_diagramEq_sum_elim_inl",
+      "to": "infra_610_isFreeLift_same_galois",
+      "kind": "hard",
+      "note": "Path A pad is the open tip under chartRoot=d\u2081."
     }
   ],
-  "doneCount": 106
+  "doneCount": 117
 }

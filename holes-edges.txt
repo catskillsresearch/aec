@@ -1,7 +1,7 @@
 # Hard edges from holes-graph.json
 # Convention: FROM --> TO means the English proof of TO requires FROM.
-# Nodes: 163  Hard edges: 205
-# Open tips: infra_610_majority_matches_root, infra_610_root_galois.
+# Nodes: 179  Hard edges: 212
+# Open tips: infra_610_diagramEq_sum_elim_inl.
 
 claim_11_10 --> claim_11_11
 claim_11_11 --> claim_11_12
@@ -14,34 +14,27 @@ corollary_9_2 --> theorem_9_3
 infra_55_enumerate_added --> infra_55_pattern_realize
 infra_55_one_point_cut --> infra_55_pattern_realize
 infra_55_pattern_realize --> infra_69_richness_arity
-infra_610_chart_of_B --> infra_610_chart_support
+infra_610_chartRoot_joint_majority --> infra_610_reflected_matches_chartRoot
 infra_610_chart_prescriptions --> infra_610_majority_prescription
 infra_610_chart_prescriptions --> infra_610_place_prescriptions
-infra_610_chart_support --> infra_610_chart_prescriptions
-infra_610_chart_support --> infra_610_majority_matches_root
-infra_610_chart_support --> infra_610_root_galois
-infra_610_choose_chi --> infra_610_chart_support
 infra_610_closed_level --> infra_610_same_galois
 infra_610_closed_level --> stationary_free_extension_exists
-infra_610_free_root --> infra_610_chart_support
+infra_610_diagramEq_sum_elim_inl --> infra_610_chartRoot_joint_majority
+infra_610_diagramEq_sum_elim_inl --> infra_610_isFreeLift_same_galois
 infra_610_galois_tests_of_placement --> infra_610_majority_prescription
 infra_610_galois_tests_of_placement --> infra_610_same_galois
-infra_610_majority_matches_root --> infra_610_majority_prescription
 infra_610_majority_of_placement --> infra_610_majority_prescription
 infra_610_majority_prescription --> infra_610_place_on_B
 infra_610_majority_prescription --> infra_610_same_galois
-infra_610_moved_majority --> infra_610_root_majority
-infra_610_move_query --> infra_610_free_root
-infra_610_move_query --> infra_610_moved_majority
-infra_610_majority_qPres --> infra_610_chart_support
-infra_610_param_freeing_qPres --> infra_610_chart_support
 infra_610_place_on_B --> stationary_free_extension_exists
 infra_610_place_prescriptions --> infra_610_galois_tests_of_placement
 infra_610_place_prescriptions --> infra_610_majority_of_placement
 infra_610_place_prescriptions --> infra_610_majority_prescription
-infra_610_root_galois --> infra_610_chart_prescriptions
-infra_610_root_majority --> infra_610_chart_prescriptions
-infra_610_same_galois --> stationary_free_extension_exists
+infra_610_qPres_matches_empty_root --> infra_610_isFreeLift_same_galois
+infra_610_reflected_matches_chartRoot --> infra_610_same_galois_tests_chartRoot
+infra_610_root_galois --> infra_610_isFreeLift_same_galois
+infra_610_same_galois --> infra_610_isFreeLift_same_galois
+infra_610_same_galois_tests_chartRoot --> infra_610_isFreeLift_same_galois
 infra_69_anchor_bound --> infra_69_slot_assignment
 infra_69_assemble --> lemma_6_9
 infra_69_chart_iso --> infra_69_place_type
@@ -176,6 +169,7 @@ proposition_4_8 --> lemma_6_5
 proposition_4_8 --> proposition_4_9
 proposition_4_8 --> proposition_6_3
 proposition_4_8 --> theorem_4_11
+proposition_4_9 --> infra_610_isFreeLift_same_galois
 proposition_4_9 --> lemma_4_10
 proposition_4_9 --> lemma_6_4
 proposition_5_6 --> proposition_10_2

@@ -18,10 +18,9 @@ English ↔ Lean step map: `FreeExtension.md` (paper pp. 44–45).
 with same-level host `p.ν = μ`. `IsFreeLift` queries are bounded by the sequence arity `I.τ`
 (English testing cost), not every `#ι < ν`. Cross-scheme transfer is not used.
 
-**Open tips (E5 split).** `infra_610_majority_matches_root` (residual: join `hinr`+`hcoh`
-into `DiagramEq` of the placed joint), `infra_610_root_galois`. Done: majority `qPres`
-(`infra_610_majority_qPres` / `chart_support` with `χ = seq.τ`), `moved_majority`, placed
-`chartRoot` from empty majority prescription, E6–E7 packaging and `closed_level`.
+**E5 tips.** `matches_root` / `root_galois` via reflected `eB∘qPres`. Soft join to empty
+`chartRoot` (d₁) is Path A: majority uniqueness on the params query. E6–E7 packaging and
+`IsFreeLift` restore `SameGaloisType` via `infra_610_isFreeLift_same_galois`.
 -/
 
 namespace AEC
@@ -306,10 +305,15 @@ structure Infra610ChartSupport
     P.D.same hjoint hImem hImem hcardI hcardI
       (fun i => qPres hβ params (Sum.map id ι i))
       (qPres hβ' (fun b => params (ι b)))
-  /-- Each prescription is a moved majority answer on `B`. -/
+  /-- Each prescription is a moved majority answer on `B` (with move diagrams). -/
   hmajPres : ∀ {β : Type u} (hβ : #β ≤ χ)
     (params : β → (@OrderPresentation.obj K P.E I linOrder nonempty).carrier),
     ∃ (Z0 : β → Occurrence K oneVertexShape (P.scheme.asSystem hμ A)),
+      (∀ i : seq.κIndex,
+        P.scheme.DiagramEq (X := A) (Y := B) (seqJoint (seq.family i) Z0)
+          (seqJoint
+            (fun j => ⟨(seq.family i j).1, f.onVertex (seq.family i j).1 (seq.family i j).2⟩)
+            (fun b => B.occ (eB (params b))))) ∧
       IsMajorityValue seq Z0 hμ B
         (fun t => B.occ (eB (qPres hβ params t)))
 
@@ -323,22 +327,16 @@ structure Infra610ChartPrescriptions
     (p : TupleOver K oneVertexShape P.scheme hμ A)
     (seq : ApproximationSequence p)
     extends Infra610ChartSupport (hμ := hμ) P σ f hf p seq where
-  /-- Thm 6.6 tests: `p` vs the placed empty-query majority root on `B`. -/
-  hgalois : ∀ {β : Type u} (_ : #β ≤ P.g σ + ls K) (ρ : Cardinal.{u}) (_ : aleph0 ≤ ρ)
+  /-- Galois tests vs Prop 4.9–reflected `eB ∘ qPres` (identical params; no soft join). -/
+  hgalois : ∀ {β : Type u} (hβg : #β ≤ P.g σ + ls K) (ρ : Cardinal.{u}) (_ : aleph0 ≤ ρ)
     (_ : ρ < μ) (params : β → A.model.carrier) (hjoint : #(p.idx ⊕ β) ≤ ρ)
     (h₀ : P.D.t ρ ≤ Model.card p.host.model)
     (h₁ : P.D.t ρ ≤ Model.card B.model),
     P.D.same hjoint p.host.mem B.mem h₀ h₁
       (Sum.elim (fun i => p.host.val (p.val ((Equiv.refl p.idx).symm i)))
         (fun b => p.incl.onVertex PUnit.unit (params b)))
-      (Sum.elim
-        (fun i => B.val (B.occ (eB (qPres
-          (β := PEmpty.{u + 1})
-          (by simpa [mk_eq_zero] using (bot_le : (0 : Cardinal.{u}) ≤ χ))
-          PEmpty.elim (Sum.inl i)))))
-        (fun b =>
-          (SystemArrow.comp f (SystemArrow.refl (P.scheme.asSystem hμ B))).onVertex
-            PUnit.unit (params b)))
+      (fun t => B.val (B.occ (eB (qPres (hβg.trans htestχ)
+        (fun b => eB.symm (f.onVertex PUnit.unit (params b))) t))))
   /-- E2–E3: some majority value of `seq` on a moved query from `B` (good `vi` push).
   Identification with the chart-root joint is `infra_610_majority_matches_root`. -/
   hmajority : ∀ {ι : Type u}
@@ -761,6 +759,11 @@ theorem infra_610_majority_qPres
           (qPres hβ' (fun b => params (ι b)))) ∧
       (∀ {β : Type u} (hβ : #β ≤ seq.τ) (params : β → (P.E.obj I).carrier),
         ∃ (Z0 : β → Occurrence K oneVertexShape (P.scheme.asSystem hμ A)),
+          (∀ i : seq.κIndex,
+            P.scheme.DiagramEq (X := A) (Y := B) (seqJoint (seq.family i) Z0)
+              (seqJoint
+                (fun j => ⟨(seq.family i j).1, f.onVertex (seq.family i j).1 (seq.family i j).2⟩)
+                (fun b => B.occ (eB (params b))))) ∧
           IsMajorityValue seq Z0 hμ B
             (fun t => B.occ (eB (qPres hβ params t)))) := by
   classical
@@ -783,12 +786,10 @@ theorem infra_610_majority_qPres
     let xs := seqJoint pushed Z
     refine ⟨infra_610_pullMajority eB xs, Z0, ?_, hmove, ?_⟩
     · intro b
-      -- `val_occ` is `rfl`; recover `params` along `eB`.
       change eB.symm (eB (params b)) = params b
       exact Language.Equiv.symm_apply_apply eB (params b)
     · have hx : (fun t => B.occ (eB (infra_610_pullMajority eB xs t))) = xs := by
         funext t
-        -- `pullMajority` then `eB` recovers `val`; `occ_val` is `rfl`.
         change B.occ (eB (eB.symm (B.val (xs t)))) = xs t
         rw [Language.Equiv.apply_symm_apply]
         rfl
@@ -863,8 +864,8 @@ theorem infra_610_majority_qPres
       (le_max_left _ _) hρ0inf hρinf hρ0le le_rfl hls hImem hImem
       hMcI0 hMcI0 hcardI hcardI hcardI hcardI _ _ hsI0 hjoint id
   · intro β hβ params
-    obtain ⟨Z0, _, _, hmaj⟩ := hqSpec hβ params
-    exact ⟨Z0, hmaj⟩
+    obtain ⟨Z0, _, hmove, hmaj⟩ := hqSpec hβ params
+    exact ⟨Z0, hmove, hmaj⟩
 
 /-- **E5c.** Assemble chart + power-fixed `χ = seq.τ` + free-root + majority `qPres`.
 Caller must supply the Prop 4.9 cardinal hypotheses on `seq.τ` (see `exists`). -/
@@ -917,185 +918,212 @@ theorem infra_610_chart_support
     hmajPres := hmajPres
   }⟩
 
-/-- **E5d′.** The majority prescription on a query `Z` is `DiagramEq` to the placed
-chart-root joint. Returns the majority witness so the free-lift assembler need not
-re-derive it from `root_majority`. -/
-theorem infra_610_majority_matches_root
+/-- **Open tip.** Pad `DiagramEq` of heads along a common parameter tail on `B`.
+Path A soft join for `infra_610_chartRoot_joint_majority` needs this: empty-query head
+agreement `pushed ~ chartRoot` does not automatically pad with a params-query tail `Z`
+(that would require a parameter-fixing auto matching the heads; α-only `to_strong` is not
+enough). Board: `infra_610_diagramEq_sum_elim_inl`. -/
+theorem infra_610_diagramEq_sum_elim_inl
+    {P : SingleModelData K}
+    {μ : Cardinal.{u}} {hμ : μ ∈ P.eligible}
+    {B : P.scheme.Object μ hμ}
+    {α β : Type u}
+    (u v : α → Occurrence K oneVertexShape (P.scheme.asSystem hμ B))
+    (Z : β → Occurrence K oneVertexShape (P.scheme.asSystem hμ B))
+    (_hα : #α < μ) (_hαβ : #(α ⊕ β) < μ)
+    (huv : P.scheme.DiagramEq (X := B) (Y := B) u v) :
+    P.scheme.DiagramEq (X := B) (Y := B) (Sum.elim u Z) (Sum.elim v Z) := by
+  exact sorry
+
+/-- Path A soft join: `Sum.elim chartRoot (f∘params)` is a majority value on the moved
+params query (empty-good exceptions; double-good style as in `root_galois`). -/
+theorem infra_610_chartRoot_joint_majority
+    {P : SingleModelData K} {σ : Cardinal.{u}} (_hσ : aleph0 ≤ σ)
+    {μ : Cardinal.{u}} {hμ : μ ∈ P.eligible}
+    {A B : P.scheme.Object μ hμ}
+    {f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ B)}
+    {hf : P.scheme.permitted (X := A) (Y := B) f}
+    {p : TupleOver K oneVertexShape P.scheme hμ A} {seq : ApproximationSequence p}
+    (data : Infra610ChartPrescriptions (hμ := hμ) P σ f hf p seq)
+    (hκ : seq.τ + aleph0 < #seq.κIndex)
+    {β : Type u} (hβχ : #β ≤ data.χ)
+    (paramsI : β → (@OrderPresentation.obj K P.E data.I data.linOrder data.nonempty).carrier)
+    (Z0 : β → Occurrence K oneVertexShape (P.scheme.asSystem hμ A))
+    (hmove : ∀ i : seq.κIndex,
+      P.scheme.DiagramEq (X := A) (Y := B) (seqJoint (seq.family i) Z0)
+        (seqJoint
+          (fun j => ⟨(seq.family i j).1, f.onVertex (seq.family i j).1 (seq.family i j).2⟩)
+          (fun b => B.occ (data.eB (paramsI b))))) :
+    IsMajorityValue seq Z0 hμ B
+      (Sum.elim (fun a => data.chartRoot.val a) (fun b => B.occ (data.eB (paramsI b)))) := by
+  classical
+  letI := data.linOrder
+  letI := data.nonempty
+  have hβ0 : #(PEmpty.{u + 1}) ≤ data.χ := by
+    simpa [mk_eq_zero] using (bot_le : (0 : Cardinal.{u}) ≤ data.χ)
+  obtain ⟨Z0Empty, hmoveEmpty, hmajEmpty⟩ :=
+    data.hmajPres hβ0 (PEmpty.elim : PEmpty.{u + 1} → _)
+  let chartJ : p.idx ⊕ PEmpty.{u + 1} →
+      Occurrence K oneVertexShape (P.scheme.asSystem hμ B) :=
+    fun t => B.occ (data.eB (data.qPres hβ0 PEmpty.elim t))
+  let ZB : β → Occurrence K oneVertexShape (P.scheme.asSystem hμ B) :=
+    fun b => B.occ (data.eB (paramsI b))
+  let ys : p.idx ⊕ β → Occurrence K oneVertexShape (P.scheme.asSystem hμ B) :=
+    Sum.elim (fun a => data.chartRoot.val a) ZB
+  have hchartJ : chartJ = Sum.elim (fun a => data.chartRoot.val a) PEmpty.elim := by
+    funext t; cases t with
+    | inl a =>
+      dsimp [chartJ, Infra610ChartPrescriptions.chartRoot]
+      rfl
+    | inr e => exact e.elim
+  let ExcEmpty : Set seq.κIndex :=
+    {i | ¬ P.scheme.DiagramEq (X := A) (Y := B) (seqJoint (seq.family i) Z0Empty) chartJ}
+  have hExcEmpty : #ExcEmpty ≤ aleph0 := by
+    change # {i : seq.κIndex //
+        ¬ P.scheme.DiagramEq (X := A) (Y := B) (seqJoint (seq.family i) Z0Empty) chartJ} ≤ _
+    have h := hmajEmpty
+    simp only [IsMajorityValue] at h
+    simpa [ExcEmpty, mk_eq_zero] using h
+  have hκpos : aleph0 ≤ #seq.κIndex :=
+    (le_add_self (a := aleph0) (b := seq.τ)).trans (le_of_lt hκ)
+  have hidxμ : #p.idx < μ := by
+    have : #p.idx ≤ #seq.κIndex * #p.idx :=
+      le_mul_of_one_le_left (bot_le (a := (#p.idx : Cardinal.{u}))) (one_le_aleph0.trans hκpos)
+    simpa [mk_prod, lift_id, lift_id] using this.trans_lt seq.concat_bounded
+  have hβμ : #β < μ := hβχ.trans_lt data.hχμ
+  have hαμ : #(p.idx ⊕ β) < μ := by
+    rw [mk_sum, lift_id, lift_id]
+    exact add_lt_of_lt (P.aleph0_le hμ) hidxμ hβμ
+  have hmono : ∀ j,
+      ¬ P.scheme.DiagramEq (X := A) (Y := B) (seqJoint (seq.family j) Z0) ys →
+      j ∈ ExcEmpty := by
+    intro j hys hgood
+    let pushed : p.idx → Occurrence K oneVertexShape (P.scheme.asSystem hμ B) :=
+      fun a => ⟨(seq.family j a).1, f.onVertex (seq.family j a).1 (seq.family j a).2⟩
+    let ZBempty : PEmpty.{u + 1} → Occurrence K oneVertexShape (P.scheme.asSystem hμ B) :=
+      fun b => B.occ (data.eB (PEmpty.elim b))
+    have h2 : P.scheme.DiagramEq (X := A) (Y := B)
+        (seqJoint (seq.family j) Z0Empty) chartJ := by simpa [ExcEmpty] using hgood
+    have hBB : P.scheme.DiagramEq (X := B) (Y := B) (seqJoint pushed ZBempty) chartJ :=
+      P.scheme.diagram_trans B A B _ _ _
+        (P.scheme.diagram_symm A B _ _ (hmoveEmpty j)) h2
+    have hheads : P.scheme.DiagramEq (X := B) (Y := B) pushed
+        (fun a => data.chartRoot.val a) := by
+      have hBB' : P.scheme.DiagramEq (X := B) (Y := B)
+          (Sum.elim pushed ZBempty)
+          (Sum.elim (fun a => data.chartRoot.val a) (PEmpty.elim : PEmpty.{u + 1} → _)) := by
+        convert hBB
+        · funext t; cases t <;> rfl
+        · exact hchartJ.symm
+      exact (P.scheme.diagram_restrict B B pushed (fun a => data.chartRoot.val a)
+        ZBempty (PEmpty.elim : PEmpty.{u + 1} → _) hBB').1
+    have hpush := hmove j
+    have hpadj : P.scheme.DiagramEq (X := B) (Y := B) (seqJoint pushed ZB) ys := by
+      convert infra_610_diagramEq_sum_elim_inl pushed (fun a => data.chartRoot.val a) ZB
+        hidxμ hαμ hheads
+      funext t; cases t <;> rfl
+    exact hys (P.scheme.diagram_trans A B B _ _ _ hpush hpadj)
+  change # {j : seq.κIndex //
+      ¬ P.scheme.DiagramEq (X := A) (Y := B) (seqJoint (seq.family j) Z0) ys} ≤ _
+  exact (mk_subtype_mono hmono).trans (hExcEmpty.trans (le_add_self (a := aleph0) (b := #β)))
+
+/-- **E5 glue (B), Path A.** Soft join via majority uniqueness: `eB∘qPres` and
+`Sum.elim chartRoot (f∘params)` are both majority values on the moved params query. -/
+theorem infra_610_reflected_matches_chartRoot
     {P : SingleModelData K} {σ : Cardinal.{u}} (hσ : aleph0 ≤ σ)
     {μ : Cardinal.{u}} {hμ : μ ∈ P.eligible}
     {A B : P.scheme.Object μ hμ}
     {f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ B)}
     {hf : P.scheme.permitted (X := A) (Y := B) f}
     {p : TupleOver K oneVertexShape P.scheme hμ A} {seq : ApproximationSequence p}
-    (supp : Infra610ChartSupport (hμ := hμ) P σ f hf p seq)
-    (hidx : #p.idx ≤ σ) (hσμ : σ < μ)
-    {ι : Type u} (Z : ι → Occurrence K oneVertexShape (P.scheme.asSystem hμ B))
-    (hιχ : #ι ≤ supp.χ) (hκ : #ι + aleph0 < #seq.κIndex) :
-    ∃ (Z0 : ι → Occurrence K oneVertexShape (P.scheme.asSystem hμ A))
-      (xs : p.idx ⊕ ι → Occurrence K oneVertexShape (P.scheme.asSystem hμ B)),
-      IsMajorityValue seq Z0 hμ B xs ∧
-      P.scheme.DiagramEq (X := B) (Y := B) xs
-        (Sum.elim
-          (fun a => B.occ (supp.eB (supp.qPres
-            (β := PEmpty.{u + 1})
-            (by simpa [mk_eq_zero] using (bot_le : (0 : Cardinal.{u}) ≤ supp.χ))
-            PEmpty.elim (Sum.inl a))))
-          (fun j =>
-            ⟨(Z j).1,
-              (SystemArrow.refl (P.scheme.asSystem hμ B)).onVertex (Z j).1 (Z j).2⟩)) := by
-  classical
-  letI := supp.linOrder
-  letI := supp.nonempty
-  let params : ι → (P.E.obj supp.I).carrier := fun j => supp.eB.symm (B.val (Z j))
-  have hZ : ∀ j, B.occ (supp.eB (params j)) = Z j := by
-    intro j
-    change B.occ (supp.eB (supp.eB.symm (B.val (Z j)))) = Z j
-    rw [Language.Equiv.apply_symm_apply]
-    rfl
-  obtain ⟨Z0, hmaj⟩ := supp.hmajPres hιχ params
-  let xs : p.idx ⊕ ι → Occurrence K oneVertexShape (P.scheme.asSystem hμ B) :=
-    fun t => B.occ (supp.eB (supp.qPres hιχ params t))
-  refine ⟨Z0, xs, hmaj, ?_⟩
-  -- Remaining glue: `hinr` + `hcoh` (or Prop 4.9 empty-vs-params) give
-  -- `D.same (Sum.elim empty-root params) (qPres params)` on the chart; push by `eB`.
-  have hEmpty : #(PEmpty.{u + 1}) ≤ supp.χ := by
-    simpa [mk_eq_zero] using (bot_le : (0 : Cardinal.{u}) ≤ supp.χ)
-  have hjointEmpty : #(p.idx ⊕ PEmpty.{u + 1}) ≤ σ + supp.χ := by
-    simpa [mk_sum, lift_id, mk_eq_zero, add_zero] using
-      (hidx.trans (self_le_add_right σ supp.χ) : #p.idx ≤ σ + supp.χ)
-  have hcardObj : Model.card (P.E.obj supp.I) = μ :=
-    P.card_obj_eq hμ supp.I supp.hIcard
-  have hσχμ : σ + supp.χ < μ :=
-    add_lt_of_lt (P.aleph0_le hμ) hσμ supp.hχμ
-  have hcardI : P.D.t (σ + supp.χ) ≤ Model.card (P.E.obj supp.I) :=
-    ((P.t_lt hμ (hσ.trans (self_le_add_right σ supp.χ)) hσχμ).le).trans hcardObj.ge
-  have _hcoh :=
-    supp.hcoh (hβ := hιχ) (hβ' := hEmpty) params PEmpty.elim hjointEmpty hcardI
-  have _hinr := fun b => supp.hinr hιχ params b
-  have _hZ := hZ
-  sorry
-
-/-- **E5d.** Chart-root majority field: packaging of `infra_610_moved_majority`. -/
-theorem infra_610_root_majority
-    {P : SingleModelData K} {σ : Cardinal.{u}}
-    {μ : Cardinal.{u}} {hμ : μ ∈ P.eligible}
-    {A B : P.scheme.Object μ hμ}
-    {f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ B)}
-    {hf : P.scheme.permitted (X := A) (Y := B) f}
-    {p : TupleOver K oneVertexShape P.scheme hμ A} {seq : ApproximationSequence p}
-    (_supp : Infra610ChartSupport (hμ := hμ) P σ f hf p seq)
-    (hτμ : seq.τ < μ) (hκ : seq.τ + aleph0 < #seq.κIndex) :
-    ∀ {ι : Type u} (Z : ι → Occurrence K oneVertexShape (P.scheme.asSystem hμ B)),
-      #ι ≤ seq.τ →
-      ∃ (Z0 : ι → Occurrence K oneVertexShape (P.scheme.asSystem hμ A))
-        (xs : p.idx ⊕ ι → Occurrence K oneVertexShape (P.scheme.asSystem hμ B)),
-        IsMajorityValue seq Z0 hμ B xs := by
-  intro ι Z hι
-  obtain ⟨Z0, i, _, _, hmaj⟩ := infra_610_moved_majority f hf seq hτμ hκ Z hι
-  exact ⟨Z0,
-    seqJoint (fun j => ⟨(seq.family i j).1, f.onVertex (seq.family i j).1 (seq.family i j).2⟩) Z,
-    hmaj⟩
-
-/-- **Open (E5e).** Thm 6.6 diagram tests of `p` vs the placed empty-query majority root. -/
-theorem infra_610_root_galois
-    {P : SingleModelData K} {σ : Cardinal.{u}}
-    {μ : Cardinal.{u}} {hμ : μ ∈ P.eligible}
-    {A B : P.scheme.Object μ hμ}
-    {f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ B)}
-    {hf : P.scheme.permitted (X := A) (Y := B) f}
-    {p : TupleOver K oneVertexShape P.scheme hμ A} {seq : ApproximationSequence p}
-    (supp : Infra610ChartSupport (hμ := hμ) P σ f hf p seq) :
-    ∀ {β : Type u} (_ : #β ≤ P.g σ + ls K) (ρ : Cardinal.{u}) (_ : aleph0 ≤ ρ)
-      (_ : ρ < μ) (params : β → A.model.carrier) (hjoint : #(p.idx ⊕ β) ≤ ρ)
-      (h₀ : P.D.t ρ ≤ Model.card p.host.model)
-      (h₁ : P.D.t ρ ≤ Model.card B.model),
-      P.D.same hjoint p.host.mem B.mem h₀ h₁
-        (Sum.elim (fun i => p.host.val (p.val ((Equiv.refl p.idx).symm i)))
-          (fun b => p.incl.onVertex PUnit.unit (params b)))
-        (Sum.elim
-          (fun i => B.val (B.occ (supp.eB (supp.qPres
-            (β := PEmpty.{u + 1})
-            (by simpa [mk_eq_zero] using (bot_le : (0 : Cardinal.{u}) ≤ supp.χ))
-            PEmpty.elim (Sum.inl i)))))
-          (fun b =>
-            (SystemArrow.comp f (SystemArrow.refl (P.scheme.asSystem hμ B))).onVertex
-              PUnit.unit (params b))) := by
-  sorry
-
-/-- **E5 assembler.** Support + root majority + root Galois tests → full chart prescriptions. -/
-theorem infra_610_chart_prescriptions
-    (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ)
-    {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
-    (_hrec : μ ∈ recursionClosedLevels P σ) (hσμ : Order.succ σ ≤ μ)
-    {A B : P.scheme.Object μ hμ}
-    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ B))
-    (hf : P.scheme.permitted (X := A) (Y := B) f)
-    (p : TupleOver K oneVertexShape P.scheme hμ A)
-    (_hνμ : p.ν = μ) (hidx : #p.idx ≤ σ) (_hidxμ : #p.idx < μ)
-    (seq : ApproximationSequence p) (hτμ : seq.τ < μ)
+    (data : Infra610ChartPrescriptions (hμ := hμ) P σ f hf p seq)
     (hκ : seq.τ + aleph0 < #seq.κIndex)
-    (hχls : ls K + σ < seq.τ) (hpow : seq.τ ^ σ = seq.τ)
-    (htestχ : P.g σ + ls K ≤ seq.τ) :
-    Nonempty (Infra610ChartPrescriptions (hμ := hμ) P σ f hf p seq) := by
-  obtain ⟨supp⟩ :=
-    infra_610_chart_support P σ hσ hμ hσμ f hf p hidx seq hτμ hκ hχls hpow htestχ
-  exact ⟨{
-    toInfra610ChartSupport := supp
-    hgalois := infra_610_root_galois supp
-    hmajority := infra_610_root_majority supp hτμ hκ
-  }⟩
+    (hidx : #p.idx ≤ σ) (hσμ : σ < μ)
+    {β : Type u} (hβg : #β ≤ P.g σ + ls K) (params : β → A.model.carrier)
+    (hjoint : #(p.idx ⊕ β) ≤ σ + data.χ)
+    (_h₀ : P.D.t (σ + data.χ) ≤ Model.card p.host.model)
+    (h₁ : P.D.t (σ + data.χ) ≤ Model.card B.model) :
+    P.D.same hjoint B.mem B.mem h₁ h₁
+      (fun t => B.val (B.occ (data.eB (data.qPres (hβg.trans data.htestχ)
+        (fun b => data.eB.symm (f.onVertex PUnit.unit (params b))) t))))
+      (Sum.elim (fun a => B.val (data.chartRoot.val a))
+        (fun b => f.onVertex PUnit.unit (params b))) := by
+  classical
+  letI := data.linOrder
+  letI := data.nonempty
+  let paramsI : β → (P.E.obj data.I).carrier :=
+    fun b => data.eB.symm (f.onVertex PUnit.unit (params b))
+  have hβχ : #β ≤ data.χ := hβg.trans data.htestχ
+  have hβτ : #β ≤ seq.τ := by simpa [data.hχτ] using hβχ
+  have hbound : #β + aleph0 < #seq.κIndex :=
+    (add_le_add hβτ le_rfl).trans_lt hκ
+  obtain ⟨Z0, hmove, hmaj⟩ := data.hmajPres hβχ paramsI
+  let xs : p.idx ⊕ β → Occurrence K oneVertexShape (P.scheme.asSystem hμ B) :=
+    fun t => B.occ (data.eB (data.qPres hβχ paramsI t))
+  let ys : p.idx ⊕ β → Occurrence K oneVertexShape (P.scheme.asSystem hμ B) :=
+    Sum.elim (fun a => data.chartRoot.val a) (fun b => B.occ (data.eB (paramsI b)))
+  have hmaj_ys : IsMajorityValue seq Z0 hμ B ys :=
+    infra_610_chartRoot_joint_majority hσ data hκ hβχ paramsI Z0 hmove
+  have hEq : P.scheme.DiagramEq (X := B) (Y := B) xs ys :=
+    infra_610_majority_unique seq Z0 (xs := xs) (ys := ys) hmaj hmaj_ys hbound
+  have hκpos : aleph0 ≤ #seq.κIndex :=
+    (le_add_self (a := aleph0) (b := seq.τ)).trans (le_of_lt hκ)
+  have hidxμ : #p.idx < μ := by
+    have : #p.idx ≤ #seq.κIndex * #p.idx :=
+      le_mul_of_one_le_left (bot_le (a := (#p.idx : Cardinal.{u}))) (one_le_aleph0.trans hκpos)
+    simpa [mk_prod, lift_id, lift_id] using this.trans_lt seq.concat_bounded
+  have hβμ : #β < μ := hβχ.trans_lt data.hχμ
+  have hαμ : #(p.idx ⊕ β) < μ := by
+    rw [mk_sum, lift_id, lift_id]
+    exact add_lt_of_lt (P.aleph0_le hμ) hidxμ hβμ
+  have hSame : P.D.SameD B.model B.model (fun t => B.val (xs t)) (fun t => B.val (ys t)) :=
+    (SingleModelData.diagramEq_iff_sameD (P := P) (α := p.idx ⊕ β) hμ hμ B B
+      (fun t => B.val (xs t)) (fun t => B.val (ys t)) hαμ hαμ).mp hEq
+  obtain ⟨_, _, hMc, hNc, hs⟩ := hSame
+  let ρ0 : Cardinal.{u} := max #(p.idx ⊕ β) aleph0
+  let ρ : Cardinal.{u} := σ + data.χ
+  have hρ0inf : aleph0 ≤ ρ0 := le_max_right _ _
+  have hρinf : aleph0 ≤ ρ := hσ.trans (self_le_add_right σ data.χ)
+  have hρ0le : ρ0 ≤ ρ := max_le hjoint (hσ.trans (self_le_add_right σ data.χ))
+  have hls : ls K ≤ ρ := by
+    have h1 : ls K ≤ ls K + σ := le_self_add
+    have h2 : ls K + σ < data.χ := data.hχτ ▸ data.hχls
+    dsimp [ρ]
+    exact h1.trans (h2.le.trans (by rw [add_comm]; exact self_le_add_right data.χ σ))
+  have hYS :
+      (fun t => B.val (ys t)) =
+        Sum.elim (fun a => B.val (data.chartRoot.val a))
+          (fun b => f.onVertex PUnit.unit (params b)) := by
+    funext t
+    cases t with
+    | inl a => rfl
+    | inr b =>
+      dsimp [ys, paramsI]
+      exact Language.Equiv.apply_symm_apply data.eB _
+  have hXS :
+      (fun t => B.val (xs t)) =
+        fun t => B.val (B.occ (data.eB (data.qPres (hβg.trans data.htestχ)
+          (fun b => data.eB.symm (f.onVertex PUnit.unit (params b))) t))) := rfl
+  exact P.D.same_relevel (σ := ρ0) (τ := ρ) (σ' := ρ)
+    (le_max_left _ _) hρ0inf hρinf hρ0le le_rfl hls
+    B.mem B.mem hMc hNc h₁ h₁ h₁ h₁ _ _
+    (hXS ▸ hYS ▸ hs) hjoint id
 
-/-- **E6.** Feed E5 data into `proposition_4_9` / Lem 6.4, then take the chart-root
-`TupleOver` over `B`. -/
-theorem infra_610_place_prescriptions
+/-- **E7 glue.** Galois tests for `SameGaloisType`: reflected RHS replaced by `chartRoot` joint.
+Uses `Equiv.refl` on `chartRoot.idx = p.idx`. -/
+theorem infra_610_same_galois_tests_chartRoot
     (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ)
     {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
-    (_hrec : μ ∈ recursionClosedLevels P σ) (_hσμ : Order.succ σ ≤ μ)
-    {A B : P.scheme.Object μ hμ}
-    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ B))
-    (hf : P.scheme.permitted (X := A) (Y := B) f)
-    (p : TupleOver K oneVertexShape P.scheme hμ A)
-    (_hνμ : p.ν = μ) (hidx : #p.idx ≤ σ) (_hidxμ : #p.idx < μ)
-    (seq : ApproximationSequence p) (_hτμ : seq.τ < μ)
-    (data : Infra610ChartPrescriptions (hμ := hμ) P σ f hf p seq) :
-    ∃ q : TupleOver K oneVertexShape P.scheme hμ B, q.ν = μ ∧ q = data.chartRoot := by
-  classical
-  haveI : CategoricalUnbounded K := P.D.categoricalUnbounded
-  obtain ⟨_J, _, _, _fIJ, _z, _hJ, _hPlace⟩ :=
-    @proposition_4_9 K _ P.E P.D data.I data.linOrder data.nonempty data.wf
-      p.idx σ data.χ hσ hidx data.hχls data.hpow data.hImem data.qPres data.hnat data.hcoh
-  exact ⟨data.chartRoot, rfl, rfl⟩
-
-/-- **E2–E3 packaging.** Majority transport of `seq` for queries from `B`. -/
-theorem infra_610_majority_of_placement
-    (P : SingleModelData K) (σ : Cardinal.{u}) (_hσ : aleph0 ≤ σ)
-    {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
     {A B : P.scheme.Object μ hμ}
     (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ B))
     (hf : P.scheme.permitted (X := A) (Y := B) f)
     (p : TupleOver K oneVertexShape P.scheme hμ A)
     (seq : ApproximationSequence p)
-    (data : Infra610ChartPrescriptions (hμ := hμ) P σ f hf p seq) :
-    ∀ {ι : Type u} (Z : ι → Occurrence K oneVertexShape (P.scheme.asSystem hμ B)),
-      #ι ≤ seq.τ →
-      ∃ (Z0 : ι → Occurrence K oneVertexShape (P.scheme.asSystem hμ A))
-        (xs : p.idx ⊕ ι → Occurrence K oneVertexShape (P.scheme.asSystem hμ B)),
-        IsMajorityValue seq Z0 hμ B xs :=
-  fun Z hι => data.hmajority Z hι
-
-/-- **E7 tests.** Diagram tests of `p` vs `data.chartRoot.restrict f` (identity reindexing). -/
-theorem infra_610_galois_tests_of_placement
-    (P : SingleModelData K) (σ : Cardinal.{u}) (_hσ : aleph0 ≤ σ)
-    {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
-    {A B : P.scheme.Object μ hμ}
-    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ B))
-    (hf : P.scheme.permitted (X := A) (Y := B) f)
-    (p : TupleOver K oneVertexShape P.scheme hμ A)
-    (seq : ApproximationSequence p)
-    (data : Infra610ChartPrescriptions (hμ := hμ) P σ f hf p seq) :
-    ∀ {β : Type u} (_ : #β ≤ P.g σ + ls K) (ρ : Cardinal.{u}) (_ : aleph0 ≤ ρ)
-      (_ : ρ < μ) (params : β → A.model.carrier)
-      (hjoint : #(data.chartRoot.idx ⊕ β) ≤ ρ)
+    (data : Infra610ChartPrescriptions (hμ := hμ) P σ f hf p seq)
+    (hκ : seq.τ + aleph0 < #seq.κIndex)
+    (hidx : #p.idx ≤ σ) (hσμ : σ < μ) (hνμ : p.ν = μ) (_hqν : data.chartRoot.ν = μ) :
+    ∀ {β : Type u} (hβg : #β ≤ P.g σ + ls K) (ρ : Cardinal.{u}) (hρinf : aleph0 ≤ ρ)
+      (hρμ : ρ < μ) (params : β → A.model.carrier) (hjoint : #(data.chartRoot.idx ⊕ β) ≤ ρ)
       (h₀ : P.D.t ρ ≤ Model.card p.host.model)
       (h₁ : P.D.t ρ ≤ Model.card data.chartRoot.host.model),
       P.D.same hjoint p.host.mem data.chartRoot.host.mem h₀ h₁
@@ -1103,124 +1131,56 @@ theorem infra_610_galois_tests_of_placement
           (fun b => p.incl.onVertex PUnit.unit (params b)))
         (Sum.elim (fun i => data.chartRoot.host.val (data.chartRoot.val i))
           (fun b => (data.chartRoot.restrict f hf).incl.onVertex PUnit.unit (params b))) := by
-  intro β hβ ρ hρinf hρμ params hjoint h₀ h₁
-  simp only [Infra610ChartPrescriptions.chartRoot, TupleOver.restrict] at hjoint h₁ ⊢
-  exact data.hgalois hβ ρ hρinf hρμ params hjoint h₀ h₁
-
-/-- Assembler of English E5–E7: chart prescriptions → Lem 6.4 placement → majority → Galois
-tests. -/
-theorem infra_610_majority_prescription
-    (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ)
-    {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
-    (hrec : μ ∈ recursionClosedLevels P σ) (hσμ : Order.succ σ ≤ μ)
-    {A B : P.scheme.Object μ hμ}
-    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ B))
-    (hf : P.scheme.permitted (X := A) (Y := B) f)
-    (p : TupleOver K oneVertexShape P.scheme hμ A)
-    (hνμ : p.ν = μ) (hidx : #p.idx ≤ σ) (hidxμ : #p.idx < μ)
-    (seq : ApproximationSequence p) (hτμ : seq.τ < μ)
-    (hκIndex : seq.τ + aleph0 < #seq.κIndex)
-    (hχls : ls K + σ < seq.τ) (hpow : seq.τ ^ σ = seq.τ)
-    (htestχ : P.g σ + ls K ≤ seq.τ) :
-    ∃ q : TupleOver K oneVertexShape P.scheme hμ B,
-      ∃ e : p.idx ≃ q.idx,
-        q.ν = μ ∧
-        (∀ {β : Type u} (_ : #β ≤ P.g σ + ls K) (ρ : Cardinal.{u}) (_ : aleph0 ≤ ρ)
-          (_ : ρ < μ) (params : β → A.model.carrier) (hjoint : #(q.idx ⊕ β) ≤ ρ)
-          (h₀ : P.D.t ρ ≤ Model.card p.host.model)
-          (h₁ : P.D.t ρ ≤ Model.card q.host.model),
-          P.D.same hjoint p.host.mem q.host.mem h₀ h₁
-            (Sum.elim (fun i => p.host.val (p.val (e.symm i)))
-              (fun b => p.incl.onVertex PUnit.unit (params b)))
-            (Sum.elim (fun i => q.host.val (q.val i))
-              (fun b => (q.restrict f hf).incl.onVertex PUnit.unit (params b)))) ∧
-        ∀ {ι : Type u} (Z : ι → Occurrence K oneVertexShape (P.scheme.asSystem hμ B)),
-          #ι ≤ seq.τ →
-          ∃ (Z0 : ι → Occurrence K oneVertexShape (P.scheme.asSystem hμ A))
-            (xs : p.idx ⊕ ι → Occurrence K oneVertexShape
-              (P.scheme.asSystem q.hν q.host)),
-            IsMajorityValue seq Z0 q.hν q.host xs ∧
-            P.scheme.DiagramEq (X := q.host) (Y := q.host)
-              (reindexJoint e xs) (typeJoint (p := q) Z) := by
-  obtain ⟨data⟩ :=
-    infra_610_chart_prescriptions P σ hσ hμ hrec hσμ f hf p hνμ hidx hidxμ seq hτμ hκIndex
-      hχls hpow htestχ
-  obtain ⟨q, hqν, hq⟩ :=
-    infra_610_place_prescriptions P σ hσ hμ hrec hσμ f hf p hνμ hidx hidxμ seq hτμ data
-  -- Specialize to the chart-root so `q.idx` is definitionally `p.idx`.
-  subst hq
-  refine ⟨data.chartRoot, Equiv.refl p.idx, hqν, ?_, ?_⟩
-  · exact infra_610_galois_tests_of_placement P σ hσ hμ f hf p seq data
-  · intro ι Z hι
-    have hσlt : σ < μ := (Order.lt_succ σ).trans_le hσμ
-    have hιχ : #ι ≤ data.χ := by simpa [data.hχτ] using hι
-    have hbound : #ι + aleph0 < #seq.κIndex :=
-      (add_le_add hι le_rfl).trans_lt hκIndex
-    obtain ⟨Z0, xs, hmaj, heq⟩ :=
-      infra_610_majority_matches_root (hσ := hσ)
-        (supp := data.toInfra610ChartSupport) hidx hσlt Z hιχ hbound
-    have hre : reindexJoint (Equiv.refl p.idx) xs = xs := by
-      funext t
-      cases t with
-      | inl i =>
-        simp [reindexJoint, Equiv.refl_symm]
-      | inr j =>
-        rfl
-    have hroot :
-        Sum.elim
-          (fun a => B.occ (data.eB (data.qPres
-            (β := PEmpty.{u + 1})
-            (by simpa [mk_eq_zero] using (bot_le : (0 : Cardinal.{u}) ≤ data.χ))
-            PEmpty.elim (Sum.inl a))))
-          (fun j =>
-            ⟨(Z j).1,
-              (SystemArrow.refl (P.scheme.asSystem hμ B)).onVertex (Z j).1 (Z j).2⟩) =
-          typeJoint (p := data.chartRoot) Z := by
-      funext t
-      cases t with
-      | inl _ => rfl
-      | inr _ => rfl
-    refine ⟨Z0, xs, hmaj, ?_⟩
-    change P.scheme.DiagramEq (X := B) (Y := B) (reindexJoint (Equiv.refl p.idx) xs)
-      (typeJoint (p := data.chartRoot) Z)
-    exact cast (congrArg₂ (P.scheme.DiagramEq (X := B) (Y := B)) hre.symm hroot) heq
-
-/-- Packaging of `infra_610_majority_prescription` (English E5–E7 on a chart of `B`). -/
-theorem infra_610_place_on_B
-    (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ)
-    {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
-    (hrec : μ ∈ recursionClosedLevels P σ) (hσμ : Order.succ σ ≤ μ)
-    {A B : P.scheme.Object μ hμ}
-    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ B))
-    (hf : P.scheme.permitted (X := A) (Y := B) f)
-    (p : TupleOver K oneVertexShape P.scheme hμ A)
-    (hνμ : p.ν = μ) (hidx : #p.idx ≤ σ) (hidxμ : #p.idx < μ)
-    (seq : ApproximationSequence p) (hτμ : seq.τ < μ)
-    (hκIndex : seq.τ + aleph0 < #seq.κIndex)
-    (hχls : ls K + σ < seq.τ) (hpow : seq.τ ^ σ = seq.τ)
-    (htestχ : P.g σ + ls K ≤ seq.τ) :
-    ∃ q : TupleOver K oneVertexShape P.scheme hμ B,
-      ∃ e : p.idx ≃ q.idx,
-        q.ν = μ ∧
-        (∀ {β : Type u} (_ : #β ≤ P.g σ + ls K) (ρ : Cardinal.{u}) (_ : aleph0 ≤ ρ)
-          (_ : ρ < μ) (params : β → A.model.carrier) (hjoint : #(q.idx ⊕ β) ≤ ρ)
-          (h₀ : P.D.t ρ ≤ Model.card p.host.model)
-          (h₁ : P.D.t ρ ≤ Model.card q.host.model),
-          P.D.same hjoint p.host.mem q.host.mem h₀ h₁
-            (Sum.elim (fun i => p.host.val (p.val (e.symm i)))
-              (fun b => p.incl.onVertex PUnit.unit (params b)))
-            (Sum.elim (fun i => q.host.val (q.val i))
-              (fun b => (q.restrict f hf).incl.onVertex PUnit.unit (params b)))) ∧
-        ∀ {ι : Type u} (Z : ι → Occurrence K oneVertexShape (P.scheme.asSystem hμ B)),
-          #ι ≤ seq.τ →
-          ∃ (Z0 : ι → Occurrence K oneVertexShape (P.scheme.asSystem hμ A))
-            (xs : p.idx ⊕ ι → Occurrence K oneVertexShape
-              (P.scheme.asSystem q.hν q.host)),
-            IsMajorityValue seq Z0 q.hν q.host xs ∧
-            P.scheme.DiagramEq (X := q.host) (Y := q.host)
-              (reindexJoint e xs) (typeJoint (p := q) Z) :=
-  infra_610_majority_prescription P σ hσ hμ hrec hσμ f hf p hνμ hidx hidxμ seq hτμ hκIndex
-    hχls hpow htestχ
+  intro β hβg ρ hρinf hρμ params hjoint h₀ h₁
+  letI := data.linOrder
+  letI := data.nonempty
+  have hσjoint : #(p.idx ⊕ β) ≤ σ + data.χ := by
+    simpa [mk_sum, lift_id] using add_le_add hidx (hβg.trans data.htestχ)
+  have hσχinf : ℵ₀ ≤ σ + data.χ := hσ.trans (self_le_add_right σ data.χ)
+  have hσμχ : σ + data.χ < μ :=
+    add_lt_of_lt (P.aleph0_le hμ) hσμ data.hχμ
+  have hσ₀ : P.D.t (σ + data.χ) ≤ Model.card p.host.model := by
+    have hc : Model.card p.host.model = μ := by simpa [hνμ] using p.host.card
+    exact (P.t_lt hμ hσχinf hσμχ).le.trans hc.ge
+  have hσ₁ : P.D.t (σ + data.χ) ≤ Model.card B.model :=
+    (P.t_lt hμ hσχinf hσμχ).le.trans B.card.ge
+  have hgalois : P.D.same hjoint p.host.mem B.mem h₀ h₁
+      (Sum.elim (fun i => p.host.val (p.val ((Equiv.refl p.idx).symm i)))
+        (fun b => p.incl.onVertex PUnit.unit (params b)))
+      (fun t => B.val (B.occ (data.eB (data.qPres (hβg.trans data.htestχ)
+        (fun b => data.eB.symm (f.onVertex PUnit.unit (params b))) t)))) :=
+    data.hgalois hβg ρ hρinf hρμ params hjoint h₀ h₁
+  have hchartσ :=
+    infra_610_reflected_matches_chartRoot hσ data hκ hidx hσμ hβg params hσjoint hσ₀ hσ₁
+  let reflected := fun t => B.val (B.occ (data.eB (data.qPres (hβg.trans data.htestχ)
+    (fun b => data.eB.symm (f.onVertex PUnit.unit (params b))) t)))
+  let chartRHS := Sum.elim (fun i => B.val (data.chartRoot.val i))
+    (fun b => f.onVertex PUnit.unit (params b))
+  let final := Sum.elim (fun i => data.chartRoot.host.val (data.chartRoot.val i))
+    (fun b => (data.chartRoot.restrict f hf).incl.onVertex PUnit.unit (params b))
+  let ρ' : Cardinal.{u} := max ρ (σ + data.χ)
+  have hρ'inf : aleph0 ≤ ρ' := hρinf.trans (le_max_left _ _)
+  have hρle' : ρ ≤ ρ' := le_max_left _ _
+  have hσle' : σ + data.χ ≤ ρ' := le_max_right _ _
+  have hls : ls K ≤ ρ' := by
+    have h1 : ls K ≤ ls K + σ := le_self_add
+    have h2 : ls K + σ < data.χ := data.hχτ ▸ data.hχls
+    have h3 : data.χ ≤ σ + data.χ := by rw [add_comm]; exact self_le_add_right data.χ σ
+    exact h1.trans (h2.le.trans (h3.trans hσle'))
+  have hρ'μ : ρ' < μ := max_lt hρμ hσμχ
+  have hMc' : P.D.t ρ' ≤ Model.card B.model :=
+    (P.t_lt hμ hρ'inf hρ'μ).le.trans B.card.ge
+  have hchart' : P.D.same hjoint B.mem B.mem h₁ h₁ reflected chartRHS :=
+    P.D.same_relevel (σ := σ + data.χ) (τ := ρ) (σ' := ρ') hσjoint hσχinf hρinf hσle' hρle' hls
+      B.mem B.mem hσ₁ hσ₁ hMc' hMc' h₁ h₁ reflected chartRHS hchartσ hjoint id
+  have hbridge : P.D.same hjoint B.mem data.chartRoot.host.mem h₁ h₁ chartRHS final := by
+    simp only [final, chartRHS, Infra610ChartPrescriptions.chartRoot, TupleOver.restrict,
+      SystemArrow.comp, SystemArrow.refl]
+    exact P.D.refl hjoint B.mem h₁ _
+  exact P.D.trans hjoint p.host.mem B.mem data.chartRoot.host.mem h₀ h₁ h₁
+    _ reflected final hgalois
+    (P.D.trans hjoint B.mem B.mem data.chartRoot.host.mem h₁ h₁ h₁
+      reflected chartRHS final hchart' hbridge)
 
 /-! ## Same Galois type from ClosedLevel tests -/
 
@@ -1313,11 +1273,395 @@ theorem infra_610_same_galois
       ⟨PUnit.unit, φ (g₁ (d₁ i))⟩
     rw [hd i]
 
+/-- **E5 tip.** `SameGaloisType` + majority packaging for the placed chart-root lift. -/
+theorem infra_610_isFreeLift_same_galois
+    (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ)
+    {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
+    (hrec : μ ∈ recursionClosedLevels P σ) (hσμ : Order.succ σ ≤ μ)
+    {A B : P.scheme.Object μ hμ}
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ B))
+    (hf : P.scheme.permitted (X := A) (Y := B) f)
+    (p : TupleOver K oneVertexShape P.scheme hμ A)
+    (hνμ : p.ν = μ) (hidx : #p.idx ≤ σ) (_hidxμ : #p.idx < μ)
+    (seq : ApproximationSequence p) (_hτμ : seq.τ < μ)
+    (hκIndex : seq.τ + aleph0 < #seq.κIndex)
+    (data : Infra610ChartPrescriptions (hμ := hμ) P σ f hf p seq) :
+    IsFreeLift p data.chartRoot f hf (Equiv.refl p.idx) := by
+  refine And.intro ?_ ⟨seq, ?_⟩
+  · have hσlt : σ < μ := (Order.lt_succ σ).trans_le hσμ
+    have hL := infra_610_closed_level P σ hσ hμ hrec
+    have hqν : data.chartRoot.ν = μ := rfl
+    exact infra_610_same_galois f hf p data.chartRoot (Equiv.refl p.idx) σ hσ hσlt hidx hνμ hqν hL
+      (infra_610_same_galois_tests_chartRoot P σ hσ hμ f hf p seq data hκIndex hidx hσlt hνμ hqν)
+  · intro ι Z hι
+    exact data.hmajority Z hι
+
+/-- **E5d′.** Majority prescription vs the Prop 4.9–reflected joint `eB ∘ qPres`
+(definitionally `xs`; freeness with identical params — no empty-majority soft join). -/
+theorem infra_610_majority_matches_root
+    {P : SingleModelData K} {σ : Cardinal.{u}} (hσ : aleph0 ≤ σ)
+    {μ : Cardinal.{u}} {hμ : μ ∈ P.eligible}
+    {A B : P.scheme.Object μ hμ}
+    {f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ B)}
+    {hf : P.scheme.permitted (X := A) (Y := B) f}
+    {p : TupleOver K oneVertexShape P.scheme hμ A} {seq : ApproximationSequence p}
+    (supp : Infra610ChartSupport (hμ := hμ) P σ f hf p seq)
+    (hidx : #p.idx ≤ σ) (hσμ : σ < μ)
+    {ι : Type u} (Z : ι → Occurrence K oneVertexShape (P.scheme.asSystem hμ B))
+    (hιχ : #ι ≤ supp.χ) (hκ : #ι + aleph0 < #seq.κIndex) :
+    ∃ (Z0 : ι → Occurrence K oneVertexShape (P.scheme.asSystem hμ A))
+      (xs : p.idx ⊕ ι → Occurrence K oneVertexShape (P.scheme.asSystem hμ B)),
+      IsMajorityValue seq Z0 hμ B xs ∧
+      P.scheme.DiagramEq (X := B) (Y := B) xs xs := by
+  classical
+  letI := supp.linOrder
+  letI := supp.nonempty
+  let params : ι → (P.E.obj supp.I).carrier := fun j => supp.eB.symm (B.val (Z j))
+  obtain ⟨Z0, _, hmaj⟩ := supp.hmajPres hιχ params
+  let xs : p.idx ⊕ ι → Occurrence K oneVertexShape (P.scheme.asSystem hμ B) :=
+    fun t => B.occ (supp.eB (supp.qPres hιχ params t))
+  exact ⟨Z0, xs, hmaj, P.scheme.diagram_refl B xs⟩
+
+/-- **E5d.** Chart-root majority field: packaging of `infra_610_moved_majority`. -/
+theorem infra_610_root_majority
+    {P : SingleModelData K} {σ : Cardinal.{u}}
+    {μ : Cardinal.{u}} {hμ : μ ∈ P.eligible}
+    {A B : P.scheme.Object μ hμ}
+    {f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ B)}
+    {hf : P.scheme.permitted (X := A) (Y := B) f}
+    {p : TupleOver K oneVertexShape P.scheme hμ A} {seq : ApproximationSequence p}
+    (_supp : Infra610ChartSupport (hμ := hμ) P σ f hf p seq)
+    (hτμ : seq.τ < μ) (hκ : seq.τ + aleph0 < #seq.κIndex) :
+    ∀ {ι : Type u} (Z : ι → Occurrence K oneVertexShape (P.scheme.asSystem hμ B)),
+      #ι ≤ seq.τ →
+      ∃ (Z0 : ι → Occurrence K oneVertexShape (P.scheme.asSystem hμ A))
+        (xs : p.idx ⊕ ι → Occurrence K oneVertexShape (P.scheme.asSystem hμ B)),
+        IsMajorityValue seq Z0 hμ B xs := by
+  intro ι Z hι
+  obtain ⟨Z0, i, _, _, hmaj⟩ := infra_610_moved_majority f hf seq hτμ hκ Z hι
+  exact ⟨Z0,
+    seqJoint (fun j => ⟨(seq.family i j).1, f.onVertex (seq.family i j).1 (seq.family i j).2⟩) Z,
+    hmaj⟩
+
+/-- **E5e.** Diagram tests of `p` vs the Prop 4.9–reflected joint `eB ∘ qPres`
+(identical params both sides — no empty-majority soft join). No Thm 6.6. -/
+theorem infra_610_root_galois
+    {P : SingleModelData K} {σ : Cardinal.{u}}
+    {μ : Cardinal.{u}} {hμ : μ ∈ P.eligible}
+    {A B : P.scheme.Object μ hμ}
+    {f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ B)}
+    {hf : P.scheme.permitted (X := A) (Y := B) f}
+    {p : TupleOver K oneVertexShape P.scheme hμ A} {seq : ApproximationSequence p}
+    (supp : Infra610ChartSupport (hμ := hμ) P σ f hf p seq)
+    (hνμ : p.ν = μ) (_hτμ : seq.τ < μ) (hκ : seq.τ + aleph0 < #seq.κIndex) :
+    ∀ {β : Type u} (hβg : #β ≤ P.g σ + ls K) (ρ : Cardinal.{u}) (hρinf : aleph0 ≤ ρ)
+      (hρμ : ρ < μ) (params : β → A.model.carrier) (hjoint : #(p.idx ⊕ β) ≤ ρ)
+      (h₀ : P.D.t ρ ≤ Model.card p.host.model)
+      (h₁ : P.D.t ρ ≤ Model.card B.model),
+      P.D.same hjoint p.host.mem B.mem h₀ h₁
+        (Sum.elim (fun i => p.host.val (p.val ((Equiv.refl p.idx).symm i)))
+          (fun b => p.incl.onVertex PUnit.unit (params b)))
+        (fun t => B.val (B.occ (supp.eB (supp.qPres (hβg.trans supp.htestχ)
+          (fun b => supp.eB.symm (f.onVertex PUnit.unit (params b))) t)))) := by
+  classical
+  intro β hβg ρ hρinf hρμ params hjoint h₀ h₁
+  letI := supp.linOrder
+  letI := supp.nonempty
+  have hβχ : #β ≤ supp.χ := hβg.trans supp.htestχ
+  have hβτ : #β ≤ seq.τ := by simpa [supp.hχτ] using hβχ
+  have hbound : #β + aleph0 < #seq.κIndex :=
+    (add_le_add hβτ le_rfl).trans_lt hκ
+  let paramsI : β → (P.E.obj supp.I).carrier :=
+    fun b => supp.eB.symm (f.onVertex PUnit.unit (params b))
+  let Zpar : β → Occurrence K oneVertexShape (P.scheme.asSystem hμ A) :=
+    fun b => A.occ (params b)
+  let ys : p.idx ⊕ β → Occurrence K oneVertexShape (P.scheme.asSystem hμ B) :=
+    fun t => B.occ (supp.eB (supp.qPres hβχ paramsI t))
+  obtain ⟨Z0, hmove, hmaj⟩ := supp.hmajPres hβχ paramsI
+  have hT : IsMajorityValue seq Z0 p.hν p.host (typeJoint (p := p) Z0) :=
+    infra_610_majority_eq_type seq Z0 hβτ
+  have hTY : P.scheme.DiagramEq (X := p.host) (Y := B)
+      (typeJoint (p := p) Z0) ys :=
+    infra_610_majority_unique seq Z0 (xs := typeJoint (p := p) Z0) (ys := ys)
+      hT hmaj hbound
+  have hmovePar : ∀ i : seq.κIndex,
+      P.scheme.DiagramEq (X := A) (Y := B) (seqJoint (seq.family i) Zpar)
+        (seqJoint
+          (fun j => ⟨(seq.family i j).1, f.onVertex (seq.family i j).1 (seq.family i j).2⟩)
+          (fun b => ⟨(Zpar b).1, f.onVertex (Zpar b).1 (Zpar b).2⟩)) := by
+    intro i
+    have hidxμ : #p.idx < μ := by
+      have hκpos : aleph0 ≤ #seq.κIndex :=
+        (le_add_self (a := aleph0) (b := seq.τ)).trans (le_of_lt hκ)
+      have : #p.idx ≤ #seq.κIndex * #p.idx :=
+        le_mul_of_one_le_left (bot_le (a := (#p.idx : Cardinal.{u})))
+          (one_le_aleph0.trans hκpos)
+      simpa [mk_prod, lift_id, lift_id] using this.trans_lt seq.concat_bounded
+    have hιμ : #β < μ := hβχ.trans_lt supp.hχμ
+    have hcard : #(p.idx ⊕ β) < μ := by
+      rw [mk_sum, lift_id, lift_id]
+      exact add_lt_of_lt (P.aleph0_le hμ) hidxμ hιμ
+    have hpres :=
+      P.scheme.diagram_preserved A B f hf (seqJoint (seq.family i) Zpar) hcard hcard
+    have hRHS :
+        (fun t => ⟨(seqJoint (seq.family i) Zpar t).1,
+            f.onVertex (seqJoint (seq.family i) Zpar t).1
+              (seqJoint (seq.family i) Zpar t).2⟩) =
+          seqJoint
+            (fun j => ⟨(seq.family i j).1, f.onVertex (seq.family i j).1 (seq.family i j).2⟩)
+            (fun b => ⟨(Zpar b).1, f.onVertex (Zpar b).1 (Zpar b).2⟩) := by
+      funext t; cases t <;> rfl
+    exact hRHS ▸ hpres
+  let Exc : Set seq.κIndex :=
+    {i | ¬ P.scheme.DiagramEq (X := A) (Y := p.host)
+      (seqJoint (seq.family i) Z0) (typeJoint (p := p) Z0)}
+  let ExcPar : Set seq.κIndex :=
+    {i | ¬ P.scheme.DiagramEq (X := A) (Y := p.host)
+      (seqJoint (seq.family i) Zpar) (typeJoint (p := p) Zpar)}
+  have hExc : #Exc ≤ #β + aleph0 := by
+    change # {i : seq.κIndex //
+        ¬ P.scheme.DiagramEq (X := A) (Y := p.host)
+          (seqJoint (seq.family i) Z0) (typeJoint (p := p) Z0)} ≤ _
+    exact infra_610_majority_eq_type seq Z0 hβτ
+  have hExcPar : #ExcPar ≤ #β + aleph0 := by
+    change # {i : seq.κIndex //
+        ¬ P.scheme.DiagramEq (X := A) (Y := p.host)
+          (seqJoint (seq.family i) Zpar) (typeJoint (p := p) Zpar)} ≤ _
+    exact infra_610_majority_eq_type seq Zpar hβτ
+  have hex : ∃ i : seq.κIndex, i ∉ Exc ∧ i ∉ ExcPar := by
+    by_contra h
+    have hall : (Set.univ : Set seq.κIndex) ⊆ Exc ∪ ExcPar := by
+      intro i _
+      by_cases hi : i ∈ Exc ∪ ExcPar
+      · exact hi
+      · exact False.elim (h ⟨i, by
+          simp only [Set.mem_union, not_or] at hi
+          exact hi⟩)
+    have hinfκ : aleph0 ≤ #seq.κIndex :=
+      (le_add_self (a := aleph0) (b := #β)).trans (le_of_lt hbound)
+    have hle : #seq.κIndex ≤ (#β + aleph0) + (#β + aleph0) := by
+      have huni : #(Set.univ : Set seq.κIndex) = #seq.κIndex := mk_univ
+      rw [← huni]
+      exact (mk_le_mk_of_subset hall).trans
+        ((mk_union_le _ _).trans (add_le_add hExc hExcPar))
+    exact (not_le_of_gt (add_lt_of_lt hinfκ hbound hbound)) hle
+  obtain ⟨i, hi, hiPar⟩ := hex
+  have hgood : P.scheme.DiagramEq (X := A) (Y := p.host)
+      (seqJoint (seq.family i) Z0) (typeJoint (p := p) Z0) := by
+    simpa [Exc] using hi
+  have hgoodPar : P.scheme.DiagramEq (X := A) (Y := p.host)
+      (seqJoint (seq.family i) Zpar) (typeJoint (p := p) Zpar) := by
+    simpa [ExcPar] using hiPar
+  let pushed : p.idx → Occurrence K oneVertexShape (P.scheme.asSystem hμ B) :=
+    fun j => ⟨(seq.family i j).1, f.onVertex (seq.family i j).1 (seq.family i j).2⟩
+  let ZparB : β → Occurrence K oneVertexShape (P.scheme.asSystem hμ B) :=
+    fun b => ⟨(Zpar b).1, f.onVertex (Zpar b).1 (Zpar b).2⟩
+  have hPushPar := hmovePar i
+  have hPush : P.scheme.DiagramEq (X := A) (Y := B)
+      (seqJoint (seq.family i) Z0) (seqJoint pushed ZparB) := by
+    have h := hmove i
+    have hpar : (fun b => B.occ (supp.eB (paramsI b))) = ZparB := by
+      funext b
+      have hv :
+          (supp.eB (paramsI b) : B.model.carrier) =
+            (f.onVertex PUnit.unit (params b) : B.model.carrier) := by
+        dsimp [paramsI]
+        exact Language.Equiv.apply_symm_apply supp.eB _
+      exact
+        (congrArg (fun a : B.model.carrier =>
+            (⟨PUnit.unit, a⟩ :
+              Occurrence K oneVertexShape (P.scheme.asSystem hμ B))) hv).trans
+          (by rfl)
+    simpa [pushed, hpar] using h
+  have hTypeEq : P.scheme.DiagramEq (X := p.host) (Y := p.host)
+      (typeJoint (p := p) Z0) (typeJoint (p := p) Zpar) :=
+    P.scheme.diagram_trans p.host A p.host (typeJoint (p := p) Z0)
+      (seqJoint (seq.family i) Z0) (typeJoint (p := p) Zpar)
+      (P.scheme.diagram_symm A p.host _ _ hgood)
+      (P.scheme.diagram_trans A B p.host (seqJoint (seq.family i) Z0)
+        (seqJoint pushed ZparB) (typeJoint (p := p) Zpar) hPush
+        (P.scheme.diagram_trans B A p.host (seqJoint pushed ZparB)
+          (seqJoint (seq.family i) Zpar) (typeJoint (p := p) Zpar)
+          (P.scheme.diagram_symm A B _ _ hPushPar) hgoodPar))
+  have hLHS : P.scheme.DiagramEq (X := p.host) (Y := B)
+      (typeJoint (p := p) Zpar) ys :=
+    P.scheme.diagram_trans p.host p.host B (typeJoint (p := p) Zpar)
+      (typeJoint (p := p) Z0) ys
+      (P.scheme.diagram_symm p.host p.host _ _ hTypeEq) hTY
+  have hαμ : #(p.idx ⊕ β) < μ := hjoint.trans_lt hρμ
+  have hαν : #(p.idx ⊕ β) < p.ν := by simpa [hνμ] using hαμ
+  have hSame : P.D.SameD p.host.model B.model
+      (fun t => p.host.val (typeJoint (p := p) Zpar t)) (fun t => B.val (ys t)) :=
+    (SingleModelData.diagramEq_iff_sameD (P := P) (α := p.idx ⊕ β) p.hν hμ p.host B
+      (fun t => p.host.val (typeJoint (p := p) Zpar t)) (fun t => B.val (ys t))
+      hαν hαμ).mp hLHS
+  obtain ⟨_, _, hMc, hNc, hs⟩ := hSame
+  let ρ0 : Cardinal.{u} := max #(p.idx ⊕ β) aleph0
+  let ρ' : Cardinal.{u} := max ρ (ls K)
+  have hρ0inf : aleph0 ≤ ρ0 := le_max_right _ _
+  have hρ0le : ρ0 ≤ ρ' :=
+    max_le (hjoint.trans (le_max_left _ _)) (hρinf.trans (le_max_left _ _))
+  have hls : ls K ≤ ρ' := le_max_right _ _
+  have hρle' : ρ ≤ ρ' := le_max_left _ _
+  have hρ'μ : ρ' < μ := max_lt hρμ (P.ls_lt hμ)
+  have hρ'inf : aleph0 ≤ ρ' := hρinf.trans hρle'
+  have hMc' : P.D.t ρ' ≤ Model.card p.host.model :=
+    (P.t_lt hμ hρ'inf hρ'μ).le.trans (by simpa [hνμ] using p.host.card.ge)
+  have hNc' : P.D.t ρ' ≤ Model.card B.model :=
+    (P.t_lt hμ hρ'inf hρ'μ).le.trans B.card.ge
+  have hsρ : P.D.same hjoint p.host.mem B.mem h₀ h₁
+      (fun t => p.host.val (typeJoint (p := p) Zpar t)) (fun t => B.val (ys t)) :=
+    P.D.same_relevel (σ := ρ0) (τ := ρ) (σ' := ρ')
+      (le_max_left _ _) hρ0inf hρinf hρ0le hρle' hls
+      p.host.mem B.mem hMc hNc hMc' hNc' h₀ h₁
+      _ _ hs hjoint id
+  have hL :
+      (Sum.elim (fun i => p.host.val (p.val ((Equiv.refl p.idx).symm i)))
+        (fun b => p.incl.onVertex PUnit.unit (params b))) =
+        fun t => p.host.val (typeJoint (p := p) Zpar t) := by
+    funext t; cases t with
+    | inl i => rfl
+    | inr b =>
+      dsimp [typeJoint, Zpar, SMObject.occ, oneVertexOcc]
+      rfl
+  exact hL ▸ hsρ
+
+/-- **E5 assembler.** Support + root majority + root Galois tests → full chart prescriptions. -/
+theorem infra_610_chart_prescriptions
+    (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ)
+    {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
+    (_hrec : μ ∈ recursionClosedLevels P σ) (hσμ : Order.succ σ ≤ μ)
+    {A B : P.scheme.Object μ hμ}
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ B))
+    (hf : P.scheme.permitted (X := A) (Y := B) f)
+    (p : TupleOver K oneVertexShape P.scheme hμ A)
+    (hνμ : p.ν = μ) (hidx : #p.idx ≤ σ) (_hidxμ : #p.idx < μ)
+    (seq : ApproximationSequence p) (hτμ : seq.τ < μ)
+    (hκ : seq.τ + aleph0 < #seq.κIndex)
+    (hχls : ls K + σ < seq.τ) (hpow : seq.τ ^ σ = seq.τ)
+    (htestχ : P.g σ + ls K ≤ seq.τ) :
+    Nonempty (Infra610ChartPrescriptions (hμ := hμ) P σ f hf p seq) := by
+  obtain ⟨supp⟩ :=
+    infra_610_chart_support P σ hσ hμ hσμ f hf p hidx seq hτμ hκ hχls hpow htestχ
+  exact ⟨{
+    toInfra610ChartSupport := supp
+    hgalois := infra_610_root_galois supp hνμ hτμ hκ
+    hmajority := infra_610_root_majority supp hτμ hκ
+  }⟩
+
+/-- **E6.** Feed E5 data into `proposition_4_9` / Lem 6.4, then take the chart-root
+`TupleOver` over `B`. -/
+theorem infra_610_place_prescriptions
+    (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ)
+    {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
+    (_hrec : μ ∈ recursionClosedLevels P σ) (_hσμ : Order.succ σ ≤ μ)
+    {A B : P.scheme.Object μ hμ}
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ B))
+    (hf : P.scheme.permitted (X := A) (Y := B) f)
+    (p : TupleOver K oneVertexShape P.scheme hμ A)
+    (_hνμ : p.ν = μ) (hidx : #p.idx ≤ σ) (_hidxμ : #p.idx < μ)
+    (seq : ApproximationSequence p) (_hτμ : seq.τ < μ)
+    (data : Infra610ChartPrescriptions (hμ := hμ) P σ f hf p seq) :
+    ∃ q : TupleOver K oneVertexShape P.scheme hμ B, q.ν = μ ∧ q = data.chartRoot := by
+  classical
+  haveI : CategoricalUnbounded K := P.D.categoricalUnbounded
+  obtain ⟨_J, _, _, _fIJ, _z, _hJ, _hPlace⟩ :=
+    @proposition_4_9 K _ P.E P.D data.I data.linOrder data.nonempty data.wf
+      p.idx σ data.χ hσ hidx data.hχls data.hpow data.hImem data.qPres data.hnat data.hcoh
+  exact ⟨data.chartRoot, rfl, rfl⟩
+
+/-- **E2–E3 packaging.** Majority transport of `seq` for queries from `B`. -/
+theorem infra_610_majority_of_placement
+    (P : SingleModelData K) (σ : Cardinal.{u}) (_hσ : aleph0 ≤ σ)
+    {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
+    {A B : P.scheme.Object μ hμ}
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ B))
+    (hf : P.scheme.permitted (X := A) (Y := B) f)
+    (p : TupleOver K oneVertexShape P.scheme hμ A)
+    (seq : ApproximationSequence p)
+    (data : Infra610ChartPrescriptions (hμ := hμ) P σ f hf p seq) :
+    ∀ {ι : Type u} (Z : ι → Occurrence K oneVertexShape (P.scheme.asSystem hμ B)),
+      #ι ≤ seq.τ →
+      ∃ (Z0 : ι → Occurrence K oneVertexShape (P.scheme.asSystem hμ A))
+        (xs : p.idx ⊕ ι → Occurrence K oneVertexShape (P.scheme.asSystem hμ B)),
+        IsMajorityValue seq Z0 hμ B xs :=
+  fun Z hι => data.hmajority Z hι
+
+/-- **E7 tests.** Diagram tests of `p` vs the reflected Prop 4.9 joint. -/
+theorem infra_610_galois_tests_of_placement
+    (P : SingleModelData K) (σ : Cardinal.{u}) (_hσ : aleph0 ≤ σ)
+    {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
+    {A B : P.scheme.Object μ hμ}
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ B))
+    (hf : P.scheme.permitted (X := A) (Y := B) f)
+    (p : TupleOver K oneVertexShape P.scheme hμ A)
+    (seq : ApproximationSequence p)
+    (data : Infra610ChartPrescriptions (hμ := hμ) P σ f hf p seq) :
+    ∀ {β : Type u} (hβg : #β ≤ P.g σ + ls K) (ρ : Cardinal.{u}) (_ : aleph0 ≤ ρ)
+      (_ : ρ < μ) (params : β → A.model.carrier)
+      (hjoint : #(data.chartRoot.idx ⊕ β) ≤ ρ)
+      (h₀ : P.D.t ρ ≤ Model.card p.host.model)
+      (h₁ : P.D.t ρ ≤ Model.card data.chartRoot.host.model),
+      P.D.same hjoint p.host.mem data.chartRoot.host.mem h₀ h₁
+        (Sum.elim (fun i => p.host.val (p.val ((Equiv.refl p.idx).symm i)))
+          (fun b => p.incl.onVertex PUnit.unit (params b)))
+        (fun t => B.val (B.occ (data.eB (data.qPres (hβg.trans data.htestχ)
+          (fun b => data.eB.symm (f.onVertex PUnit.unit (params b))) t)))) := by
+  intro β hβg ρ hρinf hρμ params hjoint h₀ h₁
+  simp only [Infra610ChartPrescriptions.chartRoot] at hjoint h₁ ⊢
+  exact data.hgalois hβg ρ hρinf hρμ params hjoint h₀ h₁
+
+/-- Assembler of English E5–E7: chart prescriptions → Lem 6.4 placement → majority +
+`SameGaloisType` (`infra_610_isFreeLift_same_galois`). -/
+theorem infra_610_majority_prescription
+    (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ)
+    {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
+    (hrec : μ ∈ recursionClosedLevels P σ) (hσμ : Order.succ σ ≤ μ)
+    {A B : P.scheme.Object μ hμ}
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ B))
+    (hf : P.scheme.permitted (X := A) (Y := B) f)
+    (p : TupleOver K oneVertexShape P.scheme hμ A)
+    (hνμ : p.ν = μ) (hidx : #p.idx ≤ σ) (hidxμ : #p.idx < μ)
+    (seq : ApproximationSequence p) (hτμ : seq.τ < μ)
+    (hκIndex : seq.τ + aleph0 < #seq.κIndex)
+    (hχls : ls K + σ < seq.τ) (hpow : seq.τ ^ σ = seq.τ)
+    (htestχ : P.g σ + ls K ≤ seq.τ) :
+    ∃ q : TupleOver K oneVertexShape P.scheme hμ B,
+      ∃ e : p.idx ≃ q.idx, IsFreeLift p q f hf e := by
+  obtain ⟨data⟩ :=
+    infra_610_chart_prescriptions P σ hσ hμ hrec hσμ f hf p hνμ hidx hidxμ seq hτμ hκIndex
+      hχls hpow htestχ
+  obtain ⟨q, hqν, hq⟩ :=
+    infra_610_place_prescriptions P σ hσ hμ hrec hσμ f hf p hνμ hidx hidxμ seq hτμ data
+  subst hq
+  exact ⟨data.chartRoot, Equiv.refl p.idx,
+    infra_610_isFreeLift_same_galois P σ hσ hμ hrec hσμ f hf p hνμ hidx hidxμ seq hτμ hκIndex
+      data⟩
+
+/-- Packaging of `infra_610_majority_prescription` (English E5–E7 on a chart of `B`). -/
+theorem infra_610_place_on_B
+    (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ)
+    {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
+    (hrec : μ ∈ recursionClosedLevels P σ) (hσμ : Order.succ σ ≤ μ)
+    {A B : P.scheme.Object μ hμ}
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ B))
+    (hf : P.scheme.permitted (X := A) (Y := B) f)
+    (p : TupleOver K oneVertexShape P.scheme hμ A)
+    (hνμ : p.ν = μ) (hidx : #p.idx ≤ σ) (hidxμ : #p.idx < μ)
+    (seq : ApproximationSequence p) (hτμ : seq.τ < μ)
+    (hκIndex : seq.τ + aleph0 < #seq.κIndex)
+    (hχls : ls K + σ < seq.τ) (hpow : seq.τ ^ σ = seq.τ)
+    (htestχ : P.g σ + ls K ≤ seq.τ) :
+    ∃ q : TupleOver K oneVertexShape P.scheme hμ B, ∃ e : p.idx ≃ q.idx,
+      IsFreeLift p q f hf e :=
+  infra_610_majority_prescription P σ hσ hμ hrec hσμ f hf p hνμ hidx hidxμ seq hτμ hκIndex
+    hχls hpow htestχ
+
 /-! ## Existence -/
 
 /-- English clause 1: existence of a free lift along a permitted arrow of `P.scheme`.
 Packaging matches Lemma 6.9 (`p.ν = μ`, recursion-closed level, code arity `c(σ)`).
-Open tip is E5 `chart_prescriptions` (`hgalois` / `hmajority`). -/
+Full `IsFreeLift` (`SameGaloisType` + majority) via `infra_610_isFreeLift_same_galois`. -/
 theorem stationary_free_extension_exists
     (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ)
     {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
@@ -1382,14 +1726,8 @@ theorem stationary_free_extension_exists
   have hχls' : ls K + σ < seq.τ := hseqτ ▸ hχls
   have hpow' : seq.τ ^ σ = seq.τ := by rw [hseqτ]; exact hpow
   have htestχ' : P.g σ + ls K ≤ seq.τ := hseqτ ▸ htestχ
-  obtain ⟨q, e, hqν, htest, hmaj⟩ :=
-    infra_610_place_on_B P σ hσ hμ hrec hσμ f hf p hνμ hidx hidxμ seq hseqτμ hκIndex
-      hχls' hpow' htestχ'
-  have hL := infra_610_closed_level P σ hσ hμ hrec
-  refine ⟨q, e, ⟨infra_610_same_galois f hf p q e σ hσ hσlt hidx hνμ hqν hL htest, ⟨seq, ?_⟩⟩⟩
-  intro ι Z hι
-  obtain ⟨Z0, xs, hZ0, heq⟩ := hmaj Z hι
-  exact ⟨Z0, xs, hZ0, heq⟩
+  exact infra_610_place_on_B P σ hσ hμ hrec hσμ f hf p hνμ hidx hidxμ seq hseqτμ hκIndex
+    hχls' hpow' htestχ'
 
 end
 end AEC

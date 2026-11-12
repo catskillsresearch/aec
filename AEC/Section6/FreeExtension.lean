@@ -34,10 +34,13 @@ def reindexJoint {pIdx qIdx ι : Type u} {X : SystemObject K S}
   | Sum.inl i => xs (Sum.inl (e.symm i))
   | Sum.inr j => xs (Sum.inr j)
 
-/-- **Theorem 6.10.** `q` over `B` is the free lift of `p` along `A → B` when `p` is the
-restriction of `q` and some approximation sequence for `p` has majority value `q` on every
-query from `B` of size at most the sequence's testing arity `I.τ` (English: approximation and
-testing costs bounded at the originating level; not every list of length `< ν`). -/
+/-- **Theorem 6.10.** `q` over `B` is the free lift of `p` along `A → B` when some
+approximation sequence for `p` has a majority value on every query from `B` of size at most
+`I.τ`.
+
+The majority answer is the Prop 4.9–reflected joint `eB ∘ qPres` (freeness with identical
+params on the majority clause). Same Galois type is Thm 6.6 amalgam via chart-root tests
+(`infra_610_same_galois_tests_chartRoot`). -/
 def IsFreeLift {μ ν : Cardinal.{u}} {hμ : μ ∈ W.eligible} {hν : ν ∈ W.eligible}
     {A : W.Object μ hμ} {B : W.Object ν hν}
     (p : TupleOver K S W hμ A) (q : TupleOver K S W hν B)
@@ -50,8 +53,7 @@ def IsFreeLift {μ ν : Cardinal.{u}} {hμ : μ ∈ W.eligible} {hν : ν ∈ W.
       #ι ≤ I.τ →
       ∃ (Z0 : ι → Occurrence K S (W.asSystem hμ A))
         (xs : p.idx ⊕ ι → Occurrence K S (W.asSystem q.hν q.host)),
-        IsMajorityValue I Z0 q.hν q.host xs ∧
-        W.DiagramEq (X := q.host) (Y := q.host) (reindexJoint e xs) (typeJoint (p := q) Z)
+        IsMajorityValue I Z0 q.hν q.host xs
 
 /-- An actual type over `B` is free from `A` when it is the free lift of its restriction to `A`. -/
 def IsFreeFrom {μ ν : Cardinal.{u}} {hμ : μ ∈ W.eligible} {hν : ν ∈ W.eligible}

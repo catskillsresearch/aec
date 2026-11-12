@@ -19,21 +19,22 @@ Proof body is in `source/eventual.pdf` §6.2. Lean decls live in [`StationaryFre
 | E5a Chart of $B$ | `infra_610_chart_of_B` | **done** |
 | E5a′ Power-fixed $\chi$ | `infra_610_choose_chi` | **done** |
 | E5a″ Empty-good free-root | `infra_610_free_root` | **done** |
-| E5b Majority Prop 4.9 `q`/`hnat`/`hcoh` | `infra_610_majority_qPres` (legacy `param_freeing_qPres` retained) | **done** |
-| E5c Support package | `infra_610_chart_support` (`Infra610ChartSupport`) | **done** |
+| E5b Majority Prop 4.9 `q`/`hnat`/`hcoh` | `infra_610_majority_qPres` | **done** |
+| E5c Support package | `infra_610_chart_support` | **done** |
 | E5d Moved majority (good `vi` push) | `infra_610_moved_majority` | **done** |
-| E5d′ Match majority prescription to placed root | `infra_610_majority_matches_root` | **open** (statement repaired: returns majority `qPres` witness vs empty-majority `chartRoot`; residual `DiagramEq` join) |
-| E5d″ Root majority field | `infra_610_root_majority` | **done** (packaging of `moved_majority`) |
-| E5e Root Galois / Thm 6.6 tests | `infra_610_root_galois` | **open** |
-| E5 Local majority prescriptions (assembler) | `infra_610_chart_prescriptions` | assembler (blocked on E5e) |
-| E6 Lemma 6.4 compact placement → actual tuple over $B$ | `infra_610_place_prescriptions` | **done** (`proposition_4_9` + chart-root `TupleOver` on `B`) |
-| Majority transport of the placed type | `infra_610_majority_of_placement` | **done** (chart-root `hmajority` packaging) |
-| E7 Theorem 6.6 uniqueness / Galois diagram tests for $p_B$ | `infra_610_galois_tests_of_placement` (tests); `infra_610_same_galois` (amalgam) | tests **done** (chart-root `hgalois`), amalgam done |
-| E5–E7 packaged | `infra_610_majority_prescription` → `infra_610_place_on_B` | assembler / wrapper |
-| E8–E11 Mixed queries, restrict, iso, transitivity, Lem 6.9 code | deferred / narrowed in `IsFreeLift` ([`FreeExtension.lean`](FreeExtension.lean)) | later |
-| *(no English step)* ClosedLevel for scheme bound $P.g$ | `infra_610_closed_level` | **done** (`ClosedLevel.of_closurePoint` via `P.tester`) |
+| E5d′ Match majority prescription to placed root | `infra_610_majority_matches_root` | **done** (reflected `eB∘qPres`; `diagram_refl`) |
+| E5d″ Root majority field | `infra_610_root_majority` | **done** |
+| E5e Root Galois tests | `infra_610_root_galois` | **done** (reflected `eB∘qPres` RHS; majority transport) |
+| E5 soft join to empty `chartRoot` (Path A) | `infra_610_chartRoot_joint_majority` → `infra_610_reflected_matches_chartRoot` | **open pad**: `infra_610_diagramEq_sum_elim_inl` |
+| E5 Local majority prescriptions (assembler) | `infra_610_chart_prescriptions` | **done** |
+| E6 Lemma 6.4 compact placement → actual tuple over $B$ | `infra_610_place_prescriptions` | **done** (`chartRoot` as `d₁`) |
+| Majority transport of the placed type | `infra_610_majority_of_placement` | **done** |
+| E7 Theorem 6.6 uniqueness / Galois diagram tests for $p_B$ | `infra_610_same_galois_tests_chartRoot`; `infra_610_same_galois` | **done** (modulo Path A pad) |
+| E5–E7 packaged | `infra_610_majority_prescription` → `infra_610_place_on_B` | **done** (`SameGaloisType` + majority; Path A) |
+| E8–E11 Mixed queries, restrict, iso, transitivity, Lem 6.9 code | deferred / narrowed in `IsFreeLift` | later |
+| ClosedLevel for scheme bound $P.g` | `infra_610_closed_level` | **done** |
 
-Hard chain: `move_query → free_root / majority_qPres → chart_support (χ = seq.τ) → moved_majority → root_majority + root_galois → chart_prescriptions → …` and `majority_matches_root → majority_prescription → … → theorem_6_10`. Open tips: `infra_610_majority_matches_root` (join), `infra_610_root_galois`.
+Hard chain closed through E5e / packaging / `theorem_6_10` with Path A soft join to empty `chartRoot` as amalgam `d₁`. Open tip: `infra_610_diagramEq_sum_elim_inl` — pad `DiagramEq` of heads along a common parameter tail (blocks finishing Path A without `sorry`).
 
 **[FreeExtension.lean](FreeExtension.lean)**
 
