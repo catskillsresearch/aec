@@ -29,7 +29,12 @@ Proof body is in `source/eventual.pdf` §6.2. Lean decls live in [`StationaryFre
 | E5 Local majority prescriptions (assembler) | `infra_610_chart_prescriptions` | **done** |
 | E6 μ-hull of chart∪$z$ | `infra_610_placement_mu_hull` | **done** |
 | E6 global $\varphi:N\to B$ fixing $eB$ | `infra_610_placement_to_B` | **retired** (impossible; no §6.2 sentence) |
-| E6 saturate Prop 4.9 placement into $B$ | `infra_610_placement_saturate_to_B` | **open** (board tip; English §8) |
+| E6 pull $zN$ into $B$ | `infra_610_pull_z_to_B` | **done** (`exists_transport` empty base) |
+| E6 per-param transport joint into $B$ | `infra_610_transport_joint` | **done** |
+| E6 empty prescription joint on $E(I)$ | `infra_610_qPres_empty_joint_on_I` | **open** (stationarity kernel) |
+| E6 pull-root AgreeOn free ref | `infra_610_pull_root_agrees_free_ref` | **open** (board tip; AgreeOn discharge) |
+| E6 same-head transfers joint | `infra_610_same_head_transfers_joint` | **demoted** (under-hypothesized) |
+| E6 saturate Prop 4.9 placement into $B$ | `infra_610_placement_saturate_to_B` | **blocked** on `pull_root_agrees_free_ref` |
 | E6 Lem 6.4 placement root on $B$ | `infra_610_placement_root_on_B` | **blocked** on `placement_saturate_to_B` |
 | E6 place_z: qPres head ~ empty | `infra_610_qPres_inl_matches_empty` | **done** (`hcoh`) |
 | E5 glue reflected vs `chartRoot` | `infra_610_reflected_matches_chartRoot` | **blocked** on `placement_root_on_B` (`placeRoot`) |
@@ -46,7 +51,7 @@ Proof body is in `source/eventual.pdf` §6.2. Lean decls live in [`StationaryFre
 | E8–E11 Mixed queries, restrict, iso, transitivity, Lem 6.9 code | deferred / narrowed in `IsFreeLift` | later |
 | ClosedLevel for scheme bound $P.g` | `infra_610_closed_level` | **done** |
 
-Hard chain follows English §6.2/§8: majority prescriptions → Prop 4.9 enlargement → saturation pullback into $B$ → Lem 6.4 placement root → Thm 6.6 Galois tests. Open tip: `infra_610_placement_saturate_to_B`. Blocked: `placement_root_on_B` → `reflected_matches_chartRoot` → `place_z_as_free_lift`. Retired: global `placement_to_B`, soft-pad.
+Hard chain follows English §6.2/§8: majority prescriptions → Prop 4.9 enlargement → μ-hull → pull $z$ → abs match with free ref $r_0$ → placed-comparison AgreeOn → freeness → Lem 6.4 placement root → Thm 6.6 Galois tests. Open tip: `infra_610_pull_root_agrees_free_ref` (+ `qPres_empty_joint_on_I`). Blocked: `placement_saturate_to_B` → `placement_root_on_B` → `reflected_matches_chartRoot` → `place_z_as_free_lift`. Done: `pull_z_to_B`, `transport_joint`, `placement_mu_hull`, `pull_root_abs_qPres_empty`. Demoted: `same_head_transfers_joint`. Retired: global `placement_to_B`, soft-pad placeRoot.
 
 **[FreeExtension.lean](FreeExtension.lean)**
 

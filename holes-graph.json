@@ -7,7 +7,7 @@
     "done": "Proved (no sorry)"
   },
   "notes": [
-    "Open tip: infra_610_placement_root_on_B (Lem 6.4 placement root on B). Blocked: reflected_matches_chartRoot \u2192 place_z_as_free_lift (Galois tests). Done: qPres_inl_matches_empty. Soft-pad stays retired. Map: AEC/Section6/FreeExtension.md.",
+    "Open tip: infra_610_pull_root_agrees_free_ref (+ qPres_empty_joint_on_I). Done: pull_z_to_B, transport_joint, placement_mu_hull, pull_root_abs_qPres_empty. Blocked: placement_saturate_to_B \u2192 placement_root_on_B \u2192 reflected_matches \u2192 place_z. Demoted: same_head. Soft-pad placeRoot / placement_to_B stay retired. Map: AEC/Section6/FreeExtension.md.",
     "Edge B\u2192A means the English proof of A requires B (or a required Lean infra subgoal).",
     "Blue = done. Green = open. Grey = blocked. No separate failed status unless a counterexample refutes the program.",
     "lemma_6_14 is independent of Prop 6.13 (false paper-number edge removed); it feeds lemma_12_6."
@@ -1618,13 +1618,58 @@
       "detail": "Retired: \u03c6\u2218j=eB impossible (eB Equiv onto; j not; t \u03bc>\u03bc). No \u00a76.2 sentence."
     },
     {
+      "id": "infra_610_pull_z_to_B",
+      "file": "AEC/Section6/StationaryFreeExtension.lean",
+      "section": 6,
+      "label": "E6 pull zN into B via empty exists_transport",
+      "status": "done",
+      "blocker": null,
+      "detail": "Done: empty-base exists_transport + of_strong."
+    },
+    {
+      "id": "infra_610_transport_joint",
+      "file": "AEC/Section6/StationaryFreeExtension.lean",
+      "section": 6,
+      "label": "E6 per-param transport joint into B",
+      "status": "done",
+      "blocker": null,
+      "detail": "Done: exists_transport + of_strong + same_of_common_hull; also returns root' ~ zN."
+    },
+    {
+      "id": "infra_610_qPres_empty_joint_on_I",
+      "file": "AEC/Section6/StationaryFreeExtension.lean",
+      "section": 6,
+      "label": "E6 empty head + params ~ qPres on E(I)",
+      "status": "open",
+      "blocker": null,
+      "detail": "Stationarity kernel for free-ref freeness (hinr/hcoh lift)."
+    },
+    {
+      "id": "infra_610_pull_root_agrees_free_ref",
+      "file": "AEC/Section6/StationaryFreeExtension.lean",
+      "section": 6,
+      "label": "E6 pull-root free via AgreeOn vs r0",
+      "status": "open",
+      "blocker": null,
+      "detail": "Board-open: ClosedLevel AgreeOn of pull_z root vs eB qPres empty; same_of_agreeOn + empty-free."
+    },
+    {
+      "id": "infra_610_same_head_transfers_joint",
+      "file": "AEC/Section6/StationaryFreeExtension.lean",
+      "section": 6,
+      "label": "E6 same head transfers short joint",
+      "status": "blocked",
+      "blocker": null,
+      "detail": "Demoted: absolute hhead under-hypothesized; prefer pull_root_agrees_free_ref."
+    },
+    {
       "id": "infra_610_placement_saturate_to_B",
       "file": "AEC/Section6/StationaryFreeExtension.lean",
       "section": 6,
       "label": "E6 saturate Prop 4.9 placement into B",
-      "status": "open",
-      "blocker": null,
-      "detail": "Board-open: English \u00a78 saturation pullback of Prop 4.9 joints (length <\u03bc) into B as placeRoot."
+      "status": "blocked",
+      "blocker": "infra_610_pull_root_agrees_free_ref",
+      "detail": "Assembled: Prop4.9 + mu_hull + pull_z + abs match + tip freeness; RHS via val_occ."
     }
   ],
   "edges": [
@@ -2907,7 +2952,19 @@
       "from": "infra_610_placement_mu_hull",
       "to": "infra_610_placement_saturate_to_B",
       "kind": "hard",
-      "note": "optional hull coding for saturation ambient"
+      "note": "hull supplies N,j,zN for pull/transport"
+    },
+    {
+      "from": "infra_610_placement_mu_hull",
+      "to": "infra_610_pull_z_to_B",
+      "kind": "hard",
+      "note": "hull zN pulled into B"
+    },
+    {
+      "from": "infra_610_placement_mu_hull",
+      "to": "infra_610_transport_joint",
+      "kind": "hard",
+      "note": "hull joint transported into B"
     },
     {
       "from": "infra_610_closed_level",
@@ -2916,12 +2973,30 @@
       "note": "categoricity / saturation at \u03bc"
     },
     {
+      "from": "infra_610_pull_z_to_B",
+      "to": "infra_610_placement_saturate_to_B",
+      "kind": "hard",
+      "note": "canonical root from empty transport"
+    },
+    {
+      "from": "infra_610_transport_joint",
+      "to": "infra_610_placement_saturate_to_B",
+      "kind": "hard",
+      "note": "per-param root' + joint"
+    },
+    {
+      "from": "infra_610_pull_root_agrees_free_ref",
+      "to": "infra_610_placement_saturate_to_B",
+      "kind": "hard",
+      "note": "glue root ~ root' transfers joint"
+    },
+    {
       "from": "infra_610_placement_saturate_to_B",
       "to": "infra_610_placement_root_on_B",
       "kind": "hard",
       "note": "root thin-wraps saturate"
     }
   ],
-  "doneCount": 117,
-  "meta": "Open tip: infra_610_placement_saturate_to_B (English \u00a78 saturation pullback into B). Retired: placement_to_B (global \u03c6 impossible). Done: placement_mu_hull. Blocked: placement_root_on_B \u2192 reflected_matches \u2192 place_z. Soft-pad stays retired. Map: AEC/Section6/FreeExtension.md."
+  "doneCount": 119,
+  "meta": "Open tip: infra_610_pull_root_agrees_free_ref (+ qPres_empty_joint_on_I). Done: pull_z, transport, mu_hull, abs match. Blocked: saturate \u2192 root \u2192 reflected \u2192 place_z. Demoted: same_head. Map: AEC/Section6/FreeExtension.md."
 }

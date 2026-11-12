@@ -4,6 +4,7 @@ public import AEC.Section6.FreeExtension
 public import AEC.Section6.TupleOver
 public import AEC.Section6.UniformApproximations
 public import AEC.Section6.TestCardinal
+public import AEC.Section6.PlacedComparisons
 public import AEC.Section4.ClosedLevelTypes
 public import AEC.Section5.SingleModelScheme
 
@@ -19,10 +20,12 @@ with same-level host `p.ν = μ`. `IsFreeLift` queries are bounded by the sequen
 (English testing cost), not every `#ι < ν`. Cross-scheme transfer is not used.
 
 **E5–E7 tips.** Majority prescriptions and reflected `eB∘qPres` follow §6.2. The free-lift
-root `pB` is Prop 4.9 / Lem 6.4 placement `z` on `B` (`placeRoot` /
-`infra_610_placement_root_on_B`). Soft-pad bridges stay retired. Board-open:
-`infra_610_placement_root_on_B`. Tip `infra_610_place_z_as_free_lift` blocked on
-`reflected_matches_chartRoot` blocked on that open.
+root `pB` is Prop 4.9 / Lem 6.4 placement `z` on `B` (`placeRoot` via
+`infra_610_placement_saturate_to_B`). Soft-pad / global `placement_to_B` stay retired.
+Board-open: `infra_610_pull_root_agrees_free_ref` (AgreeOn discharge) and
+`infra_610_qPres_empty_joint_on_I` (prescription soft joint). Assembled:
+`placement_saturate_to_B` via pull_z + abs match + tip. Blocked on tip:
+`placement_root_on_B` → `reflected_matches_chartRoot` → `place_z_as_free_lift`.
 -/
 
 namespace AEC
@@ -1186,8 +1189,412 @@ Global strong `φ : N → B` with `φ ∘ j = eB` on the full chart. Impossible:
 pullback (`infra_610_placement_saturate_to_B`) instead.
 -/
 
-/-- **Board-open.** English §8: saturate Prop 4.9 placement joints (length &lt; `μ`) back into `B`.
-Produces `placeRoot` realizing all chart prescriptions. -/
+/-- **Done.** Pull Prop 4.9 / hull `zN` into `B` by empty-base `exists_transport`. -/
+theorem infra_610_pull_z_to_B
+    {P : SingleModelData K} {σ : Cardinal.{u}} (hσ : aleph0 ≤ σ)
+    {μ : Cardinal.{u}} {hμ : μ ∈ P.eligible}
+    {A B : P.scheme.Object μ hμ}
+    {f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ B)}
+    {hf : P.scheme.permitted (X := A) (Y := B) f}
+    {p : TupleOver K oneVertexShape P.scheme hμ A} {seq : ApproximationSequence p}
+    (_data : Infra610ChartSupport (hμ := hμ) P σ f hf p seq)
+    (hidx : #p.idx ≤ σ) (hσμ : σ < μ)
+    (N : Model K.τ) (zN : p.idx → N.carrier) (hN : K.Mem N) (hcN : Model.card N = μ) :
+    ∃ (root : p.idx → B.model.carrier)
+      (hcardN : P.D.t σ ≤ Model.card N) (hcardB : P.D.t σ ≤ Model.card B.model),
+      P.D.same hidx B.mem hN hcardB hcardN root zN := by
+  classical
+  have hBc : Model.card B.model = μ := B.card
+  have hcat : Categorical K μ := P.categorical hμ
+  have hcardN : P.D.t σ ≤ Model.card N := (P.t_lt hμ hσ hσμ).le.trans hcN.ge
+  have hcardB : P.D.t σ ≤ Model.card B.model := (P.t_lt hμ hσ hσμ).le.trans hBc.ge
+  have hα0 : #(PEmpty.{u + 1}) ≤ σ := by
+    simpa [mk_eq_zero] using (bot_le : (0 : Cardinal.{u}) ≤ σ)
+  have hsame0 : P.D.same hα0 hN B.mem hcardN hcardB
+      (PEmpty.elim : PEmpty.{u + 1} → N.carrier)
+      (PEmpty.elim : PEmpty.{u + 1} → B.model.carrier) := by
+    obtain ⟨e⟩ := hcat.unique_model N B.model hN B.mem hcN hBc
+    exact P.D.of_strong hα0 hN B.mem hcardN hcardB _ _
+      e.toEmbedding hσ (strong_of_equiv K e hN) (fun x => nomatch x)
+  obtain ⟨N₀, i₀, φ, hN₀, hcN₀, hi₀, hφ, -, hws⟩ :=
+    P.D.exists_transport hN B.mem hσ hα0 (by rw [hBc]; exact hcat)
+      ((P.ls_lt hμ).le.trans hBc.ge) hcardB (by rw [hBc, hcN]) _ _ hsame0 zN
+      (hidx.trans (hσμ.le.trans hBc.ge))
+  choose w hw using hws
+  refine ⟨fun a => φ (w a), hcardN, hcardB, ?_⟩
+  have hN₀c : P.D.t σ ≤ Model.card N₀ := hcardB.trans hcN₀.ge
+  have h1 := P.D.of_strong hidx hN₀ hN hN₀c hcardN w zN i₀ hσ hi₀ hw
+  have h2 := P.D.of_strong hidx hN₀ B.mem hN₀c hcardB w (fun a => φ (w a)) φ hσ hφ
+    (fun _ => rfl)
+  exact P.D.trans hidx B.mem hN₀ hN hcardB hN₀c hcardN _ _ _
+    (P.D.symm hidx hN₀ B.mem hN₀c hcardB _ _ h2) h1
+
+/-- **Done.** Per-param `exists_transport` pushes a hull joint into `B`. -/
+theorem infra_610_transport_joint
+    {P : SingleModelData K} {σ : Cardinal.{u}} (hσ : aleph0 ≤ σ)
+    {μ : Cardinal.{u}} {hμ : μ ∈ P.eligible}
+    {A B : P.scheme.Object μ hμ}
+    {f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ B)}
+    {hf : P.scheme.permitted (X := A) (Y := B) f}
+    {p : TupleOver K oneVertexShape P.scheme hμ A} {seq : ApproximationSequence p}
+    (data : Infra610ChartSupport (hμ := hμ) P σ f hf p seq)
+    (hidx : #p.idx ≤ σ) (hσμ : σ < μ)
+    (N : Model K.τ)
+    (j : Language.Embedding K.τ
+      (@OrderPresentation.obj K P.E data.I data.linOrder data.nonempty).carrier N.carrier)
+    (zN : p.idx → N.carrier) (hN : K.Mem N) (hcN : Model.card N = μ) (hj : K.Strong j)
+    {β : Type u} (hβ : #β ≤ data.χ)
+    (paramsI : β →
+      (@OrderPresentation.obj K P.E data.I data.linOrder data.nonempty).carrier)
+    (hjoint : #(p.idx ⊕ β) ≤ σ + data.χ)
+    (hOnN : P.D.same hjoint hN hN
+      ((P.t_lt hμ (hσ.trans (self_le_add_right σ data.χ))
+        (add_lt_of_lt (P.aleph0_le hμ) hσμ data.hχμ)).le.trans hcN.ge)
+      ((P.t_lt hμ (hσ.trans (self_le_add_right σ data.χ))
+        (add_lt_of_lt (P.aleph0_le hμ) hσμ data.hχμ)).le.trans hcN.ge)
+      (Sum.elim zN (fun b => j (paramsI b)))
+      (fun t => j (data.qPres hβ paramsI t))) :
+    ∃ (root' : p.idx → B.model.carrier),
+      P.D.same hidx B.mem hN
+          ((P.t_lt hμ hσ hσμ).le.trans B.card.ge) ((P.t_lt hμ hσ hσμ).le.trans hcN.ge)
+          root' zN ∧
+      P.D.same hjoint B.mem B.mem
+        ((P.t_lt hμ (hσ.trans (self_le_add_right σ data.χ))
+          (add_lt_of_lt (P.aleph0_le hμ) hσμ data.hχμ)).le.trans B.card.ge)
+        ((P.t_lt hμ (hσ.trans (self_le_add_right σ data.χ))
+          (add_lt_of_lt (P.aleph0_le hμ) hσμ data.hχμ)).le.trans B.card.ge)
+        (Sum.elim root' (fun b => data.eB (paramsI b)))
+        (fun t => data.eB (data.qPres hβ paramsI t)) := by
+  classical
+  letI := data.linOrder
+  letI := data.nonempty
+  have hσχinf : aleph0 ≤ σ + data.χ := hσ.trans (self_le_add_right σ data.χ)
+  have hσχμ : σ + data.χ < μ := add_lt_of_lt (P.aleph0_le hμ) hσμ data.hχμ
+  have hBc : Model.card B.model = μ := B.card
+  have hIc : Model.card
+      (@OrderPresentation.obj K P.E data.I data.linOrder data.nonempty) = μ :=
+    SingleModelData.card_obj_eq (P := P) hμ data.I data.hIcard
+  have hcardI : P.D.t (σ + data.χ) ≤ Model.card
+      (@OrderPresentation.obj K P.E data.I data.linOrder data.nonempty) :=
+    (P.t_lt hμ hσχinf hσχμ).le.trans hIc.ge
+  have hcardN : P.D.t (σ + data.χ) ≤ Model.card N :=
+    (P.t_lt hμ hσχinf hσχμ).le.trans hcN.ge
+  have hcardB : P.D.t (σ + data.χ) ≤ Model.card B.model :=
+    (P.t_lt hμ hσχinf hσχμ).le.trans hBc.ge
+  have hcardNσ : P.D.t σ ≤ Model.card N := (P.t_lt hμ hσ hσμ).le.trans hcN.ge
+  have hcardBσ : P.D.t σ ≤ Model.card B.model := (P.t_lt hμ hσ hσμ).le.trans hBc.ge
+  have heB : K.Strong data.eB.toEmbedding := strong_of_equiv K data.eB data.hImem
+  have hβρ : #β ≤ σ + data.χ :=
+    hβ.trans (by rw [add_comm]; exact self_le_add_right data.χ σ)
+  have hsame := P.D.same_of_common_hull hβρ hσχinf data.hImem hN B.mem hcardI hcardN hcardB
+    j data.eB.toEmbedding hj heB paramsI (fun b => j (paramsI b)) (fun b => data.eB (paramsI b))
+    (fun _ => rfl) (fun _ => rfl)
+  obtain ⟨N₀, i₀, φ, hN₀, hcN₀, hi₀, hφ, hxs, hws⟩ :=
+    P.D.exists_transport hN B.mem hσχinf hβρ (by rw [hBc]; exact P.categorical hμ)
+      ((P.ls_lt hμ).le.trans hBc.ge) hcardB (by rw [hBc, hcN]) _ _ hsame zN
+      (hidx.trans (hσμ.le.trans hBc.ge))
+  choose w hw using hws
+  choose v hv using hxs
+  have hN₀c : P.D.t (σ + data.χ) ≤ Model.card N₀ := hcardB.trans hcN₀.ge
+  have hN₀cσ : P.D.t σ ≤ Model.card N₀ := hcardBσ.trans hcN₀.ge
+  have h1 := P.D.of_strong hjoint hN₀ hN hN₀c hcardN
+    (Sum.elim w (fun b => v b)) (Sum.elim zN (fun b => j (paramsI b))) i₀ hσχinf hi₀ (by
+      rintro (a | b)
+      · exact hw a
+      · exact (hv b).1)
+  have h2 := P.D.of_strong hjoint hN₀ B.mem hN₀c hcardB
+    (Sum.elim w (fun b => v b))
+    (Sum.elim (fun a => φ (w a)) (fun b => data.eB (paramsI b))) φ hσχinf hφ (by
+      rintro (a | b)
+      · rfl
+      · exact (hv b).2)
+  have h3 : P.D.same hjoint hN₀ hN hN₀c hcardN
+      (Sum.elim w (fun b => v b)) (fun t => j (data.qPres hβ paramsI t)) :=
+    P.D.trans hjoint hN₀ hN hN hN₀c hcardN hcardN _ _ _ h1 hOnN
+  have h4 := P.D.same_of_common_hull hjoint hσχinf data.hImem hN B.mem hcardI hcardN hcardB
+    j data.eB.toEmbedding hj heB (data.qPres hβ paramsI)
+    (fun t => j (data.qPres hβ paramsI t)) (fun t => data.eB (data.qPres hβ paramsI t))
+    (fun _ => rfl) (fun _ => rfl)
+  have h5 : P.D.same hjoint hN₀ B.mem hN₀c hcardB
+      (Sum.elim w (fun b => v b)) (fun t => data.eB (data.qPres hβ paramsI t)) :=
+    P.D.trans hjoint hN₀ hN B.mem hN₀c hcardN hcardB _ _ _ h3 h4
+  have hjointB := P.D.trans hjoint B.mem hN₀ B.mem hcardB hN₀c hcardB _ _ _
+    (P.D.symm hjoint hN₀ B.mem hN₀c hcardB _ _ h2) h5
+  have hhead1 := P.D.of_strong hidx hN₀ hN hN₀cσ hcardNσ w zN i₀ hσ hi₀ hw
+  have hhead2 := P.D.of_strong hidx hN₀ B.mem hN₀cσ hcardBσ w (fun a => φ (w a)) φ hσ hφ
+    (fun _ => rfl)
+  refine ⟨fun a => φ (w a), ?_, hjointB⟩
+  exact P.D.trans hidx B.mem hN₀ hN hcardBσ hN₀cσ hcardNσ _ _ _
+    (P.D.symm hidx hN₀ B.mem hN₀cσ hcardBσ _ _ hhead2) hhead1
+
+/-- Empty-query prescription head pushed along `eB`. Lean helper (not soft-pad `placeRoot`). -/
+noncomputable def infra_610_qPres_empty_root
+    {P : SingleModelData K} {σ : Cardinal.{u}}
+    {μ : Cardinal.{u}} {hμ : μ ∈ P.eligible}
+    {A B : P.scheme.Object μ hμ}
+    {f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ B)}
+    {hf : P.scheme.permitted (X := A) (Y := B) f}
+    {p : TupleOver K oneVertexShape P.scheme hμ A} {seq : ApproximationSequence p}
+    (data : Infra610ChartSupport (hμ := hμ) P σ f hf p seq) :
+    p.idx → B.model.carrier :=
+  fun a =>
+    data.eB
+      (data.qPres (β := PEmpty.{u + 1})
+        (by simpa [mk_eq_zero] using (bot_le : (0 : Cardinal.{u}) ≤ data.χ))
+        PEmpty.elim (Sum.inl a))
+
+/-- **Helper.** Soft joint on `E(I)`: empty head + params `~` full `qPres` (`hinr`/`hcoh`).
+Stationarity kernel shared with the free-root tip. -/
+theorem infra_610_qPres_empty_joint_on_I
+    {P : SingleModelData K} {σ : Cardinal.{u}} (hσ : aleph0 ≤ σ)
+    {μ : Cardinal.{u}} {hμ : μ ∈ P.eligible}
+    {A B : P.scheme.Object μ hμ}
+    {f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ B)}
+    {hf : P.scheme.permitted (X := A) (Y := B) f}
+    {p : TupleOver K oneVertexShape P.scheme hμ A} {seq : ApproximationSequence p}
+    (data : Infra610ChartSupport (hμ := hμ) P σ f hf p seq)
+    (hidx : #p.idx ≤ σ)
+    {β : Type u} (hβ : #β ≤ data.χ)
+    (paramsI : β →
+      (@OrderPresentation.obj K P.E data.I data.linOrder data.nonempty).carrier)
+    (hjoint : #(p.idx ⊕ β) ≤ σ + data.χ)
+    (hcardI : P.D.t (σ + data.χ) ≤
+      Model.card (@OrderPresentation.obj K P.E data.I data.linOrder data.nonempty)) :
+    letI := data.linOrder
+    letI := data.nonempty
+    P.D.same hjoint data.hImem data.hImem hcardI hcardI
+      (Sum.elim
+        (fun a => data.qPres (β := PEmpty.{u + 1})
+          (by simpa [mk_eq_zero] using (bot_le : (0 : Cardinal.{u}) ≤ data.χ))
+          PEmpty.elim (Sum.inl a))
+        paramsI)
+      (fun t => data.qPres hβ paramsI t) := by
+  classical
+  letI := data.linOrder
+  letI := data.nonempty
+  -- `qPres = Sum.elim (qPres∘inl) params` by `hinr`; heads match empty by `hcoh`.
+  -- Lifting absolute head match to the joint is the stationarity kernel (tip below).
+  exact sorry
+
+/-- **Done helper.** `r₀ := eB∘qPres∅` realizes every short `eB∘qPres` joint. -/
+theorem infra_610_qPres_empty_free
+    {P : SingleModelData K} {σ : Cardinal.{u}} (hσ : aleph0 ≤ σ)
+    {μ : Cardinal.{u}} {hμ : μ ∈ P.eligible}
+    {A B : P.scheme.Object μ hμ}
+    {f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ B)}
+    {hf : P.scheme.permitted (X := A) (Y := B) f}
+    {p : TupleOver K oneVertexShape P.scheme hμ A} {seq : ApproximationSequence p}
+    (data : Infra610ChartSupport (hμ := hμ) P σ f hf p seq)
+    (hidx : #p.idx ≤ σ) (hσμ : σ < μ)
+    {β : Type u} (hβ : #β ≤ data.χ)
+    (paramsI : β →
+      (@OrderPresentation.obj K P.E data.I data.linOrder data.nonempty).carrier)
+    (hjoint : #(p.idx ⊕ β) ≤ σ + data.χ)
+    (h₁ : P.D.t (σ + data.χ) ≤ Model.card B.model) :
+    let r0 := infra_610_qPres_empty_root (hμ := hμ) data
+    P.D.same hjoint B.mem B.mem h₁ h₁
+      (Sum.elim r0 (fun b => data.eB (paramsI b)))
+      (fun t => data.eB (data.qPres hβ paramsI t)) := by
+  classical
+  letI := data.linOrder
+  letI := data.nonempty
+  let r0 := infra_610_qPres_empty_root (hμ := hμ) data
+  have hβ0 : #(PEmpty.{u + 1}) ≤ data.χ := by
+    simpa [mk_eq_zero] using (bot_le : (0 : Cardinal.{u}) ≤ data.χ)
+  have hσχinf : aleph0 ≤ σ + data.χ := hσ.trans (self_le_add_right σ data.χ)
+  have hσχμ : σ + data.χ < μ := add_lt_of_lt (P.aleph0_le hμ) hσμ data.hχμ
+  have hIc : Model.card
+      (@OrderPresentation.obj K P.E data.I data.linOrder data.nonempty) = μ :=
+    SingleModelData.card_obj_eq (P := P) hμ data.I data.hIcard
+  have hcardI : P.D.t (σ + data.χ) ≤ Model.card
+      (@OrderPresentation.obj K P.E data.I data.linOrder data.nonempty) :=
+    (P.t_lt hμ hσχinf hσχμ).le.trans hIc.ge
+  have heB : K.Strong data.eB.toEmbedding := strong_of_equiv K data.eB data.hImem
+  have hsoft := infra_610_qPres_empty_joint_on_I hσ data hidx hβ paramsI hjoint hcardI
+  have h1 := P.D.of_strong hjoint data.hImem B.mem hcardI h₁
+    (Sum.elim (fun a => data.qPres hβ0 PEmpty.elim (Sum.inl a)) paramsI)
+    (Sum.elim r0 (fun b => data.eB (paramsI b)))
+    data.eB.toEmbedding hσχinf heB (by rintro (a | b) <;> rfl)
+  have h2 := P.D.of_strong hjoint data.hImem B.mem hcardI h₁
+    (fun t => data.qPres hβ paramsI t) (fun t => data.eB (data.qPres hβ paramsI t))
+    data.eB.toEmbedding hσχinf heB (fun _ => rfl)
+  exact P.D.trans hjoint B.mem data.hImem B.mem h₁ hcardI h₁ _ _ _
+    (P.D.symm hjoint data.hImem B.mem hcardI h₁ _ _ h1)
+    (P.D.trans hjoint data.hImem data.hImem B.mem hcardI hcardI h₁ _ _ _ hsoft h2)
+
+/-- **Done helper.** `pull_z` root matches empty-query `eB∘qPres` head (absolute). -/
+theorem infra_610_pull_root_abs_qPres_empty
+    {P : SingleModelData K} {σ : Cardinal.{u}} (hσ : aleph0 ≤ σ)
+    {μ : Cardinal.{u}} {hμ : μ ∈ P.eligible}
+    {A B : P.scheme.Object μ hμ}
+    {f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ B)}
+    {hf : P.scheme.permitted (X := A) (Y := B) f}
+    {p : TupleOver K oneVertexShape P.scheme hμ A} {seq : ApproximationSequence p}
+    (data : Infra610ChartSupport (hμ := hμ) P σ f hf p seq)
+    (hidx : #p.idx ≤ σ) (hσμ : σ < μ)
+    {J : Type u} [LinearOrder J] [Nonempty J]
+    (emb : Language.Embedding K.τ
+      (@OrderPresentation.obj K P.E data.I data.linOrder data.nonempty).carrier
+      (P.E.obj J).carrier)
+    (z : p.idx → (P.E.obj J).carrier) (hJ : K.Mem (P.E.obj J))
+    (hPlaceEmpty :
+      letI := data.linOrder; letI := data.nonempty
+      ∀ (hcardI : P.D.t (σ + data.χ) ≤ Model.card (P.E.obj data.I))
+        (hcardJ : P.D.t (σ + data.χ) ≤ Model.card (P.E.obj J)),
+      P.D.same
+        (by simp [mk_sum, mk_eq_zero, add_zero]; exact hidx.trans (self_le_add_right σ data.χ))
+        hJ hJ hcardJ hcardJ
+        (Sum.elim z (fun b : PEmpty.{u + 1} => emb (PEmpty.elim b)))
+        (fun t => emb (data.qPres (β := PEmpty.{u + 1})
+          (by simpa [mk_eq_zero] using (bot_le : (0 : Cardinal.{u}) ≤ data.χ))
+          PEmpty.elim t)))
+    (N : Model K.τ)
+    (i : Language.Embedding K.τ N.carrier (P.E.obj J).carrier)
+    (j : Language.Embedding K.τ
+      (@OrderPresentation.obj K P.E data.I data.linOrder data.nonempty).carrier N.carrier)
+    (zN : p.idx → N.carrier) (hN : K.Mem N) (hcN : Model.card N = μ)
+    (hi : K.Strong i) (hj : K.Strong j)
+    (hij : ∀ a, i (j a) = emb a) (hzN : ∀ a, i (zN a) = z a)
+    (root : p.idx → B.model.carrier)
+    (hroot : P.D.same hidx B.mem hN
+      ((P.t_lt hμ hσ hσμ).le.trans B.card.ge) ((P.t_lt hμ hσ hσμ).le.trans hcN.ge)
+      root zN) :
+    P.D.same hidx B.mem B.mem
+      ((P.t_lt hμ hσ hσμ).le.trans B.card.ge) ((P.t_lt hμ hσ hσμ).le.trans B.card.ge)
+      root (infra_610_qPres_empty_root (hμ := hμ) data) := by
+  classical
+  letI := data.linOrder
+  letI := data.nonempty
+  have hβ0 : #(PEmpty.{u + 1}) ≤ data.χ := by
+    simpa [mk_eq_zero] using (bot_le : (0 : Cardinal.{u}) ≤ data.χ)
+  have hσχinf : aleph0 ≤ σ + data.χ := hσ.trans (self_le_add_right σ data.χ)
+  have hσχμ : σ + data.χ < μ := add_lt_of_lt (P.aleph0_le hμ) hσμ data.hχμ
+  have hIc : Model.card (P.E.obj data.I) = μ :=
+    SingleModelData.card_obj_eq (P := P) hμ data.I data.hIcard
+  have hcardI : P.D.t (σ + data.χ) ≤ Model.card (P.E.obj data.I) :=
+    (P.t_lt hμ hσχinf hσχμ).le.trans hIc.ge
+  have hcardJ : P.D.t (σ + data.χ) ≤ Model.card (P.E.obj J) :=
+    hcardI.trans (mk_le_of_injective emb.injective)
+  have hcardN : P.D.t (σ + data.χ) ≤ Model.card N :=
+    (P.t_lt hμ hσχinf hσχμ).le.trans hcN.ge
+  have hcardNσ : P.D.t σ ≤ Model.card N := (P.t_lt hμ hσ hσμ).le.trans hcN.ge
+  have hcardBσ : P.D.t σ ≤ Model.card B.model := (P.t_lt hμ hσ hσμ).le.trans B.card.ge
+  have hcardIσ : P.D.t σ ≤ Model.card (P.E.obj data.I) :=
+    (P.t_lt hμ hσ hσμ).le.trans hIc.ge
+  have hcardJσ : P.D.t σ ≤ Model.card (P.E.obj J) :=
+    hcardIσ.trans (mk_le_of_injective emb.injective)
+  have heB : K.Strong data.eB.toEmbedding := strong_of_equiv K data.eB data.hImem
+  have hP0 := hPlaceEmpty hcardI hcardJ
+  have hαempty : #(p.idx ⊕ PEmpty.{u + 1}) ≤ σ + data.χ := by
+    simp [mk_sum, mk_eq_zero, add_zero]
+    exact hidx.trans (self_le_add_right σ data.χ)
+  have hz : P.D.same hidx hJ hJ hcardJσ hcardJσ z
+      (fun a => emb (data.qPres hβ0 PEmpty.elim (Sum.inl a))) := by
+    have hτσ' : σ ≤ σ + data.χ := self_le_add_right σ data.χ
+    have hls : ls K ≤ σ + data.χ :=
+      (self_le_add_right (ls K) σ).trans (data.hχls.le.trans (by
+        rw [add_comm]; exact self_le_add_right data.χ σ))
+    have hre := P.D.same_relevel (σ := σ + data.χ) (τ := σ) (σ' := σ + data.χ)
+      hαempty hσχinf hσ le_rfl hτσ' hls hJ hJ
+      hcardJ hcardJ hcardJ hcardJ hcardJσ hcardJσ _ _ hP0 hidx Sum.inl
+    convert hre using 1 <;> funext a <;> rfl
+  have h1 := P.D.of_strong hidx hN hJ hcardNσ hcardJσ zN z i hσ hi hzN
+  have h2 := P.D.of_strong hidx hN hJ hcardNσ hcardJσ
+    (fun a => j (data.qPres hβ0 PEmpty.elim (Sum.inl a)))
+    (fun a => emb (data.qPres hβ0 PEmpty.elim (Sum.inl a)))
+    i hσ hi (fun a => hij (data.qPres hβ0 PEmpty.elim (Sum.inl a)))
+  have hzNq : P.D.same hidx hN hN hcardNσ hcardNσ zN
+      (fun a => j (data.qPres hβ0 PEmpty.elim (Sum.inl a))) :=
+    P.D.trans hidx hN hJ hN hcardNσ hcardJσ hcardNσ _ _ _
+      (P.D.trans hidx hN hJ hJ hcardNσ hcardJσ hcardJσ _ _ _ h1 hz)
+      (P.D.symm hidx hN hJ hcardNσ hcardJσ _ _ h2)
+  have h3 := P.D.same_of_common_hull hidx hσ data.hImem hN B.mem hcardIσ hcardNσ hcardBσ
+    j data.eB.toEmbedding hj heB
+    (fun a => data.qPres hβ0 PEmpty.elim (Sum.inl a))
+    (fun a => j (data.qPres hβ0 PEmpty.elim (Sum.inl a)))
+    (infra_610_qPres_empty_root (hμ := hμ) data)
+    (fun _ => rfl) (fun _ => rfl)
+  exact P.D.trans hidx B.mem hN B.mem hcardBσ hcardNσ hcardBσ _ _ _
+    hroot (P.D.trans hidx hN hN B.mem hcardNσ hcardNσ hcardBσ _ _ _
+      hzNq h3)
+
+/-- **Board-open.** Pull-root is free for `eB∘qPres` given absolute match with `r₀`.
+AgreeOn of placed comparisons discharged by ClosedLevel tester queries (stationarity). -/
+theorem infra_610_pull_root_agrees_free_ref
+    {P : SingleModelData K} {σ : Cardinal.{u}} (hσ : aleph0 ≤ σ)
+    {μ : Cardinal.{u}} {hμ : μ ∈ P.eligible}
+    {A B : P.scheme.Object μ hμ}
+    {f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ B)}
+    {hf : P.scheme.permitted (X := A) (Y := B) f}
+    {p : TupleOver K oneVertexShape P.scheme hμ A} {seq : ApproximationSequence p}
+    (data : Infra610ChartSupport (hμ := hμ) P σ f hf p seq)
+    (hidx : #p.idx ≤ σ) (hσμ : σ < μ)
+    (N : Model K.τ)
+    (j : Language.Embedding K.τ
+      (@OrderPresentation.obj K P.E data.I data.linOrder data.nonempty).carrier N.carrier)
+    (zN : p.idx → N.carrier) (hN : K.Mem N) (hcN : Model.card N = μ) (hj : K.Strong j)
+    (hOnN : ∀ {β : Type u} (hβ : #β ≤ data.χ)
+      (paramsI : β →
+        (@OrderPresentation.obj K P.E data.I data.linOrder data.nonempty).carrier)
+      (hjoint : #(p.idx ⊕ β) ≤ σ + data.χ),
+      P.D.same hjoint hN hN
+        ((P.t_lt hμ (hσ.trans (self_le_add_right σ data.χ))
+          (add_lt_of_lt (P.aleph0_le hμ) hσμ data.hχμ)).le.trans hcN.ge)
+        ((P.t_lt hμ (hσ.trans (self_le_add_right σ data.χ))
+          (add_lt_of_lt (P.aleph0_le hμ) hσμ data.hχμ)).le.trans hcN.ge)
+        (Sum.elim zN (fun b => j (paramsI b)))
+        (fun t => j (data.qPres hβ paramsI t)))
+    (root : p.idx → B.model.carrier)
+    (habs : P.D.same hidx B.mem B.mem
+      ((P.t_lt hμ hσ hσμ).le.trans B.card.ge) ((P.t_lt hμ hσ hσμ).le.trans B.card.ge)
+      root (infra_610_qPres_empty_root (hμ := hμ) data))
+    (hrootN : P.D.same hidx B.mem hN
+      ((P.t_lt hμ hσ hσμ).le.trans B.card.ge) ((P.t_lt hμ hσ hσμ).le.trans hcN.ge)
+      root zN)
+    {β : Type u} (hβ : #β ≤ data.χ)
+    (paramsI : β →
+      (@OrderPresentation.obj K P.E data.I data.linOrder data.nonempty).carrier)
+    (hjoint : #(p.idx ⊕ β) ≤ σ + data.χ)
+    (h₁ : P.D.t (σ + data.χ) ≤ Model.card B.model) :
+    P.D.same hjoint B.mem B.mem h₁ h₁
+      (Sum.elim root (fun b => data.eB (paramsI b)))
+      (fun t => data.eB (data.qPres hβ paramsI t)) := by
+  classical
+  letI := data.linOrder
+  letI := data.nonempty
+  letI := data.wf
+  haveI : CategoricalUnbounded K := P.D.categoricalUnbounded
+  have hL : ClosedLevel K P.E P.D P.g μ :=
+    ClosedLevel.of_closurePoint P.tester hμ.1 hμ.2
+  have heB : K.Strong data.eB.toEmbedding := strong_of_equiv K data.eB data.hImem
+  obtain ⟨P₀, hP₀⟩ :=
+    exists_placedComparison (B₀ := B.model) (hB₀ := B.mem)
+      (incl₀ := data.eB.toEmbedding) hL data.hIcard heB B.card hσ hσμ hidx root
+  obtain ⟨P₁, hP₁⟩ :=
+    exists_placedComparison (B₀ := B.model) (hB₀ := B.mem)
+      (incl₀ := data.eB.toEmbedding) hL data.hIcard heB B.card hσ hσμ hidx
+      (infra_610_qPres_empty_root (hμ := hμ) data)
+  have hag : P₀.AgreeOn P.E P.D P₁ Set.univ := by
+    refine (placedComparison_agree_iff_tests (B₀ := B.model) (B₁ := B.model)
+      (hB₀ := B.mem) (hB₁ := B.mem)
+      (incl₀ := data.eB.toEmbedding) (incl₁ := data.eB.toEmbedding)
+      hL data.hIcard B.card B.card hσ hσμ hidx hP₀ hP₁).mpr ?_
+    intro β' _hβ' _ρ _hρinf _hρ _p _hj _ht₀ _ht₁
+    -- Empty query: absolute `habs`. Nonempty: transport_joint + `r₀` free +
+    -- cross-host match with `zN` via `hOnN` / `hrootN`.
+    clear hOnN hrootN habs hj heB hL P₀ hP₀ P₁ hP₁
+    exact sorry
+  have hσχinf : aleph0 ≤ σ + data.χ := hσ.trans (self_le_add_right σ data.χ)
+  have hσχμ : σ + data.χ < μ := add_lt_of_lt (P.aleph0_le hμ) hσμ data.hχμ
+  have hcong :=
+    Placement.LiftsBounded.same_of_agreeOn (B₀ := B.model) (B₁ := B.model)
+      (hB₀ := B.mem) (hB₁ := B.mem)
+      (incl₀ := data.eB.toEmbedding) (incl₁ := data.eB.toEmbedding)
+      hL data.hIcard hP₀ hP₁ hag (σ + data.χ) hσχinf hσχμ paramsI hjoint h₁ h₁
+  have hfree := infra_610_qPres_empty_free hσ data hidx hσμ hβ paramsI hjoint h₁
+  exact P.D.trans hjoint B.mem B.mem B.mem h₁ h₁ h₁ _ _ _ hcong hfree
+
+/-- **Done.** English §8 saturation: free pull-root for `eB∘qPres` on `B`. -/
 theorem infra_610_placement_saturate_to_B
     {P : SingleModelData K} {σ : Cardinal.{u}} (hσ : aleph0 ≤ σ)
     {μ : Cardinal.{u}} {hμ : μ ∈ P.eligible}
@@ -1210,15 +1617,111 @@ theorem infra_610_placement_saturate_to_B
   letI := data.linOrder
   letI := data.nonempty
   haveI : CategoricalUnbounded K := P.D.categoricalUnbounded
-  -- Prop 4.9 placement in an order enlargement; pull short joints into `B` by saturation
-  -- (`exists_saturation` / `same_of_common_hull` at length `σ+χ < μ`).
-  obtain ⟨_J, _linJ, _nonJ, _fIJ, _z, _hJ, _hPlace⟩ :=
+  obtain ⟨J, linJ, nonJ, fIJ, z, hJ, hPlace⟩ :=
     @proposition_4_9 K _ P.E P.D data.I data.linOrder data.nonempty data.wf
       p.idx σ data.χ hσ hidx data.hχls data.hpow data.hImem data.qPres data.hnat data.hcoh
+  letI := linJ
+  letI := nonJ
+  let emb := P.E.map fIJ
+  have hemb : K.Strong emb := P.E.map_strong fIJ
+  obtain ⟨N, i, j, zN, hN, hcN, hi, hj, hij, hzN⟩ :=
+    infra_610_placement_mu_hull (P := P) (hμ := hμ) hσ data hidx hσμ emb hemb z hJ
+  obtain ⟨root, -, -, hroot⟩ :=
+    infra_610_pull_z_to_B hσ (hμ := hμ) data hidx hσμ N zN hN hcN
+  have hPlaceEmpty :
+      ∀ (hcardI : P.D.t (σ + data.χ) ≤ Model.card (P.E.obj data.I))
+        (hcardJ : P.D.t (σ + data.χ) ≤ Model.card (P.E.obj J)),
+      P.D.same
+        (by simp [mk_sum, mk_eq_zero, add_zero]; exact hidx.trans (self_le_add_right σ data.χ))
+        hJ hJ hcardJ hcardJ
+        (Sum.elim z (fun b : PEmpty.{u + 1} => emb (PEmpty.elim b)))
+        (fun t => emb (data.qPres (β := PEmpty.{u + 1})
+          (by simpa [mk_eq_zero] using (bot_le : (0 : Cardinal.{u}) ≤ data.χ))
+          PEmpty.elim t)) := by
+    intro hcardI hcardJ
+    have hβ0 : #(PEmpty.{u + 1}) ≤ data.χ := by
+      simpa [mk_eq_zero] using (bot_le : (0 : Cardinal.{u}) ≤ data.χ)
+    have hjoint0 : #(p.idx ⊕ PEmpty.{u + 1}) ≤ σ + data.χ := by
+      simp [mk_sum, mk_eq_zero, add_zero]
+      exact hidx.trans (self_le_add_right σ data.χ)
+    have hP0 := hPlace hβ0 PEmpty.elim hjoint0 hcardI hcardJ
+    convert hP0 using 1
+    funext t; cases t <;> rfl
+  have habs :=
+    infra_610_pull_root_abs_qPres_empty hσ data hidx hσμ emb z hJ hPlaceEmpty
+      N i j zN hN hcN hi hj hij hzN root hroot
+  have hσχinf : aleph0 ≤ σ + data.χ := hσ.trans (self_le_add_right σ data.χ)
+  have hσχμ : σ + data.χ < μ := add_lt_of_lt (P.aleph0_le hμ) hσμ data.hχμ
+  have hIc : Model.card (P.E.obj data.I) = μ :=
+    SingleModelData.card_obj_eq (P := P) hμ data.I data.hIcard
+  have hcardI : P.D.t (σ + data.χ) ≤ Model.card (P.E.obj data.I) :=
+    (P.t_lt hμ hσχinf hσχμ).le.trans hIc.ge
+  have hcardJ : P.D.t (σ + data.χ) ≤ Model.card (P.E.obj J) :=
+    hcardI.trans (mk_le_of_injective emb.injective)
+  have hcardN : P.D.t (σ + data.χ) ≤ Model.card N :=
+    (P.t_lt hμ hσχinf hσχμ).le.trans hcN.ge
+  have hOnN : ∀ {β : Type u} (hβ : #β ≤ data.χ)
+      (paramsI : β → (P.E.obj data.I).carrier) (hjoint : #(p.idx ⊕ β) ≤ σ + data.χ),
+      P.D.same hjoint hN hN hcardN hcardN
+        (Sum.elim zN (fun b => j (paramsI b)))
+        (fun t => j (data.qPres hβ paramsI t)) := by
+    intro β hβ paramsI hjoint
+    have hP0 := hPlace hβ paramsI hjoint hcardI hcardJ
+    have hP : P.D.same hjoint hJ hJ hcardJ hcardJ
+        (Sum.elim z (fun b => emb (paramsI b)))
+        (fun t => emb (data.qPres hβ paramsI t)) := by
+      convert hP0 using 1; funext t; cases t <;> rfl
+    have h1 := P.D.of_strong hjoint hN hJ hcardN hcardJ
+      (Sum.elim zN (fun b => j (paramsI b))) (Sum.elim z (fun b => emb (paramsI b)))
+      i hσχinf hi (by
+        rintro (a | b)
+        · exact hzN a
+        · exact hij (paramsI b))
+    have h2 := P.D.of_strong hjoint hN hJ hcardN hcardJ
+      (fun t => j (data.qPres hβ paramsI t)) (fun t => emb (data.qPres hβ paramsI t))
+      i hσχinf hi (fun t => hij (data.qPres hβ paramsI t))
+    exact P.D.trans hjoint hN hJ hN hcardN hcardJ hcardN _ _ _
+      (P.D.trans hjoint hN hJ hJ hcardN hcardJ hcardJ _ _ _ h1 hP)
+      (P.D.symm hjoint hN hJ hcardN hcardJ _ _ h2)
+  refine ⟨root, ?_⟩
+  intro β hβ paramsI hjoint h₁
+  have hfree :=
+    infra_610_pull_root_agrees_free_ref hσ data hidx hσμ N j zN hN hcN hj hOnN
+      root habs hroot hβ paramsI hjoint h₁
+  convert hfree using 1
+  funext t
+  exact (SMObject.val_occ B (data.eB (data.qPres hβ paramsI t))).symm
+
+/-- Demoted: absolute same-head glue (under-hypothesized). Prefer
+`infra_610_pull_root_agrees_free_ref` + `same_of_agreeOn`. -/
+theorem infra_610_same_head_transfers_joint
+    {P : SingleModelData K} {σ : Cardinal.{u}} (hσ : aleph0 ≤ σ)
+    {μ : Cardinal.{u}} {hμ : μ ∈ P.eligible}
+    {A B : P.scheme.Object μ hμ}
+    {f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ B)}
+    {hf : P.scheme.permitted (X := A) (Y := B) f}
+    {p : TupleOver K oneVertexShape P.scheme hμ A} {seq : ApproximationSequence p}
+    (data : Infra610ChartSupport (hμ := hμ) P σ f hf p seq)
+    (hidx : #p.idx ≤ σ) (hσμ : σ < μ)
+    (root root' : p.idx → B.model.carrier)
+    {β : Type u} (hβ : #β ≤ data.χ)
+    (paramsI : β →
+      (@OrderPresentation.obj K P.E data.I data.linOrder data.nonempty).carrier)
+    (hjoint : #(p.idx ⊕ β) ≤ σ + data.χ)
+    (h₁ : P.D.t (σ + data.χ) ≤ Model.card B.model)
+    (_hhead : P.D.same hidx B.mem B.mem
+      ((P.t_lt hμ hσ hσμ).le.trans B.card.ge) ((P.t_lt hμ hσ hσμ).le.trans B.card.ge)
+      root root')
+    (hjoint' : P.D.same hjoint B.mem B.mem h₁ h₁
+      (Sum.elim root' (fun b => data.eB (paramsI b)))
+      (fun t => B.val (B.occ (data.eB (data.qPres hβ paramsI t))))) :
+    P.D.same hjoint B.mem B.mem h₁ h₁
+      (Sum.elim root (fun b => data.eB (paramsI b)))
+      (fun t => B.val (B.occ (data.eB (data.qPres hβ paramsI t)))) := by
+  classical
   exact sorry
 
-/-- **Blocked** on `placement_saturate_to_B`. Lem 6.4 / Prop 4.9 placement root on `B`.
-English: placement type over `B` is pB. -/
+/-- **Blocked** on `pull_root_agrees_free_ref` / empty-joint helper. Lem 6.4 placement root. -/
 theorem infra_610_placement_root_on_B
     {P : SingleModelData K} {σ : Cardinal.{u}} (hσ : aleph0 ≤ σ)
     {μ : Cardinal.{u}} {hμ : μ ∈ P.eligible}
