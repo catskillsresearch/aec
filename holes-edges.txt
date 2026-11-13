@@ -1,7 +1,7 @@
 # Hard edges from holes-graph.json
 # Convention: FROM --> TO means the English proof of TO requires FROM.
-# Nodes: 196  Hard edges: 247
-# Open tip: corollary_6_16. proposition_6_15 done (two-sided strip). infra_615_terminal is the one-sided specialization. Lem 6.17 blocked.
+# Nodes: 197  Hard edges: 237
+# Open tip: lemma_7_2. lemma_6_17 done (mixed ν≤μ). Soft: corollary_6_16→lemma_6_17, lemma_6_17→lemma_7_2. Hard: lemma_6_11→lemma_6_17, corollary_6_7→lemma_6_17, lemma_6_17→theorem_7_9.
 # Retired: infra_610_qPres_empty_joint_on_I, infra_610_same_head_transfers_joint.
 
 claim_11_10 --> claim_11_11
@@ -10,36 +10,25 @@ claim_11_12 --> claim_11_13
 claim_11_13 --> theorem_11_9
 corollary_10_10 --> lemma_11_2
 corollary_14_4 --> theorem_14_5
-corollary_6_16 --> lemma_6_17
+corollary_6_7 --> lemma_6_17
 corollary_9_2 --> theorem_9_3
 infra_55_enumerate_added --> infra_55_pattern_realize
 infra_55_one_point_cut --> infra_55_pattern_realize
 infra_55_pattern_realize --> infra_69_richness_arity
-infra_610_chart_of_B --> infra_610_chart_support
 infra_610_chart_prescriptions --> infra_610_majority_prescription
 infra_610_chart_prescriptions --> infra_610_place_prescriptions
-infra_610_chart_support --> infra_610_chart_prescriptions
-infra_610_chart_support --> infra_610_majority_matches_root
-infra_610_chart_support --> infra_610_root_galois
-infra_610_choose_chi --> infra_610_chart_support
 infra_610_closed_level --> infra_610_placement_saturate_to_B
 infra_610_closed_level --> infra_610_same_galois
 infra_610_closed_level --> stationary_free_extension_exists
-infra_610_free_root --> infra_610_chart_support
 infra_610_galois_tests_of_placement --> infra_610_majority_prescription
 infra_610_galois_tests_of_placement --> infra_610_same_galois
 infra_610_hPlace_empty --> infra_610_place_z_as_free_lift
 infra_610_hPlace_full --> infra_610_place_z_as_free_lift
 infra_610_hPlace_full --> infra_610_placement_mu_hull
 infra_610_hPlace_full --> infra_610_placement_saturate_to_B
-infra_610_majority_matches_root --> infra_610_majority_prescription
 infra_610_majority_of_placement --> infra_610_majority_prescription
 infra_610_majority_prescription --> infra_610_place_on_B
 infra_610_majority_prescription --> infra_610_same_galois
-infra_610_move_query --> infra_610_free_root
-infra_610_move_query --> infra_610_moved_majority
-infra_610_moved_majority --> infra_610_root_majority
-infra_610_param_freeing_qPres --> infra_610_chart_support
 infra_610_place_on_B --> stationary_free_extension_exists
 infra_610_place_prescriptions --> infra_610_galois_tests_of_placement
 infra_610_place_prescriptions --> infra_610_majority_of_placement
@@ -56,19 +45,17 @@ infra_610_placement_mu_hull --> infra_610_pull_z_to_B
 infra_610_placement_mu_hull --> infra_610_transport_joint
 infra_610_placement_root_on_B --> infra_610_reflected_matches_chartRoot
 infra_610_placement_saturate_to_B --> infra_610_placement_root_on_B
+infra_610_pull_root_agrees_free_ref --> infra_610_placement_saturate_to_B
 infra_610_pull_z_to_B --> infra_610_placement_saturate_to_B
 infra_610_qPres_matches_empty_root --> infra_610_isFreeLift_same_galois
-infra_610_qPres_empty_free --> infra_610_pull_root_agrees_free_ref
-infra_610_pull_root_agrees_free_ref --> infra_610_placement_saturate_to_B
-infra_610_pull_root_abs_qPres_empty --> infra_610_placement_saturate_to_B
-infra_610_transport_joint --> infra_610_pull_root_agrees_free_ref
 infra_610_reflect_joint_eB --> infra_610_place_z_as_free_lift
 infra_610_reflected_matches_chartRoot --> infra_610_place_z_as_free_lift
-infra_610_root_galois --> infra_610_chart_prescriptions
 infra_610_root_galois --> infra_610_isFreeLift_same_galois
-infra_610_root_majority --> infra_610_chart_prescriptions
 infra_610_same_galois --> infra_610_isFreeLift_same_galois
 infra_610_same_galois_tests_chartRoot --> infra_610_isFreeLift_same_galois
+infra_610_transport_joint --> infra_610_placement_saturate_to_B
+infra_613_freeFrom_trans --> proposition_6_13
+infra_615_terminal --> proposition_6_15
 infra_69_anchor_bound --> infra_69_slot_assignment
 infra_69_assemble --> lemma_6_9
 infra_69_chart_iso --> infra_69_place_type
@@ -163,12 +150,12 @@ lemma_5_5 --> infra_55_pattern_realize
 lemma_5_5 --> infra_69_present_padded
 lemma_5_5 --> proposition_5_9
 lemma_6_1 --> infra_69_lem61_off_hits
+lemma_6_11 --> lemma_6_17
 lemma_6_11 --> proposition_6_12
 lemma_6_11 --> proposition_6_13
 lemma_6_14 --> lemma_12_6
-infra_615_terminal --> proposition_6_15
 lemma_6_14 --> proposition_6_15
-lemma_6_17 --> lemma_7_2
+lemma_6_17 --> theorem_7_9
 lemma_6_4 --> lemma_6_5
 lemma_6_5 --> infra_69_place_type
 lemma_6_9 --> theorem_6_10
@@ -216,7 +203,9 @@ proposition_5_7 --> proposition_10_6
 proposition_5_7 --> theorem_9_3
 proposition_5_8 --> lemma_6_1
 proposition_5_9 --> lemma_6_1
-infra_613_freeFrom_trans --> proposition_6_13
+proposition_6_13 --> lemma_7_11
+proposition_6_13 --> proposition_7_8
+proposition_6_13 --> theorem_7_13
 proposition_6_15 --> corollary_6_16
 proposition_6_3 --> lemma_6_5
 proposition_7_3 --> proposition_7_5
@@ -244,8 +233,8 @@ theorem_3_5 --> lemma_4_5
 theorem_4_11 --> corollary_6_7
 theorem_4_11 --> proposition_5_6
 theorem_4_11 --> theorem_6_6
-theorem_6_6 --> proposition_6_15
 theorem_6_10 --> lemma_6_11
+theorem_6_6 --> proposition_6_15
 theorem_7_13 --> lemma_8_2
 theorem_7_9 --> lemma_7_11
 theorem_8_6 --> proposition_9_1

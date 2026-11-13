@@ -20,6 +20,8 @@ public import AEC.Section6.AverageDescent
 public import AEC.Section6.BoundedProducts
 public import AEC.Section6.LocalCharacter
 public import AEC.Section6.FreshStrip
+public import AEC.Section6.ApproxRetractionProof
+public import AEC.Section6.DescentRetraction
 
 @[expose] public section
 
@@ -719,49 +721,71 @@ theorem proposition_6_15 {K : AbstractElementaryClass.{u}} (P : SingleModelData 
   ⟨infra_615_closed P, infra_615_tail P, fun μ hμ J _ _ hJ =>
     infra_615_two_sided P hμ J hJ⟩
 
-/-- **Corollary 6.16** (Approximate retractions). For same-level `A ≤ B` there is a family of
-arrows `B → A`, indexed by the level, such that each element of `A` is moved only finitely
-often. -/
-theorem corollary_6_16 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
-    (W : WorkingScheme K S) :
-    ∃ T, ∃ hT : Tail W.eligible T,
-      ∀ μ (hμ : μ ∈ T) (A B : W.Object μ (Tail.mem hT hμ))
-        (incl : SystemArrow K S (W.asSystem _ A) (W.asSystem _ B)),
-        W.permitted (X := A) (Y := B) incl →
-        Nonempty (ApproximateRetraction K S W (Tail.mem hT hμ) A B incl) := by
-  sorry
+/-- **Corollary 6.16** (Approximate retractions). At a closed level, for same-level
+`A ≤ B` in the single-model scheme there is a family of arrows `B → A`, indexed by the
+level, such that each element of `A` is moved only finitely often. `A` is presented on
+`lvlOrder μ ×ₗ (ℕ ×ₗ lvlOrder μ)`; each nonzero block is the fresh middle strip of
+Proposition 6.15, and the exhaustion is postcomposed back onto `A`. -/
+theorem corollary_6_16 {K : AbstractElementaryClass.{u}} (P : SingleModelData K) :
+    ∃ T, ∃ hT : Tail P.eligible T,
+      ∀ μ (hμ : μ ∈ T) (A B : P.scheme.Object μ (Tail.mem hT hμ))
+        (incl : SystemArrow K oneVertexShape
+          (P.scheme.asSystem (Tail.mem hT hμ) A)
+          (P.scheme.asSystem (Tail.mem hT hμ) B)),
+        P.scheme.permitted (X := A) (Y := B) incl →
+        Nonempty (ApproximateRetraction K oneVertexShape P.scheme
+          (Tail.mem hT hμ) A B incl) :=
+  ⟨infra_615_closed P, infra_615_tail P, fun μ hμ A B incl _ =>
+    corollary_6_16_family P hμ A B incl⟩
 
-/-- **Lemma 6.17** (Descent through approximate retractions). If retractions of `U` onto `A`
-fix `A` up to a finite set and preserve a smaller pair `A' ≤ U'`, then a bounded tuple of `U'`
-is free from `A'` over `A`. -/
-theorem lemma_6_17 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
-    (W : WorkingScheme K S) :
-    ∃ T, ∃ hT : Tail W.eligible T,
+/-- **Lemma 6.17** (Descent through approximate retractions). At closed levels `ν ≤ μ`, if
+arrows `rᵢ : U → A` almost-fix `A` and send `U'` into `A'`, then for every short tuple of
+`U'` the actual type over `A` is the free lift of `tp(d/A'; U')`, with majority values the
+large type joints. Mixed diagrams at arities below `ν` are included. Proof:
+`infra_617_from_retractions` (`DescentRetraction.lean`): factor restrictions, SameGaloisType
+from the square, ApproximationSequence from a short restr subsequence, mixed move-query, and
+almost-identity exceptions. -/
+theorem lemma_6_17 {K : AbstractElementaryClass.{u}} (P : SingleModelData K) :
+    ∃ T, ∃ hT : Tail P.eligible T,
       ∀ μ (hμ : μ ∈ T) ν (hν : ν ∈ T)
-        (A : W.Object μ (Tail.mem hT hμ)) (U : W.Object μ (Tail.mem hT hμ))
-        (A' : W.Object ν (Tail.mem hT hν)) (U' : W.Object ν (Tail.mem hT hν))
-        (toA : SystemArrow K S (W.asSystem _ A') (W.asSystem _ A))
-        (toU : SystemArrow K S (W.asSystem _ U') (W.asSystem _ U))
-        (incl : SystemArrow K S (W.asSystem _ A) (W.asSystem _ U))
-        (incl' : SystemArrow K S (W.asSystem _ A') (W.asSystem _ U')),
+        (A : P.scheme.Object μ (Tail.mem hT hμ)) (U : P.scheme.Object μ (Tail.mem hT hμ))
+        (A' : P.scheme.Object ν (Tail.mem hT hν)) (U' : P.scheme.Object ν (Tail.mem hT hν))
+        (toA : SystemArrow K oneVertexShape
+          (P.scheme.asSystem _ A') (P.scheme.asSystem _ A))
+        (toU : SystemArrow K oneVertexShape
+          (P.scheme.asSystem _ U') (P.scheme.asSystem _ U))
+        (incl : SystemArrow K oneVertexShape
+          (P.scheme.asSystem _ A) (P.scheme.asSystem _ U))
+        (incl' : SystemArrow K oneVertexShape
+          (P.scheme.asSystem _ A') (P.scheme.asSystem _ U')),
         ν ≤ μ →
-        (htoA : W.permitted (X := A') (Y := A) toA) →
-        (htoU : W.permitted (X := U') (Y := U) toU) →
-        (hincl : W.permitted (X := A) (Y := U) incl) →
-        W.permitted (X := A') (Y := U') incl' →
+        (htoA : P.scheme.permitted (X := A') (Y := A) toA) →
+        (htoU : P.scheme.permitted (X := U') (Y := U) toU) →
+        (hincl : P.scheme.permitted (X := A) (Y := U) incl) →
+        (hincl' : P.scheme.permitted (X := A') (Y := U') incl') →
         (∀ v, (incl.onVertex v).comp (toA.onVertex v) =
           (toU.onVertex v).comp (incl'.onVertex v)) →
-        (∃ (ι : Type u) (r : ι → SystemArrow K S (W.asSystem _ U) (W.asSystem _ A)),
-          #ι = ν ∧ (∀ i, W.permitted (X := U) (Y := A) (r i)) ∧
-          (∀ a : Occurrence K S (W.asSystem _ A),
-            Finite {i : ι // (r i).onVertex a.1 (incl.onVertex a.1 a.2) ≠ a.2}) ∧
-          ∀ i v (x : ((W.asSystem _ U').obj v).carrier),
-            ∃ y, toA.onVertex v y = (r i).onVertex v (toU.onVertex v x)) →
-        ∀ {dIdx : Type u} (d : dIdx → Occurrence K S (W.asSystem _ U')),
-          #dIdx < ν →
-          IsFreeFrom toA htoA (asTuple incl hincl
-            (fun i => ⟨(d i).1, toU.onVertex (d i).1 (d i).2⟩)) := by
-  sorry
+        ∀ {ι : Type u}
+          (r : ι → SystemArrow K oneVertexShape
+            (P.scheme.asSystem _ U) (P.scheme.asSystem _ A)),
+          #ι = ν →
+          (∀ i, P.scheme.permitted (X := U) (Y := A) (r i)) →
+          (∀ a : Occurrence K oneVertexShape (P.scheme.asSystem _ A),
+            Finite {i : ι // (r i).onVertex a.1 (incl.onVertex a.1 a.2) ≠ a.2}) →
+          (∀ i (x : ((P.scheme.asSystem _ U').obj PUnit.unit).carrier),
+            ∃ y, toA.onVertex PUnit.unit y =
+              (r i).onVertex PUnit.unit (toU.onVertex PUnit.unit x)) →
+          ∀ {dIdx : Type u}
+            (d : dIdx → Occurrence K oneVertexShape (P.scheme.asSystem _ U')),
+            #dIdx < ν →
+            IsFreeLift (asTuple incl' hincl' d)
+              (asTuple incl hincl
+                (fun j => ⟨(d j).1, toU.onVertex (d j).1 (d j).2⟩))
+              toA htoA (Equiv.refl dIdx) :=
+  ⟨infra_615_closed P, infra_615_tail P, fun μ hμ ν hν A U A' U' toA toU incl incl'
+      hνμ htoA htoU hincl hincl' hsq ι r hιcard hr halmost himg dIdx d hd =>
+    infra_617_from_retractions P hν hμ hνμ A U A' U' toA toU incl incl'
+      htoA htoU hincl hincl' hsq r hιcard hr halmost himg d hd⟩
 
 end
 end AEC
