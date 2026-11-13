@@ -662,15 +662,11 @@ theorem lemma_6_14 {J : Type u} [LinearOrder J] (color : J → ℕ)
               ∀ i, color (q i) = color (q' i) :=
   lemma_6_14_proof color χ lam hχ hlam
 
-/-- **Proposition 6.15** (Universality of a fresh strip). At every level closed under the
-bounds below, a well-ordered presentation `E(J)` of size `μ` extends by a terminal fresh strip
-`H` of size `μ`, split into countably many disjoint convex fibers of size `μ`, so that every
-same-level strong extension of `E(J)` embeds strongly into `E(J ⊕ₗ H)` over `E(J)`.
-
-The presentation is `G = P.E` and the strip is terminal. A general presentation `G ≠ F` and
-two-sided strips are deferred; they are what Corollary 6.16 needs. No chain-union hypothesis
-is used. -/
-theorem proposition_6_15 {K : AbstractElementaryClass.{u}} (P : SingleModelData K) :
+/-- **Infra `infra_615_terminal`.** Terminal-strip specialization: well-ordered `E(J)` extends
+by `J ⊕ₗ (ℕ ×ₗ lvlOrder μ)` with fibers in the right summand, and every same-level strong
+extension embeds over `E.map emb`. This is **not** Proposition 6.15 (paper ID requires a
+two-sided / middle strip). -/
+theorem infra_615_terminal {K : AbstractElementaryClass.{u}} (P : SingleModelData K) :
     ∃ T, ∃ hT : Tail P.eligible T,
       ∀ μ (hμ : μ ∈ T) (J : Type u) [LinearOrder J] [WellFoundedLT J] [Nonempty J],
         #J = μ →
@@ -694,6 +690,34 @@ theorem proposition_6_15 {K : AbstractElementaryClass.{u}} (P : SingleModelData 
       ⟨freshFiber μ, fun n => ⟨freshFiber_convex μ n, freshFiber_card hμinf n⟩,
         freshFiber_disjoint μ, freshFiber_subset_inr μ⟩,
       fun B f hB hf hc => infra_615_exhaust_embed P hμ hJ f hB hf hc⟩⟩
+
+/-- **Proposition 6.15** (Universality of a fresh strip). At a closed level, for `G = P.E` and
+a nonempty linear order `J` of size `μ`, there is an enlargement `J⁺` obtained by inserting
+into `J` a fresh convex strip of size `μ` with countably many disjoint convex μ-fibers, so
+that old points of `J` may lie on **both** sides of the strip, and every same-level strong
+extension of `E(J)` embeds strongly into `E(J⁺)` over `E.map emb`.
+
+Paper ID matches the English middle-strip statement (for `G = F = P.E`). The terminal
+specialization is `infra_615_terminal`, not this theorem. -/
+theorem proposition_6_15 {K : AbstractElementaryClass.{u}} (P : SingleModelData K) :
+    ∃ T, ∃ hT : Tail P.eligible T,
+      ∀ μ (hμ : μ ∈ T) (J : Type u) [LinearOrder J] [Nonempty J],
+        #J = μ →
+        ∃ (Jplus : Type u) (_ : LinearOrder Jplus) (_ : Nonempty Jplus) (emb : J ↪o Jplus)
+          (strip : Set Jplus) (V : ℕ → Set Jplus),
+          #Jplus = μ ∧
+          IsConvexRegion strip ∧ #strip = μ ∧
+          (∀ n, IsConvexRegion (V n) ∧ #(V n) = μ ∧ V n ⊆ strip) ∧
+          Pairwise (Function.onFun Disjoint V) ∧
+          (∃ (a b : J), emb a < emb b ∧
+            (∃ s ∈ strip, emb a < s ∧ s < emb b)) ∧
+          ∀ (B : Model K.τ)
+            (f : Language.Embedding K.τ (P.E.obj J).carrier B.carrier),
+            K.Mem B → K.Strong f → Model.card B = μ →
+            ∃ g : Language.Embedding K.τ B.carrier (P.E.obj Jplus).carrier,
+              K.Strong g ∧ ∀ a, g (f a) = P.E.map emb a :=
+  ⟨infra_615_closed P, infra_615_tail P, fun μ hμ J _ _ hJ =>
+    infra_615_two_sided P hμ J hJ⟩
 
 /-- **Corollary 6.16** (Approximate retractions). For same-level `A ≤ B` there is a family of
 arrows `B → A`, indexed by the level, such that each element of `A` is moved only finitely

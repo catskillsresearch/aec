@@ -1,13 +1,13 @@
 {
   "updated": "2026-11-12",
-  "sorryCount": 53,
+  "sorryCount": 52,
   "legend": {
     "open": "No unfinished required proof-deps \u2014 try next",
     "blocked": "Waiting on incomplete required proof-deps",
     "done": "Proved (no sorry)"
   },
   "notes": [
-    "proposition_6_15 is done for a terminal strip with G = P.E on a well-order (FreshStrip.lean; hard lemma_6_14 and theorem_6_6; no chain unions). Cor 6.16+ stays blocked: two-sided strips and G \u2260 F are deferred. Map: AEC/Section6/Proposition_6.15.md.",
+    "Open tip: corollary_6_16 (approximate retractions). proposition_6_15 done for the two-sided strip, G=P.E. infra_615_terminal remains the one-sided specialization. Lem 6.17 stays blocked.",
     "Edge B\u2192A means the English proof of A requires B (or a required Lean infra subgoal).",
     "Blue = done. Green = open. Grey = blocked. No separate failed status unless a counterexample refutes the program.",
     "lemma_6_14 is independent of Prop 6.13 (that paper-number edge stays removed). Widened to \u03c7-indexed queries plus a fixed T\u2605, it is a hard dependency of proposition_6_15 and still feeds lemma_12_6."
@@ -337,8 +337,9 @@
       "label": "Cor 6.16",
       "section": 6,
       "file": "AEC/Section6/Results.lean",
-      "status": "blocked",
-      "blocker": null
+      "status": "open",
+      "blocker": null,
+      "detail": "Open tip: approximate retractions. Blocker proposition_6_15 is done (two-sided strip, G=P.E). Lean statement is still a bare WorkingScheme sorry."
     },
     {
       "id": "corollary_6_7",
@@ -507,7 +508,16 @@
       "file": "AEC/Section6/Results.lean",
       "status": "done",
       "blocker": null,
-      "detail": "Done for same-level SingleModelData. SameLevelChain (joint cover, not HasChainUnions). Local character: infra_613_trap_in_stage then infra_611_isFreeFrom. Continuity: infra_613_freeFrom_trans along the cocone. Deferred: mixed levels, SatisfiesContinuity / \u00a77. Prop 6.15 is done for a terminal strip; Cor 6.16+ stays blocked."
+      "detail": "Done for same-level SingleModelData. SameLevelChain (joint cover, not HasChainUnions). Local character: infra_613_trap_in_stage then infra_611_isFreeFrom. Continuity: infra_613_freeFrom_trans along the cocone. Deferred: mixed levels, SatisfiesContinuity / \u00a77. Next frontier is Cor 6.16."
+    },
+    {
+      "id": "infra_615_terminal",
+      "label": "Infra: terminal fresh strip",
+      "section": 6,
+      "file": "AEC/Section6/FreshStrip.lean",
+      "status": "done",
+      "blocker": null,
+      "detail": "Done. One-sided J \u2295\u2097 (\u2115 \u00d7\u2097 \u03bc) with fibers in Sum.inr; exhaustion embeds same-level extensions. Not paper Prop 6.15."
     },
     {
       "id": "proposition_6_15",
@@ -516,7 +526,7 @@
       "file": "AEC/Section6/Results.lean",
       "status": "done",
       "blocker": null,
-      "detail": "Done for a terminal strip with G = P.E on a well-ordered J (FreshStrip.lean). Tail closed for every smaller length. Fibers of N x_l lvlOrder, one per exhaustion stage. Hard deps: lemma_6_14 (widened) and theorem_6_6 via ClosedLevel amalgamation. No HasChainUnions and no Prop 6.13. Deferred: G \u2260 F, two-sided strips (Cor 6.16)."
+      "detail": "Done for G=P.E. Middle strip: cut of J, countably many \u03bc-fibers between the two sides, side color through lemma_6_14, exhaustion into E(J\u207a). infra_615_terminal is the one-sided specialization. General G \u2260 P.E is out of scope."
     },
     {
       "id": "proposition_6_3",
@@ -3032,8 +3042,14 @@
       "to": "infra_610_placement_root_on_B",
       "kind": "hard",
       "note": "root thin-wraps saturate"
+    },
+    {
+      "from": "infra_615_terminal",
+      "to": "proposition_6_15",
+      "kind": "hard",
+      "note": "Terminal specialization; paper Prop 6.15 needs middle strip."
     }
   ],
-  "doneCount": 139,
-  "meta": "proposition_6_15 done (terminal strip, G = P.E). Cor 6.16+ blocked pending two-sided strips. Done: Prop 6.13, 6.12, Lem 6.11, Thm 6.10. Map: AEC/Section6/Proposition_6.15.md."
+  "doneCount": 141,
+  "meta": "Open tip: corollary_6_16. Done: proposition_6_15 two-sided strip. infra_615_terminal is the one-sided specialization. Lem 6.17 blocked. Map: AEC/Section6/Corollary_6.16.md."
 }

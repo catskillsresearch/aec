@@ -1,7 +1,7 @@
 # Hard edges from holes-graph.json
 # Convention: FROM --> TO means the English proof of TO requires FROM.
 # Nodes: 196  Hard edges: 247
-# proposition_6_15 done (terminal strip). Cor 6.16+ blocked pending two-sided strips.
+# Open tip: corollary_6_16. proposition_6_15 done (two-sided strip). infra_615_terminal is the one-sided specialization. Lem 6.17 blocked.
 # Retired: infra_610_qPres_empty_joint_on_I, infra_610_same_head_transfers_joint.
 
 claim_11_10 --> claim_11_11
@@ -166,6 +166,7 @@ lemma_6_1 --> infra_69_lem61_off_hits
 lemma_6_11 --> proposition_6_12
 lemma_6_11 --> proposition_6_13
 lemma_6_14 --> lemma_12_6
+infra_615_terminal --> proposition_6_15
 lemma_6_14 --> proposition_6_15
 lemma_6_17 --> lemma_7_2
 lemma_6_4 --> lemma_6_5

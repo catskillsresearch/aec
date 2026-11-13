@@ -10,12 +10,17 @@ public import AEC.Section4.CompactPlacement
 @[expose] public section
 
 /-!
-# Proposition 6.15 — universality of a fresh strip
+# Fresh strips for Proposition 6.15
 
-Same-level packaging for `SingleModelData`, with `G = P.E` on a well-order. The fresh strip
-is terminal: `H = ℕ ×ₗ lvlOrder μ`, so every old position lies to the left of every fiber and
-no side-of-`V` coloring is required. General presentations `G ≠ F` and two-sided strips are
-deferred (they are what Corollary 6.16 needs).
+Same-level packaging for `SingleModelData`, with `G = P.E`. Two constructions live here:
+
+* `infra_615_terminal` — the one-sided enlargement `J ⊕ₗ (ℕ ×ₗ lvlOrder μ)`. Every old
+  position lies to the left of every fiber. This is infrastructure, not Proposition 6.15.
+* The two-sided enlargement used by `proposition_6_15`: a cut of `J`, a convex strip of
+  countably many `μ`-fibers inserted at the cut, and old points on both sides. Side-of-strip
+  colors are passed to Lemma 6.14 and used when a realized support sits in the fresh fiber.
+
+A general presentation `G ≠ P.E` is not claimed.
 -/
 
 namespace AEC
@@ -248,21 +253,30 @@ theorem infra_615_strip {J : Type u} [LinearOrder J] [WellFoundedLT J] [Nonempty
 
 /-! ## Realizing one bounded tuple in the next fiber -/
 
-/-- **Infra `infra_615_realize_in_fiber`.** A bounded tuple in a strong `μ`-extension of
-`E(I)` has a lift in `E(I ⊕ₗ lvlOrder μ)`. The fresh summand is the single fiber. The
-argument is an approximation sequence, the widened support closure, saturation into
-`E(S ∪ fiber)`, and the tests of Theorem 6.6. -/
-theorem infra_615_realize_in_fiber
+/-- **Infra `infra_615_realize_at_cut`.** A bounded tuple in a strong `μ`-extension of
+`E(I)` lifts in `E(Jt)`. The order embedding `slotEmb` inserts one fresh fiber
+`fiberEmb : lvlOrder μ ↪o Jt`. `color i = 0` means `slotEmb i` is strictly left of the
+fiber, and `color i = 1` means it is strictly right. Lemma 6.14 is applied to this
+color, and the color conjunct is used when a support of the realized tuple sits in
+the fiber. -/
+theorem infra_615_realize_at_cut
     (P : SingleModelData K)
     {μ : Cardinal.{u}} (hμ : μ ∈ infra_615_closed P)
-    {I : Type u} [LinearOrder I] [Nonempty I] [WellFoundedLT I]
+    {I : Type u} [LinearOrder I] [Nonempty I]
     (hI : #I = μ)
+    {Jt : Type u} [LinearOrder Jt] [Nonempty Jt]
+    (slotEmb : I ↪o Jt)
+    (fiberEmb : lvlOrder μ ↪o Jt)
+    (color : I → ℕ)
+    (hltF : ∀ i a, slotEmb i < fiberEmb a ↔ color i = 0)
+    (hFlt : ∀ i a, fiberEmb a < slotEmb i ↔ color i = 1)
+    (hJcard : #Jt = μ)
     {B : Model K.τ}
     (incl : Language.Embedding K.τ (P.E.obj I).carrier B.carrier)
     (hB : K.Mem B) (hstrong : K.Strong incl) (hcard : Model.card B = μ)
     {α : Type u} (d : α → B.carrier) (hα : #α < μ) :
-    ∃ z : α → (P.E.obj (I ⊕ₗ lvlOrder μ)).carrier,
-      LiftsTuple P.E P.D hB incl μ (sumLexEmbedLeftIncl I (lvlOrder μ)) d z := by
+    ∃ z : α → (P.E.obj Jt).carrier,
+      LiftsTuple P.E P.D hB incl μ slotEmb d z := by
   classical
   have hμel : μ ∈ P.eligible := hμ.1
   haveI : CategoricalUnbounded K := P.D.categoricalUnbounded
@@ -275,9 +289,9 @@ theorem infra_615_realize_in_fiber
       intro ρ hρinf hρμ
       exact (hL.t_lt hρinf hρμ).le.trans (P.card_obj_eq hμel I hI).ge
     have h := liftsTuple_of_base (E := P.E) (D := P.D) (hB := hB) (incl := incl)
-      hstrong hIμ (sumLexEmbedLeftIncl I (lvlOrder μ)) (fun i : α => isEmptyElim i)
+      hstrong hIμ (slotEmb) (fun i : α => isEmptyElim i)
     have hdz : (fun i : α => incl (isEmptyElim i)) = d := funext fun i => isEmptyElim i
-    have hzz : (fun i : α => P.E.map (sumLexEmbedLeftIncl I (lvlOrder μ)) (isEmptyElim i)) =
+    have hzz : (fun i : α => P.E.map (slotEmb) (isEmptyElim i)) =
         fun i : α => isEmptyElim i := funext fun i => isEmptyElim i
     rw [hdz, hzz] at h
     exact h
@@ -352,7 +366,6 @@ theorem infra_615_realize_in_fiber
         (le_of_eq (mul_eq_left hκinf hκinf aleph0_ne_zero))
     let Tstar : ↥Tset → I := Subtype.val
     let i0 : I := Classical.arbitrary I
-    let color : I → ℕ := fun _ => 0
     let χC : Cardinal.{u} := max σ τ
     have hχC : ℵ₀ ≤ χC := hσ.trans (le_max_left σ τ)
     have hχClam : χC ≤ κApx := (le_of_lt (cantor χC)).trans
@@ -380,36 +393,31 @@ theorem infra_615_realize_in_fiber
     obtain ⟨Z, fZ, zs, hfZ, hzs, hDZ⟩ :=
       SingleModelData.exists_saturation hμel hμel A Bobj xsS baseS
         (Sum.elim baseS (fun i => eB (d i))) hES hα (fun _ => rfl) hEq
-    -- The fresh fiber together with `S` is a μ-sized suborder of the terminal enlargement.
-    let inU : (I ⊕ₗ lvlOrder μ) → Prop := fun x =>
-      (∃ i : ↥S, x = Sum.inlₗ i.1) ∨ ∃ a : lvlOrder μ, x = Sum.inrₗ a
+    -- `S` together with the fresh fiber, inside the enlargement `Jt`.
+    let inU : Jt → Prop := fun x =>
+      (∃ i : ↥S, x = slotEmb i.1) ∨ ∃ a : lvlOrder μ, x = fiberEmb a
     have hUne : Nonempty {x // inU x} :=
-      ⟨⟨Sum.inrₗ (Classical.arbitrary (lvlOrder μ)), Or.inr ⟨_, rfl⟩⟩⟩
+      ⟨⟨fiberEmb (Classical.arbitrary (lvlOrder μ)), Or.inr ⟨_, rfl⟩⟩⟩
     letI : Nonempty {x // inU x} := hUne
     have hUcard : #{x // inU x} = μ := by
-      let f : lvlOrder μ → {x // inU x} := fun a => ⟨Sum.inrₗ a, Or.inr ⟨a, rfl⟩⟩
+      let f : lvlOrder μ → {x // inU x} := fun a => ⟨fiberEmb a, Or.inr ⟨a, rfl⟩⟩
       have hinj : Injective f := by
         intro a b h
-        have h' : Sum.inrₗ a = Sum.inrₗ b := congrArg Subtype.val h
-        exact Sum.inr_injective (congrArg ofLex h')
-      have hIL : #(I ⊕ₗ lvlOrder μ) = μ := by
-        change #(I ⊕ lvlOrder μ) = μ
-        rw [mk_sum, lift_id, lift_id, hI, mk_lvlOrder (P.aleph0_le hμel),
-          add_eq_self (P.aleph0_le hμel)]
+        exact fiberEmb.injective (congrArg Subtype.val h)
       apply le_antisymm
-      · exact (mk_le_of_injective (Subtype.val_injective (p := inU))).trans_eq hIL
+      · exact (mk_le_of_injective (Subtype.val_injective (p := inU))).trans_eq hJcard
       · exact (mk_lvlOrder (P.aleph0_le hμel)).symm.trans_le (mk_le_of_injective hinj)
     let U : Type u := {x // inU x}
     have hUE : Model.card (P.E.obj U) = μ := P.card_obj_eq hμel U hUcard
     obtain ⟨eZU⟩ := (P.categorical hμel).unique_model Z.model (P.E.obj U) Z.mem (P.hE U)
       Z.card hUE
     let sU : ↥S ↪o U :=
-      OrderEmbedding.ofStrictMono (fun i => ⟨Sum.inlₗ i.1, Or.inl ⟨i, rfl⟩⟩)
+      OrderEmbedding.ofStrictMono (fun i => ⟨slotEmb i.1, Or.inl ⟨i, rfl⟩⟩)
         (by
           intro i j hij
-          have hlt : i.1 < j.1 := hij
-          exact (Sum.Lex.inl_lt_inl_iff (α := I) (β := lvlOrder μ)).mpr hlt)
-    let uIncl : U ↪o (I ⊕ₗ lvlOrder μ) := OrderEmbedding.subtype inU
+          exact (Subtype.mk_lt_mk).mpr
+            (slotEmb.strictMono (Subtype.coe_lt_coe.mp hij)))
+    let uIncl : U ↪o Jt := OrderEmbedding.subtype inU
     let ρS : Cardinal.{u} := max (Model.card (P.E.obj ↥S)) ℵ₀
     have hρSinf : ℵ₀ ≤ ρS := le_max_right _ _
     have hρSμ : ρS < μ := max_lt hES (P.aleph0_lt hμel)
@@ -481,12 +489,9 @@ theorem infra_615_realize_in_fiber
       | inr i =>
           simp only [Sum.elim]
           rfl
-    let z : α → (P.E.obj (I ⊕ₗ lvlOrder μ)).carrier := fun i => P.E.map uIncl (w0 i)
-    have hILcard : #(I ⊕ₗ lvlOrder μ) = μ := by
-      change #(I ⊕ lvlOrder μ) = μ
-      rw [mk_sum, lift_id, lift_id, hI, mk_lvlOrder (P.aleph0_le hμel),
-        add_eq_self (P.aleph0_le hμel)]
-    have hstripCard : Model.card (P.E.obj (I ⊕ₗ lvlOrder μ)) = μ :=
+    let z : α → (P.E.obj (Jt)).carrier := fun i => P.E.map uIncl (w0 i)
+    have hILcard : #Jt = μ := hJcard
+    have hstripCard : Model.card (P.E.obj (Jt)) = μ :=
       P.card_obj_eq hμel _ hILcard
     refine ⟨z, ?_⟩
     -- Testing queries are small enough for Lemma 6.14 and the approximation sequence.
@@ -494,10 +499,10 @@ theorem infra_615_realize_in_fiber
         (_hρinf : ℵ₀ ≤ ρ) (_hρμ : ρ < μ) (q : β → (P.E.obj I).carrier)
         (hjoint : #(α ⊕ β) ≤ ρ)
         (h₀ : P.D.t ρ ≤ Model.card B)
-        (h₁ : P.D.t ρ ≤ Model.card (P.E.obj (I ⊕ₗ lvlOrder μ))),
+        (h₁ : P.D.t ρ ≤ Model.card (P.E.obj (Jt))),
         P.D.same hjoint hB (P.hE _) h₀ h₁
           (Sum.elim d (fun b => incl (q b)))
-          (Sum.elim z (fun b => P.E.map (sumLexEmbedLeftIncl I (lvlOrder μ)) (q b))) := by
+          (Sum.elim z (fun b => P.E.map (slotEmb) (q b))) := by
       intro β _hβ ρ _hρinf _hρμ q hjoint h₀ h₁
       -- `q` is a testing query. Its positions move into `S` by the widened closure,
       -- and the saturated joint over `E(S)` matches `d` with `z` on that move.
@@ -580,7 +585,7 @@ theorem infra_615_realize_in_fiber
             Cardinal.mul_eq_left hχC hχC aleph0_ne_zero
           exact (mul_le_mul' hαχ le_rfl).trans (le_of_eq hmulχ)
         exact hle.trans hmul
-      obtain ⟨qPos', hqS, hpat, _hcol⟩ := hclose (ι := rIdx) hrIdx
+      obtain ⟨qPos', hqS, hpat, hcol⟩ := hclose (ι := rIdx) hrIdx
         (fun s => eS (rPos s)) (fun s => (rPos s).2) hqIdx qPos
       -- The moved positions still carry the query terms, now inside `S`.
       have hqlt : ∀ b, StrictMono fun k : Fin (P.E.arity (tq b).label) =>
@@ -604,13 +609,13 @@ theorem infra_615_realize_in_fiber
         change P.E.realize (tq' b) = P.E.map eS (P.E.realize (tS b))
         rw [halong, ← P.E.realize_along]
       -- On the moved query, both sides are reindexings of the saturated joint.
-      have hembed : ∀ i : ↥S, uIncl (sU i) = sumLexEmbedLeftIncl I (lvlOrder μ) (eS i) := by
+      have hembed : ∀ i : ↥S, uIncl (sU i) = slotEmb (eS i) := by
         intro i
         rfl
       have hmoved :
           P.D.same hjoint hB (P.hE _) h₀ h₁
             (Sum.elim d (fun b => incl (q' b)))
-            (Sum.elim z (fun b => P.E.map (sumLexEmbedLeftIncl I (lvlOrder μ)) (q' b))) := by
+            (Sum.elim z (fun b => P.E.map (slotEmb) (q' b))) := by
         -- Reindex the saturated joint. The index map sends the tuple coordinates to the
         -- `d`/`w0` summand and the query coordinates to the chosen elements of `E(S)`.
         let ιr : α ⊕ β → (P.E.obj ↥S).carrier ⊕ α
@@ -767,7 +772,7 @@ theorem infra_615_realize_in_fiber
               rw [hq'eq]
               rfl
         have hRgt : (fun t => (Sum.elim (fun x => P.E.map uIncl (P.E.map sU x)) z) (ιr t)) =
-            Sum.elim z (fun b => P.E.map (sumLexEmbedLeftIncl I (lvlOrder μ)) (q' b)) := by
+            Sum.elim z (fun b => P.E.map (slotEmb) (q' b)) := by
           funext t
           cases t with
           | inl a => rfl
@@ -778,27 +783,28 @@ theorem infra_615_realize_in_fiber
                 rw [P.E.map_comp]
                 rfl
               have htrans : sU.trans uIncl =
-                  eS.trans (sumLexEmbedLeftIncl I (lvlOrder μ)) := by
+                  eS.trans (slotEmb) := by
                 ext i
                 exact hembed i
               rw [← hcomp, htrans, P.E.map_comp, hq'eq]
               rfl
         simpa [hLft, hRgt] using hre
-      -- Moving the query does not change the diagram of `z`. Old supports of `z` are
-      -- χ-parameters of the closure, so the move fixes them; supports in the fiber sit
-      -- to the right of every query position, original or moved.
+      -- Moving the query does not change the diagram of `z`. Supports that land in
+      -- `S` are χ-parameters of the closure, so the move fixes them. A support in the
+      -- fresh fiber lies entirely on one side of a query position, and that side is the
+      -- color Lemma 6.14 preserves.
       have hzMove : P.D.same hjoint (P.hE _) (P.hE _) h₁ h₁
-          (Sum.elim z (fun b => P.E.map (sumLexEmbedLeftIncl I (lvlOrder μ)) (q b)))
-          (Sum.elim z (fun b => P.E.map (sumLexEmbedLeftIncl I (lvlOrder μ)) (q' b))) := by
-        let emb := sumLexEmbedLeftIncl I (lvlOrder μ)
-        let tL : α → SupportTerm P.E.lab P.E.arity (I ⊕ₗ lvlOrder μ) :=
+          (Sum.elim z (fun b => P.E.map (slotEmb) (q b)))
+          (Sum.elim z (fun b => P.E.map (slotEmb) (q' b))) := by
+        let emb := slotEmb
+        let tL : α → SupportTerm P.E.lab P.E.arity (Jt) :=
           fun i => SupportTerm.along uIncl (w0Term i)
-        let tR : β → SupportTerm P.E.lab P.E.arity (I ⊕ₗ lvlOrder μ) :=
+        let tR : β → SupportTerm P.E.lab P.E.arity (Jt) :=
           fun b => SupportTerm.along emb (tq b)
-        let tR' : β → SupportTerm P.E.lab P.E.arity (I ⊕ₗ lvlOrder μ) :=
+        let tR' : β → SupportTerm P.E.lab P.E.arity (Jt) :=
           fun b => SupportTerm.along emb (tq' b)
-        let tA : α ⊕ β → SupportTerm P.E.lab P.E.arity (I ⊕ₗ lvlOrder μ) := Sum.elim tL tR
-        let tA' : α ⊕ β → SupportTerm P.E.lab P.E.arity (I ⊕ₗ lvlOrder μ) := Sum.elim tL tR'
+        let tA : α ⊕ β → SupportTerm P.E.lab P.E.arity (Jt) := Sum.elim tL tR
+        let tA' : α ⊕ β → SupportTerm P.E.lab P.E.arity (Jt) := Sum.elim tL tR'
         have hzl : ∀ (i : α) (b : β) (k : Fin (P.E.arity (w0Term i).label))
             (l : Fin (P.E.arity (tq b).label)),
             uIncl ((w0Term i).pos k) < emb ((tq b).pos l) ↔
@@ -816,13 +822,23 @@ theorem infra_615_realize_in_fiber
             rw [hux]
             simp only [emb.lt_iff_lt]
             exact hiff
-          · exact Iff.intro
-              (fun hlt => False.elim <| by
-                rw [show uIncl x = Sum.inrₗ a from ha] at hlt
-                exact Sum.Lex.not_inr_le_inl (α := I) (β := lvlOrder μ) hlt.le)
-              (fun hlt => False.elim <| by
-                rw [show uIncl x = Sum.inrₗ a from ha] at hlt
-                exact Sum.Lex.not_inr_le_inl (α := I) (β := lvlOrder μ) hlt.le)
+          · refine Iff.intro ?_ ?_
+            · intro hlt
+              have hx : uIncl x = fiberEmb a := ha
+              rw [hx] at hlt
+              have hc : color ((tq b).pos l) = 1 := (hFlt _ a).mp hlt
+              have hceq : color ((tq b).pos l) = color ((tq' b).pos l) := by
+                simpa [qPos, tq'] using hcol ⟨b, l⟩
+              rw [hx]
+              exact (hFlt _ a).mpr (hceq ▸ hc)
+            · intro hlt
+              have hx : uIncl x = fiberEmb a := ha
+              rw [hx] at hlt
+              have hc : color ((tq' b).pos l) = 1 := (hFlt _ a).mp hlt
+              have hceq : color ((tq b).pos l) = color ((tq' b).pos l) := by
+                simpa [qPos, tq'] using hcol ⟨b, l⟩
+              rw [hx]
+              exact (hFlt _ a).mpr (hceq.symm ▸ hc)
         have hlz : ∀ (i : α) (b : β) (k : Fin (P.E.arity (w0Term i).label))
             (l : Fin (P.E.arity (tq b).label)),
             emb ((tq b).pos l) < uIncl ((w0Term i).pos k) ↔
@@ -840,13 +856,23 @@ theorem infra_615_realize_in_fiber
             rw [hux]
             simp only [emb.lt_iff_lt]
             exact hiff
-          · exact Iff.intro
-              (fun _ => by
-                rw [show uIncl x = Sum.inrₗ a from ha]
-                exact Sum.Lex.inl_lt_inr ((tq' b).pos l) a)
-              (fun _ => by
-                rw [show uIncl x = Sum.inrₗ a from ha]
-                exact Sum.Lex.inl_lt_inr ((tq b).pos l) a)
+          · refine Iff.intro ?_ ?_
+            · intro hlt
+              have hx : uIncl x = fiberEmb a := ha
+              rw [hx] at hlt
+              have hc : color ((tq b).pos l) = 0 := (hltF _ a).mp hlt
+              have hceq : color ((tq b).pos l) = color ((tq' b).pos l) := by
+                simpa [qPos, tq'] using hcol ⟨b, l⟩
+              rw [hx]
+              exact (hltF _ a).mpr (hceq ▸ hc)
+            · intro hlt
+              have hx : uIncl x = fiberEmb a := ha
+              rw [hx] at hlt
+              have hc : color ((tq' b).pos l) = 0 := (hltF _ a).mp hlt
+              have hceq : color ((tq b).pos l) = color ((tq' b).pos l) := by
+                simpa [qPos, tq'] using hcol ⟨b, l⟩
+              rw [hx]
+              exact (hltF _ a).mpr (hceq.symm ▸ hc)
         have hqq : ∀ (b b' : β) (k : Fin (P.E.arity (tq b).label))
             (l : Fin (P.E.arity (tq b').label)),
             emb ((tq b).pos k) < emb ((tq b').pos l) ↔
@@ -1111,19 +1137,48 @@ theorem infra_615_realize_in_fiber
         (P.D.symm hjoint (P.hE _) (P.hE _) h₁ h₁ _ _ hzMove)
     obtain ⟨Qa, gB, gE, hQa, hgB, hgE, _hc, hbase, hd⟩ :=
       hL.exists_tuple_amalgam hσ hσμ (le_max_left (#α) ℵ₀)
-        (P.E.obj I) B (P.E.obj (I ⊕ₗ lvlOrder μ))
-        incl (P.E.map (sumLexEmbedLeftIncl I (lvlOrder μ))) d z
+        (P.E.obj I) B (P.E.obj (Jt))
+        incl (P.E.map (slotEmb)) d z
         (P.hE I) hB (P.hE _) hstrong (P.E.map_strong _)
         hIA hcard hstripCard hsmall
     intro β ρ hρinf hρμ p hj hBc hJc
     exact P.D.same_of_amalgam hB (P.hE _) hQa gB gE hgB hgE
       (Sum.elim d (fun b => incl (p b)))
-      (Sum.elim z (fun b => P.E.map (sumLexEmbedLeftIncl I (lvlOrder μ)) (p b)))
+      (Sum.elim z (fun b => P.E.map (slotEmb) (p b)))
       (by
         rintro (a | b)
         · exact hd a
         · exact hbase (p b))
       hρinf hj hBc hJc
+
+
+/-- **Infra `infra_615_realize_in_fiber`.** Terminal special case of
+`infra_615_realize_at_cut`: the fiber is the right summand of `I ⊕ₗ lvlOrder μ`, so
+every old position has color `0`. -/
+theorem infra_615_realize_in_fiber
+    (P : SingleModelData K)
+    {μ : Cardinal.{u}} (hμ : μ ∈ infra_615_closed P)
+    {I : Type u} [LinearOrder I] [Nonempty I] [WellFoundedLT I]
+    (hI : #I = μ)
+    {B : Model K.τ}
+    (incl : Language.Embedding K.τ (P.E.obj I).carrier B.carrier)
+    (hB : K.Mem B) (hstrong : K.Strong incl) (hcard : Model.card B = μ)
+    {α : Type u} (d : α → B.carrier) (hα : #α < μ) :
+    ∃ z : α → (P.E.obj (I ⊕ₗ lvlOrder μ)).carrier,
+      LiftsTuple P.E P.D hB incl μ (sumLexEmbedLeftIncl I (lvlOrder μ)) d z := by
+  let fiberEmb : lvlOrder μ ↪o (I ⊕ₗ lvlOrder μ) :=
+    OrderEmbedding.ofStrictMono (fun a => Sum.inrₗ a) Sum.Lex.inr_strictMono
+  exact infra_615_realize_at_cut P hμ hI (sumLexEmbedLeftIncl I (lvlOrder μ)) fiberEmb
+    (fun _ => 0)
+    (fun i a => Iff.intro (fun _ => rfl) (fun _ => Sum.Lex.inl_lt_inr i a))
+    (fun i a => Iff.intro
+      (fun h => (Sum.Lex.not_inr_le_inl (α := I) (β := lvlOrder μ) h.le).elim)
+      (fun h => (Nat.zero_ne_one h).elim))
+    (by
+      change #(I ⊕ lvlOrder μ) = μ
+      rw [mk_sum, lift_id, lift_id, hI, mk_lvlOrder (P.aleph0_le hμ.1),
+        add_eq_self (P.aleph0_le hμ.1)])
+    incl hB hstrong hcard d hα
 
 /-! ## The initial segment through the first `n` fibers -/
 
@@ -1562,6 +1617,1095 @@ theorem infra_615_exhaust_embed
     P.E.map (sumLexEmbedLeftIncl J (ℕ ×ₗ lvlOrder μ)) a
   rw [hfix]
   exact infra_615_push_base P μ n a
+
+
+/-! ## Two-sided strip -/
+
+/-- A lift along an arbitrary order embedding, not only a terminal sum. -/
+theorem infra_615_transport_emb
+    (P : SingleModelData K)
+    {μ : Cardinal.{u}} (hμ : μ ∈ infra_615_closed P)
+    {I : Type u} [LinearOrder I] [Nonempty I]
+    {B : Model K.τ}
+    (f : Language.Embedding K.τ (P.E.obj I).carrier B.carrier) (hB : K.Mem B)
+    (hcard : Model.card B = μ)
+    {S : Type u} [LinearOrder S] [Nonempty S]
+    {Splus : Type u} [LinearOrder Splus] [Nonempty Splus]
+    (e : I ↪o S) (eStep : S ↪o Splus)
+    {Q : Model K.τ}
+    (gB : Language.Embedding K.τ B.carrier Q.carrier)
+    (gS : Language.Embedding K.τ (P.E.obj S).carrier Q.carrier)
+    (hQ : K.Mem Q) (hgB : K.Strong gB) (hcQ : Model.card Q = μ)
+    (hagree : ∀ a, gB (f a) = gS (P.E.map e a))
+    {α : Type u} (d : α → B.carrier)
+    (z : α → (P.E.obj Splus).carrier)
+    (hz : LiftsTuple P.E P.D hQ gS μ eStep (fun i => gB (d i)) z) :
+    LiftsTuple P.E P.D hB f μ (e.trans eStep) d z := by
+  intro β ρ hρinf hρμ p hj hBc hJc
+  have hμel : μ ∈ P.eligible := hμ.1
+  haveI : CategoricalUnbounded K := P.D.categoricalUnbounded
+  have hL : ClosedLevel K P.E P.D P.g μ :=
+    ClosedLevel.of_closurePoint P.tester hμel.1 hμel.2
+  have hQc : P.D.t ρ ≤ Model.card Q := (hL.t_lt hρinf hρμ).le.trans hcQ.ge
+  have h1 := hz ρ hρinf hρμ (fun b => P.E.map e (p b)) hj hQc hJc
+  have hLft : (Sum.elim (fun i => gB (d i)) (fun b => gS (P.E.map e (p b)))) =
+      fun t => gB ((Sum.elim d (fun b => f (p b))) t) := by
+    funext t
+    cases t with
+    | inl i => rfl
+    | inr b => exact (hagree (p b)).symm
+  have hRgt : (Sum.elim z (fun b => P.E.map eStep (P.E.map e (p b)))) =
+      Sum.elim z (fun b => P.E.map (e.trans eStep) (p b)) := by
+    funext t
+    cases t with
+    | inl i => rfl
+    | inr b =>
+      change P.E.map eStep (P.E.map e (p b)) = P.E.map (e.trans eStep) (p b)
+      rw [P.E.map_comp]
+      rfl
+  rw [hLft, hRgt] at h1
+  exact P.D.trans hj hB hQ (P.hE _) hBc hQc hJc _ _ _
+    (P.D.of_strong hj hB hQ hBc hQc (Sum.elim d (fun b => f (p b)))
+      (fun t => gB ((Sum.elim d (fun b => f (p b))) t)) gB hρinf hgB
+      fun _ => rfl) h1
+
+theorem eq_inlₗ {α β : Type u} {x : α ⊕ₗ β} {a : α} (h : ofLex x = Sum.inl a) :
+    x = Sum.inlₗ a := by
+  rw [← toLex_ofLex x]
+  exact congrArg toLex h
+
+theorem eq_inrₗ {α β : Type u} {x : α ⊕ₗ β} {b : β} (h : ofLex x = Sum.inr b) :
+    x = Sum.inrₗ b := by
+  rw [← toLex_ofLex x]
+  exact congrArg toLex h
+
+/-! ## Cut, left tower, right copy -/
+
+abbrev CutLeft (J : Type u) [LinearOrder J] (c : J) := {j : J // j ≤ c}
+
+abbrev CutRight (J : Type u) [LinearOrder J] (c : J) := {j : J // c < j}
+
+section Geometry
+
+variable {L R : Type u} [LinearOrder L] [Nonempty L] [LinearOrder R] [Nonempty R]
+
+/-- Segment `n`: left copy, `n` fibers, right copy. `n = 0` is an empty fiber block. -/
+abbrev MSeg (μ : Cardinal.{u}) (n : ℕ) :=
+  L ⊕ₗ ((Fin n ×ₗ lvlOrder μ) ⊕ₗ R)
+
+/-- Full enlargement: left copy, every fiber, right copy. -/
+abbrev MTop (μ : Cardinal.{u}) :=
+  L ⊕ₗ ((ℕ ×ₗ lvlOrder μ) ⊕ₗ R)
+
+def segStepFun (μ : Cardinal.{u}) (n : ℕ) : MSeg (L := L) (R := R) μ n →
+    MSeg (L := L) (R := R) μ (n + 1)
+  | x =>
+    match ofLex x with
+    | Sum.inl l => Sum.inlₗ l
+    | Sum.inr p =>
+      match ofLex p with
+      | Sum.inl q =>
+        Sum.inrₗ (Sum.inlₗ (toLex (Fin.castSucc (ofLex q).1, (ofLex q).2)))
+      | Sum.inr r => Sum.inrₗ (Sum.inrₗ r)
+
+@[simp] theorem segStepFun_inl (μ : Cardinal.{u}) (n : ℕ) (l : L) :
+    segStepFun (L := L) (R := R) μ n (Sum.inlₗ l) = Sum.inlₗ l := rfl
+
+@[simp] theorem segStepFun_fiber (μ : Cardinal.{u}) (n : ℕ) (i : Fin n) (a : lvlOrder μ) :
+    segStepFun (L := L) (R := R) μ n (Sum.inrₗ (Sum.inlₗ (toLex (i, a)))) =
+      Sum.inrₗ (Sum.inlₗ (toLex (Fin.castSucc i, a))) := rfl
+
+@[simp] theorem segStepFun_right (μ : Cardinal.{u}) (n : ℕ) (r : R) :
+    segStepFun (L := L) (R := R) μ n (Sum.inrₗ (Sum.inrₗ r)) = Sum.inrₗ (Sum.inrₗ r) := rfl
+
+noncomputable def segStep (μ : Cardinal.{u}) (n : ℕ) :
+    MSeg (L := L) (R := R) μ n ↪o MSeg (L := L) (R := R) μ (n + 1) :=
+  OrderEmbedding.ofStrictMono (segStepFun (L := L) (R := R) μ n) (by
+    intro x y hxy
+    cases hx : ofLex x with
+    | inl xl =>
+      cases hy : ofLex y with
+      | inl yl =>
+        have hx' := eq_inlₗ hx
+        have hy' := eq_inlₗ hy
+        have hlt : xl < yl := by
+          rw [hx', hy'] at hxy
+          exact (Sum.Lex.inl_lt_inl_iff).mp hxy
+        rw [hx', hy', segStepFun_inl, segStepFun_inl]
+        exact (Sum.Lex.inl_lt_inl_iff).mpr hlt
+      | inr yp =>
+        rw [eq_inlₗ hx, segStepFun_inl]
+        cases hyp : ofLex yp with
+        | inl q =>
+          rcases hq : ofLex q with ⟨i, a⟩
+          have hq' : q = toLex (i, a) := by rw [← toLex_ofLex q]; exact congrArg toLex hq
+          have hy' : y = Sum.inrₗ (Sum.inlₗ (toLex (i, a))) := by
+            rw [eq_inrₗ hy, eq_inlₗ hyp, hq']
+          rw [hy', segStepFun_fiber]
+          exact Sum.Lex.inl_lt_inr xl _
+        | inr r =>
+          have hy' : y = Sum.inrₗ (Sum.inrₗ r) := by rw [eq_inrₗ hy, eq_inrₗ hyp]
+          rw [hy', segStepFun_right]
+          exact Sum.Lex.inl_lt_inr xl _
+    | inr xp =>
+      cases hy : ofLex y with
+      | inl yl =>
+        exfalso
+        have hx' := eq_inrₗ hx
+        have hy' := eq_inlₗ hy
+        rw [hx', hy'] at hxy
+        exact Sum.Lex.not_inr_le_inl hxy.le
+      | inr yp =>
+        have hx' := eq_inrₗ hx
+        have hy' := eq_inrₗ hy
+        have hlt : xp < yp := by
+          rw [hx', hy'] at hxy
+          exact (Sum.Lex.inr_lt_inr_iff).mp hxy
+        cases hxp : ofLex xp with
+        | inl qx =>
+          cases hyp : ofLex yp with
+          | inl qy =>
+            have hqx : xp = Sum.inlₗ qx := eq_inlₗ hxp
+            have hqy : yp = Sum.inlₗ qy := eq_inlₗ hyp
+            have hpair : qx < qy := by
+              rw [hqx, hqy] at hlt
+              exact (Sum.Lex.inl_lt_inl_iff).mp hlt
+            rcases hxq : ofLex qx with ⟨ix, ax⟩
+            rcases hyq : ofLex qy with ⟨iy, ay⟩
+            have hqx' : qx = toLex (ix, ax) := by
+              rw [← toLex_ofLex qx]; exact congrArg toLex hxq
+            have hqy' : qy = toLex (iy, ay) := by
+              rw [← toLex_ofLex qy]; exact congrArg toLex hyq
+            have hord : toLex (ix, ax) < toLex (iy, ay) := by
+              rw [← hqx', ← hqy']; exact hpair
+            rw [hx', hy', hqx, hqy, hqx', hqy', segStepFun_fiber, segStepFun_fiber]
+            refine (Sum.Lex.inr_lt_inr_iff).mpr ((Sum.Lex.inl_lt_inl_iff).mpr ?_)
+            refine (Prod.Lex.toLex_lt_toLex).mpr ?_
+            rcases (Prod.Lex.toLex_lt_toLex).mp hord with h | ⟨heq, h2⟩
+            · exact Or.inl (Fin.strictMono_castSucc h)
+            · exact Or.inr ⟨congrArg Fin.castSucc heq, h2⟩
+          | inr ry =>
+            rw [hx', hy', eq_inlₗ hxp, eq_inrₗ hyp, segStepFun_right]
+            rcases hxq : ofLex qx with ⟨ix, ax⟩
+            have hqx' : qx = toLex (ix, ax) := by
+              rw [← toLex_ofLex qx]; exact congrArg toLex hxq
+            rw [hqx', segStepFun_fiber]
+            exact (Sum.Lex.inr_lt_inr_iff).mpr (Sum.Lex.inl_lt_inr _ _)
+        | inr rx =>
+          cases hyp : ofLex yp with
+          | inl qy =>
+            exfalso
+            rw [eq_inrₗ hxp, eq_inlₗ hyp] at hlt
+            exact Sum.Lex.not_inr_le_inl hlt.le
+          | inr ry =>
+            have hr : rx < ry := by
+              rw [eq_inrₗ hxp, eq_inrₗ hyp] at hlt
+              exact (Sum.Lex.inr_lt_inr_iff).mp hlt
+            rw [hx', hy', eq_inrₗ hxp, eq_inrₗ hyp, segStepFun_right, segStepFun_right]
+            exact (Sum.Lex.inr_lt_inr_iff).mpr ((Sum.Lex.inr_lt_inr_iff).mpr hr))
+
+@[simp] theorem segStep_apply (μ : Cardinal.{u}) (n : ℕ)
+    (x : MSeg (L := L) (R := R) μ n) :
+    segStep (L := L) (R := R) μ n x = segStepFun (L := L) (R := R) μ n x := rfl
+
+noncomputable def segFiber (μ : Cardinal.{u}) (n : ℕ) :
+    lvlOrder μ ↪o MSeg (L := L) (R := R) μ (n + 1) :=
+  OrderEmbedding.ofStrictMono (fun a => Sum.inrₗ (Sum.inlₗ (toLex (Fin.last n, a)))) (by
+    intro a b h
+    exact (Sum.Lex.inr_lt_inr_iff).mpr ((Sum.Lex.inl_lt_inl_iff).mpr
+      ((Prod.Lex.toLex_lt_toLex).mpr (Or.inr ⟨rfl, h⟩))))
+
+@[simp] theorem segFiber_apply (μ : Cardinal.{u}) (n : ℕ) (a : lvlOrder μ) :
+    segFiber (L := L) (R := R) μ n a =
+      Sum.inrₗ (Sum.inlₗ (toLex (Fin.last n, a))) := rfl
+
+def segColor (μ : Cardinal.{u}) (n : ℕ) : MSeg (L := L) (R := R) μ n → ℕ
+  | x =>
+    match ofLex x with
+    | Sum.inl _ => 0
+    | Sum.inr p =>
+      match ofLex p with
+      | Sum.inl _ => 0
+      | Sum.inr _ => 1
+
+@[simp] theorem segColor_inl (μ : Cardinal.{u}) (n : ℕ) (l : L) :
+    segColor (L := L) (R := R) μ n (Sum.inlₗ l) = 0 := rfl
+
+@[simp] theorem segColor_fiber (μ : Cardinal.{u}) (n : ℕ) (q : Fin n ×ₗ lvlOrder μ) :
+    segColor (L := L) (R := R) μ n (Sum.inrₗ (Sum.inlₗ q)) = 0 := rfl
+
+@[simp] theorem segColor_right (μ : Cardinal.{u}) (n : ℕ) (r : R) :
+    segColor (L := L) (R := R) μ n (Sum.inrₗ (Sum.inrₗ r)) = 1 := rfl
+
+theorem seg_hltF (μ : Cardinal.{u}) (n : ℕ) (i : MSeg (L := L) (R := R) μ n)
+    (a : lvlOrder μ) :
+    segStep (L := L) (R := R) μ n i < segFiber (L := L) (R := R) μ n a ↔
+      segColor (L := L) (R := R) μ n i = 0 := by
+  cases hi : ofLex i with
+  | inl l =>
+    rw [eq_inlₗ hi, segColor_inl, segStep_apply, segFiber_apply, segStepFun_inl]
+    exact Iff.intro (fun _ => rfl) (fun _ => Sum.Lex.inl_lt_inr _ _)
+  | inr p =>
+    cases hp : ofLex p with
+    | inl q =>
+      rcases hq : ofLex q with ⟨k, b⟩
+      have hq' : q = toLex (k, b) := by rw [← toLex_ofLex q]; exact congrArg toLex hq
+      have hi' : i = Sum.inrₗ (Sum.inlₗ (toLex (k, b))) := by
+        rw [eq_inrₗ hi, eq_inlₗ hp, hq']
+      rw [hi', segColor_fiber, segStep_apply, segFiber_apply, segStepFun_fiber]
+      exact Iff.intro (fun _ => rfl) (fun _ =>
+        (Sum.Lex.inr_lt_inr_iff).mpr ((Sum.Lex.inl_lt_inl_iff).mpr
+          ((Prod.Lex.toLex_lt_toLex).mpr (Or.inl (Fin.castSucc_lt_last k)))))
+    | inr r =>
+      have hi' : i = Sum.inrₗ (Sum.inrₗ r) := by rw [eq_inrₗ hi, eq_inrₗ hp]
+      rw [hi', segColor_right]
+      refine Iff.intro ?_ ?_
+      · intro hlt
+        rw [segStep_apply, segFiber_apply, segStepFun_right] at hlt
+        exact (Sum.Lex.not_inr_le_inl ((Sum.Lex.inr_lt_inr_iff).mp hlt).le).elim
+      · intro h
+        exact (Nat.one_ne_zero h).elim
+
+theorem seg_hFlt (μ : Cardinal.{u}) (n : ℕ) (i : MSeg (L := L) (R := R) μ n)
+    (a : lvlOrder μ) :
+    segFiber (L := L) (R := R) μ n a < segStep (L := L) (R := R) μ n i ↔
+      segColor (L := L) (R := R) μ n i = 1 := by
+  cases hi : ofLex i with
+  | inl l =>
+    rw [eq_inlₗ hi, segColor_inl]
+    refine Iff.intro ?_ ?_
+    · intro hlt
+      rw [segStep_apply, segFiber_apply, segStepFun_inl] at hlt
+      exact (Sum.Lex.not_inr_le_inl hlt.le).elim
+    · intro h
+      exact (Nat.zero_ne_one h).elim
+  | inr p =>
+    cases hp : ofLex p with
+    | inl q =>
+      rcases hq : ofLex q with ⟨k, b⟩
+      have hq' : q = toLex (k, b) := by rw [← toLex_ofLex q]; exact congrArg toLex hq
+      have hi' : i = Sum.inrₗ (Sum.inlₗ (toLex (k, b))) := by
+        rw [eq_inrₗ hi, eq_inlₗ hp, hq']
+      rw [hi', segColor_fiber]
+      refine Iff.intro ?_ ?_
+      · intro hlt
+        exact (lt_asymm hlt ((seg_hltF (L := L) (R := R) μ n
+          (Sum.inrₗ (Sum.inlₗ (toLex (k, b)))) a).mpr
+          (segColor_fiber (L := L) (R := R) μ n (toLex (k, b))))).elim
+      · intro h
+        exact (Nat.zero_ne_one h).elim
+    | inr r =>
+      have hi' : i = Sum.inrₗ (Sum.inrₗ r) := by rw [eq_inrₗ hi, eq_inrₗ hp]
+      rw [hi', segColor_right, segStep_apply, segFiber_apply, segStepFun_right]
+      exact Iff.intro (fun _ => rfl) (fun _ =>
+        (Sum.Lex.inr_lt_inr_iff).mpr (Sum.Lex.inl_lt_inr _ _))
+
+noncomputable def segEmbFun (μ : Cardinal.{u}) (n : ℕ) :
+    MSeg (L := L) (R := R) μ n → MTop (L := L) (R := R) μ
+  | x =>
+    match ofLex x with
+    | Sum.inl l => Sum.inlₗ l
+    | Sum.inr p =>
+      match ofLex p with
+      | Sum.inl q => Sum.inrₗ (Sum.inlₗ (toLex ((ofLex q).1.val, (ofLex q).2)))
+      | Sum.inr r => Sum.inrₗ (Sum.inrₗ r)
+
+@[simp] theorem segEmbFun_inl (μ : Cardinal.{u}) (n : ℕ) (l : L) :
+    segEmbFun (L := L) (R := R) μ n (Sum.inlₗ l) = Sum.inlₗ l := rfl
+
+@[simp] theorem segEmbFun_fiber (μ : Cardinal.{u}) (n : ℕ) (i : Fin n) (a : lvlOrder μ) :
+    segEmbFun (L := L) (R := R) μ n (Sum.inrₗ (Sum.inlₗ (toLex (i, a)))) =
+      Sum.inrₗ (Sum.inlₗ (toLex (i.val, a))) := rfl
+
+@[simp] theorem segEmbFun_right (μ : Cardinal.{u}) (n : ℕ) (r : R) :
+    segEmbFun (L := L) (R := R) μ n (Sum.inrₗ (Sum.inrₗ r)) = Sum.inrₗ (Sum.inrₗ r) := rfl
+
+noncomputable def segEmb (μ : Cardinal.{u}) (n : ℕ) :
+    MSeg (L := L) (R := R) μ n ↪o MTop (L := L) (R := R) μ :=
+  OrderEmbedding.ofStrictMono (segEmbFun (L := L) (R := R) μ n) (by
+    intro x y hxy
+    cases hx : ofLex x with
+    | inl xl =>
+      cases hy : ofLex y with
+      | inl yl =>
+        have hx' := eq_inlₗ hx
+        have hy' := eq_inlₗ hy
+        have hlt : xl < yl := by
+          rw [hx', hy'] at hxy
+          exact (Sum.Lex.inl_lt_inl_iff).mp hxy
+        rw [hx', hy', segEmbFun_inl, segEmbFun_inl]
+        exact (Sum.Lex.inl_lt_inl_iff).mpr hlt
+      | inr yp =>
+        rw [eq_inlₗ hx, segEmbFun_inl]
+        cases hyp : ofLex yp with
+        | inl q =>
+          rcases hq : ofLex q with ⟨i, a⟩
+          have hq' : q = toLex (i, a) := by rw [← toLex_ofLex q]; exact congrArg toLex hq
+          have hy' : y = Sum.inrₗ (Sum.inlₗ (toLex (i, a))) := by
+            rw [eq_inrₗ hy, eq_inlₗ hyp, hq']
+          rw [hy', segEmbFun_fiber]
+          exact Sum.Lex.inl_lt_inr xl _
+        | inr r =>
+          have hy' : y = Sum.inrₗ (Sum.inrₗ r) := by rw [eq_inrₗ hy, eq_inrₗ hyp]
+          rw [hy', segEmbFun_right]
+          exact Sum.Lex.inl_lt_inr xl _
+    | inr xp =>
+      cases hy : ofLex y with
+      | inl yl =>
+        exfalso
+        rw [eq_inrₗ hx, eq_inlₗ hy] at hxy
+        exact Sum.Lex.not_inr_le_inl hxy.le
+      | inr yp =>
+        have hlt : xp < yp := by
+          rw [eq_inrₗ hx, eq_inrₗ hy] at hxy
+          exact (Sum.Lex.inr_lt_inr_iff).mp hxy
+        cases hxp : ofLex xp with
+        | inl qx =>
+          cases hyp : ofLex yp with
+          | inl qy =>
+            rcases hxq : ofLex qx with ⟨ix, ax⟩
+            rcases hyq : ofLex qy with ⟨iy, ay⟩
+            have hqx' : qx = toLex (ix, ax) := by
+              rw [← toLex_ofLex qx]; exact congrArg toLex hxq
+            have hqy' : qy = toLex (iy, ay) := by
+              rw [← toLex_ofLex qy]; exact congrArg toLex hyq
+            have hpair : toLex (ix, ax) < toLex (iy, ay) := by
+              have hqx : xp = Sum.inlₗ qx := eq_inlₗ hxp
+              have hqy : yp = Sum.inlₗ qy := eq_inlₗ hyp
+              rw [hqx, hqy, hqx', hqy'] at hlt
+              exact (Sum.Lex.inl_lt_inl_iff).mp hlt
+            rw [eq_inrₗ hx, eq_inrₗ hy, eq_inlₗ hxp, eq_inlₗ hyp, hqx', hqy',
+              segEmbFun_fiber, segEmbFun_fiber]
+            refine (Sum.Lex.inr_lt_inr_iff).mpr ((Sum.Lex.inl_lt_inl_iff).mpr ?_)
+            refine (Prod.Lex.toLex_lt_toLex).mpr ?_
+            rcases (Prod.Lex.toLex_lt_toLex).mp hpair with h | ⟨heq, h2⟩
+            · exact Or.inl h
+            · exact Or.inr ⟨congrArg Fin.val heq, h2⟩
+          | inr ry =>
+            rcases hxq : ofLex qx with ⟨ix, ax⟩
+            have hqx' : qx = toLex (ix, ax) := by
+              rw [← toLex_ofLex qx]; exact congrArg toLex hxq
+            rw [eq_inrₗ hx, eq_inrₗ hy, eq_inlₗ hxp, eq_inrₗ hyp, hqx',
+              segEmbFun_fiber, segEmbFun_right]
+            exact (Sum.Lex.inr_lt_inr_iff).mpr (Sum.Lex.inl_lt_inr _ _)
+        | inr rx =>
+          cases hyp : ofLex yp with
+          | inl qy =>
+            exfalso
+            rw [eq_inrₗ hxp, eq_inlₗ hyp] at hlt
+            exact Sum.Lex.not_inr_le_inl hlt.le
+          | inr ry =>
+            have hr : rx < ry := by
+              rw [eq_inrₗ hxp, eq_inrₗ hyp] at hlt
+              exact (Sum.Lex.inr_lt_inr_iff).mp hlt
+            rw [eq_inrₗ hx, eq_inrₗ hy, eq_inrₗ hxp, eq_inrₗ hyp,
+              segEmbFun_right, segEmbFun_right]
+            exact (Sum.Lex.inr_lt_inr_iff).mpr ((Sum.Lex.inr_lt_inr_iff).mpr hr))
+
+@[simp] theorem segEmb_apply (μ : Cardinal.{u}) (n : ℕ)
+    (x : MSeg (L := L) (R := R) μ n) :
+    segEmb (L := L) (R := R) μ n x = segEmbFun (L := L) (R := R) μ n x := rfl
+
+theorem segEmb_step (μ : Cardinal.{u}) (n : ℕ) :
+    (segStep (L := L) (R := R) μ n).trans (segEmb (L := L) (R := R) μ (n + 1)) =
+      segEmb (L := L) (R := R) μ n := by
+  ext x
+  rw [RelEmbedding.trans_apply, segStep_apply, segEmb_apply, segEmb_apply]
+  cases hx : ofLex x with
+  | inl l =>
+    rw [eq_inlₗ hx, segStepFun_inl, segEmbFun_inl, segEmbFun_inl]
+  | inr p =>
+    cases hp : ofLex p with
+    | inl q =>
+      rcases hq : ofLex q with ⟨i, a⟩
+      have hq' : q = toLex (i, a) := by rw [← toLex_ofLex q]; exact congrArg toLex hq
+      rw [eq_inrₗ hx, eq_inlₗ hp, hq', segStepFun_fiber, segEmbFun_fiber, segEmbFun_fiber,
+        Fin.val_castSucc]
+    | inr r =>
+      rw [eq_inrₗ hx, eq_inrₗ hp, segStepFun_right, segEmbFun_right, segEmbFun_right]
+
+/-- Put `L ⊕ₗ R` into the segment that already has `n + 1` fibers, right copy still right. -/
+def openInclFun (μ : Cardinal.{u}) : (L ⊕ₗ R) → MSeg (L := L) (R := R) μ 1
+  | x =>
+    match ofLex x with
+    | Sum.inl l => Sum.inlₗ l
+    | Sum.inr r => Sum.inrₗ (Sum.inrₗ r)
+
+@[simp] theorem openInclFun_inl (μ : Cardinal.{u}) (l : L) :
+    openInclFun (L := L) (R := R) μ (Sum.inlₗ l) = Sum.inlₗ l := rfl
+
+@[simp] theorem openInclFun_inr (μ : Cardinal.{u}) (r : R) :
+    openInclFun (L := L) (R := R) μ (Sum.inrₗ r) = Sum.inrₗ (Sum.inrₗ r) := rfl
+
+noncomputable def openIncl (μ : Cardinal.{u}) :
+    (L ⊕ₗ R) ↪o MSeg (L := L) (R := R) μ 1 :=
+  OrderEmbedding.ofStrictMono (openInclFun (L := L) (R := R) μ) (by
+    intro x y hxy
+    cases hx : ofLex x with
+    | inl xl =>
+      cases hy : ofLex y with
+      | inl yl =>
+        have hx' := eq_inlₗ hx
+        have hy' := eq_inlₗ hy
+        have hlt : xl < yl := by
+          rw [hx', hy'] at hxy
+          exact (Sum.Lex.inl_lt_inl_iff).mp hxy
+        rw [hx', hy', openInclFun_inl, openInclFun_inl]
+        exact (Sum.Lex.inl_lt_inl_iff).mpr hlt
+      | inr yr =>
+        rw [eq_inlₗ hx, eq_inrₗ hy, openInclFun_inl, openInclFun_inr]
+        exact Sum.Lex.inl_lt_inr _ _
+    | inr xr =>
+      cases hy : ofLex y with
+      | inl yl =>
+        exfalso
+        rw [eq_inrₗ hx, eq_inlₗ hy] at hxy
+        exact Sum.Lex.not_inr_le_inl hxy.le
+      | inr yr =>
+        have hlt : xr < yr := by
+          rw [eq_inrₗ hx, eq_inrₗ hy] at hxy
+          exact (Sum.Lex.inr_lt_inr_iff).mp hxy
+        rw [eq_inrₗ hx, eq_inrₗ hy, openInclFun_inr, openInclFun_inr]
+        exact (Sum.Lex.inr_lt_inr_iff).mpr ((Sum.Lex.inr_lt_inr_iff).mpr hlt))
+
+@[simp] theorem openIncl_apply (μ : Cardinal.{u}) (x : L ⊕ₗ R) :
+    openIncl (L := L) (R := R) μ x = openInclFun (L := L) (R := R) μ x := rfl
+
+def openColor (μ : Cardinal.{u}) : (L ⊕ₗ R) → ℕ
+  | x =>
+    match ofLex x with
+    | Sum.inl _ => 0
+    | Sum.inr _ => 1
+
+@[simp] theorem openColor_inl (μ : Cardinal.{u}) (l : L) :
+    openColor (L := L) (R := R) μ (Sum.inlₗ l) = 0 := rfl
+
+@[simp] theorem openColor_inr (μ : Cardinal.{u}) (r : R) :
+    openColor (L := L) (R := R) μ (Sum.inrₗ r) = 1 := rfl
+
+theorem open_hltF (μ : Cardinal.{u}) (i : L ⊕ₗ R) (a : lvlOrder μ) :
+    openIncl (L := L) (R := R) μ i < segFiber (L := L) (R := R) μ 0 a ↔
+      openColor (L := L) (R := R) μ i = 0 := by
+  cases hi : ofLex i with
+  | inl l =>
+    rw [eq_inlₗ hi, openColor_inl, openIncl_apply, segFiber_apply, openInclFun_inl]
+    exact Iff.intro (fun _ => rfl) (fun _ => Sum.Lex.inl_lt_inr _ _)
+  | inr r =>
+    rw [eq_inrₗ hi, openColor_inr]
+    refine Iff.intro ?_ ?_
+    · intro hlt
+      rw [openIncl_apply, segFiber_apply, openInclFun_inr] at hlt
+      exact (Sum.Lex.not_inr_le_inl ((Sum.Lex.inr_lt_inr_iff).mp hlt).le).elim
+    · intro h
+      exact (Nat.one_ne_zero h).elim
+
+theorem open_hFlt (μ : Cardinal.{u}) (i : L ⊕ₗ R) (a : lvlOrder μ) :
+    segFiber (L := L) (R := R) μ 0 a < openIncl (L := L) (R := R) μ i ↔
+      openColor (L := L) (R := R) μ i = 1 := by
+  cases hi : ofLex i with
+  | inl l =>
+    rw [eq_inlₗ hi, openColor_inl]
+    refine Iff.intro ?_ ?_
+    · intro hlt
+      rw [openIncl_apply, segFiber_apply, openInclFun_inl] at hlt
+      exact (Sum.Lex.not_inr_le_inl hlt.le).elim
+    · intro h
+      exact (Nat.zero_ne_one h).elim
+  | inr r =>
+    rw [eq_inrₗ hi, openColor_inr, openIncl_apply, segFiber_apply, openInclFun_inr]
+    exact Iff.intro (fun _ => rfl) (fun _ =>
+      (Sum.Lex.inr_lt_inr_iff).mpr (Sum.Lex.inl_lt_inr _ _))
+
+noncomputable def midIncl (μ : Cardinal.{u}) :
+    (n : ℕ) → (L ⊕ₗ R) ↪o MSeg (L := L) (R := R) μ (n + 1)
+  | 0 => openIncl (L := L) (R := R) μ
+  | n + 1 => (midIncl μ n).trans (segStep (L := L) (R := R) μ (n + 1))
+
+/-- Read `L ⊕ₗ R` in the full enlargement: left stays left of the strip, right stays right. -/
+def baseIntoFun (μ : Cardinal.{u}) : (L ⊕ₗ R) → MTop (L := L) (R := R) μ
+  | x =>
+    match ofLex x with
+    | Sum.inl l => Sum.inlₗ l
+    | Sum.inr r => Sum.inrₗ (Sum.inrₗ r)
+
+@[simp] theorem baseIntoFun_inl (μ : Cardinal.{u}) (l : L) :
+    baseIntoFun (L := L) (R := R) μ (Sum.inlₗ l) = Sum.inlₗ l := rfl
+
+@[simp] theorem baseIntoFun_inr (μ : Cardinal.{u}) (r : R) :
+    baseIntoFun (L := L) (R := R) μ (Sum.inrₗ r) = Sum.inrₗ (Sum.inrₗ r) := rfl
+
+noncomputable def baseInto (μ : Cardinal.{u}) : (L ⊕ₗ R) ↪o MTop (L := L) (R := R) μ :=
+  OrderEmbedding.ofStrictMono (baseIntoFun (L := L) (R := R) μ) (by
+    intro x y hxy
+    cases hx : ofLex x with
+    | inl xl =>
+      cases hy : ofLex y with
+      | inl yl =>
+        have hx' := eq_inlₗ hx
+        have hy' := eq_inlₗ hy
+        have hlt : xl < yl := by
+          rw [hx', hy'] at hxy
+          exact (Sum.Lex.inl_lt_inl_iff).mp hxy
+        rw [hx', hy', baseIntoFun_inl, baseIntoFun_inl]
+        exact (Sum.Lex.inl_lt_inl_iff).mpr hlt
+      | inr yr =>
+        rw [eq_inlₗ hx, eq_inrₗ hy, baseIntoFun_inl, baseIntoFun_inr]
+        exact Sum.Lex.inl_lt_inr _ _
+    | inr xr =>
+      cases hy : ofLex y with
+      | inl yl =>
+        exfalso
+        rw [eq_inrₗ hx, eq_inlₗ hy] at hxy
+        exact Sum.Lex.not_inr_le_inl hxy.le
+      | inr yr =>
+        have hlt : xr < yr := by
+          rw [eq_inrₗ hx, eq_inrₗ hy] at hxy
+          exact (Sum.Lex.inr_lt_inr_iff).mp hxy
+        rw [eq_inrₗ hx, eq_inrₗ hy, baseIntoFun_inr, baseIntoFun_inr]
+        exact (Sum.Lex.inr_lt_inr_iff).mpr ((Sum.Lex.inr_lt_inr_iff).mpr hlt))
+
+@[simp] theorem baseInto_apply (μ : Cardinal.{u}) (x : L ⊕ₗ R) :
+    baseInto (L := L) (R := R) μ x = baseIntoFun (L := L) (R := R) μ x := rfl
+
+theorem segEmb_open (μ : Cardinal.{u}) :
+    (openIncl (L := L) (R := R) μ).trans (segEmb (L := L) (R := R) μ 1) =
+      baseInto (L := L) (R := R) μ := by
+  ext x
+  rw [RelEmbedding.trans_apply, openIncl_apply, segEmb_apply, baseInto_apply]
+  cases hx : ofLex x with
+  | inl l =>
+    rw [eq_inlₗ hx, openInclFun_inl, segEmbFun_inl, baseIntoFun_inl]
+  | inr r =>
+    rw [eq_inrₗ hx, openInclFun_inr, segEmbFun_right, baseIntoFun_inr]
+
+theorem midIncl_push (μ : Cardinal.{u}) (n : ℕ) :
+    (midIncl (L := L) (R := R) μ n).trans (segEmb (L := L) (R := R) μ (n + 1)) =
+      baseInto (L := L) (R := R) μ := by
+  induction n with
+  | zero =>
+    simpa [midIncl] using segEmb_open (L := L) (R := R) μ
+  | succ n ih =>
+    ext x
+    have hstep := congrFun (congrArg DFunLike.coe
+      (segEmb_step (L := L) (R := R) μ (n + 1))) (midIncl (L := L) (R := R) μ n x)
+    simp only [RelEmbedding.trans_apply, midIncl] at hstep ⊢
+    rw [hstep]
+    exact congrFun (congrArg DFunLike.coe ih) x
+
+theorem infra_615_mid_push_step (P : SingleModelData K) (μ : Cardinal.{u}) (n : ℕ)
+    (x : (P.E.obj (MSeg (L := L) (R := R) μ (n + 1))).carrier) :
+    P.E.map (segEmb (L := L) (R := R) μ (n + 2))
+        (P.E.map (segStep (L := L) (R := R) μ (n + 1)) x) =
+      P.E.map (segEmb (L := L) (R := R) μ (n + 1)) x := by
+  have h := congrArg (fun e => e x)
+    (P.E.map_comp (segStep (L := L) (R := R) μ (n + 1))
+      (segEmb (L := L) (R := R) μ (n + 2)))
+  rw [segEmb_step (L := L) (R := R) μ (n + 1)] at h
+  simpa [Language.Embedding.comp_apply] using h.symm
+
+theorem infra_615_mid_push_base (P : SingleModelData K) (μ : Cardinal.{u}) (n : ℕ)
+    (a : (P.E.obj (L ⊕ₗ R)).carrier) :
+    P.E.map (segEmb (L := L) (R := R) μ (n + 1))
+        (P.E.map (midIncl (L := L) (R := R) μ n) a) =
+      P.E.map (baseInto (L := L) (R := R) μ) a := by
+  have h := congrArg (fun e => e a)
+    (P.E.map_comp (midIncl (L := L) (R := R) μ n)
+      (segEmb (L := L) (R := R) μ (n + 1)))
+  rw [midIncl_push (L := L) (R := R) μ n] at h
+  simpa [Language.Embedding.comp_apply] using h.symm
+
+theorem sum_card_lr {μ : Cardinal.{u}} (h0 : #(L ⊕ₗ R) = μ) : #L + #R = μ := by
+  rw [← h0]
+  change #L + #R = #(L ⊕ R)
+  rw [mk_sum, lift_id, lift_id]
+
+theorem finLvl_card {μ : Cardinal.{u}} (hμ : ℵ₀ ≤ μ) (n : ℕ) :
+    #(Fin (n + 1) × lvlOrder μ) = μ := by
+  rw [mk_prod, Cardinal.mk_fin, mk_lvlOrder hμ]
+  simp only [Cardinal.lift_natCast, Cardinal.lift_uzero]
+  exact mul_eq_right hμ (natCast_le_aleph0.trans hμ) (Nat.cast_ne_zero.mpr (Nat.succ_ne_zero n))
+
+theorem midSeg_card {μ : Cardinal.{u}} (hμ : ℵ₀ ≤ μ) (h0 : #(L ⊕ₗ R) = μ) (n : ℕ) :
+    #(MSeg (L := L) (R := R) μ n) = μ := by
+  have hLR := sum_card_lr h0
+  cases n with
+  | zero =>
+    have hempty : #(Fin 0 × lvlOrder μ) = 0 := by
+      rw [mk_prod, Cardinal.mk_fin, Nat.cast_zero]
+      simp only [Cardinal.lift_zero, Cardinal.lift_uzero, zero_mul]
+    change #(L ⊕ ((Fin 0 × lvlOrder μ) ⊕ R)) = μ
+    rw [mk_sum, mk_sum, lift_id, lift_id, lift_id, lift_id, hempty, zero_add, hLR]
+  | succ n =>
+    change #(L ⊕ ((Fin (n + 1) × lvlOrder μ) ⊕ R)) = μ
+    rw [mk_sum, mk_sum, lift_id, lift_id, lift_id, lift_id, finLvl_card hμ n, add_comm μ #R,
+      ← add_assoc, hLR, add_eq_self hμ]
+
+theorem mtop_card {μ : Cardinal.{u}} (hμ : ℵ₀ ≤ μ) (h0 : #(L ⊕ₗ R) = μ) :
+    #(MTop (L := L) (R := R) μ) = μ := by
+  have hLR := sum_card_lr h0
+  have hH : #(ℕ × lvlOrder μ) = μ := by
+    rw [mk_prod, Cardinal.mk_nat, Cardinal.lift_aleph0, mk_lvlOrder hμ]
+    simp only [Cardinal.lift_id']
+    exact mul_eq_right hμ hμ aleph0_ne_zero
+  change #(L ⊕ ((ℕ × lvlOrder μ) ⊕ R)) = μ
+  rw [mk_sum, mk_sum, lift_id, lift_id, lift_id, lift_id, hH, add_comm μ #R,
+    ← add_assoc, hLR, add_eq_self hμ]
+
+def midStrip (μ : Cardinal.{u}) : Set (MTop (L := L) (R := R) μ) :=
+  Set.range (fun h : ℕ ×ₗ lvlOrder μ => Sum.inrₗ (Sum.inlₗ h))
+
+def midV (μ : Cardinal.{u}) (n : ℕ) : Set (MTop (L := L) (R := R) μ) :=
+  Set.range (fun a : lvlOrder μ => Sum.inrₗ (Sum.inlₗ (toLex (n, a))))
+
+theorem midV_subset (μ : Cardinal.{u}) (n : ℕ) :
+    midV (L := L) (R := R) μ n ⊆ midStrip (L := L) (R := R) μ := by
+  rintro _ ⟨a, rfl⟩
+  exact ⟨toLex (n, a), rfl⟩
+
+theorem midV_card {μ : Cardinal.{u}} (hμ : ℵ₀ ≤ μ) (n : ℕ) :
+    #(midV (L := L) (R := R) μ n) = μ := by
+  let f : lvlOrder μ → MTop (L := L) (R := R) μ :=
+    fun a => Sum.inrₗ (Sum.inlₗ (toLex (n, a)))
+  have hinj : Injective f := by
+    intro a b h
+    have h1 : Sum.inlₗ (toLex (n, a)) = Sum.inlₗ (toLex (n, b)) :=
+      Sum.inr_injective (congrArg ofLex h)
+    have h2 : toLex (n, a) = toLex (n, b) := Sum.inl_injective (congrArg ofLex h1)
+    exact (Prod.ext_iff.mp (congrArg ofLex h2)).2
+  rw [show midV (L := L) (R := R) μ n = Set.range f from rfl, mk_range_eq f hinj, mk_lvlOrder hμ]
+
+theorem midStrip_card {μ : Cardinal.{u}} (hμ : ℵ₀ ≤ μ) :
+    #(midStrip (L := L) (R := R) μ) = μ := by
+  let f : (ℕ ×ₗ lvlOrder μ) → MTop (L := L) (R := R) μ := fun h => Sum.inrₗ (Sum.inlₗ h)
+  have hinj : Injective f := by
+    intro a b h
+    have h1 : Sum.inlₗ a = Sum.inlₗ b := Sum.inr_injective (congrArg ofLex h)
+    exact Sum.inl_injective (congrArg ofLex h1)
+  rw [show midStrip (L := L) (R := R) μ = Set.range f from rfl, mk_range_eq f hinj]
+  exact freshOrder_card hμ
+
+theorem lexNat_between {ν : Cardinal.{u}} {n : ℕ} {a b : lvlOrder ν} {p : ℕ ×ₗ lvlOrder ν}
+    (h1 : toLex (n, a) ≤ p) (h2 : p ≤ toLex (n, b)) : ∃ c, p = toLex (n, c) := by
+  have hk1 := Prod.Lex.toLex_le_toLex.mp
+    (show toLex (n, a) ≤ toLex (ofLex p) by simpa [toLex_ofLex] using h1)
+  have hk2 := Prod.Lex.toLex_le_toLex.mp
+    (show toLex (ofLex p) ≤ toLex (n, b) by simpa [toLex_ofLex] using h2)
+  rcases hk1 with hlt | ⟨hk, _⟩
+  · rcases hk2 with hlt' | ⟨hk', _⟩
+    · exact (lt_asymm hlt hlt').elim
+    · exact (lt_irrefl _ (by rwa [← hk'] at hlt)).elim
+  · refine ⟨(ofLex p).2, ?_⟩
+    rw [← toLex_ofLex p]
+    exact congrArg toLex (Prod.ext (by simpa using hk.symm) rfl)
+
+theorem midV_disjoint (μ : Cardinal.{u}) :
+    Pairwise (Function.onFun Disjoint (midV (L := L) (R := R) μ)) := by
+  intro m n hmn
+  change Disjoint (midV (L := L) (R := R) μ m) (midV (L := L) (R := R) μ n)
+  rw [Set.disjoint_left]
+  intro x hm hn
+  obtain ⟨a, ha⟩ := hm
+  obtain ⟨b, hb⟩ := hn
+  have hpair : toLex (m, a) = toLex (n, b) := by
+    have h := ha.trans hb.symm
+    have h1 : Sum.inlₗ (toLex (m, a)) = Sum.inlₗ (toLex (n, b)) :=
+      Sum.inr_injective (congrArg ofLex h)
+    exact Sum.inl_injective (congrArg ofLex h1)
+  exact hmn (congrArg Prod.fst (congrArg ofLex hpair))
+
+theorem midV_convex (μ : Cardinal.{u}) (n : ℕ) :
+    IsConvexRegion (midV (L := L) (R := R) μ n) := by
+  intro x hx y hy z hxz hzy
+  obtain ⟨a, rfl⟩ := hx
+  obtain ⟨b, rfl⟩ := hy
+  cases hz : ofLex z with
+  | inl l =>
+    exfalso
+    rw [eq_inlₗ hz] at hxz
+    exact Sum.Lex.not_inr_le_inl hxz
+  | inr p =>
+    cases hp : ofLex p with
+    | inr r =>
+      exfalso
+      have hz' : z = Sum.inrₗ (Sum.inrₗ r) := by rw [eq_inrₗ hz, eq_inrₗ hp]
+      rw [hz'] at hzy
+      exact Sum.Lex.not_inr_le_inl ((Sum.Lex.inr_le_inr_iff).mp hzy)
+    | inl q =>
+      have hz' : z = Sum.inrₗ (Sum.inlₗ q) := by rw [eq_inrₗ hz, eq_inlₗ hp]
+      rw [hz'] at hxz hzy
+      have h1 : toLex (n, a) ≤ q :=
+        (Sum.Lex.inl_le_inl_iff).mp ((Sum.Lex.inr_le_inr_iff).mp hxz)
+      have h2 : q ≤ toLex (n, b) :=
+        (Sum.Lex.inl_le_inl_iff).mp ((Sum.Lex.inr_le_inr_iff).mp hzy)
+      obtain ⟨c, hc⟩ := lexNat_between h1 h2
+      exact ⟨c, by rw [hz', hc]⟩
+
+theorem midStrip_convex (μ : Cardinal.{u}) :
+    IsConvexRegion (midStrip (L := L) (R := R) μ) := by
+  intro x hx y hy z hxz hzy
+  obtain ⟨p, rfl⟩ := hx
+  obtain ⟨q, rfl⟩ := hy
+  cases hz : ofLex z with
+  | inl l =>
+    exfalso
+    rw [eq_inlₗ hz] at hxz
+    exact Sum.Lex.not_inr_le_inl hxz
+  | inr w =>
+    cases hw : ofLex w with
+    | inr r =>
+      exfalso
+      have hz' : z = Sum.inrₗ (Sum.inrₗ r) := by rw [eq_inrₗ hz, eq_inrₗ hw]
+      rw [hz'] at hzy
+      exact Sum.Lex.not_inr_le_inl ((Sum.Lex.inr_le_inr_iff).mp hzy)
+    | inl h =>
+      exact ⟨h, by rw [eq_inrₗ hz, eq_inlₗ hw]⟩
+
+/-! ## One fiber, then the tower -/
+
+theorem infra_615_middle_step
+    (P : SingleModelData K)
+    {μ : Cardinal.{u}} (hμ : μ ∈ infra_615_closed P)
+    (h0 : #(L ⊕ₗ R) = μ)
+    {B : Model K.τ}
+    (f : Language.Embedding K.τ (P.E.obj (L ⊕ₗ R)).carrier B.carrier)
+    (hB : K.Mem B) (hf : K.Strong f) (hcard : Model.card B = μ)
+    (hL : ClosedLevel K P.E P.D P.g μ)
+    {n : ℕ} {M M' : Model K.τ}
+    (j : Language.Embedding K.τ M.carrier B.carrier) (hj : K.Strong j)
+    (hM : Model.card M < μ)
+    (j' : Language.Embedding K.τ M'.carrier B.carrier) (hj' : K.Strong j')
+    (hM' : Model.card M' < μ)
+    (ι : M.carrier → M'.carrier) (hι : ∀ x, j' (ι x) = j x)
+    (prev : Language.Embedding K.τ M.carrier
+      (P.E.obj (MSeg (L := L) (R := R) μ (n + 1))).carrier)
+    (hprev : K.Strong prev)
+    (hlift : LiftsTuple P.E P.D hB f μ (midIncl (L := L) (R := R) μ n) (fun x => j x) prev) :
+    ∃ step : Language.Embedding K.τ M'.carrier
+        (P.E.obj (MSeg (L := L) (R := R) μ (n + 2))).carrier,
+      K.Strong step ∧
+      LiftsTuple P.E P.D hB f μ (midIncl (L := L) (R := R) μ (n + 1)) (fun x => j' x) step ∧
+      ∀ x, step (ι x) = P.E.map (segStep (L := L) (R := R) μ (n + 1)) (prev x) := by
+  have hμel : μ ∈ P.eligible := hμ.1
+  haveI : CategoricalUnbounded K := P.D.categoricalUnbounded
+  have hμinf : ℵ₀ ≤ μ := P.aleph0_le hμel
+  let σ : Cardinal.{u} := max (Model.card M) ℵ₀
+  have hσ : ℵ₀ ≤ σ := le_max_right _ _
+  have hσμ : σ < μ := max_lt hM (P.aleph0_lt hμel)
+  obtain ⟨Q, gB, gS, hQ, hgB, hgS, hcQ, hbase, htup⟩ :=
+    hL.exists_tuple_amalgam hσ hσμ (le_max_left _ _) (P.E.obj (L ⊕ₗ R)) B
+      (P.E.obj (MSeg (L := L) (R := R) μ (n + 1))) f
+      (P.E.map (midIncl (L := L) (R := R) μ n))
+      (fun x => j x) (fun x => prev x) (P.hE _) hB (P.hE _) hf (P.E.map_strong _)
+      (P.card_obj_eq hμel _ h0) hcard
+      (P.card_obj_eq hμel _ (midSeg_card hμinf h0 (n + 1)))
+      (fun {β} _hβ ρ hρinf hρμ p hj h₀ h₁ => hlift ρ hρinf hρμ p hj h₀ h₁)
+  obtain ⟨z, hz⟩ := infra_615_realize_at_cut P hμ
+    (midSeg_card hμinf h0 (n + 1))
+    (segStep (L := L) (R := R) μ (n + 1))
+    (segFiber (L := L) (R := R) μ (n + 1))
+    (segColor (L := L) (R := R) μ (n + 1))
+    (seg_hltF (L := L) (R := R) μ (n + 1))
+    (seg_hFlt (L := L) (R := R) μ (n + 1))
+    (midSeg_card hμinf h0 (n + 2))
+    gS hQ hgS hcQ (fun x => gB (j' x)) hM'
+  have hzB := infra_615_transport_emb P hμ f hB hcard
+    (midIncl (L := L) (R := R) μ n) (segStep (L := L) (R := R) μ (n + 1))
+    gB gS hQ hgB hcQ hbase (fun x => j' x) z hz
+  obtain ⟨step, hstep, hstepz⟩ := exists_strong_of_liftsTuple hL hcard
+    (midIncl (L := L) (R := R) μ (n + 1))
+    (le_of_eq (P.card_obj_eq hμel _ (midSeg_card hμinf h0 (n + 2))).symm)
+    j' hj' hM' hzB
+  refine ⟨step, hstep, ?_, ?_⟩
+  · intro β ρ hρinf hρμ p hj hBc hJc
+    rw [show z = fun x => step x from funext fun x => (hstepz x).symm] at hzB
+    exact hzB ρ hρinf hρμ p hj hBc hJc
+  · intro x
+    rw [hstepz]
+    have hρinf : ℵ₀ ≤ Model.card M' ⊔ ℵ₀ := le_sup_right
+    have hρμ : Model.card M' ⊔ ℵ₀ < μ := max_lt hM' (P.aleph0_lt hμel)
+    have hjρ : #(M'.carrier ⊕ PUnit.{u + 1}) ≤ Model.card M' ⊔ ℵ₀ := by
+      rw [mk_sum, lift_id, lift_id, mk_punit]
+      exact add_le_of_le hρinf le_sup_left (one_le_aleph0.trans le_sup_right)
+    have hQc : P.D.t (Model.card M' ⊔ ℵ₀) ≤ Model.card Q :=
+      (hL.t_lt hρinf hρμ).le.trans hcQ.ge
+    have hSc : P.D.t (Model.card M' ⊔ ℵ₀) ≤
+        Model.card (P.E.obj (MSeg (L := L) (R := R) μ (n + 2))) :=
+      (hL.t_lt hρinf hρμ).le.trans
+        (le_of_eq (P.card_obj_eq hμel _ (midSeg_card hμinf h0 (n + 2))).symm)
+    have hsame := hz (Model.card M' ⊔ ℵ₀) hρinf hρμ (fun _ : PUnit.{u + 1} => prev x)
+      hjρ hQc hSc
+    have hxeq : gB (j' (ι x)) = gS (prev x) := (congrArg gB (hι x)).trans (htup x)
+    exact (P.D.preserves_atomic hjρ hQ (P.hE _) hQc hSc _ _ hsame
+      (Sum.inl (ι x)) (Sum.inr PUnit.unit)).mp hxeq
+
+/-- Every same-level strong extension of `E(L ⊕ₗ R)` embeds into `E(MTop)` over the
+inclusion that keeps `L` on the left of the strip and `R` on the right. -/
+theorem infra_615_middle_exhaust
+    (P : SingleModelData K)
+    {μ : Cardinal.{u}} (hμ : μ ∈ infra_615_closed P)
+    (h0 : #(L ⊕ₗ R) = μ)
+    {B : Model K.τ}
+    (f : Language.Embedding K.τ (P.E.obj (L ⊕ₗ R)).carrier B.carrier)
+    (hB : K.Mem B) (hf : K.Strong f) (hcard : Model.card B = μ) :
+    ∃ g : Language.Embedding K.τ B.carrier
+        (P.E.obj (MTop (L := L) (R := R) μ)).carrier,
+      K.Strong g ∧ ∀ a, g (f a) = P.E.map (baseInto (L := L) (R := R) μ) a := by
+  classical
+  have hμel : μ ∈ P.eligible := hμ.1
+  haveI : CategoricalUnbounded K := P.D.categoricalUnbounded
+  have hμinf : ℵ₀ ≤ μ := P.aleph0_le hμel
+  have hL : ClosedLevel K P.E P.D P.g μ :=
+    ClosedLevel.of_closurePoint P.tester hμel.1 hμel.2
+  obtain ⟨M, j, hj, hMc, hmono, hcov, _⟩ :=
+    exists_strong_tower hB (P.aleph0_le hμel) hμel.1.working.countableCof (P.ls_lt hμel)
+      hcard (fun e : PEmpty.{u + 1} => e.elim)
+      (by rw [mk_pempty]; exact aleph0_pos.trans_le (P.aleph0_le hμel))
+  choose ι hι using hmono
+  obtain ⟨z0, hz0⟩ := infra_615_realize_at_cut P hμ h0
+    (openIncl (L := L) (R := R) μ)
+    (segFiber (L := L) (R := R) μ 0)
+    (openColor (L := L) (R := R) μ)
+    (open_hltF (L := L) (R := R) μ)
+    (open_hFlt (L := L) (R := R) μ)
+    (midSeg_card hμinf h0 1)
+    f hB hf hcard (fun x => j 0 x) (hMc 0)
+  obtain ⟨s0, hs0, hs0z⟩ := exists_strong_of_liftsTuple hL hcard
+    (midIncl (L := L) (R := R) μ 0)
+    (le_of_eq (P.card_obj_eq hμel _ (midSeg_card hμinf h0 1)).symm)
+    (j 0) (hj 0) (hMc 0) hz0
+  have hlift0 : LiftsTuple P.E P.D hB f μ (midIncl (L := L) (R := R) μ 0) (fun x => j 0 x)
+      (fun x => s0 x) := by
+    rw [show z0 = fun x => s0 x from funext fun x => (hs0z x).symm] at hz0
+    exact hz0
+  have hstep : ∀ n (prev : Language.Embedding K.τ (M n).carrier
+        (P.E.obj (MSeg (L := L) (R := R) μ (n + 1))).carrier),
+      K.Strong prev →
+      LiftsTuple P.E P.D hB f μ (midIncl (L := L) (R := R) μ n) (fun x => j n x) prev →
+      ∃ step : Language.Embedding K.τ (M (n + 1)).carrier
+          (P.E.obj (MSeg (L := L) (R := R) μ (n + 2))).carrier,
+        K.Strong step ∧
+        LiftsTuple P.E P.D hB f μ (midIncl (L := L) (R := R) μ (n + 1))
+          (fun x => j (n + 1) x) step ∧
+        ∀ x, step (ι n x) =
+          P.E.map (segStep (L := L) (R := R) μ (n + 1)) (prev x) :=
+    fun n prev hp hl => infra_615_middle_step P hμ h0 f hB hf hcard hL (j n) (hj n) (hMc n)
+      (j (n + 1)) (hj (n + 1)) (hMc (n + 1)) (ι n) (hι n) prev hp hl
+  let S : ∀ n, {s : Language.Embedding K.τ (M n).carrier
+      (P.E.obj (MSeg (L := L) (R := R) μ (n + 1))).carrier //
+      K.Strong s ∧
+        LiftsTuple P.E P.D hB f μ (midIncl (L := L) (R := R) μ n) (fun x => j n x) s} :=
+    fun n => Nat.rec (motive := fun n => {s : Language.Embedding K.τ (M n).carrier
+        (P.E.obj (MSeg (L := L) (R := R) μ (n + 1))).carrier //
+        K.Strong s ∧ LiftsTuple P.E P.D hB f μ (midIncl (L := L) (R := R) μ n)
+          (fun x => j n x) s})
+      ⟨s0, hs0, hlift0⟩
+      (fun n P =>
+        let e := hstep n P.1 P.2.1 P.2.2
+        ⟨Classical.choose e, (Classical.choose_spec e).1, (Classical.choose_spec e).2.1⟩) n
+  have hS : ∀ n x, (S (n + 1)).1 (ι n x) =
+      P.E.map (segStep (L := L) (R := R) μ (n + 1)) ((S n).1 x) :=
+    fun n x => (Classical.choose_spec (hstep n (S n).1 (S n).2.1 (S n).2.2)).2.2 x
+  let h : ∀ n, Language.Embedding K.τ (M n).carrier
+      (P.E.obj (MTop (L := L) (R := R) μ)).carrier :=
+    fun n => (P.E.map (segEmb (L := L) (R := R) μ (n + 1))).comp (S n).1
+  have hh : ∀ n, K.Strong (h n) := fun n =>
+    K.strong_trans _ _ (S n).2.1 (P.E.map_strong _)
+  have hcoh : ∀ n x y, j (n + 1) y = j n x → (h (n + 1)) y = (h n) x := by
+    intro n x y hxy
+    have hy : y = ι n x := (j (n + 1)).injective (hxy.trans (hι n x).symm)
+    rw [hy]
+    change P.E.map (segEmb (L := L) (R := R) μ (n + 2)) ((S (n + 1)).1 (ι n x)) =
+      P.E.map (segEmb (L := L) (R := R) μ (n + 1)) ((S n).1 x)
+    rw [hS n x]
+    exact infra_615_mid_push_step P μ n ((S n).1 x)
+  obtain ⟨F, hF, hFj⟩ := exists_strong_of_nat_exhaustion hB (P.hE (MTop (L := L) (R := R) μ)) M j hj
+    (fun n x => ⟨ι n x, hι n x⟩) hcov h hh hcoh
+  refine ⟨F, hF, fun a => ?_⟩
+  obtain ⟨n, x, hx⟩ := hcov (f a)
+  rw [← hx, hFj]
+  have hfix : (S n).1 x = P.E.map (midIncl (L := L) (R := R) μ n) a := by
+    have hρinf : ℵ₀ ≤ Model.card (M n) ⊔ ℵ₀ := le_sup_right
+    have hρμ : Model.card (M n) ⊔ ℵ₀ < μ := max_lt (hMc n) (P.aleph0_lt hμel)
+    have hjρ : #((M n).carrier ⊕ PUnit.{u + 1}) ≤ Model.card (M n) ⊔ ℵ₀ := by
+      rw [mk_sum, lift_id, lift_id, mk_punit]
+      exact add_le_of_le hρinf le_sup_left (one_le_aleph0.trans le_sup_right)
+    have hBc : P.D.t (Model.card (M n) ⊔ ℵ₀) ≤ Model.card B :=
+      (hL.t_lt hρinf hρμ).le.trans hcard.ge
+    have hGc : P.D.t (Model.card (M n) ⊔ ℵ₀) ≤
+        Model.card (P.E.obj (MSeg (L := L) (R := R) μ (n + 1))) :=
+      (hL.t_lt hρinf hρμ).le.trans
+        (le_of_eq (P.card_obj_eq hμel _ (midSeg_card hμinf h0 (n + 1))).symm)
+    have hsame := (S n).2.2 (Model.card (M n) ⊔ ℵ₀) hρinf hρμ
+      (fun _ : PUnit.{u + 1} => a) hjρ hBc hGc
+    exact (P.D.preserves_atomic hjρ hB (P.hE _) hBc hGc _ _ hsame
+      (Sum.inl x) (Sum.inr PUnit.unit)).mp hx
+  change P.E.map (segEmb (L := L) (R := R) μ (n + 1)) ((S n).1 x) =
+    P.E.map (baseInto (L := L) (R := R) μ) a
+  rw [hfix]
+  exact infra_615_mid_push_base P μ n a
+
+end Geometry
+
+/-! ## The cut of an arbitrary order -/
+
+noncomputable def splitFun {J : Type u} [LinearOrder J] (c : J) (j : J) :
+    CutLeft J c ⊕ₗ CutRight J c :=
+  if h : j ≤ c then Sum.inlₗ ⟨j, h⟩ else Sum.inrₗ ⟨j, lt_of_not_ge h⟩
+
+theorem splitFun_strict {J : Type u} [LinearOrder J] (c : J) : StrictMono (splitFun c) := by
+  intro a b hab
+  by_cases ha : a ≤ c <;> by_cases hb : b ≤ c
+  · rw [splitFun, splitFun, dite_eq_left ha, dite_eq_left hb]
+    exact (Sum.Lex.inl_lt_inl_iff).mpr (Subtype.mk_lt_mk.mpr hab)
+  · rw [splitFun, splitFun, dite_eq_left ha, dite_eq_right hb]
+    exact Sum.Lex.inl_lt_inr _ _
+  · exact (lt_asymm hab (lt_of_le_of_lt hb (lt_of_not_ge ha))).elim
+  · rw [splitFun, splitFun, dite_eq_right ha, dite_eq_right hb]
+    exact (Sum.Lex.inr_lt_inr_iff).mpr (Subtype.mk_lt_mk.mpr hab)
+
+theorem splitFun_surj {J : Type u} [LinearOrder J] (c : J) : Surjective (splitFun c) := by
+  intro x
+  cases hx : ofLex x with
+  | inl l =>
+    refine ⟨l.1, ?_⟩
+    rw [eq_inlₗ hx, splitFun, dite_eq_left l.2]
+  | inr r =>
+    refine ⟨r.1, ?_⟩
+    have hgt : ¬ r.1 ≤ c := not_le_of_gt r.2
+    rw [eq_inrₗ hx, splitFun, dite_eq_right hgt]
+
+noncomputable def cutIso {J : Type u} [LinearOrder J] (c : J) :
+    J ≃o (CutLeft J c ⊕ₗ CutRight J c) where
+  toFun := splitFun c
+  invFun := fun x =>
+    match ofLex x with
+    | Sum.inl l => l.1
+    | Sum.inr r => r.1
+  left_inv := by
+    intro j
+    by_cases h : j ≤ c
+    · simp [splitFun, h]
+    · simp [splitFun, h]
+  right_inv := by
+    intro x
+    cases hx : ofLex x with
+    | inl l => simp [splitFun, eq_inlₗ hx, l.2]
+    | inr r => simp [splitFun, eq_inrₗ hx, not_le_of_gt r.2]
+  map_rel_iff' :=
+    (OrderEmbedding.ofStrictMono (splitFun c) (splitFun_strict c)).map_rel_iff
+
+@[simp] theorem cutIso_apply {J : Type u} [LinearOrder J] (c j : J) :
+    cutIso c j = splitFun c j := rfl
+
+theorem splitFun_le {J : Type u} [LinearOrder J] (c j : J) (h : j ≤ c) :
+    splitFun c j = Sum.inlₗ ⟨j, h⟩ := by
+  simp [splitFun, h]
+
+theorem splitFun_gt {J : Type u} [LinearOrder J] (c j : J) (h : c < j) :
+    splitFun c j = Sum.inrₗ ⟨j, h⟩ := by
+  simp [splitFun, not_le_of_gt h]
+
+noncomputable def infra_615_cutWitness {J : Type u} [LinearOrder J]
+    {μ : Cardinal.{u}} (hμ : ℵ₀ ≤ μ) (hJ : #J = μ) : {c : J // ∃ r : J, c < r} := by
+  have hnt : Nontrivial J := by
+    refine (not_subsingleton_iff_nontrivial).mp ?_
+    intro hsub
+    have hle : #J ≤ 1 := by
+      rw [← Cardinal.mk_univ]
+      exact Cardinal.mk_le_one_iff_set_subsingleton.mpr
+        (fun x _ y _ => Subsingleton.elim x y)
+    exact (not_le_of_gt (one_lt_aleph0.trans_le hμ)) (hJ ▸ hle)
+  let a : J := Classical.choose (exists_pair_ne J)
+  have hrest : ∃ b : J, a ≠ b := Classical.choose_spec (exists_pair_ne J)
+  let b : J := Classical.choose hrest
+  have hne : a ≠ b := Classical.choose_spec hrest
+  exact if h : a < b then ⟨a, b, h⟩ else
+    if h' : b < a then ⟨b, a, h'⟩ else
+      (hne (le_antisymm (le_of_not_gt h') (le_of_not_gt h))).elim
+
+/-- **Proposition 6.15** for `G = P.E`: insert `ℕ ×ₗ lvlOrder μ` between the two sides of a cut. -/
+theorem infra_615_two_sided
+    (P : SingleModelData K)
+    {μ : Cardinal.{u}} (hμ : μ ∈ infra_615_closed P)
+    (J : Type u) [LinearOrder J] [Nonempty J]
+    (hJ : #J = μ) :
+    ∃ (Jplus : Type u) (_ : LinearOrder Jplus) (_ : Nonempty Jplus) (emb : J ↪o Jplus)
+      (strip : Set Jplus) (V : ℕ → Set Jplus),
+      #Jplus = μ ∧
+      IsConvexRegion strip ∧ #strip = μ ∧
+      (∀ n, IsConvexRegion (V n) ∧ #(V n) = μ ∧ V n ⊆ strip) ∧
+      Pairwise (Function.onFun Disjoint V) ∧
+      (∃ (a b : J), emb a < emb b ∧ (∃ s ∈ strip, emb a < s ∧ s < emb b)) ∧
+      ∀ (B : Model K.τ)
+        (f : Language.Embedding K.τ (P.E.obj J).carrier B.carrier),
+        K.Mem B → K.Strong f → Model.card B = μ →
+        ∃ g : Language.Embedding K.τ B.carrier (P.E.obj Jplus).carrier,
+          K.Strong g ∧ ∀ a, g (f a) = P.E.map emb a := by
+  have hμel : μ ∈ P.eligible := hμ.1
+  have hμinf : ℵ₀ ≤ μ := P.aleph0_le hμel
+  let w := infra_615_cutWitness hμinf hJ
+  let c : J := w.1
+  obtain ⟨r, hr⟩ := w.2
+  let L := CutLeft J c
+  let R := CutRight J c
+  haveI : Nonempty L := ⟨⟨c, le_rfl⟩⟩
+  haveI : Nonempty R := ⟨⟨r, hr⟩⟩
+  have h0 : #(L ⊕ₗ R) = μ :=
+    (Cardinal.mk_congr (cutIso c).toEquiv).symm.trans hJ
+  let Jplus := MTop (L := L) (R := R) μ
+  let emb : J ↪o Jplus :=
+    (cutIso c).toOrderEmbedding.trans (baseInto (L := L) (R := R) μ)
+  let strip : Set Jplus := midStrip (L := L) (R := R) μ
+  let V : ℕ → Set Jplus := midV (L := L) (R := R) μ
+  have ha : emb c = Sum.inlₗ (⟨c, le_rfl⟩ : L) := by
+    rw [show emb c = baseInto (L := L) (R := R) μ (cutIso c c) from
+      RelEmbedding.trans_apply _ _ _]
+    rw [cutIso_apply, splitFun_le _ _ le_rfl, baseInto_apply, baseIntoFun_inl]
+  have hb : emb r = Sum.inrₗ (Sum.inrₗ (⟨r, hr⟩ : R)) := by
+    rw [show emb r = baseInto (L := L) (R := R) μ (cutIso c r) from
+      RelEmbedding.trans_apply _ _ _]
+    rw [cutIso_apply, splitFun_gt _ _ hr, baseInto_apply, baseIntoFun_inr]
+  let s0 : lvlOrder μ := Classical.arbitrary _
+  let s : Jplus := Sum.inrₗ (Sum.inlₗ (toLex (0, s0)))
+  have hs : s ∈ strip := ⟨toLex (0, s0), rfl⟩
+  have hleft : emb c < s := by
+    rw [ha]
+    exact Sum.Lex.inl_lt_inr _ _
+  have hright : s < emb r := by
+    rw [hb]
+    exact (Sum.Lex.inr_lt_inr_iff).mpr (Sum.Lex.inl_lt_inr _ _)
+  refine ⟨Jplus, inferInstance, ⟨Sum.inlₗ (⟨c, le_rfl⟩ : L)⟩, emb, strip, V,
+    mtop_card hμinf h0, midStrip_convex μ,
+    midStrip_card hμinf, ?_, midV_disjoint μ, ?_, ?_⟩
+  · intro n
+    exact ⟨midV_convex μ n, midV_card hμinf n, midV_subset μ n⟩
+  · exact ⟨c, r, lt_trans hleft hright, s, hs, hleft, hright⟩
+  · intro B f hB hf hc
+    let iso := cutIso c
+    let fBase : Language.Embedding K.τ (P.E.obj (L ⊕ₗ R)).carrier B.carrier :=
+      f.comp (P.E.map iso.symm.toOrderEmbedding)
+    have hfBase : K.Strong fBase :=
+      K.strong_trans _ _ (P.E.map_strong _) hf
+    obtain ⟨g, hg, hfix⟩ := infra_615_middle_exhaust (L := L) (R := R) P hμ h0 fBase hB hfBase hc
+    refine ⟨g, hg, fun a => ?_⟩
+    have hback : fBase (P.E.map iso.toOrderEmbedding a) = f a := by
+      have he : iso.toOrderEmbedding.trans iso.symm.toOrderEmbedding =
+          (OrderIso.refl J).toOrderEmbedding := by
+        ext x
+        exact iso.symm_apply_apply x
+      have happ :
+          P.E.map iso.symm.toOrderEmbedding (P.E.map iso.toOrderEmbedding a) =
+            P.E.map (iso.toOrderEmbedding.trans iso.symm.toOrderEmbedding) a := by
+        simpa [Language.Embedding.comp_apply] using
+          (congrArg (fun e => e a)
+            (P.E.map_comp iso.toOrderEmbedding iso.symm.toOrderEmbedding)).symm
+      rw [show fBase (P.E.map iso.toOrderEmbedding a) =
+          f (P.E.map iso.symm.toOrderEmbedding (P.E.map iso.toOrderEmbedding a)) from rfl,
+        happ, he, P.E.map_id, Language.Embedding.refl_apply]
+    rw [← hback, hfix]
+    simpa [emb, Language.Embedding.comp_apply] using
+      (congrArg (fun e => e a)
+        (P.E.map_comp iso.toOrderEmbedding (baseInto (L := L) (R := R) μ))).symm
 
 end
 end AEC

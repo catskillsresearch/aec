@@ -4,7 +4,7 @@ Proposition 6.13 (Local character and continuity). Let $(A_i : i < \delta)$ be a
 
 **Done** for same-level `SingleModelData` ([`LocalCharacter.lean`](LocalCharacter.lean), thin wrap in [`Results.lean`](Results.lean)). The chain is `SameLevelChain`: nonzero limit ordinal, transition arrows for `i ≤ j`, cocone into a level-`μ` union, joint cover of occurrences. The tail is the recursion-closed levels at or above `σ⁺`. Local character traps a Lemma 6.9 code in one stage (`infra_613_bounded_in_stage`, `infra_613_trap_in_stage`) and discharges `IsFreeFrom` by `infra_611_isFreeFrom`, after `infra_613_stage_majority` (`infra_610_move_query`, `infra_610_majority_eq_type`, `diagram_trans`). Continuity is `infra_613_continuity`: local character picks the stage, and `infra_613_freeFrom_trans` moves freeness from `X` up the cocone. The type-joint form of that step is `infra_613_strong_trans` (`infra_610_majority_unique` and Lemma 6.11).
 
-**Deferred:** mixed levels `ν < μ`; Section 7 `SatisfiesContinuity`. **Next tip:** [`proposition_6_15`](Proposition_6.15.md).
+**Deferred:** mixed levels `ν < μ`; Section 7 `SatisfiesContinuity`. **Next tip:** [`corollary_6_16`](Corollary_6.16.md). Proposition 6.15 is done for the two-sided strip.
 
 **[Results.lean](Results.lean)**
 
