@@ -1853,7 +1853,7 @@ theorem infra_610_isFreeLift_same_galois
     (_hκIndex : seq.τ + aleph0 < #seq.κIndex)
     (data : Infra610ChartPrescriptions (hμ := hμ) P σ f hf p seq) :
     ∃ q : TupleOver K oneVertexShape P.scheme hμ B,
-      ∃ e : p.idx ≃ q.idx, IsFreeLift p q f hf e := by
+      ∃ e : p.idx ≃ q.idx, IsFreeLift p q f hf e ∧ q.ν = μ := by
   classical
   haveI : CategoricalUnbounded K := P.D.categoricalUnbounded
   have hσlt : σ < μ := (Order.lt_succ σ).trans_le hσμ
@@ -1891,7 +1891,7 @@ theorem infra_610_isFreeLift_same_galois
       incl_arrow := trivial
       idx := p.idx
       val := fun a => top.occ (embP (p.host.val (p.val a))) }
-  refine ⟨q, Equiv.refl p.idx, And.intro ?_ ⟨seq, ?_⟩⟩
+  refine ⟨q, Equiv.refl p.idx, And.intro ?_ ⟨seq, ?_⟩, rfl⟩
   · refine ⟨μ, hμ, top, arrP, SystemArrow.refl (P.scheme.asSystem hμ top), trivial, trivial, ?_, ?_⟩
     · intro v
       refine DFunLike.ext _ _ fun x => ?_
@@ -2261,7 +2261,7 @@ theorem infra_610_majority_prescription
     (hχls : ls K + σ < seq.τ) (hpow : seq.τ ^ σ = seq.τ)
     (htestχ : P.g σ + ls K ≤ seq.τ) :
     ∃ q : TupleOver K oneVertexShape P.scheme hμ B,
-      ∃ e : p.idx ≃ q.idx, IsFreeLift p q f hf e := by
+      ∃ e : p.idx ≃ q.idx, IsFreeLift p q f hf e ∧ q.ν = μ := by
   obtain ⟨data⟩ :=
     infra_610_chart_prescriptions P σ hσ hμ hrec hσμ f hf p hνμ hidx hidxμ seq hτμ hκIndex
       hχls hpow htestχ
@@ -2283,7 +2283,7 @@ theorem infra_610_place_on_B
     (hχls : ls K + σ < seq.τ) (hpow : seq.τ ^ σ = seq.τ)
     (htestχ : P.g σ + ls K ≤ seq.τ) :
     ∃ q : TupleOver K oneVertexShape P.scheme hμ B, ∃ e : p.idx ≃ q.idx,
-      IsFreeLift p q f hf e :=
+      IsFreeLift p q f hf e ∧ q.ν = μ :=
   infra_610_majority_prescription P σ hσ hμ hrec hσμ f hf p hνμ hidx hidxμ seq hτμ hκIndex
     hχls hpow htestχ
 
@@ -2302,7 +2302,7 @@ theorem stationary_free_extension_exists
     (p : TupleOver K oneVertexShape P.scheme hμ A)
     (hνμ : p.ν = μ) (hidx : #p.idx ≤ σ) (hidxμ : #p.idx < μ) :
     ∃ q : TupleOver K oneVertexShape P.scheme hμ B, ∃ e : p.idx ≃ q.idx,
-      IsFreeLift p q f hf e := by
+      IsFreeLift p q f hf e ∧ q.ν = μ := by
   have hσlt : σ < μ := (Order.lt_succ σ).trans_le hσμ
   let b : Cardinal.{u} := max (ls K) ℵ₀
   let τ0 : Cardinal.{u} := testCardinal b P.g σ

@@ -17,6 +17,7 @@ public import AEC.Section6.UniformApproximations
 public import AEC.Section6.TestCardinal
 public import AEC.Section6.StationaryFreeExtension
 public import AEC.Section6.AverageDescent
+public import AEC.Section6.BoundedProducts
 
 @[expose] public section
 
@@ -498,8 +499,10 @@ theorem theorem_6_10 {K : AbstractElementaryClass.{u}}
       (infra_69_recursion_tail P hσ).2 (max κ (Order.succ σ))
     exact ⟨μ, (le_max_left _ _).trans hle, ⟨⟨hμ, hrec⟩, (le_max_right _ _).trans hle⟩⟩
   refine ⟨T, hT, fun μ hμ A B f hf p hνμ hσidx hidx => ?_⟩
-  exact stationary_free_extension_exists P σ hσ (Tail.mem hT hμ) hμ.1 hμ.2 f hf p
-    hνμ hσidx hidx
+  obtain ⟨q, e, h, _⟩ :=
+    stationary_free_extension_exists P σ hσ (Tail.mem hT hμ) hμ.1 hμ.2 f hf p
+      hνμ hσidx hidx
+  exact ⟨q, e, h⟩
 
 /-- **Lemma 6.11** (An average criterion for descent). At a recursion-closed level, a type
 `q` over `B` whose restrictions to a long sequence in `A` have majority value `q ↾ Z` on
@@ -537,17 +540,61 @@ theorem lemma_6_11 {K : AbstractElementaryClass.{u}}
   exact infra_611_isFreeFrom P σ hσ (Tail.mem hT hμ) hμ.1 hμ.2 f hf q seq
     hνμ hidx hidxμ hτμ hκ hκμ hmaj
 
-/-- **Proposition 6.12** (Products of bounded types). Bounded types have a product over `A`,
-independent of the choice of realization, symmetric, and commuting with free lifts. -/
-theorem proposition_6_12 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
-    (W : WorkingScheme K S) :
-    ∃ T, ∃ hT : Tail W.eligible T,
-      ∀ μ (hμ : μ ∈ T) (A : W.Object μ (Tail.mem hT hμ))
-        (p q : TupleOver K S W (Tail.mem hT hμ) A),
-        #p.idx < μ → #q.idx < μ →
-        ∃ joint : TupleOver K S W (Tail.mem hT hμ) A,
-          ∃ e : p.idx ⊕ q.idx ≃ joint.idx, IsProduct p q joint e := by
-  sorry
+/-- **Proposition 6.12** (Products of bounded types). At a recursion-closed level, bounded
+types `p` and `q` over a same-level base have a product. Two products along one realization
+of `p` are the same Galois type when their free lifts of `q` are anchored to one
+approximation code: on every query up to that code's arity, both type joints are majority
+values of the code on a single parameter list.
+
+Symmetry, finite products, base change `(p ⊗ q)^B = p_B ⊗ q^B`, and mixed levels are
+deferred. So is stationarity for an untied `IsFreeLift`: its majority witness need not be
+the type joint (`same_head` stays demoted), so a bare `IsProduct` does not by itself fix
+the cross-diagram. -/
+theorem proposition_6_12 {K : AbstractElementaryClass.{u}}
+    (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ) :
+    ∃ T, ∃ hT : Tail P.eligible T,
+      ∀ μ (hμ : μ ∈ T) (A : P.scheme.Object μ (Tail.mem hT hμ))
+        (p q : TupleOver K oneVertexShape P.scheme (Tail.mem hT hμ) A),
+        p.ν = μ → q.ν = μ → #p.idx ≤ σ → #q.idx ≤ σ → #p.idx < μ → #q.idx < μ →
+        (∃ joint : TupleOver K oneVertexShape P.scheme (Tail.mem hT hμ) A,
+          ∃ e : p.idx ⊕ q.idx ≃ joint.idx, IsProduct p q joint e) ∧
+        (∀ (x : TupleOver K oneVertexShape P.scheme (Tail.mem hT hμ) A)
+          (ex : p.idx ≃ x.idx)
+          (y₁ y₂ : TupleOver K oneVertexShape P.scheme x.hν x.host)
+          (ey₁ : q.idx ≃ y₁.idx) (ey₂ : q.idx ≃ y₂.idx)
+          (seq : ApproximationSequence q)
+          (joint₁ joint₂ : TupleOver K oneVertexShape P.scheme (Tail.mem hT hμ) A)
+          (e₁ : p.idx ⊕ q.idx ≃ joint₁.idx) (e₂ : p.idx ⊕ q.idx ≃ joint₂.idx),
+          y₁.ν = μ → y₂.ν = μ → joint₁.ν = μ → joint₂.ν = μ →
+          σ + (P.g σ + ls K) ≤ seq.τ → seq.τ < μ →
+          seq.τ + aleph0 < #seq.κIndex →
+          (∀ {ι : Type u}
+            (Z : ι → Occurrence K oneVertexShape (P.scheme.asSystem x.hν x.host)),
+            #ι ≤ seq.τ →
+            ∃ Z0 : ι → Occurrence K oneVertexShape
+                (P.scheme.asSystem (Tail.mem hT hμ) A),
+              IsMajorityValue seq Z0 y₁.hν y₁.host
+                  (infra_612_anchored ey₁ y₁.incl y₁.val Z) ∧
+                IsMajorityValue seq Z0 y₂.hν y₂.host
+                  (infra_612_anchored ey₂ y₂.incl y₂.val Z)) →
+          SameGaloisType joint₁ (x.join y₁)
+            (e₁.symm.trans (Equiv.sumCongr ex ey₁)) (Equiv.refl (x.idx ⊕ y₁.idx)) →
+          SameGaloisType joint₂ (x.join y₂)
+            (e₂.symm.trans (Equiv.sumCongr ex ey₂)) (Equiv.refl (x.idx ⊕ y₂.idx)) →
+          SameGaloisType joint₁ joint₂ (e₁.symm.trans e₂) (Equiv.refl joint₂.idx)) := by
+  let T : Set Cardinal.{u} :=
+    {μ | μ ∈ recursionClosedLevels P σ ∧ Order.succ σ ≤ μ}
+  have hT : Tail P.eligible T := by
+    refine ⟨fun μ hμ => hμ.1.1, fun κ => ?_⟩
+    obtain ⟨μ, hle, hμ, hrec⟩ :=
+      (infra_69_recursion_tail P hσ).2 (max κ (Order.succ σ))
+    exact ⟨μ, (le_max_left _ _).trans hle, ⟨⟨hμ, hrec⟩, (le_max_right _ _).trans hle⟩⟩
+  refine ⟨T, hT, fun μ hμ A p q hνp hνq hpσ hqσ hpμ hqμ =>
+    ⟨infra_612_exists_product P σ hσ (Tail.mem hT hμ) hμ.1 hμ.2 p q hνp hνq hpσ hqσ hpμ hqμ,
+      fun x ex y₁ y₂ ey₁ ey₂ seq joint₁ joint₂ e₁ e₂ hν₁ hν₂ hνj₁ hνj₂ hτ hτμ hκ hanchor
+          hJ₁ hJ₂ =>
+        infra_612_product_unique P σ hσ (Tail.mem hT hμ) hμ.1 hμ.2 p q hpσ hqσ x ex y₁ y₂
+          ey₁ ey₂ hν₁ hν₂ seq hτ hτμ hκ hanchor joint₁ joint₂ e₁ e₂ hJ₁ hJ₂ hνj₁ hνj₂⟩⟩
 
 /-- **Proposition 6.13** (Local character and continuity). A type over the union of a chain,
 of length below the cofinality of the chain, is free from some stage. -/

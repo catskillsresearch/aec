@@ -30,9 +30,9 @@ def TupleOver.join (x : TupleOver K S W hμ A) (y : TupleOver K S W x.hν x.host
 realization of `p` followed by a free lift of `q`. -/
 def IsProduct (p q joint : TupleOver K S W hμ A) (e : p.idx ⊕ q.idx ≃ joint.idx) : Prop :=
   ∃ (x : TupleOver K S W hμ A) (ex : p.idx ≃ x.idx),
-    SameGaloisType p x ex (Equiv.refl x.idx) ∧
+    SameGaloisType p x ex (Equiv.refl x.idx) ∧ x.ν = μ ∧
     ∃ (y : TupleOver K S W x.hν x.host) (ey : q.idx ≃ y.idx),
-      IsFreeLift q y x.incl x.incl_arrow ey ∧
+      IsFreeLift q y x.incl x.incl_arrow ey ∧ y.ν = μ ∧ joint.ν = μ ∧
       SameGaloisType joint (x.join y)
         (e.symm.trans (Equiv.sumCongr ex ey)) (Equiv.refl (x.idx ⊕ y.idx))
 
