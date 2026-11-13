@@ -18,6 +18,7 @@ public import AEC.Section6.TestCardinal
 public import AEC.Section6.StationaryFreeExtension
 public import AEC.Section6.AverageDescent
 public import AEC.Section6.BoundedProducts
+public import AEC.Section6.LocalCharacter
 
 @[expose] public section
 
@@ -596,19 +597,52 @@ theorem proposition_6_12 {K : AbstractElementaryClass.{u}}
         infra_612_product_unique P σ hσ (Tail.mem hT hμ) hμ.1 hμ.2 p q hpσ hqσ x ex y₁ y₂
           ey₁ ey₂ hν₁ hν₂ seq hτ hτμ hκ hanchor joint₁ joint₂ e₁ e₂ hJ₁ hJ₂ hνj₁ hνj₂⟩⟩
 
-/-- **Proposition 6.13** (Local character and continuity). A type over the union of a chain,
-of length below the cofinality of the chain, is free from some stage. -/
-theorem proposition_6_13 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
-    (W : WorkingScheme K S) :
-    ∃ T, ∃ hT : Tail W.eligible T,
-      ∀ μ (hμ : μ ∈ T) (A : W.Object μ (Tail.mem hT hμ))
-        (p : TupleOver K S W (Tail.mem hT hμ) A),
-        #p.idx < μ →
-        ∃ (ν : Cardinal.{u}) (hν : ν ∈ T) (A₀ : W.Object ν (Tail.mem hT hν))
-          (f : SystemArrow K S (W.asSystem _ A₀) (W.asSystem _ A))
-          (hf : W.permitted (X := A₀) (Y := A) f),
-          ν ≤ μ ∧ IsFreeFrom f hf p := by
-  sorry
+/-- **Proposition 6.13** (Local character and continuity). At a recursion-closed level, a
+same-level chain `(A_i : i < δ)` with union `A` has local character for tuples shorter than
+`cf(δ)`: the type over `A` is free from some stage. If every stage restriction is free from a
+fixed base `X ≤ A_0`, the union type is free from `X`.
+
+Same packaging as Theorem 6.10. The chain is `SameLevelChain` (joint cover, not
+`HasChainUnions`). The proof is `infra_613_local` (trap a Lemma 6.9 code in one stage, then
+`infra_611_isFreeFrom`) and `infra_613_continuity` (`infra_613_freeFrom_trans` along the
+cocone). Mixed levels and Section 7 `SatisfiesContinuity` stay deferred. -/
+theorem proposition_6_13 {K : AbstractElementaryClass.{u}}
+    (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ) :
+    ∃ T, ∃ hT : Tail P.eligible T,
+      ∀ μ (hμ : μ ∈ T) (C : SameLevelChain P (Tail.mem hT hμ))
+        (p : TupleOver K oneVertexShape P.scheme (Tail.mem hT hμ) C.unionObj),
+        p.ν = μ → #p.idx ≤ σ → #p.idx < C.δ.cof →
+        (∃ (i : Ordinal.{u}) (hi : i < C.δ),
+          IsFreeFrom (C.toUnion i hi) (C.toUnion_arrow i hi) p) ∧
+        (∀ (X : P.scheme.Object μ (Tail.mem hT hμ))
+          (g : SystemArrow K oneVertexShape
+            (P.scheme.asSystem _ X)
+            (P.scheme.asSystem _ (C.obj 0 C.hlim.1)))
+          (hg : P.scheme.permitted (X := X) (Y := C.obj 0 C.hlim.1) g),
+          (∀ (i : Ordinal.{u}) (hi : i < C.δ),
+            IsFreeFrom
+              (SystemArrow.comp g
+                (C.le C.hlim.1 hi (bot_le : (0 : Ordinal.{u}) ≤ i)))
+              (P.scheme.comp g
+                (C.le C.hlim.1 hi (bot_le : (0 : Ordinal.{u}) ≤ i)) hg
+                (C.le_arrow C.hlim.1 hi (bot_le : (0 : Ordinal.{u}) ≤ i)))
+              (p.restrict (C.toUnion i hi) (C.toUnion_arrow i hi))) →
+          IsFreeFrom
+            (SystemArrow.comp g (C.toUnion 0 C.hlim.1))
+            (P.scheme.comp g (C.toUnion 0 C.hlim.1) hg (C.toUnion_arrow 0 C.hlim.1))
+            p) := by
+  let T : Set Cardinal.{u} :=
+    {μ | μ ∈ recursionClosedLevels P σ ∧ Order.succ σ ≤ μ}
+  have hT : Tail P.eligible T := by
+    refine ⟨fun μ hμ => hμ.1.1, fun κ => ?_⟩
+    obtain ⟨μ, hle, hμ, hrec⟩ :=
+      (infra_69_recursion_tail P hσ).2 (max κ (Order.succ σ))
+    exact ⟨μ, (le_max_left _ _).trans hle, ⟨⟨hμ, hrec⟩, (le_max_right _ _).trans hle⟩⟩
+  refine ⟨T, hT, fun μ hμ C p hνμ hidx hcof =>
+    ⟨infra_613_local P σ hσ (Tail.mem hT hμ) hμ.1 hμ.2 C p hνμ hidx hcof,
+      fun X g hg hAll =>
+        infra_613_continuity P σ hσ (Tail.mem hT hμ) hμ.1 hμ.2 C p hνμ hidx hcof
+          X g hg hAll⟩⟩
 
 /-- **Lemma 6.14** (Closure of a bounded support set). A bounded colored set of positions
 outside a convex strip can be enlarged to a still bounded set that realizes every

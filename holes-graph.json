@@ -1,13 +1,13 @@
 {
   "updated": "2026-11-12",
-  "sorryCount": 55,
+  "sorryCount": 54,
   "legend": {
     "open": "No unfinished required proof-deps \u2014 try next",
     "blocked": "Waiting on incomplete required proof-deps",
     "done": "Proved (no sorry)"
   },
   "notes": [
-    "proposition_6_12 done for same-level SingleModelData: existence of IsProduct, and independence along one realization when the free lifts are anchored to one code. Deferred: symmetry, IsFiniteProduct, base change, mixed levels, untied IsFreeLift stationarity (same_head stays demoted). Prop 6.13+ stays blocked. No new open tip. Map: AEC/Section6/Proposition_6.12.md.",
+    "proposition_6_13 done (same-level local character and continuity). Prop 6.15+ stays blocked. Deferred: mixed levels, SatisfiesContinuity. Map: AEC/Section6/Proposition_6.13.md.",
     "Edge B\u2192A means the English proof of A requires B (or a required Lean infra subgoal).",
     "Blue = done. Green = open. Grey = blocked. No separate failed status unless a counterexample refutes the program.",
     "lemma_6_14 is independent of Prop 6.13 (false paper-number edge removed); it feeds lemma_12_6."
@@ -492,12 +492,22 @@
       "detail": "Done for same-level SingleModelData. Existence via stationary_free_extension_exists (realize p by itself, freely lift q). Independence (infra_612_product_unique): two products along one realization of p have the same Galois type when both free lifts of q are majority values of one code on a common parameter list. Deferred: symmetry, IsFiniteProduct, base change (p\u2297q)^B = p_B \u2297 q^B, mixed levels, and stationarity for an untied IsFreeLift."
     },
     {
+      "id": "infra_613_freeFrom_trans",
+      "label": "Infra: IsFreeFrom transitivity",
+      "section": 6,
+      "file": "AEC/Section6/LocalCharacter.lean",
+      "status": "done",
+      "blocker": null,
+      "detail": "Same-level IsFreeFrom along X\u2192A and A\u2192B yields IsFreeFrom along X\u2192B. The witness is the base leg's code. infra_613_strong_trans is the type-joint form (majority_unique + Lemma 6.11)."
+    },
+    {
       "id": "proposition_6_13",
       "label": "Prop 6.13",
       "section": 6,
       "file": "AEC/Section6/Results.lean",
-      "status": "blocked",
-      "blocker": null
+      "status": "done",
+      "blocker": null,
+      "detail": "Done for same-level SingleModelData. SameLevelChain (joint cover, not HasChainUnions). Local character: infra_613_trap_in_stage then infra_611_isFreeFrom. Continuity: infra_613_freeFrom_trans along the cocone. Deferred: mixed levels, SatisfiesContinuity / \u00a77. Prop 6.15+ stays blocked."
     },
     {
       "id": "proposition_6_15",
@@ -505,7 +515,8 @@
       "section": 6,
       "file": "AEC/Section6/Results.lean",
       "status": "blocked",
-      "blocker": null
+      "blocker": null,
+      "detail": "Stays blocked. Bare WorkingScheme / HasChainUnions packaging; not opened by Prop 6.13."
     },
     {
       "id": "proposition_6_3",
@@ -1858,9 +1869,22 @@
       "kind": "hard"
     },
     {
+      "from": "lemma_6_11",
+      "to": "proposition_6_13",
+      "kind": "hard",
+      "note": "Local character traps a Lemma 6.9 code in one stage and calls infra_611_isFreeFrom."
+    },
+    {
+      "from": "infra_613_freeFrom_trans",
+      "to": "proposition_6_13",
+      "kind": "hard",
+      "note": "Continuity is same-level IsFreeFrom transitivity along the cocone."
+    },
+    {
       "from": "proposition_6_12",
       "to": "proposition_6_13",
-      "kind": "hard"
+      "kind": "soft",
+      "note": "Paper-number edge. The proof of 6.13 uses Lemma 6.11 and freeness transitivity, not Prop 6.12."
     },
     {
       "from": "proposition_6_13",
@@ -2999,6 +3023,6 @@
       "note": "root thin-wraps saturate"
     }
   ],
-  "doneCount": 121,
-  "meta": "proposition_6_12 done (same-level existence + anchored independence). Prop 6.13+ blocked. No new open tip. Deferred: symmetry, finite products, base change, mixed levels, untied IsFreeLift. Map: AEC/Section6/Proposition_6.12.md."
+  "doneCount": 139,
+  "meta": "Prop 6.13 done (same-level local character / continuity). Prop 6.15+ blocked. Deferred: mixed levels, SatisfiesContinuity. Map: AEC/Section6/Proposition_6.13.md."
 }

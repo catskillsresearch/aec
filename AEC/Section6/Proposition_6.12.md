@@ -6,7 +6,7 @@
 
 **Deferred:** symmetry (`Equiv.sumComm`), `IsFiniteProduct`, base change `(p ⊗ q)^B = p_B ⊗ q^B`, mixed eligible levels, and stationarity for an untied `IsFreeLift`. The weak majority witness need not be the type joint (`same_head` stays demoted), so a bare `IsProduct` does not by itself fix the cross-diagram.
 
-Downstream Prop 6.13+ stays blocked.
+**Next:** [`proposition_6_13`](Proposition_6.13.md) is done. Proposition 6.15 and later stay blocked.
 
 **[Results.lean](Results.lean)**
 
