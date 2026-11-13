@@ -19,6 +19,7 @@ public import AEC.Section6.StationaryFreeExtension
 public import AEC.Section6.AverageDescent
 public import AEC.Section6.BoundedProducts
 public import AEC.Section6.LocalCharacter
+public import AEC.Section6.FreshStrip
 
 @[expose] public section
 
@@ -644,36 +645,55 @@ theorem proposition_6_13 {K : AbstractElementaryClass.{u}}
         infra_613_continuity P σ hσ (Tail.mem hT hμ) hμ.1 hμ.2 C p hνμ hidx hcof
           X g hg hAll⟩⟩
 
-/-- **Lemma 6.14** (Closure of a bounded support set). A bounded colored set of positions
-outside a convex strip can be enlarged to a still bounded set that realizes every
-order/equality/color pattern of length at most `χ` over its subsets of size at most `χ`. -/
+/-- **Lemma 6.14** (Closure of a bounded support set). A bounded colored set of positions,
+together with a fixed support enumeration `T★` of size at most `λ`, can be enlarged to a set
+of size at most `2^λ` that realizes every order/equality/color pattern of a query indexed by
+at most `χ` positions, over every parameter list of size at most `χ` and over `T★`. A terminal
+strip needs no side-of-`V` coloring: pass a constant `color`. -/
 theorem lemma_6_14 {J : Type u} [LinearOrder J] (color : J → ℕ)
     (χ lam : Cardinal.{u}) (hχ : aleph0 ≤ χ) (hlam : χ ≤ lam) :
-    ∀ (S0 : Set J), #S0 ≤ lam →
-      ∃ S : Set J, S0 ⊆ S ∧ #S ≤ (2 : Cardinal.{u}) ^ lam ∧
+    ∀ {τ : Type u} (Tstar : τ → J) (_hτ : #τ ≤ lam) (S0 : Set J), #S0 ≤ lam →
+      ∃ S : Set J, S0 ⊆ S ∧ (∀ t, Tstar t ∈ S) ∧ #S ≤ (2 : Cardinal.{u}) ^ lam ∧
         ∀ {ι : Type u} (hι : #ι ≤ χ) (p : ι → J), (∀ i, p i ∈ S) →
-          ∀ {n : ℕ} (q : Fin n → J), n ≤ χ →
-            ∃ q' : Fin n → J, (∀ i, q' i ∈ S) ∧
-              SameOrderDiagram (Sum.elim p q) (Sum.elim p q') ∧
+          ∀ {ρ : Type u} (hρ : #ρ ≤ χ) (q : ρ → J),
+            ∃ q' : ρ → J, (∀ i, q' i ∈ S) ∧
+              SameOrderDiagram (Sum.elim (Sum.elim p Tstar) q)
+                (Sum.elim (Sum.elim p Tstar) q') ∧
               ∀ i, color (q i) = color (q' i) :=
   lemma_6_14_proof color χ lam hχ hlam
 
-/-- **Proposition 6.15** (Universality of a fresh strip). Every same-level extension of a
-presented object `A` embeds into the object obtained by inserting a fresh convex strip. -/
-theorem proposition_6_15 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
-    (W : WorkingScheme K S) (hpack : HasChainUnions W) (hmix : HasMixedDownward W)
-    (hsat : IsSaturated W) (hexh : SatisfiesExhaustion W) :
-    ∃ T, ∃ hT : Tail W.eligible T,
-      ∀ μ (hμ : μ ∈ T) (A : W.Object μ (Tail.mem hT hμ)),
-        ∃ Ap : W.Object μ (Tail.mem hT hμ),
-          ∃ incl : SystemArrow K S (W.asSystem _ A) (W.asSystem _ Ap),
-            W.permitted (X := A) (Y := Ap) incl ∧
-            ∀ (B : W.Object μ (Tail.mem hT hμ))
-              (f : SystemArrow K S (W.asSystem _ A) (W.asSystem _ B)),
-              W.permitted (X := A) (Y := B) f →
-              ∃ g : SystemArrow K S (W.asSystem _ B) (W.asSystem _ Ap),
-                W.permitted (X := B) (Y := Ap) g ∧ SystemArrow.comp f g = incl := by
-  sorry
+/-- **Proposition 6.15** (Universality of a fresh strip). At every level closed under the
+bounds below, a well-ordered presentation `E(J)` of size `μ` extends by a terminal fresh strip
+`H` of size `μ`, split into countably many disjoint convex fibers of size `μ`, so that every
+same-level strong extension of `E(J)` embeds strongly into `E(J ⊕ₗ H)` over `E(J)`.
+
+The presentation is `G = P.E` and the strip is terminal. A general presentation `G ≠ F` and
+two-sided strips are deferred; they are what Corollary 6.16 needs. No chain-union hypothesis
+is used. -/
+theorem proposition_6_15 {K : AbstractElementaryClass.{u}} (P : SingleModelData K) :
+    ∃ T, ∃ hT : Tail P.eligible T,
+      ∀ μ (hμ : μ ∈ T) (J : Type u) [LinearOrder J] [WellFoundedLT J] [Nonempty J],
+        #J = μ →
+        ∃ (H : Type u) (_ : LinearOrder H) (_ : WellFoundedLT H) (_ : Nonempty H)
+          (emb : J ↪o (J ⊕ₗ H)),
+          #H = μ ∧
+          (∃ V : ℕ → Set (J ⊕ₗ H),
+            (∀ n, IsConvexRegion (V n) ∧ #(V n) = μ) ∧
+            Pairwise (Function.onFun Disjoint V) ∧
+            (∀ n, V n ⊆ Set.range Sum.inr)) ∧
+          ∀ (B : Model K.τ)
+            (f : Language.Embedding K.τ (P.E.obj J).carrier B.carrier),
+            K.Mem B → K.Strong f → Model.card B = μ →
+            ∃ g : Language.Embedding K.τ B.carrier (P.E.obj (J ⊕ₗ H)).carrier,
+              K.Strong g ∧ ∀ a, g (f a) = P.E.map emb a := by
+  exact ⟨infra_615_closed P, infra_615_tail P, fun μ hμ J _ _ _ hJ => by
+    have hμinf : ℵ₀ ≤ μ := P.aleph0_le (Tail.mem (infra_615_tail P) hμ)
+    letI : LinearOrder (ℕ ×ₗ lvlOrder μ) := Prod.Lex.instLinearOrder ℕ (lvlOrder μ)
+    exact ⟨ℕ ×ₗ lvlOrder μ, inferInstance, inferInstance, inferInstance,
+      sumLexEmbedLeftIncl J (ℕ ×ₗ lvlOrder μ), freshOrder_card hμinf,
+      ⟨freshFiber μ, fun n => ⟨freshFiber_convex μ n, freshFiber_card hμinf n⟩,
+        freshFiber_disjoint μ, freshFiber_subset_inr μ⟩,
+      fun B f hB hf hc => infra_615_exhaust_embed P hμ hJ f hB hf hc⟩⟩
 
 /-- **Corollary 6.16** (Approximate retractions). For same-level `A ≤ B` there is a family of
 arrows `B → A`, indexed by the level, such that each element of `A` is moved only finitely

@@ -131,6 +131,7 @@ public import AEC.Section6.StationaryFreeExtension
 public import AEC.Section6.AverageDescent
 public import AEC.Section6.BoundedProducts
 public import AEC.Section6.LocalCharacter
+public import AEC.Section6.FreshStrip
 public import AEC.Section7.AllDominated
 public import AEC.Section7.ContinuityCondition
 public import AEC.Section7.ProductIndependent

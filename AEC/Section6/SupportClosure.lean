@@ -15,253 +15,264 @@ section
 
 universe u
 
-open Cardinal Classical Set
+open Cardinal Classical Set Function
 
 attribute [local instance] Classical.propDecidable
 
 namespace Section6SupportClosure
 
 abbrev EmptyU : Type u := PEmpty.{u + 1}
-abbrev FinU (n : ℕ) : Type u := ULift.{u, 0} (Fin n)
 abbrev NatU : Type u := ULift.{u, 0} ℕ
 abbrev BoolU : Type u := ULift.{u, 0} Bool
 
-/-- Pattern codes over `ι`, with finite indices lifted to `Type u`. -/
-abbrev PatternCode (ι : Type u) (n : ℕ) : Type u :=
-  (FinU.{u} n → FinU.{u} n → BoolU.{u}) ×
-  (FinU.{u} n → FinU.{u} n → BoolU.{u}) ×
-  (FinU.{u} n → ι → BoolU.{u}) ×
-  (FinU.{u} n → ι → BoolU.{u}) ×
-  (FinU.{u} n → NatU.{u})
+/-- A canonical index of cardinality `χ`. -/
+abbrev ChiType (χ : Cardinal.{u}) : Type u := χ.ord.ToType
+
+lemma mk_chiType (χ : Cardinal.{u}) : #(ChiType χ) = χ := mk_ord_toType _
+
+/-- Order, equality, and color pattern of a `χ`-indexed query over a parameter list and a
+fixed support list `T★`. The query index is `ChiType χ` in the closure; smaller queries
+embed into it. -/
+structure PatternCode (ρ ι τ : Type u) : Type u where
+  eqQ : ρ → ρ → BoolU
+  ltQ : ρ → ρ → BoolU
+  eqR : ρ → ι → BoolU
+  ltR : ρ → ι → BoolU
+  eqT : ρ → τ → BoolU
+  ltT : ρ → τ → BoolU
+  col : ρ → NatU
 
 noncomputable def patternCode {J : Type u} [LinearOrder J] (color : J → ℕ)
-    {ι : Type u} {n : ℕ} (r : ι → J) (q : Fin n → J) : PatternCode ι n :=
-  (fun i j => ULift.up (decide (q i.down = q j.down)),
-   fun i j => ULift.up (decide (q i.down < q j.down)),
-   fun i k => ULift.up (decide (q i.down = r k)),
-   fun i k => ULift.up (decide (q i.down < r k)),
-   fun i => ULift.up (color (q i.down)))
+    {ρ ι τ : Type u} (Tstar : τ → J) (r : ι → J) (q : ρ → J) : PatternCode ρ ι τ where
+  eqQ := fun i j => ULift.up (decide (q i = q j))
+  ltQ := fun i j => ULift.up (decide (q i < q j))
+  eqR := fun i k => ULift.up (decide (q i = r k))
+  ltR := fun i k => ULift.up (decide (q i < r k))
+  eqT := fun i t => ULift.up (decide (q i = Tstar t))
+  ltT := fun i t => ULift.up (decide (q i < Tstar t))
+  col := fun i => ULift.up (color (q i))
 
-lemma patternCode_eq_iff {J : Type u} [LinearOrder J] (color : J → ℕ)
-    {ι : Type u} {n : ℕ} (r : ι → J) (q q' : Fin n → J) :
-    patternCode color r q = patternCode color r q' ↔
-      (∀ i j : Fin n, q i = q j ↔ q' i = q' j) ∧
-      (∀ i j : Fin n, q i < q j ↔ q' i < q' j) ∧
-      (∀ i : Fin n, ∀ k, q i = r k ↔ q' i = r k) ∧
-      (∀ i : Fin n, ∀ k, q i < r k ↔ q' i < r k) ∧
-      (∀ i : Fin n, color (q i) = color (q' i)) := by
+lemma patternCode_components {J : Type u} [LinearOrder J] (color : J → ℕ)
+    {ρ ι τ : Type u} (Tstar : τ → J) (r : ι → J) (q q' : ρ → J)
+    (h : patternCode color Tstar r q = patternCode color Tstar r q') :
+    (∀ i j, q i = q j ↔ q' i = q' j) ∧
+    (∀ i j, q i < q j ↔ q' i < q' j) ∧
+    (∀ i k, q i = r k ↔ q' i = r k) ∧
+    (∀ i k, q i < r k ↔ q' i < r k) ∧
+    (∀ i t, q i = Tstar t ↔ q' i = Tstar t) ∧
+    (∀ i t, q i < Tstar t ↔ q' i < Tstar t) ∧
+    (∀ i, color (q i) = color (q' i)) := by
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · intro i j
+    have := congr_fun (congr_fun (congrArg PatternCode.eqQ h) i) j
+    simpa [patternCode, Bool.decide_iff] using this
+  · intro i j
+    have := congr_fun (congr_fun (congrArg PatternCode.ltQ h) i) j
+    simpa [patternCode, Bool.decide_iff] using this
+  · intro i k
+    have := congr_fun (congr_fun (congrArg PatternCode.eqR h) i) k
+    simpa [patternCode, Bool.decide_iff] using this
+  · intro i k
+    have := congr_fun (congr_fun (congrArg PatternCode.ltR h) i) k
+    simpa [patternCode, Bool.decide_iff] using this
+  · intro i t
+    have := congr_fun (congr_fun (congrArg PatternCode.eqT h) i) t
+    simpa [patternCode, Bool.decide_iff] using this
+  · intro i t
+    have := congr_fun (congr_fun (congrArg PatternCode.ltT h) i) t
+    simpa [patternCode, Bool.decide_iff] using this
+  · intro i
+    exact ULift.up_injective (congr_fun (congrArg PatternCode.col h) i)
+
+lemma sameOrderDiagram_rfl {ι α : Type u} [LinearOrder α] (xs : ι → α) :
+    SameOrderDiagram xs xs :=
+  ⟨fun _ _ => Iff.rfl, fun _ _ => Iff.rfl⟩
+
+/-- Comparing a query with a fixed base list in both directions, from the stored
+`q = base` and `q < base` bits. The base list is the same on both sides. -/
+lemma lt_base_of_pattern {J : Type u} [LinearOrder J] {ρ β : Type u}
+    (base : β → J) (q q' : ρ → J)
+    (heq : ∀ i k, q i = base k ↔ q' i = base k)
+    (hlt : ∀ i k, q i < base k ↔ q' i < base k)
+    (k : β) (i : ρ) : base k < q i ↔ base k < q' i := by
   constructor
-  · intro h
-    have h1 := congr_arg Prod.fst h
-    have h2 := congr_arg Prod.fst (congr_arg Prod.snd h)
-    have h3 := congr_arg Prod.fst (congr_arg Prod.snd (congr_arg Prod.snd h))
-    have h4 := congr_arg Prod.fst (congr_arg Prod.snd (congr_arg Prod.snd (congr_arg Prod.snd h)))
-    have h5 := congr_arg Prod.snd (congr_arg Prod.snd (congr_arg Prod.snd (congr_arg Prod.snd h)))
-    refine ⟨?_, ?_, ?_, ?_, ?_⟩
-    · intro i j
-      have := congr_fun (congr_fun h1 (ULift.up i)) (ULift.up j)
-      simpa [patternCode, Bool.decide_iff] using this
-    · intro i j
-      have := congr_fun (congr_fun h2 (ULift.up i)) (ULift.up j)
-      simpa [patternCode, Bool.decide_iff] using this
-    · intro i k
-      have := congr_fun (congr_fun h3 (ULift.up i)) k
-      simpa [patternCode, Bool.decide_iff] using this
-    · intro i k
-      have := congr_fun (congr_fun h4 (ULift.up i)) k
-      simpa [patternCode, Bool.decide_iff] using this
-    · intro i
-      simpa [patternCode] using congr_fun h5 (ULift.up i)
-  · intro ⟨heq, hlt, heqp, hltp, hcol⟩
-    refine Prod.ext ?_ (Prod.ext ?_ (Prod.ext ?_ (Prod.ext ?_ ?_)))
-    · ext i j; cases i; cases j; simp [patternCode, heq]
-    · ext i j; cases i; cases j; simp [patternCode, hlt]
-    · ext i k; cases i; simp [patternCode, heqp]
-    · ext i k; cases i; simp [patternCode, hltp]
-    · ext i; cases i; simp [patternCode, hcol]
+  · intro hij
+    rcases lt_trichotomy (base k) (q' i) with hlt' | heq' | hgt
+    · exact hlt'
+    · exact (hij.ne ((heq i k).2 heq'.symm).symm).elim
+    · exact (lt_asymm hij ((hlt i k).2 hgt)).elim
+  · intro hij
+    rcases lt_trichotomy (base k) (q i) with hlt' | heq' | hgt
+    · exact hlt'
+    · exact (hij.ne ((heq i k).1 heq'.symm).symm).elim
+    · exact (lt_asymm hij ((hlt i k).1 hgt)).elim
 
 lemma sameDiagram_of_patternCode {J : Type u} [LinearOrder J] (color : J → ℕ)
-    {ι : Type u} {n : ℕ} (r : ι → J) (q q' : Fin n → J)
-    (h : patternCode color r q = patternCode color r q') :
-    SameOrderDiagram (Sum.elim r q) (Sum.elim r q') ∧
+    {ρ ι τ : Type u} (Tstar : τ → J) (r : ι → J) (q q' : ρ → J)
+    (h : patternCode color Tstar r q = patternCode color Tstar r q') :
+    SameOrderDiagram (Sum.elim (Sum.elim r Tstar) q) (Sum.elim (Sum.elim r Tstar) q') ∧
       ∀ i, color (q i) = color (q' i) := by
-  obtain ⟨heqN, hltN, heqP, hltP, hcol⟩ := (patternCode_eq_iff color r q q').1 h
+  obtain ⟨heqQ, hltQ, heqR, hltR, heqT, hltT, hcol⟩ :=
+    patternCode_components color Tstar r q q' h
   refine ⟨⟨?eq, ?lt⟩, hcol⟩
   · intro a b
-    match a, b with
-    | .inl i, .inl j => simp [Sum.elim]
-    | .inl i, .inr j =>
-        simp only [Sum.elim]
-        exact ⟨fun hij => ((heqP j i).1 hij.symm).symm,
-          fun hij => ((heqP j i).2 hij.symm).symm⟩
-    | .inr i, .inl j => simpa [Sum.elim] using heqP i j
-    | .inr i, .inr j => simpa [Sum.elim] using heqN i j
+    rcases a with (⟨i | t⟩ | i) <;> rcases b with (⟨j | t'⟩ | j)
+    · simp [Sum.elim]
+    · simp [Sum.elim]
+    · simp only [Sum.elim]
+      exact ⟨fun h => ((heqR j i).1 h.symm).symm, fun h => ((heqR j i).2 h.symm).symm⟩
+    · simp [Sum.elim]
+    · simp [Sum.elim]
+    · simp only [Sum.elim]
+      exact ⟨fun h => ((heqT j t).1 h.symm).symm, fun h => ((heqT j t).2 h.symm).symm⟩
+    · simpa [Sum.elim] using heqR i j
+    · simpa [Sum.elim] using heqT i t'
+    · simpa [Sum.elim] using heqQ i j
   · intro a b
-    match a, b with
-    | .inl i, .inl j => simp [Sum.elim]
-    | .inl i, .inr j =>
-        simp only [Sum.elim]
-        constructor
-        · intro hij
-          rcases lt_trichotomy (r i) (q' j) with hlt | heq | hgt
-          · exact hlt
-          · exact (hij.ne ((heqP j i).2 heq.symm).symm).elim
-          · exact (lt_asymm hij ((hltP j i).2 hgt)).elim
-        · intro hij
-          rcases lt_trichotomy (r i) (q j) with hlt | heq | hgt
-          · exact hlt
-          · exact (hij.ne ((heqP j i).1 heq.symm).symm).elim
-          · exact (lt_asymm hij ((hltP j i).1 hgt)).elim
-    | .inr i, .inl j => simpa [Sum.elim] using hltP i j
-    | .inr i, .inr j => simpa [Sum.elim] using hltN i j
+    rcases a with (⟨i | t⟩ | i) <;> rcases b with (⟨j | t'⟩ | j)
+    · simp [Sum.elim]
+    · simp [Sum.elim]
+    · simpa [Sum.elim] using lt_base_of_pattern r q q' heqR hltR i j
+    · simp [Sum.elim]
+    · simp [Sum.elim]
+    · simpa [Sum.elim] using lt_base_of_pattern Tstar q q' heqT hltT t j
+    · simpa [Sum.elim] using hltR i j
+    · simpa [Sum.elim] using hltT i t'
+    · simpa [Sum.elim] using hltQ i j
 
-lemma sameDiagram_comp_embed {J : Type u} [LinearOrder J]
-    {ι ρ : Type u} {n : ℕ} (e : ι ↪ ρ) (r : ρ → J) (q q' : Fin n → J)
-    (h : SameOrderDiagram (Sum.elim r q) (Sum.elim r q')) :
-    SameOrderDiagram (Sum.elim (r ∘ e) q) (Sum.elim (r ∘ e) q') := by
+lemma sameDiagram_restrict_param {J : Type u} [LinearOrder J]
+    {ι ι' τ ρ : Type u} (e : ι ↪ ι') (r : ι' → J) (t : τ → J) (q q' : ρ → J)
+    (h : SameOrderDiagram (Sum.elim (Sum.elim r t) q) (Sum.elim (Sum.elim r t) q')) :
+    SameOrderDiagram (Sum.elim (Sum.elim (r ∘ e) t) q)
+      (Sum.elim (Sum.elim (r ∘ e) t) q') := by
   refine ⟨?_, ?_⟩
   · intro a b
-    match a, b with
-    | .inl i, .inl j => simpa [Sum.elim, Function.comp] using h.1 (Sum.inl (e i)) (Sum.inl (e j))
-    | .inl i, .inr j => simpa [Sum.elim, Function.comp] using h.1 (Sum.inl (e i)) (Sum.inr j)
-    | .inr i, .inl j => simpa [Sum.elim, Function.comp] using h.1 (Sum.inr i) (Sum.inl (e j))
-    | .inr i, .inr j => simpa [Sum.elim, Function.comp] using h.1 (Sum.inr i) (Sum.inr j)
+    rcases a with (⟨i | t₁⟩ | i) <;> rcases b with (⟨j | t₂⟩ | j)
+    · simpa [Sum.elim, Function.comp] using h.1 (Sum.inl (Sum.inl (e i))) (Sum.inl (Sum.inl (e j)))
+    · simpa [Sum.elim, Function.comp] using h.1 (Sum.inl (Sum.inl (e i))) (Sum.inl (Sum.inr t₂))
+    · simpa [Sum.elim, Function.comp] using h.1 (Sum.inl (Sum.inl (e i))) (Sum.inr j)
+    · simpa [Sum.elim, Function.comp] using h.1 (Sum.inl (Sum.inr t₁)) (Sum.inl (Sum.inl (e j)))
+    · simpa [Sum.elim, Function.comp] using h.1 (Sum.inl (Sum.inr t₁)) (Sum.inl (Sum.inr t₂))
+    · simpa [Sum.elim, Function.comp] using h.1 (Sum.inl (Sum.inr t₁)) (Sum.inr j)
+    · simpa [Sum.elim, Function.comp] using h.1 (Sum.inr i) (Sum.inl (Sum.inl (e j)))
+    · simpa [Sum.elim, Function.comp] using h.1 (Sum.inr i) (Sum.inl (Sum.inr t₂))
+    · simpa [Sum.elim, Function.comp] using h.1 (Sum.inr i) (Sum.inr j)
   · intro a b
-    match a, b with
-    | .inl i, .inl j => simpa [Sum.elim, Function.comp] using h.2 (Sum.inl (e i)) (Sum.inl (e j))
-    | .inl i, .inr j => simpa [Sum.elim, Function.comp] using h.2 (Sum.inl (e i)) (Sum.inr j)
-    | .inr i, .inl j => simpa [Sum.elim, Function.comp] using h.2 (Sum.inr i) (Sum.inl (e j))
-    | .inr i, .inr j => simpa [Sum.elim, Function.comp] using h.2 (Sum.inr i) (Sum.inr j)
+    rcases a with (⟨i | t₁⟩ | i) <;> rcases b with (⟨j | t₂⟩ | j)
+    · simpa [Sum.elim, Function.comp] using h.2 (Sum.inl (Sum.inl (e i))) (Sum.inl (Sum.inl (e j)))
+    · simpa [Sum.elim, Function.comp] using h.2 (Sum.inl (Sum.inl (e i))) (Sum.inl (Sum.inr t₂))
+    · simpa [Sum.elim, Function.comp] using h.2 (Sum.inl (Sum.inl (e i))) (Sum.inr j)
+    · simpa [Sum.elim, Function.comp] using h.2 (Sum.inl (Sum.inr t₁)) (Sum.inl (Sum.inl (e j)))
+    · simpa [Sum.elim, Function.comp] using h.2 (Sum.inl (Sum.inr t₁)) (Sum.inl (Sum.inr t₂))
+    · simpa [Sum.elim, Function.comp] using h.2 (Sum.inl (Sum.inr t₁)) (Sum.inr j)
+    · simpa [Sum.elim, Function.comp] using h.2 (Sum.inr i) (Sum.inl (Sum.inl (e j)))
+    · simpa [Sum.elim, Function.comp] using h.2 (Sum.inr i) (Sum.inl (Sum.inr t₂))
+    · simpa [Sum.elim, Function.comp] using h.2 (Sum.inr i) (Sum.inr j)
 
-lemma sameDiagram_of_empty_params {J : Type u} [LinearOrder J]
-    {ι : Type u} [IsEmpty ι] {n : ℕ} (_p : ι → J) (q q' : Fin n → J)
-    (h : SameOrderDiagram (Sum.elim (fun e : EmptyU => e.elim) q)
-      (Sum.elim (fun e : EmptyU => e.elim) q')) :
-    SameOrderDiagram (Sum.elim _p q) (Sum.elim _p q') := by
+lemma sameDiagram_restrict_query {J : Type u} [LinearOrder J]
+    {ι ρ ρ' : Type u} (e : ρ ↪ ρ') (base : ι → J) (q q' : ρ' → J)
+    (h : SameOrderDiagram (Sum.elim base q) (Sum.elim base q')) :
+    SameOrderDiagram (Sum.elim base (q ∘ e)) (Sum.elim base (q' ∘ e)) := by
   refine ⟨?_, ?_⟩
   · intro a b
-    match a, b with
-    | .inl i, _ => exact isEmptyElim i
-    | .inr _, .inl j => exact isEmptyElim j
-    | .inr i, .inr j => exact h.1 (Sum.inr i) (Sum.inr j)
+    rcases a with i | i <;> rcases b with j | j
+    · exact h.1 (Sum.inl i) (Sum.inl j)
+    · exact h.1 (Sum.inl i) (Sum.inr (e j))
+    · exact h.1 (Sum.inr (e i)) (Sum.inl j)
+    · exact h.1 (Sum.inr (e i)) (Sum.inr (e j))
   · intro a b
-    match a, b with
-    | .inl i, _ => exact isEmptyElim i
-    | .inr _, .inl j => exact isEmptyElim j
-    | .inr i, .inr j => exact h.2 (Sum.inr i) (Sum.inr j)
+    rcases a with i | i <;> rcases b with j | j
+    · exact h.2 (Sum.inl i) (Sum.inl j)
+    · exact h.2 (Sum.inl i) (Sum.inr (e j))
+    · exact h.2 (Sum.inr (e i)) (Sum.inl j)
+    · exact h.2 (Sum.inr (e i)) (Sum.inr (e j))
+
+lemma sameDiagram_drop_empty {J : Type u} [LinearOrder J]
+    {ι τ ρ : Type u} [IsEmpty ι] (p : ι → J) (t : τ → J) (q q' : ρ → J)
+    (h : SameOrderDiagram (Sum.elim (Sum.elim p t) q) (Sum.elim (Sum.elim p t) q')) :
+    SameOrderDiagram (Sum.elim t q) (Sum.elim t q') := by
+  refine ⟨?_, ?_⟩
+  · intro a b
+    rcases a with t₁ | i <;> rcases b with t₂ | j
+    · exact h.1 (Sum.inl (Sum.inr t₁)) (Sum.inl (Sum.inr t₂))
+    · exact h.1 (Sum.inl (Sum.inr t₁)) (Sum.inr j)
+    · exact h.1 (Sum.inr i) (Sum.inl (Sum.inr t₂))
+    · exact h.1 (Sum.inr i) (Sum.inr j)
+  · intro a b
+    rcases a with t₁ | i <;> rcases b with t₂ | j
+    · exact h.2 (Sum.inl (Sum.inr t₁)) (Sum.inl (Sum.inr t₂))
+    · exact h.2 (Sum.inl (Sum.inr t₁)) (Sum.inr j)
+    · exact h.2 (Sum.inr i) (Sum.inl (Sum.inr t₂))
+    · exact h.2 (Sum.inr i) (Sum.inr j)
+
+lemma sameDiagram_empty_param {J : Type u} [LinearOrder J]
+    {ι τ ρ : Type u} [IsEmpty ι] (p : ι → J) (t : τ → J) (q q' : ρ → J)
+    (h : SameOrderDiagram (Sum.elim t q) (Sum.elim t q')) :
+    SameOrderDiagram (Sum.elim (Sum.elim p t) q) (Sum.elim (Sum.elim p t) q') := by
+  refine ⟨?_, ?_⟩
+  · intro a b
+    rcases a with (⟨i | t₁⟩ | i) <;> rcases b with (⟨j | t₂⟩ | j)
+    · exact isEmptyElim i
+    · exact isEmptyElim i
+    · exact isEmptyElim i
+    · exact isEmptyElim j
+    · exact h.1 (Sum.inl t₁) (Sum.inl t₂)
+    · exact h.1 (Sum.inl t₁) (Sum.inr j)
+    · exact isEmptyElim j
+    · exact h.1 (Sum.inr i) (Sum.inl t₂)
+    · exact h.1 (Sum.inr i) (Sum.inr j)
+  · intro a b
+    rcases a with (⟨i | t₁⟩ | i) <;> rcases b with (⟨j | t₂⟩ | j)
+    · exact isEmptyElim i
+    · exact isEmptyElim i
+    · exact isEmptyElim i
+    · exact isEmptyElim j
+    · exact h.2 (Sum.inl t₁) (Sum.inl t₂)
+    · exact h.2 (Sum.inl t₁) (Sum.inr j)
+    · exact isEmptyElim j
+    · exact h.2 (Sum.inr i) (Sum.inl t₂)
+    · exact h.2 (Sum.inr i) (Sum.inr j)
 
 noncomputable def witnessRange {J : Type u} [LinearOrder J] (color : J → ℕ)
-    {ι : Type u} {n : ℕ} (r : ι → J) (c : PatternCode ι n) : Set J :=
-  if h : ∃ q : Fin n → J, patternCode color r q = c then
+    {ρ ι τ : Type u} (Tstar : τ → J) (r : ι → J) (c : PatternCode ρ ι τ) : Set J :=
+  if h : ∃ q : ρ → J, patternCode color Tstar r q = c then
     Set.range (Classical.choose h)
   else
     ∅
 
 lemma exists_chosen_witness {J : Type u} [LinearOrder J] (color : J → ℕ)
-    {ι : Type u} {n : ℕ} (r : ι → J) (q : Fin n → J) :
-    ∃ q' : Fin n → J,
-      (∀ i, q' i ∈ witnessRange color r (patternCode color r q)) ∧
-      patternCode color r q' = patternCode color r q := by
-  let c := patternCode color r q
-  have hEx : ∃ q' : Fin n → J, patternCode color r q' = c := ⟨q, rfl⟩
+    {ρ ι τ : Type u} (Tstar : τ → J) (r : ι → J) (q : ρ → J) :
+    ∃ q' : ρ → J,
+      (∀ i, q' i ∈ witnessRange color Tstar r (patternCode color Tstar r q)) ∧
+      patternCode color Tstar r q' = patternCode color Tstar r q := by
+  let c := patternCode color Tstar r q
+  have hEx : ∃ q' : ρ → J, patternCode color Tstar r q' = c := ⟨q, rfl⟩
   refine ⟨Classical.choose hEx, fun i => ?_, Classical.choose_spec hEx⟩
-  change Classical.choose hEx i ∈ witnessRange color r c
+  change Classical.choose hEx i ∈ witnessRange color Tstar r c
   simp only [witnessRange, dite_eq_left hEx]
   exact ⟨i, rfl⟩
 
 lemma witnessRange_card_le {J : Type u} [LinearOrder J] (color : J → ℕ)
-    {ι : Type u} {n : ℕ} (r : ι → J) (c : PatternCode ι n) :
-    #(witnessRange color r c) ≤ aleph0 := by
+    {ι τ : Type u} (Tstar : τ → J) (r : ι → J) (χ : Cardinal.{u})
+    (c : PatternCode (ChiType χ) ι τ) :
+    #(witnessRange color Tstar r c) ≤ χ := by
   unfold witnessRange
   split_ifs with h
-  · let f : FinU.{u} n → J := fun i => Classical.choose h i.down
-    have hsub : Set.range (Classical.choose h) ⊆ Set.range f := by
-      intro x hx
-      obtain ⟨i, rfl⟩ := hx
-      exact ⟨ULift.up i, rfl⟩
-    refine (mk_le_mk_of_subset hsub).trans (mk_range_le.trans ?_)
-    rw [show #(FinU.{u} n) = lift.{u, 0} (#(Fin n)) by exact mk_uLift (Fin n),
-      mk_fin, lift_natCast]
-    exact natCast_le_aleph0
+  · exact mk_range_le.trans (le_of_eq (mk_chiType χ))
   · simp
-
-lemma mk_finU (n : ℕ) : #(FinU n) = (n : Cardinal.{u}) := by
-  rw [show #(FinU.{u} n) = lift.{u, 0} (#(Fin n)) by exact mk_uLift (Fin n)]
-  rw [mk_fin, lift_natCast]
-
-lemma mk_patternCode_le {ι : Type u} (n : ℕ) {lam : Cardinal.{u}}
-    (hι : #ι ≤ lam) (hlam : aleph0 ≤ lam) :
-    #(PatternCode ι n) ≤ (2 : Cardinal.{u}) ^ lam := by
-  let κ : Cardinal.{u} := (2 : Cardinal.{u}) ^ lam
-  have hκ : aleph0 ≤ κ := hlam.trans (le_of_lt (cantor lam))
-  have hmul {a b : Cardinal.{u}} (ha : a ≤ κ) (hb : b ≤ κ) : a * b ≤ κ :=
-    (mul_le_mul' ha hb).trans_eq (mul_eq_self hκ)
-  have hn : #(FinU n) ≤ lam := (mk_finU n).symm ▸ natCast_le_aleph0.trans hlam
-  have hBool : #(BoolU.{u}) = (2 : Cardinal.{u}) := by
-    rw [mk_uLift]
-    simp
-  have hNN : #(FinU.{u} n → FinU.{u} n → BoolU.{u}) ≤ κ := by
-    rw [← power_def, ← power_def, hBool, ← power_mul]
-    exact power_le_power_left two_ne_zero <|
-      (mul_le_max _ _).trans (max_le (max_le hn hn) hlam)
-  have hPar : #(FinU.{u} n → ι → BoolU.{u}) ≤ κ := by
-    rw [← power_def, ← power_def, hBool, ← power_mul]
-    exact power_le_power_left two_ne_zero <|
-      (mul_le_max _ _).trans (max_le (max_le hι hn) hlam)
-  have hCol : #(FinU.{u} n → NatU.{u}) ≤ κ := by
-    rw [← power_def, show #(NatU.{u}) = aleph0 by rw [mk_uLift, mk_nat, lift_aleph0]]
-    have hFinA : #(FinU n) ≤ aleph0 := (mk_finU n).symm ▸ natCast_le_aleph0
-    refine (power_le_power_left aleph0_ne_zero hFinA).trans ?_
-    rw [aleph0_power_aleph0, ← two_power_aleph0]
-    exact power_le_power_left two_ne_zero hlam
-  change #((FinU n → FinU n → BoolU) × (FinU n → FinU n → BoolU) ×
-      (FinU n → ι → BoolU) × (FinU n → ι → BoolU) × (FinU n → NatU)) ≤ κ
-  simp only [mk_prod, lift_id]
-  exact hmul hNN (hmul hNN (hmul hPar (hmul hPar hCol)))
-
-abbrev ChiType (χ : Cardinal.{u}) : Type u := χ.ord.ToType
-
-lemma mk_chiType (χ : Cardinal.{u}) : #(ChiType χ) = χ := mk_ord_toType _
-
-noncomputable def emptyParamWitnesses {J : Type u} [LinearOrder J] (color : J → ℕ) : Set J :=
-  ⋃ n : NatU.{u}, ⋃ c : PatternCode EmptyU n.down,
-    witnessRange color (fun e : EmptyU => e.elim) c
-
-noncomputable def paramWitnesses {J : Type u} [LinearOrder J] (color : J → ℕ)
-    (χ : Cardinal.{u}) (S : Set J) : Set J :=
-  ⋃ (r : ChiType χ → ↥S), ⋃ n : NatU.{u},
-    ⋃ c : PatternCode (ChiType χ) n.down,
-    witnessRange color (fun i => (r i).1) c
-
-noncomputable def enrich {J : Type u} [LinearOrder J] (color : J → ℕ)
-    (χ : Cardinal.{u}) (S : Set J) : Set J :=
-  (S ∪ emptyParamWitnesses color) ∪ paramWitnesses color χ S
-
-lemma enrich_subset_left {J : Type u} [LinearOrder J] (color : J → ℕ)
-    (χ : Cardinal.{u}) (S : Set J) : S ⊆ enrich color χ S :=
-  fun _ hx => Or.inl (Or.inl hx)
 
 lemma two_power_aleph0_le (lam : Cardinal.{u}) (hlam : aleph0 ≤ lam) :
     aleph0 ≤ (2 : Cardinal.{u}) ^ lam :=
   hlam.trans (le_of_lt (cantor lam))
 
-lemma emptyParamWitnesses_card {J : Type u} [LinearOrder J] (color : J → ℕ)
-    {lam : Cardinal.{u}} (hlam : aleph0 ≤ lam) :
-    #(emptyParamWitnesses (J := J) color) ≤ (2 : Cardinal.{u}) ^ lam := by
-  let κ : Cardinal.{u} := (2 : Cardinal.{u}) ^ lam
-  change #(emptyParamWitnesses (J := J) color) ≤ κ
-  have hκ : aleph0 ≤ κ := two_power_aleph0_le lam hlam
-  have hκκ : κ * κ = κ := mul_eq_self hκ
-  refine (mk_iUnion_le (α := J) (ι := NatU)
-      (fun n => ⋃ c : PatternCode EmptyU n.down,
-        witnessRange color (fun e : EmptyU => e.elim) c)).trans ?_
-  rw [show #NatU = aleph0 by rw [mk_uLift, mk_nat, lift_aleph0], ← hκκ]
-  refine mul_le_mul' hκ (ciSup_le' fun n => ?_)
-  refine (mk_iUnion_le _).trans ?_
-  have hc : #(PatternCode EmptyU n.down) ≤ κ :=
-    mk_patternCode_le n.down (by simp [EmptyU, mk_eq_zero]) hlam
-  rw [← hκκ]
-  exact mul_le_mul' hc (ciSup_le' fun c => (witnessRange_card_le color _ c).trans hκ)
+lemma aleph0_power_eq_two_power (χ : Cardinal.{u}) (hχ : aleph0 ≤ χ) :
+    aleph0 ^ χ = (2 : Cardinal.{u}) ^ χ := by
+  apply le_antisymm
+  · calc aleph0 ^ χ ≤ ((2 : Cardinal.{u}) ^ χ) ^ χ :=
+        power_le_power_right (hχ.trans (le_of_lt (cantor χ)))
+      _ = (2 : Cardinal.{u}) ^ (χ * χ) := by rw [← power_mul]
+      _ = (2 : Cardinal.{u}) ^ χ := by rw [mul_eq_self hχ]
+  · exact power_le_power_right (natCast_le_aleph0 (n := 2))
 
 lemma kappa_pow_chi (χ lam : Cardinal.{u}) (hχ : aleph0 ≤ χ) (hlam : χ ≤ lam) :
     ((2 : Cardinal.{u}) ^ lam) ^ χ = (2 : Cardinal.{u}) ^ lam := by
@@ -278,103 +289,229 @@ lemma kappa_pow_chi (χ lam : Cardinal.{u}) (hχ : aleph0 ≤ χ) (hlam : χ ≤
       power_le_power_left (ne_of_gt (aleph0_pos.trans_le hκ)) (one_le_aleph0.trans hχ)
   exact le_antisymm h1 h2
 
-lemma paramWitnesses_card {J : Type u} [LinearOrder J] (color : J → ℕ)
-    (χ lam : Cardinal.{u}) (hχ : aleph0 ≤ χ) (hlam : χ ≤ lam)
-    {S : Set J} (hS : #S ≤ (2 : Cardinal.{u}) ^ lam) :
-    #(paramWitnesses color χ S) ≤ (2 : Cardinal.{u}) ^ lam := by
+lemma mk_patternCode_le {ι τ : Type u} {χ lam : Cardinal.{u}}
+    (hχ : aleph0 ≤ χ) (hlam : χ ≤ lam) (hι : #ι ≤ χ) (hτ : #τ ≤ lam) :
+    #(PatternCode (ChiType χ) ι τ) ≤ (2 : Cardinal.{u}) ^ lam := by
   let κ : Cardinal.{u} := (2 : Cardinal.{u}) ^ lam
-  change #(paramWitnesses color χ S) ≤ κ
+  have hκ : aleph0 ≤ κ := two_power_aleph0_le lam (hχ.trans hlam)
+  have hmul {a b : Cardinal.{u}} (ha : a ≤ κ) (hb : b ≤ κ) : a * b ≤ κ :=
+    (mul_le_mul' ha hb).trans_eq (mul_eq_self hκ)
+  have hBool : #(BoolU.{u}) = (2 : Cardinal.{u}) := by
+    rw [mk_uLift]
+    simp
+  have hChi : #(ChiType χ) = χ := mk_chiType χ
+  have hQQ : #(ChiType χ → ChiType χ → BoolU.{u}) ≤ κ := by
+    calc #(ChiType χ → ChiType χ → BoolU.{u})
+        = (#BoolU ^ #(ChiType χ)) ^ #(ChiType χ) := by rw [← power_def, ← power_def]
+      _ = ((2 : Cardinal.{u}) ^ χ) ^ χ := by rw [hBool, hChi]
+      _ = (2 : Cardinal.{u}) ^ (χ * χ) := by rw [← power_mul]
+      _ = (2 : Cardinal.{u}) ^ χ := by rw [mul_eq_self hχ]
+      _ ≤ κ := power_le_power_left two_ne_zero hlam
+  have hQR : #(ChiType χ → ι → BoolU.{u}) ≤ κ := by
+    have hmulχ : #(ChiType χ) * #ι ≤ lam := by
+      rw [hChi]
+      exact (mul_le_max_of_aleph0_le_left hχ).trans (max_le hlam (hι.trans hlam))
+    calc #(ChiType χ → ι → BoolU.{u})
+        = (#BoolU ^ #ι) ^ #(ChiType χ) := by rw [← power_def, ← power_def]
+      _ = (2 : Cardinal.{u}) ^ (#ι * #(ChiType χ)) := by rw [hBool, ← power_mul]
+      _ = (2 : Cardinal.{u}) ^ (#(ChiType χ) * #ι) := by rw [mul_comm]
+      _ ≤ κ := power_le_power_left two_ne_zero hmulχ
+  have hQT : #(ChiType χ → τ → BoolU.{u}) ≤ κ := by
+    have hmulχ : #(ChiType χ) * #τ ≤ lam := by
+      rw [hChi]
+      exact (mul_le_max_of_aleph0_le_left hχ).trans (max_le hlam hτ)
+    calc #(ChiType χ → τ → BoolU.{u})
+        = (#BoolU ^ #τ) ^ #(ChiType χ) := by rw [← power_def, ← power_def]
+      _ = (2 : Cardinal.{u}) ^ (#τ * #(ChiType χ)) := by rw [hBool, ← power_mul]
+      _ = (2 : Cardinal.{u}) ^ (#(ChiType χ) * #τ) := by rw [mul_comm]
+      _ ≤ κ := power_le_power_left two_ne_zero hmulχ
+  have hCol : #(ChiType χ → NatU.{u}) ≤ κ := by
+    calc #(ChiType χ → NatU.{u})
+        = aleph0 ^ χ := by
+          rw [← power_def, hChi, show #(NatU.{u}) = aleph0 by rw [mk_uLift, mk_nat, lift_aleph0]]
+      _ = (2 : Cardinal.{u}) ^ χ := aleph0_power_eq_two_power χ hχ
+      _ ≤ κ := power_le_power_left two_ne_zero hlam
+  let f : PatternCode (ChiType χ) ι τ →
+      (ChiType χ → ChiType χ → BoolU) × (ChiType χ → ChiType χ → BoolU) ×
+      (ChiType χ → ι → BoolU) × (ChiType χ → ι → BoolU) ×
+      (ChiType χ → τ → BoolU) × (ChiType χ → τ → BoolU) ×
+      (ChiType χ → NatU) :=
+    fun c => (c.eqQ, c.ltQ, c.eqR, c.ltR, c.eqT, c.ltT, c.col)
+  have hinj : Function.Injective f := by
+    intro a b h
+    cases a
+    cases b
+    simp only [f, Prod.mk.injEq] at h
+    rcases h with ⟨h1, h2, h3, h4, h5, h6, h7⟩
+    simp [h1, h2, h3, h4, h5, h6, h7]
+  refine (mk_le_of_injective hinj).trans ?_
+  simp only [mk_prod, lift_id]
+  exact hmul hQQ (hmul hQQ (hmul hQR (hmul hQR (hmul hQT (hmul hQT hCol)))))
+
+noncomputable def emptyParamWitnesses {J : Type u} [LinearOrder J] (color : J → ℕ)
+    {τ : Type u} (Tstar : τ → J) (χ : Cardinal.{u}) : Set J :=
+  ⋃ c : PatternCode (ChiType χ) EmptyU τ,
+    witnessRange color Tstar (fun e : EmptyU => e.elim) c
+
+noncomputable def paramWitnesses {J : Type u} [LinearOrder J] (color : J → ℕ)
+    {τ : Type u} (Tstar : τ → J) (χ : Cardinal.{u}) (S : Set J) : Set J :=
+  ⋃ (r : ChiType χ → ↥S), ⋃ c : PatternCode (ChiType χ) (ChiType χ) τ,
+    witnessRange color Tstar (fun i => (r i).1) c
+
+noncomputable def enrich {J : Type u} [LinearOrder J] (color : J → ℕ)
+    {τ : Type u} (Tstar : τ → J) (χ : Cardinal.{u}) (S : Set J) : Set J :=
+  (S ∪ emptyParamWitnesses color Tstar χ) ∪ paramWitnesses color Tstar χ S
+
+lemma enrich_subset_left {J : Type u} [LinearOrder J] (color : J → ℕ)
+    {τ : Type u} (Tstar : τ → J) (χ : Cardinal.{u}) (S : Set J) :
+    S ⊆ enrich color Tstar χ S :=
+  fun _ hx => Or.inl (Or.inl hx)
+
+lemma emptyParamWitnesses_card {J : Type u} [LinearOrder J] (color : J → ℕ)
+    {τ : Type u} (Tstar : τ → J) {χ lam : Cardinal.{u}}
+    (hχ : aleph0 ≤ χ) (hlam : χ ≤ lam) (hτ : #τ ≤ lam) :
+    #(emptyParamWitnesses (J := J) color Tstar χ) ≤ (2 : Cardinal.{u}) ^ lam := by
+  let κ : Cardinal.{u} := (2 : Cardinal.{u}) ^ lam
+  change #(emptyParamWitnesses (J := J) color Tstar χ) ≤ κ
+  have hκ : aleph0 ≤ κ := two_power_aleph0_le lam (hχ.trans hlam)
+  have hκκ : κ * κ = κ := mul_eq_self hκ
+  have hχκ : χ ≤ κ := hlam.trans (le_of_lt (cantor lam))
+  refine (mk_iUnion_le (α := J) (ι := PatternCode (ChiType χ) EmptyU τ)
+      (fun c => witnessRange color Tstar (fun e : EmptyU => e.elim) c)).trans ?_
+  have hc : #(PatternCode (ChiType χ) EmptyU τ) ≤ κ :=
+    mk_patternCode_le hχ hlam (by simp [EmptyU, mk_eq_zero]) hτ
+  rw [← hκκ]
+  exact mul_le_mul' hc (ciSup_le' fun c => (witnessRange_card_le color Tstar _ χ c).trans hχκ)
+
+lemma paramWitnesses_card {J : Type u} [LinearOrder J] (color : J → ℕ)
+    {τ : Type u} (Tstar : τ → J) (χ lam : Cardinal.{u})
+    (hχ : aleph0 ≤ χ) (hlam : χ ≤ lam) (hτ : #τ ≤ lam)
+    {S : Set J} (hS : #S ≤ (2 : Cardinal.{u}) ^ lam) :
+    #(paramWitnesses color Tstar χ S) ≤ (2 : Cardinal.{u}) ^ lam := by
+  let κ : Cardinal.{u} := (2 : Cardinal.{u}) ^ lam
+  change #(paramWitnesses color Tstar χ S) ≤ κ
   have hκ : aleph0 ≤ κ := two_power_aleph0_le lam (hχ.trans hlam)
   have hκκ : κ * κ = κ := mul_eq_self hκ
   have hpow : κ ^ χ = κ := kappa_pow_chi χ lam hχ hlam
+  have hχκ : χ ≤ κ := hlam.trans (le_of_lt (cantor lam))
   refine (mk_iUnion_le (α := J) (ι := ChiType χ → ↥S)
-    (fun r => ⋃ n : NatU, ⋃ c : PatternCode (ChiType χ) n.down,
-      witnessRange color (fun i => (r i).1) c)).trans ?_
+    (fun r => ⋃ c : PatternCode (ChiType χ) (ChiType χ) τ,
+      witnessRange color Tstar (fun i => (r i).1) c)).trans ?_
   have hidx : #(ChiType χ → ↥S) ≤ κ := by
     rw [← power_def, mk_chiType]
     exact (power_le_power_right hS).trans_eq hpow
   refine (mul_le_mul' hidx (ciSup_le' fun r => ?_)).trans (by rw [hκκ])
-  refine (mk_iUnion_le (α := J) (ι := NatU)
-    (fun n => ⋃ c : PatternCode (ChiType χ) n.down,
-      witnessRange color (fun i => (r i).1) c)).trans ?_
-  rw [show #NatU = aleph0 by rw [mk_uLift, mk_nat, lift_aleph0], ← hκκ]
-  refine mul_le_mul' hκ (ciSup_le' fun n => ?_)
   refine (mk_iUnion_le _).trans ?_
-  have hc : #(PatternCode (ChiType χ) n.down) ≤ κ :=
-    mk_patternCode_le n.down ((le_of_eq (mk_chiType χ)).trans hlam) (hχ.trans hlam)
+  have hc : #(PatternCode (ChiType χ) (ChiType χ) τ) ≤ κ :=
+    mk_patternCode_le hχ hlam (le_of_eq (mk_chiType χ)) hτ
   rw [← hκκ]
-  exact mul_le_mul' hc (ciSup_le' fun c => (witnessRange_card_le color _ c).trans hκ)
+  exact mul_le_mul' hc (ciSup_le' fun c => (witnessRange_card_le color Tstar _ χ c).trans hχκ)
 
 lemma enrich_card {J : Type u} [LinearOrder J] (color : J → ℕ)
-    (χ lam : Cardinal.{u}) (hχ : aleph0 ≤ χ) (hlam : χ ≤ lam)
+    {τ : Type u} (Tstar : τ → J) (χ lam : Cardinal.{u})
+    (hχ : aleph0 ≤ χ) (hlam : χ ≤ lam) (hτ : #τ ≤ lam)
     {S : Set J} (hS : #S ≤ (2 : Cardinal.{u}) ^ lam) :
-    #(enrich color χ S) ≤ (2 : Cardinal.{u}) ^ lam := by
+    #(enrich color Tstar χ S) ≤ (2 : Cardinal.{u}) ^ lam := by
   let κ : Cardinal.{u} := (2 : Cardinal.{u}) ^ lam
   have hκ : aleph0 ≤ κ := two_power_aleph0_le lam (hχ.trans hlam)
   have hadd : κ + κ = κ := add_eq_self hκ
-  have h1 : #(emptyParamWitnesses (J := J) color) ≤ κ :=
-    emptyParamWitnesses_card color (hχ.trans hlam)
-  have h2 : #(paramWitnesses color χ S) ≤ κ :=
-    paramWitnesses_card color χ lam hχ hlam hS
-  have hleft : Cardinal.mk (↥(S ∪ emptyParamWitnesses (J := J) color)) ≤ κ :=
+  have h1 : #(emptyParamWitnesses (J := J) color Tstar χ) ≤ κ :=
+    emptyParamWitnesses_card color Tstar hχ hlam hτ
+  have h2 : #(paramWitnesses color Tstar χ S) ≤ κ :=
+    paramWitnesses_card color Tstar χ lam hχ hlam hτ hS
+  have hleft : Cardinal.mk (↥(S ∪ emptyParamWitnesses (J := J) color Tstar χ)) ≤ κ :=
     (mk_union_le _ _).trans ((add_le_add hS h1).trans (le_of_eq hadd))
   exact (mk_union_le _ _).trans ((add_le_add hleft h2).trans (le_of_eq hadd))
 
 lemma enrich_realizes {J : Type u} [LinearOrder J] (color : J → ℕ)
-    (χ : Cardinal.{u}) (S : Set J) {ι : Type u} (hι : #ι ≤ χ)
-    (p : ι → J) (hp : ∀ i, p i ∈ S) {n : ℕ} (q : Fin n → J) :
-    ∃ q' : Fin n → J, (∀ i, q' i ∈ enrich color χ S) ∧
-      SameOrderDiagram (Sum.elim p q) (Sum.elim p q') ∧
+    {τ : Type u} (Tstar : τ → J) (χ : Cardinal.{u}) (hχ : aleph0 ≤ χ) (S : Set J)
+    {ι : Type u} (hι : #ι ≤ χ) (p : ι → J) (hp : ∀ i, p i ∈ S)
+    {ρ : Type u} (hρ : #ρ ≤ χ) (q : ρ → J) :
+    ∃ q' : ρ → J, (∀ i, q' i ∈ enrich color Tstar χ S) ∧
+      SameOrderDiagram (Sum.elim (Sum.elim p Tstar) q) (Sum.elim (Sum.elim p Tstar) q') ∧
       ∀ i, color (q i) = color (q' i) := by
-  cases isEmpty_or_nonempty ι with
+  cases isEmpty_or_nonempty ρ with
   | inl hempty =>
-      letI : IsEmpty ι := hempty
-      obtain ⟨q', hq'mem, hcode⟩ :=
-        exists_chosen_witness color (fun e : EmptyU => e.elim) q
-      refine ⟨q', ?_, ?_, ?_⟩
-      · intro i
-        exact Or.inl (Or.inr (mem_iUnion.mpr ⟨ULift.up n,
-          mem_iUnion.mpr ⟨patternCode color (fun e : EmptyU => e.elim) q, hq'mem i⟩⟩))
-      · exact sameDiagram_of_empty_params p q q'
-          (sameDiagram_of_patternCode color (fun e : EmptyU => e.elim) q q' hcode.symm).1
-      · exact (sameDiagram_of_patternCode color (fun e : EmptyU => e.elim) q q' hcode.symm).2
-  | inr hnonempty =>
-      let i0 : ι := Classical.choice hnonempty
-      have hembCard : lift.{u} #ι ≤ lift.{u} #(ChiType χ) := by
-        simpa [mk_chiType] using hι
-      let e : ι ↪ ChiType χ := Classical.choice (lift_mk_le'.mp hembCard)
-      let r : ChiType χ → ↥S :=
-        Function.extend e (fun i => ⟨p i, hp i⟩) (fun _ => ⟨p i0, hp i0⟩)
-      have hre : ∀ i, (r (e i)).1 = p i := by
+      letI : IsEmpty ρ := hempty
+      refine ⟨fun i => isEmptyElim i, fun i => isEmptyElim i, ?_, fun i => isEmptyElim i⟩
+      have hq : q = fun i => isEmptyElim i := funext fun i => isEmptyElim i
+      rw [hq]
+      exact sameOrderDiagram_rfl _
+  | inr hρne =>
+      let iρ : ρ := Classical.choice hρne
+      have heρ : lift.{u} #ρ ≤ lift.{u} #(ChiType χ) := by simpa [mk_chiType] using hρ
+      let eρ : ρ ↪ ChiType χ := Classical.choice (lift_mk_le'.mp heρ)
+      let Q : ChiType χ → J :=
+        Function.extend eρ q (fun _ => q iρ)
+      have hQ : ∀ i, Q (eρ i) = q i := by
         intro i
-        change (Function.extend e (fun i => (⟨p i, hp i⟩ : ↥S))
-          (fun _ => (⟨p i0, hp i0⟩ : ↥S)) (e i)).1 = p i
-        rw [e.injective.extend_apply]
-      obtain ⟨q', hq'mem, hcode⟩ :=
-        exists_chosen_witness color (fun i => (r i).1) q
-      have hfull := sameDiagram_of_patternCode color (fun i => (r i).1) q q' hcode.symm
-      refine ⟨q', ?_, ?_, hfull.2⟩
-      · intro i
-        exact Or.inr (mem_iUnion.mpr ⟨r, mem_iUnion.mpr ⟨ULift.up n,
-          mem_iUnion.mpr ⟨patternCode color (fun k => (r k).1) q, hq'mem i⟩⟩⟩)
-      · have hrestricted := sameDiagram_comp_embed e (fun i => (r i).1) q q' hfull.1
-        have hre' : (fun i => (r i).1) ∘ e = p := funext hre
-        rw [hre'] at hrestricted
-        exact hrestricted
+        change Function.extend eρ q (fun _ => q iρ) (eρ i) = q i
+        rw [eρ.injective.extend_apply]
+      cases isEmpty_or_nonempty ι with
+      | inl hempty =>
+          letI : IsEmpty ι := hempty
+          obtain ⟨Q', hQ'mem, hcode⟩ :=
+            exists_chosen_witness color Tstar (fun e : EmptyU => e.elim) Q
+          have hfull := sameDiagram_of_patternCode color Tstar
+            (fun e : EmptyU => e.elim) Q Q' hcode.symm
+          let q' : ρ → J := fun i => Q' (eρ i)
+          refine ⟨q', ?_, ?_, ?_⟩
+          · intro i
+            exact Or.inl (Or.inr (mem_iUnion.mpr ⟨patternCode color Tstar
+              (fun e : EmptyU => e.elim) Q, hQ'mem (eρ i)⟩))
+          · have hdrop := sameDiagram_drop_empty (fun e : EmptyU => e.elim) Tstar Q Q' hfull.1
+            have hrest := sameDiagram_restrict_query eρ Tstar Q Q' hdrop
+            have hQe : Q ∘ eρ = q := funext hQ
+            rw [hQe] at hrest
+            exact sameDiagram_empty_param p Tstar q q' hrest
+          · intro i
+            have hcol := hfull.2 (eρ i)
+            simpa [q', hQ] using hcol
+      | inr hιne =>
+          let i0 : ι := Classical.choice hιne
+          have heι : lift.{u} #ι ≤ lift.{u} #(ChiType χ) := by simpa [mk_chiType] using hι
+          let eι : ι ↪ ChiType χ := Classical.choice (lift_mk_le'.mp heι)
+          let r : ChiType χ → ↥S :=
+            Function.extend eι (fun i => ⟨p i, hp i⟩) (fun _ => ⟨p i0, hp i0⟩)
+          have hr : ∀ i, (r (eι i)).1 = p i := by
+            intro i
+            change (Function.extend eι (fun i => (⟨p i, hp i⟩ : ↥S))
+              (fun _ => (⟨p i0, hp i0⟩ : ↥S)) (eι i)).1 = p i
+            rw [eι.injective.extend_apply]
+          obtain ⟨Q', hQ'mem, hcode⟩ :=
+            exists_chosen_witness color Tstar (fun i => (r i).1) Q
+          have hfull := sameDiagram_of_patternCode color Tstar (fun i => (r i).1) Q Q' hcode.symm
+          let q' : ρ → J := fun i => Q' (eρ i)
+          refine ⟨q', ?_, ?_, ?_⟩
+          · intro i
+            exact Or.inr (mem_iUnion.mpr ⟨r, mem_iUnion.mpr ⟨patternCode color Tstar
+              (fun k => (r k).1) Q, hQ'mem (eρ i)⟩⟩)
+          · have hrestQ := sameDiagram_restrict_query eρ
+              (Sum.elim (fun i => (r i).1) Tstar) Q Q' hfull.1
+            have hQe : Q ∘ eρ = q := funext hQ
+            rw [hQe] at hrestQ
+            have hrest := sameDiagram_restrict_param eι (fun i => (r i).1) Tstar q q' hrestQ
+            have hr' : (fun i => (r i).1) ∘ eι = p := funext hr
+            simpa [hr'] using hrest
+          · intro i
+            have hcol := hfull.2 (eρ i)
+            simpa [q', hQ] using hcol
 
 noncomputable def closureStage {J : Type u} [LinearOrder J] (color : J → ℕ)
-    (χ : Cardinal.{u}) (S : Set J) (i : (Order.succ χ).ord.ToType) : Set J :=
-  enrich color χ
-    (S ∪ ⋃ j : {j : (Order.succ χ).ord.ToType // j < i}, closureStage color χ S j.1)
+    {τ : Type u} (Tstar : τ → J) (χ : Cardinal.{u}) (S : Set J)
+    (i : (Order.succ χ).ord.ToType) : Set J :=
+  enrich color Tstar χ
+    (S ∪ ⋃ j : {j : (Order.succ χ).ord.ToType // j < i}, closureStage color Tstar χ S j.1)
 termination_by i
 decreasing_by
   exact j.2
 
 lemma closureStage_card {J : Type u} [LinearOrder J] (color : J → ℕ)
-    (χ lam : Cardinal.{u}) (hχ : aleph0 ≤ χ) (hlam : χ ≤ lam)
+    {τ : Type u} (Tstar : τ → J) (χ lam : Cardinal.{u})
+    (hχ : aleph0 ≤ χ) (hlam : χ ≤ lam) (hτ : #τ ≤ lam)
     {S : Set J} (hS : #S ≤ (2 : Cardinal.{u}) ^ lam)
     (i : (Order.succ χ).ord.ToType) :
-    #(closureStage color χ S i) ≤ (2 : Cardinal.{u}) ^ lam := by
+    #(closureStage color Tstar χ S i) ≤ (2 : Cardinal.{u}) ^ lam := by
   let κ : Cardinal.{u} := (2 : Cardinal.{u}) ^ lam
   have hκ : aleph0 ≤ κ := two_power_aleph0_le lam (hχ.trans hlam)
   have hsucc : Order.succ χ ≤ κ :=
@@ -382,9 +519,10 @@ lemma closureStage_card {J : Type u} [LinearOrder J] (color : J → ℕ)
   apply (wellFounded_lt (α := (Order.succ χ).ord.ToType)).induction i
   intro i ih
   rw [closureStage.eq_def]
-  apply enrich_card color χ lam hχ hlam
+  apply enrich_card color Tstar χ lam hχ hlam hτ
   have hprev :
-      #(⋃ j : {j : (Order.succ χ).ord.ToType // j < i}, closureStage color χ S j.1) ≤ κ := by
+      #(⋃ j : {j : (Order.succ χ).ord.ToType // j < i},
+        closureStage color Tstar χ S j.1) ≤ κ := by
     refine (mk_iUnion_le _).trans ?_
     refine (mul_le_mul'
       ((mk_le_of_injective Subtype.val_injective).trans (by rw [mk_ord_toType]))
@@ -394,9 +532,10 @@ lemma closureStage_card {J : Type u} [LinearOrder J] (color : J → ℕ)
     ((add_le_add hS hprev).trans (by rw [add_eq_self hκ]))
 
 lemma closureSet_card {J : Type u} [LinearOrder J] (color : J → ℕ)
-    (χ lam : Cardinal.{u}) (hχ : aleph0 ≤ χ) (hlam : χ ≤ lam)
+    {τ : Type u} (Tstar : τ → J) (χ lam : Cardinal.{u})
+    (hχ : aleph0 ≤ χ) (hlam : χ ≤ lam) (hτ : #τ ≤ lam)
     {S : Set J} (hS : #S ≤ (2 : Cardinal.{u}) ^ lam) :
-    #(⋃ i : (Order.succ χ).ord.ToType, closureStage color χ S i) ≤
+    #(⋃ i : (Order.succ χ).ord.ToType, closureStage color Tstar χ S i) ≤
       (2 : Cardinal.{u}) ^ lam := by
   let κ : Cardinal.{u} := (2 : Cardinal.{u}) ^ lam
   have hκ : aleph0 ≤ κ := two_power_aleph0_le lam (hχ.trans hlam)
@@ -404,7 +543,7 @@ lemma closureSet_card {J : Type u} [LinearOrder J] (color : J → ℕ)
     Order.succ_le_of_lt (lt_of_le_of_lt hlam (cantor lam))
   refine (mk_iUnion_le _).trans ?_
   refine (mul_le_mul' (by rw [mk_ord_toType])
-    (ciSup_le' (closureStage_card color χ lam hχ hlam hS))).trans ?_
+    (ciSup_le' (closureStage_card color Tstar χ lam hχ hlam hτ hS))).trans ?_
   exact (mul_le_mul' hsucc le_rfl).trans (by rw [mul_eq_self hκ])
 
 lemma toType_lt_of_ordinal_lt {o : _root_.Ordinal.{u}} {x : o.ToType}
@@ -415,37 +554,49 @@ lemma toType_lt_of_ordinal_lt {o : _root_.Ordinal.{u}} {x : o.ToType}
   have hmap := (Ordinal.ToType.mk.lt_iff_lt).mpr hsub
   simpa [Ordinal.ToType.mk.apply_symm_apply] using hmap
 
+/-- **Lemma 6.14** (Closure of a bounded support set), widened. Queries are indexed by an
+arbitrary type of size at most `χ`, and a fixed support enumeration `T★` of size at most `λ`
+is part of every pattern. A terminal strip needs no side-of-`V` coloring: pass a constant
+`color`. The closed set still has size at most `2^λ` and contains `S₀` and the range of `T★`. -/
 theorem lemma_6_14_proof {J : Type u} [LinearOrder J] (color : J → ℕ)
     (χ lam : Cardinal.{u}) (hχ : aleph0 ≤ χ) (hlam : χ ≤ lam) :
-    ∀ (S0 : Set J), #S0 ≤ lam →
-      ∃ S : Set J, S0 ⊆ S ∧ #S ≤ (2 : Cardinal.{u}) ^ lam ∧
+    ∀ {τ : Type u} (Tstar : τ → J) (_hτ : #τ ≤ lam) (S0 : Set J), #S0 ≤ lam →
+      ∃ S : Set J, S0 ⊆ S ∧ (∀ t, Tstar t ∈ S) ∧ #S ≤ (2 : Cardinal.{u}) ^ lam ∧
         ∀ {ι : Type u} (hι : #ι ≤ χ) (p : ι → J), (∀ i, p i ∈ S) →
-          ∀ {n : ℕ} (q : Fin n → J), n ≤ χ →
-            ∃ q' : Fin n → J, (∀ i, q' i ∈ S) ∧
-              SameOrderDiagram (Sum.elim p q) (Sum.elim p q') ∧
+          ∀ {ρ : Type u} (hρ : #ρ ≤ χ) (q : ρ → J),
+            ∃ q' : ρ → J, (∀ i, q' i ∈ S) ∧
+              SameOrderDiagram (Sum.elim (Sum.elim p Tstar) q)
+                (Sum.elim (Sum.elim p Tstar) q') ∧
               ∀ i, color (q i) = color (q' i) := by
-  intro S0 hS0
+  intro τ Tstar hτ S0 hS0
   let κ : Cardinal.{u} := (2 : Cardinal.{u}) ^ lam
-  have hSκ : #S0 ≤ κ := hS0.trans (le_of_lt (cantor lam))
-  let S : Set J := ⋃ i : (Order.succ χ).ord.ToType, closureStage color χ S0 i
+  have hlam0 : aleph0 ≤ lam := hχ.trans hlam
+  let Sbase : Set J := S0 ∪ Set.range Tstar
+  have hbase : #Sbase ≤ κ := by
+    refine (mk_union_le _ _).trans ?_
+    have h1 : #S0 ≤ κ := hS0.trans (le_of_lt (cantor lam))
+    have h2 : #(Set.range Tstar) ≤ κ :=
+      mk_range_le.trans (hτ.trans (le_of_lt (cantor lam)))
+    exact (add_le_add h1 h2).trans (le_of_eq (add_eq_self (two_power_aleph0_le lam hlam0)))
+  let S : Set J := ⋃ i : (Order.succ χ).ord.ToType, closureStage color Tstar χ Sbase i
   have hpos : (0 : _root_.Ordinal.{u}) < (Order.succ χ).ord := by
     refine lt_of_lt_of_le (Ordinal.natCast_lt_omega0 0) ?_
     rw [← ord_aleph0]
     exact ord_le_ord.mpr (hχ.trans (Order.le_succ χ))
   let i0 : (Order.succ χ).ord.ToType := Ordinal.ToType.mk ⟨0, hpos⟩
-  have hS0sub : S0 ⊆ S := by
+  have hS0sub : Sbase ⊆ S := by
     intro x hx
     refine mem_iUnion.mpr ⟨i0, ?_⟩
     rw [closureStage.eq_def]
-    exact enrich_subset_left color χ _ (Or.inl hx)
-  have hcard : #S ≤ κ := closureSet_card color χ lam hχ hlam hSκ
-  refine ⟨S, hS0sub, hcard, ?_⟩
-  intro ι hι p hp n q _hn
+    exact enrich_subset_left color Tstar χ _ (Or.inl hx)
+  have hcard : #S ≤ κ := closureSet_card color Tstar χ lam hχ hlam hτ hbase
+  refine ⟨S, fun x hx => hS0sub (Or.inl hx), fun t => hS0sub (Or.inr ⟨t, rfl⟩), hcard, ?_⟩
+  intro ι hι p hp ρ hρ q
   have hreg : Ordinal.cof (Order.succ χ).ord = Order.succ χ :=
     (isRegular_succ hχ).cof_ord
   let j : ι → (Order.succ χ).ord.ToType :=
     fun i => Classical.choose (mem_iUnion.mp (hp i))
-  have hj : ∀ i, p i ∈ closureStage color χ S0 (j i) :=
+  have hj : ∀ i, p i ∈ closureStage color Tstar χ Sbase (j i) :=
     fun i => Classical.choose_spec (mem_iUnion.mp (hp i))
   have hidx : #ι < Ordinal.cof (Order.succ χ).ord := by
     rw [hreg]
@@ -463,12 +614,12 @@ theorem lemma_6_14_proof {J : Type u} [LinearOrder J] (color : J → ℕ)
       (Ordinal.le_iSup (fun k => (Ordinal.ToType.toOrd (j k)).1) i)
       (lt_add_of_pos_right _ zero_lt_one)
   let R : Set J :=
-    S0 ∪ ⋃ k : {k : (Order.succ χ).ord.ToType // k < i1},
-      closureStage color χ S0 k.1
+    Sbase ∪ ⋃ k : {k : (Order.succ χ).ord.ToType // k < i1},
+      closureStage color Tstar χ Sbase k.1
   have hpR : ∀ i, p i ∈ R := by
     intro i
     exact Or.inr (mem_iUnion.mpr ⟨⟨j i, hjlt i⟩, hj i⟩)
-  obtain ⟨q', hq', hdiag, hcolor⟩ := enrich_realizes color χ R hι p hpR q
+  obtain ⟨q', hq', hdiag, hcolor⟩ := enrich_realizes color Tstar χ hχ R hι p hpR hρ q
   refine ⟨q', ?_, hdiag, hcolor⟩
   intro k
   exact mem_iUnion.mpr ⟨i1, by

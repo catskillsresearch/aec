@@ -1,7 +1,7 @@
 # Hard edges from holes-graph.json
 # Convention: FROM --> TO means the English proof of TO requires FROM.
-# Nodes: 196  Hard edges: 246
-# proposition_6_13 done. Prop 6.15+ blocked. Deferred: mixed levels, SatisfiesContinuity.
+# Nodes: 196  Hard edges: 247
+# proposition_6_15 done (terminal strip). Cor 6.16+ blocked pending two-sided strips.
 # Retired: infra_610_qPres_empty_joint_on_I, infra_610_same_head_transfers_joint.
 
 claim_11_10 --> claim_11_11
@@ -166,6 +166,7 @@ lemma_6_1 --> infra_69_lem61_off_hits
 lemma_6_11 --> proposition_6_12
 lemma_6_11 --> proposition_6_13
 lemma_6_14 --> lemma_12_6
+lemma_6_14 --> proposition_6_15
 lemma_6_17 --> lemma_7_2
 lemma_6_4 --> lemma_6_5
 lemma_6_5 --> infra_69_place_type
@@ -215,7 +216,6 @@ proposition_5_7 --> theorem_9_3
 proposition_5_8 --> lemma_6_1
 proposition_5_9 --> lemma_6_1
 infra_613_freeFrom_trans --> proposition_6_13
-proposition_6_13 --> proposition_6_15
 proposition_6_15 --> corollary_6_16
 proposition_6_3 --> lemma_6_5
 proposition_7_3 --> proposition_7_5
@@ -243,6 +243,7 @@ theorem_3_5 --> lemma_4_5
 theorem_4_11 --> corollary_6_7
 theorem_4_11 --> proposition_5_6
 theorem_4_11 --> theorem_6_6
+theorem_6_6 --> proposition_6_15
 theorem_6_10 --> lemma_6_11
 theorem_7_13 --> lemma_8_2
 theorem_7_9 --> lemma_7_11

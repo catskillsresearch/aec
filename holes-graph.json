@@ -1,16 +1,16 @@
 {
   "updated": "2026-11-12",
-  "sorryCount": 54,
+  "sorryCount": 53,
   "legend": {
     "open": "No unfinished required proof-deps \u2014 try next",
     "blocked": "Waiting on incomplete required proof-deps",
     "done": "Proved (no sorry)"
   },
   "notes": [
-    "proposition_6_13 done (same-level local character and continuity). Prop 6.15+ stays blocked. Deferred: mixed levels, SatisfiesContinuity. Map: AEC/Section6/Proposition_6.13.md.",
+    "proposition_6_15 is done for a terminal strip with G = P.E on a well-order (FreshStrip.lean; hard lemma_6_14 and theorem_6_6; no chain unions). Cor 6.16+ stays blocked: two-sided strips and G \u2260 F are deferred. Map: AEC/Section6/Proposition_6.15.md.",
     "Edge B\u2192A means the English proof of A requires B (or a required Lean infra subgoal).",
     "Blue = done. Green = open. Grey = blocked. No separate failed status unless a counterexample refutes the program.",
-    "lemma_6_14 is independent of Prop 6.13 (false paper-number edge removed); it feeds lemma_12_6."
+    "lemma_6_14 is independent of Prop 6.13 (that paper-number edge stays removed). Widened to \u03c7-indexed queries plus a fixed T\u2605, it is a hard dependency of proposition_6_15 and still feeds lemma_12_6."
   ],
   "nodes": [
     {
@@ -507,16 +507,16 @@
       "file": "AEC/Section6/Results.lean",
       "status": "done",
       "blocker": null,
-      "detail": "Done for same-level SingleModelData. SameLevelChain (joint cover, not HasChainUnions). Local character: infra_613_trap_in_stage then infra_611_isFreeFrom. Continuity: infra_613_freeFrom_trans along the cocone. Deferred: mixed levels, SatisfiesContinuity / \u00a77. Prop 6.15+ stays blocked."
+      "detail": "Done for same-level SingleModelData. SameLevelChain (joint cover, not HasChainUnions). Local character: infra_613_trap_in_stage then infra_611_isFreeFrom. Continuity: infra_613_freeFrom_trans along the cocone. Deferred: mixed levels, SatisfiesContinuity / \u00a77. Prop 6.15 is done for a terminal strip; Cor 6.16+ stays blocked."
     },
     {
       "id": "proposition_6_15",
       "label": "Prop 6.15",
       "section": 6,
       "file": "AEC/Section6/Results.lean",
-      "status": "blocked",
+      "status": "done",
       "blocker": null,
-      "detail": "Stays blocked. Bare WorkingScheme / HasChainUnions packaging; not opened by Prop 6.13."
+      "detail": "Done for a terminal strip with G = P.E on a well-ordered J (FreshStrip.lean). Tail closed for every smaller length. Fibers of N x_l lvlOrder, one per exhaustion stage. Hard deps: lemma_6_14 (widened) and theorem_6_6 via ClosedLevel amalgamation. No HasChainUnions and no Prop 6.13. Deferred: G \u2260 F, two-sided strips (Cor 6.16)."
     },
     {
       "id": "proposition_6_3",
@@ -1889,6 +1889,17 @@
     {
       "from": "proposition_6_13",
       "to": "proposition_6_15",
+      "kind": "soft",
+      "note": "Paper-number edge. The proof of 6.15 uses Lemma 6.14 and Theorem 6.6, not Prop 6.13."
+    },
+    {
+      "from": "lemma_6_14",
+      "to": "proposition_6_15",
+      "kind": "hard"
+    },
+    {
+      "from": "theorem_6_6",
+      "to": "proposition_6_15",
       "kind": "hard"
     },
     {
@@ -3024,5 +3035,5 @@
     }
   ],
   "doneCount": 139,
-  "meta": "Prop 6.13 done (same-level local character / continuity). Prop 6.15+ blocked. Deferred: mixed levels, SatisfiesContinuity. Map: AEC/Section6/Proposition_6.13.md."
+  "meta": "proposition_6_15 done (terminal strip, G = P.E). Cor 6.16+ blocked pending two-sided strips. Done: Prop 6.13, 6.12, Lem 6.11, Thm 6.10. Map: AEC/Section6/Proposition_6.15.md."
 }
