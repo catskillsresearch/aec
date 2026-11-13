@@ -1,7 +1,7 @@
 # Hard edges from holes-graph.json
 # Convention: FROM --> TO means the English proof of TO requires FROM.
 # Nodes: 193  Hard edges: 243
-# Open tip: lemma_6_11 (blocker theorem_6_10 done).
+# lemma_6_11 done (same-level). Mixed ν<μ deferred. Prop 6.12+ blocked.
 # Retired: infra_610_qPres_empty_joint_on_I, infra_610_same_head_transfers_joint.
 
 claim_11_10 --> claim_11_11

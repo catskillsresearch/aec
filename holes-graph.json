@@ -1,13 +1,13 @@
 {
   "updated": "2026-11-12",
-  "sorryCount": 57,
+  "sorryCount": 56,
   "legend": {
     "open": "No unfinished required proof-deps — try next",
     "blocked": "Waiting on incomplete required proof-deps",
     "done": "Proved (no sorry)"
   },
   "notes": [
-    "Open tip: lemma_6_11 (average criterion / descent; blocker theorem_6_10 done). Thm 6.10 closed for SingleModelData. Retired: qPres_empty_joint_on_I. Demoted: same_head. Map: AEC/Section6/Lemma_6.11.md.",
+    "lemma_6_11 done for same-level SingleModelData (AverageDescent.lean). Mixed ν<μ deferred. Prop 6.12+ stays blocked. Thm 6.10 closed. Retired: qPres_empty_joint_on_I. Demoted: same_head. Map: AEC/Section6/Lemma_6.11.md.",
     "Edge B→A means the English proof of A requires B (or a required Lean infra subgoal).",
     "Blue = done. Green = open. Grey = blocked. No separate failed status unless a counterexample refutes the program.",
     "lemma_6_14 is independent of Prop 6.13 (false paper-number edge removed); it feeds lemma_12_6."
@@ -363,9 +363,9 @@
       "label": "Lem 6.11",
       "section": 6,
       "file": "AEC/Section6/Results.lean",
-      "status": "open",
+      "status": "done",
       "blocker": null,
-      "detail": "Open tip: average criterion for descent / IsFreeFrom. theorem_6_10 done."
+      "detail": "Same-level SingleModelData: fresh Lem 6.9 code, majority bridge (eq_type + unique), move_query on parameter lists, infra_610_same_galois, then IsFreeLift of q.restrict. Mixed ν<μ deferred. No sorry."
     },
     {
       "id": "lemma_6_14",
@@ -2998,6 +2998,6 @@
       "note": "root thin-wraps saturate"
     }
   ],
-  "doneCount": 119,
-  "meta": "Open tip: lemma_6_11. Done: Thm 6.10 for SingleModelData. Retired: qPres_empty_joint_on_I, same_head. Map: AEC/Section6/Lemma_6.11.md."
+  "doneCount": 120,
+  "meta": "lemma_6_11 done (same-level). Mixed ν<μ deferred. Prop 6.12+ blocked. Done: Thm 6.10. Retired: qPres_empty_joint_on_I, same_head. Map: AEC/Section6/Lemma_6.11.md."
 }

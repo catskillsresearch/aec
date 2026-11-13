@@ -52,7 +52,7 @@ Proof body is in `source/eventual.pdf` §6.2. Lean decls live in [`StationaryFre
 | E8–E11 Mixed queries, restrict, iso, transitivity, Lem 6.9 code | deferred / narrowed in `IsFreeLift` | later |
 | ClosedLevel for scheme bound $P.g` | `infra_610_closed_level` | **done** |
 
-Hard chain follows English §6.2: majority prescriptions → per-query type-good push on $B$ (`qPres_empty_free`) → Galois tests of $p$ against $eB\circ qPres$. A single head in $B$ for every parameter list is retired with the soft-pad (`qPres_empty_joint_on_I`, `preserves_atomic`). `IsFreeLift` is the amalgam of $p$'s host with $B$, with majority values pushed along the $B$ leg. **Thm 6.10 done** for `SingleModelData`. **Next tip:** [`lemma_6_11`](Lemma_6.11.md). Retired: global `placement_to_B`, soft-pad placeRoot, empty-head joint, `same_head_transfers_joint`.
+Hard chain follows English §6.2: majority prescriptions → per-query type-good push on $B$ (`qPres_empty_free`) → Galois tests of $p$ against $eB\circ qPres$. A single head in $B$ for every parameter list is retired with the soft-pad (`qPres_empty_joint_on_I`, `preserves_atomic`). `IsFreeLift` is the amalgam of $p$'s host with $B$, with majority values pushed along the $B$ leg. **Thm 6.10 done** for `SingleModelData`. **Lemma 6.11 done** for the same-level average criterion ([`AverageDescent.lean`](AverageDescent.lean)): fresh Lemma 6.9 code, majority bridge, moved parameter queries, `infra_610_same_galois`. Mixed $\nu < \mu$ stays deferred with E8–E11. Proposition 6.12 and later stay blocked. Retired: global `placement_to_B`, soft-pad placeRoot, empty-head joint, `same_head_transfers_joint`.
 
 **[FreeExtension.lean](FreeExtension.lean)**
 

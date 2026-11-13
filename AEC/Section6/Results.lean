@@ -16,6 +16,7 @@ public import AEC.Section6.LargerLevelRealization
 public import AEC.Section6.UniformApproximations
 public import AEC.Section6.TestCardinal
 public import AEC.Section6.StationaryFreeExtension
+public import AEC.Section6.AverageDescent
 
 @[expose] public section
 
@@ -500,23 +501,41 @@ theorem theorem_6_10 {K : AbstractElementaryClass.{u}}
   exact stationary_free_extension_exists P σ hσ (Tail.mem hT hμ) hμ.1 hμ.2 f hf p
     hνμ hσidx hidx
 
-/-- **Lemma 6.11** (An average criterion for descent). A type whose restrictions to a long
-sequence in `A` have the stated majority is the free lift of its restriction to `A`. -/
-theorem lemma_6_11 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
-    (W : WorkingScheme K S) :
-    ∃ T, ∃ hT : Tail W.eligible T,
-      ∀ μ (hμ : μ ∈ T) ν (hν : ν ∈ T) (A : W.Object ν (Tail.mem hT hν))
-        (B : W.Object μ (Tail.mem hT hμ))
-        (f : SystemArrow K S (W.asSystem _ A) (W.asSystem _ B))
-        (hf : W.permitted (X := A) (Y := B) f)
-        (q : TupleOver K S W (Tail.mem hT hμ) B)
+/-- **Lemma 6.11** (An average criterion for descent). At a recursion-closed level, a type
+`q` over `B` whose restrictions to a long sequence in `A` have majority value `q ↾ Z` on
+every short query `Z ⊆ B` is free from `A`.
+
+Same packaging as Theorem 6.10: `SingleModelData`, same-level host `q.ν = μ`. The proof is
+`infra_611_isFreeFrom` (`AverageDescent.lean`): a fresh Lemma 6.9 code for `q.restrict`,
+the bridge through `infra_610_majority_eq_type` and `infra_610_majority_unique`, moved
+parameter queries, and `infra_610_same_galois`. Mixed levels `ν < μ` are deferred. -/
+theorem lemma_6_11 {K : AbstractElementaryClass.{u}}
+    (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ) :
+    ∃ T, ∃ hT : Tail P.eligible T,
+      ∀ μ (hμ : μ ∈ T) (A B : P.scheme.Object μ (Tail.mem hT hμ))
+        (f : SystemArrow K oneVertexShape
+          (P.scheme.asSystem _ A) (P.scheme.asSystem _ B))
+        (hf : P.scheme.permitted (X := A) (Y := B) f)
+        (q : TupleOver K oneVertexShape P.scheme (Tail.mem hT hμ) B)
         (seq : ApproximationSequence (q.restrict f hf)),
-        ν ≤ μ → #q.idx < ν → seq.τ < ν → #(seq.κIndex) < ν →
-        (∀ {ι : Type u} (Z : ι → Occurrence K S (W.asSystem _ B)), #ι ≤ seq.τ →
-          ∃ Z0 : ι → Occurrence K S (W.asSystem _ A),
+        q.ν = μ → #q.idx ≤ σ → #q.idx < μ →
+        seq.τ < μ → seq.τ + aleph0 < #seq.κIndex → #seq.κIndex < μ →
+        (∀ {ι : Type u}
+          (Z : ι → Occurrence K oneVertexShape (P.scheme.asSystem _ B)),
+          #ι ≤ seq.τ →
+          ∃ Z0 : ι → Occurrence K oneVertexShape (P.scheme.asSystem _ A),
             IsMajorityValue seq Z0 q.hν q.host (typeJoint (p := q) Z)) →
         IsFreeFrom f hf q := by
-  sorry
+  let T : Set Cardinal.{u} :=
+    {μ | μ ∈ recursionClosedLevels P σ ∧ Order.succ σ ≤ μ}
+  have hT : Tail P.eligible T := by
+    refine ⟨fun μ hμ => hμ.1.1, fun κ => ?_⟩
+    obtain ⟨μ, hle, hμ, hrec⟩ :=
+      (infra_69_recursion_tail P hσ).2 (max κ (Order.succ σ))
+    exact ⟨μ, (le_max_left _ _).trans hle, ⟨⟨hμ, hrec⟩, (le_max_right _ _).trans hle⟩⟩
+  refine ⟨T, hT, fun μ hμ A B f hf q seq hνμ hidx hidxμ hτμ hκ hκμ hmaj => ?_⟩
+  exact infra_611_isFreeFrom P σ hσ (Tail.mem hT hμ) hμ.1 hμ.2 f hf q seq
+    hνμ hidx hidxμ hτμ hκ hκμ hmaj
 
 /-- **Proposition 6.12** (Products of bounded types). Bounded types have a product over `A`,
 independent of the choice of realization, symmetric, and commuting with free lifts. -/
