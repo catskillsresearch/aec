@@ -1,7 +1,8 @@
 # Hard edges from holes-graph.json
 # Convention: FROM --> TO means the English proof of TO requires FROM.
 # Nodes: 193  Hard edges: 243
-# Open tips: infra_610_pull_root_agrees_free_ref, infra_610_qPres_empty_joint_on_I.
+# Open tip: lemma_6_11 (blocker theorem_6_10 done).
+# Retired: infra_610_qPres_empty_joint_on_I, infra_610_same_head_transfers_joint.
 
 claim_11_10 --> claim_11_11
 claim_11_11 --> claim_11_12
@@ -57,9 +58,8 @@ infra_610_placement_root_on_B --> infra_610_reflected_matches_chartRoot
 infra_610_placement_saturate_to_B --> infra_610_placement_root_on_B
 infra_610_pull_z_to_B --> infra_610_placement_saturate_to_B
 infra_610_qPres_matches_empty_root --> infra_610_isFreeLift_same_galois
-infra_610_pull_root_agrees_free_ref --> infra_610_placement_saturate_to_B
-infra_610_qPres_empty_joint_on_I --> infra_610_qPres_empty_free
 infra_610_qPres_empty_free --> infra_610_pull_root_agrees_free_ref
+infra_610_pull_root_agrees_free_ref --> infra_610_placement_saturate_to_B
 infra_610_pull_root_abs_qPres_empty --> infra_610_placement_saturate_to_B
 infra_610_transport_joint --> infra_610_pull_root_agrees_free_ref
 infra_610_reflect_joint_eB --> infra_610_place_z_as_free_lift

@@ -31,14 +31,15 @@ Proof body is in `source/eventual.pdf` §6.2. Lean decls live in [`StationaryFre
 | E6 global $\varphi:N\to B$ fixing $eB$ | `infra_610_placement_to_B` | **retired** (impossible; no §6.2 sentence) |
 | E6 pull $zN$ into $B$ | `infra_610_pull_z_to_B` | **done** (`exists_transport` empty base) |
 | E6 per-param transport joint into $B$ | `infra_610_transport_joint` | **done** |
-| E6 empty prescription joint on $E(I)$ | `infra_610_qPres_empty_joint_on_I` | **open** (stationarity kernel) |
-| E6 pull-root AgreeOn free ref | `infra_610_pull_root_agrees_free_ref` | **open** (board tip; AgreeOn discharge) |
+| E6 empty prescription joint on $E(I)$ | `infra_610_qPres_empty_joint_on_I` | **retired** (soft-pad; `preserves_atomic`) |
+| E6 per-query freeness on $B$ | `infra_610_qPres_empty_free` | **done** (type-good push; E4 uniqueness) |
+| E6 pull-root AgreeOn free ref | `infra_610_pull_root_agrees_free_ref` | **done** (wrapper of `qPres_empty_free`) |
 | E6 same-head transfers joint | `infra_610_same_head_transfers_joint` | **demoted** (under-hypothesized) |
-| E6 saturate Prop 4.9 placement into $B$ | `infra_610_placement_saturate_to_B` | **blocked** on `pull_root_agrees_free_ref` |
-| E6 Lem 6.4 placement root on $B$ | `infra_610_placement_root_on_B` | **blocked** on `placement_saturate_to_B` |
+| E6 saturate prescriptions into $B$ | `infra_610_placement_saturate_to_B` | **done** (per query; type-good push) |
+| E6 Lem 6.4 placement root on $B$ | `infra_610_placement_root_on_B` | **done** (per query) |
 | E6 place_z: qPres head ~ empty | `infra_610_qPres_inl_matches_empty` | **done** (`hcoh`) |
-| E5 glue reflected vs `chartRoot` | `infra_610_reflected_matches_chartRoot` | **blocked** on `placement_root_on_B` (`placeRoot`) |
-| E6 Lemma 6.4 / Thm 6.6: type is $p_B$ | `infra_610_place_z_as_free_lift` → `infra_610_same_galois_tests_chartRoot` | **blocked** on `reflected_matches_chartRoot` |
+| E5 glue reflected vs a realizing head | `infra_610_reflected_matches_chartRoot` | **done** (per-query type-good head) |
+| E6 Galois tests of $p$ vs $eB\circ qPres$ | `infra_610_place_z_as_free_lift` → `infra_610_same_galois_tests_chartRoot` | **done** (`hgalois`; not the empty-head joint) |
 | E6 place_z: Prop 4.9 package | `infra_610_place_z_prop49` | **done** |
 | E6 place_z: empty hPlace | `infra_610_hPlace_empty` | **done** |
 | E6 place_z: full hPlace | `infra_610_hPlace_full` | **done** |
@@ -46,12 +47,12 @@ Proof body is in `source/eventual.pdf` §6.2. Lean decls live in [`StationaryFre
 | E6 place_z: reflect $E(I)\to B$ | `infra_610_reflect_joint_eB` | **done** |
 | E6 wrap placement as `TupleOver` over $B$ | `infra_610_place_prescriptions` | **done** (`chartRoot` = `placeRoot`) |
 | Majority transport of the placed type | `infra_610_majority_of_placement` | **done** |
-| E7 Theorem 6.6 uniqueness / Galois diagram tests for $p_B$ | `infra_610_same_galois_tests_chartRoot` (thin wrap of tip); `infra_610_same_galois` | **done** (modulo place_z tip) |
-| E5–E7 packaged | `infra_610_majority_prescription` → `infra_610_place_on_B` | **done** (`SameGaloisType` + majority; modulo place_z) |
+| E7 Theorem 6.6 uniqueness / Galois diagram tests for $p_B$ | `infra_610_same_galois_tests_chartRoot` (prescription tests); `infra_610_same_galois` | **done** |
+| E5–E7 packaged | `infra_610_majority_prescription` → `infra_610_place_on_B` | **done** (amalgam `IsFreeLift` + majority transport) |
 | E8–E11 Mixed queries, restrict, iso, transitivity, Lem 6.9 code | deferred / narrowed in `IsFreeLift` | later |
 | ClosedLevel for scheme bound $P.g` | `infra_610_closed_level` | **done** |
 
-Hard chain follows English §6.2/§8: majority prescriptions → Prop 4.9 enlargement → μ-hull → pull $z$ → abs match with free ref $r_0$ → placed-comparison AgreeOn → freeness → Lem 6.4 placement root → Thm 6.6 Galois tests. Open tip: `infra_610_pull_root_agrees_free_ref` (+ `qPres_empty_joint_on_I`). Blocked: `placement_saturate_to_B` → `placement_root_on_B` → `reflected_matches_chartRoot` → `place_z_as_free_lift`. Done: `pull_z_to_B`, `transport_joint`, `placement_mu_hull`, `pull_root_abs_qPres_empty`. Demoted: `same_head_transfers_joint`. Retired: global `placement_to_B`, soft-pad placeRoot.
+Hard chain follows English §6.2: majority prescriptions → per-query type-good push on $B$ (`qPres_empty_free`) → Galois tests of $p$ against $eB\circ qPres$. A single head in $B$ for every parameter list is retired with the soft-pad (`qPres_empty_joint_on_I`, `preserves_atomic`). `IsFreeLift` is the amalgam of $p$'s host with $B$, with majority values pushed along the $B$ leg. **Thm 6.10 done** for `SingleModelData`. **Next tip:** [`lemma_6_11`](Lemma_6.11.md). Retired: global `placement_to_B`, soft-pad placeRoot, empty-head joint, `same_head_transfers_joint`.
 
 **[FreeExtension.lean](FreeExtension.lean)**
 
