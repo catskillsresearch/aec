@@ -1,6 +1,6 @@
 module
 
-public import AEC.Section7.RelativeIsolation
+public import AEC.Section7.RelativeIsolationTransfer
 public import AEC.Section7.AllDominated
 public import AEC.Section7.ContinuityCondition
 public import AEC.Section7.ProductIndependent
@@ -18,25 +18,44 @@ set_option linter.unusedVariables false
 
 open Cardinal
 
-/-- **Lemma 7.2.** A projection of a relatively isolated type is relatively isolated, and a free
-lift of a type isolated relative to `u` remains isolated relative to `u`. -/
-theorem lemma_7_2 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
-    (W : WorkingScheme K S) :
-    ∃ T, ∃ hT : Tail W.eligible T,
-      ∀ μ (hμ : μ ∈ T) (A : W.Object μ (Tail.mem hT hμ))
-        (q : TupleOver K S W (Tail.mem hT hμ) A) {uIdx cIdx : Type u}
-        (e : q.idx ≃ uIdx ⊕ cIdx),
+/-- **Lemma 7.2.** A projection of a relatively isolated type is relatively isolated, and if
+`q = tp(u,c/A)` is isolated relative to `u` and `q_B` is an extension of `q` over `B` with free
+`u`-marginal, then the joint is the free lift of `q`. Competitors over `B` that match the
+pushed isolating fragment have the same restriction Galois type as the lift (English uniqueness
+through restrictions / Prop 7.3 “extension of `q`”).
+
+Path A packaging: `SingleModelData`, recursion-closed levels, same-level hosts `ν = μ`.
+Full `IsRelativelyIsolated qB` (over-`B` `SameGaloisType`) needs demoted `same_head`. -/
+theorem lemma_7_2 {K : AbstractElementaryClass.{u}} (P : SingleModelData K)
+    (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ) :
+    ∃ T, ∃ hT : Tail P.eligible T,
+      ∀ μ (hμ : μ ∈ T) (A : P.scheme.Object μ (Tail.mem hT hμ))
+        (q : TupleOver K oneVertexShape P.scheme (Tail.mem hT hμ) A)
+        {uIdx c0Idx c1Idx : Type u}
+        (e : q.idx ≃ uIdx ⊕ (c0Idx ⊕ c1Idx)),
+        q.ν = μ → #q.idx ≤ σ → #q.idx < μ →
         IsRelativelyIsolated q e →
-        (∃ e' : (q.marginal e).idx ≃ (q.marginal e).idx ⊕ PEmpty.{u+1},
-          IsRelativelyIsolated (q.marginal e) e') ∧
-        ∀ {ν : Cardinal.{u}} (hν : ν ∈ T) (B : W.Object ν (Tail.mem hT hν))
-          (f : SystemArrow K S (W.asSystem _ A) (W.asSystem _ B))
-          (hf : W.permitted (X := A) (Y := B) f)
-          (qB : TupleOver K S W (Tail.mem hT hν) B) (eB : q.idx ≃ qB.idx),
-          IsFreeLift q qB f hf eB →
-          ∃ uIdx' : Type u, ∃ cIdx' : Type u, ∃ e' : qB.idx ≃ uIdx' ⊕ cIdx',
-            IsRelativelyIsolated qB e' := by
-  sorry
+        IsRelativelyIsolated (q.projectUC0 e)
+            (projectDecomp (uIdx := uIdx) (c0Idx := c0Idx)) ∧
+          ∀ (B : P.scheme.Object μ (Tail.mem hT hμ))
+            (f : SystemArrow K oneVertexShape
+              (P.scheme.asSystem (Tail.mem hT hμ) A)
+              (P.scheme.asSystem (Tail.mem hT hμ) B))
+            (hf : P.scheme.permitted (X := A) (Y := B) f)
+            (qB : TupleOver K oneVertexShape P.scheme (Tail.mem hT hμ) B)
+            (eB : q.idx ≃ qB.idx),
+            qB.ν = μ →
+            SameGaloisType q (qB.restrict f hf) eB (Equiv.refl qB.idx) →
+            IsFreeLift (q.marginal e) (qB.marginal (eB.symm.trans e)) f hf
+              (Equiv.refl uIdx) →
+            IsFreeLift q qB f hf eB ∧
+              ∃ (ι : Type u)
+                (Ziso : ι → Occurrence K oneVertexShape
+                  (P.scheme.asSystem (Tail.mem hT hμ) A)),
+                IsIsolatingFragment q e Ziso ∧
+                  IsRestrictIsolatingFragment f hf qB (eB.symm.trans e)
+                    (pushParams f Ziso) :=
+  infra_72_lemma P σ hσ
 
 /-- **Proposition 7.3.** There is a bound `h`, depending only on the scheme, such that a type
 `q = tp(u, c/A)` is either isolated relative to `u` by a fragment of size at most `h(σ)`, or

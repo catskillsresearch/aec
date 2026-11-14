@@ -138,6 +138,8 @@ public import AEC.Section7.AllDominated
 public import AEC.Section7.ContinuityCondition
 public import AEC.Section7.ProductIndependent
 public import AEC.Section7.RelativeIsolation
+public import AEC.Section7.RelativeIsolationProof
+public import AEC.Section7.RelativeIsolationTransfer
 public import AEC.Section7.Results
 public import AEC.Section7.WitnessingChain
 public import AEC.Section8.MarkedPair

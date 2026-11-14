@@ -46,7 +46,8 @@ Section 13 is complete and was never on that chain.
 
 The table is the previous `Results.lean` rollup. The live token count is **52**,
 including residual infra such as `WorkingScheme.exists_approximationSequence`
-(Thm 6.10 packaging closed for `SingleModelData`: per-query type-good push, amalgam `IsFreeLift`. Retired: `qPres_empty_joint_on_I`. Demoted: `same_head`).
+(Thm 6.10 packaging closed for `SingleModelData`: per-query type-good push, amalgam `IsFreeLift`. Retired: `qPres_empty_joint_on_I`. Demoted: `same_head`)
+and Lemma 7.2 Transfer residuals (`infra_722_extension_bridge`, `infra_722_anchored_maj_of_move`).
 
 ---
 
@@ -113,7 +114,7 @@ counterexample refutes the program.
 **Dependency rule:** edge B→A only if the English proof of A requires B, or A
 needs an explicit Lean infra subgoal B (not a paper-number chain).
 
-**Open (frontier):** [`lemma_7_2`](AEC/Section7/Results.lean) — relative isolation under projection and free lift. [`lemma_6_17`](AEC/Section6/Results.lean) is done for `SingleModelData` mixed `ν ≤ μ`: restricted approximate retractions, SameGaloisType from the square, ApproximationSequence from a short restr subsequence, mixed move-query, almost-id exceptions (`DescentRetraction.lean`). Soft board edges: `corollary_6_16 → lemma_6_17`, `lemma_6_17 → lemma_7_2`. Hard: `lemma_6_11 → lemma_6_17`, `corollary_6_7 → lemma_6_17`, `lemma_6_17 → theorem_7_9`. Deferred elsewhere: Section 7 `SatisfiesContinuity`, general `G ≠ P.E`.
+**Open (frontier):** [`proposition_7_3`](AEC/Section7/Results.lean) — isolation bound / exclusivity. [`lemma_7_2`](AEC/Section7/Results.lean) is done for `SingleModelData`: English `hExt` hyp `SameGaloisType q (qB.restrict)`; `IsFreeLift` via `of_ext`; isolation as `IsRestrictIsolatingFragment` (restriction Galois uniqueness; full `IsRelativelyIsolated qB` needs demoted `same_head`). Zero Transfer sorries. Soft: `lemma_6_17 → lemma_7_2`. Hard: `theorem_6_10 → lemma_7_2`, `corollary_6_7 → lemma_7_2`. Deferred elsewhere: Section 7 `SatisfiesContinuity`, general `G ≠ P.E`.
 
 **Definition 5.2 repairs (made for Proposition 5.6).** The planned statement of Proposition 5.6 (a working package with an object at every eligible level) was refutable from the definitions; each obstruction was checked in Lean before the repair.
 1. `WorkingScheme.diagram_iso` is now for lists with `#α < μ`, and `WorkingScheme.diagram_preserved` for lists with `#α < μ` and `#α < ν` (`AEC/Section5/WorkingScheme.lean`). Unbounded, the two fields applied to the list of all occurrences of an object made every permitted arrow between objects at one level vertexwise bijective; the stable diagram `D` only controls bounded lists. `diagram_refl`, `diagram_symm`, `diagram_trans`, `diagram_reindex`, `diagram_restrict`, `diagram_empty` are unchanged.
@@ -149,7 +150,7 @@ Proof of clause 2. Identify `N` with its chart `E(Below μ)` (categoricity at `�
 
 **Lemma 6.9 is done for `SingleModelData`.** The chain is `infra_69_recursion_tail`, then `infra_69_assemble` at a same-level tuple `p.ν = μ`. Theorem 6.10 is restated the same way. `stationary_free_extension_exists` packages `IsFreeLift` by amalgamating `p`'s host with `B` and pushing majority values along the `B` leg. A single head in `B` for every parameter list is retired (`qPres_empty_joint_on_I`, `preserves_atomic`). Per-query realization is `qPres_empty_free`. Demoted: `same_head`. Soft-pad placeRoot / global `placement_to_B` stay retired. Majority uniqueness is proved. No constant-family alternate.
 
-**Lemma 6.11 is done for same-level `SingleModelData`.** `infra_611_fresh_code` builds a Lemma 6.9 code for `p = q.restrict`. The given sequence and that code meet in `infra_611_bridge` (`infra_610_majority_eq_type`, `infra_610_majority_unique`). `infra_611_code_majority` transports the majority onto `q ↾ Z`. Parameter queries are moved by `infra_610_move_query` (`infra_611_image_agree`); `infra_610_same_galois` is the testing criterion. `IsFreeFrom` is that `IsFreeLift`. Mixed `ν < μ` is deferred. Proposition 6.12 is done for same-level existence and anchored independence. Proposition 6.13 is done for same-level local character and continuity (`SameLevelChain`, stage-trapped Lemma 6.9 code, `infra_611_isFreeFrom`, `infra_613_freeFrom_trans`). Hard board edges into §7: `proposition_7_8`, `lemma_7_11`, `theorem_7_13` (Def 7.7 / local character). Soft only to `proposition_6_15`. Mixed levels stay deferred. Proposition 6.15 is done for the two-sided strip (`G = P.E`); `infra_615_terminal` is the one-sided specialization. Corollary 6.16 is done for `SingleModelData` (μ blocks on `lvlOrder μ ×ₗ (ℕ ×ₗ lvlOrder μ)`, middle-strip exhaustion postcomposed back onto `A`). Lemma 6.17 is done for mixed `ν ≤ μ` (`DescentRetraction.lean`). Open tip: Lemma 7.2.
+**Lemma 6.11 is done for same-level `SingleModelData`.** `infra_611_fresh_code` builds a Lemma 6.9 code for `p = q.restrict`. The given sequence and that code meet in `infra_611_bridge` (`infra_610_majority_eq_type`, `infra_610_majority_unique`). `infra_611_code_majority` transports the majority onto `q ↾ Z`. Parameter queries are moved by `infra_610_move_query` (`infra_611_image_agree`); `infra_610_same_galois` is the testing criterion. `IsFreeFrom` is that `IsFreeLift`. Mixed `ν < μ` is deferred. Proposition 6.12 is done for same-level existence and anchored independence. Proposition 6.13 is done for same-level local character and continuity (`SameLevelChain`, stage-trapped Lemma 6.9 code, `infra_611_isFreeFrom`, `infra_613_freeFrom_trans`). Hard board edges into §7: `proposition_7_8`, `lemma_7_11`, `theorem_7_13` (Def 7.7 / local character). Soft only to `proposition_6_15`. Mixed levels stay deferred. Proposition 6.15 is done for the two-sided strip (`G = P.E`); `infra_615_terminal` is the one-sided specialization. Corollary 6.16 is done for `SingleModelData` (μ blocks on `lvlOrder μ ×ₗ (ℕ ×ₗ lvlOrder μ)`, middle-strip exhaustion postcomposed back onto `A`). Lemma 6.17 is done for mixed `ν ≤ μ` (`DescentRetraction.lean`). Open tip: Proposition 7.3. Lemma 7.2 is done.
 
 **Wired (intended use, reach apex):** `5.6 → 9.3, 10.2`; `5.7 → 9.3, 10.6, 10.8`;
 `2.3 → 1.2`; `3.11 → 4.2, 5.8`; `4.2 → 4.9, 4.10, 4.11`; `4.3 → 4.10, 4.11`; `4.5 → 6.1`; `4.6 → 4.9`; `4.7 → 4.8, 12.5`; `4.8 → 4.10, 4.11, 6.3, 6.5`; `4.10 → 4.11, 6.5`; `6.3 → 6.5`; `6.4 → 6.5`; `4.11 → 5.6, 6.6, 6.7`; `infra_69_place_on_fills → infra_69_assemble → 6.9` (hard; 6.9 done for `SingleModelData`); `infra_610_move_query → infra_610_free_root / infra_610_param_freeing_qPres → infra_610_chart_support → infra_610_moved_majority → infra_610_root_majority + infra_610_root_galois → infra_610_chart_prescriptions → infra_610_place_prescriptions → infra_610_majority_of_placement → infra_610_majority_prescription → infra_610_place_on_B → stationary_free_extension_exists → 6.10` with `infra_610_majority_matches_root → infra_610_majority_prescription` and `infra_610_galois_tests_of_placement → infra_610_majority_prescription` with `infra_610_closed_level → infra_610_same_galois → infra_610_isFreeLift_same_galois` (hard restore tip; majority path soft on same_galois; E5 tipport / moved_majority / root_majority done; E5d′/E5e reflected done; `IsFreeLift` majority-only)
@@ -289,13 +290,13 @@ Waits on Section 5 working package. Lean: later Results import this module.
 
 (`lemma_6_14` is proved, widened to χ-indexed queries plus a fixed `T★`, and is a hard dependency of `proposition_6_15`. `lemma_6_1` is done and stays in the table for its statement changes.)
 
-### L3 — Section 7 (9)
+### L3 — Section 7 (8)
 
 Lean: imports `AEC.Section6.Results`.
 
 | Decl | Title | Location |
 |------|-------|----------|
-| `lemma_7_2` | Lemma 7.2 | `AEC/Section7/Results.lean:39` |
+| `lemma_7_2` | Lemma 7.2 | `AEC/Section7/Results.lean` (**done**: `hExt` + `IsFreeLift` + `IsRestrictIsolatingFragment`; 0 Transfer sorries) |
 | `proposition_7_3` | Proposition 7.3 | `AEC/Section7/Results.lean:59` |
 | `proposition_7_5` | Proposition 7.5 | `AEC/Section7/Results.lean:82` |
 | `lemma_7_6` | Lemma 7.6 | `AEC/Section7/Results.lean:100` |

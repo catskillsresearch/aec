@@ -1,7 +1,6 @@
-# Hard edges from holes-graph.json
+# Nodes: (see holes-graph.json)  Hard edges: 239
 # Convention: FROM --> TO means the English proof of TO requires FROM.
-# Nodes: 197  Hard edges: 237
-# Open tip: lemma_7_2. lemma_6_17 done (mixed ν≤μ). Soft: corollary_6_16→lemma_6_17, lemma_6_17→lemma_7_2. Hard: lemma_6_11→lemma_6_17, corollary_6_7→lemma_6_17, lemma_6_17→theorem_7_9.
+# Open tip: proposition_7_3. lemma_7_2 done (hExt + IsFreeLift + IsRestrictIsolatingFragment; 0 Transfer sorries). Hard: theorem_6_10→lemma_7_2, corollary_6_7→lemma_7_2. Soft keep lemma_6_17→lemma_7_2.
 # Retired: infra_610_qPres_empty_joint_on_I, infra_610_same_head_transfers_joint.
 
 claim_11_10 --> claim_11_11
@@ -11,6 +10,7 @@ claim_11_13 --> theorem_11_9
 corollary_10_10 --> lemma_11_2
 corollary_14_4 --> theorem_14_5
 corollary_6_7 --> lemma_6_17
+corollary_6_7 --> lemma_7_2
 corollary_9_2 --> theorem_9_3
 infra_55_enumerate_added --> infra_55_pattern_realize
 infra_55_one_point_cut --> infra_55_pattern_realize
@@ -234,6 +234,7 @@ theorem_4_11 --> corollary_6_7
 theorem_4_11 --> proposition_5_6
 theorem_4_11 --> theorem_6_6
 theorem_6_10 --> lemma_6_11
+theorem_6_10 --> lemma_7_2
 theorem_6_6 --> proposition_6_15
 theorem_7_13 --> lemma_8_2
 theorem_7_9 --> lemma_7_11
