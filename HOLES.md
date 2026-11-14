@@ -4,7 +4,7 @@ Inventory of Lean `sorry` holes in this repository, ordered **prove-first**: Lay
 are holes with no remaining unfinished prerequisites; later layers wait on earlier
 ones. Apex theorems 1.2 and 1.3 are **last**.
 
-**Count:** 52 `sorry`, 0 `admit`.
+**Count:** 48 `sorry`, 0 `admit`.
 Sections **2**, **3**, **4**, and **13** have no holes.
 
 **Dependency basis:** paper/logical order from `dependencies.mermaid`
@@ -34,7 +34,7 @@ Section 13 is complete and was never on that chain.
 | 4 | 0 | — |
 | 5 | 1 | `AEC/Section5/Results.lean` |
 | 6 | 7 | `AEC/Section6/Results.lean` |
-| 7 | 9 | `AEC/Section7/Results.lean` |
+| 7 | 5 | `AEC/Section7/Results.lean` |
 | 8 | 5 | `AEC/Section8/Results.lean` |
 | 9 | 7 | `AEC/Section9/Results.lean` |
 | 10 | 9 | `AEC/Section10/Results.lean` |
@@ -299,7 +299,7 @@ Lean: imports `AEC.Section6.Results`.
 | `lemma_7_2` | Lemma 7.2 | `AEC/Section7/Results.lean` (**done**: `hExt` + `IsFreeLift` + `IsRestrictIsolatingFragment`; 0 Transfer sorries) |
 | `proposition_7_3` | Proposition 7.3 | `AEC/Section7/Results.lean` (**partial**: fragment ≤ `h(σ)` or extension with free marginal and `¬ IsTiedFree`. Uniform bound open. 0 sorry) |
 | `proposition_7_5` | Proposition 7.5 | `AEC/Section7/Results.lean:82` |
-| `lemma_7_6` | Lemma 7.6 | `AEC/Section7/Results.lean:100` |
+| `lemma_7_6` | Lemma 7.6 | `AEC/Section7/Results.lean` (**done**: approach C, fragment `pushParams f Z`; arbitrary `W ⊆ B` demoted with `same_head`. 0 sorry) |
 | `proposition_7_8` | Proposition 7.8 | `AEC/Section7/Results.lean:118` |
 | `theorem_7_9` | Theorem 7.9 | `AEC/Section7/Results.lean:134` |
 | `lemma_7_11` | Lemma 7.11 | `AEC/Section7/Results.lean:151` |

@@ -141,6 +141,7 @@ public import AEC.Section7.RelativeIsolation
 public import AEC.Section7.RelativeIsolationProof
 public import AEC.Section7.RelativeIsolationTransfer
 public import AEC.Section7.IsolationBound
+public import AEC.Section7.DescentIsolation
 public import AEC.Section7.Primness
 public import AEC.Section7.Results
 public import AEC.Section7.WitnessingChain

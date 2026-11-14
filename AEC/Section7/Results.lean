@@ -1,6 +1,7 @@
 module
 
 public import AEC.Section7.RelativeIsolationTransfer
+public import AEC.Section7.DescentIsolation
 public import AEC.Section7.IsolationBound
 public import AEC.Section7.Primness
 public import AEC.Section7.AllDominated
@@ -130,23 +131,33 @@ theorem proposition_7_5 {K : AbstractElementaryClass.{u}} (P : SingleModelData K
             ∀ i, φ.onVertex (b i).1 (b i).2 = (b₂ i).2) :=
   infra_75_lemma P σ hσ
 
-/-- **Lemma 7.6.** If the free lift of `q_A` is isolated relative to `u`, then `q_A` is
-isolated relative to `u`. -/
-theorem lemma_7_6 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
-    (W : WorkingScheme K S) :
-    ∃ T, ∃ hT : Tail W.eligible T,
-      ∀ ν (hν : ν ∈ T) μ (hμ : μ ∈ T) (A : W.Object ν (Tail.mem hT hν))
-        (B : W.Object μ (Tail.mem hT hμ))
-        (f : SystemArrow K S (W.asSystem _ A) (W.asSystem _ B))
-        (hf : W.permitted (X := A) (Y := B) f)
-        (qA : TupleOver K S W (Tail.mem hT hν) A)
-        (qB : TupleOver K S W (Tail.mem hT hμ) B)
+/-- **Lemma 7.6.** If the free lift of `q_A` is isolated relative to `u` by the push of a
+list from `A`, then `q_A` is isolated relative to `u` by that list.
+
+Path A packaging: `SingleModelData`, recursion-closed levels, same-level hosts `ν = μ`.
+An arbitrary isolating fragment `W ⊆ B` is demoted with `same_head`. The proved fragment
+on `B` is `pushParams f Z` for a list `Z` in `A`; the marginal identification is the
+amalgam of the shared `u`-marginal. -/
+theorem lemma_7_6 {K : AbstractElementaryClass.{u}} (P : SingleModelData K)
+    (σ : Cardinal.{u}) (hσ : ℵ₀ ≤ σ) :
+    ∃ T, ∃ hT : Tail P.eligible T,
+      ∀ μ (hμ : μ ∈ T) (A B : P.scheme.Object μ (Tail.mem hT hμ))
+        (f : SystemArrow K oneVertexShape (P.scheme.asSystem _ A) (P.scheme.asSystem _ B))
+        (hf : P.scheme.permitted (X := A) (Y := B) f)
+        (qA : TupleOver K oneVertexShape P.scheme (Tail.mem hT hμ) A)
+        (qB : TupleOver K oneVertexShape P.scheme (Tail.mem hT hμ) B)
         (e : qA.idx ≃ qB.idx) {uIdx cIdx : Type u}
         (eA : qA.idx ≃ uIdx ⊕ cIdx),
-        ν ≤ μ → IsFreeLift qA qB f hf e →
-        IsRelativelyIsolated qB (e.symm.trans eA) →
-        IsRelativelyIsolated qA eA := by
-  sorry
+        qA.ν = μ → qB.ν = μ →
+        #qA.idx ≤ σ → #qA.idx < μ →
+        IsFreeLift qA qB f hf e →
+        IsFreeLift (qA.marginal eA) (qB.marginal (e.symm.trans eA)) f hf
+          (Equiv.refl uIdx) →
+        (∃ (wIdx : Type u)
+          (Z0 : wIdx → Occurrence K oneVertexShape (P.scheme.asSystem _ A)),
+          IsIsolatingFragment qB (e.symm.trans eA) (pushParams f Z0)) →
+        IsRelativelyIsolated qA eA :=
+  infra_76_lemma P σ hσ
 
 /-- **Proposition 7.8.** A finite-tuple type at a sufficiently closed level has a same-level
 extension in which every tuple of length at most `θ` is isolated relative to the mark. -/

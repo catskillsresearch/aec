@@ -1,6 +1,6 @@
 {
   "updated": "2026-11-14T04:40:00Z",
-  "sorryCount": 50,
+  "sorryCount": 49,
   "legend": {
     "open": "No unfinished required proof-deps — try next",
     "blocked": "Waiting on incomplete required proof-deps",
@@ -8,7 +8,7 @@
   },
   "notes": [
     "Prop 6.13 hard-feeds theorem_7_13, proposition_7_8, lemma_7_11 (English §7 continuity / local character). Edge to proposition_6_15 stays soft (paper-number).",
-    "Open tip: lemma_7_6 (descent of isolation). proposition_7_5 done for SingleModelData: same-level embedding and structural iso over X+b. Clause 3, mixed-level targets, and prescribed tuple match demoted. Hard proposition_7_3→proposition_7_5 and proposition_7_5→lemma_7_6. 0 sorry. sorryCount 50.",
+    "Open tip: proposition_7_8. lemma_7_6 done for SingleModelData when the isolating fragment of qB is pushParams f Z (Z a list in A). Arbitrary W ⊆ B demoted with same_head. Marginal identification is the amalgam of the shared u-marginal. 0 sorry in DescentIsolation and lemma_7_6. sorryCount 49.",
     "Edge B→A means the English proof of A requires B (or a required Lean infra subgoal).",
     "Blue = done. Green = open. Grey = blocked. No separate failed status unless a counterexample refutes the program.",
     "lemma_6_14 is independent of Prop 6.13 (that paper-number edge stays removed). Widened to χ-indexed queries plus a fixed T★, it is a hard dependency of proposition_6_15 and still feeds lemma_12_6."
@@ -586,9 +586,9 @@
       "label": "Lem 7.6",
       "section": 7,
       "file": "AEC/Section7/Results.lean",
-      "status": "open",
+      "status": "done",
       "blocker": null,
-      "detail": "Open tip after proposition_7_5."
+      "detail": "Done for SingleModelData, approach C: isolating fragment of qB is pushParams f Z for Z in A. qA is isolated by Z. Arbitrary W ⊆ B demoted with same_head. Marginal SGT is the amalgam of the shared u-marginal, not infra_612_freeLift_unique. 0 sorry."
     },
     {
       "id": "proposition_7_3",
@@ -612,8 +612,9 @@
       "label": "Prop 7.8",
       "section": 7,
       "file": "AEC/Section7/Results.lean",
-      "status": "blocked",
-      "blocker": null
+      "status": "open",
+      "blocker": null,
+      "detail": "Open tip after lemma_7_6. Hard deps proposition_6_13 and lemma_7_6 are done."
     },
     {
       "id": "theorem_7_13",
@@ -3104,6 +3105,6 @@
       "note": "Mixed-level free lift comparisons; Path A same-level uses Cor 6.7 packaging."
     }
   ],
-  "doneCount": 146,
-  "meta": "Open tip: lemma_7_6. proposition_7_5 done (SingleModelData clauses 1–2; clause 3 / mixed-level / prescribed match demoted). sorryCount 50."
+  "doneCount": 147,
+  "meta": "Open tip: proposition_7_8. lemma_7_6 done (SingleModelData; isolating fragment of qB is a push from A; arbitrary W ⊆ B demoted with same_head). sorryCount 49."
 }
