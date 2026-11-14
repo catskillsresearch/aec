@@ -114,7 +114,7 @@ counterexample refutes the program.
 **Dependency rule:** edge B→A only if the English proof of A requires B, or A
 needs an explicit Lean infra subgoal B (not a paper-number chain).
 
-**Open (frontier):** [`proposition_7_3`](AEC/Section7/Results.lean) — isolation bound / exclusivity. [`lemma_7_2`](AEC/Section7/Results.lean) is done for `SingleModelData`: English `hExt` hyp `SameGaloisType q (qB.restrict)`; `IsFreeLift` via `of_ext`; isolation as `IsRestrictIsolatingFragment` (restriction Galois uniqueness; full `IsRelativelyIsolated qB` needs demoted `same_head`). Zero Transfer sorries. Soft: `lemma_6_17 → lemma_7_2`. Hard: `theorem_6_10 → lemma_7_2`, `corollary_6_7 → lemma_7_2`. Deferred elsewhere: Section 7 `SatisfiesContinuity`, general `G ≠ P.E`.
+**Open (frontier):** [`proposition_7_3`](AEC/Section7/Results.lean) — isolation bound, partial. At a recursion-closed level, either `q` has an isolating fragment of size at most `h(σ)`, or `infra_73_alt2` supplies a same-level extension with free `u`-marginal and `¬ IsTiedFree`. The uniform bound (every relatively isolated type has such a fragment) is open: isolation does not yet imply `IsTiedFree`, because that is free evaluation of the actual joint and the untied `IsFreeLift` witness does not name tuple values. [`lemma_7_2`](AEC/Section7/Results.lean) remains done. Zero sorries in `IsolationBound.lean` and `proposition_7_3`.
 
 **Definition 5.2 repairs (made for Proposition 5.6).** The planned statement of Proposition 5.6 (a working package with an object at every eligible level) was refutable from the definitions; each obstruction was checked in Lean before the repair.
 1. `WorkingScheme.diagram_iso` is now for lists with `#α < μ`, and `WorkingScheme.diagram_preserved` for lists with `#α < μ` and `#α < ν` (`AEC/Section5/WorkingScheme.lean`). Unbounded, the two fields applied to the list of all occurrences of an object made every permitted arrow between objects at one level vertexwise bijective; the stable diagram `D` only controls bounded lists. `diagram_refl`, `diagram_symm`, `diagram_trans`, `diagram_reindex`, `diagram_restrict`, `diagram_empty` are unchanged.
@@ -297,7 +297,7 @@ Lean: imports `AEC.Section6.Results`.
 | Decl | Title | Location |
 |------|-------|----------|
 | `lemma_7_2` | Lemma 7.2 | `AEC/Section7/Results.lean` (**done**: `hExt` + `IsFreeLift` + `IsRestrictIsolatingFragment`; 0 Transfer sorries) |
-| `proposition_7_3` | Proposition 7.3 | `AEC/Section7/Results.lean:59` |
+| `proposition_7_3` | Proposition 7.3 | `AEC/Section7/Results.lean` (**partial**: fragment ≤ `h(σ)` or extension with free marginal and `¬ IsTiedFree`. Uniform bound open. 0 sorry) |
 | `proposition_7_5` | Proposition 7.5 | `AEC/Section7/Results.lean:82` |
 | `lemma_7_6` | Lemma 7.6 | `AEC/Section7/Results.lean:100` |
 | `proposition_7_8` | Proposition 7.8 | `AEC/Section7/Results.lean:118` |

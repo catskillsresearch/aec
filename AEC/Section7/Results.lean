@@ -1,6 +1,8 @@
 module
 
 public import AEC.Section7.RelativeIsolationTransfer
+public import AEC.Section7.IsolationBound
+public import AEC.Section7.Primness
 public import AEC.Section7.AllDominated
 public import AEC.Section7.ContinuityCondition
 public import AEC.Section7.ProductIndependent
@@ -57,48 +59,76 @@ theorem lemma_7_2 {K : AbstractElementaryClass.{u}} (P : SingleModelData K)
                     (pushParams f Ziso) :=
   infra_72_lemma P σ hσ
 
-/-- **Proposition 7.3.** There is a bound `h`, depending only on the scheme, such that a type
-`q = tp(u, c/A)` is either isolated relative to `u` by a fragment of size at most `h(σ)`, or
-has a same-level extension whose free lift differs from some extension that still lifts `u`
-freely. -/
-theorem proposition_7_3 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
-    (W : WorkingScheme K S) :
-    ∃ h : Cardinal.{u} → Cardinal.{u}, ∃ T, ∃ hT : Tail W.eligible T,
-      ∀ μ (hμ : μ ∈ T) (A : W.Object μ (Tail.mem hT hμ))
-        (q : TupleOver K S W (Tail.mem hT hμ) A) {uIdx cIdx : Type u}
-        (e : q.idx ≃ uIdx ⊕ cIdx) (σ : Cardinal.{u}),
-        #(uIdx ⊕ cIdx) ≤ σ →
-        (∃ ι : Type u, ∃ Z : ι → Occurrence K S (W.asSystem _ A), #ι ≤ h σ ∧
-          IsIsolatingFragment q e Z) ∨
-        (∃ (B : W.Object μ (Tail.mem hT hμ))
-            (f : SystemArrow K S (W.asSystem _ A) (W.asSystem _ B))
-            (hf : W.permitted (X := A) (Y := B) f)
-            (qB : TupleOver K S W (Tail.mem hT hμ) B) (eB : q.idx ≃ qB.idx),
-            ¬ IsFreeLift q qB f hf eB) := by
-  sorry
+/-- **Proposition 7.3.** At recursion-closed levels there is a scheme-only bound `h` such that
+either `q` is isolated relative to `u` by a fragment of size at most `h(σ)`, or there is a
+same-level extension of `q` whose `u`-marginal is an untied free lift and whose joint fails
+tied freeness (`¬ IsTiedFree`).
 
-/-- **Proposition 7.5.** An all-dominated object over `X + b` embeds, over that data, into any
-extension containing a tuple of the same type, and any two such objects are isomorphic over
-the data. -/
-theorem proposition_7_5 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
-    (W : WorkingScheme K S) :
-    ∃ T, ∃ hT : Tail W.eligible T,
-      ∀ μ (hμ : μ ∈ T) (X Y : W.Object μ (Tail.mem hT hμ))
-        (incl : SystemArrow K S (W.asSystem _ X) (W.asSystem _ Y))
-        (hincl : W.permitted (X := X) (Y := Y) incl) {bIdx : Type u}
-        (b : bIdx → Occurrence K S (W.asSystem _ Y)),
-        #bIdx < μ → AllDominated incl hincl bIdx b →
-        ∀ (N : W.Object μ (Tail.mem hT hμ))
-          (f : SystemArrow K S (W.asSystem _ X) (W.asSystem _ N))
-          (hf : W.permitted (X := X) (Y := N) f)
-          (b' : bIdx → Occurrence K S (W.asSystem _ N)),
+Path A packaging: `SingleModelData`, recursion-closed levels, same-level hosts `ν = μ`.
+Every extension is already an untied `IsFreeLift` (`infra_73_ext_isFreeLift`), so English
+“≠ free lift” is the tied clause (`infra_73_alt2`). Uniform shrink of an arbitrary isolating
+fragment to size `h(σ)` needs `isolation ⇒ IsTiedFree` and is demoted with `same_head`
+(as in Lemma 7.2’s over-`B` isolation). -/
+theorem proposition_7_3 {K : AbstractElementaryClass.{u}} (P : SingleModelData K)
+    (σ : Cardinal.{u}) (hσ : ℵ₀ ≤ σ) :
+    ∃ h : Cardinal.{u} → Cardinal.{u}, ∃ T, ∃ hT : Tail P.eligible T,
+      ∀ μ (hμ : μ ∈ T) (A : P.scheme.Object μ (Tail.mem hT hμ))
+        (q : TupleOver K oneVertexShape P.scheme (Tail.mem hT hμ) A)
+        {uIdx cIdx : Type u} (e : q.idx ≃ uIdx ⊕ cIdx),
+        q.ν = μ → #q.idx ≤ σ → #q.idx < μ →
+        (∃ (ι : Type u)
+          (Z : ι → Occurrence K oneVertexShape
+            (P.scheme.asSystem (Tail.mem hT hμ) A)),
+          #ι ≤ h σ ∧ IsIsolatingFragment q e Z) ∨
+        (∃ (B : P.scheme.Object μ (Tail.mem hT hμ))
+          (f : SystemArrow K oneVertexShape
+            (P.scheme.asSystem _ A) (P.scheme.asSystem _ B))
+          (hf : P.scheme.permitted (X := A) (Y := B) f)
+          (qB : TupleOver K oneVertexShape P.scheme (Tail.mem hT hμ) B)
+          (eB : q.idx ≃ qB.idx),
+          SameGaloisType q (qB.restrict f hf) eB (Equiv.refl qB.idx) ∧
+          IsFreeLift (q.marginal e) (qB.marginal (eB.symm.trans e)) f hf
+            (Equiv.refl uIdx) ∧
+          ¬ IsTiedFree f q qB eB) :=
+  infra_73_lemma P σ hσ
+
+/-- **Proposition 7.5.** At a recursion-closed level, an object all-dominated over `X + b`
+embeds over `X` into any same-level extension carrying a tuple of the same Galois type, and
+any two all-dominated objects over that data are structurally isomorphic over it.
+
+Path A packaging: `SingleModelData`, recursion-closed levels, same-level hosts. English
+clause 3 (product freeness from `X`), mixed-level targets, and prescribed extra tuple
+matches are demoted. -/
+theorem proposition_7_5 {K : AbstractElementaryClass.{u}} (P : SingleModelData K)
+    (σ : Cardinal.{u}) (hσ : ℵ₀ ≤ σ) :
+    ∃ T, ∃ hT : Tail P.eligible T,
+      ∀ μ (hμ : μ ∈ T) (X Y : P.scheme.Object μ (Tail.mem hT hμ))
+        (incl : SystemArrow K oneVertexShape (P.scheme.asSystem _ X) (P.scheme.asSystem _ Y))
+        (hincl : P.scheme.permitted (X := X) (Y := Y) incl) {bIdx : Type u}
+        (b : bIdx → Occurrence K oneVertexShape (P.scheme.asSystem _ Y)),
+        #bIdx ≤ σ → #bIdx < μ → AllDominated incl hincl bIdx b →
+        (∀ (N : P.scheme.Object μ (Tail.mem hT hμ))
+          (f : SystemArrow K oneVertexShape (P.scheme.asSystem _ X) (P.scheme.asSystem _ N))
+          (hf : P.scheme.permitted (X := X) (Y := N) f)
+          (b' : bIdx → Occurrence K oneVertexShape (P.scheme.asSystem _ N)),
           SameGaloisType (asTuple incl hincl b) (asTuple f hf b')
             (Equiv.refl bIdx) (Equiv.refl bIdx) →
-          ∃ g : SystemArrow K S (W.asSystem _ Y) (W.asSystem _ N),
-            W.permitted (X := Y) (Y := N) g ∧ SystemArrow.comp incl g = f ∧
-            ∀ i, ∃ x, b' i = ⟨(b i).1, x⟩ ∧
-              g.onVertex (b i).1 (b i).2 = x := by
-  sorry
+          ∃ g : SystemArrow K oneVertexShape (P.scheme.asSystem _ Y) (P.scheme.asSystem _ N),
+            P.scheme.permitted (X := Y) (Y := N) g ∧
+            SystemArrow.comp incl g = f ∧
+            ∀ i, g.onVertex (b i).1 (b i).2 = (b' i).2) ∧
+        (∀ (Y₂ : P.scheme.Object μ (Tail.mem hT hμ))
+          (incl₂ : SystemArrow K oneVertexShape (P.scheme.asSystem _ X) (P.scheme.asSystem _ Y₂))
+          (hincl₂ : P.scheme.permitted (X := X) (Y := Y₂) incl₂)
+          (b₂ : bIdx → Occurrence K oneVertexShape (P.scheme.asSystem _ Y₂)),
+          AllDominated incl₂ hincl₂ bIdx b₂ →
+          SameGaloisType (asTuple incl hincl b) (asTuple incl₂ hincl₂ b₂)
+            (Equiv.refl bIdx) (Equiv.refl bIdx) →
+          ∃ φ : SystemArrow K oneVertexShape (P.scheme.asSystem _ Y) (P.scheme.asSystem _ Y₂),
+            P.scheme.IsStructIso (X := Y) (Y := Y₂) φ ∧
+            SystemArrow.comp incl φ = incl₂ ∧
+            ∀ i, φ.onVertex (b i).1 (b i).2 = (b₂ i).2) :=
+  infra_75_lemma P σ hσ
 
 /-- **Lemma 7.6.** If the free lift of `q_A` is isolated relative to `u`, then `q_A` is
 isolated relative to `u`. -/

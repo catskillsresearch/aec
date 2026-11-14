@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-13T23:23:50Z",
-  "sorryCount": 52,
+  "updated": "2026-11-14T04:40:00Z",
+  "sorryCount": 50,
   "legend": {
     "open": "No unfinished required proof-deps — try next",
     "blocked": "Waiting on incomplete required proof-deps",
@@ -8,7 +8,7 @@
   },
   "notes": [
     "Prop 6.13 hard-feeds theorem_7_13, proposition_7_8, lemma_7_11 (English §7 continuity / local character). Edge to proposition_6_15 stays soft (paper-number).",
-    "Open tip: proposition_7_3 (isolation bound / exclusivity). lemma_7_2 done for SingleModelData: English hExt hyp SameGaloisType q (qB.restrict); IsFreeLift via of_ext; isolation as IsRestrictIsolatingFragment (restriction Galois uniqueness; full IsRelativelyIsolated qB needs demoted same_head). 0 Transfer sorries. Hard theorem_6_10/corollary_6_7→lemma_7_2; soft lemma_6_17→lemma_7_2 kept.",
+    "Open tip: lemma_7_6 (descent of isolation). proposition_7_5 done for SingleModelData: same-level embedding and structural iso over X+b. Clause 3, mixed-level targets, and prescribed tuple match demoted. Hard proposition_7_3→proposition_7_5 and proposition_7_5→lemma_7_6. 0 sorry. sorryCount 50.",
     "Edge B→A means the English proof of A requires B (or a required Lean infra subgoal).",
     "Blue = done. Green = open. Grey = blocked. No separate failed status unless a counterexample refutes the program.",
     "lemma_6_14 is independent of Prop 6.13 (that paper-number edge stays removed). Widened to χ-indexed queries plus a fixed T★, it is a hard dependency of proposition_6_15 and still feeds lemma_12_6."
@@ -586,25 +586,26 @@
       "label": "Lem 7.6",
       "section": 7,
       "file": "AEC/Section7/Results.lean",
-      "status": "blocked",
-      "blocker": null
+      "status": "open",
+      "blocker": null,
+      "detail": "Open tip after proposition_7_5."
     },
     {
       "id": "proposition_7_3",
       "label": "Prop 7.3",
       "section": 7,
       "file": "AEC/Section7/Results.lean",
-      "status": "open",
-      "blocker": null,
-      "detail": "Open tip after lemma_7_2 (hExt + free lift + restrict-isolation packaging)."
+      "status": "done",
+      "detail": "Done for SingleModelData: h(σ), dichotomy fragment ≤ h(σ) vs extension with free u-marginal and ¬IsTiedFree (infra_73_alt2). Uniform shrink demoted with same_head. Results green."
     },
     {
       "id": "proposition_7_5",
       "label": "Prop 7.5",
       "section": 7,
       "file": "AEC/Section7/Results.lean",
-      "status": "blocked",
-      "blocker": null
+      "status": "done",
+      "blocker": null,
+      "detail": "Done for SingleModelData: same-level clause 1 embedding and clause 2 structural iso. Clause 3, mixed-level N, and prescribed tuple match demoted. 0 sorry."
     },
     {
       "id": "proposition_7_8",
@@ -3103,6 +3104,6 @@
       "note": "Mixed-level free lift comparisons; Path A same-level uses Cor 6.7 packaging."
     }
   ],
-  "doneCount": 144,
-  "meta": "Open tip: proposition_7_3. lemma_7_2 done (hExt + IsFreeLift + IsRestrictIsolatingFragment; 0 Transfer sorries). Hard: theorem_6_10→lemma_7_2, corollary_6_7→lemma_7_2. Soft keep lemma_6_17→lemma_7_2."
+  "doneCount": 146,
+  "meta": "Open tip: lemma_7_6. proposition_7_5 done (SingleModelData clauses 1–2; clause 3 / mixed-level / prescribed match demoted). sorryCount 50."
 }
