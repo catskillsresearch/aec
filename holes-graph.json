@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-14T04:40:00Z",
+  "updated": "2026-11-14T14:15:00Z",
   "sorryCount": 49,
   "legend": {
     "open": "No unfinished required proof-deps — try next",
@@ -8,7 +8,7 @@
   },
   "notes": [
     "Prop 6.13 hard-feeds theorem_7_13, proposition_7_8, lemma_7_11 (English §7 continuity / local character). Edge to proposition_6_15 stays soft (paper-number).",
-    "Open tip: proposition_7_8. lemma_7_6 done for SingleModelData when the isolating fragment of qB is pushParams f Z (Z a list in A). Arbitrary W ⊆ B demoted with same_head. Marginal identification is the amalgam of the shared u-marginal. 0 sorry in DescentIsolation and lemma_7_6. sorryCount 49.",
+    "Open tip: proposition_7_8 (existence blocked). Path A cannot fill existence: needs Prop 7.3 uniform shrink (demoted same_head) and Lem 7.6 mixed/arbitrary-fragment descent (demoted), plus Fodor/ρ^λ matrix. infra_78_finite_continuity packages Def 7.7 for finite marks via Prop 6.13. Tip stays. sorryCount 49.",
     "Edge B→A means the English proof of A requires B (or a required Lean infra subgoal).",
     "Blue = done. Green = open. Grey = blocked. No separate failed status unless a counterexample refutes the program.",
     "lemma_6_14 is independent of Prop 6.13 (that paper-number edge stays removed). Widened to χ-indexed queries plus a fixed T★, it is a hard dependency of proposition_6_15 and still feeds lemma_12_6."
@@ -614,7 +614,7 @@
       "file": "AEC/Section7/Results.lean",
       "status": "open",
       "blocker": null,
-      "detail": "Open tip after lemma_7_6. Hard deps proposition_6_13 and lemma_7_6 are done."
+      "detail": "Tip stays. Existence blocked on Prop 7.3 uniform shrink and Lem 7.6 mixed/arbitrary fragment (both demoted same_head), plus Fodor matrix. infra_78_finite_continuity (Def 7.7 for Finite) via Prop 6.13 is green. Stub remains sorry."
     },
     {
       "id": "theorem_7_13",
@@ -1952,7 +1952,14 @@
     {
       "from": "lemma_7_6",
       "to": "proposition_7_8",
-      "kind": "hard"
+      "kind": "hard",
+      "note": "English uses mixed/arbitrary-fragment descent; Path A lemma_7_6 is push-only same-level and does not unlock Prop 7.8 existence."
+    },
+    {
+      "from": "proposition_7_3",
+      "to": "proposition_7_8",
+      "kind": "soft",
+      "note": "English successor uses 7.3 nonfree extension and shrink uses h(σ); Path A dichotomy alone is not enough (uniform shrink demoted)."
     },
     {
       "from": "proposition_7_8",
@@ -3072,7 +3079,7 @@
       "from": "proposition_6_13",
       "to": "proposition_7_8",
       "kind": "hard",
-      "note": "Limit stages of the isolation construction preserve the marginal via Def 7.7; finite-tuple case is Prop 6.13."
+      "note": "Def 7.7 for finite marks (infra_78_finite_continuity). Not sufficient for Path A existence of the θ-isolation extension."
     },
     {
       "from": "lemma_6_11",
@@ -3106,5 +3113,5 @@
     }
   ],
   "doneCount": 147,
-  "meta": "Open tip: proposition_7_8. lemma_7_6 done (SingleModelData; isolating fragment of qB is a push from A; arbitrary W ⊆ B demoted with same_head). sorryCount 49."
+  "meta": "Open tip: proposition_7_8 (existence blocked on demoted 7.3/7.6 halves + Fodor). infra_78_finite_continuity green. sorryCount 49."
 }

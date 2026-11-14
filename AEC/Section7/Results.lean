@@ -4,6 +4,7 @@ public import AEC.Section7.RelativeIsolationTransfer
 public import AEC.Section7.DescentIsolation
 public import AEC.Section7.IsolationBound
 public import AEC.Section7.Primness
+public import AEC.Section7.FiniteIsolation
 public import AEC.Section7.AllDominated
 public import AEC.Section7.ContinuityCondition
 public import AEC.Section7.ProductIndependent
@@ -160,7 +161,12 @@ theorem lemma_7_6 {K : AbstractElementaryClass.{u}} (P : SingleModelData K)
   infra_76_lemma P σ hσ
 
 /-- **Proposition 7.8.** A finite-tuple type at a sufficiently closed level has a same-level
-extension in which every tuple of length at most `θ` is isolated relative to the mark. -/
+extension in which every tuple of length at most `θ` is isolated relative to the mark.
+
+Blocked for Path A existence: English needs Prop 7.3’s demoted uniform fragment bound
+(`isolation ⇒ IsTiedFree`), Lemma 7.6’s demoted mixed / arbitrary-fragment descent, and a
+Fodor / `ρ^λ` bookkeeping matrix. Finite-mark continuity (Def 7.7) is packaged separately as
+`infra_78_finite_continuity` in `FiniteIsolation.lean` via Proposition 6.13. -/
 theorem proposition_7_8 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
     (W : WorkingScheme K S) :
     ∃ T, ∃ hT : Tail W.eligible T,
