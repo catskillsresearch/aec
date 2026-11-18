@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-18 10:13",
+  "updated": "2026-11-18 10:15",
   "sorryCount": 44,
   "legend": {
     "open": "No unfinished required proof-deps — try next",
@@ -1844,7 +1844,7 @@
       "file": "AEC/Section7/MixedDescent.lean",
       "status": "blocked",
       "blocker": "infra_78_matrix_construction",
-      "detail": "Blocked (full claim kept: everything Prop 7.8 needs beyond the done infra). Split into tracked sub-tips: infra_78_fixed_list_eventually_free (DONE), infra_78_nonfree_extension_tied (open), infra_78_same_level_type_amalgam (DONE), infra_78_bookkeeping_closure (open), infra_78_matrix_construction (blocked), infra_78_isolated_stage (blocked), infra_78_theta_shrink (blocked), infra_78_isolation_transfer (blocked). Previously done toward it: mixed tied free lift, mixed Lemma 7.6, Fodor, matrix data, stationary combinatorics, tied local character. Open. Done toward it: mixed tied free lift and mixed Lemma 7.6 (sorry-free), Fodor, matrix data, stationary combinatorics (infra_78_stationary_combinatorics: high-cofinality stages stationary, small sets appear early, one fixed failing list on a stationary set). Tied local character now done (infra_78_tied_local_character: infra_78_tied_local, base mono, restrict); untied IsFreeFrom is vacuous (audit_free_from_vacuous). Remaining for Prop 7.8: the rho^+ matrix construction at level kappa with level-lambda pairs inside R_i,S_i (bookkeeping closures), type-identifying amalgamation at kappa, the local-character contradiction for the fixed list, the theta^+ shrink to A<=U with the majority free-extension identity, Def 7.7 continuity at matrix limits (only finite marks done: infra_78_finite_continuity)."
+      "detail": "Blocked (full claim kept: everything Prop 7.8 needs beyond the done infra). Split into tracked sub-tips: infra_78_fixed_list_eventually_free (DONE), infra_78_nonfree_extension_tied (DONE), infra_78_same_level_type_amalgam (DONE), infra_78_bookkeeping_closure (open), infra_78_matrix_construction (blocked), infra_78_isolated_stage (blocked), infra_78_theta_shrink (blocked), infra_78_isolation_transfer (blocked). Previously done toward it: mixed tied free lift, mixed Lemma 7.6, Fodor, matrix data, stationary combinatorics, tied local character. Open. Done toward it: mixed tied free lift and mixed Lemma 7.6 (sorry-free), Fodor, matrix data, stationary combinatorics (infra_78_stationary_combinatorics: high-cofinality stages stationary, small sets appear early, one fixed failing list on a stationary set). Tied local character now done (infra_78_tied_local_character: infra_78_tied_local, base mono, restrict); untied IsFreeFrom is vacuous (audit_free_from_vacuous). Remaining for Prop 7.8: the rho^+ matrix construction at level kappa with level-lambda pairs inside R_i,S_i (bookkeeping closures), type-identifying amalgamation at kappa, the local-character contradiction for the fixed list, the theta^+ shrink to A<=U with the majority free-extension identity, Def 7.7 continuity at matrix limits (only finite marks done: infra_78_finite_continuity)."
     },
     {
       "id": "infra_9_cube_scheme",
@@ -2192,10 +2192,10 @@
       "id": "infra_78_nonfree_extension_tied",
       "label": "Prop 7.8: tied nonfree extension at a failing stage",
       "section": 7,
-      "file": "AEC/Section7/MixedDescent.lean",
-      "status": "open",
+      "file": "AEC/Section7/BlockRestriction.lean",
+      "status": "done",
       "blocker": null,
-      "detail": "Open (board-only, no Lean decl yet). Prop 7.3 step of the matrix: if tp(b,d/X_i) is not relatively isolated over b, there is a same-level (kappa) extension X_i <= X' and a realization of the joint type over X' whose b-marginal is TIED free (IsTiedFree) from X_i while the joint is not tied free. proposition_7_3's second disjunct only gives the untied (vacuous) IsFreeLift on the marginal, so this needs the tied form (via proposition_7_3_uniform / infra_73_alt2_tied_marginal)."
+      "detail": "Done (no sorry; axioms propext/choice/Quot.sound). infra_78_nonfree_extension_tied in AEC/Section7/BlockRestriction.lean: at a level mu in infra_73_tailSet P sigma, for q over A with q.nu = mu, #q.idx <= sigma and NOT IsRelativelyIsolated q e, there are B, permitted f : A -> B, qB over B with qB.nu = mu, SameGaloisType q (qB.restrict f) eB refl, IsTiedFree f on the u-marginal, and NOT IsTiedFree f q qB eB. Via the helper infra_78_tied_dichotomy (Prop 7.3 dichotomy with TIED marginal: small isolating fragment or such an extension), from infra_73_block_restriction + infra_73_competitor + infra_73_alt2_tied."
     },
     {
       "id": "infra_78_same_level_type_amalgam",
@@ -2221,7 +2221,7 @@
       "section": 7,
       "file": "AEC/Section7/MixedDescent.lean",
       "status": "blocked",
-      "blocker": "infra_78_nonfree_extension_tied",
+      "blocker": "infra_78_bookkeeping_closure",
       "detail": "Blocked. Transfinite construction of continuous pairs X_i <= Y_i (i <= rho^+) at level kappa (Infra78Matrix plus SameLevelChain unions) with invariant (5) tp(b/X_i) = free lift of tp(b/X_0) (tied), failing stages extended by infra_78_nonfree_extension_tied + infra_78_same_level_type_amalgam (transitivity for (5)), Def 7.7 continuity at limits (finite marks: infra_78_finite_continuity), bookkeeping from infra_78_bookkeeping_closure."
     },
     {
@@ -4221,6 +4221,6 @@
       "kind": "hard"
     }
   ],
-  "doneCount": 185,
+  "doneCount": 186,
   "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 43. Uncommitted in /tmp/aec-grok."
 }

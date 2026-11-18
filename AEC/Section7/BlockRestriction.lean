@@ -744,6 +744,66 @@ theorem proposition_7_3_uniform (P : SingleModelData K) (σ : Cardinal.{u}) (hσ
           #ι ≤ h σ ∧ IsIsolatingFragment q e Z :=
   proposition_7_3_uniform_of_block P σ hσ (infra_73_block_restriction P σ hσ)
 
+/-- **Prop 7.3 dichotomy with tied marginal (proved).** At a tail level, a tuple `q` with
+`#idx ≤ σ` either has an isolating fragment of size at most `h(σ)`, or has a same-level
+extension whose `u`-marginal is the tied free extension while the joint is not tied free
+(block restriction, competitor, `infra_73_alt2_tied`). Unlike `proposition_7_3`, the marginal
+clause is `IsTiedFree`, not the vacuous untied `IsFreeLift`. -/
+theorem infra_78_tied_dichotomy (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : ℵ₀ ≤ σ)
+    {μ : Cardinal.{u}} (hμT : μ ∈ infra_73_tailSet P σ)
+    {A : P.scheme.Object μ (Tail.mem (infra_73_tail P σ hσ) hμT)}
+    (q : TupleOver K oneVertexShape P.scheme (Tail.mem (infra_73_tail P σ hσ) hμT) A)
+    {uIdx cIdx : Type u} (e : q.idx ≃ uIdx ⊕ cIdx)
+    (hqν : q.ν = μ) (hidx : #q.idx ≤ σ) :
+    (∃ (ι : Type u)
+        (Z : ι → Occurrence K oneVertexShape
+          (P.scheme.asSystem (Tail.mem (infra_73_tail P σ hσ) hμT) A)),
+        #ι ≤ infra_73_h P σ ∧ IsIsolatingFragment q e Z) ∨
+      (∃ (B : P.scheme.Object μ (Tail.mem (infra_73_tail P σ hσ) hμT))
+        (f : SystemArrow K oneVertexShape (P.scheme.asSystem _ A) (P.scheme.asSystem _ B))
+        (hf : P.scheme.permitted (X := A) (Y := B) f)
+        (qB : TupleOver K oneVertexShape P.scheme (Tail.mem (infra_73_tail P σ hσ) hμT) B)
+        (eB : q.idx ≃ qB.idx),
+        qB.ν = μ ∧
+        SameGaloisType q (qB.restrict f hf) eB (Equiv.refl qB.idx) ∧
+        IsTiedFree f (q.marginal e) (qB.marginal (eB.symm.trans e)) (Equiv.refl uIdx) ∧
+        ¬ IsTiedFree f q qB eB) := by
+  have hμel : μ ∈ P.eligible := Tail.mem (infra_73_tail P σ hσ) hμT
+  have hrec : μ ∈ recursionClosedLevels P σ := infra_73_tail_rec hμT
+  have hσSucc : Order.succ σ ≤ μ := infra_73_tail_succ hμT
+  obtain ⟨seq, hτge, hlong, ι, Z, hι, hZ⟩ :=
+    infra_73_block_restriction P σ hσ μ hμT A q e hqν hidx
+  have hιμ : #ι < μ := hι.trans_lt (infra_73_h_lt hμel hμT)
+  by_cases hFrag : IsIsolatingFragment q e Z
+  · exact Or.inl ⟨ι, Z, hι, hFrag⟩
+  · obtain ⟨q', e', hq'ν, hMarg, hDE, hneq⟩ := infra_73_competitor q e Z hιμ hFrag
+    obtain ⟨g, hg, hfix, hres⟩ := hZ q' e' hq'ν hMarg hDE
+    exact Or.inr (infra_73_alt2_tied P σ hσ hμel hrec hσSucc q e hqν hidx seq hτge hlong q' e'
+      hq'ν hMarg hneq g hg hfix hres)
+
+/-- **Tied nonfree extension at a failing stage (Prop 7.8 matrix step; proved).** If `q`
+(at a tail level, `#idx ≤ σ`) is not relatively isolated over its `u`-part, there is a
+same-level extension `A → B` and `qB` over `B` extending `q`, at level `μ`, whose
+`u`-marginal is tied free from `A` while `qB` is not tied free from `A`. -/
+theorem infra_78_nonfree_extension_tied (P : SingleModelData K) (σ : Cardinal.{u})
+    (hσ : ℵ₀ ≤ σ) {μ : Cardinal.{u}} (hμT : μ ∈ infra_73_tailSet P σ)
+    {A : P.scheme.Object μ (Tail.mem (infra_73_tail P σ hσ) hμT)}
+    (q : TupleOver K oneVertexShape P.scheme (Tail.mem (infra_73_tail P σ hσ) hμT) A)
+    {uIdx cIdx : Type u} (e : q.idx ≃ uIdx ⊕ cIdx)
+    (hqν : q.ν = μ) (hidx : #q.idx ≤ σ) (hnot : ¬ IsRelativelyIsolated q e) :
+    ∃ (B : P.scheme.Object μ (Tail.mem (infra_73_tail P σ hσ) hμT))
+      (f : SystemArrow K oneVertexShape (P.scheme.asSystem _ A) (P.scheme.asSystem _ B))
+      (hf : P.scheme.permitted (X := A) (Y := B) f)
+      (qB : TupleOver K oneVertexShape P.scheme (Tail.mem (infra_73_tail P σ hσ) hμT) B)
+      (eB : q.idx ≃ qB.idx),
+      qB.ν = μ ∧
+      SameGaloisType q (qB.restrict f hf) eB (Equiv.refl qB.idx) ∧
+      IsTiedFree f (q.marginal e) (qB.marginal (eB.symm.trans e)) (Equiv.refl uIdx) ∧
+      ¬ IsTiedFree f q qB eB := by
+  rcases infra_78_tied_dichotomy P σ hσ hμT q e hqν hidx with ⟨_, _, _, hF⟩ | h
+  · exact absurd (IsRelativelyIsolated.of_fragment hF) hnot
+  · exact h
+
 end Main
 
 end
