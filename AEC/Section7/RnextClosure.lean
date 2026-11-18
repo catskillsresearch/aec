@@ -66,6 +66,12 @@ def infra_78_PairClosed (ρ : Cardinal.{u}) {ℓ : Cardinal.{u}} (hℓel : ℓ �
     ∀ s ⊆ T', #s ≤ ℓ → #(Sum.inr ⁻¹' s : Set Y.model.carrier) ≤ σ →
     ∃ seq : ApproximationSequence (infra_78_pairTuple f hf s), seq.τ = ℓ ∧
       ℓ + ℵ₀ < #seq.κIndex ∧
+      ∀ a b, (Sum.inl (X.val (seq.family a b)) : X.model.carrier ⊕ Y.model.carrier) ∈ T') ∧
+  (∀ σ : Cardinal.{u}, ℵ₀ ≤ σ → κ ∈ recursionClosedLevels P σ → Order.succ σ ≤ κ → ℓ < κ →
+    ℓ ≤ σ → ∀ {I : Type u} (d : I → Y.model.carrier), #I ≤ ℓ →
+    (∀ k, (Sum.inr (d k) : X.model.carrier ⊕ Y.model.carrier) ∈ T') →
+    ∃ seq : ApproximationSequence (infra_78_pairListTuple f hf d), seq.τ = ℓ ∧
+      ℓ + ℵ₀ < #seq.κIndex ∧
       ∀ a b, (Sum.inl (X.val (seq.family a b)) : X.model.carrier ⊕ Y.model.carrier) ∈ T')
 
 open Classical in
@@ -482,6 +488,19 @@ theorem infra_78_rnext_closure (hidx : #(uIdx ⊕ cIdx) ≤ σ)
         ℓ + ℵ₀ < #seq.κIndex ∧
         ∀ a b, (Sum.inl (((infra_78_rcMatrix hρκ Xb hℓel cand s0 e0).X i).val (seq.family a b)) :
           infra_78_bkCarrier (infra_78_rcMatrix hρκ Xb hℓel cand s0 e0) i) ∈
+          infra_78_rcSets hρκ Xb hℓel cand s0 e0 i) ∧
+    (∀ σ' : Cardinal.{u}, ℵ₀ ≤ σ' → ℓ ≤ σ' → μ ∈ recursionClosedLevels P σ' →
+      Order.succ σ' ≤ μ → ℓ < μ →
+      ∀ i, (¬ Order.IsSuccLimit i ∨ ℓ < Order.cof (Set.Iio i)) →
+      ∀ {I : Type u} (d : I → ((infra_78_rcMatrix hρκ Xb hℓel cand s0 e0).Y i).model.carrier),
+      #I ≤ ℓ →
+      (∀ k, (Sum.inr (d k) : infra_78_bkCarrier (infra_78_rcMatrix hρκ Xb hℓel cand s0 e0) i) ∈
+        infra_78_rcSets hρκ Xb hℓel cand s0 e0 i) →
+      ∃ seq : ApproximationSequence
+          (infra_78_bkListTuple (infra_78_rcMatrix hρκ Xb hℓel cand s0 e0) i d), seq.τ = ℓ ∧
+        ℓ + ℵ₀ < #seq.κIndex ∧
+        ∀ a b, (Sum.inl (((infra_78_rcMatrix hρκ Xb hℓel cand s0 e0).X i).val (seq.family a b)) :
+          infra_78_bkCarrier (infra_78_rcMatrix hρκ Xb hℓel cand s0 e0) i) ∈
           infra_78_rcSets hρκ Xb hℓel cand s0 e0 i) := by
   have hℓ : ℵ₀ ≤ ℓ := P.aleph0_le hℓel
   have hρ : ℵ₀ ≤ ρ := hℓ.trans hℓρ.le
@@ -494,7 +513,7 @@ theorem infra_78_rnext_closure (hidx : #(uIdx ⊕ cIdx) ≤ σ)
     infra_78_rc_bkMono hρκ Xb hℓel cand s0 e0 h
   have hlim := infra_78_rc_bkLim hρκ Xb hℓel cand s0 e0
   refine ⟨fun i => infra_78_rc_card hρκ Xb hℓel cand s0 e0 hρ h0 i, hmono, hlim, ?_,
-    fun i => infra_78_rc_S_nonempty hρκ Xb hℓel cand s0 e0 hS0 i, ?_, ?_⟩
+    fun i => infra_78_rc_S_nonempty hρκ Xb hℓel cand s0 e0 hS0 i, ?_, ?_, ?_⟩
   · intro i x hx
     have h0p : ∀ x, (Sum.inl x : μ.ord.ToType ⊕ μ.ord.ToType) ∈ s0.e.R →
         (Sum.inr (s0.p x) : μ.ord.ToType ⊕ μ.ord.ToType) ∈ s0.e.R := fun x hx => by
@@ -514,10 +533,16 @@ theorem infra_78_rnext_closure (hidx : #(uIdx ⊕ cIdx) ≤ σ)
         (fun i hi s hs hsl => (hsupp i hi).2.2.1 s hs hsl) i hcof s hs hsl
   · intro σ' hσ' hrec hσS hℓμ i hi s hs hsl hσs
     rcases hi with hnl | hcof
-    · exact (hsupp i hnl).2.2.2 σ' hσ' hrec hσS hℓμ s hs hsl hσs
+    · exact (hsupp i hnl).2.2.2.1 σ' hσ' hrec hσS hℓμ s hs hsl hσs
     · exact infra_78_bookkeeping_req2_high_cof _ hM hC hℓ hℓμ σ' hσ' hrec hσS _ hmono hlim
-        (fun i hi s hs hsl hσs => (hsupp i hi).2.2.2 σ' hσ' hrec hσS hℓμ s hs hsl hσs)
+        (fun i hi s hs hsl hσs => (hsupp i hi).2.2.2.1 σ' hσ' hrec hσS hℓμ s hs hsl hσs)
         i hcof s hs hsl hσs
+  · intro σ' hσ' hℓσ' hrec hσS hℓμ i hi I d hI hd
+    rcases hi with hnl | hcof
+    · exact (hsupp i hnl).2.2.2.2 σ' hσ' hrec hσS hℓμ hℓσ' d hI hd
+    · exact infra_78_bookkeeping_req2_list_high_cof _ hM hC hℓ hℓμ σ' hσ' hℓσ' hrec hσS _ hmono
+        hlim (fun i hi I d hI hd => (hsupp i hi).2.2.2.2 σ' hσ' hrec hσS hℓμ hℓσ' d hI hd)
+        i hcof d hI hd
 
 end Supply
 end AEC

@@ -30,9 +30,19 @@ at the recursion matrix.
 Cycle 58: `infra_78_theta_free_identity` (tied majority characterization, `IsTiedFreeMixed`) and
 its assembly `infra_78_theta_shrink_inj` at the recursion matrix for joint lists `(b, c)` without
 repeated entries (the matrix level's tail membership at `σ ≥ λ` discharges the closure
-hypothesis). Open: lists with repeated entries (`infra_78_theta_shrink_repeats`): the bookkeeping
-sequences are indexed by point SETS, and passing to a list with repetitions would need a
-non-injective `DiagramEq` reindexing, which the working scheme does not provide.
+hypothesis).
+
+Cycle 59: `infra_78_theta_shrink` (full; closes `infra_78_theta_shrink_repeats`). Closure
+requirement 2 is now also LIST-indexed (`infra_78_pairRepCopyReq`, `infra_78_bkListTuple`,
+`infra_78_bookkeeping_req2_list_high_cof`): one request per small set `s` for its `λ`-fold
+repetition list (still `ρ^λ = ρ` requests), from which every list of length `≤ λ` from `s` (with
+arbitrary repetitions) is an INJECTIVE reindexing (`infra_78_listSeq_reindex`). The `θ⁺` chain
+records sequences for the `θ`-fold repetition lists of its stages (`infra_78_bkRep`), so the
+joint list `(b, c)` gets its sequence directly; no many-to-one reindexing is used.
+Hypotheses `λ ≤ σ` and `|uIdx| ≤ θ` are explicit: `|uIdx| ≤ θ` follows from the finite tuple of
+`proposition_7_8` and `ℵ₀ ≤ θ`; `λ ≤ σ` (with `θ⁺ ≤ λ`) is NOT implied by the Lean
+`proposition_7_8` hypotheses as stated (tail chosen before `θ`, `θ < μ` arbitrary) and is a
+tracked obligation of the assembly (`infra_78_theta_shrink_closure_level`).
 -/
 
 universe u
@@ -196,30 +206,46 @@ theorem infra_78_obj_card (A : P.scheme.Object ℓ hℓel) :
     #((P.scheme.asSystem hℓel A).obj PUnit.unit).carrier = ℓ :=
   P.scheme.vertex_card hℓel A PUnit.unit
 
-/-- **One step of the `θ⁺` recursion.** A small `D ⊆ T` (closure requirements 1 and 2 on `T`)
-lies in the image `E ⊆ T` of a level-`ℓ` pair, and `E` contains the copies of a requirement-2
-approximation sequence for the top points of `D`, cut down to exactly `ℓ` copies. -/
-theorem infra_78_theta_step (hℓ : ℵ₀ ≤ ℓ) (T : Set (infra_78_bkCarrier M i))
+/-- The `θ`-fold repetition list of the top points of a bookkeeping set `D`: every top point of
+`D` occurs `θ` times, so every list of length `≤ θ` of top points of `D` (repetitions allowed)
+is an INJECTIVE reindexing of it. -/
+abbrev infra_78_bkRep (θ : Cardinal.{u}) (D : Set (infra_78_bkCarrier M i)) :
+    (Sum.inr ⁻¹' D : Set (M.Y i).model.carrier) × θ.ord.ToType → (M.Y i).model.carrier :=
+  fun x => x.1.1
+
+/-- **One step of the `θ⁺` recursion.** A small `D ⊆ T` (closure requirement 1 and the
+list-indexed closure requirement 2 on `T`) lies in the image `E ⊆ T` of a level-`ℓ` pair, and
+`E` contains the copies of a requirement-2 approximation sequence for the `θ`-fold repetition
+list of the top points of `D`, cut down to exactly `ℓ` copies. -/
+theorem infra_78_theta_step (hℓ : ℵ₀ ≤ ℓ) {θ : Cardinal.{u}} (hθℓ : θ ≤ ℓ)
+    (T : Set (infra_78_bkCarrier M i))
     (hR1 : ∀ s ⊆ T, #s ≤ ℓ → infra_78_bkReq1 M hℓel i s T)
-    (hR2 : ∀ s ⊆ T, #s ≤ ℓ → ∃ seq : ApproximationSequence (infra_78_bkTuple M i s),
+    (hR2 : ∀ {I : Type u} (d : I → (M.Y i).model.carrier), #I ≤ ℓ →
+      (∀ k, (Sum.inr (d k) : infra_78_bkCarrier M i) ∈ T) →
+      ∃ seq : ApproximationSequence (infra_78_bkListTuple M i d),
       seq.τ = ℓ ∧ ℓ + ℵ₀ < #seq.κIndex ∧
       ∀ a b, (Sum.inl ((M.X i).val (seq.family a b)) : infra_78_bkCarrier M i) ∈ T)
     (D : Set (infra_78_bkCarrier M i)) (hD : D ⊆ T) (hDl : #D ≤ ℓ) :
     ∃ E ⊆ T, #E ≤ ℓ ∧ D ⊆ E ∧ infra_78_PairRange M hℓel i E ∧
-      ∃ seq : ApproximationSequence (infra_78_bkTuple M i D), seq.τ = ℓ ∧ #seq.κIndex = ℓ ∧
+      ∃ seq : ApproximationSequence (infra_78_bkListTuple M i (infra_78_bkRep M i θ D)),
+        seq.τ = ℓ ∧ #seq.κIndex = ℓ ∧
         ∀ a b, (Sum.inl ((M.X i).val (seq.family a b)) : infra_78_bkCarrier M i) ∈ E := by
   classical
-  obtain ⟨seq0, hτ0, hlen0, hin0⟩ := hR2 D hD hDl
+  have hidx : #(infra_78_bkListTuple M i (infra_78_bkRep M i θ D)).idx ≤ ℓ := by
+    show #((Sum.inr ⁻¹' D : Set (M.Y i).model.carrier) × θ.ord.ToType) ≤ ℓ
+    rw [Cardinal.mk_prod, Cardinal.lift_id, Cardinal.lift_id, Cardinal.mk_ord_toType]
+    exact (mul_le_mul ((Cardinal.mk_preimage_of_injective _ _ Sum.inr_injective).trans hDl)
+      hθℓ zero_le zero_le).trans (Cardinal.mul_eq_self hℓ).le
+  obtain ⟨seq0, hτ0, hlen0, hin0⟩ := hR2 (infra_78_bkRep M i θ D) hidx
+    (fun k => hD k.1.2)
   obtain ⟨κ', hκ'⟩ := Cardinal.le_mk_iff_exists_set.1
     ((le_self_add.trans_lt hlen0).le : ℓ ≤ #seq0.κIndex)
-  let seq : ApproximationSequence (infra_78_bkTuple M i D) :=
+  let seq : ApproximationSequence (infra_78_bkListTuple M i (infra_78_bkRep M i θ D)) :=
     infra_78_seq_sub seq0 κ' id Function.injective_id
   have hfam : ∀ a b, seq.family a b = seq0.family a.1 b := fun _ _ => rfl
   let Cp : Set (infra_78_bkCarrier M i) := Set.range
-    (fun ab : κ' × (infra_78_bkTuple M i D).idx =>
+    (fun ab : κ' × (infra_78_bkListTuple M i (infra_78_bkRep M i θ D)).idx =>
       (Sum.inl ((M.X i).val (seq0.family ab.1.1 ab.2)) : infra_78_bkCarrier M i))
-  have hidx : #(infra_78_bkTuple M i D).idx ≤ ℓ :=
-    (Cardinal.mk_preimage_of_injective _ _ Sum.inr_injective).trans hDl
   have hCp : #Cp ≤ ℓ := by
     refine Cardinal.mk_range_le.trans ?_
     rw [Cardinal.mk_prod, Cardinal.lift_id, Cardinal.lift_id, hκ']
@@ -311,10 +337,10 @@ def infra_78_ThetaChainOut (θ : Cardinal.{u}) (T s₀ : Set (infra_78_bkCarrier
         Sum.inr '' Set.range (jU.onVertex PUnit.unit) ∧
       Sum.inl '' Set.range (jA.onVertex PUnit.unit) ⊆ T ∧
       Sum.inr '' Set.range (jU.onVertex PUnit.unit) ⊆ T ∧
-      ∀ s : Set (infra_78_bkCarrier M i),
-        (Sum.inr ⁻¹' s : Set (M.Y i).model.carrier) ⊆ Set.range (jU.onVertex PUnit.unit) →
-        #(Sum.inr ⁻¹' s : Set (M.Y i).model.carrier) ≤ θ →
-        ∃ seq : ApproximationSequence (infra_78_bkTuple M i s), seq.τ = ℓ ∧ #seq.κIndex = ℓ ∧
+      ∀ {I : Type u} (d : I → (M.Y i).model.carrier), #I ≤ θ →
+        (∀ k, d k ∈ Set.range (jU.onVertex PUnit.unit)) →
+        ∃ seq : ApproximationSequence (infra_78_bkListTuple M i d), seq.τ = ℓ ∧
+          #seq.κIndex = ℓ ∧
           ∀ a b, (M.X i).val (seq.family a b) ∈ Set.range (jA.onVertex PUnit.unit)
 
 /-- **`infra_78_theta_chain`** (Prop 7.8 proof, the `θ⁺` shrink construction). At a stage `i`
@@ -328,19 +354,22 @@ copies lie in `A`. -/
 theorem infra_78_theta_chain {θ : Cardinal.{u}} (hθ : ℵ₀ ≤ θ) (hθℓ : Order.succ θ ≤ ℓ)
     (T : Set (infra_78_bkCarrier M i))
     (hR1 : ∀ s ⊆ T, #s ≤ ℓ → infra_78_bkReq1 M hℓel i s T)
-    (hR2 : ∀ s ⊆ T, #s ≤ ℓ → ∃ seq : ApproximationSequence (infra_78_bkTuple M i s),
+    (hR2 : ∀ {I : Type u} (d : I → (M.Y i).model.carrier), #I ≤ ℓ →
+      (∀ k, (Sum.inr (d k) : infra_78_bkCarrier M i) ∈ T) →
+      ∃ seq : ApproximationSequence (infra_78_bkListTuple M i d),
       seq.τ = ℓ ∧ ℓ + ℵ₀ < #seq.κIndex ∧
       ∀ a b, (Sum.inl ((M.X i).val (seq.family a b)) : infra_78_bkCarrier M i) ∈ T)
     (s₀ : Set (infra_78_bkCarrier M i)) (hs₀ : s₀ ⊆ T) (hs₀l : #s₀ ≤ ℓ) :
     infra_78_ThetaChainOut M hℓel i θ T s₀ := by
   classical
   have hℓ : ℵ₀ ≤ ℓ := hθ.trans ((Order.le_succ θ).trans hθℓ)
-  have step := infra_78_theta_step M hℓel i hℓ T hR1 hR2
+  have step := infra_78_theta_step M hℓel i hℓ ((Order.le_succ θ).trans hθℓ) T hR1 hR2
   let F : Set (infra_78_bkCarrier M i) → Set (infra_78_bkCarrier M i) := fun D =>
     if h : D ⊆ T ∧ #D ≤ ℓ then Classical.choose (step D h.1 h.2) else D
   have hF : ∀ D (hD : D ⊆ T) (hDl : #D ≤ ℓ), F D ⊆ T ∧ #(F D) ≤ ℓ ∧ D ⊆ F D ∧
       infra_78_PairRange M hℓel i (F D) ∧
-      ∃ seq : ApproximationSequence (infra_78_bkTuple M i D), seq.τ = ℓ ∧ #seq.κIndex = ℓ ∧
+      ∃ seq : ApproximationSequence (infra_78_bkListTuple M i (infra_78_bkRep M i θ D)),
+        seq.τ = ℓ ∧ #seq.κIndex = ℓ ∧
         ∀ a b, (Sum.inl ((M.X i).val (seq.family a b)) : infra_78_bkCarrier M i) ∈ F D := by
     intro D hD hDl
     have e : F D = Classical.choose (step D hD hDl) := dif_pos ⟨hD, hDl⟩
@@ -370,8 +399,8 @@ theorem infra_78_theta_chain {θ : Cardinal.{u}} (hθ : ℵ₀ ≤ θ) (hθℓ :
       exact (mul_le_mul hI le_rfl zero_le zero_le).trans (Cardinal.mul_eq_self hℓ).le
   let E : ι → Set (infra_78_bkCarrier M i) := fun β => F (D β)
   have hE : ∀ β, E β ⊆ T ∧ #(E β) ≤ ℓ ∧ D β ⊆ E β ∧ infra_78_PairRange M hℓel i (E β) ∧
-      ∃ seq : ApproximationSequence (infra_78_bkTuple M i (D β)), seq.τ = ℓ ∧
-        #seq.κIndex = ℓ ∧
+      ∃ seq : ApproximationSequence (infra_78_bkListTuple M i (infra_78_bkRep M i θ (D β))),
+        seq.τ = ℓ ∧ #seq.κIndex = ℓ ∧
         ∀ a b, (Sum.inl ((M.X i).val (seq.family a b)) : infra_78_bkCarrier M i) ∈ E β :=
     fun β => hF _ (hgood β).1 (hgood β).2
   have hED : ∀ {β α : ι}, β < α → E β ⊆ D α := by
@@ -472,22 +501,23 @@ theorem infra_78_theta_chain {θ : Cardinal.{u}} (hθ : ℵ₀ ≤ θ) (hθℓ :
   · rintro _ ⟨x, hx, rfl⟩
     obtain ⟨β, hβ⟩ := (hrU x).1 hx
     exact (hE β).1 (hVE β x hβ)
-  · intro s hsU hsθ
-    have hpick : ∀ y : (Sum.inr ⁻¹' s : Set (M.Y i).model.carrier), ∃ β : ι,
-        y.1 ∈ Set.range ((iV β).onVertex PUnit.unit) := fun y => (hrU y.1).1 (hsU y.2)
+  · intro I d hI hdU
+    have hpick : ∀ k : I, ∃ β : ι, d k ∈ Set.range ((iV β).onVertex PUnit.unit) :=
+      fun k => (hrU (d k)).1 (hdU k)
     choose bf hbf using hpick
-    obtain ⟨γ, hγ⟩ := infra_78_succ_bounded hθ hsθ bf
-    have hsub : (Sum.inr ⁻¹' s : Set (M.Y i).model.carrier) ⊆ Sum.inr ⁻¹' (D γ) := by
-      intro y hy
-      exact hED (hγ ⟨y, hy⟩) (hVE _ y (hbf ⟨y, hy⟩))
+    obtain ⟨γ, hγ⟩ := infra_78_succ_bounded hθ hI bf
+    have hsub : ∀ k, (Sum.inr (d k) : infra_78_bkCarrier M i) ∈ D γ := fun k =>
+      hED (hγ k) (hVE _ (d k) (hbf k))
     obtain ⟨seq0, hτ0, hlen0, hin0⟩ := (hE γ).2.2.2.2
-    let seq : ApproximationSequence (infra_78_bkTuple M i s) :=
-      infra_78_seq_sub seq0 Set.univ (Set.inclusion hsub) (Set.inclusion_injective hsub)
-    refine ⟨seq, hτ0, ?_, ?_⟩
-    · show #(Set.univ : Set seq0.κIndex) = ℓ
-      rw [Cardinal.mk_univ, hlen0]
-    · intro a b
-      exact (hrA _).2 ⟨γ, hinlE γ _ (hin0 a.1 _)⟩
+    obtain ⟨emb⟩ : Nonempty (I ↪ θ.ord.ToType) :=
+      (Cardinal.le_def _ _).1 (by rw [Cardinal.mk_ord_toType]; exact hI)
+    let π : I → (Sum.inr ⁻¹' (D γ) : Set (M.Y i).model.carrier) × θ.ord.ToType :=
+      fun k => (⟨d k, hsub k⟩, emb k)
+    have hπ : Function.Injective π := fun a b hab => emb.injective (congrArg Prod.snd hab)
+    refine ⟨infra_78_listSeq_reindex (M.pair i) (M.pair_permitted i) d
+      (infra_78_bkRep M i θ (D γ)) π hπ (fun _ => rfl) seq0, hτ0, hlen0, ?_⟩
+    intro a b
+    exact (hrA _).2 ⟨γ, hinlE γ _ (hin0 a (π b))⟩
 
 end ThetaChain
 
@@ -521,12 +551,11 @@ theorem infra_78_theta_chain_rc (hidx : #(uIdx ⊕ cIdx) ≤ σ)
     (hs₀ : s₀ ⊆ infra_78_rcSets hρκ Xb hℓel cand s0 e0 i) (hs₀l : #s₀ ≤ ℓ) :
     infra_78_ThetaChainOut (infra_78_rcMatrix hρκ Xb hℓel cand s0 e0) hℓel i θ
       (infra_78_rcSets hρκ Xb hℓel cand s0 e0 i) s₀ := by
-  obtain ⟨-, -, -, -, -, hR1, hR2⟩ :=
+  obtain ⟨-, -, -, -, -, hR1, -, hR2⟩ :=
     infra_78_rnext_closure P σ hσ hμT hρκ Xb hℓel cand s0 e0 hidx h5 hℓκ hℓρ hpow h0 hseed hS0
   exact infra_78_theta_chain _ hℓel i hθ hθℓ _
     (fun s hs hsl => hR1 i (Or.inr hcof) s hs hsl)
-    (fun s hs hsl => hR2 σ' hσ' hrec hσS hℓμ i (Or.inr hcof) s hs hsl
-      ((Cardinal.mk_preimage_of_injective _ _ Sum.inr_injective).trans (hsl.trans hℓσ')))
+    (fun d hI hd => hR2 σ' hσ' hℓσ' hrec hσS hℓμ i (Or.inr hcof) d hI hd)
     s₀ hs₀ hs₀l
 
 end ThetaChainRc
@@ -683,7 +712,105 @@ variable (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : ℵ₀ ≤ σ)
   (e0 : Infra78MarkData μ uIdx)
 
 include hρκ in
-/-- **`infra_78_theta_shrink_inj`** (Prop 7.8 `θ⁺` shrink, lists without repeated entries). At
+/-- **`infra_78_theta_shrink`** (Prop 7.8, the `θ⁺` shrink and the tied free-extension
+identity). At a stage `i` of cofinality `> λ` of the recursion matrix, with `λ ≤ σ` (so the matrix
+level `μ ∈ infra_73_tailSet P σ` — built from `infra_69_recursion_tail` — is recursion-closed at
+`σ ≥ λ`, discharging the requirement-2 closure hypothesis of `infra_78_theta_chain_rc`) and
+`|b| ≤ θ`, every small seed `s₀ ⊆ R_i` containing the marked tuple `b` lies in a level-`λ` pair
+`A ≤ U` inside `X_i ≤ Y_i` with images in `R_i`, such that for EVERY list `c` from `U` of length
+`≤ θ` (repeated entries allowed, also with `b`), `tp(b, c / X_i)` is the TIED free extension of
+its restriction to `A` (`IsTiedFreeMixed`, `infra_78_theta_free_identity`). The sequence for the
+joint list `(b, c)` comes directly from the LIST-indexed requirement 2
+(`infra_78_bkListTuple`, `infra_78_pairRepCopyReq`); no many-to-one reindexing is used. -/
+theorem infra_78_theta_shrink (hidx : #(uIdx ⊕ cIdx) ≤ σ)
+    (h5 : ∀ β, infra_78_StageInv5 Xb (infra_78_rcObj Xb hℓel cand s0 e0 β))
+    (hℓκ : ℓ ≤ μ) (hℓρ : ℓ < ρ) (hpow : ρ ^ ℓ = ρ) (h0 : #s0.e.R ≤ ρ)
+    (hseed : infra_78_PairClosed ρ hℓel (infra_78_toArr s0.hp) trivial s0.e.R)
+    (hS0 : ∃ y, (Sum.inr y : μ.ord.ToType ⊕ μ.ord.ToType) ∈ s0.e.R)
+    (hℓσ : ℓ ≤ σ) {θ : Cardinal.{u}} (hθ : ℵ₀ ≤ θ) (hθℓ : Order.succ θ ≤ ℓ) (hu : #uIdx ≤ θ)
+    (i : (Order.succ ρ).ord.ToType) (hcof : ℓ < Order.cof (Set.Iio i))
+    (s₀ : Set (infra_78_bkCarrier (infra_78_rcMatrix hρκ Xb hℓel cand s0 e0) i))
+    (hs₀ : s₀ ⊆ infra_78_rcSets hρκ Xb hℓel cand s0 e0 i) (hs₀l : #s₀ ≤ ℓ)
+    (hb : ∀ k, (Sum.inr ((infra_78_rcObj Xb hℓel cand s0 e0 i).e.b k) :
+      infra_78_bkCarrier (infra_78_rcMatrix hρκ Xb hℓel cand s0 e0) i) ∈ s₀) :
+    ∃ (A U : P.scheme.Object ℓ hℓel)
+      (jA : SystemArrow K oneVertexShape (P.scheme.asSystem hℓel A)
+        (P.scheme.asSystem _ ((infra_78_rcMatrix hρκ Xb hℓel cand s0 e0).X i)))
+      (jU : SystemArrow K oneVertexShape (P.scheme.asSystem hℓel U)
+        (P.scheme.asSystem _ ((infra_78_rcMatrix hρκ Xb hℓel cand s0 e0).Y i)))
+      (gu : SystemArrow K oneVertexShape (P.scheme.asSystem hℓel A) (P.scheme.asSystem hℓel U))
+      (hjA : P.scheme.permitted (X := A) (Y := (infra_78_rcMatrix hρκ Xb hℓel cand s0 e0).X i) jA),
+      P.scheme.permitted (X := U) (Y := (infra_78_rcMatrix hρκ Xb hℓel cand s0 e0).Y i) jU ∧
+      P.scheme.permitted (X := A) (Y := U) gu ∧
+      SystemArrow.comp gu jU =
+        SystemArrow.comp jA ((infra_78_rcMatrix hρκ Xb hℓel cand s0 e0).pair i) ∧
+      s₀ ⊆ Sum.inl '' Set.range (jA.onVertex PUnit.unit) ∪
+        Sum.inr '' Set.range (jU.onVertex PUnit.unit) ∧
+      Sum.inl '' Set.range (jA.onVertex PUnit.unit) ⊆ infra_78_rcSets hρκ Xb hℓel cand s0 e0 i ∧
+      Sum.inr '' Set.range (jU.onVertex PUnit.unit) ⊆ infra_78_rcSets hρκ Xb hℓel cand s0 e0 i ∧
+      ∀ (J : Type u), #J ≤ θ → ∀ c : J → μ.ord.ToType,
+        Set.range c ⊆ Set.range (jU.onVertex PUnit.unit) →
+        IsTiedFreeMixed jA
+          ((infra_78_markTuple (infra_78_toArr (infra_78_rcObj Xb hℓel cand s0 e0 i).hp)
+            (Sum.elim (infra_78_stageMark (infra_78_rcObj Xb hℓel cand s0 e0 i))
+              (fun x => ⟨PUnit.unit, c x⟩))).restrict jA hjA)
+          (infra_78_markTuple (infra_78_toArr (infra_78_rcObj Xb hℓel cand s0 e0 i).hp)
+            (Sum.elim (infra_78_stageMark (infra_78_rcObj Xb hℓel cand s0 e0 i))
+              (fun x => ⟨PUnit.unit, c x⟩)))
+          (Equiv.refl _) := by
+  classical
+  have hσS : Order.succ σ ≤ μ := (Order.succ_le_succ (le_max_left _ _)).trans hμT.2
+  have hℓμ : ℓ < μ := hℓσ.trans_lt ((Order.lt_succ_of_not_isMax (not_isMax σ)).trans_le hσS)
+  obtain ⟨A, U, jA, jU, gu, hjA, hjU, hgu, hsq, hs0, hTA, hTU, hcop⟩ :=
+    infra_78_theta_chain_rc P σ hσ hμT hρκ Xb hℓel cand s0 e0 hidx h5 hℓκ hℓρ hpow h0 hseed hS0
+      σ hσ hℓσ hμT.1 hσS hℓμ hθ hθℓ i hcof s₀ hs₀ hs₀l
+  refine ⟨A, U, jA, jU, gu, hjA, hjU, hgu, hsq, hs0, hTA, hTU, ?_⟩
+  intro J hJ c hcU
+  let pt : uIdx ⊕ J → μ.ord.ToType := Sum.elim (infra_78_rcObj Xb hℓel cand s0 e0 i).e.b c
+  have hptU : ∀ k, pt k ∈ Set.range (jU.onVertex PUnit.unit) := by
+    intro k
+    rcases k with k | x
+    · rcases hs0 (hb k) with ⟨x, -, hxe⟩ | ⟨x, hx, hxe⟩
+      · exact (Sum.inl_ne_inr hxe).elim
+      · have e : x = (infra_78_rcObj Xb hℓel cand s0 e0 i).e.b k := Sum.inr_injective hxe
+        show (infra_78_rcObj Xb hℓel cand s0 e0 i).e.b k ∈ _
+        rw [← e]; exact hx
+    · exact hcU ⟨x, rfl⟩
+  have hptθ : #(uIdx ⊕ J) ≤ θ := by
+    rw [Cardinal.mk_sum, Cardinal.lift_id, Cardinal.lift_id]
+    exact (add_le_add hu hJ).trans (Cardinal.add_eq_self hθ).le
+  obtain ⟨seqL, hτL, hlenL, hinL⟩ := hcop pt hptθ hptU
+  set q := infra_78_markTuple (infra_78_toArr (infra_78_rcObj Xb hℓel cand s0 e0 i).hp)
+    (Sum.elim (infra_78_stageMark (infra_78_rcObj Xb hℓel cand s0 e0 i))
+      (fun x => (⟨PUnit.unit, c x⟩ : Occurrence K oneVertexShape _))) with hq
+  let seqQ : ApproximationSequence q :=
+    { τ := seqL.τ
+      κIndex := seqL.κIndex
+      family := fun a k => seqL.family a k
+      concat_bounded := seqL.concat_bounded
+      few_exceptions := fun {β} Z hZ => by
+        have hsub := seqL.few_exceptions Z hZ
+        have htj : typeJoint (p := q) Z =
+            typeJoint (p := infra_78_bkListTuple (infra_78_rcMatrix hρκ Xb hℓel cand s0 e0) i pt)
+              Z := by
+          funext t
+          rcases t with (k | k) | t <;> rfl
+        rw [htj]
+        exact hsub }
+  refine infra_78_theta_free_identity jA hjA hℓκ q seqQ (le_of_eq hτL.symm) (le_of_eq hlenL.symm)
+    ?_
+  intro a k
+  obtain ⟨y, hy⟩ := hinL a k
+  refine ⟨⟨PUnit.unit, y⟩, ?_⟩
+  show (⟨PUnit.unit, jA.onVertex PUnit.unit y⟩ : Occurrence K oneVertexShape _) =
+    seqL.family a k
+  rw [hy]
+  generalize seqL.family a k = o
+  rcases o with ⟨⟨⟩, x⟩
+  rfl
+
+include hρκ in
+/-- **`infra_78_theta_shrink_inj`** (Prop 7.8 `θ⁺` shrink, lists without repeated entries; now a corollary of `infra_78_theta_shrink`). At
 a stage `i` of cofinality `> λ` of the recursion matrix, with `λ ≤ σ` (so the matrix level
 `μ ∈ infra_73_tailSet P σ` — built from `infra_69_recursion_tail` — is recursion-closed at
 `σ ≥ λ`, discharging the requirement-2 closure hypothesis of `infra_78_theta_chain_rc`), every
@@ -729,69 +856,11 @@ theorem infra_78_theta_shrink_inj (hidx : #(uIdx ⊕ cIdx) ≤ σ)
             (Sum.elim (infra_78_stageMark (infra_78_rcObj Xb hℓel cand s0 e0 i))
               (fun x => ⟨PUnit.unit, c x⟩)))
           (Equiv.refl _) := by
-  classical
-  have hσS : Order.succ σ ≤ μ := (Order.succ_le_succ (le_max_left _ _)).trans hμT.2
-  have hℓμ : ℓ < μ := hℓσ.trans_lt ((Order.lt_succ_of_not_isMax (not_isMax σ)).trans_le hσS)
-  obtain ⟨A, U, jA, jU, gu, hjA, hjU, hgu, hsq, hs0, hTA, hTU, hcop⟩ :=
-    infra_78_theta_chain_rc P σ hσ hμT hρκ Xb hℓel cand s0 e0 hidx h5 hℓκ hℓρ hpow h0 hseed hS0
-      σ hσ hℓσ hμT.1 hσS hℓμ hθ hθℓ i hcof s₀ hs₀ hs₀l
-  refine ⟨A, U, jA, jU, gu, hjA, hjU, hgu, hsq, hs0, hTA, hTU, ?_⟩
-  intro J hJ c hcU hinj
-  let pt : uIdx ⊕ J → μ.ord.ToType := Sum.elim (infra_78_rcObj Xb hℓel cand s0 e0 i).e.b c
-  let s : Set (infra_78_bkCarrier (infra_78_rcMatrix hρκ Xb hℓel cand s0 e0) i) :=
-    Sum.inr '' Set.range pt
-  have hpre : (Sum.inr ⁻¹' s : Set μ.ord.ToType) = Set.range pt :=
-    Set.preimage_image_eq _ Sum.inr_injective
-  have hsU : (Sum.inr ⁻¹' s : Set μ.ord.ToType) ⊆ Set.range (jU.onVertex PUnit.unit) := by
-    rw [hpre]
-    rintro _ ⟨k, rfl⟩
-    rcases k with k | x
-    · rcases hs0 (hb k) with ⟨x, -, hxe⟩ | ⟨x, hx, hxe⟩
-      · exact (Sum.inl_ne_inr hxe).elim
-      · have e : x = (infra_78_rcObj Xb hℓel cand s0 e0 i).e.b k := Sum.inr_injective hxe
-        show (infra_78_rcObj Xb hℓel cand s0 e0 i).e.b k ∈ _
-        rw [← e]; exact hx
-    · exact hcU ⟨x, rfl⟩
-  have hsθ : #(Sum.inr ⁻¹' s : Set μ.ord.ToType) ≤ θ := by
-    rw [hpre]
-    refine Cardinal.mk_range_le.trans ?_
-    rw [Cardinal.mk_sum, Cardinal.lift_id, Cardinal.lift_id]
-    exact (add_le_add hu hJ).trans (Cardinal.add_eq_self hθ).le
-  obtain ⟨seqS, hτS, hlenS, hinS⟩ := hcop s hsU hsθ
-  let π : uIdx ⊕ J → (infra_78_bkTuple (infra_78_rcMatrix hρκ Xb hℓel cand s0 e0) i s).idx :=
-    fun k => ⟨pt k, ⟨pt k, ⟨k, rfl⟩, rfl⟩⟩
-  have hπ : Function.Injective π := fun a b h => hinj (congrArg Subtype.val h)
-  set q := infra_78_markTuple (infra_78_toArr (infra_78_rcObj Xb hℓel cand s0 e0 i).hp)
-    (Sum.elim (infra_78_stageMark (infra_78_rcObj Xb hℓel cand s0 e0 i))
-      (fun x => (⟨PUnit.unit, c x⟩ : Occurrence K oneVertexShape _))) with hq
-  let seqQ : ApproximationSequence q :=
-    { τ := seqS.τ
-      κIndex := seqS.κIndex
-      family := fun a k => seqS.family a (π k)
-      concat_bounded := by
-        refine lt_of_le_of_lt ?_ seqS.concat_bounded
-        exact Cardinal.mk_le_of_injective (f := Prod.map id π)
-          (Function.injective_id.prodMap hπ)
-      few_exceptions := fun {β} Z hZ => by
-        have hsub := seqS.subtuple_uniform π hπ Z hZ
-        have htj : typeJoint (p := q) Z =
-            typeJoint (p := (infra_78_bkTuple (infra_78_rcMatrix hρκ Xb hℓel cand s0 e0) i s).reindex π)
-              Z := by
-          funext t
-          rcases t with (k | k) | t <;> rfl
-        rw [htj]
-        exact hsub }
-  refine infra_78_theta_free_identity jA hjA hℓκ q seqQ (le_of_eq hτS.symm) (le_of_eq hlenS.symm)
-    ?_
-  intro a k
-  obtain ⟨y, hy⟩ := hinS a (π k)
-  refine ⟨⟨PUnit.unit, y⟩, ?_⟩
-  show (⟨PUnit.unit, jA.onVertex PUnit.unit y⟩ : Occurrence K oneVertexShape _) =
-    seqS.family a (π k)
-  rw [hy]
-  generalize seqS.family a (π k) = o
-  rcases o with ⟨⟨⟩, x⟩
-  rfl
+  obtain ⟨A, U, jA, jU, gu, hjA, h⟩ :=
+    infra_78_theta_shrink P σ hσ hμT hρκ Xb hℓel cand s0 e0 hidx h5 hℓκ hℓρ hpow h0 hseed hS0
+      hℓσ hθ hθℓ hu i hcof s₀ hs₀ hs₀l hb
+  exact ⟨A, U, jA, jU, gu, hjA, h.1, h.2.1, h.2.2.1, h.2.2.2.1, h.2.2.2.2.1, h.2.2.2.2.2.1,
+    fun J hJ c hcU _ => h.2.2.2.2.2.2 J hJ c hcU⟩
 
 end ThetaShrinkInj
 end AEC

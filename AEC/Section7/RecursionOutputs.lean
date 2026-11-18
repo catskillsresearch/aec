@@ -360,7 +360,9 @@ theorem infra_78_recursion_outputs (hidx : #(uIdx ⊕ cIdx) ≤ σ)
     infra_78_pairMatrix_min s0 _ _ hi
   refine ⟨infra_78_pairMatrix_idLaw hρκ s0 _ _ hsop, infra_78_pairMatrix_compLaw hρκ s0 _ _ hsop,
     infra_78_pairMatrix_contAtLimits hρκ s0 _ _ hsop, h5, ?_, ?_,
-    infra_78_rnext_closure P σ hσ hμT hρκ Xb hℓel cand s0 e0 hidx h5 hℓκ hℓρ hpow h0 hseed hS0⟩
+    (fun h => ⟨h.1, h.2.1, h.2.2.1, h.2.2.2.1, h.2.2.2.2.1, h.2.2.2.2.2.1, h.2.2.2.2.2.2.1⟩)
+      (infra_78_rnext_closure P σ hσ hμT hρκ Xb hℓel cand s0 e0 hidx h5 hℓκ hℓρ hpow h0 hseed
+        hS0)⟩
   · intro k u
     obtain ⟨i0, -, hi0⟩ := (wellFounded_lt (α := (Order.succ ρ).ord.ToType)).has_min Set.univ
       ⟨k, trivial⟩

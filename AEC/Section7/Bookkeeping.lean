@@ -772,12 +772,58 @@ def infra_78_pairCopyReq (ℓ : Cardinal.{u}) (s T : Set (X.model.carrier ⊕ Y.
     T = Set.range (fun ab : seq.κIndex × (infra_78_pairTuple f hf s).idx =>
       (Sum.inl (X.val (seq.family ab.1 ab.2)) : X.model.carrier ⊕ Y.model.carrier))
 
+/-- The tuple of a LIST `d` of top points over `X` (realized in `Y` along `f`); entries may
+repeat. -/
+def infra_78_pairListTuple {I : Type u} (d : I → Y.model.carrier) :
+    TupleOver K oneVertexShape P.scheme hκ X :=
+  ⟨κ, hκ, Y, f, hf, I, fun k => Y.occ (d k)⟩
+
+/-- The `λ`-fold repetition list of the top points of `s`: every point of `s` occurs `λ` times,
+so every list of length `≤ λ` from `s` (with arbitrary repetitions) is an INJECTIVE reindexing
+of it. -/
+def infra_78_pairRep (ℓ : Cardinal.{u}) (s : Set (X.model.carrier ⊕ Y.model.carrier)) :
+    (Sum.inr ⁻¹' s : Set Y.model.carrier) × ℓ.ord.ToType → Y.model.carrier :=
+  fun x => x.1.1
+
+/-- Pair-local list-indexed closure requirement 2 request (the repetition list of `s`). -/
+def infra_78_pairRepCopyReq (ℓ : Cardinal.{u}) (s T : Set (X.model.carrier ⊕ Y.model.carrier)) :
+    Prop :=
+  ∃ seq : ApproximationSequence (infra_78_pairListTuple f hf (infra_78_pairRep ℓ s)),
+    seq.τ = ℓ ∧ ℓ + ℵ₀ < #seq.κIndex ∧
+    T = Set.range (fun ab : seq.κIndex × (infra_78_pairListTuple f hf (infra_78_pairRep ℓ s)).idx =>
+      (Sum.inl (X.val (seq.family ab.1 ab.2)) : X.model.carrier ⊕ Y.model.carrier))
+
+/-- Restriction of a list sequence along an injective coordinate map `ρ` with `d' ∘ ρ = d`
+(`ApproximationSequence.subtuple_uniform`; no many-to-one reindexing). -/
+noncomputable def infra_78_listSeq_reindex {I I' : Type u} (d : I → Y.model.carrier)
+    (d' : I' → Y.model.carrier) (ρ : I → I') (hρ : Function.Injective ρ)
+    (h : ∀ k, d' (ρ k) = d k) (seq : ApproximationSequence (infra_78_pairListTuple f hf d')) :
+    ApproximationSequence (infra_78_pairListTuple f hf d) where
+  τ := seq.τ
+  κIndex := seq.κIndex
+  family := fun a k => seq.family a (ρ k)
+  concat_bounded := by
+    refine lt_of_le_of_lt ?_ seq.concat_bounded
+    exact Cardinal.mk_le_of_injective (f := Prod.map id ρ) (Function.injective_id.prodMap hρ)
+  few_exceptions := fun {β} Z hZ => by
+    have hsub := seq.subtuple_uniform ρ hρ Z hZ
+    have htj : typeJoint (p := infra_78_pairListTuple f hf d) Z =
+        typeJoint (p := (infra_78_pairListTuple f hf d').reindex ρ) Z := by
+      funext t
+      cases t with
+      | inl k =>
+        exact (congrArg (fun y => Y.occ y) (h k)).symm
+      | inr _ => rfl
+    rw [htj]
+    exact hsub
+
 /-- Pair-local requests of a small parameter set. -/
 noncomputable def infra_78_pairRequests (ρ : Cardinal.{u}) {ℓ : Cardinal.{u}}
     (hℓel : ℓ ∈ P.eligible) (s : Set (X.model.carrier ⊕ Y.model.carrier)) :
     Set (X.model.carrier ⊕ Y.model.carrier) :=
   (Sum.inr '' (f.onVertex PUnit.unit '' (Sum.inl ⁻¹' s))) ∪
-    infra_78_pick ρ (infra_78_pairLsReq f hℓel s) ∪ infra_78_pick ρ (infra_78_pairCopyReq f hf ℓ s)
+    infra_78_pick ρ (infra_78_pairLsReq f hℓel s) ∪ infra_78_pick ρ (infra_78_pairCopyReq f hf ℓ s) ∪
+    infra_78_pick ρ (infra_78_pairRepCopyReq f hf ℓ s)
 
 /-- **Stage-local bookkeeping closure (Prop 7.8 interleaving).** For a single permitted pair
 `f : X → Y` at level `κ` and any `T ⊆ |X| ⊕ |Y|` of size `≤ ρ`, there is `T' ⊇ T` of size
@@ -808,6 +854,12 @@ theorem infra_78_pair_bookkeeping_close {ρ ℓ : Cardinal.{u}} (hℓel : ℓ �
         ∀ s ⊆ T', #s ≤ ℓ → #(Sum.inr ⁻¹' s : Set Y.model.carrier) ≤ σ →
         ∃ seq : ApproximationSequence (infra_78_pairTuple f hf s), seq.τ = ℓ ∧
           ℓ + ℵ₀ < #seq.κIndex ∧
+          ∀ a b, (Sum.inl (X.val (seq.family a b)) : X.model.carrier ⊕ Y.model.carrier) ∈ T') ∧
+      (∀ σ : Cardinal.{u}, ℵ₀ ≤ σ → κ ∈ recursionClosedLevels P σ → Order.succ σ ≤ κ → ℓ < κ →
+        ℓ ≤ σ → ∀ {I : Type u} (d : I → Y.model.carrier), #I ≤ ℓ →
+        (∀ k, (Sum.inr (d k) : X.model.carrier ⊕ Y.model.carrier) ∈ T') →
+        ∃ seq : ApproximationSequence (infra_78_pairListTuple f hf d), seq.τ = ℓ ∧
+          ℓ + ℵ₀ < #seq.κIndex ∧
           ∀ a b, (Sum.inl (X.val (seq.family a b)) : X.model.carrier ⊕ Y.model.carrier) ∈ T') := by
   have hℓ : ℵ₀ ≤ ℓ := P.aleph0_le hℓel
   have hρ : ℵ₀ ≤ ρ := hℓ.trans hℓρ.le
@@ -819,19 +871,20 @@ theorem infra_78_pair_bookkeeping_close {ρ ℓ : Cardinal.{u}} (hℓel : ℓ �
       Cardinal.mk_image_le.trans (Cardinal.mk_image_le.trans
         ((Cardinal.mk_preimage_of_injective _ _ Sum.inl_injective).trans (hs.trans hℓρ.le)))
     refine (mk_union_le _ _).trans ?_
-    refine (add_le_add ((mk_union_le _ _).trans (add_le_add h1 (infra_78_pick_card _ _)))
+    refine (add_le_add ((mk_union_le _ _).trans (add_le_add ((mk_union_le _ _).trans
+      (add_le_add h1 (infra_78_pick_card _ _))) (infra_78_pick_card _ _)))
       (infra_78_pick_card _ _)).trans ?_
-    rw [add_eq_self hρ, add_eq_self hρ]
+    rw [add_eq_self hρ, add_eq_self hρ, add_eq_self hρ]
   obtain ⟨T', hTT', hcard, hcl⟩ :=
     infra_78_cardinal_closure T hℓ hℓρ hpow (infra_78_pairRequests f hf ρ hℓel) hF hT
-  refine ⟨T', hTT', hcard, ?_, ?_, ?_⟩
+  refine ⟨T', hTT', hcard, ?_, ?_, ?_, ?_⟩
   · intro x hx
     have hs : ({Sum.inl x} : Set (X.model.carrier ⊕ Y.model.carrier)) ⊆ T' :=
       Set.singleton_subset_iff.2 hx
     have hsl : #({Sum.inl x} : Set (X.model.carrier ⊕ Y.model.carrier)) ≤ ℓ := by
       rw [Cardinal.mk_singleton]; exact one_le_aleph0.trans hℓ
     apply hcl _ hs hsl
-    left; left
+    left; left; left
     exact ⟨_, ⟨x, Set.mem_singleton _, rfl⟩, rfl⟩
   · intro s hs hsl
     have hS : #(Sum.inl ⁻¹' s : Set X.model.carrier) ≤ ℓ :=
@@ -852,7 +905,7 @@ theorem infra_78_pair_bookkeeping_close {ρ ℓ : Cardinal.{u}} (hℓel : ℓ �
       rw [add_eq_self hℓ]; exact hℓρ.le
     obtain ⟨A, V, iA, iV, g, h1, h2, h3, h4, h5, h6, hTe⟩ := infra_78_pick_spec hex
     have hsub : infra_78_pick ρ (infra_78_pairLsReq f hℓel s) ⊆ T' := fun z hz =>
-      hcl s hs hsl (Or.inl (Or.inr hz))
+      hcl s hs hsl (Or.inl (Or.inl (Or.inr hz)))
     rw [hTe] at hsub
     exact ⟨A, V, iA, iV, g, h1, h2, h3, h4, h5, h6,
       fun z hz => hsub (Or.inl hz), fun z hz => hsub (Or.inr hz)⟩
@@ -869,9 +922,40 @@ theorem infra_78_pair_bookkeeping_close {ρ ℓ : Cardinal.{u}} (hℓel : ℓ �
       exact Order.lt_succ_of_not_isMax (not_isMax ℓ)
     obtain ⟨seq, hτ, hlen, hTe⟩ := infra_78_pick_spec hex
     have hsub : infra_78_pick ρ (infra_78_pairCopyReq f hf ℓ s) ⊆ T' := fun z hz =>
-      hcl s hs hsl (Or.inr hz)
+      hcl s hs hsl (Or.inl (Or.inr hz))
     rw [hTe] at hsub
     exact ⟨seq, hτ, hlen, fun a b => hsub ⟨(a, b), rfl⟩⟩
+  · intro σ hσ hrec hσSucc hℓκ' hℓσ I d hI hdT
+    classical
+    let s : Set (X.model.carrier ⊕ Y.model.carrier) := Sum.inr '' Set.range d
+    have hs : s ⊆ T' := by
+      rintro _ ⟨_, ⟨k, rfl⟩, rfl⟩
+      exact hdT k
+    have hsl : #s ≤ ℓ := Cardinal.mk_image_le.trans (Cardinal.mk_range_le.trans hI)
+    have hidxℓ : #(infra_78_pairListTuple f hf (infra_78_pairRep ℓ s)).idx ≤ ℓ := by
+      show #((Sum.inr ⁻¹' s : Set Y.model.carrier) × ℓ.ord.ToType) ≤ ℓ
+      rw [Cardinal.mk_prod, Cardinal.lift_id, Cardinal.lift_id, Cardinal.mk_ord_toType]
+      exact (mul_le_mul ((Cardinal.mk_preimage_of_injective _ _ Sum.inr_injective).trans hsl)
+        le_rfl zero_le zero_le).trans (Cardinal.mul_eq_self hℓ).le
+    have hex : ∃ T : Set (X.model.carrier ⊕ Y.model.carrier), #T ≤ ρ ∧
+        infra_78_pairRepCopyReq f hf ℓ s T := by
+      obtain ⟨seq, hτ, hκI, hprod⟩ := infra_78_code_copies_bounded P σ hσ hκ hrec hσSucc
+        (infra_78_pairListTuple f hf (infra_78_pairRep ℓ s)) rfl (hidxℓ.trans hℓσ) hℓ hℓκ' hidxℓ
+      refine ⟨_, Cardinal.mk_range_le.trans (hprod.trans (Order.succ_le_of_lt hℓρ)), seq, hτ,
+        ?_, rfl⟩
+      rw [hκI, Cardinal.add_eq_left hℓ hℓ]
+      exact Order.lt_succ_of_not_isMax (not_isMax ℓ)
+    obtain ⟨seq, hτ, hlen, hTe⟩ := infra_78_pick_spec hex
+    have hsub : infra_78_pick ρ (infra_78_pairRepCopyReq f hf ℓ s) ⊆ T' := fun z hz =>
+      hcl s hs hsl (Or.inr hz)
+    rw [hTe] at hsub
+    obtain ⟨e⟩ : Nonempty (I ↪ ℓ.ord.ToType) :=
+      (Cardinal.le_def _ _).1 (by rw [Cardinal.mk_ord_toType]; exact hI)
+    let ρ' : I → (infra_78_pairListTuple f hf (infra_78_pairRep ℓ s)).idx :=
+      fun k => (⟨d k, ⟨d k, ⟨k, rfl⟩, rfl⟩⟩, e k)
+    have hρ' : Function.Injective ρ' := fun a b hab => e.injective (congrArg Prod.snd hab)
+    exact ⟨infra_78_listSeq_reindex f hf d (infra_78_pairRep ℓ s) ρ' hρ' (fun _ => rfl) seq, hτ,
+      hlen, fun a b => hsub ⟨(a, ρ' b), rfl⟩⟩
 
 end PairLocal
 
@@ -880,5 +964,96 @@ theorem infra_78_bkTuple_eq_pairTuple {P : SingleModelData K} {ρ κ : Cardinal.
     {hκ : κ ∈ P.eligible} (M : Infra78Matrix P ρ hκ) (i : (Order.succ ρ).ord.ToType)
     (s : Set (infra_78_bkCarrier M i)) :
     infra_78_bkTuple M i s = infra_78_pairTuple (M.pair i) (M.pair_permitted i) s := rfl
+
+
+section ListReq
+variable {P : SingleModelData K} {ρ κ : Cardinal.{u}} {hκ : κ ∈ P.eligible}
+  (M : Infra78Matrix P ρ hκ)
+
+/-- The tuple of a LIST of top points of stage `i` over `X_i` (entries may repeat). -/
+abbrev infra_78_bkListTuple (i : (Order.succ ρ).ord.ToType) {I : Type u}
+    (d : I → (M.Y i).model.carrier) : TupleOver K oneVertexShape P.scheme hκ (M.X i) :=
+  infra_78_pairListTuple (M.pair i) (M.pair_permitted i) d
+
+/-- **List-indexed closure requirement 2 at stages of cofinality `> λ`.** As
+`infra_78_bookkeeping_req2_high_cof`, for LISTS `d : I → Y_i` (`|I| ≤ λ ≤ σ`, repetitions
+allowed) whose points lie in `R_i`: the list is pulled back to an intervening non-limit stage
+`k` past a local-character stage (`infra_78_bk_pull`, choosing preimages of its points), the
+non-limit list supply gives a sequence there, and it is transferred to `Y_i` along `stepY` with
+the identity on the list index (`infra_78_seq_host_transfer`) and persists over `X_i`. -/
+theorem infra_78_bookkeeping_req2_list_high_cof (hM : M.CompLaw) (hC : M.ContAtLimits)
+    {ℓ : Cardinal.{u}} (hℓ : ℵ₀ ≤ ℓ) (hℓκ : ℓ < κ) (σ : Cardinal.{u}) (hσ : ℵ₀ ≤ σ)
+    (hℓσ : ℓ ≤ σ) (hrec : κ ∈ recursionClosedLevels P σ) (hσSucc : Order.succ σ ≤ κ)
+    (R : ∀ i, Set (infra_78_bkCarrier M i))
+    (hmono : ∀ {j i} (h : j < i), infra_78_bkStep M h '' R j ⊆ R i)
+    (hlim : ∀ i, Order.IsSuccLimit i → R i = ⋃ j : Set.Iio i, infra_78_bkStep M j.2 '' R j.1)
+    (hsupp : ∀ i, ¬ Order.IsSuccLimit i → ∀ {I : Type u} (d : I → (M.Y i).model.carrier),
+      #I ≤ ℓ → (∀ k, (Sum.inr (d k) : infra_78_bkCarrier M i) ∈ R i) →
+      ∃ seq : ApproximationSequence (infra_78_bkListTuple M i d), seq.τ = ℓ ∧
+        ℓ + ℵ₀ < #seq.κIndex ∧
+        ∀ a b, (Sum.inl ((M.X i).val (seq.family a b)) : infra_78_bkCarrier M i) ∈ R i)
+    (i : (Order.succ ρ).ord.ToType) (hcof : ℓ < Order.cof (Set.Iio i))
+    {I : Type u} (d : I → (M.Y i).model.carrier) (hI : #I ≤ ℓ)
+    (hd : ∀ k, (Sum.inr (d k) : infra_78_bkCarrier M i) ∈ R i) :
+    ∃ seq : ApproximationSequence (infra_78_bkListTuple M i d), seq.τ = ℓ ∧
+      ℓ + ℵ₀ < #seq.κIndex ∧
+      ∀ a b, (Sum.inl ((M.X i).val (seq.family a b)) : infra_78_bkCarrier M i) ∈ R i := by
+  classical
+  by_cases hi : Order.IsSuccLimit i
+  swap
+  · exact hsupp i hi d hI hd
+  set q := infra_78_bkListTuple M i d with hqdef
+  let C := infra_78_stageChain M hM hC i hi
+  obtain ⟨α₀, hα₀, hF⟩ := infra_78_tied_local P σ hσ hκ hrec hσSucc C q rfl (hI.trans hℓσ)
+    (by
+      show #I < (infra_78_stageChain M hM hC i hi).δ.cof
+      rw [infra_78_stageChain_cof]; exact hI.trans_lt hcof)
+  set j₀ := infra_78_stg i α₀ hα₀ with hj₀def
+  have hj₀ : j₀ < i := infra_78_stg_lt i α₀ hα₀
+  let s : Set (infra_78_bkCarrier M i) := Sum.inr '' Set.range d
+  have hs : s ⊆ R i := by
+    rintro _ ⟨_, ⟨k, rfl⟩, rfl⟩
+    exact hd k
+  have hsl : #s ≤ ℓ := Cardinal.mk_image_le.trans (Cardinal.mk_range_le.trans hI)
+  obtain ⟨k, hk, hj₀k, hknl, s', hs'R, -, hs'eq⟩ :=
+    infra_78_bk_pull M hM R hmono hlim i hi hcof s hs hsl j₀ hj₀
+  have hpre : ∀ t : I, ∃ y : (M.Y k).model.carrier,
+      (Sum.inr y : infra_78_bkCarrier M k) ∈ s' ∧ (M.stepY hk.le).onVertex PUnit.unit y = d t := by
+    intro t
+    have hmem : (Sum.inr (d t) : infra_78_bkCarrier M i) ∈ s := ⟨d t, ⟨t, rfl⟩, rfl⟩
+    rw [← hs'eq] at hmem
+    obtain ⟨z, hz, hze⟩ := hmem
+    rcases z with x | y
+    · exact (Sum.inl_ne_inr hze).elim
+    · exact ⟨y, hz, Sum.inr_injective hze⟩
+  choose d' hd'R hd'eq using hpre
+  obtain ⟨sk, hτk, hlenk, hink⟩ := hsupp k hknl d' hI (fun t => hs'R (hd'R t))
+  have hb : #(infra_78_bkListTuple M k d').idx + sk.τ < κ := by
+    rw [hτk]
+    exact (add_le_add hI le_rfl).trans_lt (by rw [Cardinal.add_eq_self hℓ]; exact hℓκ)
+  let s2 := infra_78_seq_host_transfer (infra_78_bkListTuple M k d')
+    (q.restrict (M.stepX hk.le) trivial) (M.stepY hk.le) trivial (Equiv.refl I)
+    (fun x => infra_78_bkStep_pair M hk x)
+    (fun t => by
+      show (M.Y i).occ (d t) = _
+      rw [← hd'eq t]
+      rfl) sk hb hb
+  have hfree := infra_78_tiedFree_congr_arrow (P := P) (A := M.X j₀) (B := M.X i)
+    (f := M.stepX (infra_78_stg_lt i α₀ hα₀).le)
+    (f' := SystemArrow.comp (M.stepX hj₀k.le) (M.stepX hk.le)) trivial trivial q
+    (hM.1 hj₀k.le hk.le) hF
+  have hs2 : s2.τ + ℵ₀ < #s2.κIndex := by
+    show sk.τ + ℵ₀ < #sk.κIndex
+    rw [hτk]; exact hlenk
+  have hs2μ : s2.τ < κ := by show sk.τ < κ; rw [hτk]; exact hℓκ
+  obtain ⟨seq, hτ, e', hfam⟩ := infra_78_copies_persist_at_limits P σ hσ hκ hrec hσSucc
+    (M.stepX hj₀k.le) trivial (M.stepX hk.le) trivial q rfl (hI.trans hℓσ) hfree s2 hs2 hs2μ
+  refine ⟨seq, hτ.trans hτk, ?_, ?_⟩
+  · rw [Cardinal.mk_congr e']; exact hlenk
+  · intro a b
+    rw [hfam a b]
+    exact hmono hk ⟨_, hink (e' a) b, rfl⟩
+
+end ListReq
 
 end AEC
