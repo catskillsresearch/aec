@@ -86,7 +86,10 @@ theorem lemma_14_2 (K : AbstractElementaryClass.{u}) {n : ℕ}
 
 /-- **Theorem 14.3** (Exact lifting at every larger cardinal). For every finite allowed shape
 and every monotone assignment of cardinals at least `γ`, a prescribed boundary isomorphism
-between two systems with that assignment extends to an isomorphism of their tops. -/
+between two systems with that assignment extends to an isomorphism of their tops. 
+
+**False as stated (kept open, needs hypotheses):** `A` is not linked to `X`, `Y`, and the
+statement fails for arbitrary geometric systems (`AEC.Audit.theorem_14_3_arbitrary_false`). -/
 theorem theorem_14_3 (K : AbstractElementaryClass.{u}) {n : ℕ}
     {L : Set (Finset (Fin n))} (γ : Cardinal.{u})
     (A : CardinalAssignment n L γ)
@@ -96,8 +99,13 @@ theorem theorem_14_3 (K : AbstractElementaryClass.{u}) {n : ℕ}
   sorry
 
 /-- **Corollary 14.4** (Pointed categoricity on a tail). Above a threshold `γ`, any two models
-of a given cardinality that carry the fixed point pattern are pointedly isomorphic. -/
-theorem corollary_14_4 (K : AbstractElementaryClass.{u}) (D : MinimalData K) :
+of a given cardinality that carry the fixed point pattern are pointedly isomorphic.
+
+**Statement change:** now assumes the paper's standing hypothesis `CategoricalUnbounded K`.
+The unconditional form is false (`AEC.Audit.Pred.corollary_14_4_unconditional_false`: sets with
+a unary predicate, which are categorical in no infinite cardinal). -/
+theorem corollary_14_4 (K : AbstractElementaryClass.{u}) [CategoricalUnbounded K]
+    (D : MinimalData K) :
     ∃ γ : Cardinal.{u}, ∀ κ, γ ≤ κ →
       ∀ M N : PointedModel K D, Model.card M.M = κ → Model.card N.M = κ →
         ∃ e : M.M.carrier ≃[K.τ] N.M.carrier,

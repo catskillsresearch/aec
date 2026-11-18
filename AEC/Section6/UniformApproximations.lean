@@ -101,8 +101,8 @@ theorem english_orderPattern_realized_pt (η : Cardinal.{u}) (hη : aleph0 ≤ �
 /-! ## NOT a Lemma 6.9 proof
 
 `TupleOver.InBase` and `ApproximationSequence.ofConstFamily` are constant-family helpers
-retained for tests. They are **not** the proof of Lemma 6.9 and are not used by
-`WorkingScheme.exists_approximationSequence`. -/
+retained for tests. They are **not** the proof of Lemma 6.9 (which is
+`SingleModelData.exists_approximationSequence`). -/
 
 /-- At level `μ`, data in the base with reflexive inclusion (in-base actual type).
 **NOT a Lemma 6.9 proof.** -/
@@ -156,8 +156,8 @@ order sufficiently saturated for every support size used below.
 
 `η` bounds the support sizes used below (`ℵ₀ ≤ η < μ`), and `μ` is a strong limit so Lemma 5.5
 supplies a padded dense order of cardinality `μ`. Every cut of size at most `η` is filled.
-Lemma 5.4 realizes that presentation as a scheme object, and `HasPresentations` identifies the
-presentation with `A`. -/
+Lemma 5.4 realizes that presentation as a scheme object; here `A` itself is that object, since
+`HasPresentations` identifies the presentation with every object at `μ`. -/
 theorem infra_69_present_padded
     (F : TermTemplate K S) [hpres : HasPresentations W F]
     (hpack : HasChainUnions W)
@@ -181,9 +181,9 @@ theorem infra_69_present_padded
   have hfill : ∀ ρ : Cardinal.{u}, ρ ≤ η → OrderFillsCuts ρ I := by
     intro ρ hρ L R hL hR hLR
     exact hcut L R (le_trans hL hρ) (le_trans hR hρ) hLR
-  obtain ⟨X, hX, _⟩ := lemma_5_4 W F hpack hμ I hIcard
   exact ⟨I, lo, hne, pad, hIcard, hdense, hfill,
-    ⟨X, hX, fun v => hpres.present_equiv hμ A I hIcard v⟩⟩
+    ⟨A, fun v => hpres.present_equiv hμ A I hIcard v,
+      fun v => hpres.present_equiv hμ A I hIcard v⟩⟩
 
 /-- **Infra `infra_69_chart_iso`:** The presentation is an object of the current scheme;
 categoricity in the package gives an isomorphism with `A`.
@@ -204,7 +204,9 @@ theorem infra_69_chart_iso
         ((W.asSystem hμ A).obj v).carrier)) ∧
       ∀ v, Nonempty (((F.present I).obj v).carrier ≃[K.τ]
         ((W.asSystem hμ A).obj v).carrier) := by
-  obtain ⟨X, hX, _⟩ := lemma_5_4 W F hpack hμ I hI
+  let X : W.Object μ hμ := A
+  have hX : ∀ v, Nonempty (((F.present I).obj v).carrier ≃[K.τ]
+      ((W.asSystem hμ X).obj v).carrier) := fun v => hpres.present_equiv hμ A I hI v
   refine ⟨X, hX, ?_, ?_⟩
   · intro v
     exact (hcat μ hμ).unique_model
@@ -3152,35 +3154,13 @@ theorem SingleModelData.exists_approximationSequence
     ∃ seq : ApproximationSequence p, seq.τ = τ ∧ #(seq.κIndex) = κ :=
   infra_69_assemble P hμ base p hνμ σ τ κ hσ hσμ hidx hτ hτμ hκ hκμ hprod hclosed
 
-/-! ## Main existence (English support-copy gloss) -/
+/-! ## Retired: `WorkingScheme.exists_approximationSequence`
 
-/-- Uniform approximation sequences for `p = tp(v/A)` with `#p.idx ≤ σ` (English Lemma 6.9).
-
-Hypotheses match Lemma 6.1 packaging. On `SingleModelData` the chain is
-`infra_69_assemble`: padded chart, `infra_69_place_on_fills`, `infra_69_support_copy_sequence`.
-A general `WorkingScheme` has no order presentation and no `Placement`, so it is not that
-chain. `infra_69_place_type` places over a well-ordered skeleton and does not fill cuts.
-`TupleOver.InBase` and `ApproximationSequence.ofConstFamily` are not a proof. -/
-theorem WorkingScheme.exists_approximationSequence
-    [CategoricalUnbounded K] (F : TermTemplate K S) [hpres : HasPresentations W F]
-    [hpack : HasChainUnions W]
-    (hedge : ∀ i j, ¬ S.specified i j)
-    (hcat : ∀ μ' ∈ W.eligible, Categorical K μ')
-    (σ χ b τ κ : Cardinal.{u})
-    (hσ : aleph0 ≤ σ) (hτ : aleph0 ≤ τ) (hκ : aleph0 ≤ κ)
-    (hpow : χ ^ σ = χ) (hb : b + σ < χ)
-    (hχ : ls K + (2 : Cardinal.{u}) ^ ((2 : Cardinal.{u}) ^ σ) ≤ χ)
-    (hiso : AssemblesStructIso W b)
-    {μ : Cardinal.{u}} {hμ : μ ∈ W.eligible} (base : W.Object μ hμ)
-    (p : TupleOver K S W hμ base)
-    (hidxσ : #p.idx ≤ σ) (hidxμ : #p.idx < μ)
-    (hμτ : τ < μ) (hκμ : κ < μ) (hμκ : κ * #p.idx < μ)
-    (hχμ : χ < μ) :
-    ∃ seq : ApproximationSequence p, seq.τ = τ ∧ #(seq.κIndex) = κ := by
-  /- Cross-scheme transfer is not the path. Use `SingleModelData.exists_approximationSequence`
-     (Attempt A / Lemma 6.9). A general `WorkingScheme.DiagramEq` is not the image of
-     `P.scheme.DiagramEq` under a categoricity carrier equivalence. Not a constant family. -/
-  sorry
+The general-`WorkingScheme` form of Lemma 6.9 was removed (unused anywhere). A general
+`WorkingScheme` has no order presentation and no `Placement`, and its `DiagramEq` is not the
+image of `P.scheme.DiagramEq` under a categoricity carrier equivalence, so the support-copy
+chain does not apply. Lemma 6.9 is `SingleModelData.exists_approximationSequence`
+(`infra_69_assemble`). -/
 
 /-- Push a one-vertex occurrence along a carrier equivalence. The vertex is `PUnit.unit`. -/
 def infra_69_pushOcc {SP SW : SystemObject K oneVertexShape}
@@ -3256,22 +3236,9 @@ def infra_69_transfer_tuple
     α → Occurrence K oneVertexShape SW :=
   fun i => infra_69_pushOcc e (xs i)
 
-/-- Cross-scheme sequence transfer is not used. Approximation sequences for Theorem 6.10 are
-`SingleModelData.exists_approximationSequence`. -/
-theorem infra_69_transfer_sequence
-    (P : SingleModelData K)
-    {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
-    (A B : P.scheme.Object μ hμ)
-    (pA : TupleOver K oneVertexShape P.scheme hμ A)
-    (pB : TupleOver K oneVertexShape P.scheme hμ B)
-    (seq : ApproximationSequence pB)
-    (e : ((P.scheme.asSystem hμ B).obj PUnit.unit).carrier ≃[K.τ]
-      ((P.scheme.asSystem hμ A).obj PUnit.unit).carrier) :
-    ∃ seqA : ApproximationSequence pA, seqA.τ = seq.τ ∧ #(seqA.κIndex) = #(seq.κIndex) := by
-  /- Not the path to Theorem 6.10. `pA` is not the image of `pB` under `e`, and
-     `few_exceptions` compares a host joint to a base joint. Use the single-model assemble
-     chain instead. -/
-  sorry
+/- `infra_69_transfer_sequence` (cross-scheme sequence transfer) was removed: it was retired,
+unused, and stated without the level hypotheses of Lemma 6.9 (`pA` is not the image of `pB`).
+Approximation sequences for Theorem 6.10 are `SingleModelData.exists_approximationSequence`. -/
 
 end
 end AEC

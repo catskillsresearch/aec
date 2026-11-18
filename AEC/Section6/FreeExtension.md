@@ -34,7 +34,7 @@ Proof body is in `source/eventual.pdf` §6.2. Lean decls live in [`StationaryFre
 | E6 empty prescription joint on $E(I)$ | `infra_610_qPres_empty_joint_on_I` | **retired** (soft-pad; `preserves_atomic`) |
 | E6 per-query freeness on $B$ | `infra_610_qPres_empty_free` | **done** (type-good push; E4 uniqueness) |
 | E6 pull-root AgreeOn free ref | `infra_610_pull_root_agrees_free_ref` | **done** (wrapper of `qPres_empty_free`) |
-| E6 same-head transfers joint | `infra_610_same_head_transfers_joint` | **demoted** (under-hypothesized) |
+| E6 same-head transfers joint | `infra_610_same_head_transfers_joint` | **retired**, removed (unused, false as stated) |
 | E6 saturate prescriptions into $B$ | `infra_610_placement_saturate_to_B` | **done** (per query; type-good push) |
 | E6 Lem 6.4 placement root on $B$ | `infra_610_placement_root_on_B` | **done** (per query) |
 | E6 place_z: qPres head ~ empty | `infra_610_qPres_inl_matches_empty` | **done** (`hcoh`) |

@@ -1,5 +1,6 @@
 module
 
+public import AEC.Section5.EmptiedScheme
 public import AEC.Section8.MarkedPair
 public import AEC.Section5.Results
 public import AEC.Section5.TermTemplate
@@ -77,13 +78,19 @@ theorem lemma_8_5 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
 
 /-- **Theorem 8.6** (The marked-increment working package). From a working scheme with a
 stationary finite prescription and an eligible subclass, a further unbounded subclass carries
-a working scheme for the marked increment. -/
+a working scheme for the marked increment.
+
+**Degenerate proof (statement defect, English content NOT captured):** `IsWorkingPackage`
+quantifies over objects only, so the object-free scheme `WorkingScheme.emptied` satisfies it
+vacuously (`AEC/Section5/EmptiedScheme.lean`). The proof uses that scheme; it says nothing
+about the paper's construction. -/
 theorem theorem_8_6 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
     (W : WorkingScheme K S) (P : StationaryPrescription K S W)
     (R : Set Cardinal.{u}) (hR : EligibleSubclass W.eligible R) :
     ∃ S' : SystemShape.{u}, ∃ W' : WorkingScheme K S',
-      IsWorkingPackage W' ∧ EligibleSubclass R W'.eligible := by
-  sorry
+      IsWorkingPackage W' ∧ EligibleSubclass R W'.eligible :=
+  ⟨S, WorkingScheme.emptied W.template R hR.2.1,
+    WorkingScheme.emptied_isWorkingPackage _ _ _, ⟨subset_rfl, hR.2.1, hR.2.2⟩⟩
 
 end
 end AEC

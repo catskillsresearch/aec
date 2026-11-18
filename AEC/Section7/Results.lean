@@ -29,7 +29,7 @@ pushed isolating fragment have the same restriction Galois type as the lift (Eng
 through restrictions / Prop 7.3 “extension of `q`”).
 
 Path A packaging: `SingleModelData`, recursion-closed levels, same-level hosts `ν = μ`.
-Full `IsRelativelyIsolated qB` (over-`B` `SameGaloisType`) needs demoted `same_head`. -/
+Full `IsRelativelyIsolated qB` over `B` needs a tied-free `u`-marginal; see `lemma_7_2_tied`. -/
 theorem lemma_7_2 {K : AbstractElementaryClass.{u}} (P : SingleModelData K)
     (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ) :
     ∃ T, ∃ hT : Tail P.eligible T,
@@ -61,6 +61,36 @@ theorem lemma_7_2 {K : AbstractElementaryClass.{u}} (P : SingleModelData K)
                     (pushParams f Ziso) :=
   infra_72_lemma P σ hσ
 
+/-- **Lemma 7.2 (English-complete form).** Clause 1 as in `lemma_7_2`. Clause 2 with the
+English free-extension hypothesis: if the `u`-marginal of `q_B` is tied free (the actual
+answer on every sequence-move is the free evaluation), then `q_B` itself is tied free and is
+relatively isolated over `B` (`infra_72_over_B_isolation`, by the pushed fragment). The
+untied `IsFreeLift` marginal hypothesis of `lemma_7_2` is too weak for clause 2: it follows
+from `hExt` alone. -/
+theorem lemma_7_2_tied {K : AbstractElementaryClass.{u}} (P : SingleModelData K)
+    (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ) :
+    ∃ T, ∃ hT : Tail P.eligible T,
+      ∀ μ (hμ : μ ∈ T) (A : P.scheme.Object μ (Tail.mem hT hμ))
+        (q : TupleOver K oneVertexShape P.scheme (Tail.mem hT hμ) A)
+        {uIdx c0Idx c1Idx : Type u}
+        (e : q.idx ≃ uIdx ⊕ (c0Idx ⊕ c1Idx)),
+        q.ν = μ → #q.idx ≤ σ → #q.idx < μ →
+        IsRelativelyIsolated q e →
+        IsRelativelyIsolated (q.projectUC0 e)
+            (projectDecomp (uIdx := uIdx) (c0Idx := c0Idx)) ∧
+          ∀ (B : P.scheme.Object μ (Tail.mem hT hμ))
+            (f : SystemArrow K oneVertexShape
+              (P.scheme.asSystem (Tail.mem hT hμ) A)
+              (P.scheme.asSystem (Tail.mem hT hμ) B))
+            (hf : P.scheme.permitted (X := A) (Y := B) f)
+            (qB : TupleOver K oneVertexShape P.scheme (Tail.mem hT hμ) B)
+            (eB : q.idx ≃ qB.idx),
+            qB.ν = μ →
+            SameGaloisType q (qB.restrict f hf) eB (Equiv.refl qB.idx) →
+            IsTiedFree f (q.marginal e) (qB.marginal (eB.symm.trans e)) (Equiv.refl uIdx) →
+            IsTiedFree f q qB eB ∧ IsRelativelyIsolated qB (eB.symm.trans e) :=
+  infra_72_lemma_tied P σ hσ
+
 /-- **Proposition 7.3.** At recursion-closed levels there is a scheme-only bound `h` such that
 either `q` is isolated relative to `u` by a fragment of size at most `h(σ)`, or there is a
 same-level extension of `q` whose `u`-marginal is an untied free lift and whose joint fails
@@ -68,9 +98,13 @@ tied freeness (`¬ IsTiedFree`).
 
 Path A packaging: `SingleModelData`, recursion-closed levels, same-level hosts `ν = μ`.
 Every extension is already an untied `IsFreeLift` (`infra_73_ext_isFreeLift`), so English
-“≠ free lift” is the tied clause (`infra_73_alt2`). Uniform shrink of an arbitrary isolating
-fragment to size `h(σ)` needs `isolation ⇒ IsTiedFree` and is demoted with `same_head`
-(as in Lemma 7.2’s over-`B` isolation). -/
+“≠ free lift” is the tied clause (`infra_73_alt2`). `isolation ⇒ IsTiedFree` is proved for a
+tied-free `u`-marginal (`infra_73_tied_of_isolated`); uniform shrink to size `h(σ)`
+(`infra_73_uniform_of_isolated`) still needs the alt-2 extension to have tied-free marginal
+(`infra_73_alt2_tied_marginal`). That extension is built from the English block restriction
+in `AltTwoTied.lean` (`infra_73_alt2_tied`), and the uniform form
+`proposition_7_3_uniform_of_block` is proved there from `Infra73BlockRestriction`
+(open board tip `infra_73_block_restriction`). -/
 theorem proposition_7_3 {K : AbstractElementaryClass.{u}} (P : SingleModelData K)
     (σ : Cardinal.{u}) (hσ : ℵ₀ ≤ σ) :
     ∃ h : Cardinal.{u} → Cardinal.{u}, ∃ T, ∃ hT : Tail P.eligible T,
@@ -136,9 +170,10 @@ theorem proposition_7_5 {K : AbstractElementaryClass.{u}} (P : SingleModelData K
 list from `A`, then `q_A` is isolated relative to `u` by that list.
 
 Path A packaging: `SingleModelData`, recursion-closed levels, same-level hosts `ν = μ`.
-An arbitrary isolating fragment `W ⊆ B` is demoted with `same_head`. The proved fragment
-on `B` is `pushParams f Z` for a list `Z` in `A`; the marginal identification is the
-amalgam of the shared `u`-marginal. -/
+The proved fragment on `B` here is `pushParams f Z` for a list `Z` in `A`; the marginal
+identification is the amalgam of the shared `u`-marginal. The English form for an arbitrary
+isolating fragment `W ⊆ B` along a tied-free lift is `lemma_7_6_tied`
+(`AEC/Section7/TiedDescent.lean`). -/
 theorem lemma_7_6 {K : AbstractElementaryClass.{u}} (P : SingleModelData K)
     (σ : Cardinal.{u}) (hσ : ℵ₀ ≤ σ) :
     ∃ T, ∃ hT : Tail P.eligible T,
@@ -163,9 +198,9 @@ theorem lemma_7_6 {K : AbstractElementaryClass.{u}} (P : SingleModelData K)
 /-- **Proposition 7.8.** A finite-tuple type at a sufficiently closed level has a same-level
 extension in which every tuple of length at most `θ` is isolated relative to the mark.
 
-Blocked for Path A existence: English needs Prop 7.3’s demoted uniform fragment bound
-(`isolation ⇒ IsTiedFree`), Lemma 7.6’s demoted mixed / arbitrary-fragment descent, and a
-Fodor / `ρ^λ` bookkeeping matrix. Finite-mark continuity (Def 7.7) is packaged separately as
+Blocked for Path A existence on `infra_78_mixed_level_isolation`: the same-level inputs
+(`proposition_7_3_uniform`, `lemma_7_6_tied`) are green, but English needs Lemma 7.6 for
+mixed levels `ν < μ` and a Fodor / `ρ^λ` bookkeeping matrix. Finite-mark continuity (Def 7.7) is packaged separately as
 `infra_78_finite_continuity` in `FiniteIsolation.lean` via Proposition 6.13. -/
 theorem proposition_7_8 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
     (W : WorkingScheme K S) :

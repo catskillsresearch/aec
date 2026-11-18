@@ -44,10 +44,32 @@ Section 13 is complete and was never on that chain.
 | 14 | 4 | `AEC/Section14/Results.lean` |
 | **Total** | **56** | |
 
-The table is the previous `Results.lean` rollup. The live token count is **52**,
-including residual infra such as `WorkingScheme.exists_approximationSequence`
-(Thm 6.10 packaging closed for `SingleModelData`: per-query type-good push, amalgam `IsFreeLift`. Retired: `qPres_empty_joint_on_I`. Demoted: `same_head`)
-and Lemma 7.2 Transfer residuals (`infra_722_extension_bridge`, `infra_722_anchored_maj_of_move`).
+The table is the previous `Results.lean` rollup. The live count of declarations using
+`sorry` is **32** (48 at the start of the overnight run). `WorkingScheme.exists_approximationSequence`
+was retired (unused; Lemma 6.9 is `SingleModelData.exists_approximationSequence`).
+Statement audit: `AEC/Audit/TinyAEC.lean` builds `tinyAEC` (empty language, at most one
+element per model); `AEC/Audit/Counterexamples.lean` refutes unconditional Prop 10.2, the old
+4th clause of Lemma 11.2, the old Lemma 10.8 statement (when a new realization exists),
+unconditional Thm 9.3 (`emptyAEC`), and Thms 9.8, 11.9, 12.2, 14.3 for arbitrary face families /
+geometric systems. `AEC/Section5/EmptiedScheme.lean` shows `IsWorkingPackage` is vacuous for
+object-free schemes; Thm 8.6, Thm 9.3, Prop 10.6, Prop 11.7 have sorry-free degenerate proofs that way (counted as NOT done; board flag `degenerate`); Prop 11.6 is proved degenerately on a constant
+geometric system (now with `[CategoricalUnbounded K]`).
+`AEC/Audit/AllSets.lean` builds the AEC of all sets (chain unions are direct limits) and
+`AllSetsMinimal.lean` a `MinimalData` on it; they refute Prop 10.7 as stated and the original
+point-set hypotheses of Thm 10.9 / Cor 10.10 (restated to `P(B) = f[P(A)]`).
+Overnight additions: `AEC/Audit/EqPattern.lean` (an `OrderPresentation` and a `StableDiagram` on the
+AEC of all sets) refutes Lemma 12.6 as formalized and the original form of Lemma 12.5 (restated:
+query type `ι` inside the hypothesis); `AEC/Audit/BoundaryGlue.lean` refutes Lemma 12.3 and
+`AEC/Audit/FaceGlue.lean` refutes Lemma 9.7 (tops may glue faces along a non-face overlap);
+`AEC/Audit/Counterexamples.lean` also refutes Claims 11.10 and 11.13 as formalized;
+`AEC/Audit/PredSets.lean` (sets with a unary predicate + `MinimalData`) refutes the
+unconditional Corollary 14.4 (restated with `[CategoricalUnbounded K]`).
+**Degenerate closures are NOT counted as done** (board flag `degenerate`, status blocked):
+Thm 8.6, Prop 9.1, Cor 9.2, Thm 9.3, Thm 9.6, Lem 10.1, Prop 10.6, Prop 11.6, Prop 11.7,
+Claim 11.12 (the last via `AEC/Section11/Repiece.lean`). Each carries a proposed honest
+restatement in `holes-graph.json`, as does every refuted-as-formalized node.
+`AEC/Audit/NoPairs.lean` (a `MinimalData` with no independent pairs) refutes Lemma 10.4 and
+Theorem 10.5 as stated: the abstract `productCopies` needs more axioms.
 
 ---
 
@@ -114,7 +136,7 @@ counterexample refutes the program.
 **Dependency rule:** edge B→A only if the English proof of A requires B, or A
 needs an explicit Lean infra subgoal B (not a paper-number chain).
 
-**Open (frontier):** [`infra_73_tied_of_isolated`](AEC/Section7/IsolationBound.lean) — English Prop 7.3 uniform shrink (`RelativelyIsolated` + `hExt` ⇒ `IsTiedFree` / actual joint after a sequence-move). Path A dichotomy is green in Results without this; paper tips `proposition_7_3`, `lemma_7_2`, `lemma_7_6`, `proposition_7_8` are **blocked** on tip-visible demotion infras (`infra_73_tied_of_isolated` → `infra_72_over_B_isolation`, `infra_76_arbitrary_fragment`). `proposition_7_5` stays done. `infra_78_finite_continuity` done (Def 7.7 via Prop 6.13).
+**Open (frontier):** `infra_78_mixed_level_isolation` — Proposition 7.8 shrinks a level-`κ` matrix `X_i ≤ Y_i` (`ρ⁺` stages, Fodor) to level-`λ` pairs `A ≤ U` and applies Lemma 7.6 with `A` at level `λ < κ`; the Lean tied-freeness / move / descent infrastructure is same-level only (`infra_73_move_iso` is a structural iso). Needed: mixed-level tied freeness and Lemma 7.6 for `ν < μ`. `proposition_7_8` is **blocked** on it (and its Lean statement, over an arbitrary `WorkingScheme`, should first be restated for `SingleModelData`). **Done this round:** `infra_76_arbitrary_fragment` / `lemma_7_6_tied` ([`TiedDescent.lean`](AEC/Section7/TiedDescent.lean): English Lemma 7.6 for an arbitrary isolating fragment along a tied-free lift; symmetry of the tied answer `infra_76_tied_majority`, fragment = an approximation list of `tp(W/A)`). `infra_73_block_restriction` ([`BlockRestriction.lean`](AEC/Section7/BlockRestriction.lean): block presentation `A ≅ E(σ⁺ ×ₗ μ)`, `J₀` = sequence supports ∪ a `χ₀⁺` reservoir per block, placements of `q` and `q'` (Prop 4.9 with `χ^σ = χ`), a block `b` met by neither placement, `A* = E(J₀ ∪ b)` with `g : A ≅ A*` fixing the sequence, differing tests moved inside `b` into the reservoir); hence `infra_73_alt2_tied_marginal` and the unconditional English uniform shrink `proposition_7_3_uniform`. **Done this run:** `infra_610_tied_free_lift` ([`TiedFreeLift.lean`](AEC/Section7/TiedFreeLift.lean)), `infra_73_tied_of_isolated` (restated: `hMargFree : IsFreeLift` → `hMargTied : IsTiedFree` on the `u`-marginal; the old form was false), `infra_72_over_B_isolation`, `lemma_7_2` (English form `lemma_7_2_tied`), `objectOfEmptyChain` sorry removed (`lemma_5_4` gains `hObj`). Retired and removed: `infra_69_transfer_sequence`, `infra_610_same_head_transfers_joint`. `lemma_7_6` done (English form `lemma_7_6_tied`). `proposition_7_5` stays done. `infra_78_finite_continuity` done (Def 7.7 via Prop 6.13).
 
 **Definition 5.2 repairs (made for Proposition 5.6).** The planned statement of Proposition 5.6 (a working package with an object at every eligible level) was refutable from the definitions; each obstruction was checked in Lean before the repair.
 1. `WorkingScheme.diagram_iso` is now for lists with `#α < μ`, and `WorkingScheme.diagram_preserved` for lists with `#α < μ` and `#α < ν` (`AEC/Section5/WorkingScheme.lean`). Unbounded, the two fields applied to the list of all occurrences of an object made every permitted arrow between objects at one level vertexwise bijective; the stable diagram `D` only controls bounded lists. `diagram_refl`, `diagram_symm`, `diagram_trans`, `diagram_reindex`, `diagram_restrict`, `diagram_empty` are unchanged.
@@ -150,7 +172,7 @@ Proof of clause 2. Identify `N` with its chart `E(Below μ)` (categoricity at `�
 
 **Lemma 6.9 is done for `SingleModelData`.** The chain is `infra_69_recursion_tail`, then `infra_69_assemble` at a same-level tuple `p.ν = μ`. Theorem 6.10 is restated the same way. `stationary_free_extension_exists` packages `IsFreeLift` by amalgamating `p`'s host with `B` and pushing majority values along the `B` leg. A single head in `B` for every parameter list is retired (`qPres_empty_joint_on_I`, `preserves_atomic`). Per-query realization is `qPres_empty_free`. Demoted: `same_head`. Soft-pad placeRoot / global `placement_to_B` stay retired. Majority uniqueness is proved. No constant-family alternate.
 
-**Lemma 6.11 is done for same-level `SingleModelData`.** `infra_611_fresh_code` builds a Lemma 6.9 code for `p = q.restrict`. The given sequence and that code meet in `infra_611_bridge` (`infra_610_majority_eq_type`, `infra_610_majority_unique`). `infra_611_code_majority` transports the majority onto `q ↾ Z`. Parameter queries are moved by `infra_610_move_query` (`infra_611_image_agree`); `infra_610_same_galois` is the testing criterion. `IsFreeFrom` is that `IsFreeLift`. Mixed `ν < μ` is deferred. Proposition 6.12 is done for same-level existence and anchored independence. Proposition 6.13 is done for same-level local character and continuity (`SameLevelChain`, stage-trapped Lemma 6.9 code, `infra_611_isFreeFrom`, `infra_613_freeFrom_trans`). Hard board edges into §7: `proposition_7_8`, `lemma_7_11`, `theorem_7_13` (Def 7.7 / local character). Soft only to `proposition_6_15`. Mixed levels stay deferred. Proposition 6.15 is done for the two-sided strip (`G = P.E`); `infra_615_terminal` is the one-sided specialization. Corollary 6.16 is done for `SingleModelData` (μ blocks on `lvlOrder μ ×ₗ (ℕ ×ₗ lvlOrder μ)`, middle-strip exhaustion postcomposed back onto `A`). Lemma 6.17 is done for mixed `ν ≤ μ` (`DescentRetraction.lean`). Open tip: `infra_73_tied_of_isolated`. English 7.2/7.3/7.6/7.8 blocked on demotion infras; Path A Lean Results stay green.
+**Lemma 6.11 is done for same-level `SingleModelData`.** `infra_611_fresh_code` builds a Lemma 6.9 code for `p = q.restrict`. The given sequence and that code meet in `infra_611_bridge` (`infra_610_majority_eq_type`, `infra_610_majority_unique`). `infra_611_code_majority` transports the majority onto `q ↾ Z`. Parameter queries are moved by `infra_610_move_query` (`infra_611_image_agree`); `infra_610_same_galois` is the testing criterion. `IsFreeFrom` is that `IsFreeLift`. Mixed `ν < μ` is deferred. Proposition 6.12 is done for same-level existence and anchored independence. Proposition 6.13 is done for same-level local character and continuity (`SameLevelChain`, stage-trapped Lemma 6.9 code, `infra_611_isFreeFrom`, `infra_613_freeFrom_trans`). Hard board edges into §7: `proposition_7_8`, `lemma_7_11`, `theorem_7_13` (Def 7.7 / local character). Soft only to `proposition_6_15`. Mixed levels stay deferred. Proposition 6.15 is done for the two-sided strip (`G = P.E`); `infra_615_terminal` is the one-sided specialization. Corollary 6.16 is done for `SingleModelData` (μ blocks on `lvlOrder μ ×ₗ (ℕ ×ₗ lvlOrder μ)`, middle-strip exhaustion postcomposed back onto `A`). Lemma 6.17 is done for mixed `ν ≤ μ` (`DescentRetraction.lean`). `infra_610_tied_free_lift` done. Open tip: `infra_78_mixed_level_isolation` (blocks `proposition_7_8`). Lemma 7.2 English-complete (`lemma_7_2_tied`); Prop 7.3 English uniform green (`proposition_7_3_uniform`); Lemma 7.6 English green (`lemma_7_6_tied`); Path A Lean Results stay green.
 
 **Wired (intended use, reach apex):** `5.6 → 9.3, 10.2`; `5.7 → 9.3, 10.6, 10.8`;
 `2.3 → 1.2`; `3.11 → 4.2, 5.8`; `4.2 → 4.9, 4.10, 4.11`; `4.3 → 4.10, 4.11`; `4.5 → 6.1`; `4.6 → 4.9`; `4.7 → 4.8, 12.5`; `4.8 → 4.10, 4.11, 6.3, 6.5`; `4.10 → 4.11, 6.5`; `6.3 → 6.5`; `6.4 → 6.5`; `4.11 → 5.6, 6.6, 6.7`; `infra_69_place_on_fills → infra_69_assemble → 6.9` (hard; 6.9 done for `SingleModelData`); `infra_610_move_query → infra_610_free_root / infra_610_param_freeing_qPres → infra_610_chart_support → infra_610_moved_majority → infra_610_root_majority + infra_610_root_galois → infra_610_chart_prescriptions → infra_610_place_prescriptions → infra_610_majority_of_placement → infra_610_majority_prescription → infra_610_place_on_B → stationary_free_extension_exists → 6.10` with `infra_610_majority_matches_root → infra_610_majority_prescription` and `infra_610_galois_tests_of_placement → infra_610_majority_prescription` with `infra_610_closed_level → infra_610_same_galois → infra_610_isFreeLift_same_galois` (hard restore tip; majority path soft on same_galois; E5 tipport / moved_majority / root_majority done; E5d′/E5e reflected done; `IsFreeLift` majority-only)
@@ -171,9 +193,9 @@ node reaches Thm 1.2 or 1.3; completed work should admit dead-code analysis of e
 
 Section 4 is complete: Theorem 4.11, its last hole, is done (hard deps 4.2, 4.3, 4.8, 4.10 closed).
 
-### L1 — Section 5 after diagrams (1 open)
+### L1 — Section 5 after diagrams (0 open)
 
-Proposition 5.6 is done (single-model working package on the closure points of `{t, g}` above `ℓ`). The remaining hole is the seed object `objectOfEmptyChain`.
+Proposition 5.6 is done (single-model working package on the closure points of `{t, g}` above `ℓ`). The former seed-object hole `objectOfEmptyChain` is closed: it now takes the hypothesis `hObj : ∀ μ hμ, Nonempty (W.Object μ hμ)` (the existence half of Definition 5.2(2), not recorded by `HasPresentations`), which `lemma_5_4` takes and `proposition_5_6` supplies for single models. Section 5 has no `sorry`.
 
 | Decl | Title | Location |
 |------|-------|----------|
@@ -185,7 +207,7 @@ Proposition 5.6 is done (single-model working package on the closure points of `
 | `infra_eligible_reclass` | Convention 5.3 tails / Lim | `AEC/Section5/EligibleSubclass.lean` (**done**: `eligibleTail`, `EligibleSubclass.tail` / `lim` / `aboveNamingThreshold`) |
 | `infra_named_working_scheme` | Named WorkingScheme ctor | `AEC/Section5/NamedWorkingScheme.lean` (**done**: `WorkingScheme.IsStructIso` + `namedWorkingScheme` packer; no `sorry`) |
 | `infra_named_working_package` | Named package transfer | `AEC/Section5/NamedPackageTransfer.lean` (**done**: `isWorkingPackage_namedWorkingScheme`; no `sorry`) |
-| `objectOfEmptyChain` | Seed object at eligible level | `AEC/Section5/Results.lean` (**open**: nonempty chain unions no longer supply empty-index objects) |
+| `objectOfEmptyChain` | Seed object at eligible level | `AEC/Section5/Results.lean` (**done**: takes `hObj` instead of a `sorry`; `lemma_5_4` gains `hObj`; `infra_69_present_padded`/`infra_69_chart_iso` use `A` itself and no longer call `lemma_5_4`) |
 | `proposition_5_8` | Proposition 5.8 | `AEC/Section5/Results.lean` (**done**: Lean residual via `diagram_iso` + `structural_iso`) |
 
 ### L2 — Section 6 unlock (Lem 6.9 infra board + package)
@@ -237,7 +259,7 @@ Waits on Section 5 working package. Lean: later Results import this module.
 | `infra_69_recursion_tail` | Infra: recursion-closed tail | `AEC/Section6/UniformApproximations.lean` (**done**: eligible levels closed under `{D.t, g}` and under the `σ⁺` profile recursion at every smaller test size) |
 | `infra_69_transfer_tuple` | Infra: push occurrences | `AEC/Section6/UniformApproximations.lean` (**done**: occurrence list along a carrier equivalence) |
 | `infra_69_diagram_transport` | Infra: diagram transport | `AEC/Section6/UniformApproximations.lean` (**done** inside `P.scheme`: carrier equiv → permitted bijective arrow → `DiagramEq`) |
-| `infra_69_transfer_sequence` | Infra: transfer approximation sequence | `AEC/Section6/UniformApproximations.lean` (**done**/retired: not the path to Theorem 6.10) |
+| `infra_69_transfer_sequence` | Infra: transfer approximation sequence | `AEC/Section6/UniformApproximations.lean` (**retired**, removed from Lean: unused, under-hypothesized, had a `sorry`; not the path to Theorem 6.10) |
 | `lemma_6_9` | Lemma 6.9 | `AEC/Section6/Results.lean` (**done** for `SingleModelData` on `infra_69_recursion_tail`, by `infra_69_assemble`) |
 | `infra_610_move_query` | Infra: move query B→A | `AEC/Section6/StationaryFreeExtension.lean` (**done**: saturate over concat, `diagram_iso` pullback into `A`) |
 | `infra_610_chart_of_B` | Infra: E5a chart of B | `AEC/Section6/StationaryFreeExtension.lean` (**done**) |
@@ -271,7 +293,7 @@ Waits on Section 5 working package. Lean: later Results import this module.
 | `infra_610_qPres_empty_joint_on_I` | Infra: empty head + params ~ qPres on E(I) | `AEC/Section6/StationaryFreeExtension.lean` (**retired**: soft-pad; `preserves_atomic`) |
 | `infra_610_qPres_empty_free` | Infra: type-good push realizes qPres on B | `AEC/Section6/StationaryFreeExtension.lean` (**done**: E4 majority uniqueness) |
 | `infra_610_pull_root_agrees_free_ref` | Infra: per-query freeness wrapper | `AEC/Section6/StationaryFreeExtension.lean` (**done**: wrapper of `qPres_empty_free`) |
-| `infra_610_same_head_transfers_joint` | Infra: same head transfers joint | `AEC/Section6/StationaryFreeExtension.lean` (**demoted**: under-hypothesized) |
+| `infra_610_same_head_transfers_joint` | Infra: same head transfers joint | `AEC/Section6/StationaryFreeExtension.lean` (**retired**, removed from Lean: unused and false as stated; had a `sorry`) |
 | `infra_610_placement_saturate_to_B` | Infra: per-query prescription on B | `AEC/Section6/StationaryFreeExtension.lean` (**done**: type-good push) |
 | `infra_610_placement_root_on_B` | Infra: Lem 6.4 placement root on B | `AEC/Section6/StationaryFreeExtension.lean` (**done**: per query) |
 | `infra_610_reflect_joint_eB` | Infra: reflect joint E(I)→B | `AEC/Section6/StationaryFreeExtension.lean` (**done**) |
@@ -296,11 +318,11 @@ Lean: imports `AEC.Section6.Results`.
 
 | Decl | Title | Location |
 |------|-------|----------|
-| `lemma_7_2` | Lemma 7.2 | `AEC/Section7/Results.lean` (**blocked** on `infra_72_over_B_isolation`; Path A green: `IsRestrictIsolatingFragment`) |
-| `proposition_7_3` | Proposition 7.3 | `AEC/Section7/Results.lean` (**blocked** on `infra_73_tied_of_isolated`; Path A dichotomy green) |
+| `lemma_7_2` | Lemma 7.2 | `AEC/Section7/Results.lean` (**done**: Path A `lemma_7_2`; English form `lemma_7_2_tied` via `infra_72_over_B_isolation` under tied-free `u`-marginal) |
+| `proposition_7_3` | Proposition 7.3 | `AEC/Section7/Results.lean` (done: Path A dichotomy green; English uniform shrink `proposition_7_3_uniform` in `BlockRestriction.lean` = `proposition_7_3_uniform_of_block` + `infra_73_block_restriction`) |
 | `proposition_7_5` | Proposition 7.5 | `AEC/Section7/Results.lean` (**done**: clauses 1–2) |
-| `lemma_7_6` | Lemma 7.6 | `AEC/Section7/Results.lean` (**blocked** on `infra_76_arbitrary_fragment`; Path A push-only green) |
-| `proposition_7_8` | Proposition 7.8 | `AEC/Section7/Results.lean` (**blocked** on `infra_73_tied_of_isolated`; `infra_78_finite_continuity` done; existence sorry) |
+| `lemma_7_6` | Lemma 7.6 | `AEC/Section7/Results.lean` (done: Path A push-only green; English arbitrary-fragment form `lemma_7_6_tied` in `TiedDescent.lean`) |
+| `proposition_7_8` | Proposition 7.8 | `AEC/Section7/Results.lean` (**blocked** on `infra_78_mixed_level_isolation`; `infra_78_finite_continuity`, `proposition_7_3_uniform`, `lemma_7_6_tied` done; existence sorry) |
 | `theorem_7_9` | Theorem 7.9 | `AEC/Section7/Results.lean:134` |
 | `lemma_7_11` | Lemma 7.11 | `AEC/Section7/Results.lean:151` |
 | `lemma_7_12` | Lemma 7.12 | `AEC/Section7/Results.lean:163` |
@@ -316,7 +338,7 @@ Lean: imports `Section5.Results` and `Section6.Results`. Soft paper chain after 
 | `lemma_8_3` | Lemma 8.3 | `AEC/Section8/Results.lean:48` |
 | `lemma_8_4` | Lemma 8.4 | `AEC/Section8/Results.lean:65` |
 | `lemma_8_5` | Lemma 8.5 | `AEC/Section8/Results.lean:76` |
-| `theorem_8_6` | Theorem 8.6 | `AEC/Section8/Results.lean:86` |
+| `theorem_8_6` |  Theorem 8.6 | `AEC/Section8/Results.lean` (**degenerate, NOT done (needs restatement)**: object-free `WorkingScheme.emptied` satisfies `IsWorkingPackage` vacuously; English NOT captured) |
 
 ### L5 — Section 9 (7)
 
@@ -324,13 +346,13 @@ Lean: imports S5/S6 Results. Unlocks boundary story for later geometry.
 
 | Decl | Title | Location |
 |------|-------|----------|
-| `proposition_9_1` | Proposition 9.1 | `AEC/Section9/Results.lean:35` |
-| `corollary_9_2` | Corollary 9.2 | `AEC/Section9/Results.lean:50` |
-| `theorem_9_3` | Theorem 9.3 | `AEC/Section9/Results.lean:57` |
-| `lemma_9_5` | Lemma 9.5 | `AEC/Section9/Results.lean:87` |
-| `theorem_9_6` | Theorem 9.6 | `AEC/Section9/Results.lean:96` |
-| `lemma_9_7` | Lemma 9.7 | `AEC/Section9/Results.lean:119` |
-| `theorem_9_8` | Theorem 9.8 | `AEC/Section9/Results.lean:129` |
+| `proposition_9_1` | Proposition 9.1 | `AEC/Section9/Results.lean` (**degenerate, NOT done (needs restatement)**: statement parenthesized `#α < μ → (DE ↔ DE)`; proved on `T := C.eligible`; English content NOT captured) |
+| `corollary_9_2` | Corollary 9.2 | `AEC/Section9/Results.lean` (**degenerate, NOT done (needs restatement)**: `X' := Z`, `g := f`; English content NOT captured) |
+| `theorem_9_3` |  Theorem 9.3 | `AEC/Section9/Results.lean` (**degenerate, NOT done (needs restatement)**; **statement change** `+[CategoricalUnbounded K]` (unconditional form refuted by `AEC.Audit.theorem_9_3_unconditional_false`); proof via `WorkingScheme.emptied`, English NOT captured) |
+| `lemma_9_5` | Lemma 9.5 | `AEC/Section9/Results.lean` (**done**: `hpres` along `J.incl`, `h.onFace`, `Kf.incl`, joined by `htrans`) |
+| `theorem_9_6` | Theorem 9.6 | `AEC/Section9/Results.lean` (**degenerate, NOT done (needs restatement)**: `Star := K_f`; top arrows omitted from the statement; English content NOT captured) |
+| `lemma_9_7` | Lemma 9.7 | `AEC/Section9/Results.lean:182` (open, **false as formalized**: `AEC.Audit.lemma_9_7_false`) |
+| `theorem_9_8` |  Theorem 9.8 | `AEC/Section9/Results.lean` (open, **false as stated** for arbitrary face families (`AEC.Audit.theorem_9_8_arbitrary_false`); needs scheme-object hypotheses) |
 
 ### L6 — Section 10 (9)
 
@@ -338,32 +360,32 @@ Lean: imports S5/S6 Results. Soft chain after S9; feeds Corollary 10.10 into S11
 
 | Decl | Title | Location |
 |------|-------|----------|
-| `lemma_10_1` | Lemma 10.1 | `AEC/Section10/Results.lean:31` |
-| `proposition_10_2` | Proposition 10.2 | `AEC/Section10/Results.lean:38` |
-| `lemma_10_4` | Lemma 10.4 | `AEC/Section10/Results.lean:48` |
-| `theorem_10_5` | Theorem 10.5 | `AEC/Section10/Results.lean:63` |
-| `proposition_10_6` | Proposition 10.6 | `AEC/Section10/Results.lean:72` |
-| `proposition_10_7` | Proposition 10.7 | `AEC/Section10/Results.lean:80` |
-| `lemma_10_8` | Lemma 10.8 | `AEC/Section10/Results.lean:92` |
-| `theorem_10_9` | Theorem 10.9 | `AEC/Section10/Results.lean:104` |
-| `corollary_10_10` | Corollary 10.10 | `AEC/Section10/Results.lean:117` |
+| `lemma_10_1` | Lemma 10.1 | `AEC/Section10/Results.lean` (**degenerate/weaker, NOT done (needs restatement)**: injectivity of `g`; free-lift content NOT captured) |
+| `proposition_10_2` | Proposition 10.2 | `AEC/Section10/Results.lean` (open; **statement change**: now assumes `[CategoricalUnbounded K]`; unconditional form refuted by `AEC.Audit.proposition_10_2_unconditional_false`) |
+| `lemma_10_4` | Lemma 10.4 | `AEC/Section10/Results.lean` (open, **false as stated** (`AEC.Audit.lemma_10_4_false`, `noPairs`)) |
+| `theorem_10_5` | Theorem 10.5 | `AEC/Section10/Results.lean` (open, **false as stated** (`AEC.Audit.theorem_10_5_false`, `noPairs`)) |
+| `proposition_10_6` |  Proposition 10.6 | `AEC/Section10/Results.lean` (**degenerate, NOT done (needs restatement)** via `WorkingScheme.emptied`; English NOT captured) |
+| `proposition_10_7` | Proposition 10.7 | `AEC/Section10/Results.lean` (open, **false as stated** (abstract `productCopies` may accept `[a,a]`): `AEC.Audit.proposition_10_7_false`) |
+| `lemma_10_8` | Lemma 10.8 | `AEC/Section10/Results.lean` (open, **defective statement**: conclusion ignores `c`, `β`; refuted at the base pointed model by `AEC.Audit.lemma_10_8_statement_defect`; needs restating from the paper) |
+| `theorem_10_9` | Theorem 10.9 | `AEC/Section10/Results.lean` (open; **statement change**: hypothesis now `P(B) = f[P(A)]`; original refuted by `AEC.Audit.theorem_10_9_original_false`) |
+| `corollary_10_10` | Corollary 10.10 | `AEC/Section10/Results.lean` (open; **statement change**: hypothesis now `P(B) = f[P(A)]`; original refuted by `AEC.Audit.corollary_10_10_original_false`) |
 
 ### L7 — Section 11 (8)
 
 Lean: imports S5/S6 Results. Soft internal chain:
 `claim_11_10 → claim_11_11 → claim_11_12 → claim_11_13 → theorem_11_9`
-(plus `lemma_11_2` last clause after Corollary 10.10).
+(`lemma_11_2` former last clause dropped as false for abstract `GeometricSystem`).
 
 | Decl | Title | Location |
 |------|-------|----------|
-| `lemma_11_2` | Lemma 11.2 | `AEC/Section11/Results.lean:33` |
-| `proposition_11_6` | Proposition 11.6 | `AEC/Section11/Results.lean:135` |
-| `proposition_11_7` | Proposition 11.7 | `AEC/Section11/Results.lean:145` |
-| `claim_11_10` | Claim 11.10 | `AEC/Section11/Results.lean:200` |
+| `lemma_11_2` | Lemma 11.2 | `AEC/Section11/Results.lean` (**done**; **statement change**: false 4th clause dropped, refuted by `AEC.Audit.lemma_11_2_inactive_vertex_false`) |
+| `proposition_11_6` | Proposition 11.6 | `AEC/Section11/Results.lean` (**degenerate, NOT done (needs restatement)**; **statement change** `+[CategoricalUnbounded K]`, unconditional form refuted by `AEC.Audit.proposition_11_6_unconditional_false`; English NOT captured) |
+| `proposition_11_7` |  Proposition 11.7 | `AEC/Section11/Results.lean` (**degenerate, NOT done (needs restatement)** via `WorkingScheme.emptied`; English NOT captured) |
+| `claim_11_10` | Claim 11.10 | `AEC/Section11/Results.lean` (open, **false as stated** for arbitrary systems: `AEC.Audit.claim_11_10_arbitrary_false`) |
 | `claim_11_11` | Claim 11.11 | `AEC/Section11/Results.lean:306` |
-| `claim_11_12` | Claim 11.12 | `AEC/Section11/Results.lean:340` |
-| `claim_11_13` | Claim 11.13 | `AEC/Section11/Results.lean:369` |
-| `theorem_11_9` | Theorem 11.9 | `AEC/Section11/Results.lean:156` |
+| `claim_11_12` | Claim 11.12 | `AEC/Section11/Results.lean` (**degenerate, NOT done (needs restatement)**: `U` = `Y` re-pieced by the image of `X`; English NOT captured) |
+| `claim_11_13` | Claim 11.13 | `AEC/Section11/Results.lean:392` (open, **false as formalized**: `AEC.Audit.claim_11_13_false`) |
+| `theorem_11_9` |  Theorem 11.9 | `AEC/Section11/Results.lean` (open, **false as stated** for arbitrary geometric systems (`AEC.Audit.theorem_11_9_arbitrary_false`)) |
 
 ### L8 — Section 12 (4)
 
@@ -371,10 +393,10 @@ Waits on geometric systems / exact boundary story (soft: fewer-axis lifting).
 
 | Decl | Title | Location |
 |------|-------|----------|
-| `theorem_12_2` | Theorem 12.2 | `AEC/Section12/Results.lean:29` |
-| `lemma_12_3` | Lemma 12.3 | `AEC/Section12/Results.lean:65` |
-| `lemma_12_5` | Lemma 12.5 | `AEC/Section12/Results.lean:84` |
-| `lemma_12_6` | Lemma 12.6 | `AEC/Section12/Results.lean:99` |
+| `theorem_12_2` |  Theorem 12.2 | `AEC/Section12/Results.lean` (open, **false as stated** for arbitrary geometric systems (`AEC.Audit.theorem_12_2_arbitrary_false`)) |
+| `lemma_12_3` | Lemma 12.3 | `AEC/Section12/Results.lean:43` (open, **false as formalized**: tops not tied to faces; `AEC.Audit.lemma_12_3_false`) |
+| `lemma_12_5` | Lemma 12.5 | `AEC/Section12/Results.lean:84` (open; **restated**: `ι` inside the hypothesis; original false: `AEC.Audit.lemma_12_5_original_false`) |
+| `lemma_12_6` | Lemma 12.6 | `AEC/Section12/Results.lean:107` (open, **false as formalized**: strip `V` missing; `AEC.Audit.lemma_12_6_false`) |
 
 ### L9 — Section 14 transfer (4)
 
@@ -383,8 +405,8 @@ Chain: `lemma_14_2 → theorem_14_3 → corollary_14_4 → theorem_14_5`.
 | Decl | Title | Location |
 |------|-------|----------|
 | `lemma_14_2` | Lemma 14.2 | `AEC/Section14/Results.lean:85` |
-| `theorem_14_3` | Theorem 14.3 | `AEC/Section14/Results.lean:96` |
-| `corollary_14_4` | Corollary 14.4 | `AEC/Section14/Results.lean:105` |
+| `theorem_14_3` |  Theorem 14.3 | `AEC/Section14/Results.lean` (open, **false as stated** (`AEC.Audit.theorem_14_3_arbitrary_false`; `A` unlinked)) |
+| `corollary_14_4` | Corollary 14.4 | `AEC/Section14/Results.lean:107` (open; **restated** with `[CategoricalUnbounded K]`; unconditional refuted: `AEC.Audit.Pred.corollary_14_4_unconditional_false`) |
 | `theorem_14_5` | Theorem 14.5 | `AEC/Section14/Results.lean:112` |
 
 ### L10 — Apex (2)

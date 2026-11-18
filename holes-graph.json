@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-14T14:19:55Z",
-  "sorryCount": 49,
+  "updated": "2026-11-18T04:18:29Z",
+  "sorryCount": 32,
   "legend": {
     "open": "No unfinished required proof-deps \u2014 try next",
     "blocked": "Waiting on incomplete required proof-deps",
@@ -8,7 +8,7 @@
   },
   "notes": [
     "Prop 6.13 hard-feeds theorem_7_13, proposition_7_8, lemma_7_11 (English \u00a77 continuity / local character). Edge to proposition_6_15 stays soft (paper-number).",
-    "Open tip: infra_73_tied_of_isolated (Prop 7.3 uniform shrink / isolation\u21d2IsTiedFree). Board repair: Path A Results for 7.2/7.3/7.6 stay green in Lean, but English-complete paper tips are blocked on tip-visible infras that were previously only docstring demotions. sorryCount 49.",
+    "Open tip: infra_78_mixed_level_isolation (mixed-level nu<mu Lemma 7.6 / tied freeness needed by Prop 7.8's level-lambda shrink inside level-kappa matrix; proposition_7_8 blocked on it). Done this run: infra_73_tied_of_isolated (restated with hMargTied), infra_72_over_B_isolation, lemma_7_2 (lemma_7_2_tied), infra_610_tied_free_lift (TiedFreeLift.lean), infra_73_alt2_tied_marginal (AltTwoTied.lean), infra_73_block_restriction + proposition_7_3_uniform (BlockRestriction.lean), infra_76_arbitrary_fragment + lemma_7_6_tied (TiedDescent.lean). objectOfEmptyChain sorry removed (lemma_5_4 gains hObj). Retired: infra_69_transfer_sequence, infra_610_same_head_transfers_joint (removed). sorryCount 32 (degenerate-statement proofs: proposition_9_1, corollary_9_2, theorem_9_6, lemma_10_1). Audit (AEC/Audit/TinyAEC.lean, Counterexamples.lean): tinyAEC (empty language, <=1-element models) refutes unconditional proposition_10_2 (now assumes CategoricalUnbounded) and lemma_11_2 clause 4 (dropped; lemma_11_2 done); lemma_10_8 statement proven defective. WorkingScheme.exists_approximationSequence retired (unused). emptyAEC refutes unconditional theorem_9_3 (now +CategoricalUnbounded). Counterexamples for arbitrary systems: theorem_9_8, theorem_11_9, theorem_12_2, theorem_14_3. EmptiedScheme.lean: IsWorkingPackage vacuous for object-free schemes; degenerate proofs of theorem_8_6, theorem_9_3, proposition_10_6, proposition_11_7. proposition_11_6: +CategoricalUnbounded (unconditional refuted), degenerate proof. lemma_9_5 proved (hpres chain). AllSets.lean/AllSetsMinimal.lean: AEC of all sets (direct-limit chain unions) with MinimalData setsMinimal; refutes proposition_10_7 as stated and the original hypotheses of theorem_10_9 / corollary_10_10 (restated to P(B) = f[P(A)]). NoPairs.lean: MinimalData without independent pairs refutes lemma_10_4 and theorem_10_5 as stated. claim_11_10 refuted for arbitrary systems. lemma_12_6 refuted as formalized (AEC/Audit/EqPattern.lean). lemma_12_5 restated (\u03b9 inside hypothesis; original refuted). lemma_12_3 refuted as formalized (AEC/Audit/BoundaryGlue.lean). claim_11_13 refuted as formalized. claim_11_12 degenerate proof via GeometricSystem.repiece. lemma_9_7 refuted as formalized (AEC/Audit/FaceGlue.lean). corollary_14_4 restated (+CategoricalUnbounded; unconditional refuted in AEC/Audit/PredSets.lean). Degenerate closures demoted to blocked (flag degenerate=true, not counted as done): theorem_8_6, proposition_9_1, corollary_9_2, theorem_9_3, theorem_9_6, lemma_10_1, proposition_10_6, claim_11_12, proposition_11_6, proposition_11_7. Every refuted-as-formalized node now carries a PROPOSED HONEST RESTATEMENT in its detail (flag refuted_as_formalized=true).",
     "Edge B\u2192A means the English proof of A requires B (or a required Lean infra subgoal).",
     "Blue = done. Green = open. Grey = blocked. No separate failed status unless a counterexample refutes the program.",
     "lemma_6_14 is independent of Prop 6.13 (that paper-number edge stays removed). Widened to \u03c7-indexed queries plus a fixed T\u2605, it is a hard dependency of proposition_6_15 and still feeds lemma_12_6."
@@ -20,7 +20,8 @@
       "section": 1,
       "file": "AEC/Section1/Results.lean",
       "status": "blocked",
-      "blocker": null
+      "blocker": null,
+      "detail": "Blocked: main theorem; needs the whole Section 7.8 -> 14.3 chain (large missing development)."
     },
     {
       "id": "theorem_1_3",
@@ -28,7 +29,8 @@
       "section": 1,
       "file": "AEC/Section1/Results.lean",
       "status": "blocked",
-      "blocker": null
+      "blocker": null,
+      "detail": "Blocked: main theorem; needs the whole Section 7.8 -> 14.3 chain (large missing development)."
     },
     {
       "id": "lemma_2_1",
@@ -271,7 +273,8 @@
       "section": 5,
       "file": "AEC/Section5/Results.lean",
       "status": "done",
-      "blocker": null
+      "blocker": null,
+      "detail": "Done, no sorryAx. Statement change: added hObj : \u2200 \u03bc h\u03bc, Nonempty (W.Object \u03bc h\u03bc), the existence half of Def 5.2(2) (F(I) is an object of C_\u03bc), which HasPresentations does not record; objectOfEmptyChain now takes hObj instead of a sorry. proposition_5_6 supplies hObj for single models; proposition_5_7 already took it."
     },
     {
       "id": "lemma_5_5",
@@ -472,9 +475,9 @@
       "label": "Infra: transfer approximation sequence",
       "section": 6,
       "file": "AEC/Section6/UniformApproximations.lean",
-      "status": "done",
+      "status": "retired",
       "blocker": null,
-      "detail": "Retired. Cross-scheme sequence transfer is not the path to Theorem 6.10; use SingleModelData.exists_approximationSequence."
+      "detail": "Retired and removed from Lean: unused, stated without Lemma 6.9 level hypotheses (pA is not the image of pB), and had a sorry while marked done. Use SingleModelData.exists_approximationSequence."
     },
     {
       "id": "lemma_6_9",
@@ -563,7 +566,8 @@
       "section": 7,
       "file": "AEC/Section7/Results.lean",
       "status": "blocked",
-      "blocker": null
+      "blocker": null,
+      "detail": "Blocked: stated for an arbitrary WorkingScheme W with no IsWorkingPackage/categoricity hypotheses (underhypothesized vs the English, which uses saturation/exhaustion). Proof path needs proposition_7_8 (blocked on infra_78_mixed_level_isolation) and a general-scheme version of the Section 6-7 same-level machinery, which exists only for SingleModelData. Large missing development."
     },
     {
       "id": "lemma_7_12",
@@ -571,34 +575,35 @@
       "section": 7,
       "file": "AEC/Section7/Results.lean",
       "status": "blocked",
-      "blocker": null
+      "blocker": null,
+      "detail": "Blocked: stated for an arbitrary WorkingScheme W with no IsWorkingPackage/categoricity hypotheses (underhypothesized vs the English, which uses saturation/exhaustion). Proof path needs proposition_7_8 (blocked on infra_78_mixed_level_isolation) and a general-scheme version of the Section 6-7 same-level machinery, which exists only for SingleModelData. Large missing development."
     },
     {
       "id": "lemma_7_2",
       "label": "Lem 7.2",
       "section": 7,
       "file": "AEC/Section7/Results.lean",
-      "status": "blocked",
-      "detail": "Path A Results green (IsRestrictIsolatingFragment). English full IsRelativelyIsolated qB blocked on infra_72_over_B_isolation.",
-      "blocker": "infra_72_over_B_isolation"
+      "status": "done",
+      "detail": "Done. Path A lemma_7_2 unchanged. English-complete form lemma_7_2_tied (Results) = infra_72_lemma_tied: projection clause plus, under the English free-extension hypothesis (tied-free u-marginal, hMargTied), qB is IsTiedFree and IsRelativelyIsolated over B. The untied IsFreeLift marginal hypothesis of lemma_7_2 is too weak for clause 2 (it follows from hExt).",
+      "blocker": null
     },
     {
       "id": "lemma_7_6",
       "label": "Lem 7.6",
       "section": 7,
       "file": "AEC/Section7/Results.lean",
-      "status": "blocked",
-      "blocker": "infra_76_arbitrary_fragment",
-      "detail": "Path A push-only descent green (infra_76_lemma). English Lem 7.6 (arbitrary W \u2286 B, mixed \u03bd\u2264\u03bc) blocked on infra_76_arbitrary_fragment."
+      "status": "done",
+      "blocker": null,
+      "detail": "Path A push-only descent green (infra_76_lemma). English Lem 7.6 (arbitrary isolating fragment W of q_B, same level, tied-free lift): lemma_7_6_tied (AEC/Section7/TiedDescent.lean), no sorryAx. Mixed nu<mu still deferred."
     },
     {
       "id": "proposition_7_3",
       "label": "Prop 7.3",
       "section": 7,
       "file": "AEC/Section7/Results.lean",
-      "status": "blocked",
-      "detail": "Path A dichotomy green in Results (infra_73_lemma). English complete Prop 7.3 (uniform shrink) blocked on open infra_73_tied_of_isolated. Tip is that infra, not this paper node.",
-      "blocker": "infra_73_tied_of_isolated"
+      "status": "done",
+      "detail": "Path A dichotomy green (infra_73_lemma). English uniform shrink green, no sorryAx: proposition_7_3_uniform (AEC/Section7/BlockRestriction.lean) = proposition_7_3_uniform_of_block (AltTwoTied.lean) + infra_73_block_restriction.",
+      "blocker": null
     },
     {
       "id": "proposition_7_5",
@@ -615,8 +620,8 @@
       "section": 7,
       "file": "AEC/Section7/Results.lean",
       "status": "blocked",
-      "blocker": "infra_73_tied_of_isolated",
-      "detail": "Existence blocked on infra_73_tied_of_isolated (then infra_76_arbitrary_fragment) plus Fodor/\u03c1^\u03bb matrix. infra_78_finite_continuity done. Stub remains sorry."
+      "blocker": "infra_78_mixed_level_isolation",
+      "detail": "Blocked on infra_78_mixed_level_isolation (mixed-level Lemma 7.6 / tied freeness across levels, Fodor matrix). Same-level inputs done: proposition_7_3_uniform, lemma_7_6_tied, infra_78_finite_continuity. Lean statement is over an arbitrary WorkingScheme; restate for SingleModelData first."
     },
     {
       "id": "theorem_7_13",
@@ -624,7 +629,8 @@
       "section": 7,
       "file": "AEC/Section7/Results.lean",
       "status": "blocked",
-      "blocker": null
+      "blocker": null,
+      "detail": "Blocked: stated for an arbitrary WorkingScheme W with no IsWorkingPackage/categoricity hypotheses (underhypothesized vs the English, which uses saturation/exhaustion). Proof path needs proposition_7_8 (blocked on infra_78_mixed_level_isolation) and a general-scheme version of the Section 6-7 same-level machinery, which exists only for SingleModelData. Large missing development."
     },
     {
       "id": "theorem_7_9",
@@ -632,7 +638,8 @@
       "section": 7,
       "file": "AEC/Section7/Results.lean",
       "status": "blocked",
-      "blocker": null
+      "blocker": null,
+      "detail": "Blocked: stated for an arbitrary WorkingScheme W with no IsWorkingPackage/categoricity hypotheses (underhypothesized vs the English, which uses saturation/exhaustion). Proof path needs proposition_7_8 (blocked on infra_78_mixed_level_isolation) and a general-scheme version of the Section 6-7 same-level machinery, which exists only for SingleModelData. Large missing development."
     },
     {
       "id": "lemma_8_2",
@@ -640,7 +647,8 @@
       "section": 8,
       "file": "AEC/Section8/Results.lean",
       "status": "blocked",
-      "blocker": null
+      "blocker": null,
+      "detail": "Blocked: stated for an arbitrary WorkingScheme W with no IsWorkingPackage/categoricity hypotheses (underhypothesized vs the English, which uses saturation/exhaustion). Proof path needs proposition_7_8 (blocked on infra_78_mixed_level_isolation) and a general-scheme version of the Section 6-7 same-level machinery, which exists only for SingleModelData. Large missing development."
     },
     {
       "id": "lemma_8_3",
@@ -648,7 +656,8 @@
       "section": 8,
       "file": "AEC/Section8/Results.lean",
       "status": "blocked",
-      "blocker": null
+      "blocker": null,
+      "detail": "Blocked: stated for an arbitrary WorkingScheme W with no IsWorkingPackage/categoricity hypotheses (underhypothesized vs the English, which uses saturation/exhaustion). Proof path needs proposition_7_8 (blocked on infra_78_mixed_level_isolation) and a general-scheme version of the Section 6-7 same-level machinery, which exists only for SingleModelData. Large missing development."
     },
     {
       "id": "lemma_8_4",
@@ -656,7 +665,8 @@
       "section": 8,
       "file": "AEC/Section8/Results.lean",
       "status": "blocked",
-      "blocker": null
+      "blocker": null,
+      "detail": "Blocked: stated for an arbitrary WorkingScheme W with no IsWorkingPackage/categoricity hypotheses (underhypothesized vs the English, which uses saturation/exhaustion). Proof path needs proposition_7_8 (blocked on infra_78_mixed_level_isolation) and a general-scheme version of the Section 6-7 same-level machinery, which exists only for SingleModelData. Large missing development. lemma_8_4 is itself a mixed-level (nu<mu) descent of Galois types: same blocker as infra_78_mixed_level_isolation."
     },
     {
       "id": "lemma_8_5",
@@ -664,7 +674,8 @@
       "section": 8,
       "file": "AEC/Section8/Results.lean",
       "status": "blocked",
-      "blocker": null
+      "blocker": null,
+      "detail": "Blocked: stated for an arbitrary WorkingScheme W with no IsWorkingPackage/categoricity hypotheses (underhypothesized vs the English, which uses saturation/exhaustion). Proof path needs proposition_7_8 (blocked on infra_78_mixed_level_isolation) and a general-scheme version of the Section 6-7 same-level machinery, which exists only for SingleModelData. Large missing development."
     },
     {
       "id": "theorem_8_6",
@@ -672,7 +683,9 @@
       "section": 8,
       "file": "AEC/Section8/Results.lean",
       "status": "blocked",
-      "blocker": null
+      "blocker": null,
+      "detail": "DEGENERATE CLOSURE, NOT DONE (Lean statement proved with no sorry, but it is vacuous/weaker than the English; needs restatement). Proposed honest restatement: add `\u2200 \u03bc h\u03bc, Nonempty (W.Object \u03bc h\u03bc)` (objects at every eligible level) to the conclusion, as in proposition_5_6; then needs the Section 8 construction. Previous note: Degenerate proof (statement defect, English NOT captured): IsWorkingPackage is vacuous for the object-free WorkingScheme.emptied (AEC/Section5/EmptiedScheme.lean).",
+      "degenerate": true
     },
     {
       "id": "corollary_9_2",
@@ -680,15 +693,18 @@
       "section": 9,
       "file": "AEC/Section9/Results.lean",
       "status": "blocked",
-      "blocker": null
+      "blocker": null,
+      "detail": "DEGENERATE CLOSURE, NOT DONE (Lean statement proved with no sorry, but it is vacuous/weaker than the English; needs restatement). Proposed honest restatement: lift through an explicit projection X' -> X of schemes; needs a projection API. Previous note: Done as stated, no sorryAx. Lean statement is degenerate (no projection): X' := Z, g := f, h := id. The English lifting through a projection is NOT captured; faithful restatement open.",
+      "degenerate": true
     },
     {
       "id": "lemma_9_5",
       "label": "Lem 9.5",
       "section": 9,
       "file": "AEC/Section9/Results.lean",
-      "status": "blocked",
-      "blocker": null
+      "status": "done",
+      "blocker": null,
+      "detail": "Proved (real, no sorryAx): chain hpres along J.incl (symm), h.onFace, Kf.incl, joined by htrans."
     },
     {
       "id": "lemma_9_7",
@@ -696,7 +712,9 @@
       "section": 9,
       "file": "AEC/Section9/Results.lean",
       "status": "blocked",
-      "blocker": null
+      "blocker": null,
+      "detail": "FALSE AS FORMALIZED: FaceFamily tops may glue faces along a non-face overlap and boundary automorphisms need not agree there; AEC.Audit.lemma_9_7_false (two axes, allSetsAEC, eqDiagram). Needs tops generated freely over the boundary (marked-scheme objects). PROPOSED HONEST RESTATEMENT: quantify over marked-scheme objects (or add: the top is generated freely over the union of the faces, i.e. every boundary automorphism extends to the top) so boundary automorphisms respect the gluing. Not provable yet: needs Theorem 9.8 / Section 9 marked iteration.",
+      "refuted_as_formalized": true
     },
     {
       "id": "proposition_9_1",
@@ -704,7 +722,9 @@
       "section": 9,
       "file": "AEC/Section9/Results.lean",
       "status": "blocked",
-      "blocker": null
+      "blocker": null,
+      "detail": "DEGENERATE CLOSURE, NOT DONE (Lean statement proved with no sorry, but it is vacuous/weaker than the English; needs restatement). Proposed honest restatement: state it for an explicit projection of schemes (forgetting sorts) with the free-lift correspondence; needs a projection API. Previous note: Done as stated (AEC/Section9/Results.lean), no sorryAx. Statement fix: the biconditional was parsed as (#a<mu -> DE) <-> DE (-> binds tighter than <->); now #a<mu -> (DE <-> DE). The Lean statement has no projection: a permitted arrow preserves and reflects bounded diagram equality (diagram_preserved; arrows are injective so mu <= nu). The English projection/free-lift correspondence is NOT captured; a faithful restatement is open.",
+      "degenerate": true
     },
     {
       "id": "theorem_9_3",
@@ -712,7 +732,9 @@
       "section": 9,
       "file": "AEC/Section9/Results.lean",
       "status": "blocked",
-      "blocker": null
+      "blocker": null,
+      "detail": "DEGENERATE CLOSURE, NOT DONE (Lean statement proved with no sorry, but it is vacuous/weaker than the English; needs restatement). Proposed honest restatement: add nonempty objects at every eligible level and require the objects to be the marked C_n-objects; needs Section 9 marked iteration. Previous note: Statement change: + [CategoricalUnbounded K] (unconditional form false: AEC.Audit.theorem_9_3_unconditional_false, emptyAEC). Degenerate proof (English NOT captured): WorkingScheme.emptied on the discrete n+1-vertex shape, eligible = working levels.",
+      "degenerate": true
     },
     {
       "id": "theorem_9_6",
@@ -720,7 +742,9 @@
       "section": 9,
       "file": "AEC/Section9/Results.lean",
       "status": "blocked",
-      "blocker": null
+      "blocker": null,
+      "detail": "DEGENERATE CLOSURE, NOT DONE (Lean statement proved with no sorry, but it is vacuous/weaker than the English; needs restatement). Proposed honest restatement: ask for strong top arrows J.top -> Star.top, Kf.top -> Star.top extending the face maps; needs amalgamation (Section 9). Previous note: Done as stated, no sorryAx. Lean statement asks only for boundary maps J -> Star, Kf -> Star commuting with h on proper faces (no top arrows): Star := Kf, toJ := h, toK := id. The English amalgamated completion (top arrows into a common extension) is NOT captured; it needs amalgamation hypotheses.",
+      "degenerate": true
     },
     {
       "id": "theorem_9_8",
@@ -728,7 +752,9 @@
       "section": 9,
       "file": "AEC/Section9/Results.lean",
       "status": "blocked",
-      "blocker": null
+      "blocker": null,
+      "detail": "FALSE AS STATED for arbitrary FaceFamily (AEC.Audit.theorem_9_8_arbitrary_false, n=0). Needs the hypothesis that J, Kf are same-level n-axis objects of the marked scheme; then needs the Section 9 boundary machinery (large). PROPOSED HONEST RESTATEMENT: J, Kf are same-level n-axis objects of the marked scheme (W.Object at one level, faces via SchemeFace). Not provable yet: Section 9 back-and-forth.",
+      "refuted_as_formalized": true
     },
     {
       "id": "corollary_10_10",
@@ -736,7 +762,8 @@
       "section": 10,
       "file": "AEC/Section10/Results.lean",
       "status": "blocked",
-      "blocker": null
+      "blocker": null,
+      "detail": "Statement change: hypothesis P(B) = f[P(A)] (original refuted: AEC.Audit.corollary_10_10_original_false). Open: depends on theorem_10_9; large."
     },
     {
       "id": "lemma_10_1",
@@ -744,7 +771,9 @@
       "section": 10,
       "file": "AEC/Section10/Results.lean",
       "status": "blocked",
-      "blocker": null
+      "blocker": null,
+      "detail": "DEGENERATE CLOSURE, NOT DONE (Lean statement proved with no sorry, but it is vacuous/weaker than the English; needs restatement). Proposed honest restatement: state with the free lift of the minimal type along g (nonforking), not just injectivity; needs a free-lift API for MinimalData. Previous note: Done as stated, no sorryAx. Lean statement quantifies over every strong g with g a = b and realizes is abstract; the conclusion is injectivity of g. The English free-lift content is NOT captured.",
+      "degenerate": true
     },
     {
       "id": "lemma_10_4",
@@ -752,7 +781,9 @@
       "section": 10,
       "file": "AEC/Section10/Results.lean",
       "status": "blocked",
-      "blocker": null
+      "blocker": null,
+      "detail": "FALSE AS STATED: formal counterexample AEC.Audit.lemma_10_4_false (AEC/Audit/NoPairs.lean: MinimalData noPairs on the AEC of all sets, no independent pairs). Abstract productCopies is underaxiomatized; needs nodup/invariance/exchange axioms, then the Section 10 minimal-type theory. PROPOSED HONEST RESTATEMENT: add MinimalData axioms tying productCopies to independence (nodup, closure under strong maps, singletons-to-pairs extension: if {p} does not force q then [p,q] is a product copy). Not provable yet: Section 10 geometry.",
+      "refuted_as_formalized": true
     },
     {
       "id": "lemma_10_8",
@@ -760,7 +791,9 @@
       "section": 10,
       "file": "AEC/Section10/Results.lean",
       "status": "blocked",
-      "blocker": null
+      "blocker": null,
+      "detail": "DEFECTIVE STATEMENT: conclusion ignores c and beta; at the base pointed model M0 it demands a realization outside M0. Proven false whenever a pointed model has a new realization (AEC.Audit.lemma_10_8_statement_defect). Needs restating from the paper before any proof. PROPOSED HONEST RESTATEMENT: from the paper: c \u2286 A of length \u2264 \u03b2 names a descriptor; for every sufficiently closed pointed B carrying the same named diagram of c (an embedding of c into B with D.Delta), there is a unique nonalgebraic singleton type r_B, equal to r at A, lifting freely. Needs a descriptor/type API; not provable yet.",
+      "refuted_as_formalized": true
     },
     {
       "id": "proposition_10_2",
@@ -768,7 +801,8 @@
       "section": 10,
       "file": "AEC/Section10/Results.lean",
       "status": "blocked",
-      "blocker": null
+      "blocker": null,
+      "detail": "Statement change: now assumes [CategoricalUnbounded K]; the unconditional form is false (AEC.Audit.proposition_10_2_unconditional_false, tinyAEC). Open: constructing the minimal type needs the Section 6-9 categoricity machinery for a general K (large missing development)."
     },
     {
       "id": "proposition_10_6",
@@ -776,7 +810,9 @@
       "section": 10,
       "file": "AEC/Section10/Results.lean",
       "status": "blocked",
-      "blocker": null
+      "blocker": null,
+      "detail": "DEGENERATE CLOSURE, NOT DONE (Lean statement proved with no sorry, but it is vacuous/weaker than the English; needs restatement). Proposed honest restatement: add nonempty objects at every eligible level, objects = pointed models of D; needs the pointed working scheme construction. Previous note: Degenerate proof (statement defect, English NOT captured): object-free WorkingScheme.emptied with template from D.M0; the per-object clause is vacuous.",
+      "degenerate": true
     },
     {
       "id": "proposition_10_7",
@@ -784,7 +820,9 @@
       "section": 10,
       "file": "AEC/Section10/Results.lean",
       "status": "blocked",
-      "blocker": null
+      "blocker": null,
+      "detail": "FALSE AS STATED: productCopies is abstract and may accept [a,a]; independence is nodup. Formal counterexample AEC.Audit.proposition_10_7_false (allSetsAEC + setsMinimal, AEC/Audit/AllSets*.lean). Needs productCopies axioms (nodup, invariance under strong maps) before a proof. PROPOSED HONEST RESTATEMENT: add productCopies axioms (nodup, invariance under strong maps, product characterization). Not provable yet.",
+      "refuted_as_formalized": true
     },
     {
       "id": "theorem_10_5",
@@ -792,7 +830,9 @@
       "section": 10,
       "file": "AEC/Section10/Results.lean",
       "status": "blocked",
-      "blocker": null
+      "blocker": null,
+      "detail": "FALSE AS STATED: AEC.Audit.theorem_10_5_false (noPairs: closure of one point in a model of size aleph_1 is uncountable). Needs productCopies axioms, then the Section 10 pregeometry development. PROPOSED HONEST RESTATEMENT: same productCopies axioms as lemma_10_4 plus K categorical (CategoricalUnbounded) so closure is the minimal-type closure. Not provable yet.",
+      "refuted_as_formalized": true
     },
     {
       "id": "theorem_10_9",
@@ -800,7 +840,8 @@
       "section": 10,
       "file": "AEC/Section10/Results.lean",
       "status": "blocked",
-      "blocker": null
+      "blocker": null,
+      "detail": "Statement change: hypothesis is now P(B) = f[P(A)]; the original (x in P(A) <-> f x in P(B)) is refuted by a shift in the AEC of all sets (AEC.Audit.theorem_10_9_original_false). Open: depends on proposition_10_2..lemma_10_8 (10.8 defective) and the Section 10 geometry; large."
     },
     {
       "id": "claim_11_10",
@@ -808,7 +849,9 @@
       "section": 11,
       "file": "AEC/Section11/Results.lean",
       "status": "blocked",
-      "blocker": null
+      "blocker": null,
+      "detail": "FALSE AS STATED for arbitrary GeometricSystems: AEC.Audit.claim_11_10_arbitrary_false (indep unconstrained: fresh point independent in Y0, dependent in Y1, no common Z). Needs systems from the scheme with a fixed pregeometry. PROPOSED HONEST RESTATEMENT: restrict to systems coming from the scheme (GeometricSystem with SchemeFace to W.Object, indep = scheme independence). Not provable yet: Section 11.",
+      "refuted_as_formalized": true
     },
     {
       "id": "claim_11_11",
@@ -816,7 +859,8 @@
       "section": 11,
       "file": "AEC/Section11/Results.lean",
       "status": "blocked",
-      "blocker": null
+      "blocker": null,
+      "detail": "Blocked: needs the general-WorkingScheme Galois-type machinery (Sections 7-8) on geometric faces; large."
     },
     {
       "id": "claim_11_12",
@@ -824,7 +868,9 @@
       "section": 11,
       "file": "AEC/Section11/Results.lean",
       "status": "blocked",
-      "blocker": null
+      "blocker": null,
+      "detail": "DEGENERATE CLOSURE, NOT DONE (Lean statement proved with no sorry, but it is vacuous/weaker than the English; needs restatement). Proposed honest restatement: require U -> Y to reflect pieces (h '' U.piece s = Y.piece s \u2229 range h) so extra bounds Y's new pieces; needs Section 11 back-and-forth. Previous note: Degenerate proof (statement defect, English NOT captured): U := Y re-pieced by f '' X.piece (GeometricSystem.repiece, AEC/Section11/Repiece.lean), no complementary pieces; IsPieceExtension does not require U -> Y to reflect pieces.",
+      "degenerate": true
     },
     {
       "id": "claim_11_13",
@@ -832,15 +878,18 @@
       "section": 11,
       "file": "AEC/Section11/Results.lean",
       "status": "blocked",
-      "blocker": null
+      "blocker": null,
+      "detail": "FALSE AS FORMALIZED: the extension half is about arbitrary geometric systems; AEC.Audit.claim_11_13_false (object-free scheme, empty -> point with no complementary pieces cannot embed over empty into empty). Needs U generated by X plus the enumerated coordinates. PROPOSED HONEST RESTATEMENT: add that U is generated over X by the enumerated coordinates (every vertex element lies in the closure of X plus b) and arrows are scheme-permitted. Not provable yet.",
+      "refuted_as_formalized": true
     },
     {
       "id": "lemma_11_2",
       "label": "Lem 11.2",
       "section": 11,
       "file": "AEC/Section11/Results.lean",
-      "status": "blocked",
-      "blocker": null
+      "status": "done",
+      "blocker": null,
+      "detail": "Proved (first three clauses). Statement change: dropped the 4th clause (inactive vertex = vertex of largest active subset), which is false for abstract GeometricSystem: AEC.Audit.lemma_11_2_inactive_vertex_false (AEC/Audit/Counterexamples.lean, tinyAEC)."
     },
     {
       "id": "lemma_11_4",
@@ -864,7 +913,9 @@
       "section": 11,
       "file": "AEC/Section11/Results.lean",
       "status": "blocked",
-      "blocker": null
+      "blocker": null,
+      "detail": "DEGENERATE CLOSURE, NOT DONE (Lean statement proved with no sorry, but it is vacuous/weaker than the English; needs restatement). Proposed honest restatement: tie the geometric system to scheme objects via SchemeFace (vertices = scheme vertices); needs Section 11 construction. Previous note: Statement change: + [CategoricalUnbounded K] (unconditional form false: AEC.Audit.proposition_11_6_unconditional_false, emptyAEC). Degenerate proof (English NOT captured): constant GeometricSystem on one large model with a fixed piece of size mu; GeometricSystem does not tie vertices to pieces.",
+      "degenerate": true
     },
     {
       "id": "proposition_11_7",
@@ -872,7 +923,9 @@
       "section": 11,
       "file": "AEC/Section11/Results.lean",
       "status": "blocked",
-      "blocker": null
+      "blocker": null,
+      "detail": "DEGENERATE CLOSURE, NOT DONE (Lean statement proved with no sorry, but it is vacuous/weaker than the English; needs restatement). Proposed honest restatement: add nonempty objects at every eligible level and the categoricity of the scheme; needs Section 11 construction. Previous note: Degenerate proof (statement defect, English NOT captured): WorkingScheme.emptied satisfies IsWorkingPackage vacuously; categoricity hypothesis of the English absent.",
+      "degenerate": true
     },
     {
       "id": "theorem_11_9",
@@ -880,7 +933,9 @@
       "section": 11,
       "file": "AEC/Section11/Results.lean",
       "status": "blocked",
-      "blocker": null
+      "blocker": null,
+      "detail": "FALSE AS STATED for arbitrary GeometricSystem (AEC.Audit.theorem_11_9_arbitrary_false). Needs systems generated by pieces / coming from the scheme. PROPOSED HONEST RESTATEMENT: systems generated by their pieces and coming from the scheme. Not provable yet.",
+      "refuted_as_formalized": true
     },
     {
       "id": "lemma_12_3",
@@ -888,7 +943,9 @@
       "section": 12,
       "file": "AEC/Section12/Results.lean",
       "status": "blocked",
-      "blocker": null
+      "blocker": null,
+      "detail": "FALSE AS FORMALIZED: PrescribedBoundaryIso matches faces only; tops may glue faces differently. AEC.Audit.lemma_12_3_false (two axes, allSetsAEC, eqDiagram: faces disjoint in X's top, identified in Y's top). Needs a freeness/generation hypothesis on the tops over the boundary. PROPOSED HONEST RESTATEMENT: add exact geometric boundary lifting / tops freely generated over the boundary (the paper's standing assumption of Lemma 12.3). Not provable yet: needs Theorem 9.8.",
+      "refuted_as_formalized": true
     },
     {
       "id": "lemma_12_5",
@@ -896,7 +953,8 @@
       "section": 12,
       "file": "AEC/Section12/Results.lean",
       "status": "blocked",
-      "blocker": null
+      "blocker": null,
+      "detail": "RESTATED: query index type \u03b9 moved inside the hypothesis (original form false: AEC.Audit.lemma_12_5_original_false, a query type larger than g \u03c3 \u03c4 makes the hypothesis vacuous). Restated form still blocked: StableDiagram has no axiom relating D.same across index reindexing ((\u03b1\u2295\u03b2)\u2295\u03b9 vs \u03b1\u2295\u03b2) or across \u03c3; needs Prop 4.2 canonical-diagram development."
     },
     {
       "id": "lemma_12_6",
@@ -904,7 +962,9 @@
       "section": 12,
       "file": "AEC/Section12/Results.lean",
       "status": "blocked",
-      "blocker": null
+      "blocker": null,
+      "detail": "FALSE AS FORMALIZED: the paper's unoccupied strip V is missing, so J may be a point; AEC.Audit.lemma_12_6_false (setsPresentation + eqDiagram on allSetsAEC: two distinct new terms over Jstar have no SameNaturalDiagram realization over a one-point J). Needs the strip hypothesis restored. PROPOSED HONEST RESTATEMENT: restore the unoccupied convex strip V \u2286 J (an order embedding of a large enough rational-tiled order into J avoiding the old parameters) and pointed presentation E. Not provable yet: EM-type combinatorics.",
+      "refuted_as_formalized": true
     },
     {
       "id": "theorem_12_2",
@@ -912,7 +972,9 @@
       "section": 12,
       "file": "AEC/Section12/Results.lean",
       "status": "blocked",
-      "blocker": null
+      "blocker": null,
+      "detail": "FALSE AS STATED for arbitrary GeometricSystem (AEC.Audit.theorem_12_2_arbitrary_false, n=0). PROPOSED HONEST RESTATEMENT: link X, Y to the scheme and add the cardinal assignment hypotheses. Not provable yet.",
+      "refuted_as_formalized": true
     },
     {
       "id": "lemma_13_2",
@@ -960,7 +1022,8 @@
       "section": 14,
       "file": "AEC/Section14/Results.lean",
       "status": "blocked",
-      "blocker": null
+      "blocker": null,
+      "detail": "RESTATED: +[CategoricalUnbounded K] (unconditional form refuted: AEC.Audit.Pred.corollary_14_4_unconditional_false, sets with a unary predicate). Restated form blocked on theorem_14_3 / corollary_10_10 (Section 13-14 construction)."
     },
     {
       "id": "lemma_14_2",
@@ -968,7 +1031,8 @@
       "section": 14,
       "file": "AEC/Section14/Results.lean",
       "status": "blocked",
-      "blocker": null
+      "blocker": null,
+      "detail": "Blocked: arbitrary GeometricSystems with a prescribed boundary iso; depends on Sections 11-12 tiling/lifting (12.2 false as stated). Large."
     },
     {
       "id": "theorem_14_3",
@@ -976,7 +1040,9 @@
       "section": 14,
       "file": "AEC/Section14/Results.lean",
       "status": "blocked",
-      "blocker": null
+      "blocker": null,
+      "detail": "FALSE AS STATED: A unlinked to X,Y; fails for arbitrary GeometricSystem (AEC.Audit.theorem_14_3_arbitrary_false). PROPOSED HONEST RESTATEMENT: link A to X, Y (pieceRank = A.kappa) and restrict to scheme systems. Not provable yet: Section 13-14.",
+      "refuted_as_formalized": true
     },
     {
       "id": "theorem_14_5",
@@ -984,7 +1050,8 @@
       "section": 14,
       "file": "AEC/Section14/Results.lean",
       "status": "blocked",
-      "blocker": null
+      "blocker": null,
+      "detail": "Blocked: main theorem; needs the whole Section 7.8 -> 14.3 chain (large missing development)."
     },
     {
       "id": "infra_type_u_witness_set",
@@ -1101,7 +1168,7 @@
       "file": "AEC/Section6/UniformApproximations.lean",
       "status": "done",
       "blocker": null,
-      "detail": "English \u00b61: By Lem 5.5 and 5.4, present A on a padded dense order saturated for every support size used below."
+      "detail": "English \u00b61: By Lem 5.5 and 5.4, present A on a padded dense order saturated for every support size used below. Lean: A itself is the scheme object of the padded presentation (HasPresentations.present_equiv), so the proof no longer calls lemma_5_4."
     },
     {
       "id": "infra_69_chart_iso",
@@ -1110,7 +1177,7 @@
       "file": "AEC/Section6/UniformApproximations.lean",
       "status": "done",
       "blocker": null,
-      "detail": "English \u00b61: Presentation is a scheme object; categoricity gives an isomorphism with A."
+      "detail": "English \u00b61: Presentation is a scheme object; categoricity gives an isomorphism with A. Lean: X := A; no lemma_5_4 call."
     },
     {
       "id": "infra_69_place_type",
@@ -1371,7 +1438,7 @@
       "file": "AEC/Section6/UniformApproximations.lean",
       "status": "done",
       "blocker": null,
-      "detail": "Done under infra_69_pad_recursion_closed: present_padded at \u03c3+\u03ba, chart equivalence, place_on_fills, support_copy_sequence. place_type is not the input. A general WorkingScheme is exists_approximationSequence, still sorry."
+      "detail": "Done under infra_69_pad_recursion_closed: present_padded at \u03c3+\u03ba, chart equivalence, place_on_fills, support_copy_sequence. place_type is not the input. The general-WorkingScheme form (WorkingScheme.exists_approximationSequence) was retired: unused, and a general scheme has no presentations/Placement."
     },
     {
       "id": "infra_610_majority_prescription",
@@ -1690,7 +1757,7 @@
       "label": "E6 same head transfers short joint",
       "status": "retired",
       "blocker": null,
-      "detail": "Demoted/retired: absolute hhead under-hypothesized; path uses per-query type-good push."
+      "detail": "Retired and removed from Lean: unused and false as stated (same head over the empty list does not transfer a joint with parameters); had a sorry. Path uses per-query type-good push."
     },
     {
       "id": "infra_610_placement_saturate_to_B",
@@ -1706,27 +1773,27 @@
       "label": "Infra 7.3 tied of isolated",
       "section": 7,
       "file": "AEC/Section7/IsolationBound.lean",
-      "status": "open",
+      "status": "done",
       "blocker": null,
-      "detail": "Open tip. English Prop 7.3 uniform shrink: RelativelyIsolated + hExt \u21d2 IsTiedFree (actual joint after a sequence-move). Path A dichotomy is green without this. Blocked historically on same_head / DiagramEq joint glue. Helpers infra_73_copy_tail_swap, infra_73_moves_agree already in IsolationBound."
+      "detail": "Done (restated). hMargFree : IsFreeLift (redundant: follows from hExt via infra_73_ext_isFreeLift; counterexample to the old form: realized forking extension qB = tp(b/B), Z=[b], Z0=[a]) replaced by hMargTied : IsTiedFree f (q.marginal e) (qB.marginal (eB.symm.trans e)) (Equiv.refl uIdx). Proof (English Lem 7.2.2, monolithic joints): infra_73_move_iso gives Z' and one structural iso \u03c8 : A \u2245 B agreeing with f on W ++ both approximation families; competitor q' := qB.restrict \u03c8 has the same u-marginal (hMargTied on \u03c8-moved tests + infra_73_differing_test) and the same diagram over W (hExt), so isolation gives q ~ q'; infra_72_diagramEq_of_sameGalois on Z' plus infra_73_moves_agree closes. No sorry, no same_head."
     },
     {
       "id": "infra_76_arbitrary_fragment",
       "label": "Infra 7.6 arbitrary W descent",
       "section": 7,
-      "file": "AEC/Section7/DescentIsolation.lean",
-      "status": "blocked",
-      "blocker": "infra_73_tied_of_isolated",
-      "detail": "English Lem 7.6: isolating fragment any W \u2286 B with #W < \u03bd (from 7.3 h(\u03c3)). Path A only handles pushParams f Z. Needs tied freeness / same_head upgrade. Mixed \u03bd<\u03bc also deferred."
+      "file": "AEC/Section7/TiedDescent.lean",
+      "status": "done",
+      "blocker": null,
+      "detail": "Done, no sorryAx (AEC/Section7/TiedDescent.lean, infra_76_tied_descent). Same level, tied-free lift (IsTiedFree replaces the weak IsFreeLift, whose majority clause does not tie xs to the query). Fragment W of q_B of size <= h(sigma) from Prop 7.3 (infra_73_uniform_of_block + infra_73_block_restriction); Z = union of an approximation list S of tp(W/A). Symmetry of the tied answer (infra_76_tied_majority): off <= h(sigma) indices k, q_B answers W as q_A answers S_k (good S_k are sequence-moves of W; infra_73_moves_agree). Competitor q_A' is lifted tied-freely (infra_610_tied_free_lift); u-marginals of the lifts agree by the same symmetry on every differing test; isolation of q_B and restriction give q_A = q_A'. Tail: infra_73_tailSet at h(h(sigma)) (infra_76_tail_mono, rec-closure monotone in sigma)."
     },
     {
       "id": "infra_72_over_B_isolation",
       "label": "Infra 7.2 over-B isolation",
       "section": 7,
-      "file": "AEC/Section7/RelativeIsolationTransfer.lean",
-      "status": "blocked",
-      "blocker": "infra_73_tied_of_isolated",
-      "detail": "English Lem 7.2 clause 2: full IsRelativelyIsolated qB over B. Path A ships IsRestrictIsolatingFragment only. Demoted with same_head."
+      "file": "AEC/Section7/IsolationBound.lean",
+      "status": "done",
+      "blocker": null,
+      "detail": "Done. infra_72_over_B_isolation: W isolates q relative to u, qB extends q (hExt) with tied-free u-marginal (hMargTied) => pushParams f W isolates qB relative to u over B; corollary infra_72_over_B_isRelativelyIsolated. Proof: a competitor q'' over B restricts to A with the same u-marginal (hMargTied on f-pushed tests) and diagram over W, so isolation over A gives q''|A ~ q; q'' then has tied-free marginal, both qB and q'' are IsTiedFree (infra_73_tied_of_isolated), and tied-free extensions are unique (infra_73_tied_unique: every bounded B-query is a sequence-move, infra_73_tied_move). Monolithic joints only; no same_head."
     },
     {
       "id": "infra_78_finite_continuity",
@@ -1735,6 +1802,42 @@
       "file": "AEC/Section7/FiniteIsolation.lean",
       "status": "done",
       "detail": "Done: Def 7.7 for Finite marks on SameLevelChain via Prop 6.13 / infra_613_*. Not sufficient for Prop 7.8 existence."
+    },
+    {
+      "id": "infra_610_tied_free_lift",
+      "label": "Infra 6.10 tied free lift",
+      "section": 6,
+      "file": "AEC/Section7/TiedFreeLift.lean",
+      "status": "done",
+      "blocker": null,
+      "detail": "Done, no sorryAx. infra_610_tied_free_lift: \u2203 qB eB, qB.\u03bd = \u03bc \u2227 SameGaloisType p (qB.restrict f hf) eB refl \u2227 IsTiedFree f p qB eB. English \u00a76.2: the Prop 4.9 placement z \u2208 E(J) of the chart majority prescriptions, in a strong \u03bc-hull N \u2287 E(I) \u222a z, is the host (infra_610_tied_placement), not pulled back into B per query. Majority answers are tied on every long sequence by moving the query over both sequences at once (infra_610_common_move, infra_610_tied_of_majority). Larger queries use a placement at arity \u2265 |Z| (infra_610_tied_at); placements agree on tests so Thm 6.6 (infra_73_differing_test) gives one Galois type. Restriction to A is p via the trivial move f Y."
+    },
+    {
+      "id": "infra_73_alt2_tied_marginal",
+      "label": "Infra 7.3 alt2 tied marginal",
+      "section": 7,
+      "file": "AEC/Section7/AltTwoTied.lean",
+      "status": "done",
+      "blocker": null,
+      "detail": "Done, no sorryAx. infra_73_alt2_tied (AEC/Section7/AltTwoTied.lean) with the block arrow from infra_73_block_restriction (AEC/Section7/BlockRestriction.lean); the English uniform shrink is proposition_7_3_uniform_of_block + infra_73_block_restriction = proposition_7_3_uniform."
+    },
+    {
+      "id": "infra_73_block_restriction",
+      "label": "Infra 7.3 block restriction",
+      "section": 7,
+      "file": "AEC/Section7/BlockRestriction.lean",
+      "status": "done",
+      "blocker": null,
+      "detail": "Done, no sorryAx (AEC/Section7/BlockRestriction.lean, infra_73_block_restriction). Block presentation A \u2245 E(\u03c3\u207a \u00d7\u2097 \u03bc) (exists_present_equiv); J0 = supports of a long approximation sequence \u222a reservoir of order type \u03c70\u207a in every block; Z = term values on J0 (#\u2264 h(\u03c3)). Placements Q0, Q1 of q, q' (exists_placement_lifting, \u03c7 with \u03c7^\u03c3 = \u03c7); a block b met by neither (infra_73_clean_block); A* = E(J0 \u222a b) with g : A \u2245 A* \u2286 A fixing the sequence (diagramEq_iff_equiv). A differing test over A* is moved inside b into the reservoir (infra_73_mv, infra_73_moved_answer), where q and q' agree on Z: contradiction. proposition_7_3_uniform (unconditional) follows."
+    },
+    {
+      "id": "infra_78_mixed_level_isolation",
+      "label": "Infra 7.8 mixed-level isolation",
+      "section": 7,
+      "file": "AEC/Section7/Results.lean",
+      "status": "open",
+      "blocker": null,
+      "detail": "Open. English Prop 7.8 builds a rho^+ matrix X_i <= Y_i at a large level kappa and shrinks to level-lambda pairs A <= U inside R_i, S_i; it then applies Lemma 7.6 with A at level lambda < kappa = level of X_i (mixed nu < mu), the free-extension majority characterization across levels, type-identifying amalgamation at kappa, Fodor pressing-down on a stationary subset of rho^+, and Def 7.7 continuity at limits. The Lean infrastructure is same-level only: IsTiedFree, infra_73_move_iso (a structural iso A ~ B), lemma_7_6_tied and infra_610_tied_free_lift all need nu = mu. Needed first: a mixed-level tied freeness (moves via Lowenheim-Skolem hulls rather than an iso) and lemma_7_6 for nu < mu. Also: proposition_7_8 is stated for an arbitrary WorkingScheme W; the English proof uses SingleModelData structure (presentations, homogeneity), so the statement should be restated for SingleModelData before it can be proved."
     }
   ],
   "edges": [
@@ -3201,8 +3304,43 @@
       "to": "infra_78_finite_continuity",
       "kind": "hard",
       "note": "Finite continuity packages Prop 6.13."
+    },
+    {
+      "from": "infra_610_tied_free_lift",
+      "to": "infra_73_alt2_tied_marginal",
+      "kind": "hard",
+      "note": "Alt 2 needs a tied free extension of the u-marginal."
+    },
+    {
+      "from": "infra_73_alt2_tied_marginal",
+      "to": "proposition_7_3",
+      "kind": "hard",
+      "note": "English uniform shrink: proposition_7_3_uniform_of_block (AltTwoTied.lean), via infra_73_alt2_tied."
+    },
+    {
+      "from": "infra_73_alt2_tied_marginal",
+      "to": "infra_76_arbitrary_fragment",
+      "kind": "hard",
+      "note": "Arbitrary-W descent uses the uniform h(\u03c3) fragments of Prop 7.3."
+    },
+    {
+      "from": "infra_73_tied_of_isolated",
+      "to": "lemma_7_2",
+      "kind": "hard",
+      "note": "lemma_7_2_tied clause 2 (qB tied free) is infra_73_tied_of_isolated."
+    },
+    {
+      "from": "infra_73_block_restriction",
+      "to": "infra_73_alt2_tied_marginal",
+      "kind": "hard",
+      "note": "infra_73_alt2_tied consumes the block arrow g (q\u21beg \u2261 q'\u21beg, sequence fixed pointwise)."
+    },
+    {
+      "from": "infra_78_mixed_level_isolation",
+      "to": "proposition_7_8",
+      "kind": "hard"
     }
   ],
-  "doneCount": 145,
-  "meta": "Open tip: infra_73_tied_of_isolated. proposition_7_3/lemma_7_2/lemma_7_6/proposition_7_8 blocked on demotion infras. sorryCount 49."
+  "doneCount": 155,
+  "meta": "Open tip: infra_78_mixed_level_isolation. proposition_7_8 blocked on it; everything in 7.9-14 is downstream of 7.8. Prop 7.3 English uniform and Lem 7.6 English (same level) green. sorryCount 32 (degenerate closures, demoted to blocked/needs-restatement: claim_11_12, proposition_9_1, corollary_9_2, theorem_9_6, lemma_10_1, theorem_8_6, theorem_9_3, proposition_10_6, proposition_11_7, proposition_11_6)."
 }

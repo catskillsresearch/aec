@@ -27,12 +27,15 @@ set_option linter.unusedVariables false
 open FirstOrder Cardinal
 
 /-- A seed object at an eligible level. Chain unions require a nonempty index
-(Definition 5.2(1)), so emptiness is no longer a source of objects; existence of a seed at
-each eligible level is a residual obligation (typically from presentations). -/
+(Definition 5.2(1)), so emptiness is not a source of objects. Definition 5.2(2) says that
+`F(I)` is an object of `C_μ` for every well-order `I` of eligible cardinality `μ`; the Lean
+`HasPresentations` records only the chart equivalences and order arrows, so existence of an
+object at each eligible level is the explicit hypothesis `hObj` (the same hypothesis
+`proposition_5_7` takes, and which `proposition_5_6` supplies for single models). -/
 noncomputable def objectOfEmptyChain {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
-    (W : WorkingScheme K S) (_hpack : HasChainUnions W)
+    (W : WorkingScheme K S) (hObj : ∀ μ hμ, Nonempty (W.Object μ hμ))
     {μ : Cardinal.{u}} (hμ : μ ∈ W.eligible) : W.Object μ hμ :=
-  Classical.choice (show Nonempty (W.Object μ hμ) from sorry)
+  Classical.choice (hObj μ hμ)
 
 /-- Inclusion of a set as an order embedding of subtypes. -/
 def setInclusionOrderEmbed {α : Type u} [Preorder α] {s t : Set α} (h : s ⊆ t) : s ↪o t where
@@ -87,10 +90,14 @@ theorem wellFounded_union_subtype {α : Type u} [LinearOrder α] {s t : Set α}
 
 /-- **Lemma 5.4** (Directed unions and padded presentations). Where chain unions are
 available, the presentation of a padded order of eligible cardinality `μ` is an object at
-`μ`, and an order embedding of padded orders induces a permitted arrow. -/
+`μ`, and an order embedding of padded orders induces a permitted arrow.
+
+`hObj` (an object at each eligible level) is the existence half of Definition 5.2(2),
+"`F(I)` is an object of `C_μ`", which the Lean `HasPresentations` does not record. -/
 theorem lemma_5_4 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
     (W : WorkingScheme K S) (F : TermTemplate K S) (hpack : HasChainUnions W)
     [hpres : HasPresentations W F]
+    (hObj : ∀ μ hμ, Nonempty (W.Object μ hμ))
     {μ : Cardinal.{u}} (hμ : μ ∈ W.eligible) (I : Type u) [LinearOrder I] [Nonempty I]
     [IsPadded I] (hI : #I = μ) :
     ∃ X : W.Object μ hμ,
@@ -102,11 +109,11 @@ theorem lemma_5_4 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
           ∃ arr : SystemArrow K S (W.asSystem hμ X) (W.asSystem hν Y),
             W.permitted (X := X) (Y := Y) arr := by
   classical
-  let X : W.Object μ hμ := objectOfEmptyChain W hpack hμ
+  let X : W.Object μ hμ := objectOfEmptyChain W hObj hμ
   refine ⟨X, ?_, ?_⟩
   · exact hpres.present_equiv hμ X I hI
   · intro ν hν J _ _ _ f hJ
-    let Y : W.Object ν hν := objectOfEmptyChain W hpack hν
+    let Y : W.Object ν hν := objectOfEmptyChain W hObj hν
     obtain ⟨s, hsCard, hsWF⟩ := IsPadded.padded (I := I)
     obtain ⟨t, htCard, htWF⟩ := IsPadded.padded (I := J)
     have hsI : #s = μ := hsCard.trans hI

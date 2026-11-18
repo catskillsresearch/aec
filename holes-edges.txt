@@ -1,7 +1,7 @@
-# Nodes: (see holes-graph.json)  Hard edges: 249
+# Nodes: (see holes-graph.json)  Hard edges: 255
 # Convention: FROM --> TO means the English proof of TO requires FROM.
-# Open tip: infra_73_tied_of_isolated. English 7.2/7.3/7.6/7.8 blocked on demotion infras. Path A Lean Results stay green. sorryCount 49.
-# Retired: infra_610_qPres_empty_joint_on_I, infra_610_same_head_transfers_joint.
+# Open tip: infra_78_mixed_level_isolation (mixed-level Lemma 7.6; proposition_7_8 blocked on it). Statement audit: AEC/Audit (tinyAEC, emptyAEC counterexamples), AEC/Section5/EmptiedScheme.lean (IsWorkingPackage vacuous for object-free schemes). sorryCount 32. Degenerate closures (not done): theorem_8_6, proposition_9_1, corollary_9_2, theorem_9_3, theorem_9_6, lemma_10_1, proposition_10_6, proposition_11_6, proposition_11_7, claim_11_12.
+# Retired: infra_610_qPres_empty_joint_on_I, infra_610_same_head_transfers_joint, infra_69_transfer_sequence, WorkingScheme.exists_approximationSequence.
 
 claim_11_10 --> claim_11_11
 claim_11_11 --> claim_11_12
@@ -53,6 +53,7 @@ infra_610_reflected_matches_chartRoot --> infra_610_place_z_as_free_lift
 infra_610_root_galois --> infra_610_isFreeLift_same_galois
 infra_610_same_galois --> infra_610_isFreeLift_same_galois
 infra_610_same_galois_tests_chartRoot --> infra_610_isFreeLift_same_galois
+infra_610_tied_free_lift --> infra_73_alt2_tied_marginal
 infra_610_transport_joint --> infra_610_placement_saturate_to_B
 infra_613_freeFrom_trans --> proposition_6_13
 infra_615_terminal --> proposition_6_15
@@ -91,13 +92,18 @@ infra_69_subtuple_uniform --> infra_69_uniformity_bounds
 infra_69_uniformity_bounds --> infra_69_assemble
 infra_69_whole_block_diff --> infra_69_no_internal_hits
 infra_72_over_B_isolation --> lemma_7_2
+infra_73_alt2_tied_marginal --> infra_76_arbitrary_fragment
+infra_73_alt2_tied_marginal --> proposition_7_3
+infra_73_block_restriction --> infra_73_alt2_tied_marginal
 infra_73_tied_of_isolated --> infra_72_over_B_isolation
 infra_73_tied_of_isolated --> infra_76_arbitrary_fragment
+infra_73_tied_of_isolated --> lemma_7_2
 infra_73_tied_of_isolated --> proposition_7_3
 infra_73_tied_of_isolated --> proposition_7_8
 infra_76_arbitrary_fragment --> lemma_7_6
 infra_76_arbitrary_fragment --> proposition_7_8
 infra_78_finite_continuity --> proposition_7_8
+infra_78_mixed_level_isolation --> proposition_7_8
 infra_countable_back_and_forth --> proposition_4_3
 infra_eligible_reclass --> infra_named_working_scheme
 infra_eligible_reclass --> proposition_5_7

@@ -48,7 +48,7 @@ noncomputable def cardWellOrderEmbed {μ0 μ : Cardinal.{u}} (hle : μ0 ≤ μ) 
 
 /-- **Named realization via an order arrow.** At every eligible level `μ ≥ μ₀` there is an
 object realizing the diagram of `c` as the image of a permitted arrow from `X0`. Seed objects
-at each eligible level are an external hypothesis (`objectOfEmptyChain` residual). -/
+at each eligible level are the hypothesis `hObj` (Definition 5.2(2), as in `lemma_5_4`). -/
 theorem exists_named_realization_of_arrow (W : WorkingScheme K S)
     [hpres : HasPresentations W W.template]
     (hObj : ∀ μ hμ, Nonempty (W.Object μ hμ))

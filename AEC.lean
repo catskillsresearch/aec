@@ -141,6 +141,10 @@ public import AEC.Section7.RelativeIsolation
 public import AEC.Section7.RelativeIsolationProof
 public import AEC.Section7.RelativeIsolationTransfer
 public import AEC.Section7.IsolationBound
+public import AEC.Section7.TiedFreeLift
+public import AEC.Section7.AltTwoTied
+public import AEC.Section7.BlockRestriction
+public import AEC.Section7.TiedDescent
 public import AEC.Section7.DescentIsolation
 public import AEC.Section7.Primness
 public import AEC.Section7.FiniteIsolation
@@ -170,3 +174,14 @@ public import AEC.Section13.CommonMajorant
 public import AEC.Section13.Results
 public import AEC.Section14.CardinalAssignment
 public import AEC.Section14.Results
+public import AEC.Audit.TinyAEC
+public import AEC.Audit.Counterexamples
+public import AEC.Section5.EmptiedScheme
+public import AEC.Audit.AllSets
+public import AEC.Audit.AllSetsMinimal
+public import AEC.Audit.NoPairs
+public import AEC.Audit.EqPattern
+public import AEC.Audit.BoundaryGlue
+public import AEC.Audit.FaceGlue
+public import AEC.Audit.PredSets
+public import AEC.Section11.Repiece

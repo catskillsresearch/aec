@@ -1626,34 +1626,10 @@ theorem infra_610_placement_saturate_to_B
   funext t
   exact (SMObject.val_occ B (data.eB (data.qPres hβ paramsI t))).symm
 
-/-- Demoted: absolute same-head glue (under-hypothesized). Prefer
-`infra_610_pull_root_agrees_free_ref` + `same_of_agreeOn`. -/
-theorem infra_610_same_head_transfers_joint
-    {P : SingleModelData K} {σ : Cardinal.{u}} (hσ : aleph0 ≤ σ)
-    {μ : Cardinal.{u}} {hμ : μ ∈ P.eligible}
-    {A B : P.scheme.Object μ hμ}
-    {f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ B)}
-    {hf : P.scheme.permitted (X := A) (Y := B) f}
-    {p : TupleOver K oneVertexShape P.scheme hμ A} {seq : ApproximationSequence p}
-    (data : Infra610ChartSupport (hμ := hμ) P σ f hf p seq)
-    (hidx : #p.idx ≤ σ) (hσμ : σ < μ)
-    (root root' : p.idx → B.model.carrier)
-    {β : Type u} (hβ : #β ≤ data.χ)
-    (paramsI : β →
-      (@OrderPresentation.obj K P.E data.I data.linOrder data.nonempty).carrier)
-    (hjoint : #(p.idx ⊕ β) ≤ σ + data.χ)
-    (h₁ : P.D.t (σ + data.χ) ≤ Model.card B.model)
-    (_hhead : P.D.same hidx B.mem B.mem
-      ((P.t_lt hμ hσ hσμ).le.trans B.card.ge) ((P.t_lt hμ hσ hσμ).le.trans B.card.ge)
-      root root')
-    (hjoint' : P.D.same hjoint B.mem B.mem h₁ h₁
-      (Sum.elim root' (fun b => data.eB (paramsI b)))
-      (fun t => B.val (B.occ (data.eB (data.qPres hβ paramsI t))))) :
-    P.D.same hjoint B.mem B.mem h₁ h₁
-      (Sum.elim root (fun b => data.eB (paramsI b)))
-      (fun t => B.val (B.occ (data.eB (data.qPres hβ paramsI t)))) := by
-  classical
-  exact sorry
+/- `infra_610_same_head_transfers_joint` (absolute same-head glue) was removed: it was retired,
+unused, and false as stated (two heads with the same diagram over the empty list need not have
+the same joint with a parameter list). Use `infra_610_pull_root_agrees_free_ref` +
+`same_of_agreeOn`. -/
 
 /-- **Done.** Lem 6.4 placement on `B`, per query: a type-good push realizes the prescription. -/
 theorem infra_610_placement_root_on_B
