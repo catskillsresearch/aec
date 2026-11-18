@@ -1,6 +1,6 @@
 {
- "updated": "2026-11-18 17:29 grokbot_01",
- "sorryCount": 42,
+ "updated": "2026-11-18 17:31 grokbot_01",
+ "sorryCount": 43,
  "legend": {
   "open": "No unfinished required proof-deps — try next",
   "blocked": "Waiting on incomplete required proof-deps",
@@ -3400,9 +3400,9 @@
    "label": "Thm 7.13 (1b) level-wise",
    "section": 7,
    "file": "AEC/Section7/Theorem713.lean",
-   "status": "open",
+   "status": "blocked",
    "blocker": null,
-   "detail": "Open (cycle 91). infra_713_lift_statement (Theorem713.lean): at a 7.12 level, a tied free lift q of L.whole along X -> B is product-independent (finite sublists = IsFiniteProductTied of lifted marginals) and determined by its finite-subtuple types. Plan: Prop 6.12 tied finite projections of free lifts + (1a) (infra_713_unique) at base B."
+   "detail": "Cycle 91: SPLIT: infra_713_lift := infra_713_lift_of_parts (infra_713_lift_pi) (infra_713_lift_det) (glue proved). Open (cycle 91). infra_713_lift_statement (Theorem713.lean): at a 7.12 level, a tied free lift q of L.whole along X -> B is product-independent (finite sublists = IsFiniteProductTied of lifted marginals) and determined by its finite-subtuple types. Plan: Prop 6.12 tied finite projections of free lifts + (1a) (infra_713_unique) at base B."
   },
   {
    "id": "infra_713_continuity",
@@ -3421,6 +3421,24 @@
    "status": "open",
    "blocker": null,
    "detail": "Open, not started (cycle 91) per instruction. infra_713_realize_statement: all-dominated Y over X + b realizing tp(b/X), mapped over X, b into an ambient containing L. Needs the general bounded-mark Prop 7.8 / Thm 7.9 (cf. infra_78_def77_bounded_marks, soft) -- hard."
+  },
+  {
+   "id": "infra_713_lift_pi",
+   "label": "Thm 7.13 (1b-i): tied free lift of a PI list is PI",
+   "section": 7,
+   "file": "AEC/Section7/Theorem713.lean",
+   "status": "open",
+   "blocker": null,
+   "detail": "Open (cycle 91). infra_713_lift_pi_statement (Theorem713.lean). Needs (a) finite projections of a tied free lift are tied free lifts of the projections (no Lean lemma yet: an approximation sequence of p.reindex rho is not one of p) and (b) finite iteration of tied base change (infra_612_tied_base_change_level_joints, level joints) through IsFiniteProductTied, as in infra_712_products; then PI of L gives the product data."
+  },
+  {
+   "id": "infra_713_lift_det",
+   "label": "Thm 7.13 (1b-ii): tied free lift determined by finite data",
+   "section": 7,
+   "file": "AEC/Section7/Theorem713.lean",
+   "status": "open",
+   "blocker": null,
+   "detail": "Open (cycle 91). infra_713_lift_det_statement. Plan: level-mu copies (infra_612_exists_level_copy) of q, q' as TupleLists over B with L's index structure; PI of both (from lift_pi plus invariance of IsFiniteProductTied under SameGaloisType of factors/joint -- needed lemma); then infra_713_unique at base B (B is at a 7.12 level)."
   }
  ],
  "edges": [
@@ -6886,6 +6904,24 @@
    "to": "infra_713_realize",
    "kind": "soft",
    "note": "bounded marks in the general Prop 7.8 / Thm 7.9"
+  },
+  {
+   "from": "infra_713_lift_pi",
+   "to": "infra_713_lift",
+   "kind": "hard",
+   "note": ""
+  },
+  {
+   "from": "infra_713_lift_det",
+   "to": "infra_713_lift",
+   "kind": "hard",
+   "note": ""
+  },
+  {
+   "from": "infra_713_lift_pi",
+   "to": "infra_713_lift_det",
+   "kind": "hard",
+   "note": ""
   }
  ],
  "doneCount": 320,

@@ -210,6 +210,53 @@ def infra_713_lift_statement (P : SingleModelData K) : Prop :=
                 (Equiv.refl _) (Equiv.refl _)) →
             SameGaloisType q q' eq' (Equiv.refl _))
 
+/-- **Theorem 7.13 (1b), product independence of the tied free lift (statement; open tip
+`infra_713_lift_pi`).** English proof: "The finite projections of a free lift are the free lifts of
+the finite projections, by Proposition 6.12. They are therefore the required products of the
+lifted marginal types." -/
+def infra_713_lift_pi_statement (P : SingleModelData K) : Prop :=
+  ∀ {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible), μ ∈ infra_712_levels P →
+    ∀ (X : P.scheme.Object μ hμ) (L : TupleList P.scheme hμ X) [LinearOrder L.δ] [L.FiniteEach]
+      [WellFoundedLT L.δ], ProductIndependentTied L → #(Σ i, L.indexAt i) < μ →
+        ∀ (B : P.scheme.Object μ hμ)
+            (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ B))
+            (q : TupleOver K oneVertexShape P.scheme hμ B)
+            (eq : L.whole.idx ≃ q.idx),
+          IsTiedFree f L.whole q eq → q.ν = μ →
+   ∀ (n : ℕ) (ix : Fin n → L.δ), Function.Injective ix →
+             ∃ (joint : TupleOver K oneVertexShape P.scheme hμ B)
+               (E : (Σ s, ((q.reindex (fun a : L.indexAt (ix s) => eq ⟨ix s, a⟩))).idx) ≃
+                 joint.idx),
+               IsFiniteProductTied n (fun s => q.reindex (fun a : L.indexAt (ix s) => eq ⟨ix s, a⟩))
+                 joint E ∧
+               SameGaloisType
+                 (q.reindex (fun p : Σ s : Fin n, L.indexAt (ix s) => eq ⟨ix p.1, p.2⟩)) joint E
+                 (Equiv.refl _)
+
+/-- **Theorem 7.13 (1b), the tied free lift is determined by its finite data (statement; open tip
+`infra_713_lift_det`).** English proof: "Applying witnessed uniqueness at the receiving base". -/
+def infra_713_lift_det_statement (P : SingleModelData K) : Prop :=
+  ∀ {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible), μ ∈ infra_712_levels P →
+    ∀ (X : P.scheme.Object μ hμ) (L : TupleList P.scheme hμ X) [LinearOrder L.δ] [L.FiniteEach]
+      [WellFoundedLT L.δ], ProductIndependentTied L → #(Σ i, L.indexAt i) < μ →
+        ∀ (B : P.scheme.Object μ hμ)
+            (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ B))
+            (q : TupleOver K oneVertexShape P.scheme hμ B)
+            (eq : L.whole.idx ≃ q.idx),
+          IsTiedFree f L.whole q eq → q.ν = μ →
+          ∀ (q' : TupleOver K oneVertexShape P.scheme hμ B) (eq' : q.idx ≃ q'.idx),
+            q'.ν = μ →
+            (∀ (ι : Type u) [Finite ι] (ix : ι → q.idx), Function.Injective ix →
+              SameGaloisType (q.reindex ix) (q'.reindex (fun s => eq' (ix s)))
+                (Equiv.refl _) (Equiv.refl _)) →
+            SameGaloisType q q' eq' (Equiv.refl _)
+
+/-- **Theorem 7.13 (1b) from its two halves (proved glue, cycle 91).** -/
+theorem infra_713_lift_of_parts (P : SingleModelData K) (h1 : infra_713_lift_pi_statement P)
+    (h2 : infra_713_lift_det_statement P) : infra_713_lift_statement P :=
+  fun hμ hl X L _ _ _ hPI hS B f q eq hq hqν =>
+    ⟨h1 hμ hl X L hPI hS B f q eq hq hqν, h2 hμ hl X L hPI hS B f q eq hq hqν⟩
+
 /-- **Theorem 7.13 (2), level-wise (statement; open tip `infra_713_continuity`).** -/
 def infra_713_continuity_statement (P : SingleModelData K) : Prop :=
   ∀ {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible), μ ∈ infra_712_levels P →
@@ -234,9 +281,17 @@ def infra_713_realize_statement (P : SingleModelData K) : Prop :=
             (∀ v, (g.onVertex v).comp (f.onVertex v) = (h.onVertex v).comp (L.incl.onVertex v)) ∧
             ∀ a, g.mapOcc (b a) = h.mapOcc (L.whole.val a))
 
-/-- **Theorem 7.13 (1b) (open tip `infra_713_lift`).** -/
-theorem infra_713_lift (P : SingleModelData K) : infra_713_lift_statement P := by
+/-- **Theorem 7.13 (1b), product independence (open tip `infra_713_lift_pi`).** -/
+theorem infra_713_lift_pi (P : SingleModelData K) : infra_713_lift_pi_statement P := by
   sorry
+
+/-- **Theorem 7.13 (1b), determinacy (open tip `infra_713_lift_det`).** -/
+theorem infra_713_lift_det (P : SingleModelData K) : infra_713_lift_det_statement P := by
+  sorry
+
+/-- **Theorem 7.13 (1b) (proved glue, cycle 91).** -/
+theorem infra_713_lift (P : SingleModelData K) : infra_713_lift_statement P :=
+  infra_713_lift_of_parts P (infra_713_lift_pi P) (infra_713_lift_det P)
 
 /-- **Theorem 7.13 (2) (open tip `infra_713_continuity`).** -/
 theorem infra_713_continuity (P : SingleModelData K) : infra_713_continuity_statement P := by

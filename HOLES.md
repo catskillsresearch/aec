@@ -4,7 +4,7 @@ Inventory of Lean `sorry` holes in this repository, ordered **prove-first**: Lay
 are holes with no remaining unfinished prerequisites; later layers wait on earlier
 ones. Apex theorems 1.2 and 1.3 are **last**.
 
-**Count:** 42 `sorry`, 0 `admit`.
+**Count:** 43 `sorry`, 0 `admit`.
 Sections **2**, **3**, **4**, and **13** have no holes.
 
 **Dependency basis:** paper/logical order from `dependencies.mermaid`
@@ -394,7 +394,9 @@ Lean: imports `AEC.Section6.Results`.
 | `theorem_7_13` | Theorem 7.13 | `AEC/Section7/Results.lean:462` (cycle 91: assembled from `infra_713_*`; restated cycle 90 to tied notions: uniqueness, tied free lift product-independent + determined, tied Def 7.7 continuity, all-dominated realization + embedding) |
 | `infra_713_unique_short` | Thm 7.13 (1a), `|δ| ≤ μ` | **done** (cycle 90, `Theorem713.lean`) |
 | `infra_713_unique_long` | Thm 7.13 (1a), `|δ| > μ` | **done** (cycle 91, `infra_713_unique`) |
-| `infra_713_lift` | Thm 7.13 (1b) | **open** (cycle 91, `Theorem713.lean`) |
+| `infra_713_lift` | Thm 7.13 (1b) | split (cycle 91): glue proved |
+| `infra_713_lift_pi` | Thm 7.13 (1b-i), tied free lift is PI | **open** (needs tied-lift projection + finite base change) |
+| `infra_713_lift_det` | Thm 7.13 (1b-ii), determined by finite data | **open** (after `infra_713_lift_pi`) |
 | `infra_713_continuity` | Thm 7.13 (2), tied Def 7.7 | **open** (cycle 91) |
 | `infra_713_realize` | Thm 7.13 (3) | **open**, hard (bounded-mark 7.8/7.9) |
 
