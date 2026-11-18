@@ -461,6 +461,136 @@ theorem infra_78_cardinal_closure {E : Type u} (R₀ : Set E) {ℓ ρ : Cardinal
   have hsa : s ⊆ st a := fun x hx => hmono (ha _ ⟨⟨x, hx⟩, rfl⟩) (hg ⟨x, hx⟩)
   exact (hnew (hk a rfl) s hsa hsl).trans (Set.subset_iUnion st k)
 
+section Bookkeeping
+open Classical
+
+/-- Closure of `S` under `F` (via `infra_78_cardinal_closure`), or `S` if the hypotheses fail. -/
+noncomputable def infra_78_bkClose {E : Type u} (ℓ ρ : Cardinal.{u}) (F : Set E → Set E)
+    (S : Set E) : Set E :=
+  if h : ℵ₀ ≤ ℓ ∧ ℓ < ρ ∧ ρ ^ ℓ = ρ ∧ (∀ s : Set E, #s ≤ ℓ → #(F s) ≤ ρ) ∧ #S ≤ ρ then
+    Classical.choose (infra_78_cardinal_closure S h.1 h.2.1 h.2.2.1 F h.2.2.2.1 h.2.2.2.2)
+  else S
+
+theorem infra_78_bkClose_spec {E : Type u} {ℓ ρ : Cardinal.{u}} {F : Set E → Set E}
+    {S : Set E} (hℓ : ℵ₀ ≤ ℓ) (hℓρ : ℓ < ρ) (hpow : ρ ^ ℓ = ρ)
+    (hF : ∀ s : Set E, #s ≤ ℓ → #(F s) ≤ ρ) (hS : #S ≤ ρ) :
+    S ⊆ infra_78_bkClose ℓ ρ F S ∧ #(infra_78_bkClose ℓ ρ F S) ≤ ρ ∧
+      ∀ s ⊆ infra_78_bkClose ℓ ρ F S, #s ≤ ℓ → F s ⊆ infra_78_bkClose ℓ ρ F S := by
+  have h : ℵ₀ ≤ ℓ ∧ ℓ < ρ ∧ ρ ^ ℓ = ρ ∧ (∀ s : Set E, #s ≤ ℓ → #(F s) ≤ ρ) ∧ #S ≤ ρ :=
+    ⟨hℓ, hℓρ, hpow, hF, hS⟩
+  unfold infra_78_bkClose
+  split_ifs
+  exact Classical.choose_spec (infra_78_cardinal_closure S h.1 h.2.1 h.2.2.1 F h.2.2.2.1 h.2.2.2.2)
+
+/-- Stages of the bookkeeping sets along a directed system of carriers. -/
+noncomputable def infra_78_bkStage {W : Type u} [LinearOrder W] [WellFoundedLT W]
+    (C : W → Type u) (step : ∀ {j i : W}, j < i → C j → C i)
+    (F : ∀ i, Set (C i) → Set (C i)) (seed : ∀ i, Set (C i)) (ℓ ρ : Cardinal.{u}) :
+    ∀ i, Set (C i) :=
+  (wellFounded_lt (α := W)).fix (C := fun i => Set (C i)) (fun i rec =>
+    if Order.IsSuccLimit i then ⋃ j : Set.Iio i, step j.2 '' rec j.1 j.2
+    else infra_78_bkClose ℓ ρ (F i) (seed i ∪ ⋃ j : Set.Iio i, step j.2 '' rec j.1 j.2))
+
+theorem infra_78_bkStage_eq {W : Type u} [LinearOrder W] [WellFoundedLT W]
+    (C : W → Type u) (step : ∀ {j i : W}, j < i → C j → C i)
+    (F : ∀ i, Set (C i) → Set (C i)) (seed : ∀ i, Set (C i)) (ℓ ρ : Cardinal.{u}) (i : W) :
+    infra_78_bkStage C step F seed ℓ ρ i =
+      if Order.IsSuccLimit i then
+        ⋃ j : Set.Iio i, step j.2 '' infra_78_bkStage C step F seed ℓ ρ j.1
+      else infra_78_bkClose ℓ ρ (F i)
+        (seed i ∪ ⋃ j : Set.Iio i, step j.2 '' infra_78_bkStage C step F seed ℓ ρ j.1) := by
+  unfold infra_78_bkStage
+  rw [WellFounded.fix_eq]
+
+/-- **Bookkeeping sets along a directed system (Prop 7.8, successor/limit construction; proved).**
+Along a well-order `W` whose initial segments have size at most `ρ` (e.g. `ρ⁺`), with carriers
+`C i` and forward maps `step : C j → C i` (`j < i`), closure requests `F i` of size at most `ρ` per
+set of size at most `λ`, and seeds of size at most `ρ`, there are sets `R i ⊆ C i` with
+`#R i ≤ ρ`, increasing (`step '' R j ⊆ R i`), continuous at limits (`R i = ⋃_{j<i} step '' R j`),
+and at non-limit stages containing the seed and closed under `F i` (`infra_78_cardinal_closure`
+for `λ⁺` steps). For Prop 7.8, `C i` is the sum of the carriers of `X_i` and `Y_i`. -/
+theorem infra_78_bookkeeping_sets_abstract {W : Type u} [LinearOrder W] [WellFoundedLT W]
+    (C : W → Type u) (step : ∀ {j i : W}, j < i → C j → C i)
+    (F : ∀ i, Set (C i) → Set (C i)) (seed : ∀ i, Set (C i)) {ℓ ρ : Cardinal.{u}}
+    (hℓ : ℵ₀ ≤ ℓ) (hℓρ : ℓ < ρ) (hpow : ρ ^ ℓ = ρ)
+    (hF : ∀ i (s : Set (C i)), #s ≤ ℓ → #(F i s) ≤ ρ) (hseed : ∀ i, #(seed i) ≤ ρ)
+    (hW : ∀ i : W, #(Set.Iio i) ≤ ρ) :
+    ∃ R : ∀ i, Set (C i),
+      (∀ i, #(R i) ≤ ρ) ∧
+      (∀ {j i : W} (h : j < i), step h '' R j ⊆ R i) ∧
+      (∀ i, Order.IsSuccLimit i → R i = ⋃ j : Set.Iio i, step j.2 '' R j.1) ∧
+      (∀ i, ¬ Order.IsSuccLimit i →
+        seed i ⊆ R i ∧ ∀ s ⊆ R i, #s ≤ ℓ → F i s ⊆ R i) := by
+  have hρ : ℵ₀ ≤ ρ := hℓ.trans hℓρ.le
+  let R := infra_78_bkStage C step F seed ℓ ρ
+  have hU : ∀ {ι : Type u} {E : Type u} (f : ι → Set E), #ι ≤ ρ → (∀ i, #(f i) ≤ ρ) →
+      #(⋃ i, f i) ≤ ρ :=
+    fun f hι hf => (mk_iUnion_le f).trans ((mul_le_mul' hι (ciSup_le' hf)).trans
+      (mul_eq_self hρ).le)
+  have hcard : ∀ i, #(R i) ≤ ρ := by
+    intro i
+    refine (wellFounded_lt (α := W)).induction (C := fun i => #(R i) ≤ ρ) i ?_
+    intro i ih
+    have hun : #(⋃ j : Set.Iio i, step j.2 '' R j.1) ≤ ρ :=
+      hU _ (hW i) fun j => Cardinal.mk_image_le.trans (ih j.1 j.2)
+    change #(infra_78_bkStage C step F seed ℓ ρ i) ≤ ρ
+    rw [infra_78_bkStage_eq]
+    split_ifs with hlim
+    · exact hun
+    · exact (infra_78_bkClose_spec hℓ hℓρ hpow (hF i)
+        ((mk_union_le _ _).trans ((add_le_add (hseed i) hun).trans (add_eq_self hρ).le))).2.1
+  have hbase : ∀ i, ¬ Order.IsSuccLimit i →
+      seed i ∪ (⋃ j : Set.Iio i, step j.2 '' R j.1) ⊆ R i ∧
+        ∀ s ⊆ R i, #s ≤ ℓ → F i s ⊆ R i := by
+    intro i hlim
+    have hun : #(⋃ j : Set.Iio i, step j.2 '' R j.1) ≤ ρ :=
+      hU _ (hW i) fun j => Cardinal.mk_image_le.trans (hcard j.1)
+    have hspec := infra_78_bkClose_spec hℓ hℓρ hpow (hF i)
+      ((mk_union_le _ _).trans ((add_le_add (hseed i) hun).trans (add_eq_self hρ).le))
+    have hRi : R i = infra_78_bkClose ℓ ρ (F i) (seed i ∪ ⋃ j : Set.Iio i, step j.2 '' R j.1) := by
+      change infra_78_bkStage C step F seed ℓ ρ i = _
+      rw [infra_78_bkStage_eq]
+      split_ifs
+      rfl
+    rw [hRi]
+    exact ⟨hspec.1, hspec.2.2⟩
+  have hlimEq : ∀ i, Order.IsSuccLimit i → R i = ⋃ j : Set.Iio i, step j.2 '' R j.1 := by
+    intro i hlim
+    change infra_78_bkStage C step F seed ℓ ρ i = _
+    rw [infra_78_bkStage_eq]
+    split_ifs
+    rfl
+  refine ⟨R, hcard, ?_, hlimEq, fun i hlim => ⟨fun x hx => (hbase i hlim).1 (Or.inl hx),
+    (hbase i hlim).2⟩⟩
+  intro j i h x hx
+  have hmem : x ∈ ⋃ j' : Set.Iio i, step j'.2 '' R j'.1 :=
+    Set.mem_iUnion.2 ⟨⟨j, h⟩, hx⟩
+  by_cases hlim : Order.IsSuccLimit i
+  · rw [hlimEq i hlim]; exact hmem
+  · exact (hbase i hlim).1 (Or.inr hmem)
+
+/-- The `ρ⁺` instance of `infra_78_bookkeeping_sets_abstract` (initial segments of
+`(succ ρ).ord.ToType` have size at most `ρ`). -/
+theorem infra_78_bookkeeping_sets_succ {ρ ℓ : Cardinal.{u}}
+    (C : (Order.succ ρ).ord.ToType → Type u)
+    (step : ∀ {j i : (Order.succ ρ).ord.ToType}, j < i → C j → C i)
+    (F : ∀ i, Set (C i) → Set (C i)) (seed : ∀ i, Set (C i))
+    (hℓ : ℵ₀ ≤ ℓ) (hℓρ : ℓ < ρ) (hpow : ρ ^ ℓ = ρ)
+    (hF : ∀ i (s : Set (C i)), #s ≤ ℓ → #(F i s) ≤ ρ) (hseed : ∀ i, #(seed i) ≤ ρ) :
+    ∃ R : ∀ i, Set (C i),
+      (∀ i, #(R i) ≤ ρ) ∧
+      (∀ {j i} (h : j < i), step h '' R j ⊆ R i) ∧
+      (∀ i, Order.IsSuccLimit i → R i = ⋃ j : Set.Iio i, step j.2 '' R j.1) ∧
+      (∀ i, ¬ Order.IsSuccLimit i →
+        seed i ⊆ R i ∧ ∀ s ⊆ R i, #s ≤ ℓ → F i s ⊆ R i) := by
+  refine infra_78_bookkeeping_sets_abstract C step F seed hℓ hℓρ hpow hF hseed ?_
+  intro i
+  have h := Cardinal.mk_Iio_lt i (by rw [mk_ord_toType, Ordinal.type_toType])
+  rw [mk_ord_toType] at h
+  exact Order.lt_succ_iff.1 h
+
+end Bookkeeping
+
 /-- **The `ρ⁺` matrix (data of Proposition 7.8's proof).** An increasing `ρ⁺`-chain of
 pairs `X_i ≤ Y_i` at one level `κ`, with permitted inclusions commuting with the pair arrows (continuity at limits, Def 7.7, is not
 encoded here). -/
