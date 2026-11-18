@@ -268,6 +268,79 @@ theorem infra_78_same_level_type_amalgam
     apply j.injective
     exact (key1 a1).trans (hh.trans (key2 a2).symm)
 
+/-- **Mixed Löwenheim–Skolem for pairs (Prop 7.8 closure requirement 1; proved).** Given a
+pair `f : X → Y` at level `κ` and parameter sets `S ⊆ X`, `T ⊆ Y` of size at most `ℓ`, with
+`ℓ ≤ κ` an eligible level, there is a pair `g : A → V` of level-`ℓ` objects with permitted
+arrows `A → X`, `V → Y` making the square commute (`iV ∘ g = f ∘ iA`), `S` inside the image of
+`A` and `T` inside the image of `V`. Proof: a size-`ℓ` strong hull of `S` in `X`, then a
+size-`ℓ` strong hull in `Y` of `T` and the image of the first hull. -/
+theorem infra_78_mixed_ls_pair
+    {P : SingleModelData K} {ℓ κ : Cardinal.{u}} (hℓ : ℓ ∈ P.eligible) (hκ : κ ∈ P.eligible)
+    (hℓκ : ℓ ≤ κ) {X Y : P.scheme.Object κ hκ}
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hκ X) (P.scheme.asSystem hκ Y))
+    (S : Set X.model.carrier) (T : Set Y.model.carrier) (hS : #S ≤ ℓ) (hT : #T ≤ ℓ) :
+    ∃ (A V : P.scheme.Object ℓ hℓ)
+      (iA : SystemArrow K oneVertexShape (P.scheme.asSystem hℓ A) (P.scheme.asSystem hκ X))
+      (iV : SystemArrow K oneVertexShape (P.scheme.asSystem hℓ V) (P.scheme.asSystem hκ Y))
+      (g : SystemArrow K oneVertexShape (P.scheme.asSystem hℓ A) (P.scheme.asSystem hℓ V)),
+      P.scheme.permitted (X := A) (Y := X) iA ∧
+      P.scheme.permitted (X := V) (Y := Y) iV ∧
+      P.scheme.permitted (X := A) (Y := V) g ∧
+      (∀ v, (iV.onVertex v).comp (g.onVertex v) = (f.onVertex v).comp (iA.onVertex v)) ∧
+      S ⊆ Set.range (iA.onVertex PUnit.unit) ∧ T ⊆ Set.range (iV.onVertex PUnit.unit) := by
+  classical
+  have hℓinf : ℵ₀ ≤ ℓ := P.aleph0_le hℓ
+  have hX : ℓ ≤ Model.card X.model := by
+    exact hℓκ.trans (le_of_eq (X.card).symm)
+  have hY : ℓ ≤ Model.card Y.model := by
+    exact hℓκ.trans (le_of_eq (Y.card).symm)
+  obtain ⟨M1, j1, hM1, hj1, hc1, hcov1⟩ :=
+    exists_strong_hull_exact_card K ℓ (P.ls_lt hℓ).le hℓinf X.model X.mem hX S hS
+  let fv : Language.Embedding K.τ X.model.carrier Y.model.carrier := f.onVertex PUnit.unit
+  have hfv : K.Strong fv := f.onVertex_strong PUnit.unit
+  let k1 : Language.Embedding K.τ M1.carrier Y.model.carrier := fv.comp j1
+  have hk1 : K.Strong k1 := K.strong_trans j1 fv hj1 hfv
+  have hT2 : #↥(T ∪ Set.range k1) ≤ ℓ := by
+    refine (mk_union_le _ _).trans ?_
+    have h := add_le_add hT ((mk_range_le (f := k1)).trans (le_of_eq hc1))
+    rwa [add_eq_self hℓinf] at h
+  obtain ⟨M2, j2, hM2, hj2, hc2, hcov2⟩ :=
+    exists_strong_hull_exact_card K ℓ (P.ls_lt hℓ).le hℓinf Y.model Y.mem hY _ hT2
+  have him : ∀ a, ∃ t, j2 t = k1 a := fun a => hcov2 _ (Or.inr ⟨a, rfl⟩)
+  let fac := factorEmbedding k1 j2 him
+  have hfac : K.Strong fac := strong_factorEmbedding k1 j2 hk1 hj2 him
+  have key : ∀ a, j2 (fac a) = k1 a := factorEmbedding_apply k1 j2 him
+  let A : SMObject K ℓ := SMObject.ofModel M1 hM1 hc1
+  let V : SMObject K ℓ := SMObject.ofModel M2 hM2 hc2
+  let eA : M1.carrier ≃[K.τ] A.model.carrier := SMObject.ofModelEquiv M1 hM1 hc1
+  let eV : M2.carrier ≃[K.τ] V.model.carrier := SMObject.ofModelEquiv M2 hM2 hc2
+  have heAs : K.Strong eA.symm.toEmbedding := strong_of_equiv K eA.symm A.mem
+  have heVs : K.Strong eV.symm.toEmbedding := strong_of_equiv K eV.symm V.mem
+  have heV : K.Strong eV.toEmbedding := strong_of_equiv K eV hM2
+  let iA : Language.Embedding K.τ A.model.carrier X.model.carrier := j1.comp eA.symm.toEmbedding
+  let iV : Language.Embedding K.τ V.model.carrier Y.model.carrier := j2.comp eV.symm.toEmbedding
+  let gg : Language.Embedding K.τ A.model.carrier V.model.carrier :=
+    eV.toEmbedding.comp (fac.comp eA.symm.toEmbedding)
+  refine ⟨A, V, oneVertexArrow iA (K.strong_trans _ _ heAs hj1),
+    oneVertexArrow iV (K.strong_trans _ _ heVs hj2),
+    oneVertexArrow gg (K.strong_trans _ _ (K.strong_trans _ _ heAs hfac) heV),
+    trivial, trivial, trivial, ?_, ?_, ?_⟩
+  · intro v
+    ext a
+    change j2 (eV.symm (eV (fac (eA.symm a)))) = fv (j1 (eA.symm a))
+    rw [eV.symm_apply_apply]
+    exact key _
+  · intro s hs
+    obtain ⟨x, hx⟩ := hcov1 s hs
+    refine ⟨eA x, ?_⟩
+    change j1 (eA.symm (eA x)) = s
+    rw [eA.symm_apply_apply, hx]
+  · intro t ht
+    obtain ⟨x, hx⟩ := hcov2 t (Or.inl ht)
+    refine ⟨eV x, ?_⟩
+    change j2 (eV.symm (eV x)) = t
+    rw [eV.symm_apply_apply, hx]
+
 /-- `SameGaloisType` gives equality of the aligned type-joints over any bounded parameter list,
 with no level restriction on the two hosts (only boundedness at both host levels). -/
 theorem infra_78_diagramEq_of_sameGalois

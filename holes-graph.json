@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-18 10:15",
+  "updated": "2026-11-18 10:17",
   "sorryCount": 44,
   "legend": {
     "open": "No unfinished required proof-deps — try next",
@@ -1844,7 +1844,7 @@
       "file": "AEC/Section7/MixedDescent.lean",
       "status": "blocked",
       "blocker": "infra_78_matrix_construction",
-      "detail": "Blocked (full claim kept: everything Prop 7.8 needs beyond the done infra). Split into tracked sub-tips: infra_78_fixed_list_eventually_free (DONE), infra_78_nonfree_extension_tied (DONE), infra_78_same_level_type_amalgam (DONE), infra_78_bookkeeping_closure (open), infra_78_matrix_construction (blocked), infra_78_isolated_stage (blocked), infra_78_theta_shrink (blocked), infra_78_isolation_transfer (blocked). Previously done toward it: mixed tied free lift, mixed Lemma 7.6, Fodor, matrix data, stationary combinatorics, tied local character. Open. Done toward it: mixed tied free lift and mixed Lemma 7.6 (sorry-free), Fodor, matrix data, stationary combinatorics (infra_78_stationary_combinatorics: high-cofinality stages stationary, small sets appear early, one fixed failing list on a stationary set). Tied local character now done (infra_78_tied_local_character: infra_78_tied_local, base mono, restrict); untied IsFreeFrom is vacuous (audit_free_from_vacuous). Remaining for Prop 7.8: the rho^+ matrix construction at level kappa with level-lambda pairs inside R_i,S_i (bookkeeping closures), type-identifying amalgamation at kappa, the local-character contradiction for the fixed list, the theta^+ shrink to A<=U with the majority free-extension identity, Def 7.7 continuity at matrix limits (only finite marks done: infra_78_finite_continuity)."
+      "detail": "Blocked (full claim kept: everything Prop 7.8 needs beyond the done infra). Split into tracked sub-tips: infra_78_fixed_list_eventually_free (DONE), infra_78_nonfree_extension_tied (DONE), infra_78_same_level_type_amalgam (DONE), infra_78_bookkeeping_closure (blocked; split into infra_78_mixed_ls_pair DONE, infra_78_code_copies_bounded, infra_78_copies_persist_at_limits, infra_78_bookkeeping_assembly), infra_78_matrix_construction (blocked), infra_78_isolated_stage (blocked), infra_78_theta_shrink (blocked), infra_78_isolation_transfer (blocked). Previously done toward it: mixed tied free lift, mixed Lemma 7.6, Fodor, matrix data, stationary combinatorics, tied local character. Open. Done toward it: mixed tied free lift and mixed Lemma 7.6 (sorry-free), Fodor, matrix data, stationary combinatorics (infra_78_stationary_combinatorics: high-cofinality stages stationary, small sets appear early, one fixed failing list on a stationary set). Tied local character now done (infra_78_tied_local_character: infra_78_tied_local, base mono, restrict); untied IsFreeFrom is vacuous (audit_free_from_vacuous). Remaining for Prop 7.8: the rho^+ matrix construction at level kappa with level-lambda pairs inside R_i,S_i (bookkeeping closures), type-identifying amalgamation at kappa, the local-character contradiction for the fixed list, the theta^+ shrink to A<=U with the majority free-extension identity, Def 7.7 continuity at matrix limits (only finite marks done: infra_78_finite_continuity)."
     },
     {
       "id": "infra_9_cube_scheme",
@@ -2211,9 +2211,9 @@
       "label": "Prop 7.8: bookkeeping closures R_i subset S_i",
       "section": 7,
       "file": "AEC/Section7/MixedDescent.lean",
-      "status": "open",
-      "blocker": null,
-      "detail": "Open (board-only). Sets R_i subset S_i of size <= rho with closure requirements (1) level-lambda subpairs A <= U inside R_i,S_i and (2) lambda copies of every <=lambda list computing types over X_i (Lemma 6.9 codes), satisfied at stages of cofinality > lambda via successor closures and local character at limits."
+      "status": "blocked",
+      "blocker": "infra_78_bookkeeping_assembly",
+      "detail": "Blocked (full claim kept). Split: infra_78_mixed_ls_pair (DONE, requirement 1 supply), infra_78_code_copies_bounded (open, requirement 2 supply), infra_78_copies_persist_at_limits (open, requirement 2 at limits), infra_78_bookkeeping_assembly (blocked). Open (board-only). Sets R_i subset S_i of size <= rho with closure requirements (1) level-lambda subpairs A <= U inside R_i,S_i and (2) lambda copies of every <=lambda list computing types over X_i (Lemma 6.9 codes), satisfied at stages of cofinality > lambda via successor closures and local character at limits."
     },
     {
       "id": "infra_78_matrix_construction",
@@ -2250,6 +2250,42 @@
       "status": "blocked",
       "blocker": "infra_78_theta_shrink",
       "detail": "Blocked. Mixed Lemma 7.6 (infra_78_lemma_7_6_mixed) gives isolation over A; bounded homogeneity gives A ~ X at level lambda; transport U and b to the required extension of the given X (the proposition_7_8 conclusion)."
+    },
+    {
+      "id": "infra_78_mixed_ls_pair",
+      "label": "Prop 7.8: mixed Lowenheim-Skolem for pairs (closure req. 1)",
+      "section": 7,
+      "file": "AEC/Section7/MixedLevel.lean",
+      "status": "done",
+      "blocker": null,
+      "detail": "Done (no sorry; axioms propext/choice/Quot.sound). infra_78_mixed_ls_pair: for eligible l <= kappa, f : X -> Y at level kappa, S subset X, T subset Y with #S,#T <= l: exists level-l A, V with permitted iA : A -> X, iV : V -> Y, g : A -> V, iV o g = f o iA (on vertices), S subset range iA, T subset range iV. Two strong hulls of exact size l (exists_strong_hull_exact_card)."
+    },
+    {
+      "id": "infra_78_code_copies_bounded",
+      "label": "Prop 7.8: bounded Lemma 6.9 copies (closure req. 2 supply)",
+      "section": 7,
+      "file": "AEC/Section7/MixedDescent.lean",
+      "status": "open",
+      "blocker": null,
+      "detail": "Open (board-only). At level kappa (recursion-closed for sigma >= lambda), every tuple d over X_i with |d| <= lambda has an ApproximationSequence seq with lambda <= seq.tau, lambda <= #seq.kappaIndex and #(seq.kappaIndex x d.idx) <= c(lambda) for a cost c(lambda) depending only on lambda (P.g, ls K), so that rho >= c(lambda) bounds the copies added per stage. infra_78_exists_seq_ge gives the sequence but no upper bound on #kappaIndex."
+    },
+    {
+      "id": "infra_78_copies_persist_at_limits",
+      "label": "Prop 7.8: copies persist over X_i at cf > lambda limits",
+      "section": 7,
+      "file": "AEC/Section7/MixedDescent.lean",
+      "status": "open",
+      "blocker": null,
+      "detail": "Open (board-only). If tp(d/X_i) is tied free from an earlier X_j (local character at a stage of cofinality > lambda), then copies of an approximation sequence placed in an intervening base X_k (j <= k < i) still compute tp(d/X_i) on tests of size < lambda with the |Z| + aleph0 exception estimate (free-extension theorem / sequence push along X_k -> X_i)."
+    },
+    {
+      "id": "infra_78_bookkeeping_assembly",
+      "label": "Prop 7.8: assemble R_i subset S_i along the matrix",
+      "section": 7,
+      "file": "AEC/Section7/MixedDescent.lean",
+      "status": "blocked",
+      "blocker": "infra_78_code_copies_bounded",
+      "detail": "Blocked. Successor closures for lambda^+ steps (rho^lambda = rho lists, each adding <= rho points via infra_78_mixed_ls_pair and infra_78_code_copies_bounded), continuity at limits, and requirements 1-2 at stages of cofinality > lambda via infra_78_bounded_in_earlier_stage and infra_78_copies_persist_at_limits."
     }
   ],
   "edges": [
@@ -4219,8 +4255,53 @@
       "from": "infra_78_isolation_transfer",
       "to": "infra_78_mixed_level_isolation",
       "kind": "hard"
+    },
+    {
+      "from": "infra_78_mixed_ls_pair",
+      "to": "infra_78_bookkeeping_closure",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_78_code_copies_bounded",
+      "to": "infra_78_bookkeeping_closure",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_78_copies_persist_at_limits",
+      "to": "infra_78_bookkeeping_closure",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_78_bookkeeping_assembly",
+      "to": "infra_78_bookkeeping_closure",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_78_mixed_ls_pair",
+      "to": "infra_78_bookkeeping_assembly",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_78_code_copies_bounded",
+      "to": "infra_78_bookkeeping_assembly",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_78_copies_persist_at_limits",
+      "to": "infra_78_bookkeeping_assembly",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_78_stationary_combinatorics",
+      "to": "infra_78_bookkeeping_assembly",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_78_tied_local_character",
+      "to": "infra_78_copies_persist_at_limits",
+      "kind": "hard"
     }
   ],
-  "doneCount": 186,
+  "doneCount": 187,
   "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 43. Uncommitted in /tmp/aec-grok."
 }
