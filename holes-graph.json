@@ -3349,6 +3349,15 @@
    "status": "done",
    "blocker": null,
    "detail": "PROVED cycle 89: infra_712u_Triv (empty entry, both steps onto) and infra_712u_nontriv_card: #{beta | not Triv beta} <= mu from #(Sigma i, indexAt i) <= mu and infra_712u_nontrivial_card on both chains. Gives the cofinal set for infra_712u_packed_limit_cofinal. Axioms clean."
+  },
+  {
+   "id": "infra_712u_limit_finish",
+   "label": "7.12(2) validity at a limit from any packed limit; onto steps pass to limits",
+   "section": 7,
+   "file": "AEC/Section7/Lemma712Common.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "PROVED cycle 89: infra_712u_limit_finish (compatibility over A and mark identification at a limit from any coherent packed limit: cofinal or stable) and infra_712u_surj_limit (onto steps b -> i for all i < k give an onto step b -> k at a limit, by continuity). Assembly inputs for infra_712u_common_long. Axioms clean."
   }
  ],
  "edges": [
@@ -6761,8 +6770,13 @@
    "from": "infra_712u_nontrivial_card",
    "to": "infra_712u_nontriv_card",
    "kind": "hard"
+  },
+  {
+   "from": "infra_712u_limit_finish",
+   "to": "infra_712u_common_long",
+   "kind": "hard"
   }
  ],
- "doneCount": 309,
+ "doneCount": 310,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

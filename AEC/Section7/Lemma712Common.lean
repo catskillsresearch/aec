@@ -648,6 +648,59 @@ theorem infra_712u_nontriv_card (hμ0 : ℵ₀ ≤ μ) (hsig : #(Σ i, L.indexAt
     _ ≤ (#S1 + #S2) + #S3 := by gcongr; exact Cardinal.mk_union_le _ _
     _ ≤ μ := Cardinal.add_le_of_le hμ0 (Cardinal.add_le_of_le hμ0 h1 h2) h3
 
+/-- **Validity at a limit from any packed limit (proved, cycle 89).** Whatever limit object
+receives the earlier valid states coherently with the chain steps (`infra_712u_packed_limit`,
+`_cofinal`, `_stable`), the new state is valid at `k`: compatibility over `A` and the marks come
+from an earlier stage. -/
+theorem infra_712u_limit_finish (k : WithTop L.δ) (hs : ∀ i, ¬ i ⋖ k) (hne : ∃ i, i < k)
+    (cf : Set.Iio k → infra_712u_State P μ hμ)
+    (hok : ∀ i : Set.Iio k, infra_712u_StateOK C C' e ei i.1 (cf i))
+    (R : infra_712u_State P μ hμ) (l : Set.Iio k → μ.ord.ToType → μ.ord.ToType)
+    (HG : infra_712u_IsArr (C.stage k) R.1 R.2.1)
+    (HG' : infra_712u_IsArr (C'.stage (e.withTopCongr k)) R.1 R.2.2)
+    (H1 : ∀ i x, R.2.1 ((C.step (le_of_lt i.2)).onVertex PUnit.unit x) = l i ((cf i).2.1 x))
+    (H2 : ∀ i x, R.2.2 ((C'.step (e.withTopCongr.monotone (le_of_lt i.2))).onVertex PUnit.unit x) =
+      l i ((cf i).2.2 x)) :
+    infra_712u_StateOK C C' e ei k R := by
+  obtain ⟨i0, hi0⟩ := hne
+  refine ⟨HG, HG', fun x => ?_, fun m hmk a => ?_⟩
+  · have e1 := DFunLike.congr_fun (C.into_step (le_of_lt hi0) PUnit.unit) x
+    have e2 := DFunLike.congr_fun (C'.into_step (e.withTopCongr.monotone (le_of_lt hi0))
+      PUnit.unit) x
+    rw [← e1, ← e2]
+    exact (H1 ⟨i0, hi0⟩ _).trans ((congrArg (l ⟨i0, hi0⟩) ((hok ⟨i0, hi0⟩).2.2.1 x)).trans
+      (H2 ⟨i0, hi0⟩ _).symm)
+  · have : ∃ i, (m : WithTop L.δ) < i ∧ i < k := by
+      by_contra hc
+      push Not at hc
+      exact hs m ⟨hmk, fun i h1 h2 => absurd (hc i h1) (not_le.2 h2)⟩
+    obtain ⟨i, hmi, hik⟩ := this
+    have m1 := congrArg Sigma.snd (C.mark_step m hmi (le_of_lt hik) a)
+    have m2 := congrArg Sigma.snd (C'.mark_step (e m) (e.withTopCongr.strictMono hmi)
+      (e.withTopCongr.monotone (le_of_lt hik)) (ei m a))
+    show R.2.1 (C.mark m k hmk a).2 = R.2.2 (C'.mark (e m) _ _ (ei m a)).2
+    rw [← m1, ← m2]
+    exact (H1 ⟨i, hik⟩ _).trans ((congrArg (l ⟨i, hik⟩) ((hok ⟨i, hik⟩).2.2.2 m hmi a)).trans
+      (H2 ⟨i, hik⟩ _).symm)
+
+/-- **Onto steps pass to limits (proved, cycle 89).** If every step `b → i` (`b ≤ i < k`) of a
+witnessing chain is onto and `k` is a limit, the step `b → k` is onto (continuity). -/
+theorem infra_712u_surj_limit {L₀ : TupleList P.scheme hμ A} [LinearOrder L₀.δ]
+    (D : TiedListWitnessingChain L₀) (k : WithTop L₀.δ) (hs : ∀ i, ¬ i ⋖ k) (b : WithTop L₀.δ)
+    (hb : b < k)
+    (hsb : ∀ i (h : b ≤ i), i < k → Function.Surjective ((D.step h).onVertex PUnit.unit)) :
+    Function.Surjective ((D.step (le_of_lt hb)).onVertex PUnit.unit) := by
+  intro x
+  obtain ⟨i, h, y, rfl⟩ := D.continuous k hs ⟨b, hb⟩ PUnit.unit x
+  have him : i ≤ max i b := le_max_left _ _
+  have hbm : b ≤ max i b := le_max_right _ _
+  have hmk : max i b < k := max_lt h hb
+  obtain ⟨z, hz⟩ := hsb (max i b) hbm hmk ((D.step him).onVertex PUnit.unit y)
+  refine ⟨z, ?_⟩
+  have e1 := DFunLike.congr_fun (D.step_comp hbm (le_of_lt hmk) PUnit.unit) z
+  have e2 := DFunLike.congr_fun (D.step_comp him (le_of_lt hmk) PUnit.unit) y
+  exact e1.symm.trans ((congrArg _ hz).trans e2)
+
 /-- The base state at a first stage. -/
 theorem infra_712u_base_R (k : WithTop L.δ) (hk : IsMin k) :
     ∃ s, infra_712u_StateOK C C' e ei k s := by
