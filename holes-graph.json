@@ -3448,6 +3448,42 @@
    "status": "done",
    "blocker": null,
    "detail": "PROVED cycle 92 (axioms clean): IsTiedFree f p qB eB, rho injective ==> IsTiedFree f (p.reindex rho) (qB.reindex (eB o rho)) refl, at recursion-closed mu >= sigma^+, #p.idx <= sigma. Proof: tied free lift r of p o rho (infra_610_tied_free_lift); differing test + infra_73_tied_move on the FULL p, restricted sequence (ApproximationSequence.project via subtuple_uniform), injective jointReindex precomposition; then r's answers transfer by SameGaloisType."
+  },
+  {
+   "id": "infra_713_productTied_congr_joint",
+   "label": "Tied product: replace joint by a same-Galois level joint",
+   "section": 7,
+   "file": "AEC/Section7/Theorem713Products.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "PROVED cycle 92 (axioms clean): IsProductTied p q j' e', SameGaloisType j j' g refl, j.nu = j'.nu = mu, #j.idx <= sigma ==> IsProductTied p q j (e'.trans g.symm). Via infra_612_galois_trans_cross_level_left_base (middle j', end x.join y)."
+  },
+  {
+   "id": "infra_713_tied_exists_level",
+   "label": "Existence of a tied product with level joint",
+   "section": 7,
+   "file": "AEC/Section7/Theorem713Products.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "PROVED cycle 92 (axioms clean): variant of infra_612_tied_exists exposing joint.nu = mu (joint = x.join y, nu := y.nu = mu)."
+  },
+  {
+   "id": "infra_713_productTied_base_change",
+   "label": "Binary tied product under tied free base change (level)",
+   "section": 7,
+   "file": "AEC/Section7/Theorem713Products.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "PROVED cycle 92 (axioms clean): IsProductTied p q joint e over X, tied free lifts pB qB jB along f (all at mu) ==> IsProductTied pB qB jB (sumCongr eP.symm eQ.symm . e . eJ). Via infra_713_tied_exists_level, infra_612_tied_base_change_level_joints, infra_713_productTied_congr_joint."
+  },
+  {
+   "id": "infra_713_finite_base_change",
+   "label": "Finite tied product (level) under tied free base change",
+   "section": 7,
+   "file": "AEC/Section7/Theorem713Products.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "PROVED cycle 92 (axioms clean): IsFiniteProductTiedLevel n b j E over X (factors and j at mu, factors <= sigma), tied free lifts bB i, jB along f at mu ==> IsFiniteProductTiedLevel n bB jB (sigmaCongrRight eB).symm . E . eJ. Induction on n, lifting left partial products by infra_610_tied_free_lift. Remaining for infra_713_lift_pi: PI (Def 7.10 tied) only provides plain IsFiniteProductTied (partial products' levels unknown) -- need a level finite product over X identified with L.subConcat, then infra_713_tiedFree_reindex + this lemma."
   }
  ],
  "edges": [
@@ -6937,8 +6973,32 @@
    "to": "infra_713_lift_pi",
    "kind": "hard",
    "note": ""
+  },
+  {
+   "from": "infra_713_productTied_congr_joint",
+   "to": "infra_713_lift_pi",
+   "kind": "hard",
+   "note": ""
+  },
+  {
+   "from": "infra_713_tied_exists_level",
+   "to": "infra_713_lift_pi",
+   "kind": "hard",
+   "note": ""
+  },
+  {
+   "from": "infra_713_productTied_base_change",
+   "to": "infra_713_lift_pi",
+   "kind": "hard",
+   "note": ""
+  },
+  {
+   "from": "infra_713_finite_base_change",
+   "to": "infra_713_lift_pi",
+   "kind": "hard",
+   "note": ""
   }
  ],
- "doneCount": 321,
+ "doneCount": 325,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

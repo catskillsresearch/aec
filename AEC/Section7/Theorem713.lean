@@ -1,6 +1,6 @@
 module
 
-public import AEC.Section7.TiedFreeProject
+public import AEC.Section7.Theorem713Products
 
 @[expose] public section
 

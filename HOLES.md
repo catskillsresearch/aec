@@ -397,6 +397,10 @@ Lean: imports `AEC.Section6.Results`.
 | `infra_713_lift` | Thm 7.13 (1b) | split (cycle 91): glue proved |
 | `infra_713_lift_pi` | Thm 7.13 (1b-i), tied free lift is PI | **open** (projection done; needs finite base change) |
 | `infra_713_tiedFree_reindex` | finite projections of tied free lifts | **done** (cycle 92, `TiedFreeProject.lean`) |
+| `infra_713_productTied_congr_joint` | tied product: replace the joint by a same-Galois level joint | **done** (cycle 92, `Theorem713Products.lean`) |
+| `infra_713_tied_exists_level` | tied product exists with a level joint | **done** (cycle 92, `Theorem713Products.lean`) |
+| `infra_713_productTied_base_change` | binary tied product under tied free base change (level) | **done** (cycle 92, `Theorem713Products.lean`) |
+| `infra_713_finite_base_change` | finite level tied product under tied free base change | **done** (cycle 92, `Theorem713Products.lean`) |
 | `infra_713_lift_det` | Thm 7.13 (1b-ii), determined by finite data | **open** (after `infra_713_lift_pi`) |
 | `infra_713_continuity` | Thm 7.13 (2), tied Def 7.7 | **open** (cycle 91) |
 | `infra_713_realize` | Thm 7.13 (3) | **open**, hard (bounded-mark 7.8/7.9) |
