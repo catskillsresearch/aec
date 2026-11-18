@@ -29,6 +29,11 @@ Base change is proved for joints at their base levels (`infra_612_tied_base_chan
 via `infra_612_pushSeq` and `infra_612_product_entry`).
 Associativity is proved for intermediate products and joints at the level of `A`
 (`infra_612_tied_assoc_level_joints`, the three-dimensional array argument).
+Permutation invariance and projections (clauses 5, 6) are proved when every partial product
+and both joints sit at the level of `A` (`IsFiniteProductTiedLevel`,
+`infra_612_tied_finite_perm_level`, `infra_612_tied_finite_proj_level`: generic entries of the
+`n`-dimensional array, `infra_612_finite_generic`, along sequences of strictly increasing
+lengths).
 Independence across levels (full clause 2), symmetry,
 associativity, permutation invariance, projections, and base change are the open sub-tips
 `infra_612_tied_independence`, `infra_612_tied_symmetry`, `infra_612_tied_assoc`,
@@ -1311,6 +1316,553 @@ theorem infra_612_tied_assoc_level_joints
     (by rintro ((u | u) | d) <;> rfl) (by rintro ((u | u | u) | d) <;> rfl)
   have S2 := P.scheme.diagram_trans _ _ _ _ _ _ T1 (P.scheme.diagram_trans _ _ _ _ _ _ T3 T4)
   exact P.scheme.diagram_trans _ _ _ _ _ _ S1 (P.scheme.diagram_symm _ _ _ _ S2)
+
+theorem infra_612_card_sigma_fin {n : ℕ} (α : Fin n → Type u) {σ : Cardinal.{u}}
+    (hσ : ℵ₀ ≤ σ) (h : ∀ i, #(α i) ≤ σ) : #(Σ i, α i) ≤ σ := by
+  rw [Cardinal.mk_sigma]
+  refine (Cardinal.sum_le_sum _ (fun _ => σ) h).trans ?_
+  rw [Cardinal.sum_const]
+  simp only [Cardinal.mk_fin, Cardinal.lift_natCast, Cardinal.lift_uzero]
+  exact (mul_le_mul' (Cardinal.natCast_lt_aleph0 (n := n)).le le_rfl).trans (Cardinal.aleph0_mul_eq hσ).le
+
+theorem infra_612_card_pi_fin {n : ℕ} (α : Fin n → Type u) {σ : Cardinal.{u}}
+    (hσ : ℵ₀ ≤ σ) (h : ∀ i, #(α i) ≤ σ) : #((i : Fin n) → α i) ≤ σ := by
+  rw [Cardinal.mk_pi]
+  refine (Cardinal.prod_le_prod _ (fun _ => σ) h).trans ?_
+  rw [Cardinal.prod_const]
+  simp only [Cardinal.mk_fin, Cardinal.lift_natCast, Cardinal.lift_uzero, Cardinal.power_natCast]
+  exact Cardinal.power_nat_le hσ
+
+/-- **Generic tuples.** For index types of strictly increasing infinite sizes above `c`, and
+bad sets `G i k ⊆ κ i` of size `≤ c` not depending on the `i`-th coordinate of `k`, some tuple
+avoids all its bad sets (choose coordinates from the longest down). -/
+theorem infra_612_comb : ∀ (n : ℕ) (κ : Fin n → Type u) {c : Cardinal.{u}}, ℵ₀ ≤ c →
+    (∀ i, c < #(κ i)) → (∀ i j : Fin n, i < j → #(κ i) < #(κ j)) →
+    ∀ (G : (i : Fin n) → ((j : Fin n) → κ j) → Set (κ i)),
+    (∀ i k, #(G i k) ≤ c) →
+    (∀ i k k', (∀ j, j ≠ i → k j = k' j) → G i k = G i k') →
+    ∃ k : (j : Fin n) → κ j, ∀ i, k i ∉ G i k
+  | 0, κ, c, _, _, _, G, _, _ => ⟨fun i => i.elim0, fun i => i.elim0⟩
+  | n + 1, κ, c, hc, hlen, hmono, G, hG, hind => by
+    classical
+    have hne : Nonempty (κ (Fin.last n)) := by
+      by_contra hne
+      rw [not_nonempty_iff] at hne
+      have h2 := hlen (Fin.last n)
+      rw [Cardinal.mk_eq_zero] at h2
+      exact absurd h2 (not_lt.2 bot_le)
+    obtain ⟨w0⟩ := hne
+    let κ' : Fin n → Type u := fun j => κ j.castSucc
+    -- a bound `M` for the shorter coordinates
+    obtain ⟨M, hcM, hM, hMlt⟩ : ∃ M : Cardinal.{u}, c ≤ M ∧ (∀ j, #(κ' j) ≤ M) ∧
+        M < #(κ (Fin.last n)) := by
+      rcases n with _ | m
+      · exact ⟨c, le_rfl, fun j => j.elim0, hlen _⟩
+      · refine ⟨#(κ (Fin.last m).castSucc), (hlen _).le, fun j => ?_, hmono _ _ ?_⟩
+        · rcases (Fin.le_last j).lt_or_eq with hj | hj
+          · exact (hmono _ _ (Fin.castSucc_lt_castSucc_iff.2 hj)).le
+          · rw [hj]
+        · exact Fin.castSucc_lt_last _
+    have hMinf : ℵ₀ ≤ M := hc.trans hcM
+    let U : Set (κ (Fin.last n)) :=
+      ⋃ k' : ((j : Fin n) → κ' j), G (Fin.last n) (Fin.snoc (α := κ) k' w0)
+    have hU : #U ≤ M := by
+      refine (Cardinal.mk_iUnion_le _).trans ?_
+      calc #((j : Fin n) → κ' j) * ⨆ k', #(G (Fin.last n) (Fin.snoc (α := κ) k' w0))
+          ≤ M * M := mul_le_mul' (infra_612_card_pi_fin κ' hMinf hM)
+            (ciSup_le' fun k' => (hG _ _).trans hcM)
+        _ = M := Cardinal.mul_eq_self hMinf
+    obtain ⟨v, hv⟩ : ∃ v, v ∉ U := by
+      by_contra hall
+      push Not at hall
+      have : #(κ (Fin.last n)) ≤ M :=
+        (Cardinal.mk_le_mk_of_subset (s := Set.univ) (fun v _ => hall v)).trans' 
+          Cardinal.mk_univ.ge |>.trans hU
+      exact absurd hMlt (not_lt.2 this)
+    let G' : (j : Fin n) → ((j' : Fin n) → κ' j') → Set (κ' j) :=
+      fun j k' => G j.castSucc (Fin.snoc (α := κ) k' v)
+    obtain ⟨k', hk'⟩ := infra_612_comb n κ' hc (fun j => hlen _)
+      (fun i j hij => hmono _ _ (Fin.castSucc_lt_castSucc_iff.2 hij)) G'
+      (fun j k' => hG _ _)
+      (fun j k₁ k₂ h => hind _ _ _ (by
+        intro i hi
+        induction i using Fin.lastCases with
+        | last => simp
+        | cast i =>
+          simp only [Fin.snoc_castSucc]
+          exact h i (fun hh => hi (by rw [hh]))))
+    refine ⟨Fin.snoc (α := κ) k' v, fun i => ?_⟩
+    induction i using Fin.lastCases with
+    | last =>
+      rw [Fin.snoc_last]
+      intro hmem
+      apply hv
+      refine Set.mem_iUnion.2 ⟨k', ?_⟩
+      rwa [hind (Fin.last n) (Fin.snoc (α := κ) k' w0) (Fin.snoc (α := κ) k' v) (by
+        intro j hj
+        induction j using Fin.lastCases with
+        | last => exact absurd rfl hj
+        | cast j => simp)]
+    | cast j =>
+      rw [Fin.snoc_castSucc]
+      exact hk' j
+
+
+
+/-- Finite tied products with every partial product at the level of `A`. -/
+def IsFiniteProductTiedLevel {P : SingleModelData K} {μ : Cardinal.{u}} {hμ : μ ∈ P.eligible}
+    {A : P.scheme.Object μ hμ} :
+    (n : ℕ) → (b : Fin n → TupleOver K oneVertexShape P.scheme hμ A) →
+    (joint : TupleOver K oneVertexShape P.scheme hμ A) →
+    ((Σ i, (b i).idx) ≃ joint.idx) → Prop
+  | 0, _, joint, _ => IsEmpty joint.idx
+  | n + 1, b, joint, E =>
+      ∃ (left : TupleOver K oneVertexShape P.scheme hμ A)
+        (El : (Σ i : Fin n, (b i.castSucc).idx) ≃ left.idx),
+        left.ν = μ ∧
+        IsFiniteProductTiedLevel n (fun i => b i.castSucc) left El ∧
+        ∃ e : left.idx ⊕ (b (Fin.last n)).idx ≃ joint.idx,
+          IsProductTied left (b (Fin.last n)) joint e ∧
+          (∀ (i : Fin n) (k : (b i.castSucc).idx), E ⟨i.castSucc, k⟩ = e (Sum.inl (El ⟨i, k⟩))) ∧
+          (∀ k : (b (Fin.last n)).idx, E ⟨Fin.last n, k⟩ = e (Sum.inr k))
+
+theorem IsFiniteProductTiedLevel.toPlain {P : SingleModelData K} {μ : Cardinal.{u}}
+    {hμ : μ ∈ P.eligible} {A : P.scheme.Object μ hμ} :
+    ∀ (n : ℕ) (b : Fin n → TupleOver K oneVertexShape P.scheme hμ A)
+      (joint : TupleOver K oneVertexShape P.scheme hμ A) (E : (Σ i, (b i).idx) ≃ joint.idx),
+      IsFiniteProductTiedLevel n b joint E → IsFiniteProductTied n b joint E
+  | 0, _, _, _, h => h
+  | n + 1, b, joint, E, h => by
+    obtain ⟨left, El, -, hL, e, hP, h1, h2⟩ := h
+    exact ⟨left, El, IsFiniteProductTiedLevel.toPlain n _ left El hL, e, hP, h1, h2⟩
+
+/-- Split the last factor off a `Fin (n+1)`-indexed sigma (with a parameter summand). -/
+def infra_612_finSplit {n : ℕ} {α : Fin (n + 1) → Type u} {β : Type u} :
+    (Σ i, α i) ⊕ β → (Σ j : Fin n, α j.castSucc) ⊕ (α (Fin.last n) ⊕ β)
+  | Sum.inl ⟨i, l⟩ =>
+    Fin.lastCases (motive := fun i => α i → (Σ j : Fin n, α j.castSucc) ⊕ (α (Fin.last n) ⊕ β))
+      (fun l => Sum.inr (Sum.inl l)) (fun j l => Sum.inl ⟨j, l⟩) i l
+  | Sum.inr d => Sum.inr (Sum.inr d)
+
+theorem infra_612_finSplit_castSucc {n : ℕ} {α : Fin (n + 1) → Type u} {β : Type u}
+    (j : Fin n) (l : α j.castSucc) :
+    infra_612_finSplit (β := β) (Sum.inl ⟨j.castSucc, l⟩) = Sum.inl ⟨j, l⟩ := by
+  simp [infra_612_finSplit]
+
+theorem infra_612_finSplit_last {n : ℕ} {α : Fin (n + 1) → Type u} {β : Type u}
+    (l : α (Fin.last n)) :
+    infra_612_finSplit (β := β) (Sum.inl ⟨Fin.last n, l⟩) = Sum.inr (Sum.inl l) := by
+  simp [infra_612_finSplit]
+
+set_option maxHeartbeats 3200000 in
+/-- **Generic entries of a finite tied product (levels at `A`).** -/
+theorem infra_612_finite_generic
+    (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ)
+    {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
+    (hrec : μ ∈ recursionClosedLevels P σ) (hσμ : Order.succ σ ≤ μ)
+    {A : P.scheme.Object μ hμ} {t : Cardinal.{u}} (ht : σ + t < μ) :
+    ∀ (n : ℕ) (b : Fin n → TupleOver K oneVertexShape P.scheme hμ A)
+      (joint : TupleOver K oneVertexShape P.scheme hμ A) (E : (Σ i, (b i).idx) ≃ joint.idx),
+      IsFiniteProductTiedLevel n b joint E →
+      (∀ i, (b i).ν = μ ∧ #(b i).idx ≤ σ) →
+      ∀ (s : (i : Fin n) → ApproximationSequence (b i)),
+      (∀ i, σ + t ≤ (s i).τ ∧ (s i).τ + ℵ₀ < #(s i).κIndex) →
+      ∀ {β : Type u} (Y : β → Occurrence K oneVertexShape (P.scheme.asSystem hμ A)),
+      #β ≤ σ + t →
+      ∃ F : (i : Fin n) → ((j : Fin n) → (s j).κIndex) → Set (s i).κIndex,
+        (∀ i k, #(F i k) ≤ σ + t) ∧
+        (∀ i k k', (∀ j, j ≠ i → k j = k' j) → F i k = F i k') ∧
+        ∀ k : (j : Fin n) → (s j).κIndex, (∀ i, k i ∉ F i k) →
+          P.scheme.DiagramEq (X := joint.host) (Y := A)
+            (alignJoint E.symm (typeJoint (p := joint) Y))
+            (Sum.elim (fun u : Σ i, (b i).idx => (s u.1).family (k u.1) u.2) Y)
+  | 0, b, joint, E, h, hb, s, hs, β, Y, hβ => by
+    refine ⟨fun i => i.elim0, fun i => i.elim0, fun i => i.elim0, fun k _ => ?_⟩
+    have hc : #((Σ i : Fin 0, (b i).idx) ⊕ β) < μ := by
+      rw [Cardinal.mk_sum, Cardinal.lift_id, Cardinal.lift_id]
+      have : #(Σ i : Fin 0, (b i).idx) = 0 := Cardinal.mk_eq_zero _
+      rw [this, zero_add]
+      exact hβ.trans_lt ht
+    have hp := P.scheme.diagram_preserved A joint.host joint.incl joint.incl_arrow
+      (Sum.elim (fun u : Σ i : Fin 0, (b i).idx => (s u.1).family (k u.1) u.2) Y) hc
+      (hc.trans_le (infra_612_le_nu joint))
+    refine infra_612_dEq_comp (P.scheme.diagram_symm _ _ _ _ hp) id ?_ (fun _ => rfl)
+    rintro (u | d)
+    · exact u.1.elim0
+    · rfl
+  | n + 1, b, joint, E, h, hb, s, hs, β, Y, hβ => by
+    classical
+    obtain ⟨left, El, hlν, hL, e, hP, hc1, hc2⟩ := h
+    have hσlt : σ < μ := (Order.lt_succ σ).trans_le hσμ
+    have hcinf : ℵ₀ ≤ σ + t := hσ.trans le_self_add
+    have hsum : ∀ {U V : Type u}, #U ≤ σ → #V ≤ σ + t → #(U ⊕ V) ≤ σ + t := fun hU hV => by
+      rw [Cardinal.mk_sum, Cardinal.lift_id, Cardinal.lift_id]
+      calc #_ + #_ ≤ σ + (σ + t) := add_le_add hU hV
+        _ = σ + t := by rw [← add_assoc, Cardinal.add_eq_self hσ]
+    have hsum2 : ∀ {U V : Type u}, #U ≤ σ → #V ≤ σ → #(U ⊕ V) ≤ σ := fun hU hV => by
+      rw [Cardinal.mk_sum, Cardinal.lift_id, Cardinal.lift_id]
+      exact Cardinal.add_le_of_le hσ hU hV
+    have hlt : ∀ {U : Type u}, #U ≤ σ + t → #U < μ := fun h => h.trans_lt ht
+    have hleftσ : #left.idx ≤ σ := (Cardinal.mk_congr El).symm.trans_le
+      (infra_612_card_sigma_fin _ hσ (fun i => (hb _).2))
+    have hlastσ : #(b (Fin.last n)).idx ≤ σ := (hb _).2
+    have IH := infra_612_finite_generic P σ hσ hμ hrec hσμ ht n (fun i => b i.castSucc) left El
+      hL (fun i => hb _) (fun i => s i.castSucc) (fun i => hs _) (β := (b (Fin.last n)).idx ⊕ β)
+    obtain ⟨Kq, hKτ, -, hKlong⟩ :=
+      infra_78_exists_seq_ge P σ hσ hμ hrec hσμ left hlν hleftσ ht
+    obtain ⟨x, ex, hS, y, ey, hT, hJ⟩ := hP
+    have hJ' : SameGaloisType _ (x.join y) e.symm (Equiv.sumCongr ex ey).symm := by
+      have h := infra_612_sameGalois_trans_equiv hJ (Equiv.sumCongr ex ey).symm
+      rw [Equiv.trans_assoc, Equiv.self_trans_symm, Equiv.trans_refl] at h
+      exact h
+    obtain ⟨C, hC, hEnt⟩ := infra_612_product_entry left (b (Fin.last n)) x ex hS y ey hT Kq
+      (s (Fin.last n)) Y (hleftσ.trans_lt hσlt) (hlt (hsum hleftσ hβ))
+      (hlt (hsum hlastσ hβ)) ((hsum hleftσ hβ).trans (hs _).1) (hs _).2
+    choose F' hF'c hF'i hF' using fun v : (s (Fin.last n)).κIndex =>
+      IH (Sum.elim ((s (Fin.last n)).family v) Y) (hsum hlastσ hβ)
+    refine ⟨fun i k => Fin.lastCases (motive := fun i => Set (s i).κIndex) C
+      (fun j => F' (k (Fin.last n)) j (fun j' => k j'.castSucc)) i, ?_, ?_, ?_⟩
+    · intro i k
+      induction i using Fin.lastCases with
+      | last =>
+        simp only [Fin.lastCases_last]
+        refine hC.trans ?_
+        calc #(left.idx ⊕ β) + ℵ₀ ≤ (σ + t) + (σ + t) := add_le_add (hsum hleftσ hβ) hcinf
+          _ = σ + t := Cardinal.add_eq_self hcinf
+      | cast j =>
+        simp only [Fin.lastCases_castSucc]
+        exact hF'c _ _ _
+    · intro i k k' hkk
+      induction i using Fin.lastCases with
+      | last => simp only [Fin.lastCases_last]
+      | cast j =>
+        simp only [Fin.lastCases_castSucc]
+        rw [hkk (Fin.last n) (Fin.castSucc_lt_last j).ne']
+        exact hF'i _ _ _ _ (fun j' hj' => hkk _ (fun hh => hj' (Fin.castSucc_injective _ hh)))
+    · intro k hk
+      have hv : k (Fin.last n) ∉ C := by
+        have := hk (Fin.last n)
+        simpa only [Fin.lastCases_last] using this
+      have hkj : ∀ j, k j.castSucc ∉ F' (k (Fin.last n)) j (fun j' => k j'.castSucc) := by
+        intro j
+        have := hk j.castSucc
+        simpa only [Fin.lastCases_castSucc] using this
+      have I1 := hF' (k (Fin.last n)) (fun j' => k j'.castSucc) hkj
+      set v := k (Fin.last n) with hvdef
+      let Y' : (b (Fin.last n)).idx ⊕ β → Occurrence K oneVertexShape (P.scheme.asSystem hμ A) :=
+        Sum.elim ((s (Fin.last n)).family v) Y
+      have hY' : #((b (Fin.last n)).idx ⊕ β) ≤ σ + t := hsum hlastσ hβ
+      have hKE : σ + t + ℵ₀ < #Kq.κIndex := by
+        rw [Cardinal.add_eq_left hcinf hcinf]
+        exact hKτ.trans_lt (le_self_add.trans_lt hKlong)
+      obtain ⟨m, hm, -⟩ := infra_78_exists_outside_two
+        {m | ¬ P.scheme.DiagramEq (X := left.host) (Y := A)
+          (typeJoint (p := left) Y') (seqJoint (Kq.family m) Y')}
+        {m | ¬ P.scheme.DiagramEq (X := left.host) (Y := A)
+          (typeJoint (p := left) Y') (seqJoint (Kq.family m) Y')} (hcinf.trans le_self_add)
+        ((Kq.few_exceptions _ (hY'.trans hKτ)).trans (add_le_add hY' le_rfl))
+        ((Kq.few_exceptions _ (hY'.trans hKτ)).trans (add_le_add hY' le_rfl)) hKE
+      have Gm : P.scheme.DiagramEq (X := left.host) (Y := A)
+          (typeJoint (p := left) Y') (seqJoint (Kq.family m) Y') := not_not.1 hm
+      have E1 := hEnt v hv m Gm
+      have DJ := infra_612_dEq_of_sameGalois hJ' Y ((hsum2 hleftσ hlastσ).trans_lt hσlt)
+        (hlt (hβ))
+      have Gm' := infra_612_dEq_comp (P.scheme.diagram_symm _ _ _ _ Gm)
+        (Equiv.sumAssoc left.idx (b (Fin.last n)).idx β)
+        (xs' := fun t => seqJoint (Kq.family m) Y' (Equiv.sumAssoc _ _ _ t))
+        (ys' := fun t => typeJoint (p := left) Y' (Equiv.sumAssoc _ _ _ t))
+        (fun _ => rfl) (fun _ => rfl)
+      have A1 := P.scheme.diagram_trans _ _ _ _ _ _ DJ (P.scheme.diagram_trans _ _ _ _ _ _ E1 Gm')
+      have A1' := infra_612_dEq_comp A1
+        (fun u => Sum.elim (fun jl => Sum.inl (Sum.inl (El jl)))
+          (Sum.elim (fun l => Sum.inl (Sum.inr l)) (fun d => Sum.inr d))
+          (infra_612_finSplit (α := fun i => (b i).idx) (β := β) u))
+        (xs' := alignJoint E.symm (typeJoint (p := joint) Y))
+        (ys' := fun u => alignJoint El.symm (typeJoint (p := left) Y')
+          (infra_612_finSplit (α := fun i => (b i).idx) (β := β) u))
+        (by
+          rintro (⟨i, l⟩ | d)
+          · induction i using Fin.lastCases with
+            | last =>
+              simp only [infra_612_finSplit_last]
+              exact congrArg (fun z => typeJoint (p := joint) Y (Sum.inl z)) (hc2 l)
+            | cast j =>
+              simp only [infra_612_finSplit_castSucc]
+              exact congrArg (fun z => typeJoint (p := joint) Y (Sum.inl z)) (hc1 j l)
+          · rfl)
+        (by
+          rintro (⟨i, l⟩ | d)
+          · induction i using Fin.lastCases with
+            | last => simp only [infra_612_finSplit_last]; rfl
+            | cast j => simp only [infra_612_finSplit_castSucc]; rfl
+          · rfl)
+      have I1' := infra_612_dEq_comp I1 (infra_612_finSplit (α := fun i => (b i).idx) (β := β))
+        (xs' := fun u => alignJoint El.symm (typeJoint (p := left) Y')
+          (infra_612_finSplit (α := fun i => (b i).idx) (β := β) u))
+        (ys' := Sum.elim (fun u : Σ i, (b i).idx => (s u.1).family (k u.1) u.2) Y)
+        (fun _ => rfl)
+        (by
+          rintro (⟨i, l⟩ | d)
+          · induction i using Fin.lastCases with
+            | last => simp only [infra_612_finSplit_last]; rfl
+            | cast j => simp only [infra_612_finSplit_castSucc]; rfl
+          · rfl)
+      exact P.scheme.diagram_trans _ _ _ _ _ _ A1' I1'
+
+/-- `infra_78_exists_seq_ge` with the index length `succ (max (max t ℵ₀) |p|)`. -/
+theorem infra_612_exists_seq_len
+    (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ)
+    {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
+    (hrec : μ ∈ recursionClosedLevels P σ) (hσSucc : Order.succ σ ≤ μ)
+    {base : P.scheme.Object μ hμ} (p : TupleOver K oneVertexShape P.scheme hμ base)
+    (hνμ : p.ν = μ) (hidx : #p.idx ≤ σ) {t : Cardinal.{u}} (ht : t < μ) :
+    ∃ seq : ApproximationSequence p, t ≤ seq.τ ∧ seq.τ + ℵ₀ < #seq.κIndex ∧
+      #seq.κIndex = Order.succ (max (max t ℵ₀) #p.idx) := by
+  have hσlt : σ < μ := (Order.lt_succ σ).trans_le hσSucc
+  have hidxμ : #p.idx < μ := hidx.trans_lt hσlt
+  let τ : Cardinal.{u} := max t ℵ₀
+  have hτ : ℵ₀ ≤ τ := le_max_right _ _
+  have hτμ : τ < μ := max_lt ht (P.aleph0_lt hμ)
+  have hclosed : infra_69_pad_recursion_closed σ (max (ls K) ℵ₀)
+      (max (max σ τ) (max (ls K) ℵ₀)) μ := by
+    apply hrec.2
+    exact max_lt (max_lt hσlt hτμ) (max_lt (P.ls_lt hμ) (P.aleph0_lt hμ))
+  let ρ : Cardinal.{u} := max τ #p.idx
+  have hρinf : ℵ₀ ≤ ρ := hτ.trans (le_max_left _ _)
+  have hρμ : ρ < μ := max_lt hτμ hidxμ
+  let κ : Cardinal.{u} := Order.succ ρ
+  have hκinf : ℵ₀ ≤ κ := hρinf.trans (Order.le_succ _)
+  have hκμ : κ < μ :=
+    (Order.succ_le_of_lt (cantor ρ)).trans_lt
+      (hμ.1.working.strongLimit.isStrongPrelimit hρμ)
+  have hprodκ : κ * #p.idx < μ := by
+    have hmul : κ * #p.idx ≤ κ * σ := mul_le_mul' le_rfl hidx
+    rcases le_total σ κ with hσκ | hκσ
+    · have heq : κ * σ = κ :=
+        mul_eq_left hκinf hσκ (aleph0_pos.trans_le hσ).ne'
+      rw [heq] at hmul
+      exact hmul.trans_lt hκμ
+    · have heq : κ * σ = σ := by
+        rw [mul_comm]
+        exact mul_eq_left hσ hκσ (aleph0_pos.trans_le hκinf).ne'
+      rw [heq] at hmul
+      exact hmul.trans_lt hσlt
+  obtain ⟨seq, hseqτ, hseqκ⟩ :=
+    P.exists_approximationSequence hμ base p hνμ σ τ κ hσ hσlt hidx hτ hτμ hκinf hκμ
+      hprodκ hclosed
+  refine ⟨seq, ?_, ?_, ?_⟩
+  · rw [hseqτ]; exact le_max_left _ _
+  · rw [hseqτ, hseqκ, add_eq_left hτ hτ]
+    exact (le_max_left _ _).trans_lt (Order.lt_succ ρ)
+  · rw [hseqκ]
+
+/-- Approximation sequences for finitely many factors, with strictly increasing lengths. -/
+theorem infra_612_increasing_seqs
+    (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ)
+    {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
+    (hrec : μ ∈ recursionClosedLevels P σ) (hσμ : Order.succ σ ≤ μ)
+    {A : P.scheme.Object μ hμ} {n : ℕ} (b : Fin n → TupleOver K oneVertexShape P.scheme hμ A)
+    (hb : ∀ i, (b i).ν = μ ∧ #(b i).idx ≤ σ) {t0 : Cardinal.{u}} (ht0 : t0 < μ)
+    (hσt0 : σ ≤ t0) :
+    ∃ s : (i : Fin n) → ApproximationSequence (b i),
+      (∀ i, t0 ≤ (s i).τ ∧ (s i).τ + ℵ₀ < #(s i).κIndex) ∧
+      ∀ i j, i < j → #(s i).κIndex < #(s j).κIndex := by
+  let T : ℕ → Cardinal.{u} := fun m => Order.succ^[m] t0
+  have hTμ : ∀ m, T m < μ := by
+    intro m
+    induction m with
+    | zero => exact ht0
+    | succ m ih =>
+      show Order.succ^[m + 1] t0 < μ
+      rw [Function.iterate_succ_apply']
+      exact (Order.succ_le_of_lt (cantor _)).trans_lt
+        (hμ.1.working.strongLimit.isStrongPrelimit ih)
+  have hTmono : Monotone T := monotone_nat_of_le_succ (fun m => by
+    show Order.succ^[m] t0 ≤ Order.succ^[m + 1] t0
+    rw [Function.iterate_succ_apply']
+    exact Order.le_succ _)
+  have hT0 : ∀ m, t0 ≤ T m := fun m => hTmono (Nat.zero_le m)
+  have hex : ∀ i : Fin n, ∃ seq : ApproximationSequence (b i), T i.val ≤ seq.τ ∧
+      seq.τ + ℵ₀ < #seq.κIndex ∧ #seq.κIndex ≤ T (i.val + 1) := by
+    intro i
+    obtain ⟨seq, h1, h2, h3⟩ := infra_612_exists_seq_len P σ hσ hμ hrec hσμ (b i) (hb i).1
+      (hb i).2 (hTμ i.val)
+    refine ⟨seq, h1, h2, ?_⟩
+    rw [h3]
+    show _ ≤ Order.succ^[i.val + 1] t0
+    rw [Function.iterate_succ_apply']
+    have hinf : ℵ₀ ≤ T i.val := hσ.trans (hσt0.trans (hT0 _))
+    have : max (max (T i.val) ℵ₀) #(b i).idx = T i.val :=
+      by rw [max_eq_left hinf, max_eq_left ((hb i).2.trans (hσt0.trans (hT0 _)))]
+    rw [this]
+  choose s hs1 hs2 hs3 using hex
+  refine ⟨s, fun i => ⟨(hT0 _).trans (hs1 i), hs2 i⟩, fun i j hij => ?_⟩
+  calc #(s i).κIndex ≤ T (i.val + 1) := hs3 i
+    _ ≤ T j.val := hTmono (Nat.succ_le_of_lt hij)
+    _ ≤ (s j).τ := hs1 j
+    _ < #(s j).κIndex := le_self_add.trans_lt (hs2 j)
+
+set_option maxHeartbeats 3200000 in
+/-- **Finite tied products are invariant under permuting the factors, all partial products at
+the level of `A` (proved).** -/
+theorem infra_612_tied_finite_perm_level
+    (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ)
+    {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
+    (hrec : μ ∈ recursionClosedLevels P σ) (hσμ : Order.succ σ ≤ μ)
+    {A : P.scheme.Object μ hμ} (n : ℕ)
+    (b : Fin n → TupleOver K oneVertexShape P.scheme hμ A)
+    (hb : ∀ i, (b i).ν = μ ∧ #(b i).idx ≤ σ) (π : Equiv.Perm (Fin n))
+    (j₁ j₂ : TupleOver K oneVertexShape P.scheme hμ A)
+    (E₁ : (Σ i, (b i).idx) ≃ j₁.idx) (E₂ : (Σ i, (b (π i)).idx) ≃ j₂.idx)
+    (h₁ : IsFiniteProductTiedLevel n b j₁ E₁)
+    (h₂ : IsFiniteProductTiedLevel n (fun i => b (π i)) j₂ E₂)
+    (hj₁ : j₁.ν = μ) (hj₂ : j₂.ν = μ) :
+    SameGaloisType j₁ j₂ E₁.symm
+      (E₂.symm.trans (Equiv.sigmaCongrLeft (β := fun i => (b i).idx) π)) := by
+  classical
+  have hσlt : σ < μ := (Order.lt_succ σ).trans_le hσμ
+  have hj₁σ : #j₁.idx ≤ σ := (Cardinal.mk_congr E₁).symm.trans_le
+    (infra_612_card_sigma_fin _ hσ (fun i => (hb i).2))
+  by_contra hneq
+  obtain ⟨β, Y, hβ, hnot⟩ :=
+    infra_73_differing_test P σ hσ hμ hrec hσμ j₁ j₂ E₁.symm
+      (E₂.symm.trans (Equiv.sigmaCongrLeft (β := fun i => (b i).idx) π)) hj₁ hj₂ hj₁σ
+      (hj₁σ.trans_lt hσlt) hneq
+  apply hnot
+  have hβμ : #β < μ := by
+    have hg : P.g σ < μ :=
+      (hμ.1.closed P.g (Set.mem_insert_of_mem _ rfl)).below σ hσ hσlt
+    exact hβ.trans_lt (add_lt_of_lt (P.aleph0_le hμ) hg (P.ls_lt hμ))
+  have ht : σ + #β < μ := add_lt_of_lt (P.aleph0_le hμ) hσlt hβμ
+  have hcinf : ℵ₀ ≤ σ + #β := hσ.trans le_self_add
+  obtain ⟨s, hs, hsmono⟩ := infra_612_increasing_seqs P σ hσ hμ hrec hσμ b hb ht le_self_add
+  obtain ⟨F, hFc, hFi, hF⟩ := infra_612_finite_generic P σ hσ hμ hrec hσμ ht n b j₁ E₁ h₁ hb s
+    hs Y le_add_self
+  obtain ⟨F', hF'c, hF'i, hF'⟩ := infra_612_finite_generic P σ hσ hμ hrec hσμ ht n
+    (fun i => b (π i)) j₂ E₂ h₂ (fun i => hb (π i)) (fun i => s (π i)) (fun i => hs (π i)) Y
+    le_add_self
+  let κ : Fin n → Type u := fun i => (s i).κIndex
+  let G : (i : Fin n) → ((j : Fin n) → κ j) → Set (κ i) := fun i k =>
+    F i k ∪ (fun v : κ i => cast (congrArg κ (π.apply_symm_apply i).symm) v) ⁻¹'
+      F' (π.symm i) (fun j => k (π j))
+  obtain ⟨k, hk⟩ := infra_612_comb n κ hcinf
+    (fun i => ((hs i).1.trans le_self_add).trans_lt (hs i).2) hsmono G
+    (fun i k => by
+      refine (Cardinal.mk_union_le _ _).trans ?_
+      calc _ ≤ (σ + #β) + (σ + #β) := add_le_add (hFc i k)
+            ((Cardinal.mk_preimage_of_injective _ _ (fun _ _ hh => (cast_inj _).1 hh)).trans (hF'c _ _))
+        _ = σ + #β := Cardinal.add_eq_self hcinf)
+    (fun i k k' hkk => by
+      show F i k ∪ _ = F i k' ∪ _
+      rw [hFi i k k' hkk, hF'i (π.symm i) (fun j => k (π j)) (fun j => k' (π j)) (fun j hj =>
+        hkk (π j) (fun hh => hj (by rw [← hh, Equiv.symm_apply_apply])))])
+  have hk1 : ∀ i, k i ∉ F i k := fun i hi => hk i (Or.inl hi)
+  have h3 : ∀ (j a : Fin n) (ha : a = j) (h' : κ (π j) = κ (π a)),
+      k (π j) ∈ F' j (fun j => k (π j)) → cast h' (k (π j)) ∈ F' a (fun j => k (π j)) := by
+    intro j a ha h' hm; subst ha; simpa using hm
+  have hk2 : ∀ j, k (π j) ∉ F' j (fun j => k (π j)) := fun j hj =>
+    hk (π j) (Or.inr (h3 j (π.symm (π j)) (π.symm_apply_apply j) _ hj))
+  have D1 := hF k hk1
+  have D2 := hF' (fun j => k (π j)) hk2
+  let σπ := Equiv.sigmaCongrLeft (β := fun i => (b i).idx) π
+  have D2' := infra_612_dEq_comp D2 (Sum.map σπ.symm id)
+    (xs' := alignJoint (E₂.symm.trans σπ) (typeJoint (p := j₂) Y))
+    (ys' := Sum.elim (fun u : Σ i, (b i).idx => (s u.1).family (k u.1) u.2) Y)
+    (by rintro (u | d) <;> rfl)
+    (by
+      rintro (u | d)
+      · exact (congrArg (fun w : Σ i, (b i).idx => (s w.1).family (k w.1) w.2)
+          (σπ.apply_symm_apply u)).symm
+      · rfl)
+  exact P.scheme.diagram_trans _ _ _ _ _ _ D1 (P.scheme.diagram_symm _ _ _ _ D2')
+
+set_option maxHeartbeats 3200000 in
+/-- **Restricting a finite tied product to a subfamily of factors, all partial products at the
+level of `A` (proved).** -/
+theorem infra_612_tied_finite_proj_level
+    (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ)
+    {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
+    (hrec : μ ∈ recursionClosedLevels P σ) (hσμ : Order.succ σ ≤ μ)
+    {A : P.scheme.Object μ hμ} (n m : ℕ)
+    (b : Fin n → TupleOver K oneVertexShape P.scheme hμ A)
+    (hb : ∀ i, (b i).ν = μ ∧ #(b i).idx ≤ σ) (sf : Fin m ↪ Fin n)
+    (j j' : TupleOver K oneVertexShape P.scheme hμ A)
+    (E : (Σ i, (b i).idx) ≃ j.idx) (E' : (Σ i, (b (sf i)).idx) ≃ j'.idx)
+    (h : IsFiniteProductTiedLevel n b j E)
+    (h' : IsFiniteProductTiedLevel m (fun i => b (sf i)) j' E')
+    (hj : j.ν = μ) (hj' : j'.ν = μ) :
+    SameGaloisType (j.reindex (fun t : (Σ i, (b (sf i)).idx) => E ⟨sf t.1, t.2⟩)) j'
+      (Equiv.refl _) E'.symm := by
+  classical
+  have hσlt : σ < μ := (Order.lt_succ σ).trans_le hσμ
+  have hqσ : #(Σ i, (b (sf i)).idx) ≤ σ := infra_612_card_sigma_fin _ hσ (fun i => (hb _).2)
+  by_contra hneq
+  obtain ⟨β, Y, hβ, hnot⟩ :=
+    infra_73_differing_test P σ hσ hμ hrec hσμ
+      (j.reindex (fun t : (Σ i, (b (sf i)).idx) => E ⟨sf t.1, t.2⟩)) j'
+      (Equiv.refl _) E'.symm hj hj' hqσ (hqσ.trans_lt hσlt) hneq
+  apply hnot
+  have hβμ : #β < μ := by
+    have hg : P.g σ < μ :=
+      (hμ.1.closed P.g (Set.mem_insert_of_mem _ rfl)).below σ hσ hσlt
+    exact hβ.trans_lt (add_lt_of_lt (P.aleph0_le hμ) hg (P.ls_lt hμ))
+  have ht : σ + #β < μ := add_lt_of_lt (P.aleph0_le hμ) hσlt hβμ
+  have hcinf : ℵ₀ ≤ σ + #β := hσ.trans le_self_add
+  obtain ⟨s, hs, hsmono⟩ := infra_612_increasing_seqs P σ hσ hμ hrec hσμ b hb ht le_self_add
+  obtain ⟨F, hFc, hFi, hF⟩ := infra_612_finite_generic P σ hσ hμ hrec hσμ ht n b j E h hb s
+    hs Y le_add_self
+  obtain ⟨F', hF'c, hF'i, hF'⟩ := infra_612_finite_generic P σ hσ hμ hrec hσμ ht m
+    (fun i => b (sf i)) j' E' h' (fun i => hb (sf i)) (fun i => s (sf i)) (fun i => hs (sf i)) Y
+    le_add_self
+  let κ : Fin n → Type u := fun i => (s i).κIndex
+  let G : (i : Fin n) → ((l : Fin n) → κ l) → Set (κ i) := fun i k =>
+    F i k ∪ (if hi : ∃ a, sf a = i then
+      (fun v : κ i => cast (congrArg κ (Classical.choose_spec hi).symm) v) ⁻¹'
+        F' (Classical.choose hi) (fun a => k (sf a)) else ∅)
+  obtain ⟨k, hk⟩ := infra_612_comb n κ hcinf
+    (fun i => ((hs i).1.trans le_self_add).trans_lt (hs i).2) hsmono G
+    (fun i k => by
+      refine (Cardinal.mk_union_le _ _).trans ?_
+      have h2 : #((if hi : ∃ a, sf a = i then
+          (fun v : κ i => cast (congrArg κ (Classical.choose_spec hi).symm) v) ⁻¹'
+            F' (Classical.choose hi) (fun a => k (sf a)) else ∅ : Set (κ i))) ≤ σ + #β := by
+        split_ifs with hi
+        · exact (Cardinal.mk_preimage_of_injective _ _ (fun _ _ hh => (cast_inj _).1 hh)).trans
+            (hF'c _ _)
+        · simp
+      calc _ ≤ (σ + #β) + (σ + #β) := add_le_add (hFc i k) h2
+        _ = σ + #β := Cardinal.add_eq_self hcinf)
+    (fun i k k' hkk => by
+      show F i k ∪ _ = F i k' ∪ _
+      rw [hFi i k k' hkk]
+      congr 1
+      by_cases hi : ∃ a, sf a = i
+      · simp only [dif_pos hi]
+        rw [hF'i (Classical.choose hi) (fun a => k (sf a)) (fun a => k' (sf a)) (fun a ha =>
+          hkk (sf a) (fun hh => ha (sf.injective (hh.trans (Classical.choose_spec hi).symm))))]
+      · simp only [dif_neg hi])
+  have hk1 : ∀ i, k i ∉ F i k := fun i hi => hk i (Or.inl hi)
+  have h3 : ∀ (a c : Fin m) (hc : c = a) (h' : κ (sf a) = κ (sf c)),
+      k (sf a) ∈ F' a (fun a => k (sf a)) → cast h' (k (sf a)) ∈ F' c (fun a => k (sf a)) := by
+    intro a c hc h' hm; subst hc; simpa using hm
+  have hk2 : ∀ a, k (sf a) ∉ F' a (fun a => k (sf a)) := fun a ha => by
+    have h0 : ∃ a', sf a' = sf a := ⟨a, rfl⟩
+    apply hk (sf a)
+    refine Or.inr ?_
+    show k (sf a) ∈ (if hi : ∃ a', sf a' = sf a then
+      (fun v : κ (sf a) => cast (congrArg κ (Classical.choose_spec hi).symm) v) ⁻¹'
+        F' (Classical.choose hi) (fun a => k (sf a)) else ∅)
+    rw [dif_pos h0]
+    exact h3 a _ (sf.injective (Classical.choose_spec h0)) _ ha
+  have D1 := hF k hk1
+  have D2 := hF' (fun a => k (sf a)) hk2
+  have D1' := infra_612_dEq_comp D1
+    (Sum.map (fun t : (Σ a, (b (sf a)).idx) => (⟨sf t.1, t.2⟩ : Σ i, (b i).idx)) id)
+    (xs' := alignJoint (Equiv.refl _)
+      (typeJoint (p := j.reindex (fun t : (Σ i, (b (sf i)).idx) => E ⟨sf t.1, t.2⟩)) Y))
+    (ys' := Sum.elim (fun u : Σ a, (b (sf a)).idx => (s (sf u.1)).family (k (sf u.1)) u.2) Y)
+    (by rintro (u | d) <;> rfl) (by rintro (u | d) <;> rfl)
+  exact P.scheme.diagram_trans _ _ _ _ _ _ D1' (P.scheme.diagram_symm _ _ _ _ D2)
 
 /-- **Proposition 6.12** (Products of bounded types). For bounded types `p(x)`, `q(y)` over
 `A`, realize `p` in an extension `B ≥ A` and then realize `q^B` (the free lift) in a further

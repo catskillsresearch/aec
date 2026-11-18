@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-18 09:45",
+  "updated": "2026-11-18 09:56",
   "sorryCount": 45,
   "legend": {
     "open": "No unfinished required proof-deps — try next",
@@ -2087,7 +2087,25 @@
       "file": "AEC/Section6/ProductTied.lean",
       "status": "blocked",
       "blocker": "infra_612_tied_assoc",
-      "detail": "Open. IsFiniteProductTied: permutation invariance (sigmaCongrLeft) and commuting with coordinate projections (reindex along s : Fin m ↪ Fin n)."
+      "detail": "Open (full clauses 5, 6: partial products and joints at any levels). Proved when every partial product and both joints sit at A's level: infra_612_tied_finite_perm_level, infra_612_tied_finite_proj_level. IsFiniteProductTied: permutation invariance (sigmaCongrLeft) and commuting with coordinate projections (reindex along s : Fin m ↪ Fin n)."
+    },
+    {
+      "id": "infra_612_tied_finite_perm_level",
+      "label": "Prop 6.12 (5) permutation invariance, products at A's level (tied)",
+      "section": 6,
+      "file": "AEC/Section6/ProductTied.lean",
+      "status": "done",
+      "blocker": null,
+      "detail": "Done (no sorry; axioms propext/choice/Quot.sound): infra_612_tied_finite_perm_level. Conclusion exactly clause 5: SameGaloisType j1 j2 E1.symm (E2.symm.trans (sigmaCongrLeft pi)). Recursion-closed mu >= sigma^+, factors b i over A at mu of size <= sigma; IsFiniteProductTiedLevel (IsFiniteProductTied with every partial product at mu; implies the plain predicate, IsFiniteProductTiedLevel.toPlain) and joints at mu. Proof (n-dimensional array form of the English argument): Thm 6.6 test Y; sequences s_i of strictly increasing lengths (infra_612_increasing_seqs); infra_612_finite_generic (induction on n via infra_612_product_entry) gives bad sets F_i(k) of size <= sigma+|Y| not depending on k_i such that every avoiding tuple k makes the joint agree with the entry D(s_0 k_0, ..., s_{n-1} k_{n-1}, Y); infra_612_comb picks a tuple avoiding the bad sets of both products."
+    },
+    {
+      "id": "infra_612_tied_finite_proj_level",
+      "label": "Prop 6.12 (6) projections, products at A's level (tied)",
+      "section": 6,
+      "file": "AEC/Section6/ProductTied.lean",
+      "status": "done",
+      "blocker": null,
+      "detail": "Done (no sorry; axioms propext/choice/Quot.sound): infra_612_tied_finite_proj_level. Conclusion exactly clause 6: SameGaloisType (j.reindex (E <s t.1, t.2>)) j' refl E'.symm for s : Fin m embeds Fin n. Recursion-closed mu >= sigma^+, factors b i over A at mu of size <= sigma; IsFiniteProductTiedLevel (IsFiniteProductTied with every partial product at mu; implies the plain predicate, IsFiniteProductTiedLevel.toPlain) and joints at mu. Proof (n-dimensional array form of the English argument): Thm 6.6 test Y; sequences s_i of strictly increasing lengths (infra_612_increasing_seqs); infra_612_finite_generic (induction on n via infra_612_product_entry) gives bad sets F_i(k) of size <= sigma+|Y| not depending on k_i such that every avoiding tuple k makes the joint agree with the entry D(s_0 k_0, ..., s_{n-1} k_{n-1}, Y); infra_612_comb picks a tuple avoiding the bad sets of both products."
     },
     {
       "id": "infra_612_tied_base_change",
@@ -3991,8 +4009,18 @@
       "from": "infra_612_tied_assoc_level_joints",
       "to": "infra_612_tied_assoc",
       "kind": "hard"
+    },
+    {
+      "from": "infra_612_tied_finite_perm_level",
+      "to": "infra_612_tied_finite",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_612_tied_finite_proj_level",
+      "to": "infra_612_tied_finite",
+      "kind": "hard"
     }
   ],
-  "doneCount": 178,
+  "doneCount": 180,
   "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 43. Uncommitted in /tmp/aec-grok."
 }
