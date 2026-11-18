@@ -1951,5 +1951,61 @@ theorem proposition_6_12 {K : AbstractElementaryClass.{u}}
   -- clauses 2–7: open sub-tips (see the module docstring)
   sorry
 
+/-- **Copies persist over a later base (Prop 7.8 closure requirement 2 at limits; proved).**
+If `q` over `X_i = B` is tied free from an earlier `X_j = X` along `X → A → B` (as local
+character gives at a stage of cofinality `> λ`), then every long approximation sequence of
+`q ↾ A` for an intervening base `A = X_k` still computes `q` over `B`: its copies pushed along
+`A → B` form an approximation sequence of `q` with the same test size `τ` and the same
+copies (base monotonicity, then `infra_612_pushSeq`, the free-extension theorem). -/
+theorem infra_78_copies_persist_at_limits
+    (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ)
+    {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
+    (hrec : μ ∈ recursionClosedLevels P σ) (hσSucc : Order.succ σ ≤ μ)
+    {X A B : P.scheme.Object μ hμ}
+    (g : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ A))
+    (hg : P.scheme.permitted (X := X) (Y := A) g)
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ B))
+    (hf : P.scheme.permitted (X := A) (Y := B) f)
+    (q : TupleOver K oneVertexShape P.scheme hμ B)
+    (hνμ : q.ν = μ) (hidx : #q.idx ≤ σ)
+    (hfree : IsTiedFree (SystemArrow.comp g f)
+      (q.restrict (SystemArrow.comp g f) (P.scheme.comp g f hg hf)) q (Equiv.refl _))
+    (s : ApproximationSequence (q.restrict f hf))
+    (hs : s.τ + ℵ₀ < #s.κIndex) (hsμ : s.τ < μ) :
+    ∃ seq : ApproximationSequence q, seq.τ = s.τ ∧ ∃ e : seq.κIndex ≃ s.κIndex,
+      ∀ a b, seq.family a b = pushOcc f (s.family (e a) b) := by
+  have hF := infra_78_tiedFree_base_mono P σ hσ hμ hrec hσSucc g hg f hf q hνμ hidx hfree
+  exact ⟨infra_612_pushSeq f hf le_rfl (q.restrict f hf) q (Equiv.refl _) hF s hs hsμ, rfl,
+    Equiv.refl _, fun _ _ => rfl⟩
+
+/-- **Copies persist along a chain (chain form; proved).** For a same-level chain and `p` over
+its union with `#p.idx < cf δ`, past some stage `j`, for all `j ≤ k ≤ i`, every long
+approximation sequence of `p ↾ X_k` pushed to `X_i` is an approximation sequence of `p ↾ X_i`
+(`infra_78_fixed_list_eventually_free` + `infra_612_pushSeq`). -/
+theorem infra_78_copies_persist_chain
+    (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ)
+    {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
+    (hrec : μ ∈ recursionClosedLevels P σ) (hσSucc : Order.succ σ ≤ μ)
+    (C : SameLevelChain P hμ)
+    (p : TupleOver K oneVertexShape P.scheme hμ C.unionObj)
+    (hνμ : p.ν = μ) (hidx : #p.idx ≤ σ) (hcof : #p.idx < C.δ.cof) :
+    ∃ j : Ordinal.{u}, ∃ _hj : j < C.δ, ∀ (k i : Ordinal.{u}) (hk : k < C.δ) (hi : i < C.δ),
+      j ≤ k → ∀ hki : k ≤ i,
+      ∀ s : ApproximationSequence
+          ((p.restrict (C.toUnion i hi) (C.toUnion_arrow i hi)).restrict (C.le hk hi hki)
+            (C.le_arrow hk hi hki)),
+        s.τ + ℵ₀ < #s.κIndex → s.τ < μ →
+        ∃ seq : ApproximationSequence (p.restrict (C.toUnion i hi) (C.toUnion_arrow i hi)),
+          seq.τ = s.τ ∧ ∃ e : seq.κIndex ≃ s.κIndex,
+            ∀ a b, seq.family a b = pushOcc (C.le hk hi hki) (s.family (e a) b) := by
+  obtain ⟨j, hj, hF⟩ := infra_78_fixed_list_eventually_free P σ hσ hμ hrec hσSucc C p hνμ hidx hcof
+  refine ⟨j, hj, fun k i hk hi hjk hki s hs hsμ => ?_⟩
+  exact ⟨infra_612_pushSeq (C.le hk hi hki) (C.le_arrow hk hi hki) le_rfl
+    ((p.restrict (C.toUnion i hi) (C.toUnion_arrow i hi)).restrict (C.le hk hi hki)
+      (C.le_arrow hk hi hki))
+    (p.restrict (C.toUnion i hi) (C.toUnion_arrow i hi)) (Equiv.refl _)
+    (hF k i hk hi hjk hki) s hs hsμ, rfl, Equiv.refl _, fun _ _ => rfl⟩
+
+
 end
 end AEC

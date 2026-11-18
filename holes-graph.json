@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-18 10:19",
+  "updated": "2026-11-18 10:21",
   "sorryCount": 44,
   "legend": {
     "open": "No unfinished required proof-deps — try next",
@@ -2213,7 +2213,7 @@
       "file": "AEC/Section7/MixedDescent.lean",
       "status": "blocked",
       "blocker": "infra_78_bookkeeping_assembly",
-      "detail": "Blocked (full claim kept). Split: infra_78_mixed_ls_pair (DONE, requirement 1 supply), infra_78_code_copies_bounded (DONE, requirement 2 supply), infra_78_copies_persist_at_limits (open, requirement 2 at limits), infra_78_bookkeeping_assembly (blocked). Open (board-only). Sets R_i subset S_i of size <= rho with closure requirements (1) level-lambda subpairs A <= U inside R_i,S_i and (2) lambda copies of every <=lambda list computing types over X_i (Lemma 6.9 codes), satisfied at stages of cofinality > lambda via successor closures and local character at limits."
+      "detail": "Blocked (full claim kept). Split: infra_78_mixed_ls_pair (DONE, requirement 1 supply), infra_78_code_copies_bounded (DONE, requirement 2 supply), infra_78_copies_persist_at_limits (DONE, requirement 2 at limits), infra_78_bookkeeping_assembly (open). Open (board-only). Sets R_i subset S_i of size <= rho with closure requirements (1) level-lambda subpairs A <= U inside R_i,S_i and (2) lambda copies of every <=lambda list computing types over X_i (Lemma 6.9 codes), satisfied at stages of cofinality > lambda via successor closures and local character at limits."
     },
     {
       "id": "infra_78_matrix_construction",
@@ -2273,19 +2273,19 @@
       "id": "infra_78_copies_persist_at_limits",
       "label": "Prop 7.8: copies persist over X_i at cf > lambda limits",
       "section": 7,
-      "file": "AEC/Section7/MixedDescent.lean",
-      "status": "open",
+      "file": "AEC/Section6/ProductTied.lean",
+      "status": "done",
       "blocker": null,
-      "detail": "Open (board-only). If tp(d/X_i) is tied free from an earlier X_j (local character at a stage of cofinality > lambda), then copies of an approximation sequence placed in an intervening base X_k (j <= k < i) still compute tp(d/X_i) on tests of size < lambda with the |Z| + aleph0 exception estimate (free-extension theorem / sequence push along X_k -> X_i)."
+      "detail": "Done (no sorry; axioms propext/choice/Quot.sound). infra_78_copies_persist_at_limits (AEC/Section6/ProductTied.lean): at recursion-closed mu, X -g-> A -f-> B, q over B (q.nu = mu, #idx <= sigma) tied free from X along g;f: every approximation sequence s of q|A with s.tau + aleph0 < #s.kappaIndex, s.tau < mu yields seq : ApproximationSequence q with seq.tau = s.tau, kappaIndex equiv s.kappaIndex, and seq.family = pushOcc f of s.family (base mono + infra_612_pushSeq). Chain form infra_78_copies_persist_chain: for SameLevelChain C and p with #idx < cf delta, exists j, for all j <= k <= i the same push from X_k to X_i (via infra_78_fixed_list_eventually_free)."
     },
     {
       "id": "infra_78_bookkeeping_assembly",
       "label": "Prop 7.8: assemble R_i subset S_i along the matrix",
       "section": 7,
       "file": "AEC/Section7/MixedDescent.lean",
-      "status": "blocked",
-      "blocker": "infra_78_copies_persist_at_limits",
-      "detail": "Blocked. Successor closures for lambda^+ steps (rho^lambda = rho lists, each adding <= rho points via infra_78_mixed_ls_pair and infra_78_code_copies_bounded), continuity at limits, and requirements 1-2 at stages of cofinality > lambda via infra_78_bounded_in_earlier_stage and infra_78_copies_persist_at_limits."
+      "status": "open",
+      "blocker": null,
+      "detail": "Open (all supply pieces done). Successor closures for lambda^+ steps (rho^lambda = rho lists, each adding <= rho points via infra_78_mixed_ls_pair and infra_78_code_copies_bounded), continuity at limits, and requirements 1-2 at stages of cofinality > lambda via infra_78_bounded_in_earlier_stage and infra_78_copies_persist_at_limits."
     }
   ],
   "edges": [
@@ -4300,8 +4300,13 @@
       "from": "infra_78_tied_local_character",
       "to": "infra_78_copies_persist_at_limits",
       "kind": "hard"
+    },
+    {
+      "from": "infra_78_fixed_list_eventually_free",
+      "to": "infra_78_copies_persist_at_limits",
+      "kind": "hard"
     }
   ],
-  "doneCount": 188,
+  "doneCount": 189,
   "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 43. Uncommitted in /tmp/aec-grok."
 }
