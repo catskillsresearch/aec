@@ -1,6 +1,8 @@
 module
 
 public import AEC.Section7.IsolatedStage
+public import AEC.Section7.MixedTiedLift
+public import AEC.Section7.TiedLocalCharacter
 
 @[expose] public section
 
@@ -23,8 +25,14 @@ Cycle 57b: `infra_78_theta_chain` — the `θ⁺` recursion itself (`infra_78_th
 (`infra_78_seq_sub`), pairs linked by factorization arrows (`infra_78_factor_arrow`), the union
 by `infra_78_theta_union`, and every top list of length `≤ θ` in `U` handled by restricting the
 sequence of a single stage (`infra_78_succ_bounded`). `infra_78_theta_chain_rc` instantiates it
-at the recursion matrix. Open: the tied free-extension identity
-(`infra_78_theta_free_identity`).
+at the recursion matrix.
+
+Cycle 58: `infra_78_theta_free_identity` (tied majority characterization, `IsTiedFreeMixed`) and
+its assembly `infra_78_theta_shrink_inj` at the recursion matrix for joint lists `(b, c)` without
+repeated entries (the matrix level's tail membership at `σ ≥ λ` discharges the closure
+hypothesis). Open: lists with repeated entries (`infra_78_theta_shrink_repeats`): the bookkeeping
+sequences are indexed by point SETS, and passing to a list with repetitions would need a
+non-injective `DiagramEq` reindexing, which the working scheme does not provide.
 -/
 
 universe u
@@ -522,4 +530,268 @@ theorem infra_78_theta_chain_rc (hidx : #(uIdx ⊕ cIdx) ≤ σ)
     s₀ hs₀ hs₀l
 
 end ThetaChainRc
+
+section ThetaFree
+variable {P : SingleModelData K}
+
+/-- **`infra_78_theta_free_identity`** (Prop 7.8 proof, majority characterization of the free
+extension, tied form). Let `jA : A → X` be permitted from level `λ` into level `κ ≥ λ`, and let
+`q = tp(b, c / X)`. If `q` has an approximation sequence over `X` with test size `≥ λ` and at least
+`λ` copies, all of whose copies lie in `A`, then `q` is the tied free extension of its
+restriction to `A`: `IsTiedFreeMixed jA (q ↾ A) q`.
+
+Proof (paper): given a sequence `a` for `q ↾ A` and a move `Z ↦ Z₀` of a large-base query over
+`a`, the copies inside `A`, cut down to a bounded subfamily `b` (size `(|Z| + |q| + ℵ₀)⁺ < λ`,
+strong limit), form an approximation sequence for `q ↾ A` (strong arrows preserve diagrams).
+A common move `Z₁` of `Z` over `a` and `b` (`infra_78_common_move_mixed`) is compared with `Z₀`
+through an index of `a` outside both exception sets, and with the actual large-base answer on
+`Z` through an index of `b` outside both exception sets. -/
+theorem infra_78_theta_free_identity {ℓ κ : Cardinal.{u}} {hℓ : ℓ ∈ P.eligible}
+    {hκ : κ ∈ P.eligible} {A : P.scheme.Object ℓ hℓ} {X : P.scheme.Object κ hκ}
+    (jA : SystemArrow K oneVertexShape (P.scheme.asSystem hℓ A) (P.scheme.asSystem hκ X))
+    (hjA : P.scheme.permitted (X := A) (Y := X) jA) (hℓκ : ℓ ≤ κ)
+    (q : TupleOver K oneVertexShape P.scheme hκ X)
+    (seqX : ApproximationSequence q) (hτX : ℓ ≤ seqX.τ) (hlen : ℓ ≤ #seqX.κIndex)
+    (hin : ∀ a k, ∃ c : Occurrence K oneVertexShape (P.scheme.asSystem hℓ A),
+      pushOcc jA c = seqX.family a k) :
+    IsTiedFreeMixed jA (q.restrict jA hjA) q (Equiv.refl _) := by
+  classical
+  intro seq ι Z Z0 hκs hι hιℓ hmove
+  have hℓ0 : ℵ₀ ≤ ℓ := P.aleph0_le hℓ
+  have hidx : #q.idx < ℓ := by
+    have hne : Nonempty seq.κIndex := by
+      rw [← Cardinal.mk_ne_zero_iff]
+      exact (bot_le.trans_lt hκs).ne'
+    obtain ⟨k0⟩ := hne
+    have hle : #q.idx ≤ #(seq.κIndex × q.idx) :=
+      Cardinal.mk_le_of_injective (f := fun j => (k0, j)) (fun a b h => (Prod.mk.inj h).2)
+    exact hle.trans_lt seq.concat_bounded
+  let c0 : Cardinal.{u} := #ι + ℵ₀ + #q.idx
+  have hc0 : c0 < ℓ :=
+    Cardinal.add_lt_of_lt hℓ0 (Cardinal.add_lt_of_lt hℓ0 hιℓ (P.aleph0_lt hℓ)) hidx
+  have hc1 : Order.succ c0 < ℓ :=
+    (Order.succ_le_of_lt (Cardinal.cantor c0)).trans_lt
+      (hℓ.1.working.strongLimit.isStrongPrelimit hc0)
+  obtain ⟨κ', hκ'⟩ := Cardinal.le_mk_iff_exists_set.1 (hc1.le.trans hlen)
+  choose cpre hcpre using hin
+  have hιc0 : #ι + ℵ₀ ≤ c0 := le_self_add
+  let b : ApproximationSequence (q.restrict jA hjA) :=
+    { τ := c0
+      κIndex := κ'
+      family := fun j k => cpre j.1 k
+      concat_bounded := by
+        show #(κ' × q.idx) < ℓ
+        rw [Cardinal.mk_prod, Cardinal.lift_id, Cardinal.lift_id, hκ']
+        exact Cardinal.mul_lt_of_lt hℓ0 hc1 hidx
+      few_exceptions := fun {β} W hW => by
+        have hβℓ : #β < ℓ := hW.trans_lt hc0
+        let jW : β → Occurrence K oneVertexShape (P.scheme.asSystem hκ X) :=
+          fun t => pushOcc jA (W t)
+        refine le_trans ?_ (seqX.few_exceptions jW (hW.trans (hc0.le.trans hτX)))
+        refine Cardinal.mk_le_of_injective (f := fun j => ⟨j.1.1, fun hgood => j.2 ?_⟩)
+          (by
+            intro j₁ j₂ hj
+            have h1 := congrArg Subtype.val hj
+            exact Subtype.ext (Subtype.ext h1))
+        have hsum : #(q.idx ⊕ β) < ℓ := by
+          rw [Cardinal.mk_sum, Cardinal.lift_id, Cardinal.lift_id]
+          exact Cardinal.add_lt_of_lt hℓ0 hidx hβℓ
+        have hpres := P.scheme.diagram_preserved A X jA hjA
+          (seqJoint (fun k => cpre j.1.1 k) W) hsum (hsum.trans_le hℓκ)
+        have hpush : (fun t => (⟨(seqJoint (fun k => cpre j.1.1 k) W t).1,
+            jA.onVertex _ (seqJoint (fun k => cpre j.1.1 k) W t).2⟩ :
+              Occurrence K oneVertexShape (P.scheme.asSystem hκ X))) =
+            seqJoint (seqX.family j.1.1) jW := by
+          funext t
+          cases t with
+          | inl k => exact hcpre j.1.1 k
+          | inr t => rfl
+        rw [hpush] at hpres
+        have htj : typeJoint (p := q.restrict jA hjA) W = typeJoint (p := q) jW := by
+          funext t
+          cases t <;> rfl
+        have key := P.scheme.diagram_trans _ _ _ _ _ _ hgood (P.scheme.diagram_symm _ _ _ _ hpres)
+        rw [← htj] at key
+        exact key }
+  obtain ⟨Z1, hZ1a, hZ1b⟩ := infra_78_common_move_mixed jA hjA hℓκ seq b Z hιℓ
+  have hcι : ℵ₀ ≤ #ι + ℵ₀ := le_add_self
+  -- `q ↾ A` on `Z₀` and on `Z₁`, through `seq`.
+  obtain ⟨i, hi1, hi2⟩ := infra_78_exists_outside_two
+    {i | ¬ P.scheme.DiagramEq (X := q.host) (Y := A)
+      (typeJoint (p := q.restrict jA hjA) Z0) (seqJoint (seq.family i) Z0)}
+    {i | ¬ P.scheme.DiagramEq (X := q.host) (Y := A)
+      (typeJoint (p := q.restrict jA hjA) Z1) (seqJoint (seq.family i) Z1)}
+    hcι (seq.few_exceptions Z0 hι) (seq.few_exceptions Z1 hι)
+    ((add_le_add hι le_rfl).trans_lt hκs)
+  simp only [Set.mem_ofPred_eq, not_not] at hi1 hi2
+  have E1 : P.scheme.DiagramEq (X := q.host) (Y := q.host)
+      (typeJoint (p := q.restrict jA hjA) Z0) (typeJoint (p := q.restrict jA hjA) Z1) := by
+    have a1 := P.scheme.diagram_trans _ _ _ _ _ _ hi1 (hmove i)
+    have a2 := P.scheme.diagram_trans _ _ _ _ _ _ a1 (P.scheme.diagram_symm _ _ _ _ (hZ1a i))
+    exact P.scheme.diagram_trans _ _ _ _ _ _ a2 (P.scheme.diagram_symm _ _ _ _ hi2)
+  -- `q ↾ A` on `Z₁` and `q` on `Z`, through the copies `b` inside `A`.
+  have hS2 : #{j : κ' // ¬ P.scheme.DiagramEq (X := q.host) (Y := X)
+      (typeJoint (p := q) Z) (seqJoint (seqX.family j.1) Z)} ≤ #ι + ℵ₀ := by
+    refine le_trans ?_ (seqX.few_exceptions Z (hιℓ.le.trans hτX))
+    exact Cardinal.mk_le_of_injective (f := fun j => ⟨j.1.1, j.2⟩)
+      (by
+        intro j₁ j₂ hj
+        have h1 := congrArg Subtype.val hj
+        exact Subtype.ext (Subtype.ext h1))
+  obtain ⟨j, hj1, hj2⟩ := infra_78_exists_outside_two
+    {j : κ' | ¬ P.scheme.DiagramEq (X := q.host) (Y := A)
+      (typeJoint (p := q.restrict jA hjA) Z1) (seqJoint (b.family j) Z1)}
+    {j : κ' | ¬ P.scheme.DiagramEq (X := q.host) (Y := X)
+      (typeJoint (p := q) Z) (seqJoint (seqX.family j.1) Z)}
+    hcι (b.few_exceptions Z1 ((le_self_add : #ι ≤ #ι + ℵ₀).trans hιc0))
+    hS2
+    (by
+      show #ι + ℵ₀ < #κ'
+      rw [hκ']
+      exact hιc0.trans_lt (Order.lt_succ_of_not_isMax (not_isMax c0)))
+  simp only [Set.mem_ofPred_eq, not_not] at hj1 hj2
+  have hfam : (fun k => (⟨(b.family j k).1, jA.onVertex (b.family j k).1 (b.family j k).2⟩ :
+      Occurrence K oneVertexShape (P.scheme.asSystem hκ X))) = seqX.family j.1 :=
+    funext (hcpre j.1)
+  have hb := hZ1b j
+  unfold infra_78_isMoveMixed at hb
+  rw [hfam] at hb
+  have E2 : P.scheme.DiagramEq (X := q.host) (Y := q.host)
+      (typeJoint (p := q.restrict jA hjA) Z1) (typeJoint (p := q) Z) := by
+    have b1 := P.scheme.diagram_trans _ _ _ _ _ _ hj1 hb
+    exact P.scheme.diagram_trans _ _ _ _ _ _ b1 (P.scheme.diagram_symm _ _ _ _ hj2)
+  have hfin := P.scheme.diagram_trans _ _ _ _ _ _ E1 E2
+  have e' : infra_612_anchored (Equiv.refl (q.restrict jA hjA).idx) q.incl q.val Z =
+      typeJoint (p := q) Z := by
+    funext t
+    cases t <;> rfl
+  exact (congrArg (fun w => P.scheme.DiagramEq (X := (q.restrict jA hjA).host) (Y := q.host)
+    (typeJoint (p := q.restrict jA hjA) Z0) w) e').mpr hfin
+
+end ThetaFree
+
+section ThetaShrinkInj
+variable (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : ℵ₀ ≤ σ)
+  {μ : Cardinal.{u}} (hμT : μ ∈ infra_73_tailSet P σ) {uIdx cIdx L : Type u}
+  {ρ : Cardinal.{u}} (hρκ : Order.succ ρ < μ)
+  (Xb : P.scheme.Object μ (Tail.mem (infra_73_tail P σ hσ) hμT)) {ℓ : Cardinal.{u}}
+  (hℓel : ℓ ∈ P.eligible)
+  (cand : (Order.succ ρ).ord.ToType →
+    Infra78Stage P (Tail.mem (infra_73_tail P σ hσ) hμT) (Infra78MarkData μ uIdx) →
+    L → cIdx → μ.ord.ToType)
+  (s0 : Infra78Stage P (Tail.mem (infra_73_tail P σ hσ) hμT) (Infra78MarkData μ uIdx))
+  (e0 : Infra78MarkData μ uIdx)
+
+include hρκ in
+/-- **`infra_78_theta_shrink_inj`** (Prop 7.8 `θ⁺` shrink, lists without repeated entries). At
+a stage `i` of cofinality `> λ` of the recursion matrix, with `λ ≤ σ` (so the matrix level
+`μ ∈ infra_73_tailSet P σ` — built from `infra_69_recursion_tail` — is recursion-closed at
+`σ ≥ λ`, discharging the requirement-2 closure hypothesis of `infra_78_theta_chain_rc`), every
+small seed `s₀ ⊆ R_i` containing the marked tuple `b` lies in a level-`λ` pair `A ≤ U` inside
+`X_i ≤ Y_i` with images in `R_i`, such that for every list `c` from `U` of length `≤ θ` for which
+the joint list `(b, c)` has no repeated entries, `tp(b, c / X_i)` is the TIED free extension of its
+restriction to `A` (`IsTiedFreeMixed`, `infra_78_theta_free_identity`). The marked tuple is
+re-indexed from the bookkeeping tuple of its point set along the injective coordinate map. -/
+theorem infra_78_theta_shrink_inj (hidx : #(uIdx ⊕ cIdx) ≤ σ)
+    (h5 : ∀ β, infra_78_StageInv5 Xb (infra_78_rcObj Xb hℓel cand s0 e0 β))
+    (hℓκ : ℓ ≤ μ) (hℓρ : ℓ < ρ) (hpow : ρ ^ ℓ = ρ) (h0 : #s0.e.R ≤ ρ)
+    (hseed : infra_78_PairClosed ρ hℓel (infra_78_toArr s0.hp) trivial s0.e.R)
+    (hS0 : ∃ y, (Sum.inr y : μ.ord.ToType ⊕ μ.ord.ToType) ∈ s0.e.R)
+    (hℓσ : ℓ ≤ σ) {θ : Cardinal.{u}} (hθ : ℵ₀ ≤ θ) (hθℓ : Order.succ θ ≤ ℓ) (hu : #uIdx ≤ θ)
+    (i : (Order.succ ρ).ord.ToType) (hcof : ℓ < Order.cof (Set.Iio i))
+    (s₀ : Set (infra_78_bkCarrier (infra_78_rcMatrix hρκ Xb hℓel cand s0 e0) i))
+    (hs₀ : s₀ ⊆ infra_78_rcSets hρκ Xb hℓel cand s0 e0 i) (hs₀l : #s₀ ≤ ℓ)
+    (hb : ∀ k, (Sum.inr ((infra_78_rcObj Xb hℓel cand s0 e0 i).e.b k) :
+      infra_78_bkCarrier (infra_78_rcMatrix hρκ Xb hℓel cand s0 e0) i) ∈ s₀) :
+    ∃ (A U : P.scheme.Object ℓ hℓel)
+      (jA : SystemArrow K oneVertexShape (P.scheme.asSystem hℓel A)
+        (P.scheme.asSystem _ ((infra_78_rcMatrix hρκ Xb hℓel cand s0 e0).X i)))
+      (jU : SystemArrow K oneVertexShape (P.scheme.asSystem hℓel U)
+        (P.scheme.asSystem _ ((infra_78_rcMatrix hρκ Xb hℓel cand s0 e0).Y i)))
+      (gu : SystemArrow K oneVertexShape (P.scheme.asSystem hℓel A) (P.scheme.asSystem hℓel U))
+      (hjA : P.scheme.permitted (X := A) (Y := (infra_78_rcMatrix hρκ Xb hℓel cand s0 e0).X i) jA),
+      P.scheme.permitted (X := U) (Y := (infra_78_rcMatrix hρκ Xb hℓel cand s0 e0).Y i) jU ∧
+      P.scheme.permitted (X := A) (Y := U) gu ∧
+      SystemArrow.comp gu jU =
+        SystemArrow.comp jA ((infra_78_rcMatrix hρκ Xb hℓel cand s0 e0).pair i) ∧
+      s₀ ⊆ Sum.inl '' Set.range (jA.onVertex PUnit.unit) ∪
+        Sum.inr '' Set.range (jU.onVertex PUnit.unit) ∧
+      Sum.inl '' Set.range (jA.onVertex PUnit.unit) ⊆ infra_78_rcSets hρκ Xb hℓel cand s0 e0 i ∧
+      Sum.inr '' Set.range (jU.onVertex PUnit.unit) ⊆ infra_78_rcSets hρκ Xb hℓel cand s0 e0 i ∧
+      ∀ (J : Type u), #J ≤ θ → ∀ c : J → μ.ord.ToType,
+        Set.range c ⊆ Set.range (jU.onVertex PUnit.unit) →
+        Function.Injective (Sum.elim (infra_78_rcObj Xb hℓel cand s0 e0 i).e.b c) →
+        IsTiedFreeMixed jA
+          ((infra_78_markTuple (infra_78_toArr (infra_78_rcObj Xb hℓel cand s0 e0 i).hp)
+            (Sum.elim (infra_78_stageMark (infra_78_rcObj Xb hℓel cand s0 e0 i))
+              (fun x => ⟨PUnit.unit, c x⟩))).restrict jA hjA)
+          (infra_78_markTuple (infra_78_toArr (infra_78_rcObj Xb hℓel cand s0 e0 i).hp)
+            (Sum.elim (infra_78_stageMark (infra_78_rcObj Xb hℓel cand s0 e0 i))
+              (fun x => ⟨PUnit.unit, c x⟩)))
+          (Equiv.refl _) := by
+  classical
+  have hσS : Order.succ σ ≤ μ := (Order.succ_le_succ (le_max_left _ _)).trans hμT.2
+  have hℓμ : ℓ < μ := hℓσ.trans_lt ((Order.lt_succ_of_not_isMax (not_isMax σ)).trans_le hσS)
+  obtain ⟨A, U, jA, jU, gu, hjA, hjU, hgu, hsq, hs0, hTA, hTU, hcop⟩ :=
+    infra_78_theta_chain_rc P σ hσ hμT hρκ Xb hℓel cand s0 e0 hidx h5 hℓκ hℓρ hpow h0 hseed hS0
+      σ hσ hℓσ hμT.1 hσS hℓμ hθ hθℓ i hcof s₀ hs₀ hs₀l
+  refine ⟨A, U, jA, jU, gu, hjA, hjU, hgu, hsq, hs0, hTA, hTU, ?_⟩
+  intro J hJ c hcU hinj
+  let pt : uIdx ⊕ J → μ.ord.ToType := Sum.elim (infra_78_rcObj Xb hℓel cand s0 e0 i).e.b c
+  let s : Set (infra_78_bkCarrier (infra_78_rcMatrix hρκ Xb hℓel cand s0 e0) i) :=
+    Sum.inr '' Set.range pt
+  have hpre : (Sum.inr ⁻¹' s : Set μ.ord.ToType) = Set.range pt :=
+    Set.preimage_image_eq _ Sum.inr_injective
+  have hsU : (Sum.inr ⁻¹' s : Set μ.ord.ToType) ⊆ Set.range (jU.onVertex PUnit.unit) := by
+    rw [hpre]
+    rintro _ ⟨k, rfl⟩
+    rcases k with k | x
+    · rcases hs0 (hb k) with ⟨x, -, hxe⟩ | ⟨x, hx, hxe⟩
+      · exact (Sum.inl_ne_inr hxe).elim
+      · have e : x = (infra_78_rcObj Xb hℓel cand s0 e0 i).e.b k := Sum.inr_injective hxe
+        show (infra_78_rcObj Xb hℓel cand s0 e0 i).e.b k ∈ _
+        rw [← e]; exact hx
+    · exact hcU ⟨x, rfl⟩
+  have hsθ : #(Sum.inr ⁻¹' s : Set μ.ord.ToType) ≤ θ := by
+    rw [hpre]
+    refine Cardinal.mk_range_le.trans ?_
+    rw [Cardinal.mk_sum, Cardinal.lift_id, Cardinal.lift_id]
+    exact (add_le_add hu hJ).trans (Cardinal.add_eq_self hθ).le
+  obtain ⟨seqS, hτS, hlenS, hinS⟩ := hcop s hsU hsθ
+  let π : uIdx ⊕ J → (infra_78_bkTuple (infra_78_rcMatrix hρκ Xb hℓel cand s0 e0) i s).idx :=
+    fun k => ⟨pt k, ⟨pt k, ⟨k, rfl⟩, rfl⟩⟩
+  have hπ : Function.Injective π := fun a b h => hinj (congrArg Subtype.val h)
+  set q := infra_78_markTuple (infra_78_toArr (infra_78_rcObj Xb hℓel cand s0 e0 i).hp)
+    (Sum.elim (infra_78_stageMark (infra_78_rcObj Xb hℓel cand s0 e0 i))
+      (fun x => (⟨PUnit.unit, c x⟩ : Occurrence K oneVertexShape _))) with hq
+  let seqQ : ApproximationSequence q :=
+    { τ := seqS.τ
+      κIndex := seqS.κIndex
+      family := fun a k => seqS.family a (π k)
+      concat_bounded := by
+        refine lt_of_le_of_lt ?_ seqS.concat_bounded
+        exact Cardinal.mk_le_of_injective (f := Prod.map id π)
+          (Function.injective_id.prodMap hπ)
+      few_exceptions := fun {β} Z hZ => by
+        have hsub := seqS.subtuple_uniform π hπ Z hZ
+        have htj : typeJoint (p := q) Z =
+            typeJoint (p := (infra_78_bkTuple (infra_78_rcMatrix hρκ Xb hℓel cand s0 e0) i s).reindex π)
+              Z := by
+          funext t
+          rcases t with (k | k) | t <;> rfl
+        rw [htj]
+        exact hsub }
+  refine infra_78_theta_free_identity jA hjA hℓκ q seqQ (le_of_eq hτS.symm) (le_of_eq hlenS.symm)
+    ?_
+  intro a k
+  obtain ⟨y, hy⟩ := hinS a (π k)
+  refine ⟨⟨PUnit.unit, y⟩, ?_⟩
+  show (⟨PUnit.unit, jA.onVertex PUnit.unit y⟩ : Occurrence K oneVertexShape _) =
+    seqS.family a (π k)
+  rw [hy]
+  generalize seqS.family a (π k) = o
+  rcases o with ⟨⟨⟩, x⟩
+  rfl
+
+end ThetaShrinkInj
 end AEC

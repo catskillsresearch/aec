@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-18 12:26",
+  "updated": "2026-11-18 12:34",
   "sorryCount": 44,
   "legend": {
     "open": "No unfinished required proof-deps — try next",
@@ -2257,8 +2257,8 @@
       "section": 7,
       "file": "AEC/Section7/MixedDescent.lean",
       "status": "blocked",
-      "blocker": "infra_78_theta_free_identity",
-      "detail": "Blocked (split grokbot cycle 57; full claim stays here = theta_chain + theta_free_identity). Increasing theta^+ chain A_alpha <= U_alpha of level-lambda subobjects inside R_i,S_i with unions A <= U at level lambda (I_p in A, b in U), and the TIED majority free-extension identity: for every c in U with |c| <= theta, IsTiedFreeMixed iA (q.restrict iA) q (Equiv.refl _) for q = tp(b,c/X_i) (never the untied IsFreeLift/IsFreeFrom). Sub-tips: infra_78_theta_union (done), infra_78_theta_chain (done cycle 57; infra_78_theta_chain_rc at the recursion matrix), infra_78_theta_free_identity (open). Assembly obligation (tracked here): the matrix level μ must be recursion-closed at some σ' ≥ λ with succ σ' ≤ μ (hypothesis of infra_78_theta_chain_rc), and the bkTuple-indexed sequences must be reindexed to the marked tuple (b, c)."
+      "blocker": "infra_78_theta_shrink_repeats",
+      "detail": "Blocked (split grokbot cycles 57-58; full claim stays here = infra_78_theta_shrink_inj (done) + infra_78_theta_shrink_repeats (open)). Increasing theta^+ chain A_alpha <= U_alpha of level-lambda subobjects inside R_i,S_i with unions A <= U at level lambda (I_p in A, b in U), and the TIED free-extension identity IsTiedFreeMixed jA (q.restrict jA) q (Equiv.refl _) for q = tp(b,c/X_i), every c in U with |c| <= theta. Done parts: infra_78_theta_union, infra_78_theta_chain (+_rc), infra_78_theta_free_identity, infra_78_theta_shrink_inj (all lists with (b,c) repetition-free; sufficiently-closed mu discharged by tail membership at sigma >= lambda). Open: infra_78_theta_shrink_repeats."
     },
     {
       "id": "infra_78_isolation_transfer",
@@ -2554,9 +2554,27 @@
       "label": "Prop 7.8 theta-shrink: tied majority free-extension identity tp(b,c/X_i) = tp(b,c/A)^fr",
       "section": 7,
       "file": "AEC/Section7/ThetaShrink.lean",
+      "status": "done",
+      "blocker": null,
+      "detail": "DONE (grokbot cycle 58, sorry-free, standard axioms; AEC/Section7/ThetaShrink.lean). infra_78_theta_free_identity: for jA : A -> X permitted from level lambda into level kappa >= lambda and q over X, if q has an ApproximationSequence over X with tau >= lambda and >= lambda copies, all copies inside A (pushOcc jA), then IsTiedFreeMixed jA (q.restrict jA) q (Equiv.refl _) -- the TIED notion only (never IsFreeLift/IsFreeFrom). Proof = paper's majority characterization: given a sequence a for q|A and a move Z -> Z0 over a, the copies in A cut to a bounded subfamily b of size (|Z|+|q|+aleph0)^+ < lambda (strong limit) form an approximation sequence for q|A (diagram_preserved along the strong arrow jA); a common move Z1 over a and b (infra_78_common_move_mixed); an a-index outside two exception sets compares Z0 with Z1, a b-index outside two exception sets compares Z1 with the actual large-base answer on Z."
+    },
+    {
+      "id": "infra_78_theta_shrink_inj",
+      "label": "Prop 7.8 theta-shrink assembled at the recursion matrix (joint lists (b,c) without repeated entries)",
+      "section": 7,
+      "file": "AEC/Section7/ThetaShrink.lean",
+      "status": "done",
+      "blocker": null,
+      "detail": "DONE (grokbot cycle 58, sorry-free, standard axioms; AEC/Section7/ThetaShrink.lean). infra_78_theta_shrink_inj: at a stage i of cofinality > lambda of the recursion matrix, with lambda <= sigma (the matrix level mu in infra_73_tailSet P sigma, built from infra_69_recursion_tail, is recursion-closed at sigma >= lambda with succ sigma <= mu: this discharges the sufficiently-closed hypothesis of infra_78_theta_chain_rc), aleph0 <= theta, theta^+ <= lambda, |uIdx| <= theta, and a seed s0 subset R_i of size <= lambda containing the marked points b (and e.g. I_p): a level-lambda pair gu : A -> U with permitted jA : A -> X_i, jU : U -> Y_i, the square, s0 inside the images, images inside R_i, and for every list c : J -> U-points with |J| <= theta and (b,c) without repeated entries: IsTiedFreeMixed jA (q.restrict jA) q (Equiv.refl _) for q = markTuple pair_i (b, c) (the same tuple shape as infra_78_isolated_stage). Re-indexing: the bookkeeping sequence for the point set of (b,c) is restricted along the INJECTIVE coordinate map (ApproximationSequence.subtuple_uniform)."
+    },
+    {
+      "id": "infra_78_theta_shrink_repeats",
+      "label": "Prop 7.8 theta-shrink for joint lists (b,c) with repeated entries",
+      "section": 7,
+      "file": "AEC/Section7/ThetaShrink.lean",
       "status": "open",
       "blocker": null,
-      "detail": "Open (grokbot cycle 57). Tied statement: for jA : A -> X_i permitted (A level lambda, X_i level kappa) and q over X_i with |q.idx| <= theta, if there is an ApproximationSequence for q over X_i with tau = lambda and exactly lambda copies (as produced by infra_78_theta_chain: then tau'+aleph0 < #copies for every test arity tau' < lambda) with all family entries in range jA, then IsTiedFreeMixed jA (q.restrict jA) q (Equiv.refl _) (majority characterization of the free extension, Lemma 6.10 mixed form; infra_78_isMoveMixed). Must use the tied IsTiedFreeMixed family, never the vacuous untied IsFreeLift / IsFreeFrom."
+      "detail": "Open (grokbot cycle 58). The remaining part of infra_78_theta_shrink: the conclusion of infra_78_theta_shrink_inj for lists c with |c| <= theta where (b,c) has repeated entries (c non-injective, or meeting b). Obstacle: requirement 2 (infra_78_bkCopyReq / rnext supply) gives approximation sequences for point SETS (infra_78_bkTuple); a list with repetitions is a NON-injective reindexing of its set, and the working scheme has no non-injective DiagramEq reindexing principle (must not be added). Proposed route: make the copy requests list-indexed (lists of length <= lambda from S_i; still rho^lambda = rho requests), so requirement 2 supplies sequences for the list (b,c) itself; or check whether every consumer (infra_78_isolation_transfer, proposition_7_8) can be stated for repetition-free lists without weakening the English."
     }
   ],
   "edges": [
@@ -4996,8 +5014,28 @@
       "from": "infra_78_rnext_closure",
       "to": "infra_78_theta_chain",
       "kind": "hard"
+    },
+    {
+      "from": "infra_78_theta_free_identity",
+      "to": "infra_78_theta_shrink_inj",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_78_theta_chain",
+      "to": "infra_78_theta_shrink_inj",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_78_theta_shrink_inj",
+      "to": "infra_78_theta_shrink",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_78_theta_shrink_repeats",
+      "to": "infra_78_theta_shrink",
+      "kind": "hard"
     }
   ],
-  "doneCount": 221,
+  "doneCount": 223,
   "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 43. Uncommitted in /tmp/aec-grok."
 }
