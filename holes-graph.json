@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-18 10:17",
+  "updated": "2026-11-18 10:19",
   "sorryCount": 44,
   "legend": {
     "open": "No unfinished required proof-deps — try next",
@@ -2213,7 +2213,7 @@
       "file": "AEC/Section7/MixedDescent.lean",
       "status": "blocked",
       "blocker": "infra_78_bookkeeping_assembly",
-      "detail": "Blocked (full claim kept). Split: infra_78_mixed_ls_pair (DONE, requirement 1 supply), infra_78_code_copies_bounded (open, requirement 2 supply), infra_78_copies_persist_at_limits (open, requirement 2 at limits), infra_78_bookkeeping_assembly (blocked). Open (board-only). Sets R_i subset S_i of size <= rho with closure requirements (1) level-lambda subpairs A <= U inside R_i,S_i and (2) lambda copies of every <=lambda list computing types over X_i (Lemma 6.9 codes), satisfied at stages of cofinality > lambda via successor closures and local character at limits."
+      "detail": "Blocked (full claim kept). Split: infra_78_mixed_ls_pair (DONE, requirement 1 supply), infra_78_code_copies_bounded (DONE, requirement 2 supply), infra_78_copies_persist_at_limits (open, requirement 2 at limits), infra_78_bookkeeping_assembly (blocked). Open (board-only). Sets R_i subset S_i of size <= rho with closure requirements (1) level-lambda subpairs A <= U inside R_i,S_i and (2) lambda copies of every <=lambda list computing types over X_i (Lemma 6.9 codes), satisfied at stages of cofinality > lambda via successor closures and local character at limits."
     },
     {
       "id": "infra_78_matrix_construction",
@@ -2264,10 +2264,10 @@
       "id": "infra_78_code_copies_bounded",
       "label": "Prop 7.8: bounded Lemma 6.9 copies (closure req. 2 supply)",
       "section": 7,
-      "file": "AEC/Section7/MixedDescent.lean",
-      "status": "open",
+      "file": "AEC/Section7/TiedLocalCharacter.lean",
+      "status": "done",
       "blocker": null,
-      "detail": "Open (board-only). At level kappa (recursion-closed for sigma >= lambda), every tuple d over X_i with |d| <= lambda has an ApproximationSequence seq with lambda <= seq.tau, lambda <= #seq.kappaIndex and #(seq.kappaIndex x d.idx) <= c(lambda) for a cost c(lambda) depending only on lambda (P.g, ls K), so that rho >= c(lambda) bounds the copies added per stage. infra_78_exists_seq_ge gives the sequence but no upper bound on #kappaIndex."
+      "detail": "Done (no sorry; axioms propext/choice/Quot.sound). infra_78_code_copies_bounded: at mu recursion-closed for sigma (succ sigma <= mu), p.nu = mu, #p.idx <= sigma, #p.idx <= l, aleph0 <= l < mu: exists seq : ApproximationSequence p with seq.tau = l, #seq.kappaIndex = l^+, #(seq.kappaIndex x p.idx) <= l^+ (cost c(l) = l^+). Subtuple estimate from ApproximationSequence.subtuple_uniform. Via SingleModelData.exists_approximationSequence."
     },
     {
       "id": "infra_78_copies_persist_at_limits",
@@ -2284,7 +2284,7 @@
       "section": 7,
       "file": "AEC/Section7/MixedDescent.lean",
       "status": "blocked",
-      "blocker": "infra_78_code_copies_bounded",
+      "blocker": "infra_78_copies_persist_at_limits",
       "detail": "Blocked. Successor closures for lambda^+ steps (rho^lambda = rho lists, each adding <= rho points via infra_78_mixed_ls_pair and infra_78_code_copies_bounded), continuity at limits, and requirements 1-2 at stages of cofinality > lambda via infra_78_bounded_in_earlier_stage and infra_78_copies_persist_at_limits."
     }
   ],
@@ -4302,6 +4302,6 @@
       "kind": "hard"
     }
   ],
-  "doneCount": 187,
+  "doneCount": 188,
   "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 43. Uncommitted in /tmp/aec-grok."
 }

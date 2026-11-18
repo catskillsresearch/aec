@@ -713,6 +713,43 @@ theorem infra_611_tied
   erw [infra_78_anchored_refl q Z]
   exact E
 
+/-- **Bounded Lemma 6.9 copies (Prop 7.8 closure requirement 2 supply; proved).** At a
+recursion-closed level `μ`, every tuple `p` with `#p.idx ≤ σ` and `#p.idx ≤ ℓ` (for an
+infinite `ℓ < μ`) has an approximation sequence computing its type on all parameter tests of
+size at most `ℓ` (`seq.τ = ℓ`, with the `|Z| + ℵ₀` exception estimate, also for every subtuple
+by `ApproximationSequence.subtuple_uniform`), with exactly `ℓ⁺` copies, and at most `ℓ⁺`
+coordinates in total. The cost `ℓ⁺` depends only on `ℓ`, so `ρ ≥ ℓ⁺` bounds the copies added per
+list at each stage of the matrix. -/
+theorem infra_78_code_copies_bounded
+    (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ)
+    {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
+    (hrec : μ ∈ recursionClosedLevels P σ) (hσSucc : Order.succ σ ≤ μ)
+    {base : P.scheme.Object μ hμ} (p : TupleOver K oneVertexShape P.scheme hμ base)
+    (hνμ : p.ν = μ) (hidx : #p.idx ≤ σ) {ℓ : Cardinal.{u}} (hℓ : aleph0 ≤ ℓ) (hℓμ : ℓ < μ)
+    (hidxℓ : #p.idx ≤ ℓ) :
+    ∃ seq : ApproximationSequence p, seq.τ = ℓ ∧ #seq.κIndex = Order.succ ℓ ∧
+      #(seq.κIndex × p.idx) ≤ Order.succ ℓ := by
+  have hσlt : σ < μ := (Order.lt_succ σ).trans_le hσSucc
+  have hclosed : infra_69_pad_recursion_closed σ (max (ls K) ℵ₀)
+      (max (max σ ℓ) (max (ls K) ℵ₀)) μ := by
+    apply hrec.2
+    exact max_lt (max_lt hσlt hℓμ) (max_lt (P.ls_lt hμ) (P.aleph0_lt hμ))
+  have hκinf : ℵ₀ ≤ Order.succ ℓ := hℓ.trans (Order.le_succ _)
+  have hκμ : Order.succ ℓ < μ :=
+    (Order.succ_le_of_lt (cantor ℓ)).trans_lt
+      (hμ.1.working.strongLimit.isStrongPrelimit hℓμ)
+  have hprodle : Order.succ ℓ * #p.idx ≤ Order.succ ℓ := by
+    rcases eq_or_ne #p.idx 0 with h0 | h0
+    · rw [h0, mul_zero]; exact zero_le
+    · exact (mul_le_mul' le_rfl (hidxℓ.trans (Order.le_succ _))).trans
+        (mul_eq_self hκinf).le
+  obtain ⟨seq, hτ, hκ⟩ :=
+    P.exists_approximationSequence hμ base p hνμ σ ℓ (Order.succ ℓ) hσ hσlt hidx hℓ hℓμ
+      hκinf hκμ (hprodle.trans_lt hκμ) hclosed
+  refine ⟨seq, hτ, hκ, ?_⟩
+  rw [mk_prod, lift_id, lift_id, hκ]
+  exact hprodle
+
 /-- **Eventual freeness of a fixed list along a chain (Prop 7.8 proof, local-character
 step; proved).** For a same-level chain at a recursion-closed level and a tuple `p` over its
 union with `#p.idx < cf δ`, there is a stage `j` such that for all stages `j ≤ i ≤ k`, the
