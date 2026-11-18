@@ -567,7 +567,12 @@ infra_711_tied_chain --> lemma_7_12
 infra_75_tests_reduction --> infra_75_product_free_level
 infra_75_free_eval_level --> infra_75_product_free_level
 infra_610_tied_free_lift --> infra_75_tests_reduction
-infra_612_tied_symm_level_joints --> infra_75_free_eval_level
-infra_612_tied_finite_proj_level --> infra_75_free_eval_level
-lemma_7_2 --> infra_75_free_eval_level
-infra_612_tied_indep_level_joints --> infra_75_free_eval_level
+lemma_7_12_bounded --> lemma_7_12
+infra_75_free_eval_glue --> infra_75_free_eval_level
+infra_75_eval_product --> infra_75_free_eval_level
+infra_75_eval_project --> infra_75_free_eval_level
+lemma_7_2 --> infra_75_eval_product
+infra_612_tied_symm_level_joints --> infra_75_eval_product
+infra_612_tied_indep_level_joints --> infra_75_eval_product
+infra_612_tied_symm_level_joints --> infra_75_eval_project
+infra_612_tied_finite_proj_level --> infra_75_eval_project

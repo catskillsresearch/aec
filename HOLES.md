@@ -366,13 +366,16 @@ Lean: imports `AEC.Section6.Results`.
 | `infra_711_successor` | Lemma 7.11 successor step | [`Lemma711Induction.lean`](AEC/Section7/Lemma711Induction.lean) statement `infra_711_successor_statement`; **blocked** on `infra_75_product_free_level` (cycle 75: verified that every product in the step is level-joint; re-routed to the proved level-joint 6.12 cases) |
 | `infra_75_product_free_level` | Prop 7.5(3) tied, actual coupling, level joints | [`ProductFreeLevel.lean`](AEC/Section7/ProductFreeLevel.lean) (**blocked**, cycle 77: = `infra_75_tests_reduction` (done) + `infra_75_free_eval_level` (open)) |
 | `infra_75_tests_reduction` | Prop 7.5(3) level: testing reduction | [`ProductFreeLevel.lean`](AEC/Section7/ProductFreeLevel.lean) (**done**, cycle 77; `infra_75_tiedFree_of_tests`, `infra_75_product_free_level_of_eval`; bounded tests via `infra_73_differing_test`, no amalgam) |
-| `infra_75_free_eval_level` | Prop 7.5(3) level: free evaluation on bounded tests | **open** (cycle 77; statement `infra_75_free_eval_level_statement`) |
+| `infra_75_free_eval_level` | Prop 7.5(3) level: free evaluation on bounded tests | **blocked** (cycle 78 split: = `infra_75_eval_product` (open) + `infra_75_eval_project` (open), glue `infra_75_free_eval_of_parts` **done**) |
+| `infra_75_eval_product` | 7.5(3) (i)-(iii): x has tied product with (b,Z) over X, every bounded test Z | **open** (statement `infra_75_eval_product_statement`; deps lemma_7_2, tied symm/indep level joints) |
+| `infra_75_eval_project` | 7.5(3) (iv): symmetry + projection give free evaluation | **open** (statement `infra_75_eval_project_statement`; deps tied symm level joints, finite proj level) |
+| `infra_75_free_eval_glue` | free evaluation from the two steps | **done** (`infra_75_free_eval_of_parts`) |
 | `infra_75_product_free` | Prop 7.5(3) tied: product with `b` + all-dominated `Y` ⇒ `tp(x/Y)` free from `X` | **blocked** on `infra_612_tied_symmetry`, `infra_612_tied_finite` |
 | `infra_711_induction` | Lemma 7.11 induction assembly | [`Lemma711Induction.lean`](AEC/Section7/Lemma711Induction.lean) (**done**, cycle 75; `lemma_7_11` from `infra_711_successor_statement`; first stage via `infra_711_tiedFree_of_bijective`, limit via tied 6.13) |
 | `lemma_7_12` | Lemma 7.12 | `AEC/Section7/Results.lean` (**blocked**; restated cycle 76 to the tied notions: `ProductIndependentTied`, `TiedListWitnessingChain`; old untied form removed, unused) |
 | `lemma_7_12_existence` | Lemma 7.12(1) | **blocked** on `lemma_7_11` |
 | `lemma_7_12_uniqueness` | Lemma 7.12(2) | **open** (cycle 76; all dependencies done; successor amalgam via 7.9 primeness, not a large amalgam) |
-| `lemma_7_12_bounded` | Lemma 7.12(2), bounded individual tuples | **blocked** on `lemma_7_12_uniqueness` |
+| `lemma_7_12_bounded` | Lemma 7.12(2), bounded individual tuples | **blocked** on `lemma_7_12_uniqueness`; HARD edge `lemma_7_12_bounded --> lemma_7_12` (cycle 78) |
 | `theorem_7_13` | Theorem 7.13 | `AEC/Section7/Results.lean:296` (restated: uniqueness, product-independent free lift, continuity, primeness) |
 
 ### L4 — Section 8 (5 sorry)

@@ -155,5 +155,81 @@ theorem infra_75_product_free_level_of_eval (P : SingleModelData K)
     infra_75_tiedFree_of_tests P σ hσ hμ hrec hσμ f hf x hxν hxσ
       (h σ hσ hμ hrec hσμ X Y f hf bIdx b hb hdom x hxν hxσ hprod)
 
+/-- The marks `b` together with a test `Z ⊆ Y`, read over `X` hosted with `x`. -/
+def infra_75_markTestOver {X Y : P.scheme.Object μ hμ}
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ Y))
+    (hf : P.scheme.permitted (X := X) (Y := Y) f)
+    (x : TupleOver K oneVertexShape P.scheme hμ Y) {bIdx β : Type u}
+    (b : bIdx → Occurrence K oneVertexShape (P.scheme.asSystem hμ Y))
+    (Z : β → Occurrence K oneVertexShape (P.scheme.asSystem hμ Y)) :
+    TupleOver K oneVertexShape P.scheme hμ X :=
+  infra_75_markOver f hf x (Sum.elim b Z)
+
+/-- The joint `(x, b, Z)` over `X`. -/
+def infra_75_jointTestOver {X Y : P.scheme.Object μ hμ}
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ Y))
+    (hf : P.scheme.permitted (X := X) (Y := Y) f)
+    (x : TupleOver K oneVertexShape P.scheme hμ Y) {bIdx β : Type u}
+    (b : bIdx → Occurrence K oneVertexShape (P.scheme.asSystem hμ Y))
+    (Z : β → Occurrence K oneVertexShape (P.scheme.asSystem hμ Y)) :
+    TupleOver K oneVertexShape P.scheme hμ X :=
+  infra_75_jointOver f hf x (Sum.elim b Z)
+
+/-- The common hypotheses of the level form of Proposition 7.5(3), with a conclusion `C`. -/
+def infra_75_levelHyps (P : SingleModelData K)
+    (C : ∀ (_σ : Cardinal.{u}) (μ : Cardinal.{u}) (hμ : μ ∈ P.eligible)
+      (X Y : P.scheme.Object μ hμ)
+      (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ Y))
+      (_hf : P.scheme.permitted (X := X) (Y := Y) f)
+      (bIdx : Type u) (_b : bIdx → Occurrence K oneVertexShape (P.scheme.asSystem hμ Y))
+      (_x : TupleOver K oneVertexShape P.scheme hμ Y), Prop) : Prop :=
+  ∀ (σ : Cardinal.{u}), ℵ₀ ≤ σ → ∀ {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible),
+    μ ∈ recursionClosedLevels P σ → Order.succ σ ≤ μ →
+    ∀ (X Y : P.scheme.Object μ hμ)
+      (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ Y))
+      (hf : P.scheme.permitted (X := X) (Y := Y) f)
+      (bIdx : Type u) (b : bIdx → Occurrence K oneVertexShape (P.scheme.asSystem hμ Y)),
+      #bIdx ≤ σ → AllDominated f hf bIdx b →
+      ∀ x : TupleOver K oneVertexShape P.scheme hμ Y, x.ν = μ → #x.idx ≤ σ →
+        IsProductTied (x.restrict f hf) (infra_75_markOver f hf x b)
+          (infra_75_jointOver f hf x b) (Equiv.refl _) →
+        C σ μ hμ X Y f hf bIdx b x
+
+/-- **Step (i)–(iii) of 7.5(3) (statement; open tip `infra_75_eval_product`).** `x` has the
+tied product over `X` with `(b, Z)` for every bounded test `Z ⊆ Y` (paper: "Hence `x` and
+`(b, c)` have product over `X`"). -/
+def infra_75_eval_product_statement (P : SingleModelData K) : Prop :=
+  infra_75_levelHyps P fun σ _ hμ' _ Y f hf _ b x =>
+    ∀ (β : Type u) (Z : β → Occurrence K oneVertexShape (P.scheme.asSystem hμ' Y)),
+      #β ≤ P.g σ + ls K →
+      IsProductTied (x.restrict f hf) (infra_75_markTestOver f hf x b Z)
+        (infra_75_jointTestOver f hf x b Z) (Equiv.refl _)
+
+/-- **Step (iv) of 7.5(3) (statement; open tip `infra_75_eval_project`).** From the products
+with every `(b, Z)`, symmetry and projection give the free evaluation of `x` on every bounded
+test `Z ⊆ Y`. -/
+def infra_75_eval_project_statement (P : SingleModelData K) : Prop :=
+  infra_75_levelHyps P fun σ μ' hμ' _ Y f hf _ b x =>
+    (∀ (β : Type u) (Z : β → Occurrence K oneVertexShape (P.scheme.asSystem hμ' Y)),
+      #β ≤ P.g σ + ls K →
+      IsProductTied (x.restrict f hf) (infra_75_markTestOver f hf x b Z)
+        (infra_75_jointTestOver f hf x b Z) (Equiv.refl _)) →
+    ∀ (qB : TupleOver K oneVertexShape P.scheme hμ' Y)
+      (eB : (x.restrict f hf).idx ≃ qB.idx), qB.ν = μ' →
+      IsTiedFree f (x.restrict f hf) qB eB →
+      ∀ (β : Type u) (Z : β → Occurrence K oneVertexShape (P.scheme.asSystem hμ' Y)),
+        #β ≤ P.g σ + ls K →
+        P.scheme.DiagramEq (X := qB.host) (Y := x.host)
+          (infra_612_anchored eB qB.incl qB.val Z)
+          (infra_612_anchored (Equiv.refl x.idx) x.incl x.val Z)
+
+/-- **Free evaluation from its two steps** (`infra_75_free_eval_level` split, glue). -/
+theorem infra_75_free_eval_of_parts (P : SingleModelData K)
+    (h1 : infra_75_eval_product_statement P) (h2 : infra_75_eval_project_statement P) :
+    infra_75_free_eval_level_statement P :=
+  fun σ hσ _ hμ hrec hσμ X Y f hf bIdx b hb hdom x hxν hxσ hprod qB eB hqB hT β Z hβ =>
+    h2 σ hσ hμ hrec hσμ X Y f hf bIdx b hb hdom x hxν hxσ hprod
+      (h1 σ hσ hμ hrec hσμ X Y f hf bIdx b hb hdom x hxν hxσ hprod) qB eB hqB hT β Z hβ
+
 end
 end AEC
