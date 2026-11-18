@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-18 16:45",
+ "updated": "2026-11-18 16:47",
  "sorryCount": 41,
  "legend": {
   "open": "No unfinished required proof-deps — try next",
@@ -3303,7 +3303,25 @@
    "file": "AEC/Section7/Lemma712Common.lean",
    "status": "open",
    "blocker": null,
-   "detail": "Open (cycle 89). Needed because lemma_7_12 (2) bounds the total length #(Sigma i, indexAt i) <= mu, not #delta. Plan: make the recursion trivial at steps with empty marks and surjective chain steps (at most mu nontrivial indices, injecting into stage top), and index limit unions by a cofinal set of nontrivial stages of size <= mu (or re-index the chains to the nontrivial indices)."
+   "detail": "Open (cycle 89). Needed because lemma_7_12 (2) bounds the total length #(Sigma i, indexAt i) <= mu, not #delta. Proved inputs: infra_712u_packed_limit_cofinal (limits of cofinality <= mu), infra_712u_nontrivial_card (<= mu non-surjective steps per chain; <= mu nonempty entries). Remaining: (a) a trivial successor op (empty marks, both steps bijective: keep N, compose with the inverse steps); (b) at limits of cofinality > mu the nontrivial indices are bounded below k, so the system is eventually bijective and N_b with inverse maps serves as the limit; (c) re-run the infra_712u_good induction with these ops (track eventual bijectivity). Alternative: if the paper intends nonempty tuples, add #L.delta <= mu to clause (2) only with the user's agreement."
+  },
+  {
+   "id": "infra_712u_packed_limit_cofinal",
+   "label": "7.12(2) packed limit over a cofinal set of at most mu earlier stages",
+   "section": 7,
+   "file": "AEC/Section7/Lemma712Common.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "PROVED cycle 89: infra_712u_packed_limit_cofinal: the limit step needs only a cofinal D in Iio k with |D| <= mu (union over D; other stages enter through any d >= i). Limit step for long lists at limits of cofinality <= mu. Axioms clean."
+  },
+  {
+   "id": "infra_712u_nontrivial_card",
+   "label": "7.12(2) at most mu non-surjective successor steps in a level-mu witnessing chain",
+   "section": 7,
+   "file": "AEC/Section7/Lemma712Common.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "PROVED cycle 89: infra_712u_nontrivial_card: beta |-> an element of M_top first appearing at beta+1 is injective into mu.ord.ToType. Counting input for infra_712u_common_long. Axioms clean."
   }
  ],
  "edges": [
@@ -6686,8 +6704,18 @@
    "from": "infra_712u_common_long",
    "to": "infra_712u_common",
    "kind": "hard"
+  },
+  {
+   "from": "infra_712u_packed_limit_cofinal",
+   "to": "infra_712u_common_long",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_712u_nontrivial_card",
+   "to": "infra_712u_common_long",
+   "kind": "hard"
   }
  ],
- "doneCount": 304,
+ "doneCount": 306,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

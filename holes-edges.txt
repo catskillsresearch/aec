@@ -616,3 +616,5 @@ infra_712u_packed --> infra_712u_good
 infra_712u_good --> infra_712u_common_short
 infra_712u_common_short --> infra_712u_common
 infra_712u_common_long --> infra_712u_common
+infra_712u_packed_limit_cofinal --> infra_712u_common_long
+infra_712u_nontrivial_card --> infra_712u_common_long

@@ -212,6 +212,166 @@ theorem infra_712u_packed_limit (E : WithTop L.δ ≃o WithTop L'.δ) (k : WithT
     rw [← (hG' i).arr_apply]
     exact this
 
+/-- **7.12(2) limit, packed form over a small cofinal set (proved, cycle 89).** As
+`infra_712u_packed_limit`, but only a cofinal set `D` of earlier indices with `|D| ≤ μ` is needed
+(the union is taken over `D`; every earlier `N i` enters through any `d ≥ i` in `D`). This is the
+limit step for long lists of cofinality at most `μ` (`infra_712u_common_long`). -/
+theorem infra_712u_packed_limit_cofinal (E : WithTop L.δ ≃o WithTop L'.δ) (k : WithTop L.δ)
+    (hs : ∀ i, ¬ i ⋖ k) (D : Set (Set.Iio k)) (hD : #D ≤ μ) (hcof : ∀ i, ∃ d ∈ D, i ≤ d)
+    (hne : ∃ i, i < k)
+    (N : Set.Iio k → P.scheme.Object μ hμ) (G G' : Set.Iio k → μ.ord.ToType → μ.ord.ToType)
+    (n : Set.Iio k → Set.Iio k → μ.ord.ToType → μ.ord.ToType)
+    (hG : ∀ i, infra_712u_IsArr (C.stage i.1) (N i) (G i))
+    (hG' : ∀ i, infra_712u_IsArr (C'.stage (E i.1)) (N i) (G' i))
+    (hn : ∀ i j, i ≤ j → infra_712u_IsArr (N i) (N j) (n i j))
+    (hnid : ∀ i x, n i i x = x)
+    (hntr : ∀ i j l, i ≤ j → j ≤ l → ∀ x, n i l x = n j l (n i j x))
+    (hnG : ∀ i j (h : i ≤ j) x,
+      n i j (G i x) = G j ((C.step (show i.1 ≤ j.1 from h)).onVertex PUnit.unit x))
+    (hnG' : ∀ i j (h : i ≤ j) x,
+      n i j (G' i x) = G' j ((C'.step (E.monotone (show i.1 ≤ j.1 from h))).onVertex PUnit.unit x)) :
+    ∃ (U : P.scheme.Object μ hμ) (Gk Gk' : μ.ord.ToType → μ.ord.ToType)
+      (l : Set.Iio k → μ.ord.ToType → μ.ord.ToType),
+      infra_712u_IsArr (C.stage k) U Gk ∧ infra_712u_IsArr (C'.stage (E k)) U Gk' ∧
+      (∀ i, infra_712u_IsArr (N i) U (l i)) ∧
+      (∀ i j, i ≤ j → ∀ x, l j (n i j x) = l i x) ∧
+      (∀ i x, Gk ((C.step (le_of_lt i.2)).onVertex PUnit.unit x) = l i (G i x)) ∧
+      (∀ i x, Gk' ((C'.step (E.monotone (le_of_lt i.2))).onVertex PUnit.unit x) =
+        l i (G' i x)) := by
+  classical
+  obtain ⟨i0, hi0⟩ := hne
+  obtain ⟨d0, hd0, -⟩ := hcof ⟨i0, hi0⟩
+  have : Nonempty D := ⟨⟨d0, hd0⟩⟩
+  let st : ∀ {a b : D}, a ≤ b →
+      SystemArrow K oneVertexShape (P.scheme.asSystem hμ (N a.1)) (P.scheme.asSystem hμ (N b.1)) :=
+    fun {a b} h => (hn a.1 b.1 h).arr
+  have hst : ∀ {a b : D} (h : a ≤ b) x, (st h).onVertex PUnit.unit x = n a.1 b.1 x :=
+    fun {a b} h x => (hn a.1 b.1 h).arr_apply x
+  have hrefl : ∀ a, st (le_refl a) = SystemArrow.refl _ := fun a =>
+    infra_712u_arrow_ext fun x => (hst (le_refl a) x).trans (hnid a.1 x)
+  have htrans : ∀ {a b c : D} (h₁ : a ≤ b) (h₂ : b ≤ c),
+      st (h₁.trans h₂) = SystemArrow.comp (st h₁) (st h₂) := fun {a b c} h₁ h₂ =>
+    infra_712u_arrow_ext fun x => by
+      show (st (h₁.trans h₂)).onVertex PUnit.unit x =
+        (st h₂).onVertex PUnit.unit ((st h₁).onVertex PUnit.unit x)
+      rw [hst (h₁.trans h₂), hst h₂, hst h₁]
+      exact hntr a.1 b.1 c.1 h₁ h₂ x
+  obtain ⟨U, leg, -, hleg, -, -, -⟩ :=
+    infra_78_chain_union_kappa hμ hD (fun a : D => N a.1) st hrefl htrans
+  have hlegp : ∀ {a b : D} (h : a ≤ b) x,
+      (leg b).onVertex PUnit.unit (n a.1 b.1 x) = (leg a).onVertex PUnit.unit x := by
+    intro a b h x
+    rw [← hst h x]
+    exact DFunLike.congr_fun (congrArg (fun f => f.onVertex PUnit.unit) (hleg h)) x
+  -- the entry of an arbitrary earlier stage, through a cofinal index above it
+  let dOf : Set.Iio k → D := fun i => ⟨(hcof i).choose, (hcof i).choose_spec.1⟩
+  have hdOf : ∀ i, i ≤ (dOf i).1 := fun i => (hcof i).choose_spec.2
+  let l : Set.Iio k → μ.ord.ToType → μ.ord.ToType :=
+    fun i x => (leg (dOf i)).onVertex PUnit.unit (n i (dOf i).1 x)
+  have hl_any : ∀ i (d : D), i ≤ d.1 → ∀ x, l i x = (leg d).onVertex PUnit.unit (n i d.1 x) := by
+    intro i d hid x
+    rcases le_total (dOf i) d with h | h
+    · show (leg (dOf i)).onVertex PUnit.unit (n i (dOf i).1 x) = _
+      rw [← hlegp h, ← hntr i (dOf i).1 d.1 (hdOf i) h x]
+    · show (leg (dOf i)).onVertex PUnit.unit (n i (dOf i).1 x) = _
+      rw [← hlegp h, ← hntr i d.1 (dOf i).1 hid h x]
+  obtain ⟨f, hf⟩ := infra_712u_factor_continuous hμ hD (fun a : D => C.stage a.1.1)
+    (fun {a b} h => C.step h) (fun a => infra_712u_step_refl C a.1.1)
+    (fun h₁ h₂ => infra_712u_step_trans C h₁ h₂) (C.stage k) (fun a => C.step (le_of_lt a.1.2))
+    (fun {a b} h => (infra_712u_step_trans C (a := a.1.1) (b := b.1.1) h (le_of_lt b.1.2)).symm)
+    (fun x => by
+      obtain ⟨i, h, y, hy⟩ := C.continuous k hs ⟨i0, hi0⟩ PUnit.unit x
+      obtain ⟨d, hd, hid⟩ := hcof ⟨i, h⟩
+      refine ⟨⟨d, hd⟩, (C.step (show i ≤ d.1 from hid)).onVertex PUnit.unit y, ?_⟩
+      rw [← hy]
+      exact DFunLike.congr_fun (C.step_comp (show i ≤ d.1 from hid) (le_of_lt d.2) PUnit.unit) y)
+    (fun a => SystemArrow.comp (hG a.1).arr (leg a))
+    (fun {a b} h => infra_712u_arrow_ext fun x => by
+      show (leg b).onVertex PUnit.unit ((hG b.1).arr.onVertex PUnit.unit
+        ((C.step h).onVertex PUnit.unit x)) =
+        (leg a).onVertex PUnit.unit ((hG a.1).arr.onVertex PUnit.unit x)
+      rw [(hG b.1).arr_apply, (hG a.1).arr_apply, ← hnG a.1 b.1 h x]
+      exact hlegp h _)
+  have hs' : ∀ i', ¬ i' ⋖ E k := fun i' hc => by
+    obtain ⟨i, rfl⟩ := E.surjective i'
+    exact hs i ((apply_covBy_apply_iff E).1 hc)
+  obtain ⟨f', hf'⟩ := infra_712u_factor_continuous hμ hD (fun a : D => C'.stage (E a.1.1))
+    (fun {a b} h => C'.step (E.monotone h)) (fun a => infra_712u_step_refl C' (E a.1.1))
+    (fun h₁ h₂ => infra_712u_step_trans C' _ _) (C'.stage (E k))
+    (fun a => C'.step (E.monotone (le_of_lt a.1.2)))
+    (fun {a b} h => (infra_712u_step_trans C' (E.monotone h) (E.monotone (le_of_lt b.1.2))).symm)
+    (fun x => by
+      obtain ⟨i', h, y, hy⟩ := C'.continuous (E k) hs' ⟨E i0, E.strictMono hi0⟩ PUnit.unit x
+      obtain ⟨i, rfl⟩ := E.surjective i'
+      obtain ⟨d, hd, hid⟩ := hcof ⟨i, E.lt_iff_lt.1 h⟩
+      refine ⟨⟨d, hd⟩, (C'.step (E.monotone (show i ≤ d.1 from hid))).onVertex PUnit.unit y, ?_⟩
+      rw [← hy]
+      exact DFunLike.congr_fun (C'.step_comp (E.monotone (show i ≤ d.1 from hid))
+        (E.monotone (le_of_lt d.2)) PUnit.unit) y)
+    (fun a => SystemArrow.comp (hG' a.1).arr (leg a))
+    (fun {a b} h => infra_712u_arrow_ext fun x => by
+      show (leg b).onVertex PUnit.unit ((hG' b.1).arr.onVertex PUnit.unit
+        ((C'.step (E.monotone h)).onVertex PUnit.unit x)) =
+        (leg a).onVertex PUnit.unit ((hG' a.1).arr.onVertex PUnit.unit x)
+      rw [(hG' b.1).arr_apply, (hG' a.1).arr_apply, ← hnG' a.1 b.1 h x]
+      exact hlegp h _)
+  refine ⟨U, fun x => f.onVertex PUnit.unit x, fun x => f'.onVertex PUnit.unit x, l,
+    infra_712u_IsArr.of_arrow f, infra_712u_IsArr.of_arrow f', fun i => ?_,
+    fun i j hij x => ?_, fun i x => ?_, fun i x => ?_⟩
+  · have := (hn i (dOf i).1 (hdOf i)).comp (infra_712u_IsArr.of_arrow (leg (dOf i)))
+    exact this
+  · rw [hl_any j (dOf j) (hdOf j), hl_any i (dOf j) (hij.trans (hdOf j)),
+      hntr i j (dOf j).1 hij (hdOf j)]
+  · -- `M_i → M_d → M_k`
+    have e1 := DFunLike.congr_fun (C.step_comp (show i.1 ≤ (dOf i).1.1 from hdOf i)
+      (le_of_lt (dOf i).1.2) PUnit.unit) x
+    show f.onVertex PUnit.unit ((C.step (le_of_lt i.2)).onVertex PUnit.unit x) = l i (G i x)
+    exact (congrArg (f.onVertex PUnit.unit) e1.symm).trans ((hf (dOf i) _).trans
+      ((congrArg ((leg (dOf i)).onVertex PUnit.unit) ((hG (dOf i).1).arr_apply _)).trans
+        (congrArg ((leg (dOf i)).onVertex PUnit.unit) (hnG i (dOf i).1 (hdOf i) x).symm)))
+  · have e1 := DFunLike.congr_fun (C'.step_comp (E.monotone (show i.1 ≤ (dOf i).1.1 from hdOf i))
+      (E.monotone (le_of_lt (dOf i).1.2)) PUnit.unit) x
+    show f'.onVertex PUnit.unit ((C'.step (E.monotone (le_of_lt i.2))).onVertex PUnit.unit x) =
+      l i (G' i x)
+    exact (congrArg (f'.onVertex PUnit.unit) e1.symm).trans ((hf' (dOf i) _).trans
+      ((congrArg ((leg (dOf i)).onVertex PUnit.unit) ((hG' (dOf i).1).arr_apply _)).trans
+        (congrArg ((leg (dOf i)).onVertex PUnit.unit) (hnG' i (dOf i).1 (hdOf i) x).symm)))
+
+/-- **Few non-surjective successor steps (proved, cycle 89).** In a witnessing chain at level
+`μ`, at most `μ` successor steps `M_β → M_{β+1}` fail to be onto: each such `β` yields an element
+of `M_⊤` first appearing at `β + 1`. Counting input for `infra_712u_common_long`. -/
+theorem infra_712u_nontrivial_card {L₀ : TupleList P.scheme hμ A} [LinearOrder L₀.δ]
+    (D : TiedListWitnessingChain L₀) :
+    #{β : WithTop L₀.δ // ∃ k, ∃ h : β ⋖ k,
+      ¬ Function.Surjective ((D.step h.le).onVertex PUnit.unit)} ≤ μ := by
+  classical
+  let F : {β : WithTop L₀.δ // ∃ k, ∃ h : β ⋖ k,
+      ¬ Function.Surjective ((D.step h.le).onVertex PUnit.unit)} → μ.ord.ToType := fun b =>
+    (D.step (le_top : b.2.choose ≤ ⊤)).onVertex PUnit.unit
+      (not_forall.1 b.2.choose_spec.choose_spec).choose
+  have key : ∀ b1 b2 : {β : WithTop L₀.δ // ∃ k, ∃ h : β ⋖ k,
+      ¬ Function.Surjective ((D.step h.le).onVertex PUnit.unit)}, b1.1 < b2.1 → F b1 ≠ F b2 := by
+    intro b1 b2 hlt heq
+    have h1 := b1.2.choose_spec.choose
+    have h2 := b2.2.choose_spec.choose
+    have hk1 : b1.2.choose ≤ b2.1 := le_of_not_gt fun h => h1.2 hlt h
+    have hy2 := (not_forall.1 b2.2.choose_spec.choose_spec).choose_spec
+    apply hy2
+    refine ⟨(D.step hk1).onVertex PUnit.unit (not_forall.1 b1.2.choose_spec.choose_spec).choose, ?_⟩
+    have e1 := DFunLike.congr_fun (D.step_comp hk1 h2.le PUnit.unit)
+      (not_forall.1 b1.2.choose_spec.choose_spec).choose
+    have e2 := DFunLike.congr_fun (D.step_comp (hk1.trans h2.le) (le_top : b2.2.choose ≤ ⊤)
+      PUnit.unit) (not_forall.1 b1.2.choose_spec.choose_spec).choose
+    apply (D.step (le_top : b2.2.choose ≤ ⊤)).onVertex PUnit.unit |>.injective
+    refine (congrArg _ e1).trans (e2.trans ?_)
+    exact heq
+  refine (Cardinal.mk_le_of_injective (f := F) ?_).trans (Cardinal.mk_ord_toType μ).le
+  intro b1 b2 h
+  rcases lt_trichotomy b1.1 b2.1 with hl | he | hg
+  · exact absurd h (key b1 b2 hl)
+  · exact Subtype.ext he
+  · exact absurd h.symm (key b2 b1 hg)
+
 end Packed
 
 section Assembly
