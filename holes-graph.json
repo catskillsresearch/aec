@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-18 07:36",
+  "updated": "2026-11-18 07:38",
   "sorryCount": 43,
   "legend": {
     "open": "No unfinished required proof-deps — try next",
@@ -1980,10 +1980,19 @@
       "id": "infra_78_tied_local_character",
       "label": "Tied local character + base monotonicity (Prop 6.13 tied form)",
       "section": 6,
-      "file": "AEC/Section6/LocalCharacter.lean",
+      "file": "AEC/Section7/TiedLocalCharacter.lean",
       "status": "open",
       "blocker": null,
-      "detail": "Open (precise sub-tip split off infra_78_mixed_level_isolation; English Prop 6.13 + Thm 6.10 uniqueness in the tied form). (a) LOCAL: at a recursion-closed level mu (succ sigma <= mu), for C : SameLevelChain P hmu and p over C.unionObj with p.nu = mu, #p.idx <= sigma, #p.idx < C.delta.cof: exists i hi, IsTiedFree (C.toUnion i hi) (p.restrict (C.toUnion i hi) _) p (Equiv.refl _). (b) BASE MONO: X -g-> A -f-> B same level, q over B small: IsTiedFree (comp g f) (q.restrict (comp g f) _) q refl -> IsTiedFree f (q.restrict f hf) q refl. (c) RESTRICT: same hypothesis gives IsTiedFree g ((q.restrict f hf).restrict g hg) (q.restrict f hf) refl. Needed for Prop 7.8: the fixed list (b,d) is tied-free over the union from some X_j, hence at each later successor tied-free over X_i, contradicting the Prop 7.3 alt-2 (not IsTiedFree) extensions chosen stationarily often. The untied IsFreeFrom version is vacuous (audit_free_from_vacuous)."
+      "detail": "Open; part (c) RESTRICT done (infra_78_tied_restrict: infra_78_tiedFree_restrict in AEC/Section7/TiedLocalCharacter.lean); (b) and (a) remain. (Precise sub-tip split off infra_78_mixed_level_isolation; English Prop 6.13 + Thm 6.10 uniqueness in the tied form). (a) LOCAL: at a recursion-closed level mu (succ sigma <= mu), for C : SameLevelChain P hmu and p over C.unionObj with p.nu = mu, #p.idx <= sigma, #p.idx < C.delta.cof: exists i hi, IsTiedFree (C.toUnion i hi) (p.restrict (C.toUnion i hi) _) p (Equiv.refl _). (b) BASE MONO: X -g-> A -f-> B same level, q over B small: IsTiedFree (comp g f) (q.restrict (comp g f) _) q refl -> IsTiedFree f (q.restrict f hf) q refl. (c) RESTRICT: same hypothesis gives IsTiedFree g ((q.restrict f hf).restrict g hg) (q.restrict f hf) refl. Needed for Prop 7.8: the fixed list (b,d) is tied-free over the union from some X_j, hence at each later successor tied-free over X_i, contradicting the Prop 7.3 alt-2 (not IsTiedFree) extensions chosen stationarily often. The untied IsFreeFrom version is vacuous (audit_free_from_vacuous)."
+    },
+    {
+      "id": "infra_78_tied_restrict",
+      "label": "Tied freeness restricts (part c)",
+      "section": 7,
+      "file": "AEC/Section7/TiedLocalCharacter.lean",
+      "status": "done",
+      "blocker": null,
+      "detail": "Done (no sorry; axioms propext/choice/Quot.sound): infra_78_tiedFree_restrict. IsTiedFree (g;f) (q|X) q refl -> IsTiedFree g ((q|A)|X) (q|A) refl, same level. A move along g pushes along the strong arrow f to a move along g;f (diagram_preserved; tuple+query below mu via infra_78_idx_lt_of_seq), and the anchored joint of q|A on Z is the anchored joint of q on f(Z)."
     }
   ],
   "edges": [
@@ -3685,8 +3694,13 @@
       "from": "infra_78_tied_local_character",
       "to": "infra_78_finite_continuity",
       "kind": "hard"
+    },
+    {
+      "from": "infra_78_tied_restrict",
+      "to": "infra_78_tied_local_character",
+      "kind": "hard"
     }
   ],
-  "doneCount": 162,
+  "doneCount": 163,
   "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 43. Uncommitted in /tmp/aec-grok."
 }
