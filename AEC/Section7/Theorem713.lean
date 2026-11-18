@@ -735,6 +735,103 @@ def infra_713_continuity_up_statement (P : SingleModelData K) : Prop :=
       IsTiedFree (C.toUnion 0 C.hlim.1)
         (b.restrict (C.toUnion 0 C.hlim.1) (C.toUnion_arrow 0 C.hlim.1)) b (Equiv.refl _)
 
+/-- **Mixed tied move (proved, cycle 93).** Mixed-level analogue of `infra_73_tied_move`: for
+`f : A → B` from level `μ` to `μ' ≥ μ`, a bounded query `Y` over `B` has a copy `Y0` in `A` that
+is a mixed move over an approximation sequence of `p` (`infra_78_move_mixed`, saturation at `μ`,
+then injective restriction to each row). -/
+theorem infra_713_tied_move_mixed
+    (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : ℵ₀ ≤ σ)
+    {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
+    (hrec : μ ∈ recursionClosedLevels P σ) (hσSucc : Order.succ σ ≤ μ)
+    {μ' : Cardinal.{u}} (hμ' : μ' ∈ P.eligible) (hμμ' : μ ≤ μ')
+    {A : P.scheme.Object μ hμ} {B : P.scheme.Object μ' hμ'}
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ' B))
+    (hf : P.scheme.permitted (X := A) (Y := B) f)
+    (p : TupleOver K oneVertexShape P.scheme hμ A)
+    (hpν : p.ν = μ) (hidx : #p.idx ≤ σ)
+    {β : Type u} (Y : β → Occurrence K oneVertexShape (P.scheme.asSystem hμ' B))
+    (hβ : #β ≤ P.g σ + ls K) :
+    ∃ (seq : ApproximationSequence p)
+      (Y0 : β → Occurrence K oneVertexShape (P.scheme.asSystem hμ A)),
+      seq.τ + ℵ₀ < #(seq.κIndex) ∧ #β ≤ seq.τ ∧ #β < μ ∧ infra_78_isMoveMixed f seq Y Y0 := by
+  classical
+  have hσlt : σ < μ := (Order.lt_succ σ).trans_le hσSucc
+  obtain ⟨seq, -, -, hτ, hlong⟩ := infra_73_sequence_rec P σ hσ hμ hrec hσSucc p hpν hidx
+  have hβμ : #β < μ := by
+    have hg : P.g σ < μ :=
+      (hμ.1.closed P.g (Set.mem_insert_of_mem _ rfl)).below σ hσ hσlt
+    exact hβ.trans_lt (add_lt_of_lt (P.aleph0_le hμ) hg (P.ls_lt hμ))
+  let xs : seq.κIndex × p.idx → Occurrence K oneVertexShape (P.scheme.asSystem hμ A) :=
+    fun ij => seq.family ij.1 ij.2
+  obtain ⟨Y0, hD⟩ := infra_78_move_mixed f hf hμμ' xs Y seq.concat_bounded hβμ
+  refine ⟨seq, Y0, hlong, hβ.trans hτ, hβμ, fun i => ?_⟩
+  have hinj : Function.Injective
+      (Sum.map (fun k : p.idx => (i, k)) (id : β → β)) := by
+    rintro (a | a) (b | b) h <;> simp_all
+  have h := WorkingScheme.diagramEq_precomp A B _ _ _ hinj hD
+  exact infra_73_diagramEq_of_eq h (fun t => by cases t <;> rfl) (fun t => by cases t <;> rfl)
+
+/-- **Finite projections of mixed tied free lifts (proved, cycle 93).** Mixed-level analogue of
+`infra_713_tiedFree_reindex`: a projection of a tied free lift from level `μ` to `μ' ≥ μ` is the
+tied free lift of the projection. Same proof, with `infra_78_tied_free_lift_mixed`,
+`infra_713_tied_move_mixed`, and the differing test at the receiving level `μ'`. -/
+theorem infra_713_tiedFree_reindex_mixed
+    (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : ℵ₀ ≤ σ)
+    {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
+    (hrec : μ ∈ recursionClosedLevels P σ) (hσμ : Order.succ σ ≤ μ)
+    {μ' : Cardinal.{u}} (hμ' : μ' ∈ P.eligible)
+    (hrec' : μ' ∈ recursionClosedLevels P σ) (hσμ' : Order.succ σ ≤ μ') (hμμ' : μ ≤ μ')
+    {A : P.scheme.Object μ hμ} {B : P.scheme.Object μ' hμ'}
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ' B))
+    (hf : P.scheme.permitted (X := A) (Y := B) f)
+    (p : TupleOver K oneVertexShape P.scheme hμ A) (hpν : p.ν = μ) (hidx : #p.idx ≤ σ)
+    (qB : TupleOver K oneVertexShape P.scheme hμ' B) (eB : p.idx ≃ qB.idx) (hqBν : qB.ν = μ')
+    (hT : IsTiedFreeMixed f p qB eB)
+    {ι : Type u} (ρ : ι → p.idx) (hρ : Function.Injective ρ) :
+    IsTiedFreeMixed f (p.reindex ρ) (qB.reindex (fun j => eB (ρ j))) (Equiv.refl ι) := by
+  classical
+  have hσlt : σ < μ := (Order.lt_succ σ).trans_le hσμ
+  have hσlt' : σ < μ' := (Order.lt_succ σ).trans_le hσμ'
+  have hισ : #ι ≤ σ := (Cardinal.mk_le_of_injective hρ).trans hidx
+  have hιμ : #ι < μ := hισ.trans_lt hσlt
+  set q' := qB.reindex (fun j => eB (ρ j)) with hq'
+  have hq'ν : q'.ν = μ' := hqBν
+  obtain ⟨r, er, hrν, -, hTr⟩ :=
+    infra_78_tied_free_lift_mixed P σ hσ hμ hrec hσμ hμ' hrec' hμμ' f hf (p.reindex ρ) hpν hισ
+  have hridx : #r.idx ≤ σ := by rw [← Cardinal.mk_congr er]; exact hισ
+  have hS : SameGaloisType r q' er.symm (Equiv.refl ι).symm := by
+    by_contra hneq
+    obtain ⟨β, Y, hβ, hnot⟩ :=
+      infra_73_differing_test P σ hσ hμ' hrec' hσμ' r q' er.symm (Equiv.refl ι).symm hrν hq'ν
+        hridx (hridx.trans_lt hσlt') hneq
+    apply hnot
+    obtain ⟨seq, Y0, hlong, hβτ, hβμ, hmv⟩ :=
+      infra_713_tied_move_mixed P σ hσ hμ hrec hσμ hμ' hμμ' f hf p hpν hidx Y hβ
+    have d1 := hT seq Y Y0 hlong hβτ hβμ hmv
+    have d1' : P.scheme.DiagramEq (X := p.host) (Y := qB.host)
+        (typeJoint (p := p.reindex ρ) Y0) (infra_612_anchored (Equiv.refl ι) q'.incl q'.val Y) :=
+      infra_73_diagramEq_of_eq (WorkingScheme.diagramEq_precomp p.host qB.host _ _
+        (jointReindex (β := β) ρ) (jointReindex_injective ρ hρ) d1)
+        (fun t => by cases t <;> rfl) (fun t => by cases t <;> rfl)
+    let seqR := seq.project ρ hρ
+    have hmvR : infra_78_isMoveMixed f seqR Y Y0 := fun i =>
+      infra_73_diagramEq_of_eq (WorkingScheme.diagramEq_precomp A B _ _
+        (jointReindex (β := β) ρ) (jointReindex_injective ρ hρ) (hmv i))
+        (fun t => by cases t <;> rfl) (fun t => by cases t <;> rfl)
+    have d2 := hTr seqR Y Y0 hlong hβτ hβμ hmvR
+    have d := P.scheme.diagram_trans r.host p.host qB.host _ _ _
+      (P.scheme.diagram_symm p.host r.host _ _ d2) d1'
+    exact infra_73_diagramEq_of_eq d (fun t => by cases t <;> rfl) (fun t => by cases t <;> rfl)
+  intro seq' γ Z Z0 hlong hγ hγμ hmv
+  have dL := hTr seq' Z Z0 hlong hγ hγμ hmv
+  have dS := infra_72_diagramEq_of_sameGalois (P := P) hS Z hrν hq'ν (hιμ.trans_le hμμ')
+    (hγμ.trans_le hμμ')
+  have dS' : P.scheme.DiagramEq (X := r.host) (Y := q'.host)
+      (infra_612_anchored er r.incl r.val Z)
+      (infra_612_anchored (Equiv.refl ι) q'.incl q'.val Z) :=
+    infra_73_diagramEq_of_eq dS (fun t => by cases t <;> rfl) (fun t => by cases t <;> rfl)
+  exact P.scheme.diagram_trans _ r.host q'.host _ _ _ dL dS'
+
 /-- **Theorem 7.13 (1b) across levels (statement; open tip `infra_713_lift_pi_mixed`).** A tied
 free lift (`IsTiedFreeMixed`) of a bounded PI list from level `μ` to a higher level `μ'` of the
 7.12 tail is product-independent (each finite selection has the tied finite product of the

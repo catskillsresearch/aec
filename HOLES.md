@@ -409,6 +409,8 @@ Lean: imports `AEC.Section6.Results`.
 | `infra_713_continuity_same_level` | Thm 7.13 (2), level `μ' = μ` | **done** (cycle 93) |
 | `infra_713_continuity_up` | Thm 7.13 (2), levels `μ' > μ` (mixed base) | blocked on `infra_713_lift_pi_mixed` (reduction proved: `infra_713_continuity_up_of_pi_mixed`) |
 | `infra_713_lift_pi_mixed` | Thm 7.13 (1b) across levels: mixed tied free lift of a PI list is PI | **open** |
+| `infra_713_tied_move_mixed` | mixed tied move | **done** (cycle 93) |
+| `infra_713_tiedFree_reindex_mixed` | finite projections of mixed tied free lifts | **done** (cycle 93) |
 | `infra_713_realize` | Thm 7.13 (3) | **open**, hard (bounded-mark 7.8/7.9) |
 
 ### L4 — Section 8 (5 sorry)

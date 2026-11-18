@@ -3547,6 +3547,24 @@
    "status": "open",
    "blocker": null,
    "detail": "Open (cycle 93). infra_713_lift_pi_mixed_statement: IsTiedFreeMixed f L.whole q eq, f : X (level mu) -> B (level mu' > mu, both in infra_712_levels), permitted; q is PI over B. Same-level route (infra_713_lift_pi_permitted) needs mixed versions of: infra_713_tiedFree_reindex (finite projection of a mixed tied free lift; same-level proof uses infra_73_differing_test/infra_73_tied_move), infra_712u_tiedFree_base_sameGalois (source-side transfer, mixed), and infra_713_finite_base_change (binary step infra_612_tied_base_change_level_joints is already mixed-capable, mu <= mu'; congr_joint/exists_level stay at mu'). Assess whether the projection lemma needs cross-level Galois transitivity (both-off hard case) before starting."
+  },
+  {
+   "id": "infra_713_tied_move_mixed",
+   "label": "Mixed tied move (query copy over an approximation sequence, mu -> mu')",
+   "section": 7,
+   "file": "AEC/Section7/Theorem713.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "PROVED cycle 93 (axioms clean): mixed analogue of infra_73_tied_move via infra_73_sequence_rec at mu, infra_78_move_mixed (saturation at mu), injective row restriction."
+  },
+  {
+   "id": "infra_713_tiedFree_reindex_mixed",
+   "label": "Finite projections of mixed tied free lifts",
+   "section": 7,
+   "file": "AEC/Section7/Theorem713.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "PROVED cycle 93 (axioms clean): IsTiedFreeMixed f p qB eB (mu -> mu' >= mu) ==> IsTiedFreeMixed f (p.reindex rho) (qB.reindex (eB o rho)) refl for injective rho. Same proof as infra_713_tiedFree_reindex with infra_78_tied_free_lift_mixed, infra_713_tied_move_mixed, differing test at mu'."
   }
  ],
  "edges": [
@@ -7102,8 +7120,20 @@
    "to": "infra_713_continuity_up",
    "kind": "hard",
    "note": ""
+  },
+  {
+   "from": "infra_713_tied_move_mixed",
+   "to": "infra_713_tiedFree_reindex_mixed",
+   "kind": "hard",
+   "note": ""
+  },
+  {
+   "from": "infra_713_tiedFree_reindex_mixed",
+   "to": "infra_713_lift_pi_mixed",
+   "kind": "hard",
+   "note": ""
   }
  ],
- "doneCount": 333,
+ "doneCount": 335,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
