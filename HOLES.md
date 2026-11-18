@@ -367,7 +367,10 @@ Lean: imports `AEC.Section6.Results`.
 | `infra_75_product_free_level` | Prop 7.5(3) tied, actual coupling, level joints | [`ProductFreeLevel.lean`](AEC/Section7/ProductFreeLevel.lean) (**open**, cycle 75; statement only; narrowed form of `infra_75_product_free`) |
 | `infra_75_product_free` | Prop 7.5(3) tied: product with `b` + all-dominated `Y` ⇒ `tp(x/Y)` free from `X` | **blocked** on `infra_612_tied_symmetry`, `infra_612_tied_finite` |
 | `infra_711_induction` | Lemma 7.11 induction assembly | [`Lemma711Induction.lean`](AEC/Section7/Lemma711Induction.lean) (**done**, cycle 75; `lemma_7_11` from `infra_711_successor_statement`; first stage via `infra_711_tiedFree_of_bijective`, limit via tied 6.13) |
-| `lemma_7_12` | Lemma 7.12 | `AEC/Section7/Results.lean:273` (restated over list-linked `ListWitnessingChain`; old vacuity audit in `AEC/Audit/WitnessingChainVacuous.lean`) |
+| `lemma_7_12` | Lemma 7.12 | `AEC/Section7/Results.lean` (**blocked**; restated cycle 76 to the tied notions: `ProductIndependentTied`, `TiedListWitnessingChain`; old untied form removed, unused) |
+| `lemma_7_12_existence` | Lemma 7.12(1) | **blocked** on `lemma_7_11` |
+| `lemma_7_12_uniqueness` | Lemma 7.12(2) | **open** (cycle 76; all dependencies done; successor amalgam via 7.9 primeness, not a large amalgam) |
+| `lemma_7_12_bounded` | Lemma 7.12(2), bounded individual tuples | **blocked** on `lemma_7_12_uniqueness` |
 | `theorem_7_13` | Theorem 7.13 | `AEC/Section7/Results.lean:296` (restated: uniqueness, product-independent free lift, continuity, primeness) |
 
 ### L4 — Section 8 (5 sorry)

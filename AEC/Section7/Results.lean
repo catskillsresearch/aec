@@ -313,21 +313,27 @@ theorem lemma_7_11 {K : AbstractElementaryClass.{u}} (P : SingleModelData K) :
   refine infra_711_induction P ?_
   sorry
 
-/-- **Lemma 7.12.** (1) A product-independent list `L` of finite tuples over `A`, well-ordered,
-has an all-dominated-increment witnessing chain linked to `L` (its marks are the entries of `L`
-in a common ambient).  (2) Lists with witnessing chains are determined, as a whole, by their
-successive marginal types over `A`. -/
-theorem lemma_7_12 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
-    (W : WorkingScheme K S) :
-    ∃ T, ∃ hT : Tail W.eligible T,
-      ∀ μ (hμ : μ ∈ T) (A : W.Object μ (Tail.mem hT hμ)),
-        (∀ (L : TupleList W (Tail.mem hT hμ) A) [LinearOrder L.δ] [WellFoundedLT L.δ],
-          ProductIndependent L →
-          ∃ C : ListWitnessingChain L, C.AllDominatedIncrement) ∧
-        (∀ (L L' : TupleList W (Tail.mem hT hμ) A) [LinearOrder L.δ] [WellFoundedLT L.δ]
+/-- **Lemma 7.12** (tied, restated cycle 76). At sufficiently closed eligible levels:
+(1) every actual product-independent list (`ProductIndependentTied`: tied finite products,
+Def 7.10) of finite tuples over `A`, well-ordered with `|δ| ≤ μ`, admits an all-dominated-increment
+witnessing chain (`TiedListWitnessingChain`, tied `tp(bᵢ/Mᵢ) = tp(bᵢ/A)^fr`), retaining its whole
+joint configuration in an extension `top` of the given ambient (`listToTop`, `mark_spec`);
+(2) two lists of total length at most the level, supplied with witnessing chains, with the same
+successive marginal types over `A` have one amalgam identifying the entire lists
+(`SameGaloisType` of the whole lists). The paper's extension of (2) to bounded individual
+tuples is tracked separately (`lemma_7_12_bounded`). The former statement over the untied
+`ListWitnessingChain` / `ProductIndependent` was unused and has been removed. -/
+theorem lemma_7_12 {K : AbstractElementaryClass.{u}} (P : SingleModelData K) :
+    ∃ T, ∃ hT : Tail P.eligible T,
+      ∀ μ (hμ : μ ∈ T) (A : P.scheme.Object μ (Tail.mem hT hμ)),
+        (∀ (L : TupleList P.scheme (Tail.mem hT hμ) A) [LinearOrder L.δ] [WellFoundedLT L.δ],
+          #L.δ ≤ μ → ProductIndependentTied L →
+          ∃ C : TiedListWitnessingChain L, C.AllDominatedIncrement) ∧
+        (∀ (L L' : TupleList P.scheme (Tail.mem hT hμ) A) [LinearOrder L.δ] [WellFoundedLT L.δ]
             [LinearOrder L'.δ] [WellFoundedLT L'.δ]
             (e : L.δ ≃o L'.δ) (ei : ∀ i, L.indexAt i ≃ L'.indexAt (e i)),
-          Nonempty (ListWitnessingChain L) → Nonempty (ListWitnessingChain L') →
+          #(Σ i, L.indexAt i) ≤ μ → #(Σ i, L'.indexAt i) ≤ μ →
+          Nonempty (TiedListWitnessingChain L) → Nonempty (TiedListWitnessingChain L') →
           (∀ i, SameGaloisType (L.one i) (L'.one (e i)) (ei i) (Equiv.refl _)) →
           SameGaloisType L.whole L'.whole
             (Equiv.sigmaCongr e.toEquiv ei) (Equiv.refl _)) := by

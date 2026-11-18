@@ -1,4 +1,4 @@
-# Nodes: (see holes-graph.json)  Hard edges: 551
+# Nodes: (see holes-graph.json)  Hard edges: 561
 # Convention: FROM --> TO means the English proof of TO requires FROM.
 # infra_78_mixed_level_isolation (Prop 7.8 rho^+ matrix argument; mixed tied free lift and mixed Lemma 7.6 done grokbot_02)
 # Retired: infra_610_qPres_empty_joint_on_I, infra_610_same_head_transfers_joint, infra_69_transfer_sequence, WorkingScheme.exists_approximationSequence.
@@ -554,3 +554,13 @@ infra_612_tied_finite_proj_level --> infra_711_successor
 infra_612_tied_finite_perm_level --> infra_711_successor
 infra_612_tied_exists --> infra_711_successor
 infra_711_successor --> lemma_7_11
+lemma_7_12_existence --> lemma_7_12
+lemma_7_12_uniqueness --> lemma_7_12
+lemma_7_11 --> lemma_7_12_existence
+theorem_7_9 --> lemma_7_12_existence
+infra_711_tied_chain --> lemma_7_12_existence
+theorem_7_9 --> lemma_7_12_uniqueness
+infra_610_tied_free_lift --> lemma_7_12_uniqueness
+infra_711_tied_chain --> lemma_7_12_uniqueness
+lemma_7_12_uniqueness --> lemma_7_12_bounded
+infra_711_tied_chain --> lemma_7_12

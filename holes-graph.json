@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-18 14:35",
+  "updated": "2026-11-18 14:37",
   "sorryCount": 42,
   "legend": {
     "open": "No unfinished required proof-deps — try next",
@@ -577,8 +577,8 @@
       "section": 7,
       "file": "AEC/Section7/Results.lean",
       "status": "blocked",
-      "blocker": null,
-      "detail": "RESTATED (grokbot_02) over ListWitnessingChain L (AEC/Section7/ListChain.lean): (1) product-independent well-ordered L has a linked all-dominated-increment chain (stages M_j, j<=delta, M_0=A, continuity at limits, marks = list entries in a common ambient, tp(b_i/M_i) free from A); (2) lists with linked chains and the same marginals have the same whole type. Empty-chain vacuity removed (old API audit kept). Open sorry; blocked on lemma_7_11. | cycle 73: still over the untied ListWitnessingChain (free field = vacuous IsFreeFrom); to be restated over TiedListWitnessingChain (AEC/Section7/TiedListChain.lean) like lemma_7_11."
+      "blocker": "lemma_7_12_existence, lemma_7_12_uniqueness",
+      "detail": "RESTATED cycle 76 to the tied notions (English Lemma 7.12): over SingleModelData P, a tail of levels; (1) L well-ordered, #L.delta <= mu (Def 7.10 size convention), ProductIndependentTied L (tied finite products of finite sublists, IsFiniteProductTied)  ==>  exists C : TiedListWitnessingChain L with C.AllDominatedIncrement (top/listToTop/mark_spec = the whole configuration retained in an extension of the given ambient); (2) L, L' of total length <= mu with tied witnessing chains and the same successive marginal types over A (order iso e, per-entry equivs ei)  ==>  SameGaloisType L.whole L'.whole (one amalgam identifies the entire lists). Old untied statement removed (unused). Split: lemma_7_12_existence (clause 1), lemma_7_12_uniqueness (clause 2); the paper's extension of (2) to bounded individual tuples is lemma_7_12_bounded. Remaining untied consumer: theorem_7_13 still uses ProductIndependent / ListWitnessingChain-era notions."
     },
     {
       "id": "lemma_7_2",
@@ -2980,6 +2980,33 @@
       "status": "open",
       "blocker": null,
       "detail": "Open (cycle 75; narrowed infra of infra_75_product_free, whose general claim stays tracked). Lean statement infra_75_product_free_level_statement P: sigma >= aleph0, mu recursion-closed at sigma with sigma^+ <= mu; f : X -> Y permitted at mu; b : bIdx -> Y with #bIdx <= sigma and AllDominated f b; x over Y with x.nu = mu (actual coupling) and #x.idx <= sigma; IsProductTied (x/X) (b over X hosted with x) ((x,b) over X) refl  ==>  IsTiedFree f (x/X) x refl. All tuples, products and joints are hosted at mu, so only the proved level-joint 6.12 cases are needed. English proof (7.5(3)): symmetry (infra_612_tied_symm_level_joints) + definition give W >= X with x and b free over W; Lemma 7.2 for each bounded c in Y gives (b,c)/W free from X; hence x and (b,c) have product over X; symmetry + projection (infra_612_tied_finite_proj_level) give the free evaluation of x on every bounded test c from Y; testing theorem (infra_78_tiedFree_of_upTo). The paper's type-identifying amalgamation of W with the coupling must be done per bounded test (as in the level-joint 6.12 proofs via infra_73_differing_test), not as one large amalgam (that would be infra_78_tuple_amalgam_large)."
+    },
+    {
+      "id": "lemma_7_12_existence",
+      "label": "Lemma 7.12(1): product-independent lists have all-dominated-increment tied chains",
+      "section": 7,
+      "file": "AEC/Section7/Results.lean",
+      "status": "blocked",
+      "blocker": "lemma_7_11",
+      "detail": "Blocked (cycle 76). Exactly clause (1) of the restated lemma_7_12. English proof: maintain a common ambient containing L and the chain built so far; at stage i, finite domination (Lemma 7.11, via its products with previous marks = the original ones) makes the actual b_i free over M_i from A (the tied free field); Theorem 7.9 gives an all-dominated realization over M_i + b_i and its primeness clause embeds it into a compatible actual ambient over the tuple; limits: coherent unions (same-level chain closure). Needs lemma_7_11 (blocked on infra_711_successor)."
+    },
+    {
+      "id": "lemma_7_12_uniqueness",
+      "label": "Lemma 7.12(2): lists with tied chains and equal marginals have one whole amalgam",
+      "section": 7,
+      "file": "AEC/Section7/Results.lean",
+      "status": "open",
+      "blocker": null,
+      "detail": "Open (cycle 76). Exactly clause (2) of the restated lemma_7_12 (total length <= mu). English proof: build common N_i with coherent arrows from both chains agreeing on A and identifying processed marks; successor: free lift over N_i of the next common marginal (infra_610_tied_free_lift) realized by c; restriction to either image is the prescribed type by transitivity; amalgamate M_{i+1} (all-dominated over M_i + b_i) over the old stage identifying b_i with c - use the primeness clause of Theorem 7.9 / Prop 7.5(1) (an arrow M_{i+1} -> N over M_i sending b_i to c), NOT a large amalgam; then the same for the other chain; limits: coherent unions. All dependencies done; a substantial construction (two interleaved transfinite recursions)."
+    },
+    {
+      "id": "lemma_7_12_bounded",
+      "label": "Lemma 7.12(2) for bounded individual tuples",
+      "section": 7,
+      "file": "AEC/Section7/Results.lean",
+      "status": "blocked",
+      "blocker": "lemma_7_12_uniqueness",
+      "detail": "Blocked/tracked (cycle 76). The paper: \"This assertion also permits bounded, rather than finite, individual tuples in the witnessing chains.\" Needs a TupleList variant without finite_each (bounded entries) and the corresponding tied chain; same proof as lemma_7_12_uniqueness (\"only bounded individual marginal types were used in a single step\")."
     }
   ],
   "edges": [
@@ -6045,6 +6072,56 @@
     {
       "from": "infra_711_successor",
       "to": "lemma_7_11",
+      "kind": "hard"
+    },
+    {
+      "from": "lemma_7_12_existence",
+      "to": "lemma_7_12",
+      "kind": "hard"
+    },
+    {
+      "from": "lemma_7_12_uniqueness",
+      "to": "lemma_7_12",
+      "kind": "hard"
+    },
+    {
+      "from": "lemma_7_11",
+      "to": "lemma_7_12_existence",
+      "kind": "hard"
+    },
+    {
+      "from": "theorem_7_9",
+      "to": "lemma_7_12_existence",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_711_tied_chain",
+      "to": "lemma_7_12_existence",
+      "kind": "hard"
+    },
+    {
+      "from": "theorem_7_9",
+      "to": "lemma_7_12_uniqueness",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_610_tied_free_lift",
+      "to": "lemma_7_12_uniqueness",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_711_tied_chain",
+      "to": "lemma_7_12_uniqueness",
+      "kind": "hard"
+    },
+    {
+      "from": "lemma_7_12_uniqueness",
+      "to": "lemma_7_12_bounded",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_711_tied_chain",
+      "to": "lemma_7_12",
       "kind": "hard"
     }
   ],

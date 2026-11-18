@@ -75,6 +75,16 @@ structure TiedListWitnessingChain (L : TupleList P.scheme hμ A) [LinearOrder L.
         (mark i ⊤ (WithTop.coe_lt_top i)))
       (Equiv.refl _)
 
+/-- **Definition 7.10 (tied).** The list is product-independent over `A` when each finite
+sublist (injective selection) has the tied product (`IsFiniteProductTied`, Proposition 6.12) of
+its marginal types over `A`. -/
+def ProductIndependentTied (L : TupleList P.scheme hμ A) : Prop :=
+  ∀ (n : ℕ) (ix : Fin n → L.δ), Function.Injective ix →
+    ∃ (joint : TupleOver K oneVertexShape P.scheme hμ A)
+      (E : (Σ i, (L.one (ix i)).idx) ≃ joint.idx),
+      IsFiniteProductTied n (fun i => L.one (ix i)) joint E ∧
+      SameGaloisType (L.subConcat n ix) joint E (Equiv.refl joint.idx)
+
 namespace TiedListWitnessingChain
 
 variable {L : TupleList P.scheme hμ A} [LinearOrder L.δ]
