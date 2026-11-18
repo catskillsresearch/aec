@@ -189,6 +189,7 @@ public import AEC.Audit.AllSetsMinimal
 public import AEC.Audit.NoPairs
 public import AEC.Audit.ProductAxiomsAudit
 public import AEC.Audit.WitnessingChainVacuous
+public import AEC.Audit.FreeFromVacuous
 public import AEC.Audit.EqPattern
 public import AEC.Audit.BoundaryGlue
 public import AEC.Audit.FaceGlue

@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-18 07:31",
+  "updated": "2026-11-18 07:35",
   "sorryCount": 43,
   "legend": {
     "open": "No unfinished required proof-deps — try next",
@@ -11,7 +11,8 @@
     "Open tip: infra_78_mixed_level_isolation (mixed-level nu<mu Lemma 7.6 / tied freeness needed by Prop 7.8's level-lambda shrink inside level-kappa matrix; proposition_7_8 blocked on it). Done this run: infra_73_tied_of_isolated (restated with hMargTied), infra_72_over_B_isolation, lemma_7_2 (lemma_7_2_tied), infra_610_tied_free_lift (TiedFreeLift.lean), infra_73_alt2_tied_marginal (AltTwoTied.lean), infra_73_block_restriction + proposition_7_3_uniform (BlockRestriction.lean), infra_76_arbitrary_fragment + lemma_7_6_tied (TiedDescent.lean). objectOfEmptyChain sorry removed (lemma_5_4 gains hObj). Retired: infra_69_transfer_sequence, infra_610_same_head_transfers_joint (removed). sorryCount 32 (degenerate-statement proofs: proposition_9_1, corollary_9_2, theorem_9_6, lemma_10_1). Audit (AEC/Audit/TinyAEC.lean, Counterexamples.lean): tinyAEC (empty language, <=1-element models) refutes unconditional proposition_10_2 (now assumes CategoricalUnbounded) and lemma_11_2 clause 4 (dropped; lemma_11_2 done); lemma_10_8 statement proven defective. WorkingScheme.exists_approximationSequence retired (unused). emptyAEC refutes unconditional theorem_9_3 (now +CategoricalUnbounded). Counterexamples for arbitrary systems: theorem_9_8, theorem_11_9, theorem_12_2, theorem_14_3. EmptiedScheme.lean: IsWorkingPackage vacuous for object-free schemes; degenerate proofs of theorem_8_6, theorem_9_3, proposition_10_6, proposition_11_7. proposition_11_6: +CategoricalUnbounded (unconditional refuted), degenerate proof. lemma_9_5 proved (hpres chain). AllSets.lean/AllSetsMinimal.lean: AEC of all sets (direct-limit chain unions) with MinimalData setsMinimal; refutes proposition_10_7 as stated and the original hypotheses of theorem_10_9 / corollary_10_10 (restated to P(B) = f[P(A)]). NoPairs.lean: MinimalData without independent pairs refutes lemma_10_4 and theorem_10_5 as stated. claim_11_10 refuted for arbitrary systems. lemma_12_6 refuted as formalized (AEC/Audit/EqPattern.lean). lemma_12_5 restated (ι inside hypothesis; original refuted). lemma_12_3 refuted as formalized (AEC/Audit/BoundaryGlue.lean). claim_11_13 refuted as formalized. claim_11_12 degenerate proof via GeometricSystem.repiece. lemma_9_7 refuted as formalized (AEC/Audit/FaceGlue.lean). corollary_14_4 restated (+CategoricalUnbounded; unconditional refuted in AEC/Audit/PredSets.lean). Degenerate closures demoted to blocked (flag degenerate=true, not counted as done): theorem_8_6, proposition_9_1, corollary_9_2, theorem_9_3, theorem_9_6, lemma_10_1, proposition_10_6, claim_11_12, proposition_11_6, proposition_11_7. Every refuted-as-formalized node now carries a PROPOSED HONEST RESTATEMENT in its detail (flag refuted_as_formalized=true).",
     "Edge B→A means the English proof of A requires B (or a required Lean infra subgoal).",
     "Blue = done. Green = open. Grey = blocked. No separate failed status unless a counterexample refutes the program.",
-    "lemma_6_14 is independent of Prop 6.13 (that paper-number edge stays removed). Widened to χ-indexed queries plus a fixed T★, it is a hard dependency of proposition_6_15 and still feeds lemma_12_6."
+    "lemma_6_14 is independent of Prop 6.13 (that paper-number edge stays removed). Widened to χ-indexed queries plus a fixed T★, it is a hard dependency of proposition_6_15 and still feeds lemma_12_6.",
+    "grokbot_02: audit_free_from_vacuous (AEC/Audit/FreeFromVacuous.lean) shows untied IsFreeFrom is vacuous; lemma_6_11 and proposition_6_13 demoted to blocked (degenerate=true) with tied restatements proposed; new open tip infra_78_tied_local_character. Edge reconciliation: 4 edges present in holes-edges.txt but missing from holes-graph.json added (infra_7_10_list_chain -> 7.11/7.12/7.13, infra_78_tuple_amalgam_large -> infra_78_cross_level_galois). Needs review (not yet demoted): done nodes with a hard edge from lemma_6_11/proposition_6_13 whose Lean conclusions use untied IsFreeLift/IsFreeFrom: proposition_6_12, lemma_6_17, infra_78_finite_continuity."
   ],
   "nodes": [
     {
@@ -368,9 +369,10 @@
       "label": "Lem 6.11",
       "section": 6,
       "file": "AEC/Section6/Results.lean",
-      "status": "done",
-      "blocker": null,
-      "detail": "Same-level SingleModelData: fresh Lem 6.9 code, majority bridge (eq_type + unique), move_query on parameter lists, infra_610_same_galois, then IsFreeLift of q.restrict. Mixed ν<μ deferred. No sorry."
+      "status": "blocked",
+      "blocker": "infra_78_tied_local_character",
+      "detail": "DEGENERATE CLOSURE, NOT DONE (grokbot_02 audit). Lean conclusion IsFreeFrom f hf q is implied by the hypothesis seq : ApproximationSequence (q.restrict f hf) alone (Audit.isFreeFrom_of_approximationSequence), so the majority hypothesis is unused in substance. Proposed honest restatement: conclude IsTiedFree f (q.restrict f hf) q (Equiv.refl _) (tied freeness: the majority answer on each moved query is q's own diagram), as in Section 7. Blocked on infra_78_tied_local_character. Previous note: Same-level SingleModelData: fresh Lem 6.9 code, majority bridge (eq_type + unique), move_query on parameter lists, infra_610_same_galois, then IsFreeLift of q.restrict. Mixed ν<μ deferred. No sorry.",
+      "degenerate": true
     },
     {
       "id": "lemma_6_14",
@@ -511,9 +513,10 @@
       "label": "Prop 6.13",
       "section": 6,
       "file": "AEC/Section6/Results.lean",
-      "status": "done",
-      "blocker": null,
-      "detail": "Done for same-level SingleModelData. SameLevelChain (joint cover, not HasChainUnions). Local character: infra_613_trap_in_stage then infra_611_isFreeFrom. Continuity: infra_613_freeFrom_trans along the cocone. Deferred: mixed levels, SatisfiesContinuity / §7. Next frontier is Cor 6.16."
+      "status": "blocked",
+      "blocker": "infra_78_tied_local_character",
+      "detail": "DEGENERATE CLOSURE, NOT DONE (grokbot_02 audit). Both clauses conclude untied IsFreeFrom, which holds for every small tuple (Audit.isFreeFrom_of_approximationSequence + Lemma 6.9 existence), so local character and continuity are degenerate as formalized. Proposed honest restatement: replace IsFreeFrom by IsTiedFree (restriction, refl) in both clauses. Blocked on infra_78_tied_local_character. Previous note: Done for same-level SingleModelData. SameLevelChain (joint cover, not HasChainUnions). Local character: infra_613_trap_in_stage then infra_611_isFreeFrom. Continuity: infra_613_freeFrom_trans along the cocone. Deferred: mixed levels, SatisfiesContinuity / §7. Next frontier is Cor 6.16.",
+      "degenerate": true
     },
     {
       "id": "infra_615_terminal",
@@ -1839,9 +1842,9 @@
       "label": "Infra 7.8 mixed-level isolation",
       "section": 7,
       "file": "AEC/Section7/MixedDescent.lean",
-      "status": "open",
-      "blocker": null,
-      "detail": "Open. Done toward it: mixed tied free lift and mixed Lemma 7.6 (sorry-free), Fodor, matrix data, stationary combinatorics (infra_78_stationary_combinatorics: high-cofinality stages stationary, small sets appear early, one fixed failing list on a stationary set). Remaining for Prop 7.8: the rho^+ matrix construction at level kappa with level-lambda pairs inside R_i,S_i (bookkeeping closures), type-identifying amalgamation at kappa, the local-character contradiction for the fixed list, the theta^+ shrink to A<=U with the majority free-extension identity, Def 7.7 continuity at matrix limits (only finite marks done: infra_78_finite_continuity)."
+      "status": "blocked",
+      "blocker": "infra_78_tied_local_character",
+      "detail": "Open. Done toward it: mixed tied free lift and mixed Lemma 7.6 (sorry-free), Fodor, matrix data, stationary combinatorics (infra_78_stationary_combinatorics: high-cofinality stages stationary, small sets appear early, one fixed failing list on a stationary set). Blocked on infra_78_tied_local_character (the local-character contradiction for the fixed list needs tied freeness; untied IsFreeFrom is vacuous, audit_free_from_vacuous). Remaining for Prop 7.8: the rho^+ matrix construction at level kappa with level-lambda pairs inside R_i,S_i (bookkeeping closures), type-identifying amalgamation at kappa, the local-character contradiction for the fixed list, the theta^+ shrink to A<=U with the majority free-extension identity, Def 7.7 continuity at matrix limits (only finite marks done: infra_78_finite_continuity)."
     },
     {
       "id": "infra_9_cube_scheme",
@@ -1959,6 +1962,24 @@
       "status": "done",
       "blocker": null,
       "detail": "Done (no sorry; axioms propext/choice/Quot.sound): the set-theoretic part of Prop 7.8's 'Suppose not' paragraph. infra_78_stationary_high_cof (stages i<rho^+ with cf(i)>lambda are stationary, lambda<rho infinite), infra_78_bounded_in_earlier_stage (a <=lambda subset of a continuous chain at a stage of cofinality >lambda lies in an earlier stage), infra_78_stationary_fixed_list (Fodor + partition into <=rho pieces: one fixed list on a stationary set)."
+    },
+    {
+      "id": "audit_free_from_vacuous",
+      "label": "Audit: untied IsFreeFrom vacuous",
+      "section": 6,
+      "file": "AEC/Audit/FreeFromVacuous.lean",
+      "status": "done",
+      "blocker": null,
+      "detail": "Done (no sorry): Audit.isFreeFrom_of_approximationSequence. The IsFreeLift majority clause does not tie Z0/xs to the query Z or to q, so IsFreeFrom f hf q holds for every q whose restriction q.restrict f hf has one ApproximationSequence (witness q.restrict itself, constant query, typeJoint majority via infra_610_majority_eq_type). Consequences: Lean lemma_6_11 and proposition_6_13 conclusions (IsFreeFrom) are degenerate; the Prop 7.8 local-character contradiction must use tied freeness (IsTiedFree)."
+    },
+    {
+      "id": "infra_78_tied_local_character",
+      "label": "Tied local character + base monotonicity (Prop 6.13 tied form)",
+      "section": 6,
+      "file": "AEC/Section6/LocalCharacter.lean",
+      "status": "open",
+      "blocker": null,
+      "detail": "Open (precise sub-tip split off infra_78_mixed_level_isolation; English Prop 6.13 + Thm 6.10 uniqueness in the tied form). (a) LOCAL: at a recursion-closed level mu (succ sigma <= mu), for C : SameLevelChain P hmu and p over C.unionObj with p.nu = mu, #p.idx <= sigma, #p.idx < C.delta.cof: exists i hi, IsTiedFree (C.toUnion i hi) (p.restrict (C.toUnion i hi) _) p (Equiv.refl _). (b) BASE MONO: X -g-> A -f-> B same level, q over B small: IsTiedFree (comp g f) (q.restrict (comp g f) _) q refl -> IsTiedFree f (q.restrict f hf) q refl. (c) RESTRICT: same hypothesis gives IsTiedFree g ((q.restrict f hf).restrict g hg) (q.restrict f hf) refl. Needed for Prop 7.8: the fixed list (b,d) is tied-free over the union from some X_j, hence at each later successor tied-free over X_i, contradicting the Prop 7.3 alt-2 (not IsTiedFree) extensions chosen stationarily often. The untied IsFreeFrom version is vacuous (audit_free_from_vacuous)."
     }
   ],
   "edges": [
@@ -3615,8 +3636,48 @@
       "from": "infra_78_stationary_combinatorics",
       "to": "infra_78_mixed_level_isolation",
       "kind": "hard"
+    },
+    {
+      "from": "infra_7_10_list_chain",
+      "to": "lemma_7_11",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_7_10_list_chain",
+      "to": "lemma_7_12",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_7_10_list_chain",
+      "to": "theorem_7_13",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_78_tuple_amalgam_large",
+      "to": "infra_78_cross_level_galois",
+      "kind": "hard"
+    },
+    {
+      "from": "audit_free_from_vacuous",
+      "to": "infra_78_tied_local_character",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_78_tied_local_character",
+      "to": "infra_78_mixed_level_isolation",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_78_tied_local_character",
+      "to": "proposition_6_13",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_78_tied_local_character",
+      "to": "lemma_6_11",
+      "kind": "hard"
     }
   ],
-  "doneCount": 166,
+  "doneCount": 165,
   "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 43. Uncommitted in /tmp/aec-grok."
 }
