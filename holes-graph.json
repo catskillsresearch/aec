@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-18 14:37",
+  "updated": "2026-11-18 14:39",
   "sorryCount": 42,
   "legend": {
     "open": "No unfinished required proof-deps — try next",
@@ -2977,9 +2977,9 @@
       "label": "Prop 7.5(3) tied, actual coupling, level joints",
       "section": 7,
       "file": "AEC/Section7/ProductFreeLevel.lean",
-      "status": "open",
-      "blocker": null,
-      "detail": "Open (cycle 75; narrowed infra of infra_75_product_free, whose general claim stays tracked). Lean statement infra_75_product_free_level_statement P: sigma >= aleph0, mu recursion-closed at sigma with sigma^+ <= mu; f : X -> Y permitted at mu; b : bIdx -> Y with #bIdx <= sigma and AllDominated f b; x over Y with x.nu = mu (actual coupling) and #x.idx <= sigma; IsProductTied (x/X) (b over X hosted with x) ((x,b) over X) refl  ==>  IsTiedFree f (x/X) x refl. All tuples, products and joints are hosted at mu, so only the proved level-joint 6.12 cases are needed. English proof (7.5(3)): symmetry (infra_612_tied_symm_level_joints) + definition give W >= X with x and b free over W; Lemma 7.2 for each bounded c in Y gives (b,c)/W free from X; hence x and (b,c) have product over X; symmetry + projection (infra_612_tied_finite_proj_level) give the free evaluation of x on every bounded test c from Y; testing theorem (infra_78_tiedFree_of_upTo). The paper's type-identifying amalgamation of W with the coupling must be done per bounded test (as in the level-joint 6.12 proofs via infra_73_differing_test), not as one large amalgam (that would be infra_78_tuple_amalgam_large)."
+      "status": "blocked",
+      "blocker": "infra_75_free_eval_level",
+      "detail": "Open (cycle 75; narrowed infra of infra_75_product_free, whose general claim stays tracked). Lean statement infra_75_product_free_level_statement P: sigma >= aleph0, mu recursion-closed at sigma with sigma^+ <= mu; f : X -> Y permitted at mu; b : bIdx -> Y with #bIdx <= sigma and AllDominated f b; x over Y with x.nu = mu (actual coupling) and #x.idx <= sigma; IsProductTied (x/X) (b over X hosted with x) ((x,b) over X) refl  ==>  IsTiedFree f (x/X) x refl. All tuples, products and joints are hosted at mu, so only the proved level-joint 6.12 cases are needed. English proof (7.5(3)): symmetry (infra_612_tied_symm_level_joints) + definition give W >= X with x and b free over W; Lemma 7.2 for each bounded c in Y gives (b,c)/W free from X; hence x and (b,c) have product over X; symmetry + projection (infra_612_tied_finite_proj_level) give the free evaluation of x on every bounded test c from Y; testing theorem (infra_78_tiedFree_of_upTo). The paper's type-identifying amalgamation of W with the coupling must be done per bounded test (as in the level-joint 6.12 proofs via infra_73_differing_test), not as one large amalgam (that would be infra_78_tuple_amalgam_large). | cycle 77: split = infra_75_tests_reduction (done: testing reduction to bounded tests, no amalgam) + infra_75_free_eval_level (open: the per-test free evaluation)."
     },
     {
       "id": "lemma_7_12_existence",
@@ -3007,6 +3007,24 @@
       "status": "blocked",
       "blocker": "lemma_7_12_uniqueness",
       "detail": "Blocked/tracked (cycle 76). The paper: \"This assertion also permits bounded, rather than finite, individual tuples in the witnessing chains.\" Needs a TupleList variant without finite_each (bounded entries) and the corresponding tied chain; same proof as lemma_7_12_uniqueness (\"only bounded individual marginal types were used in a single step\")."
+    },
+    {
+      "id": "infra_75_tests_reduction",
+      "label": "Prop 7.5(3) level: testing reduction",
+      "section": 7,
+      "file": "AEC/Section7/ProductFreeLevel.lean",
+      "status": "done",
+      "blocker": null,
+      "detail": "DONE cycle 77: infra_75_tiedFree_of_tests (if q agrees with every tied free lift qB of q|A on every bounded test of size <= g(sigma)+LS(K), then IsTiedFree f (q|A) q refl; Theorem 6.6 via infra_73_differing_test, then qB answers carried to q by infra_72_diagramEq_of_sameGalois) and infra_75_product_free_level_of_eval : infra_75_free_eval_level_statement P -> infra_75_product_free_level_statement P. No amalgam at all. Axioms: propext, Classical.choice, Quot.sound."
+    },
+    {
+      "id": "infra_75_free_eval_level",
+      "label": "Prop 7.5(3) level: free evaluation of x on bounded tests from Y",
+      "section": 7,
+      "file": "AEC/Section7/ProductFreeLevel.lean",
+      "status": "open",
+      "blocker": null,
+      "detail": "Open (cycle 77). Lean statement infra_75_free_eval_level_statement P (ProductFreeLevel.lean): hypotheses of infra_75_product_free_level (actual coupling x.nu = mu, Y all-dominated over X + b, IsProductTied (x|X) (b over X) ((x,b) over X)); for every tied free lift qB (level mu) of x|X over Y and every test Z in Y of size <= g(sigma)+LS(K): DiagramEq (qB ++ Z) (x ++ Z). English steps (each per bounded test, so no large amalgam): (i) symmetry (infra_612_tied_symm_level_joints) + definition of IsProductTied: a level-mu W >= X containing x with b tied-free over W; (ii) all-domination: tp(b,Z/X) relatively isolated over b; Lemma 7.2 (infra_72_lemma, tied) then gives (b,Z)/W free from X; (iii) hence x and (b,Z) have the tied product over X: compare the two joints by infra_73_differing_test on one bounded test at a time (infra_612_tied_indep_level_joints pattern) instead of the paper's type-identifying amalgamation of W with the coupling; (iv) symmetry + projection (infra_612_tied_finite_proj_level) drop b: tp(x,Z) = tp(qB,Z) on the test. All dependencies done."
     }
   ],
   "edges": [
@@ -6123,8 +6141,43 @@
       "from": "infra_711_tied_chain",
       "to": "lemma_7_12",
       "kind": "hard"
+    },
+    {
+      "from": "infra_75_tests_reduction",
+      "to": "infra_75_product_free_level",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_75_free_eval_level",
+      "to": "infra_75_product_free_level",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_610_tied_free_lift",
+      "to": "infra_75_tests_reduction",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_612_tied_symm_level_joints",
+      "to": "infra_75_free_eval_level",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_612_tied_finite_proj_level",
+      "to": "infra_75_free_eval_level",
+      "kind": "hard"
+    },
+    {
+      "from": "lemma_7_2",
+      "to": "infra_75_free_eval_level",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_612_tied_indep_level_joints",
+      "to": "infra_75_free_eval_level",
+      "kind": "hard"
     }
   ],
-  "doneCount": 270,
+  "doneCount": 271,
   "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
