@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-18 10:33",
+  "updated": "2026-11-18 10:37",
   "sorryCount": 44,
   "legend": {
     "open": "No unfinished required proof-deps — try next",
@@ -2284,8 +2284,8 @@
       "section": 7,
       "file": "AEC/Section7/MixedDescent.lean",
       "status": "blocked",
-      "blocker": "infra_78_bookkeeping_req1_high_cof",
-      "detail": "Blocked (full claim kept, stated over an arbitrary continuous pair-chain). Split: infra_78_cardinal_closure (DONE), infra_78_bookkeeping_sets_construction (DONE cycle 39 via infra_78_bookkeeping_sets_instantiate), infra_78_bookkeeping_req1_high_cof (open), infra_78_bookkeeping_req2_high_cof (open). Successor closures for lambda^+ steps (rho^lambda = rho lists, each adding <= rho points via infra_78_mixed_ls_pair and infra_78_code_copies_bounded), continuity at limits, and requirements 1-2 at stages of cofinality > lambda via infra_78_bounded_in_earlier_stage and infra_78_copies_persist_at_limits."
+      "blocker": "infra_78_bookkeeping_req2_high_cof",
+      "detail": "Blocked (full claim kept, stated over an arbitrary continuous pair-chain). Split: infra_78_cardinal_closure (DONE), infra_78_bookkeeping_sets_construction (DONE cycle 39 via infra_78_bookkeeping_sets_instantiate), infra_78_bookkeeping_req1_high_cof (DONE cycle 40, combined form infra_78_bookkeeping_sets_req1), infra_78_bookkeeping_req2_high_cof (open). Successor closures for lambda^+ steps (rho^lambda = rho lists, each adding <= rho points via infra_78_mixed_ls_pair and infra_78_code_copies_bounded), continuity at limits, and requirements 1-2 at stages of cofinality > lambda via infra_78_bounded_in_earlier_stage and infra_78_copies_persist_at_limits."
     },
     {
       "id": "infra_78_cardinal_closure",
@@ -2309,10 +2309,10 @@
       "id": "infra_78_bookkeeping_req1_high_cof",
       "label": "Prop 7.8: closure requirement 1 at cf > lambda",
       "section": 7,
-      "file": "AEC/Section7/MixedDescent.lean",
-      "status": "open",
+      "file": "AEC/Section7/Bookkeeping.lean",
+      "status": "done",
       "blocker": null,
-      "detail": "Open (board-only; unblocked cycle 39 by infra_78_bookkeeping_sets_instantiate). At a stage i with cf(i) > lambda, any <= lambda sets from R_i, S_i lie in an earlier stage (infra_78_bounded_in_earlier_stage), so the level-lambda pair A <= V requested there (inside R_{j+1}, S_{j+1}) pushes forward to a pair of subobjects of X_i <= Y_i inside R_i, S_i. Infra78Matrix has NO composition law; this node is stated over an Infra78Matrix PLUS the hypotheses stepX (h1.trans h2) = stepX h1 >> stepX h2 and the same for stepY (needed to move <= lambda points from scattered earlier stages to one stage j < i and then to i), which are obligations of infra_78_matrix_construction (tracked there), not hidden assumptions."
+      "detail": "Done (no sorry; axioms propext/choice/Quot.sound). infra_78_bookkeeping_req1_high_cof (AEC/Section7/Bookkeeping.lean): for M : Infra78Matrix with the explicit composition-law hypothesis Infra78Matrix.CompLaw (stepX (h1.trans h2) = stepX h1 >> stepX h2 and the same for stepY; exactly the obligation recorded on infra_78_matrix_construction), and any bookkeeping sets R that are forward-closed along infra_78_bkStep, continuous at limits and satisfy requirement 1 at non-limit stages (as produced by infra_78_bookkeeping_sets_instantiate): at every stage i with lambda < cof(Iio i), every s subset R i with #s <= lambda is covered by a level-lambda pair A <= V (permitted iA : A -> X_i, iV : V -> Y_i, g : A -> V, iV o g = pair_i o iA) whose images lie in R i (infra_78_bkReq1). Proof: infra_78_bounded_in_earlier_stage puts s in an earlier image, move to the non-limit stage succ j < i (composition law), apply the supply there and push forward along stepX/stepY (comm law). Combined form: infra_78_bookkeeping_sets_req1 (requirement 1 at all non-limit stages and all stages of cofinality > lambda)."
     },
     {
       "id": "infra_78_bookkeeping_req2_high_cof",
@@ -4461,6 +4461,6 @@
       "kind": "hard"
     }
   ],
-  "doneCount": 193,
+  "doneCount": 194,
   "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 43. Uncommitted in /tmp/aec-grok."
 }
