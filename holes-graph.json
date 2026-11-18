@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-18 10:10",
+  "updated": "2026-11-18 10:13",
   "sorryCount": 44,
   "legend": {
     "open": "No unfinished required proof-deps — try next",
@@ -1844,7 +1844,7 @@
       "file": "AEC/Section7/MixedDescent.lean",
       "status": "blocked",
       "blocker": "infra_78_matrix_construction",
-      "detail": "Blocked (full claim kept: everything Prop 7.8 needs beyond the done infra). Split into tracked sub-tips: infra_78_fixed_list_eventually_free (DONE), infra_78_nonfree_extension_tied (open), infra_78_same_level_type_amalgam (open), infra_78_bookkeeping_closure (open), infra_78_matrix_construction (blocked), infra_78_isolated_stage (blocked), infra_78_theta_shrink (blocked), infra_78_isolation_transfer (blocked). Previously done toward it: mixed tied free lift, mixed Lemma 7.6, Fodor, matrix data, stationary combinatorics, tied local character. Open. Done toward it: mixed tied free lift and mixed Lemma 7.6 (sorry-free), Fodor, matrix data, stationary combinatorics (infra_78_stationary_combinatorics: high-cofinality stages stationary, small sets appear early, one fixed failing list on a stationary set). Tied local character now done (infra_78_tied_local_character: infra_78_tied_local, base mono, restrict); untied IsFreeFrom is vacuous (audit_free_from_vacuous). Remaining for Prop 7.8: the rho^+ matrix construction at level kappa with level-lambda pairs inside R_i,S_i (bookkeeping closures), type-identifying amalgamation at kappa, the local-character contradiction for the fixed list, the theta^+ shrink to A<=U with the majority free-extension identity, Def 7.7 continuity at matrix limits (only finite marks done: infra_78_finite_continuity)."
+      "detail": "Blocked (full claim kept: everything Prop 7.8 needs beyond the done infra). Split into tracked sub-tips: infra_78_fixed_list_eventually_free (DONE), infra_78_nonfree_extension_tied (open), infra_78_same_level_type_amalgam (DONE), infra_78_bookkeeping_closure (open), infra_78_matrix_construction (blocked), infra_78_isolated_stage (blocked), infra_78_theta_shrink (blocked), infra_78_isolation_transfer (blocked). Previously done toward it: mixed tied free lift, mixed Lemma 7.6, Fodor, matrix data, stationary combinatorics, tied local character. Open. Done toward it: mixed tied free lift and mixed Lemma 7.6 (sorry-free), Fodor, matrix data, stationary combinatorics (infra_78_stationary_combinatorics: high-cofinality stages stationary, small sets appear early, one fixed failing list on a stationary set). Tied local character now done (infra_78_tied_local_character: infra_78_tied_local, base mono, restrict); untied IsFreeFrom is vacuous (audit_free_from_vacuous). Remaining for Prop 7.8: the rho^+ matrix construction at level kappa with level-lambda pairs inside R_i,S_i (bookkeeping closures), type-identifying amalgamation at kappa, the local-character contradiction for the fixed list, the theta^+ shrink to A<=U with the majority free-extension identity, Def 7.7 continuity at matrix limits (only finite marks done: infra_78_finite_continuity)."
     },
     {
       "id": "infra_9_cube_scheme",
@@ -2201,10 +2201,10 @@
       "id": "infra_78_same_level_type_amalgam",
       "label": "Prop 7.8: type-identifying amalgamation at kappa",
       "section": 7,
-      "file": "AEC/Section7/MixedDescent.lean",
-      "status": "open",
+      "file": "AEC/Section7/MixedLevel.lean",
+      "status": "done",
       "blocker": null,
-      "detail": "Open (board-only). Given Y_i and X' over X_i at level kappa and tuples of the same Galois type, an amalgam Y_{i+1} at level kappa (not at a higher top) identifying the tuples. SameGaloisType gives a top at some level; needs a level-kappa hull (exists_strong_hull_exact_card, as in infra_78_same_level_realization)."
+      "detail": "Done (no sorry; axioms propext/choice/Quot.sound). infra_78_same_level_type_amalgam in AEC/Section7/MixedLevel.lean: for A at level kappa and tuples t1 t2 over A with t1.nu = t2.nu = kappa and SameGaloisType t1 t2 e1 e2 (top at any level rho), there is top' : Object kappa with permitted f1 f2 from both hosts, commuting over A and identifying the tuples (the SameGaloisType body with rho := kappa). Proof: strong hull of exact size kappa of both host images in the old top (exists_strong_hull_exact_card), factor both arrows through it. Builds Y_{i+1} at level kappa in the matrix step."
     },
     {
       "id": "infra_78_bookkeeping_closure",
@@ -4221,6 +4221,6 @@
       "kind": "hard"
     }
   ],
-  "doneCount": 184,
+  "doneCount": 185,
   "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 43. Uncommitted in /tmp/aec-grok."
 }

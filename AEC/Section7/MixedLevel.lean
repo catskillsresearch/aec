@@ -189,6 +189,85 @@ theorem infra_78_same_level_realization
     rw [eB.symm_apply_apply, hy k]
     rfl
 
+/-- **Type-identifying amalgamation at one level (Prop 7.8 matrix step; proved).** Two
+tuples over `A` (level `κ`) realized in hosts at level `κ` with the same Galois type have a
+level-`κ` amalgam identifying them: the `SameGaloisType` witness `top` may sit at any level
+`ρ`, so take a strong hull of size exactly `κ` of both host images inside `top`
+(`exists_strong_hull_exact_card`) and factor both arrows through it. In Prop 7.8 this builds
+`Y_{i+1}` at level `κ` from `Y_i` and the nonfree extension `X'` over `X_i`. -/
+theorem infra_78_same_level_type_amalgam
+    {P : SingleModelData K} {κ : Cardinal.{u}} {hκ : κ ∈ P.eligible}
+    {A : P.scheme.Object κ hκ} {idx : Type u}
+    (t1 t2 : TupleOver K oneVertexShape P.scheme hκ A) (e1 : t1.idx ≃ idx) (e2 : t2.idx ≃ idx)
+    (h1 : t1.ν = κ) (h2 : t2.ν = κ) (hS : SameGaloisType t1 t2 e1 e2) :
+    ∃ (top : P.scheme.Object κ hκ)
+      (f1 : SystemArrow K oneVertexShape (P.scheme.asSystem t1.hν t1.host) (P.scheme.asSystem hκ top))
+      (f2 : SystemArrow K oneVertexShape (P.scheme.asSystem t2.hν t2.host) (P.scheme.asSystem hκ top)),
+      P.scheme.permitted (X := t1.host) (Y := top) f1 ∧
+      P.scheme.permitted (X := t2.host) (Y := top) f2 ∧
+      (∀ v, (f1.onVertex v).comp (t1.incl.onVertex v) =
+        (f2.onVertex v).comp (t2.incl.onVertex v)) ∧
+      ∀ i : idx,
+        (⟨(t1.val (e1.symm i)).1,
+            f1.onVertex (t1.val (e1.symm i)).1 (t1.val (e1.symm i)).2⟩ :
+          Occurrence K oneVertexShape (P.scheme.asSystem hκ top)) =
+        ⟨(t2.val (e2.symm i)).1,
+            f2.onVertex (t2.val (e2.symm i)).1 (t2.val (e2.symm i)).2⟩ := by
+  classical
+  obtain ⟨ρ, hρ, T, g1, g2, -, -, hcomm, hval⟩ := hS
+  have hκinf : ℵ₀ ≤ κ := P.aleph0_le hκ
+  let N : Model K.τ := T.model
+  have hN : K.Mem N := T.mem
+  let i1 : Language.Embedding K.τ t1.host.model.carrier N.carrier := g1.onVertex PUnit.unit
+  let i2 : Language.Embedding K.τ t2.host.model.carrier N.carrier := g2.onVertex PUnit.unit
+  have hi1 : K.Strong i1 := g1.onVertex_strong PUnit.unit
+  have hi2 : K.Strong i2 := g2.onVertex_strong PUnit.unit
+  have hc1 : #t1.host.model.carrier = κ := t1.host.card.trans h1
+  have hc2 : #t2.host.model.carrier = κ := t2.host.card.trans h2
+  have hκN : κ ≤ Model.card N := by
+    change κ ≤ #N.carrier
+    rw [← hc1]; exact Cardinal.mk_le_of_injective i1.injective
+  have hSz : #↥(Set.range i1 ∪ Set.range i2) ≤ κ := by
+    refine (mk_union_le _ _).trans ?_
+    have h := add_le_add ((mk_range_le (f := i1)).trans (le_of_eq hc1))
+      ((mk_range_le (f := i2)).trans (le_of_eq hc2))
+    rwa [add_eq_self hκinf] at h
+  obtain ⟨M, j, hM, hj, hcM, hcov⟩ :=
+    exists_strong_hull_exact_card K κ (P.ls_lt hκ).le hκinf N hN hκN _ hSz
+  have him1 : ∀ a, ∃ t, j t = i1 a := fun a => hcov _ (Or.inl ⟨a, rfl⟩)
+  have him2 : ∀ a, ∃ t, j t = i2 a := fun a => hcov _ (Or.inr ⟨a, rfl⟩)
+  let i1' := factorEmbedding i1 j him1
+  let i2' := factorEmbedding i2 j him2
+  have hi1' : K.Strong i1' := strong_factorEmbedding i1 j hi1 hj him1
+  have hi2' : K.Strong i2' := strong_factorEmbedding i2 j hi2 hj him2
+  let B : SMObject K κ := SMObject.ofModel M hM hcM
+  let eB : M.carrier ≃[K.τ] B.model.carrier := SMObject.ofModelEquiv M hM hcM
+  have heB : K.Strong eB.toEmbedding := strong_of_equiv K eB hM
+  have key1 : ∀ a, j (i1' a) = i1 a := factorEmbedding_apply i1 j him1
+  have key2 : ∀ a, j (i2' a) = i2 a := factorEmbedding_apply i2 j him2
+  refine ⟨B, oneVertexArrow (eB.toEmbedding.comp i1') (K.strong_trans i1' eB.toEmbedding hi1' heB),
+    oneVertexArrow (eB.toEmbedding.comp i2') (K.strong_trans i2' eB.toEmbedding hi2' heB),
+    trivial, trivial, ?_, ?_⟩
+  · intro v
+    ext a
+    change eB (i1' _) = eB (i2' _)
+    congr 1
+    apply j.injective
+    refine (key1 _).trans (Eq.trans ?_ (key2 _).symm)
+    exact congrArg (fun e => e a) (hcomm v)
+  · intro k
+    have hk := hval k
+    generalize t1.val (e1.symm k) = x1 at hk ⊢
+    generalize t2.val (e2.symm k) = x2 at hk ⊢
+    obtain ⟨⟨⟩, a1⟩ := x1
+    obtain ⟨⟨⟩, a2⟩ := x2
+    have hh : i1 a1 = i2 a2 := eq_of_heq (Sigma.mk.inj hk).2
+    refine Sigma.ext rfl (heq_of_eq ?_)
+    change eB (i1' a1) = eB (i2' a2)
+    congr 1
+    apply j.injective
+    exact (key1 a1).trans (hh.trans (key2 a2).symm)
+
 /-- `SameGaloisType` gives equality of the aligned type-joints over any bounded parameter list,
 with no level restriction on the two hosts (only boundedness at both host levels). -/
 theorem infra_78_diagramEq_of_sameGalois
