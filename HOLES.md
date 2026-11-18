@@ -601,4 +601,5 @@ Counts are standalone `sorry` lines in `AEC/` (`git grep -nE '^\s*sorry\s*$'`), 
 | `infra_712u_nontrivial_card` | infra_712u_nontrivial_card | done (cycle 89): AEC/Section7/Lemma712Common.lean |
 | `infra_712u_trivial_R` | infra_712u_trivial_R | done (cycle 89): AEC/Section7/Lemma712Common.lean |
 | `infra_712u_packed_limit_stable` | infra_712u_packed_limit_stable | done (cycle 89): AEC/Section7/Lemma712Common.lean |
+| `infra_712u_nontriv_card` | infra_712u_nontriv_card | done (cycle 89): AEC/Section7/Lemma712Common.lean |
 | `infra_712u_base` | infra_712u_base | done (cycle 88): AEC/Section7/Lemma712Uniqueness.lean |

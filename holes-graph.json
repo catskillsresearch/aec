@@ -3340,6 +3340,15 @@
    "status": "done",
    "blocker": null,
    "detail": "PROVED cycle 89: infra_712u_packed_limit_stable (+ infra_712u_stable_side): at a limit k whose system is constant from b on (same N, identity transitions, onto chain steps on both sides), N_b with the inverse of the (onto, by continuity) steps b -> k is the limit state. Limit op for infra_712u_common_long at limits of cofinality > mu. Axioms clean."
+  },
+  {
+   "id": "infra_712u_nontriv_card",
+   "label": "7.12(2) at most mu nontrivial indices for a list of total length <= mu",
+   "section": 7,
+   "file": "AEC/Section7/Lemma712Common.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "PROVED cycle 89: infra_712u_Triv (empty entry, both steps onto) and infra_712u_nontriv_card: #{beta | not Triv beta} <= mu from #(Sigma i, indexAt i) <= mu and infra_712u_nontrivial_card on both chains. Gives the cofinal set for infra_712u_packed_limit_cofinal. Axioms clean."
   }
  ],
  "edges": [
@@ -6742,8 +6751,18 @@
    "from": "infra_712u_packed_limit_stable",
    "to": "infra_712u_common_long",
    "kind": "hard"
+  },
+  {
+   "from": "infra_712u_nontriv_card",
+   "to": "infra_712u_common_long",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_712u_nontrivial_card",
+   "to": "infra_712u_nontriv_card",
+   "kind": "hard"
   }
  ],
- "doneCount": 308,
+ "doneCount": 309,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

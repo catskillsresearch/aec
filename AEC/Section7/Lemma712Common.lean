@@ -601,6 +601,53 @@ theorem infra_712u_trivial_R (β k : WithTop L.δ) (hβ : β ⋖ k) (s : infra_7
       exact (congrArg s.2.1 (hψ _)).trans ((hmk m hlt a).trans (congrArg s.2.2 (hψ' _)).symm)
     · exact ((hemp m heq.symm).false a).elim
 
+/-- A successor index is trivial: empty entry, both chains' steps onto. -/
+def infra_712u_Triv (β : WithTop L.δ) : Prop :=
+  (∀ j : L.δ, β = ↑j → IsEmpty (L.indexAt j)) ∧
+  ∀ k (h : β ⋖ k), Function.Surjective ((C.step h.le).onVertex PUnit.unit) ∧
+    Function.Surjective ((C'.step (e.withTopCongr.monotone h.le)).onVertex PUnit.unit)
+
+/-- **Few nontrivial indices (proved, cycle 89).** If the list has total length at most `μ`
+(infinite), at most `μ` indices are nontrivial (nonempty entry, or a non-onto step on either
+chain, `infra_712u_nontrivial_card`). The cofinal set of the long-list limits. -/
+theorem infra_712u_nontriv_card (hμ0 : ℵ₀ ≤ μ) (hsig : #(Σ i, L.indexAt i) ≤ μ) :
+    #{β : WithTop L.δ // ¬ infra_712u_Triv C C' e β} ≤ μ := by
+  classical
+  let S1 : Set (WithTop L.δ) := {β | ∃ j : L.δ, β = ↑j ∧ Nonempty (L.indexAt j)}
+  let S2 : Set (WithTop L.δ) := {β | ∃ k, ∃ h : β ⋖ k,
+    ¬ Function.Surjective ((C.step h.le).onVertex PUnit.unit)}
+  let S3 : Set (WithTop L.δ) := {β | ∃ k, ∃ h : β ⋖ k,
+    ¬ Function.Surjective ((C'.step (e.withTopCongr.monotone h.le)).onVertex PUnit.unit)}
+  have hsub : {β : WithTop L.δ | ¬ infra_712u_Triv C C' e β} ⊆ S1 ∪ S2 ∪ S3 := by
+    intro β hβ
+    simp only [Set.mem_setOf_eq, infra_712u_Triv, not_and_or, not_forall] at hβ
+    rcases hβ with ⟨j, hj, hne⟩ | ⟨k, h, hk⟩
+    · exact Or.inl (Or.inl ⟨j, hj, not_isEmpty_iff.1 hne⟩)
+    · rcases hk with h2 | h3
+      · exact Or.inl (Or.inr ⟨k, h, h2⟩)
+      · exact Or.inr ⟨k, h, h3⟩
+  have h1 : #S1 ≤ μ := by
+    refine (Cardinal.mk_le_of_injective (f := fun b : S1 =>
+      (⟨b.2.choose, Classical.choice b.2.choose_spec.2⟩ : Σ i, L.indexAt i)) ?_).trans hsig
+    intro b1 b2 h
+    have := congrArg Sigma.fst h
+    exact Subtype.ext (b1.2.choose_spec.1.trans ((congrArg _ this).trans b2.2.choose_spec.1.symm))
+  have h2 : #S2 ≤ μ := infra_712u_nontrivial_card C
+  have h3 : #S3 ≤ μ := by
+    refine (Cardinal.mk_le_of_injective (f := fun b : S3 =>
+      (⟨e.withTopCongr b.1, e.withTopCongr b.2.choose,
+        (apply_covBy_apply_iff e.withTopCongr).2 b.2.choose_spec.choose,
+        b.2.choose_spec.choose_spec⟩ : {β' : WithTop L'.δ // ∃ k, ∃ h : β' ⋖ k,
+          ¬ Function.Surjective ((C'.step h.le).onVertex PUnit.unit)})) ?_).trans
+      (infra_712u_nontrivial_card C')
+    intro b1 b2 h
+    exact Subtype.ext (e.withTopCongr.injective (congrArg Subtype.val h))
+  calc #{β : WithTop L.δ // ¬ infra_712u_Triv C C' e β}
+      ≤ #(S1 ∪ S2 ∪ S3 : Set (WithTop L.δ)) := Cardinal.mk_le_mk_of_subset hsub
+    _ ≤ #(S1 ∪ S2 : Set (WithTop L.δ)) + #S3 := Cardinal.mk_union_le _ _
+    _ ≤ (#S1 + #S2) + #S3 := by gcongr; exact Cardinal.mk_union_le _ _
+    _ ≤ μ := Cardinal.add_le_of_le hμ0 (Cardinal.add_le_of_le hμ0 h1 h2) h3
+
 /-- The base state at a first stage. -/
 theorem infra_712u_base_R (k : WithTop L.δ) (hk : IsMin k) :
     ∃ s, infra_712u_StateOK C C' e ei k s := by
