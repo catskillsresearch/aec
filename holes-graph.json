@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-18 12:45",
+  "updated": "2026-11-18 12:49",
   "sorryCount": 44,
   "legend": {
     "open": "No unfinished required proof-deps — try next",
@@ -1843,7 +1843,7 @@
       "section": 7,
       "file": "AEC/Section7/MixedDescent.lean",
       "status": "blocked",
-      "blocker": "infra_78_isolation_transfer, infra_78_theta_shrink_closure_level",
+      "blocker": "infra_78_isolation_transfer",
       "detail": "Blocked (full claim kept: everything Prop 7.8 needs beyond the done infra). Split into tracked sub-tips: infra_78_fixed_list_eventually_free (DONE), infra_78_nonfree_extension_tied (DONE), infra_78_same_level_type_amalgam (DONE), infra_78_bookkeeping_closure (DONE cycle 41 via infra_78_bookkeeping_assembly), infra_78_matrix_construction (blocked; split cycle 42: infra_78_bookkeeping_stage_local DONE, infra_78_matrix_successor_step open, infra_78_matrix_limit_step open, infra_78_matrix_recursion blocked), infra_78_isolated_stage (DONE cycle 56), infra_78_theta_shrink (open), infra_78_isolation_transfer (blocked). Previously done toward it: mixed tied free lift, mixed Lemma 7.6, Fodor, matrix data, stationary combinatorics, tied local character. Open. Done toward it: mixed tied free lift and mixed Lemma 7.6 (sorry-free), Fodor, matrix data, stationary combinatorics (infra_78_stationary_combinatorics: high-cofinality stages stationary, small sets appear early, one fixed failing list on a stationary set). Tied local character now done (infra_78_tied_local_character: infra_78_tied_local, base mono, restrict); untied IsFreeFrom is vacuous (audit_free_from_vacuous). Remaining for Prop 7.8: the rho^+ matrix construction at level kappa with level-lambda pairs inside R_i,S_i (bookkeeping closures), type-identifying amalgamation at kappa, the local-character contradiction for the fixed list, the theta^+ shrink to A<=U with the majority free-extension identity, Def 7.7 continuity at matrix limits (only finite marks done: infra_78_finite_continuity)."
     },
     {
@@ -2258,7 +2258,7 @@
       "file": "AEC/Section7/ThetaShrink.lean",
       "status": "done",
       "blocker": null,
-      "detail": "DONE (grokbot cycles 57-59; full claim = infra_78_theta_shrink_inj (done) + infra_78_theta_shrink_repeats (done); Lean theorem infra_78_theta_shrink in AEC/Section7/ThetaShrink.lean, sorry-free, standard axioms). At a stage i of cofinality > lambda of the recursion matrix: a level-lambda pair gu : A -> U with permitted jA : A -> X_i, jU : U -> Y_i, the square, seed s0 (b, I_p) inside the images, images inside R_i, and for EVERY list c from U with |c| <= theta (repetitions allowed): IsTiedFreeMixed jA (q.restrict jA) q (Equiv.refl _), q = markTuple pair_i (b,c). Explicit hypotheses: aleph0 <= theta, theta^+ <= lambda, |uIdx| <= theta (follows in proposition_7_8: p.idx finite, aleph0 <= theta), lambda <= sigma with mu in infra_73_tailSet P sigma (NOT implied by the Lean proposition_7_8 hypotheses as stated: tail chosen before theta, theta < mu arbitrary; tracked as infra_78_theta_shrink_closure_level, hard edge into infra_78_mixed_level_isolation)."
+      "detail": "DONE (grokbot cycles 57-59; full claim = infra_78_theta_shrink_inj (done) + infra_78_theta_shrink_repeats (done); Lean theorem infra_78_theta_shrink in AEC/Section7/ThetaShrink.lean, sorry-free, standard axioms). At a stage i of cofinality > lambda of the recursion matrix: a level-lambda pair gu : A -> U with permitted jA : A -> X_i, jU : U -> Y_i, the square, seed s0 (b, I_p) inside the images, images inside R_i, and for EVERY list c from U with |c| <= theta (repetitions allowed): IsTiedFreeMixed jA (q.restrict jA) q (Equiv.refl _), q = markTuple pair_i (b,c). Explicit hypotheses: aleph0 <= theta, theta^+ <= lambda, |uIdx| <= theta (follows in proposition_7_8: p.idx finite, aleph0 <= theta), lambda <= sigma with mu in infra_73_tailSet P sigma (NOT implied by the Lean proposition_7_8 hypotheses as stated: tail chosen before theta, theta < mu arbitrary; tracked as infra_78_theta_shrink_closure_level, hard edge into infra_78_mixed_level_isolation; DISCHARGED cycle 60 by the tail infra_78_closedTail)."
     },
     {
       "id": "infra_78_isolation_transfer",
@@ -2580,10 +2580,10 @@
       "id": "infra_78_theta_shrink_closure_level",
       "label": "Prop 7.8: the matrix level is recursion-closed at a sigma >= lambda >= theta^+ (closure hypothesis of infra_78_theta_shrink)",
       "section": 7,
-      "file": "AEC/Section7/ThetaShrink.lean",
-      "status": "open",
+      "file": "AEC/Section7/ClosureLevel.lean",
+      "status": "done",
       "blocker": null,
-      "detail": "Open (recorded grokbot cycle 59; must not silently weaken proposition_7_8). infra_78_theta_shrink (and infra_78_theta_chain_rc) need lambda <= sigma, theta^+ <= lambda, lambda eligible, lambda < rho, rho^lambda = rho, rho^+ < mu, with the matrix level mu in infra_73_tailSet P sigma (recursion-closed at sigma, succ(max sigma (h sigma)) <= mu). The Lean proposition_7_8 chooses the tail T BEFORE theta and allows any theta < mu, so with a fixed T = infra_73_tailSet P sigma0 the bound lambda <= sigma0 fails for theta >= sigma0. To discharge: choose the proposition_7_8 tail as levels mu that are recursion-closed at cofinally many sigma < mu with eligible lambda, rho between (e.g. closure under the infra_69_recursion_tail construction for all sigma < mu), or show recursionClosedLevels membership transfers to larger sigma below mu. |uIdx| <= theta DOES follow (finite p.idx, aleph0 <= theta)."
+      "detail": "DONE (grokbot cycle 60, sorry-free, standard axioms; AEC/Section7/ClosureLevel.lean). Paper check: Prop 7.8 says 'Let lambda be a sufficiently closed eligible level ... For every infinite theta < lambda ... The closure requirements at the output level are uniform functions of bounded arities; they do not require theta to have been fixed before the level was chosen.' The tail is existential and the closure is uniform over all bounded arities, so choosing a better-closed tail is faithful (no hypothesis added to proposition_7_8, conclusion unchanged; no audit finding). infra_78_closedTail P := eligible mu with mu in infra_73_tailSet P sigma for EVERY infinite sigma < mu, and mu a limit of eligible levels. infra_78_closedTail_tail: it is a Tail of P.eligible (omega-tower as infra_615_tail; recursion closure passes to the sup via monotonicity of the profile recursion in sigma/start/length: infra_615_pad_mono_arg, infra_69_pad_recursion_mono_start, infra_69_pad_recursion_mono -- checked; h bounded on [0,x] by a small supremum infra_78_hBound, no monotonicity of h assumed; next eligible level infra_78_nextElig inserted each step). infra_78_theta_shrink_closure_level: for mu in the tail and theta < mu there are eligible lambda and rho = 2^lambda with theta^+ <= lambda < mu, mu in infra_73_tailSet P lambda (so sigma := lambda), lambda < rho, rho^lambda = rho, rho^+ < mu: every level hypothesis of infra_78_theta_shrink. proposition_7_8's assembly should take T = infra_78_closedTail P."
     }
   ],
   "edges": [
@@ -5055,6 +5055,6 @@
       "kind": "hard"
     }
   ],
-  "doneCount": 225,
+  "doneCount": 226,
   "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 43. Uncommitted in /tmp/aec-grok."
 }
