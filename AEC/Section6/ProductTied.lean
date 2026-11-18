@@ -544,7 +544,7 @@ type agree with the array entries off at most `e` columns and, in each such colu
 `e` rows; the reverse order agrees off at most `e` rows and, in each such row, off at most `e`
 columns. A column outside all `κ · e` row-exceptions and a row outside both exceptional sets
 give one common entry. Theorem 6.6 testing (`infra_73_differing_test`) closes. -/
-theorem infra_612_tied_symm_level_joints
+theorem infra_612_tied_symm_core
     (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ)
     {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
     (hrec : μ ∈ recursionClosedLevels P σ) (hσμ : Order.succ σ ≤ μ)
@@ -553,7 +553,22 @@ theorem infra_612_tied_symm_level_joints
     (hνp : p.ν = μ) (hνq : q.ν = μ) (hpσ : #p.idx ≤ σ) (hqσ : #q.idx ≤ σ)
     (j₁ j₂ : TupleOver K oneVertexShape P.scheme hμ A)
     (e₁ : p.idx ⊕ q.idx ≃ j₁.idx) (e₂ : q.idx ⊕ p.idx ≃ j₂.idx)
-    (h₁ : IsProductTied p q j₁ e₁) (h₂ : IsProductTied q p j₂ e₂)
+    (x₁ x₂ : TupleOver K oneVertexShape P.scheme hμ A)
+    (ex₁ : p.idx ≃ x₁.idx) (ex₂ : q.idx ≃ x₂.idx)
+    (hS₁ : SameGaloisType p x₁ ex₁ (Equiv.refl x₁.idx))
+    (hS₂ : SameGaloisType q x₂ ex₂ (Equiv.refl x₂.idx))
+    (y₁ : TupleOver K oneVertexShape P.scheme x₁.hν x₁.host)
+    (y₂ : TupleOver K oneVertexShape P.scheme x₂.hν x₂.host)
+    (ey₁ : q.idx ≃ y₁.idx) (ey₂ : p.idx ≃ y₂.idx)
+    (hT₁ : IsTiedFreeMixed x₁.incl q y₁ ey₁) (hT₂ : IsTiedFreeMixed x₂.incl p y₂ ey₂)
+    (hD₁ : ∀ {β : Type u} (Y : β → Occurrence K oneVertexShape (P.scheme.asSystem hμ A)),
+      #β < μ → P.scheme.DiagramEq (X := j₁.host) (Y := (x₁.join y₁).host)
+        (alignJoint e₁.symm (typeJoint (p := j₁) Y))
+        (alignJoint (Equiv.sumCongr ex₁ ey₁).symm (typeJoint (p := x₁.join y₁) Y)))
+    (hD₂ : ∀ {β : Type u} (Y : β → Occurrence K oneVertexShape (P.scheme.asSystem hμ A)),
+      #β < μ → P.scheme.DiagramEq (X := j₂.host) (Y := (x₂.join y₂).host)
+        (alignJoint e₂.symm (typeJoint (p := j₂) Y))
+        (alignJoint (Equiv.sumCongr ex₂ ey₂).symm (typeJoint (p := x₂.join y₂) Y)))
     (hj₁ : j₁.ν = μ) (hj₂ : j₂.ν = μ) :
     SameGaloisType j₁ j₂ e₁.symm (e₂.symm.trans (Equiv.sumComm _ _)) := by
   classical
@@ -567,22 +582,12 @@ theorem infra_612_tied_symm_level_joints
   have hqpμ : #(q.idx ⊕ p.idx) < μ :=
     (Cardinal.mk_congr (Equiv.sumComm _ _)).symm.trans_lt hpqμ
   have hj₁σ : #j₁.idx ≤ σ := (Cardinal.mk_congr e₁).symm.trans_le hpqσ
-  obtain ⟨x₁, ex₁, hS₁, y₁, ey₁, hT₁, hJ₁⟩ := h₁
-  obtain ⟨x₂, ex₂, hS₂, y₂, ey₂, hT₂, hJ₂⟩ := h₂
   have hS'₁ : SameGaloisType p x₁ (Equiv.refl p.idx) ex₁.symm := by
     have h := infra_612_sameGalois_trans_equiv hS₁ ex₁.symm
     rwa [Equiv.self_trans_symm, Equiv.refl_trans] at h
   have hS'₂ : SameGaloisType q x₂ (Equiv.refl q.idx) ex₂.symm := by
     have h := infra_612_sameGalois_trans_equiv hS₂ ex₂.symm
     rwa [Equiv.self_trans_symm, Equiv.refl_trans] at h
-  have hJ'₁ : SameGaloisType j₁ (x₁.join y₁) e₁.symm (Equiv.sumCongr ex₁ ey₁).symm := by
-    have h := infra_612_sameGalois_trans_equiv hJ₁ (Equiv.sumCongr ex₁ ey₁).symm
-    rw [Equiv.trans_assoc, Equiv.self_trans_symm, Equiv.trans_refl] at h
-    exact h
-  have hJ'₂ : SameGaloisType j₂ (x₂.join y₂) e₂.symm (Equiv.sumCongr ex₂ ey₂).symm := by
-    have h := infra_612_sameGalois_trans_equiv hJ₂ (Equiv.sumCongr ex₂ ey₂).symm
-    rw [Equiv.trans_assoc, Equiv.self_trans_symm, Equiv.trans_refl] at h
-    exact h
   by_contra hneq
   obtain ⟨β, Y, hβ, hnot⟩ :=
     infra_73_differing_test P σ hσ hμ hrec hσμ j₁ j₂ e₁.symm
@@ -735,8 +740,8 @@ theorem infra_612_tied_symm_level_joints
     (ys' := fun t => alignJoint (Equiv.sumCongr ex₂ ey₂).symm (typeJoint (p := x₂.join y₂) Y)
       (Equiv.sumCongr (Equiv.sumComm p.idx q.idx) (Equiv.refl β) t))
     (by rintro ((k | l) | c) <;> rfl) (by rintro ((k | l) | c) <;> rfl)
-  have DJ₁ := infra_612_dEq_of_sameGalois hJ'₁ Y hpqμ hβμ
-  have DJ₂ := infra_612_dEq_of_sameGalois hJ'₂ Y hqpμ hβμ
+  have DJ₁ := hD₁ Y hβμ
+  have DJ₂ := hD₂ Y hβμ
   have DJ₂' := infra_612_dEq_transport (P.scheme.diagram_symm _ _ _ _ DJ₂)
     (Equiv.sumCongr (Equiv.sumComm p.idx q.idx) (Equiv.refl β))
     (xs' := fun t => alignJoint (Equiv.sumCongr ex₂ ey₂).symm (typeJoint (p := x₂.join y₂) Y)
@@ -784,6 +789,97 @@ noncomputable def infra_612_pushSeq
       · simp [typeJoint, infra_612_anchored]
       · rfl
     · rintro (k | c) <;> rfl
+
+set_option maxHeartbeats 1600000 in
+/-- **Symmetry of `p ⊗ q`, joints at the level of `A` (proved; corollary of the core).** -/
+theorem infra_612_tied_symm_level_joints
+    (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ)
+    {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
+    (hrec : μ ∈ recursionClosedLevels P σ) (hσμ : Order.succ σ ≤ μ)
+    {A : P.scheme.Object μ hμ}
+    (p q : TupleOver K oneVertexShape P.scheme hμ A)
+    (hνp : p.ν = μ) (hνq : q.ν = μ) (hpσ : #p.idx ≤ σ) (hqσ : #q.idx ≤ σ)
+    (j₁ j₂ : TupleOver K oneVertexShape P.scheme hμ A)
+    (e₁ : p.idx ⊕ q.idx ≃ j₁.idx) (e₂ : q.idx ⊕ p.idx ≃ j₂.idx)
+    (h₁ : IsProductTied p q j₁ e₁) (h₂ : IsProductTied q p j₂ e₂)
+    (hj₁ : j₁.ν = μ) (hj₂ : j₂.ν = μ) :
+    SameGaloisType j₁ j₂ e₁.symm (e₂.symm.trans (Equiv.sumComm _ _)) := by
+  have hσlt : σ < μ := (Order.lt_succ σ).trans_le hσμ
+  have hpqμ : #(p.idx ⊕ q.idx) < μ := by
+    rw [Cardinal.mk_sum, Cardinal.lift_id, Cardinal.lift_id]
+    exact Cardinal.add_lt_of_lt (P.aleph0_le hμ) (hpσ.trans_lt hσlt) (hqσ.trans_lt hσlt)
+  have hqpμ : #(q.idx ⊕ p.idx) < μ :=
+    (Cardinal.mk_congr (Equiv.sumComm _ _)).symm.trans_lt hpqμ
+  obtain ⟨x₁, ex₁, hS₁, y₁, ey₁, hT₁, hJ₁⟩ := h₁
+  obtain ⟨x₂, ex₂, hS₂, y₂, ey₂, hT₂, hJ₂⟩ := h₂
+  have hJ'₁ : SameGaloisType j₁ (x₁.join y₁) e₁.symm (Equiv.sumCongr ex₁ ey₁).symm := by
+    have h := infra_612_sameGalois_trans_equiv hJ₁ (Equiv.sumCongr ex₁ ey₁).symm
+    rw [Equiv.trans_assoc, Equiv.self_trans_symm, Equiv.trans_refl] at h
+    exact h
+  have hJ'₂ : SameGaloisType j₂ (x₂.join y₂) e₂.symm (Equiv.sumCongr ex₂ ey₂).symm := by
+    have h := infra_612_sameGalois_trans_equiv hJ₂ (Equiv.sumCongr ex₂ ey₂).symm
+    rw [Equiv.trans_assoc, Equiv.self_trans_symm, Equiv.trans_refl] at h
+    exact h
+  exact infra_612_tied_symm_core P σ hσ hμ hrec hσμ p q hνp hνq hpσ hqσ j₁ j₂ e₁ e₂ x₁ x₂
+    ex₁ ex₂ hS₁ hS₂ y₁ y₂ ey₁ ey₂ hT₁ hT₂
+    (fun Y hβ => infra_612_dEq_of_sameGalois hJ'₁ Y hpqμ hβ)
+    (fun Y hβ => infra_612_dEq_of_sameGalois hJ'₂ Y hqpμ hβ) hj₁ hj₂
+
+/-- **Symmetry of `p ⊗ q` for the actual `μ`-types (proved, cycle 93).** Joints `j₁, j₂` at ANY
+eligible levels; any level-`μ` copies `j'₁, j'₂` (same Galois type, `j'_k.ν = μ`) have one Galois
+type up to the coordinate swap. This is Prop 6.12 "Binary products are symmetric" for the actual
+`μ`-types of Cor 6.7. -/
+theorem infra_612_tied_symm_copies
+    (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ)
+    {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
+    (hrec : μ ∈ recursionClosedLevels P σ) (hσμ : Order.succ σ ≤ μ)
+    {A : P.scheme.Object μ hμ}
+    (p q : TupleOver K oneVertexShape P.scheme hμ A)
+    (hνp : p.ν = μ) (hνq : q.ν = μ) (hpσ : #p.idx ≤ σ) (hqσ : #q.idx ≤ σ)
+    (j₁ j₂ : TupleOver K oneVertexShape P.scheme hμ A)
+    (e₁ : p.idx ⊕ q.idx ≃ j₁.idx) (e₂ : q.idx ⊕ p.idx ≃ j₂.idx)
+    (h₁ : IsProductTied p q j₁ e₁) (h₂ : IsProductTied q p j₂ e₂)
+    (j'₁ j'₂ : TupleOver K oneVertexShape P.scheme hμ A)
+    (r₁ : j'₁.idx ≃ j₁.idx) (r₂ : j'₂.idx ≃ j₂.idx)
+    (hR₁ : SameGaloisType j₁ j'₁ (Equiv.refl j₁.idx) r₁)
+    (hR₂ : SameGaloisType j₂ j'₂ (Equiv.refl j₂.idx) r₂)
+    (hj'₁ : j'₁.ν = μ) (hj'₂ : j'₂.ν = μ) :
+    SameGaloisType j'₁ j'₂ (r₁.trans e₁.symm)
+      ((r₂.trans e₂.symm).trans (Equiv.sumComm _ _)) := by
+  have hσlt : σ < μ := (Order.lt_succ σ).trans_le hσμ
+  have hpqμ : #(p.idx ⊕ q.idx) < μ := by
+    rw [Cardinal.mk_sum, Cardinal.lift_id, Cardinal.lift_id]
+    exact Cardinal.add_lt_of_lt (P.aleph0_le hμ) (hpσ.trans_lt hσlt) (hqσ.trans_lt hσlt)
+  have hqpμ : #(q.idx ⊕ p.idx) < μ :=
+    (Cardinal.mk_congr (Equiv.sumComm _ _)).symm.trans_lt hpqμ
+  obtain ⟨x₁, ex₁, hS₁, y₁, ey₁, hT₁, hJ₁⟩ := h₁
+  obtain ⟨x₂, ex₂, hS₂, y₂, ey₂, hT₂, hJ₂⟩ := h₂
+  have hJ'₁ : SameGaloisType j₁ (x₁.join y₁) e₁.symm (Equiv.sumCongr ex₁ ey₁).symm := by
+    have h := infra_612_sameGalois_trans_equiv hJ₁ (Equiv.sumCongr ex₁ ey₁).symm
+    rw [Equiv.trans_assoc, Equiv.self_trans_symm, Equiv.trans_refl] at h
+    exact h
+  have hJ'₂ : SameGaloisType j₂ (x₂.join y₂) e₂.symm (Equiv.sumCongr ex₂ ey₂).symm := by
+    have h := infra_612_sameGalois_trans_equiv hJ₂ (Equiv.sumCongr ex₂ ey₂).symm
+    rw [Equiv.trans_assoc, Equiv.self_trans_symm, Equiv.trans_refl] at h
+    exact h
+  have hR'₁ : SameGaloisType j₁ j'₁ e₁.symm (r₁.trans e₁.symm) :=
+    infra_612_sameGalois_trans_equiv hR₁ e₁.symm
+  have hR'₂ : SameGaloisType j₂ j'₂ e₂.symm (r₂.trans e₂.symm) :=
+    infra_612_sameGalois_trans_equiv hR₂ e₂.symm
+  have h := infra_612_tied_symm_core P σ hσ hμ hrec hσμ p q hνp hνq hpσ hqσ j'₁ j'₂
+    (r₁.trans e₁.symm).symm (r₂.trans e₂.symm).symm x₁ x₂
+    ex₁ ex₂ hS₁ hS₂ y₁ y₂ ey₁ ey₂ hT₁ hT₂ ?_ ?_ hj'₁ hj'₂
+  · simpa [Equiv.symm_symm] using h
+  · intro β Y hβ
+    rw [Equiv.symm_symm]
+    exact P.scheme.diagram_trans _ _ _ _ _ _
+      (P.scheme.diagram_symm _ _ _ _ (infra_612_dEq_of_sameGalois hR'₁ Y hpqμ hβ))
+      (infra_612_dEq_of_sameGalois hJ'₁ Y hpqμ hβ)
+  · intro β Y hβ
+    rw [Equiv.symm_symm]
+    exact P.scheme.diagram_trans _ _ _ _ _ _
+      (P.scheme.diagram_symm _ _ _ _ (infra_612_dEq_of_sameGalois hR'₂ Y hqpμ hβ))
+      (infra_612_dEq_of_sameGalois hJ'₂ Y hqpμ hβ)
 
 set_option maxHeartbeats 1600000 in
 /-- **Product entry (proved).** For a tied product `(x, y)` of `p` and `q` over a base `A₀`
@@ -1874,7 +1970,9 @@ extension; the joint type `p ⊗ q` of `(x, y)` over `A` (`IsProductTied`):
    A, denoted p ⊗ q, is independent of all choices", with Cor 6.7: "Types of tuples of length
    less than ν over A obtained in a larger object are actual ν-types"; proved,
    `infra_612_tied_indep_copies`, cycle 93 audit);
-3. is symmetric, with the coordinate swap: `p ⊗ q = q ⊗ p`;
+3. is symmetric, with the coordinate swap: `p ⊗ q = q ⊗ p`, for the actual `μ`-types (any
+   level-`μ` copies; English "Binary products are symmetric, with the indicated permutation of
+   coordinates"; proved, `infra_612_tied_symm_copies`, cycle 93);
 4. associates: `(p ⊗ q) ⊗ r = p ⊗ (q ⊗ r)` (with `Equiv.sumAssoc`); iterated finite products
    then associate by induction;
 5. finite products (`IsFiniteProductTied`) are permutation invariant;
@@ -1886,8 +1984,8 @@ of the tail at or above that of `A` (all arities are bounded at the level of `A`
 Packaging as Theorem 6.10: a tail of recursion-closed levels `μ ≥ σ⁺`, factors of size `≤ σ`
 realized at the level of `A`.
 
-**Status:** clauses 1 and 2 proved (`infra_612_tied_exists`, `infra_612_tied_indep_copies`);
-clauses 3–7 are `sorry`, tracked as `infra_612_tied_symmetry`, `infra_612_tied_assoc`,
+**Status:** clauses 1–3 proved (`infra_612_tied_exists`, `infra_612_tied_indep_copies`,
+`infra_612_tied_symm_copies`); clauses 4–7 are `sorry`, tracked as `infra_612_tied_symmetry`, `infra_612_tied_assoc`,
 `infra_612_tied_finite` (5 and 6), `infra_612_tied_base_change`. -/
 theorem proposition_6_12 {K : AbstractElementaryClass.{u}}
     (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ) :
@@ -1906,10 +2004,14 @@ theorem proposition_6_12 {K : AbstractElementaryClass.{u}}
             SameGaloisType j₁ j'₁ (Equiv.refl j₁.idx) r₁ →
             SameGaloisType j₂ j'₂ (Equiv.refl j₂.idx) r₂ → j'₁.ν = μ → j'₂.ν = μ →
             SameGaloisType j'₁ j'₂ (r₁.trans e₁.symm) (r₂.trans e₂.symm)) ∧
-        -- 3. symmetry
+        -- 3. symmetry, for the actual `μ`-types (level-`μ` copies; cycle 93 audit)
         (∀ (j₁ j₂ : TO) (e₁ : p.idx ⊕ q.idx ≃ j₁.idx) (e₂ : q.idx ⊕ p.idx ≃ j₂.idx),
           IsProductTied p q j₁ e₁ → IsProductTied q p j₂ e₂ →
-          SameGaloisType j₁ j₂ e₁.symm (e₂.symm.trans (Equiv.sumComm _ _))) ∧
+          ∀ (j'₁ j'₂ : TO) (r₁ : j'₁.idx ≃ j₁.idx) (r₂ : j'₂.idx ≃ j₂.idx),
+            SameGaloisType j₁ j'₁ (Equiv.refl j₁.idx) r₁ →
+            SameGaloisType j₂ j'₂ (Equiv.refl j₂.idx) r₂ → j'₁.ν = μ → j'₂.ν = μ →
+            SameGaloisType j'₁ j'₂ (r₁.trans e₁.symm)
+              ((r₂.trans e₂.symm).trans (Equiv.sumComm _ _))) ∧
         -- 4. associativity
         (∀ (r : TO), r.ν = μ → #r.idx ≤ σ →
           ∀ (pq qr j₁ j₂ : TO) (epq : p.idx ⊕ q.idx ≃ pq.idx) (eqr : q.idx ⊕ r.idx ≃ qr.idx)
@@ -1959,8 +2061,11 @@ theorem proposition_6_12 {K : AbstractElementaryClass.{u}}
     ⟨infra_612_tied_exists P σ hσ (Tail.mem hT hμ) hμ.1 hμ.2 p q hνp hνq hqσ,
       fun j₁ j₂ e₁ e₂ h₁ h₂ j'₁ j'₂ r₁ r₂ hR₁ hR₂ hj₁ hj₂ =>
         infra_612_tied_indep_copies P σ hσ (Tail.mem hT hμ) hμ.1 hμ.2 p q hνq hpσ hqσ
+          j₁ j₂ e₁ e₂ h₁ h₂ j'₁ j'₂ r₁ r₂ hR₁ hR₂ hj₁ hj₂,
+      fun j₁ j₂ e₁ e₂ h₁ h₂ j'₁ j'₂ r₁ r₂ hR₁ hR₂ hj₁ hj₂ =>
+        infra_612_tied_symm_copies P σ hσ (Tail.mem hT hμ) hμ.1 hμ.2 p q hνp hνq hpσ hqσ
           j₁ j₂ e₁ e₂ h₁ h₂ j'₁ j'₂ r₁ r₂ hR₁ hR₂ hj₁ hj₂, ?_⟩⟩
-  -- clauses 3–7: open sub-tips (see the module docstring)
+  -- clauses 4–7: open sub-tips (see the module docstring)
   sorry
 
 /-- **Copies persist over a later base (Prop 7.8 closure requirement 2 at limits; proved).**

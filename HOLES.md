@@ -316,7 +316,7 @@ Waits on Section 5 working package. Lean: later Results import this module.
 | `infra_612_galois_trans_cross_level_of_base_end` | Galois transitivity via a mu-level middle, one end at mu | [`GaloisCrossLevel.lean`](AEC/Section6/GaloisCrossLevel.lean) (**done**, cycle 67; `_right_base`, `_left_base`) |
 | `infra_612_galois_trans_cross_level_both_off` | Galois transitivity via a mu-level middle, both ends above mu | board-only (**open**; needs a common top for two large hosts (straightening of arbitrary strong embeddings `E(I) → E(K)`); off-path since cycle 93: `infra_612_tied_independence` now uses the faithful copy form) |
 | `infra_612_tied_indep_same_level` | Prop 6.12 (2) independence, single level | `AEC/Section6/ProductTied.lean` (**done**; no `sorry`) |
-| `infra_612_tied_symmetry` | Prop 6.12 (3) symmetry | `AEC/Section6/ProductTied.lean` (**blocked** on independence; joints at A's level done) |
+| `infra_612_tied_symmetry` | Prop 6.12 (3) symmetry | `AEC/Section6/ProductTied.lean` (**done** cycle 93: restated to the actual-μ-type copy form, `infra_612_tied_symm_copies` via `infra_612_tied_symm_core`; at-level case is a corollary) |
 | `infra_612_tied_symm_level_joints` | Prop 6.12 (3) symmetry, joints at A's level | `AEC/Section6/ProductTied.lean` (**done**; no `sorry`) |
 | `infra_612_tied_assoc` | Prop 6.12 (4) associativity | `AEC/Section6/ProductTied.lean` (**blocked** on independence; products at A's level done) |
 | `infra_612_tied_assoc_level_joints` | Prop 6.12 (4) associativity, products at A's level | `AEC/Section6/ProductTied.lean` (**done**; no `sorry`) |
