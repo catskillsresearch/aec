@@ -289,7 +289,7 @@ infra_78_tied_free_lift_mixed --> infra_78_lemma_7_6_mixed
 infra_7_10_list_chain --> lemma_7_11
 infra_7_10_list_chain --> lemma_7_12
 infra_7_10_list_chain --> theorem_7_13
-infra_78_tuple_amalgam_large --> infra_78_cross_level_galois
+infra_612_same_galois_left_large --> infra_78_cross_level_galois
 infra_78_stationary_combinatorics --> infra_78_mixed_level_isolation
 audit_free_from_vacuous --> infra_78_tied_local_character
 infra_78_tied_local_character --> infra_78_mixed_level_isolation

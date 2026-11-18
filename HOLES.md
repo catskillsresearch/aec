@@ -529,8 +529,8 @@ Counts are standalone `sorry` lines in `AEC/` (`git grep -nE '^\s*sorry\s*$'`), 
 | `infra_10_product_axioms` | infra_10_product_axioms | `AEC/Section10/ProductAxioms.lean` (done: `MinimalData.ProductAxioms`, `pointIndep`, `pointClosure`; audit `AEC/Audit/ProductAxiomsAudit.lean`) |
 | `infra_11_pointed_system` | infra_11_pointed_system | `AEC/Section11/PointedSystem.lean` (done: `IsPointed`, pointed arrows, `ReflectsPieces`, `GLCategoricalAt`) |
 | `infra_78_tied_free_lift_mixed` | infra_78_tied_free_lift_mixed | `AEC/Section7/MixedTiedLift.lean` (**done**, grokbot_02; restriction in diagram form, +hrecμ) |
-| `infra_78_cross_level_galois` | infra_78_cross_level_galois | `AEC/Section7/MixedTiedLift.lean` (**proved modulo** infra_78_tuple_amalgam_large; unused downstream) |
-| `infra_78_tuple_amalgam_large` | infra_78_tuple_amalgam_large | `AEC/Section7/MixedTiedLift.lean` (**open**: Thm 6.6 clause 2 with a host of size ≥ μ) |
+| `infra_78_cross_level_galois` | infra_78_cross_level_galois | `AEC/Section7/MixedTiedLift.lean` (**done** cycle 93, directly via `infra_612_same_galois_left_large`; no longer uses `infra_78_tuple_amalgam_large`) |
+| `infra_78_tuple_amalgam_large` | infra_78_tuple_amalgam_large | `AEC/Section7/MixedTiedLift.lean` (**open**, off-path: Thm 6.6 clause 2 with an arbitrary host of size ≥ μ; no consumer since cycle 93; an amalgamation property over a μ-model with an arbitrary larger model) |
 | `infra_78_lemma_7_6_mixed` | infra_78_lemma_7_6_mixed | `AEC/Section7/MixedDescent.lean` (**done**, grokbot_02) |
 | `infra_78_mixed_level_isolation` | infra_78_mixed_level_isolation | `AEC/Section7/MixedDescent.lean` (**done**, cycle 67: all hard deps done; conclusion delivered by `infra_78_marginal_general_level`) |
 | `infra_78_fixed_list_eventually_free` | Prop 7.8 fixed list eventually free | `AEC/Section7/TiedLocalCharacter.lean` (**done**: past some stage `j`, `p ↾ X_k` is tied free from `X_i` for all `j ≤ i ≤ k`) |

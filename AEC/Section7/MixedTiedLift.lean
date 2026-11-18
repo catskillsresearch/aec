@@ -1,6 +1,7 @@
 module
 
 public import AEC.Section7.MixedLevel
+public import AEC.Section6.GaloisCrossLevel
 
 @[expose] public section
 
@@ -1100,89 +1101,41 @@ theorem infra_78_cross_level_galois
   have hνinf : aleph0 ≤ ν := P.aleph0_le hν
   have hg : P.g σ < ν := (hν.1.closed P.g (Set.mem_insert_of_mem _ rfl)).below σ hσ hσlt
   have hgls : P.g σ + ls K < ν := add_lt_of_lt hνinf hg (P.ls_lt hν)
-  let d₀ : q.idx → p.host.model.carrier := fun i => p.host.val (p.val (e.symm i))
-  let d₁ : q.idx → q.host.model.carrier := fun i => q.host.val (q.val i)
-  let f₀ : Language.Embedding K.τ A.model.carrier p.host.model.carrier :=
-    p.incl.onVertex PUnit.unit
-  let f₁ : Language.Embedding K.τ A.model.carrier q.host.model.carrier :=
-    q.incl.onVertex PUnit.unit
-  have hcA : Model.card A.model = ν := A.card
+  have hidxq : #q.idx ≤ σ := (Cardinal.mk_congr e).symm.trans_le hidx
   have hc₀ : Model.card p.host.model = ν := by simpa [hpν] using p.host.card
   have hcq : Model.card q.host.model = q.ν := q.host.card
   have hc₁ : ν ≤ Model.card q.host.model := by rw [hcq]; exact hqν
-  have hα : #q.idx ≤ σ := (Cardinal.mk_congr e).symm.trans_le hidx
-  have htest : ∀ {β : Type u} (_ : #β ≤ P.g σ + ls K) (ρ : Cardinal.{u}) (_ : aleph0 ≤ ρ)
-      (_ : ρ < ν) (params : β → A.model.carrier) (hjoint : #(q.idx ⊕ β) ≤ ρ)
-      (h₀ : P.D.t ρ ≤ Model.card p.host.model) (h₁ : P.D.t ρ ≤ Model.card q.host.model),
-      P.D.same hjoint p.host.mem q.host.mem h₀ h₁
-        (Sum.elim d₀ (fun b => f₀ (params b))) (Sum.elim d₁ (fun b => f₁ (params b))) := by
-    intro β hβ ρ hρinf hρν params hjoint h₀ h₁
-    let Z : β → Occurrence K oneVertexShape (P.scheme.asSystem hν A) :=
-      fun b => A.occ (params b)
-    have hβν : #β < ν := hβ.trans_lt hgls
-    have hDE := hD Z hβν
-    have hcardE : #(p.idx ⊕ β) = #(q.idx ⊕ β) := by
-      rw [mk_sum, mk_sum, Cardinal.mk_congr e]
-    have hαν : #(p.idx ⊕ β) < ν := hcardE ▸ hjoint.trans_lt hρν
-    have hαq : #(p.idx ⊕ β) < q.ν := hαν.trans_le hqν
-    have hαp : #(p.idx ⊕ β) < p.ν := by rw [hpν]; exact hαν
-    have h := infra_78_test_of_diagram_ge (typeJoint (p := p) Z)
-      (alignJoint e.symm (typeJoint (p := q) Z)) hDE hαp hαq ν hν hc₀.ge hc₁ hρinf hρν
-      hjoint (Sum.map e.symm id) (hcardE ▸ hjoint) h₀ h₁
-    convert h using 1
-    · funext c
-      cases c with
-      | inl i => rfl
-      | inr b =>
-        change p.incl.onVertex PUnit.unit (params b) = p.host.val
-          ⟨(Z b).1, p.incl.onVertex (Z b).1 (Z b).2⟩
-        rfl
-    · funext c
-      cases c with
-      | inl i =>
-        simp [d₁, alignJoint, typeJoint]
-      | inr b =>
-        change q.incl.onVertex PUnit.unit (params b) = q.host.val
-          ⟨(Z b).1, q.incl.onVertex (Z b).1 (Z b).2⟩
-        rfl
-  obtain ⟨P₀, g₀, g₁, hP₀, hg₀, hg₁, hcP₀, hbase, hd⟩ :=
-    infra_78_tuple_amalgam_large hL hσ hσlt hα A.model p.host.model q.host.model f₀ f₁ d₀ d₁
-      A.mem p.host.mem q.host.mem (p.incl.onVertex_strong PUnit.unit)
-      (q.incl.onVertex_strong PUnit.unit) hcA hc₀ hc₁ htest
-  let top : SMObject K q.ν := SMObject.ofModel P₀ hP₀ (hcP₀.trans hcq)
-  let φ : P₀.carrier ≃[K.τ] top.model.carrier := SMObject.ofModelEquiv P₀ hP₀ (hcP₀.trans hcq)
-  have hφ : K.Strong φ.toEmbedding := strong_of_equiv K φ hP₀
-  let emb₁ : Language.Embedding K.τ p.host.model.carrier top.model.carrier :=
-    φ.toEmbedding.comp g₀
-  let emb₂ : Language.Embedding K.τ q.host.model.carrier top.model.carrier :=
-    φ.toEmbedding.comp g₁
-  have hs₁ : K.Strong emb₁ := K.strong_trans _ _ hg₀ hφ
-  have hs₂ : K.Strong emb₂ := K.strong_trans _ _ hg₁ hφ
-  let arr₁ : SystemArrow K oneVertexShape (P.scheme.asSystem p.hν p.host)
-      (P.scheme.asSystem q.hν top) :=
-    oneVertexArrow emb₁ hs₁
-  let arr₂ : SystemArrow K oneVertexShape (P.scheme.asSystem q.hν q.host)
-      (P.scheme.asSystem q.hν top) :=
-    oneVertexArrow emb₂ hs₂
-  refine ⟨q.ν, q.hν, top, arr₁, arr₂, trivial, trivial, ?_, ?_⟩
-  · intro v
-    refine DFunLike.ext _ _ fun x => ?_
-    change φ (g₀ (p.incl.onVertex v x)) = φ (g₁ (q.incl.onVertex v x))
-    have hv : v = PUnit.unit := Subsingleton.elim _ _
-    subst hv
-    exact congrArg φ (hbase x)
-  · intro i
-    change
-      (⟨(p.val (e.symm i)).1, emb₁ (p.val (e.symm i)).2⟩ :
-        Occurrence K oneVertexShape (P.scheme.asSystem q.hν top)) =
-      ⟨(q.val ((Equiv.refl q.idx).symm i)).1, emb₂ (q.val ((Equiv.refl q.idx).symm i)).2⟩
-    have hv : (p.val (e.symm i)).1 = PUnit.unit := Subsingleton.elim _ _
-    have hw : (q.val i).1 = PUnit.unit := Subsingleton.elim _ _
-    simp only [Equiv.refl_symm, Equiv.refl_apply, hv, hw]
-    change (⟨PUnit.unit, φ (g₀ (d₀ i))⟩ :
-        Occurrence K oneVertexShape (P.scheme.asSystem q.hν top)) =
-      ⟨PUnit.unit, φ (g₁ (d₁ i))⟩
-    rw [hd i]
+  have h := infra_612_same_galois_left_large (P := P) q p e.symm σ hσ hσlt hidxq hpν hL
+    (by
+      intro β hβ ρ hρinf hρν params hjoint h₀ h₁
+      let Z : β → Occurrence K oneVertexShape (P.scheme.asSystem hν A) :=
+        fun b => A.occ (params b)
+      have hβν : #β < ν := hβ.trans_lt hgls
+      have hDE := P.scheme.diagram_symm p.host q.host _ _ (hD Z hβν)
+      have hαν : #(p.idx ⊕ β) < ν := hjoint.trans_lt hρν
+      have hαq : #(p.idx ⊕ β) < q.ν := hαν.trans_le hqν
+      have hαp : #(p.idx ⊕ β) < p.ν := by rw [hpν]; exact hαν
+      have h := infra_78_test_of_diagram_ge
+        (alignJoint e.symm (typeJoint (p := q) Z)) (typeJoint (p := p) Z) hDE hαq hαp ν hν
+        hc₁ hc₀.ge hρinf hρν hjoint id hjoint h₀ h₁
+      convert h using 1
+      · funext c
+        cases c with
+        | inl i =>
+          simp only [alignJoint, typeJoint, id, Equiv.symm_symm]
+          rfl
+        | inr b =>
+          change q.incl.onVertex PUnit.unit (params b) = q.host.val
+            ⟨(Z b).1, q.incl.onVertex (Z b).1 (Z b).2⟩
+          rfl
+      · funext c
+        cases c with
+        | inl i => rfl
+        | inr b =>
+          change p.incl.onVertex PUnit.unit (params b) = p.host.val
+            ⟨(Z b).1, p.incl.onVertex (Z b).1 (Z b).2⟩
+          rfl)
+  exact SameGaloisType.unswap_refl (SameGaloisType.symm h)
 
 end
 end

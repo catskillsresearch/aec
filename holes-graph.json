@@ -1941,9 +1941,9 @@
    "label": "Cross-level Galois identification (Thm 6.6, one host above base level)",
    "section": 7,
    "file": "AEC/Section7/MixedTiedLift.lean",
-   "status": "blocked",
+   "status": "done",
    "blocker": null,
-   "detail": "DEMOTED (grokbot_02): PROVED MODULO infra_78_tuple_amalgam_large (only sorryAx source). Reduction: diagram agreement below nu -> D.same tests (infra_78_test_of_diagram_ge, hosts of size >= nu) -> model amalgam of the nu-host and the large host over A (sub-tip) -> SMObject top at level q.nu. Not used downstream."
+   "detail": "DEMOTED (grokbot_02): PROVED MODULO infra_78_tuple_amalgam_large (only sorryAx source). Reduction: diagram agreement below nu -> D.same tests (infra_78_test_of_diagram_ge, hosts of size >= nu) -> model amalgam of the nu-host and the large host over A (sub-tip) -> SMObject top at level q.nu. Not used downstream. | DONE cycle 93: re-proved directly from infra_612_same_galois_left_large (chart the large host onto E(lvlOrder), mu-sized sub-presentation, level-mu amalgam, exists_strong_embedding_over) + SameGaloisType.symm/unswap_refl; no longer uses infra_78_tuple_amalgam_large. Axioms clean."
   },
   {
    "id": "infra_78_tuple_amalgam_large",
@@ -1952,7 +1952,7 @@
    "file": "AEC/Section7/MixedTiedLift.lean",
    "status": "open",
    "blocker": null,
-   "detail": "OPEN (grokbot_02 sub-tip of infra_78_cross_level_galois). ClosedLevel.exists_tuple_amalgam with card B1 >= mu (amalgam of size card B1). Known obstruction: exists_strong_embedding_over embeds B1 over A into E(J) along a countable tower of submodels of size < mu with LiftsTuple lifts (#alpha < mu), which cannot exhaust a larger B1; needs lifts of submodels of size >= mu or an amalgamation property over mu-sized models. Truth not verified; no consumer on the main path."
+   "detail": "OPEN (grokbot_02 sub-tip of infra_78_cross_level_galois). ClosedLevel.exists_tuple_amalgam with card B1 >= mu (amalgam of size card B1). Known obstruction: exists_strong_embedding_over embeds B1 over A into E(J) along a countable tower of submodels of size < mu with LiftsTuple lifts (#alpha < mu), which cannot exhaust a larger B1; needs lifts of submodels of size >= mu or an amalgamation property over mu-sized models. Truth not verified; no consumer on the main path. | Cycle 93 audit: NO consumer left (infra_78_cross_level_galois re-proved without it). B1 is an arbitrary K-model of size >= mu (not necessarily categorical / an EM model E(J)); the statement is an amalgamation property over a mu-model with an arbitrary larger model, not derivable from the AEC axioms + closed-level tools available (no upward extension of B1 to a categorical size is available). When #B1 is categorical and >= D.t mu the left_large method applies (embedding into E(J) over a mu-sized sub-presentation). Neither proved nor refuted; a counterexample would need a full SingleModelData-style class. Recommend: keep as an off-path open tip or delete as unused (needs ruling)."
   },
   {
    "id": "infra_78_stationary_combinatorics",
@@ -5267,11 +5267,6 @@
    "kind": "hard"
   },
   {
-   "from": "infra_78_tuple_amalgam_large",
-   "to": "infra_78_cross_level_galois",
-   "kind": "hard"
-  },
-  {
    "from": "audit_free_from_vacuous",
    "to": "infra_78_tied_local_character",
    "kind": "hard"
@@ -7177,8 +7172,14 @@
    "to": "infra_713_lift_pi_mixed",
    "kind": "hard",
    "note": ""
+  },
+  {
+   "from": "infra_612_same_galois_left_large",
+   "to": "infra_78_cross_level_galois",
+   "kind": "hard",
+   "note": "cycle 93 direct proof"
   }
  ],
- "doneCount": 341,
+ "doneCount": 342,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
