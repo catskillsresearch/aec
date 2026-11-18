@@ -138,20 +138,24 @@ def infra_78_ChainOK {ι : Type u} [Preorder ι] {E : Type u} {k : ι}
   (∀ i j l, i ≤ j → j ≤ l → mf i l = infra_78_stepComp (mf i j) (mf j l))
 
 /-- What the limit operator must deliver: a cocone of stage arrows, compatible with the chain,
-with extra data `eδ`, jointly covering both carriers (continuity at the limit). -/
+with extra data `eF` of the limit pair and cocone, jointly covering both carriers (continuity at the limit). -/
 def infra_78_LimSpec {ι : Type u} [Preorder ι] {E : Type u} {k : ι}
-    (cf : Set.Iio k → Infra78Stage P hκ E) (mf : Set.Iio k → Set.Iio k → Infra78Step κ) (eδ : E)
+    (cf : Set.Iio k → Infra78Stage P hκ E) (mf : Set.Iio k → Set.Iio k → Infra78Step κ)
+    (eF : P.scheme.Object κ hκ → P.scheme.Object κ hκ → (κ.ord.ToType → κ.ord.ToType) →
+      (Set.Iio k → Infra78Step κ) → E)
     (out : Infra78Stage P hκ E × (Set.Iio k → Infra78Step κ)) : Prop :=
   (∀ j, infra_78_StageArr (cf j) out.1 (out.2 j)) ∧
   (∀ i j, i ≤ j → infra_78_stepComp (mf i j) (out.2 j) = out.2 i) ∧
-  out.1.e = eδ ∧
+  out.1.e = eF out.1.X out.1.Y out.1.p out.2 ∧
   (∀ x, ∃ j y, (out.2 j).1 y = x) ∧ (∀ x, ∃ j y, (out.2 j).2 y = x)
 
 /-- The limit stage exists (from `infra_78_limit_pair`, under `ρ⁺ < κ`). -/
 theorem infra_78_limSpec_exists {E : Type u} (hρκ : Order.succ ρ < κ)
     {k : (Order.succ ρ).ord.ToType} (hk : Order.IsSuccLimit k)
-    (cf : Set.Iio k → Infra78Stage P hκ E) (mf : Set.Iio k → Set.Iio k → Infra78Step κ) (eδ : E)
-    (hok : infra_78_ChainOK cf mf) : ∃ out, infra_78_LimSpec cf mf eδ out := by
+    (cf : Set.Iio k → Infra78Stage P hκ E) (mf : Set.Iio k → Set.Iio k → Infra78Step κ)
+    (eF : P.scheme.Object κ hκ → P.scheme.Object κ hκ → (κ.ord.ToType → κ.ord.ToType) →
+      (Set.Iio k → Infra78Step κ) → E)
+    (hok : infra_78_ChainOK cf mf) : ∃ out, infra_78_LimSpec cf mf eF out := by
   obtain ⟨hA, hI, hC⟩ := hok
   let pair := fun j => infra_78_toArr (cf j).hp
   let sX : ∀ {a b : Set.Iio k}, a ≤ b → _ := fun {a b} h => infra_78_toArr (hA a b h).1
@@ -190,7 +194,8 @@ theorem infra_78_limSpec_exists {E : Type u} (hρκ : Order.succ ρ < κ)
   obtain ⟨Xδ, Yδ, lX, lY, pδ, -, -, -, hcX, hcY, hsq, hcovX, hcovY⟩ :=
     infra_78_limit_pair hρκ hk (fun j => (cf j).X) (fun j => (cf j).Y) pair sX sY hXr hYr hXt hYt
       hcomm
-  refine ⟨(⟨Xδ, Yδ, infra_78_plain pδ, infra_78_isArr_plain pδ, eδ⟩,
+  refine ⟨(⟨Xδ, Yδ, infra_78_plain pδ, infra_78_isArr_plain pδ,
+      eF Xδ Yδ (infra_78_plain pδ) fun j => (infra_78_plain (lX j), infra_78_plain (lY j))⟩,
     fun j => (infra_78_plain (lX j), infra_78_plain (lY j))), ?_, ?_, rfl, ?_, ?_⟩
   · intro j
     refine ⟨infra_78_isArr_plain _, infra_78_isArr_plain _, ?_⟩
@@ -218,7 +223,9 @@ open Classical in
 /-- The limit operator: a stage meeting `infra_78_LimSpec` (chosen), or a dummy if none. -/
 noncomputable def infra_78_pairLop {ι : Type u} [Preorder ι] {E : Type u}
     (s0 : Infra78Stage P hκ E)
-    (limE : (k : ι) → (Set.Iio k → Infra78Stage P hκ E) → (Set.Iio k → Set.Iio k → Infra78Step κ) → E)
+    (limE : (k : ι) → (Set.Iio k → Infra78Stage P hκ E) → (Set.Iio k → Set.Iio k → Infra78Step κ) →
+      P.scheme.Object κ hκ → P.scheme.Object κ hκ → (κ.ord.ToType → κ.ord.ToType) →
+      (Set.Iio k → Infra78Step κ) → E)
     (k : ι) (cf : Set.Iio k → Infra78Stage P hκ E) (mf : Set.Iio k → Set.Iio k → Infra78Step κ) :
     Infra78Stage P hκ E × (Set.Iio k → Infra78Step κ) :=
   if h : ∃ out, infra_78_LimSpec cf mf (limE k cf mf) out then Classical.choose h
@@ -226,7 +233,9 @@ noncomputable def infra_78_pairLop {ι : Type u} [Preorder ι] {E : Type u}
 
 theorem infra_78_pairLop_spec {ι : Type u} [Preorder ι] {E : Type u}
     (s0 : Infra78Stage P hκ E)
-    (limE : (k : ι) → (Set.Iio k → Infra78Stage P hκ E) → (Set.Iio k → Set.Iio k → Infra78Step κ) → E)
+    (limE : (k : ι) → (Set.Iio k → Infra78Stage P hκ E) → (Set.Iio k → Set.Iio k → Infra78Step κ) →
+      P.scheme.Object κ hκ → P.scheme.Object κ hκ → (κ.ord.ToType → κ.ord.ToType) →
+      (Set.Iio k → Infra78Step κ) → E)
     (k : ι) (cf : Set.Iio k → Infra78Stage P hκ E) (mf : Set.Iio k → Set.Iio k → Infra78Step κ)
     (h : ∃ out, infra_78_LimSpec cf mf (limE k cf mf) out) :
     infra_78_LimSpec cf mf (limE k cf mf) (infra_78_pairLop s0 limE k cf mf) := by
@@ -237,7 +246,8 @@ theorem infra_78_pairLop_spec {ι : Type u} [Preorder ι] {E : Type u}
 variable (hρκ : Order.succ ρ < κ) {E : Type u} (s0 : Infra78Stage P hκ E)
   (sop : (Order.succ ρ).ord.ToType → Infra78Stage P hκ E → Infra78Stage P hκ E × Infra78Step κ)
   (limE : (k : (Order.succ ρ).ord.ToType) → (Set.Iio k → Infra78Stage P hκ E) →
-    (Set.Iio k → Set.Iio k → Infra78Step κ) → E)
+    (Set.Iio k → Set.Iio k → Infra78Step κ) → P.scheme.Object κ hκ → P.scheme.Object κ hκ →
+    (κ.ord.ToType → κ.ord.ToType) → (Set.Iio k → Infra78Step κ) → E)
 
 /-- Stage `k` of the plain-data matrix recursion. -/
 noncomputable abbrev infra_78_pcObj (k : (Order.succ ρ).ord.ToType) : Infra78Stage P hκ E :=
