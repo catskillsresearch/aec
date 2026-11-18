@@ -26,9 +26,9 @@ Cycle 61 tools (proved):
   at the isolated stage, `tp(b, c / A)` (computed in the level-`λ` section `U`) is relatively
   isolated over `b` for every `c ⊆ U`, `|c| ≤ θ` (repetitions allowed).
 
-Open (tracked): `infra_78_marginal_anchor` (`I_p` still determines the marginal: `tp(b/A)` is
-carried to `p` by the anchor isomorphism) and `infra_78_iso_rename` (base change of relative
-isolation and Galois type along the structural isomorphism `X ≃ A`, renaming `U`).
+Tracked elsewhere: `infra_78_iso_rename` (done, `IsoRename.lean`) and `infra_78_marginal_anchor`
+(split cycle 63, `MarginalAnchor.lean`: done for `p` realized at the base level; the general host
+level is `infra_78_marginal_general_level`).
 -/
 
 universe u
