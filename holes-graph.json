@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-18 11:53",
+  "updated": "2026-11-18 12:03",
   "sorryCount": 44,
   "legend": {
     "open": "No unfinished required proof-deps — try next",
@@ -2228,10 +2228,28 @@
       "id": "infra_78_isolated_stage",
       "label": "Prop 7.8: a stage where every list is isolated",
       "section": 7,
-      "file": "AEC/Section7/MixedDescent.lean",
+      "file": "AEC/Section7/IsolatedStage.lean",
+      "status": "blocked",
+      "blocker": "infra_78_isolated_stage_padding",
+      "detail": "Blocked (split grokbot cycle 55; full claim kept: some stage i with cf(i) > lambda at which EVERY list of length <= theta from S_i is relatively isolated over b). = infra_78_isolated_stage_core (DONE: lists indexed by the fixed cIdx, |cIdx| <= lambda) + infra_78_isolated_stage_padding (open: shorter lists, incl. the empty list, at the same stage). Close only when both are done."
+    },
+    {
+      "id": "infra_78_isolated_stage_core",
+      "label": "Prop 7.8: a stage where every cIdx-list from S_i is isolated (Fodor contradiction)",
+      "section": 7,
+      "file": "AEC/Section7/IsolatedStage.lean",
+      "status": "done",
+      "blocker": null,
+      "detail": "DONE (grokbot cycle 55, sorry-free, standard axioms; AEC/Section7/IsolatedStage.lean). infra_78_isolated_stage_core: in infra_78_rcMatrix with candidates infra_78_candS cIdx, |uIdx+cIdx| <= sigma, |b| < cf of every limit stage (finite marks), lambda < rho eligible, rho^lambda = rho, |cIdx| <= lambda, seed with (5), an S-point and |R_0| <= rho: there is a stage i with lambda < cf(i) such that every d : cIdx -> S_i gives IsRelativelyIsolated (b_i, d). Proof as in the paper: otherwise every high-cofinality stage has a failing list with a nonfree extension at succ i (infra_78_rc_failing_list); continuity pulls it back to S_j(i), j(i) < i (infra_78_rc_pullback via infra_78_bounded_in_earlier_stage); Fodor + list count (infra_78_stationary_fixed_list, infra_78_Slists_card, infra_78_rc_card) fix (j, d) on a stationary set; infra_78_matrix_eventually_free (whole rho^+-chain infra_78_fullChain over the union from infra_78_limit_pair_gen, infra_78_fixed_list_eventually_free, host transfer) makes the fixed list free from some stage on: contradiction at a stationary stage past it. Helpers: infra_78_highcof_limit, infra_78_stage_not_isMax, infra_78_stationary_unbounded, infra_78_lt_stage_cof_le, infra_78_rc_map2_comp."
+    },
+    {
+      "id": "infra_78_isolated_stage_padding",
+      "label": "Prop 7.8: shorter lists at the isolated stage (padding / subtuple projection)",
+      "section": 7,
+      "file": "AEC/Section7/IsolatedStage.lean",
       "status": "open",
       "blocker": null,
-      "detail": "Open (unblocked grokbot cycle 54: infra_78_matrix_construction done). If every high-cofinality stage fails, Fodor/infra_78_stationary_fixed_list fixes one list d on a stationary set, which is non-free at stationarily many successors; infra_78_fixed_list_eventually_free (done) contradicts it. Hence some stage i (cf i > lambda) has every <= theta list relatively isolated. INPUTS (available): the matrix infra_78_rcMatrix with infra_78_recursion_outputs (laws, (5) everywhere, continuity of R/S, S_i nonempty), the failing-list/coverage property at every stage infra_78_rc_failing_list (candidates = all cIdx-lists from S_i, no enumeration needed per the paper), the list count infra_78_Slists_card, infra_78_bounded_in_earlier_stage. Caveat: lists are indexed by a fixed cIdx; shorter lists (|c| <= theta) must be handled by repetition padding + subtuple projection here."
+      "detail": "Open (split from infra_78_isolated_stage, grokbot cycle 55). At the stage i given by infra_78_isolated_stage_core, every list c : J -> S_i with |J| <= theta (theta <= |cIdx|), including J empty, gives IsRelativelyIsolated (b_i, c). Caveat: relative isolation does not pass to subtuples for free. Plan: for J nonempty pad c to d = c o pi (pi : cIdx ->> J, section s); a competitor q' on uIdx+J extends to uIdx+cIdx by the same repetition, needs DiagramEq stable under precomposition with a (non-injective) reindexing for P.scheme (not a WorkingScheme field: only diagram_reindex along equivalences and diagram_restrict on sum summands) and SameGaloisType restriction along the injection id+s. J empty: the tuple is its own uIdx-marginal (isolation with empty fragment). Alternatively choose cIdx to contain a copy of every J and argue directly."
     },
     {
       "id": "infra_78_theta_shrink",
@@ -4911,8 +4929,23 @@
       "from": "infra_78_recursion_outputs",
       "to": "infra_78_isolated_stage",
       "kind": "hard"
+    },
+    {
+      "from": "infra_78_isolated_stage_core",
+      "to": "infra_78_isolated_stage",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_78_isolated_stage_padding",
+      "to": "infra_78_isolated_stage",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_78_isolated_stage_core",
+      "to": "infra_78_isolated_stage_padding",
+      "kind": "hard"
     }
   ],
-  "doneCount": 216,
+  "doneCount": 217,
   "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 43. Uncommitted in /tmp/aec-grok."
 }

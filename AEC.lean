@@ -158,6 +158,7 @@ public import AEC.Section7.MatrixEngine
 public import AEC.Section7.MatrixOperators
 public import AEC.Section7.RnextClosure
 public import AEC.Section7.RecursionOutputs
+public import AEC.Section7.IsolatedStage
 public import AEC.Section6.LocalCharacterTied
 public import AEC.Section6.AverageDescentTied
 public import AEC.Section6.DescentRetractionTied
