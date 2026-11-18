@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-18 10:48",
+  "updated": "2026-11-18 10:56",
   "sorryCount": 44,
   "legend": {
     "open": "No unfinished required proof-deps — try next",
@@ -2222,7 +2222,7 @@
       "file": "AEC/Section7/MixedDescent.lean",
       "status": "blocked",
       "blocker": "infra_78_matrix_recursion",
-      "detail": "Blocked (full claim kept; split cycle 42 into infra_78_bookkeeping_stage_local (DONE), infra_78_matrix_successor_step (open), infra_78_matrix_limit_step (open), infra_78_matrix_recursion (blocked on the two steps; carries the CompLaw/ContAtLimits outputs and the interleaving caveat)). Transfinite construction of continuous pairs X_i <= Y_i (i <= rho^+) at level kappa (Infra78Matrix plus SameLevelChain unions) with invariant (5) tp(b/X_i) = free lift of tp(b/X_0) (tied), failing stages extended by infra_78_nonfree_extension_tied + infra_78_same_level_type_amalgam (transitivity for (5)), Def 7.7 continuity at limits (finite marks: infra_78_finite_continuity), bookkeeping from infra_78_bookkeeping_closure. REQUIRED OUTPUT (tracked obligations, cycle 39): besides an Infra78Matrix, this node must produce (i) the composition law stepX (le_refl) = id, stepX (h1.trans h2) = stepX h1 >> stepX h2 and the same for stepY, and (ii) continuity at limits: for limit i every element of X_i and of Y_i is stepX/stepY of an element of some earlier stage (Def 7.7 continuous pairs). These are consumed by infra_78_bookkeeping_req1_high_cof, infra_78_bookkeeping_req2_high_cof and infra_78_bookkeeping_assembly. CAVEAT (cycle 41): infra_78_bookkeeping_assembly is stated over a completed matrix, while the paper interleaves (the extension at stage i is chosen from a failing list in S_i). This node must either prove that R_i depends only on the matrix restricted to stages <= i (stage-local bookkeeping) or restructure the choice of failing lists; that step is part of this node's tracked claim."
+      "detail": "Blocked (full claim kept; split cycle 42 into infra_78_bookkeeping_stage_local (DONE), infra_78_matrix_successor_step (DONE cycle 43), infra_78_matrix_limit_step (open), infra_78_matrix_recursion (blocked on the limit step; carries the CompLaw/ContAtLimits outputs and the interleaving caveat)). Transfinite construction of continuous pairs X_i <= Y_i (i <= rho^+) at level kappa (Infra78Matrix plus SameLevelChain unions) with invariant (5) tp(b/X_i) = free lift of tp(b/X_0) (tied), failing stages extended by infra_78_nonfree_extension_tied + infra_78_same_level_type_amalgam (transitivity for (5)), Def 7.7 continuity at limits (finite marks: infra_78_finite_continuity), bookkeeping from infra_78_bookkeeping_closure. REQUIRED OUTPUT (tracked obligations, cycle 39): besides an Infra78Matrix, this node must produce (i) the composition law stepX (le_refl) = id, stepX (h1.trans h2) = stepX h1 >> stepX h2 and the same for stepY, and (ii) continuity at limits: for limit i every element of X_i and of Y_i is stepX/stepY of an element of some earlier stage (Def 7.7 continuous pairs). These are consumed by infra_78_bookkeeping_req1_high_cof, infra_78_bookkeeping_req2_high_cof and infra_78_bookkeeping_assembly. CAVEAT (cycle 41): infra_78_bookkeeping_assembly is stated over a completed matrix, while the paper interleaves (the extension at stage i is chosen from a failing list in S_i). This node must either prove that R_i depends only on the matrix restricted to stages <= i (stage-local bookkeeping) or restructure the choice of failing lists; that step is part of this node's tracked claim."
     },
     {
       "id": "infra_78_isolated_stage",
@@ -2354,10 +2354,10 @@
       "id": "infra_78_matrix_successor_step",
       "label": "Prop 7.8: matrix successor step (nonfree extension + amalgam, invariant (5))",
       "section": 7,
-      "file": "AEC/Section7/MixedDescent.lean",
-      "status": "open",
+      "file": "AEC/Section7/SuccessorStep.lean",
+      "status": "done",
       "blocker": null,
-      "detail": "Open (board-only). Given a pair f : X_i -> Y_i at level kappa, the mark b in Y_i with invariant (5) (tp(b/X_i) tied free lift of tp(b/X_0) along X_0 -> X_i), and a <= lambda list d from Y_i: produce X_{i+1}, Y_{i+1}, permitted stepX : X_i -> X_{i+1}, stepY : Y_i -> Y_{i+1}, pair_{i+1} with stepY o pair_i = pair_{i+1} o stepX, invariant (5) at X_{i+1} (transitivity of tied freeness), and, if tp(b,d/X_i) is nonisolated relative to b (d a failing list), tp(b,d/X_{i+1}) restricted to X_i is NOT tied free (a nonfree extension) while the b-marginal stays free. Uses infra_78_nonfree_extension_tied and infra_78_same_level_type_amalgam (both DONE)."
+      "detail": "DONE (grokbot cycle 43, sorry-free: AEC/Section7/SuccessorStep.lean, infra_78_matrix_successor_step). Failing-stage extension: given the stage-i tuple q = tp(b,d/X_i) (host Y_i, inclusion pair_i, q.nu = mu, #q.idx <= sigma), the u/c split e, invariant (5) for the b-marginal along g0 : X_0 -> X_i (IsTiedFree g0 ((q.marginal e).restrict g0) (q.marginal e) refl) and a failing list (not IsRelativelyIsolated q e), produces permitted stepX : X_i -> X_{i+1}, a level-mu tuple q' over X_{i+1} (host Y_{i+1}, inclusion pair_{i+1}, same index) and permitted stepY : Y_i -> Y_{i+1} with the commuting square stepY o pair_i = pair_{i+1} o stepX, stepY carrying the values of q to those of q', invariant (5) at X_{i+1} along stepX o g0 (infra_78_tiedFree_trans), the b-marginal tied free over the step, and tp(b,d/X_{i+1}) NOT tied free over X_i (nonfree extension). Built from infra_78_nonfree_extension_tied + infra_78_same_level_type_amalgam and new host-relation transfer lemmas (infra_78_HostRel, infra_78_hostRel_diag, infra_78_tiedFree_host_source/_source'/_target). Non-failing stages take the identity step; that case split is part of infra_78_matrix_recursion."
     },
     {
       "id": "infra_78_matrix_limit_step",
@@ -2374,8 +2374,8 @@
       "section": 7,
       "file": "AEC/Section7/MixedDescent.lean",
       "status": "blocked",
-      "blocker": "infra_78_matrix_successor_step",
-      "detail": "Blocked on infra_78_matrix_successor_step and infra_78_matrix_limit_step. Transfinite recursion over (succ rho).ord.ToType with state (pair X_i <= Y_i, bookkeeping set R_i subset X_i + Y_i): successor stages close the image of R_i (plus seeds Ip, b) by infra_78_bookkeeping_stage_local and extend by infra_78_matrix_successor_step on a failing list chosen from the S-part of R_i (if any); limit stages take infra_78_matrix_limit_step and the union of earlier images. Outputs: an Infra78Matrix with Infra78Matrix.CompLaw and Infra78Matrix.ContAtLimits, invariant (5) at every stage, R forward-closed, continuous at limits and with requirement-1/2 supply at non-limit stages (so infra_78_bookkeeping_req1_high_cof / req2_high_cof apply to the completed (M, R)), and the failing-list property at every stage. This node carries the interleaving caveat: R_i is chosen inside the recursion from the current pair only."
+      "blocker": "infra_78_matrix_limit_step",
+      "detail": "Blocked on infra_78_matrix_limit_step (infra_78_matrix_successor_step DONE cycle 43; non-failing stages take the identity step). Transfinite recursion over (succ rho).ord.ToType with state (pair X_i <= Y_i, bookkeeping set R_i subset X_i + Y_i): successor stages close the image of R_i (plus seeds Ip, b) by infra_78_bookkeeping_stage_local and extend by infra_78_matrix_successor_step on a failing list chosen from the S-part of R_i (if any); limit stages take infra_78_matrix_limit_step and the union of earlier images. Outputs: an Infra78Matrix with Infra78Matrix.CompLaw and Infra78Matrix.ContAtLimits, invariant (5) at every stage, R forward-closed, continuous at limits and with requirement-1/2 supply at non-limit stages (so infra_78_bookkeeping_req1_high_cof / req2_high_cof apply to the completed (M, R)), and the failing-list property at every stage. This node carries the interleaving caveat: R_i is chosen inside the recursion from the current pair only."
     }
   ],
   "edges": [
@@ -4562,6 +4562,6 @@
       "kind": "hard"
     }
   ],
-  "doneCount": 198,
+  "doneCount": 199,
   "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 43. Uncommitted in /tmp/aec-grok."
 }

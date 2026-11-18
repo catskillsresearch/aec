@@ -150,6 +150,7 @@ public import AEC.Section7.MixedTiedLift
 public import AEC.Section7.MixedDescent
 public import AEC.Section7.TiedLocalCharacter
 public import AEC.Section7.Bookkeeping
+public import AEC.Section7.SuccessorStep
 public import AEC.Section6.LocalCharacterTied
 public import AEC.Section6.AverageDescentTied
 public import AEC.Section6.DescentRetractionTied
