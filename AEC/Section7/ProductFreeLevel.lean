@@ -321,6 +321,202 @@ theorem infra_75_eval_one
   exact P.scheme.diagram_trans _ _ _ _ _ _ (P.scheme.diagram_symm _ _ _ _ TqB)
     (P.scheme.diagram_trans _ _ _ _ _ _ Ty (P.scheme.diagram_symm _ _ _ _ Dx))
 
+/-- Tied freeness depends on the base tuple only through its bounded diagrams. -/
+theorem infra_75_tiedFree_base_congr {P : SingleModelData K} {μ : Cardinal.{u}}
+    {hμ : μ ∈ P.eligible} {A B : P.scheme.Object μ hμ}
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ B))
+    (p : TupleOver K oneVertexShape P.scheme hμ A)
+    {ν' : Cardinal.{u}} {hν' : ν' ∈ P.eligible} {H' : P.scheme.Object ν' hν'}
+    {incl' : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hν' H')}
+    (hincl' : P.scheme.permitted (X := A) (Y := H') incl')
+    (val' : p.idx → Occurrence K oneVertexShape (P.scheme.asSystem hν' H'))
+    (qB : TupleOver K oneVertexShape P.scheme hμ B) (eB : p.idx ≃ qB.idx)
+    (hD : ∀ {ι : Type u} (Z : ι → Occurrence K oneVertexShape (P.scheme.asSystem hμ A)),
+      #ι < μ → P.scheme.DiagramEq (X := H') (Y := p.host)
+        (typeJoint (p := (⟨ν', hν', H', incl', hincl', p.idx, val'⟩ :
+          TupleOver K oneVertexShape P.scheme hμ A)) Z) (typeJoint (p := p) Z))
+    (hT : IsTiedFree f p qB eB) :
+    IsTiedFree f (⟨ν', hν', H', incl', hincl', p.idx, val'⟩ :
+      TupleOver K oneVertexShape P.scheme hμ A) qB eB := by
+  let p' : TupleOver K oneVertexShape P.scheme hμ A := ⟨ν', hν', H', incl', hincl', p.idx, val'⟩
+  intro seq' ι Z Z0 hlong hι hιμ hmv
+  let seq : ApproximationSequence p :=
+    { τ := #ι
+      κIndex := seq'.κIndex
+      family := seq'.family
+      concat_bounded := seq'.concat_bounded
+      few_exceptions := fun {ι'} Z' h' => by
+        have h0 := seq'.few_exceptions Z' (h'.trans hι)
+        refine le_trans (Cardinal.mk_le_of_injective (f := fun s => (⟨s.1, ?_⟩ :
+          {i : seq'.κIndex // ¬ P.scheme.DiagramEq (X := p'.host) (Y := A)
+            (typeJoint (p := p') Z') (seqJoint (seq'.family i) Z')})) ?_) h0
+        · intro hc
+          apply s.2
+          have d := hD Z' (h'.trans_lt hιμ)
+          exact P.scheme.diagram_trans _ _ _ _ _ _ (P.scheme.diagram_symm _ _ _ _
+            d) hc
+        · intro s1 s2 h
+          have h2 := congrArg Subtype.val h
+          exact Subtype.ext h2 }
+  have hlong' : seq.τ + ℵ₀ < #seq.κIndex :=
+    show #ι + ℵ₀ < #seq'.κIndex from (add_le_add hι le_rfl).trans_lt hlong
+  have T := hT seq Z Z0 hlong' le_rfl hιμ hmv
+  have d := hD Z0 hιμ
+  exact P.scheme.diagram_trans _ _ _ _ _ _ d T
+
+
+/-- Tied freeness survives pushing the free lift's host forward along a permitted arrow. -/
+theorem infra_75_tiedFree_target_push {P : SingleModelData K} {μ : Cardinal.{u}}
+    {hμ : μ ∈ P.eligible} {A B : P.scheme.Object μ hμ}
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ B))
+    (p : TupleOver K oneVertexShape P.scheme hμ A) (hpμ : #p.idx < μ)
+    (qB : TupleOver K oneVertexShape P.scheme hμ B) (eB : p.idx ≃ qB.idx) (hqBν : qB.ν = μ)
+    {T : P.scheme.Object μ hμ}
+    (g : SystemArrow K oneVertexShape (P.scheme.asSystem qB.hν qB.host) (P.scheme.asSystem hμ T))
+    (hg : P.scheme.permitted (X := qB.host) (Y := T) g)
+    (hT : IsTiedFree f p qB eB) :
+    IsTiedFree f p (⟨μ, hμ, T, SystemArrow.comp qB.incl g,
+        P.scheme.comp qB.incl g qB.incl_arrow hg, p.idx,
+        fun k => g.mapOcc (qB.val (eB k))⟩ : TupleOver K oneVertexShape P.scheme hμ B)
+      (Equiv.refl _) := by
+  intro seq ι Z Z0 hlong hι hιμ hmv
+  have T0 := hT seq Z Z0 hlong hι hιμ hmv
+  have hα : #(p.idx ⊕ ι) < μ := by
+    rw [Cardinal.mk_sum, Cardinal.lift_id, Cardinal.lift_id]
+    exact Cardinal.add_lt_of_lt (P.aleph0_le hμ) hpμ hιμ
+  have hp := P.scheme.diagram_preserved qB.host T g hg
+    (infra_612_anchored eB qB.incl qB.val Z) (by rw [hqBν]; exact hα) hα
+  exact P.scheme.diagram_trans _ _ _ _ _ _ T0
+    (infra_73_diagramEq_of_eq hp (fun t => rfl) (fun t => by cases t <;> rfl))
+
+set_option maxHeartbeats 6400000 in
+/-- **Steps (i)–(iii) of 7.5(3), one test (proved).** `x ⊗ b` is re-realized with `x` itself
+and a tied free lift `y_b` of `b` into the host of `x` (`infra_612_tied_indep_level_joints`), and
+the two level-`μ` joints are amalgamated at level `μ` (`infra_78_same_level_type_amalgam`).
+Carrying `c` along gives an extension of `tp(b, c / X)` over the host of `x` whose `b`-marginal is
+`y_b`, tied free; since `tp(b, c / X)` is isolated relative to `b` (all-domination), Lemma 7.2
+(`infra_73_tied_of_isolated`) makes the whole extension tied free, which is the product
+`x ⊗ (b, c)` (paper: "Hence `x` and `(b, c)` have product over `X`"). -/
+theorem infra_75_product_extend
+    (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : ℵ₀ ≤ σ)
+    {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
+    (hrec : μ ∈ recursionClosedLevels P σ) (hσμ : Order.succ σ ≤ μ)
+    (σ' : Cardinal.{u}) (hσσ' : σ ≤ σ')
+    (hrec' : μ ∈ recursionClosedLevels P σ') (hσμ' : Order.succ σ' ≤ μ)
+    {X Y : P.scheme.Object μ hμ}
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ Y))
+    (hf : P.scheme.permitted (X := X) (Y := Y) f)
+    {bIdx : Type u} (b : bIdx → Occurrence K oneVertexShape (P.scheme.asSystem hμ Y))
+    (hb : #bIdx ≤ σ)
+    (x : TupleOver K oneVertexShape P.scheme hμ Y) (hxν : x.ν = μ) (hxσ : #x.idx ≤ σ)
+    (hprod : IsProductTied (x.restrict f hf) (infra_75_markOver f hf x b)
+      (infra_75_jointOver f hf x b) (Equiv.refl _))
+    {β : Type u} (Z : β → Occurrence K oneVertexShape (P.scheme.asSystem hμ Y))
+    (hc : #(bIdx ⊕ β) ≤ σ')
+    (hIso : IsRelativelyIsolated (asTuple f hf (seqJoint b Z)) (Equiv.refl (bIdx ⊕ β))) :
+    IsProductTied (x.restrict f hf) (infra_75_markOver f hf x (Sum.elim b Z))
+      (infra_75_jointOver f hf x (Sum.elim b Z)) (Equiv.refl _) := by
+  classical
+  rcases x with ⟨ν, hν, H, xi, hxi, idx, val⟩
+  simp only at hxν
+  subst hxν
+  have hσ' : ℵ₀ ≤ σ' := hσ.trans hσσ'
+  have hσlt : σ < ν := (Order.lt_succ σ).trans_le hσμ
+  have hσlt' : σ' < ν := (Order.lt_succ σ').trans_le hσμ'
+  let x : TupleOver K oneVertexShape P.scheme hμ Y := ⟨ν, hν, H, xi, hxi, idx, val⟩
+  let q := x.restrict f hf
+  let pb := infra_75_markOver f hf x b
+  let pc := infra_75_markOver f hf x (Sum.elim b Z)
+  obtain ⟨yb, eyb, hybν, -, hybT⟩ :=
+    infra_610_tied_free_lift P σ hσ hμ hrec hσμ (B := H) pb.incl pb.incl_arrow pb rfl hb
+  have hprod2 : IsProductTied q pb (q.join yb) (Equiv.sumCongr (Equiv.refl _) eyb) := by
+    refine ⟨q, Equiv.refl _, SameGaloisType.refl q, yb, eyb, hybT, ?_⟩
+    have h : (Equiv.sumCongr (Equiv.refl q.idx) eyb).symm.trans
+        (Equiv.sumCongr (Equiv.refl q.idx) eyb) = Equiv.refl (q.idx ⊕ yb.idx) :=
+      Equiv.symm_trans_self _
+    exact h ▸ SameGaloisType.refl (q.join yb)
+  have S := infra_612_tied_indep_level_joints P σ hσ hμ hrec hσμ q pb rfl hxσ hb
+    (infra_75_jointOver f hf x b) (q.join yb) (Equiv.refl _)
+    (Equiv.sumCongr (Equiv.refl _) eyb) hprod hprod2 rfl hybν
+  obtain ⟨T, g1, g2, hg1, hg2, hcomm, hval⟩ :=
+    infra_78_same_level_type_amalgam (infra_75_jointOver f hf x b) (q.join yb) _ _ rfl hybν S
+  let qB : TupleOver K oneVertexShape P.scheme hμ H :=
+    ⟨ν, hμ, T, SystemArrow.comp yb.incl g2, P.scheme.comp yb.incl g2 yb.incl_arrow hg2,
+      bIdx ⊕ β, Sum.elim (fun t => g2.mapOcc (yb.val (eyb t)))
+        (fun d => g1.mapOcc (xi.mapOcc (Z d)))⟩
+  let qL := asTuple f hf (seqJoint b Z)
+  have hcomm' : ∀ v a, g1.onVertex v (xi.onVertex v (f.onVertex v a)) =
+      g2.onVertex v (yb.incl.onVertex v (xi.onVertex v (f.onVertex v a))) := by
+    intro v a
+    exact congrArg (fun e => e a) (hcomm v)
+  have hExt : SameGaloisType qL (qB.restrict pb.incl pb.incl_arrow)
+      (Equiv.refl _) (Equiv.refl _) := by
+    refine ⟨ν, hμ, T, SystemArrow.comp xi g1, SystemArrow.refl _,
+      P.scheme.comp xi g1 hxi hg1, trivial, ?_, ?_⟩
+    · intro v
+      ext a
+      exact hcomm' v a
+    · rintro (t | d)
+      · exact hval (Sum.inr t)
+      · rfl
+  have hα : ∀ {ι : Type u}, #ι < ν → #(bIdx ⊕ ι) < ν := fun hι => by
+    rw [Cardinal.mk_sum, Cardinal.lift_id, Cardinal.lift_id]
+    exact Cardinal.add_lt_of_lt (P.aleph0_le hμ) (hb.trans_lt hσlt) hι
+  have hα' : ∀ {ι : Type u}, #ι < ν → #((bIdx ⊕ β) ⊕ ι) < ν := fun hι => by
+    rw [Cardinal.mk_sum, Cardinal.lift_id, Cardinal.lift_id]
+    exact Cardinal.add_lt_of_lt (P.aleph0_le hμ) (hc.trans_lt hσlt') hι
+  -- the free marginal, pushed into `T` and read over `Y`
+  have hM1 := infra_75_tiedFree_target_push pb.incl pb (hb.trans_lt hσlt) yb eyb hybν g2 hg2 hybT
+  have hDm : ∀ {ι : Type u} (Z' : ι → Occurrence K oneVertexShape (P.scheme.asSystem hμ X)),
+      #ι < ν → P.scheme.DiagramEq (X := Y) (Y := H)
+        (typeJoint (p := (⟨ν, hμ, Y, f, hf, bIdx, fun t => b t⟩ :
+          TupleOver K oneVertexShape P.scheme hμ X)) Z') (typeJoint (p := pb) Z') := by
+    intro ι Z' hι
+    have d := P.scheme.diagram_preserved Y H xi hxi
+      (typeJoint (p := (⟨ν, hμ, Y, f, hf, bIdx, fun t => b t⟩ :
+          TupleOver K oneVertexShape P.scheme hμ X)) Z') (hα hι) (hα hι)
+    exact infra_73_diagramEq_of_eq d (fun t => rfl) (fun t => by cases t <;> rfl)
+  let ybT : TupleOver K oneVertexShape P.scheme hν H :=
+    ⟨ν, hμ, T, SystemArrow.comp yb.incl g2, P.scheme.comp yb.incl g2 yb.incl_arrow hg2, bIdx,
+      fun k => g2.mapOcc (yb.val (eyb k))⟩
+  have hM1' : IsTiedFree pb.incl pb ybT (Equiv.refl _) := hM1
+  have hMarg := infra_75_tiedFree_base_congr (p := pb) (qB := ybT) pb.incl hf (fun t => b t)
+    (Equiv.refl _) hDm hM1'
+  have hTL := infra_73_tied_of_isolated P σ' hσ' hμ hrec' hσμ' pb.incl pb.incl_arrow qL qB
+    (Equiv.refl _) (Equiv.refl _) rfl rfl hc (hc.trans_lt hσlt') hIso hExt hMarg
+  have hDc : ∀ {ι : Type u} (Z' : ι → Occurrence K oneVertexShape (P.scheme.asSystem hμ X)),
+      #ι < ν → P.scheme.DiagramEq (X := H) (Y := Y)
+        (typeJoint (p := (⟨ν, hμ, H, pb.incl, pb.incl_arrow, bIdx ⊕ β,
+          fun t => xi.mapOcc (Sum.elim b Z t)⟩ : TupleOver K oneVertexShape P.scheme hμ X)) Z')
+        (typeJoint (p := qL) Z') := by
+    intro ι Z' hι
+    have d := P.scheme.diagram_preserved Y H xi hxi (typeJoint (p := qL) Z') (hα' hι) (hα' hι)
+    exact P.scheme.diagram_symm _ _ _ _
+      (infra_73_diagramEq_of_eq d (fun t => rfl) (fun t => by rcases t with (t | t) | t <;> rfl))
+  have hTc := infra_75_tiedFree_base_congr (p := qL) pb.incl pb.incl_arrow
+    (fun t => xi.mapOcc (Sum.elim b Z t)) qB (Equiv.refl _) hDc hTL
+  refine ⟨q, Equiv.refl _, SameGaloisType.refl q, qB, Equiv.refl _, hTc, ?_⟩
+  refine ⟨ν, hμ, T, g1, SystemArrow.refl _, hg1, trivial, ?_, ?_⟩
+  · intro v
+    ext a
+    exact hcomm' v a
+  · rintro (k | t | d)
+    · exact hval (Sum.inl k)
+    · exact hval (Sum.inr t)
+    · rfl
+
+/-- **Steps (i)–(iii) of 7.5(3) (proved).** -/
+theorem infra_75_eval_product (P : SingleModelData K) : infra_75_eval_product_statement P := by
+  intro σ hσ μ hμ hrec hσμ hrw hσw X Y f hf bIdx b hb hdom x hxν hxσ hprod β Z hβ
+  have hσw' : σ ≤ infra_75_wide P σ := le_self_add
+  have hc : #(bIdx ⊕ β) ≤ infra_75_wide P σ := by
+    rw [Cardinal.mk_sum, Cardinal.lift_id, Cardinal.lift_id]
+    exact add_le_add hb hβ
+  have hβμ : #β < μ :=
+    (hβ.trans le_add_self).trans_lt ((Order.lt_succ _).trans_le hσw)
+  exact infra_75_product_extend P σ hσ hμ hrec hσμ (infra_75_wide P σ) hσw' hrw hσw f hf b hb
+    x hxν hxσ hprod Z hc (hdom β Z hβμ)
+
 /-- **Step (iv) of 7.5(3) (proved).** -/
 theorem infra_75_eval_project (P : SingleModelData K) : infra_75_eval_project_statement P := by
   intro σ hσ μ hμ hrec hσμ hrw hσw X Y f hf bIdx b hb _ x hxν hxσ _ hall qB eB _ hT β Z hβ
@@ -339,6 +535,15 @@ theorem infra_75_free_eval_of_parts (P : SingleModelData K)
   fun σ hσ _ hμ hrec hσμ hrw hσw X Y f hf bIdx b hb hdom x hxν hxσ hprod qB eB hqB hT β Z hβ =>
     h2 σ hσ hμ hrec hσμ hrw hσw X Y f hf bIdx b hb hdom x hxν hxσ hprod
       (h1 σ hσ hμ hrec hσμ hrw hσw X Y f hf bIdx b hb hdom x hxν hxσ hprod) qB eB hqB hT β Z hβ
+
+/-- **Free evaluation on bounded tests (proved).** -/
+theorem infra_75_free_eval_level (P : SingleModelData K) : infra_75_free_eval_level_statement P :=
+  infra_75_free_eval_of_parts P (infra_75_eval_product P) (infra_75_eval_project P)
+
+/-- **Proposition 7.5(3), actual coupling, level joints (proved).** -/
+theorem infra_75_product_free_level (P : SingleModelData K) :
+    infra_75_product_free_level_statement P :=
+  infra_75_product_free_level_of_eval P (infra_75_free_eval_level P)
 
 end
 end AEC

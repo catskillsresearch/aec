@@ -576,3 +576,4 @@ infra_612_tied_symm_level_joints --> infra_75_eval_product
 infra_612_tied_indep_level_joints --> infra_75_eval_product
 infra_612_tied_symm_level_joints --> infra_75_eval_project
 infra_612_tied_finite_proj_level --> infra_75_eval_project
+infra_78_same_level_type_amalgam --> infra_75_eval_product

@@ -2977,9 +2977,9 @@
    "label": "Prop 7.5(3) tied, actual coupling, level joints",
    "section": 7,
    "file": "AEC/Section7/ProductFreeLevel.lean",
-   "status": "blocked",
-   "blocker": "infra_75_free_eval_level",
-   "detail": "Open (cycle 75; narrowed infra of infra_75_product_free, whose general claim stays tracked). Lean statement infra_75_product_free_level_statement P: sigma >= aleph0, mu recursion-closed at sigma with sigma^+ <= mu; f : X -> Y permitted at mu; b : bIdx -> Y with #bIdx <= sigma and AllDominated f b; x over Y with x.nu = mu (actual coupling) and #x.idx <= sigma; IsProductTied (x/X) (b over X hosted with x) ((x,b) over X) refl  ==>  IsTiedFree f (x/X) x refl. All tuples, products and joints are hosted at mu, so only the proved level-joint 6.12 cases are needed. English proof (7.5(3)): symmetry (infra_612_tied_symm_level_joints) + definition give W >= X with x and b free over W; Lemma 7.2 for each bounded c in Y gives (b,c)/W free from X; hence x and (b,c) have product over X; symmetry + projection (infra_612_tied_finite_proj_level) give the free evaluation of x on every bounded test c from Y; testing theorem (infra_78_tiedFree_of_upTo). The paper's type-identifying amalgamation of W with the coupling must be done per bounded test (as in the level-joint 6.12 proofs via infra_73_differing_test), not as one large amalgam (that would be infra_78_tuple_amalgam_large). | cycle 77: split = infra_75_tests_reduction (done: testing reduction to bounded tests, no amalgam) + infra_75_free_eval_level (open: the per-test free evaluation). [cycle 79: statement also assumes μ closed at infra_75_wide P σ.]"
+   "status": "done",
+   "blocker": "",
+   "detail": "Proved (cycle 80): infra_75_product_free_level (tests reduction + free evaluation). Axioms clean. Narrowed (cycle 79) to levels also closed at infra_75_wide P σ; the general infra_75_product_free stays tracked."
   },
   {
    "id": "lemma_7_12_existence",
@@ -3022,9 +3022,9 @@
    "label": "Prop 7.5(3) level: free evaluation of x on bounded tests from Y",
    "section": 7,
    "file": "AEC/Section7/ProductFreeLevel.lean",
-   "status": "blocked",
-   "blocker": "infra_75_eval_product (open); eval_project done, glue done",
-   "detail": "Open (cycle 77). Lean statement infra_75_free_eval_level_statement P (ProductFreeLevel.lean): hypotheses of infra_75_product_free_level (actual coupling x.nu = mu, Y all-dominated over X + b, IsProductTied (x|X) (b over X) ((x,b) over X)); for every tied free lift qB (level mu) of x|X over Y and every test Z in Y of size <= g(sigma)+LS(K): DiagramEq (qB ++ Z) (x ++ Z). English steps (each per bounded test, so no large amalgam): (i) symmetry (infra_612_tied_symm_level_joints) + definition of IsProductTied: a level-mu W >= X containing x with b tied-free over W; (ii) all-domination: tp(b,Z/X) relatively isolated over b; Lemma 7.2 (infra_72_lemma, tied) then gives (b,Z)/W free from X; (iii) hence x and (b,Z) have the tied product over X: compare the two joints by infra_73_differing_test on one bounded test at a time (infra_612_tied_indep_level_joints pattern) instead of the paper's type-identifying amalgamation of W with the coupling; (iv) symmetry + projection (infra_612_tied_finite_proj_level) drop b: tp(x,Z) = tp(qB,Z) on the test. All dependencies done. [cycle 79: statement also assumes μ closed at infra_75_wide P σ.]"
+   "status": "done",
+   "blocker": "",
+   "detail": "Proved (cycle 80): infra_75_free_eval_level = glue(eval_product, eval_project). Axioms clean."
   },
   {
    "id": "infra_75_free_eval_glue",
@@ -3040,9 +3040,9 @@
    "label": "7.5(3) steps (i)-(iii): x has tied product with (b,Z) over X for every bounded test Z ⊆ Y",
    "section": "7",
    "file": "AEC/Section7/ProductFreeLevel.lean",
-   "status": "open",
+   "status": "done",
    "blocker": "",
-   "detail": "Paper: W with b tied-free over X (symmetry), Lemma 7.2 on Y all-dominated over X+b gives (b,c)/W free from X, joints compared via infra_73_differing_test. Statement infra_75_eval_product_statement. [cycle 79: statement also assumes μ closed at infra_75_wide P σ.]"
+   "detail": "Proved (cycle 80): infra_75_eval_product via infra_75_product_extend: re-realize x⊗b with x and a tied free lift y_b into x.host (indep_level_joints), level-μ amalgam (infra_78_same_level_type_amalgam), carry c along, Lemma 7.2 tied (infra_73_tied_of_isolated, isolation from AllDominated) makes (y_b, c) tied free; helpers infra_75_tiedFree_base_congr, infra_75_tiedFree_target_push. Axioms clean."
   },
   {
    "id": "infra_75_eval_project",
@@ -6228,6 +6228,11 @@
   {
    "from": "infra_612_tied_finite_proj_level",
    "to": "infra_75_eval_project",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_78_same_level_type_amalgam",
+   "to": "infra_75_eval_product",
    "kind": "hard"
   }
  ],
