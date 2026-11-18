@@ -324,9 +324,9 @@ Lean: imports `AEC.Section6.Results`.
 | `lemma_7_6` | Lemma 7.6 | `AEC/Section7/Results.lean` (done: Path A push-only green; English arbitrary-fragment form `lemma_7_6_tied` in `TiedDescent.lean`) |
 | `proposition_7_8` | Proposition 7.8 | `AEC/Section7/Results.lean` (**restated** for SingleModelData; open, blocked on infra_78_mixed_level_isolation) |
 | `theorem_7_9` | Theorem 7.9 | `AEC/Section7/Results.lean` (**restated** for SingleModelData; open) |
-| `lemma_7_11` | Lemma 7.11 | `AEC/Section7/Results.lean:151` |
-| `lemma_7_12` | Lemma 7.12 | `AEC/Section7/Results.lean` (**degenerate as formalized**: AEC.Audit.lemma_7_12_statement_vacuous; needs list-linked chain API) |
-| `theorem_7_13` | Theorem 7.13 | `AEC/Section7/Results.lean:176` |
+| `lemma_7_11` | Lemma 7.11 | `AEC/Section7/Results.lean:255` (restated over `ListWitnessingChain`) |
+| `lemma_7_12` | Lemma 7.12 | `AEC/Section7/Results.lean:273` (restated over list-linked `ListWitnessingChain`; old vacuity audit in `AEC/Audit/WitnessingChainVacuous.lean`) |
+| `theorem_7_13` | Theorem 7.13 | `AEC/Section7/Results.lean:296` (restated: uniqueness, product-independent free lift, continuity, primeness) |
 
 ### L4 — Section 8 (5)
 

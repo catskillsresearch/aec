@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-18 06:56",
+  "updated": "2026-11-18 07:13",
   "sorryCount": 43,
   "legend": {
     "open": "No unfinished required proof-deps — try next",
@@ -567,7 +567,7 @@
       "file": "AEC/Section7/Results.lean",
       "status": "blocked",
       "blocker": null,
-      "detail": "Blocked; underhypothesized (bare WorkingScheme) AND conclusion too weak: over SingleModelData the Lean conclusion (exists some free lift of p along C.into i) is just theorem_6_10, while English asserts the ACTUAL tp(x/M_delta) is free from A for x in a coupling with the marks; product hypothesis uses unlinked existential joints. Needs the list-linked chain API (see lemma_7_12) before restating. Depends on proposition_7_8 path."
+      "detail": "RESTATED (grokbot_02) over ListWitnessingChain L: for an all-dominated-increment chain C linked to L and a finite x over the last stage M_delta realized at mu, if x has product over A (IsProduct with C.jointWith) with every finite injective selection of marks, then IsFreeFrom (C.into top) x (the actual tp(x/M_delta) is free from A). Open sorry; blocked on the Prop 7.8 path (relative isolation over SingleModelData)."
     },
     {
       "id": "lemma_7_12",
@@ -576,8 +576,7 @@
       "file": "AEC/Section7/Results.lean",
       "status": "blocked",
       "blocker": null,
-      "detail": "DEGENERATE AS FORMALIZED (grokbot_01 Phase 3): WitnessingChain is not linked to the TupleList (no first stage A, order, continuity, or marks = list entries), so the empty chain witnesses the conclusion: AEC.Audit.lemma_7_12_statement_vacuous (sorry-free) proves the Lean statement for every scheme. Clause 2 (uniqueness of the whole amalgamation type) absent. Needs a list-linked chain API (WitnessingChainFor L: well-ordered stages M_i with M_0 = A, continuity, b_i in M_{i+1} via a common ambient retaining L) before restating. Not marked done.",
-      "degenerate": true
+      "detail": "RESTATED (grokbot_02) over ListWitnessingChain L (AEC/Section7/ListChain.lean): (1) product-independent well-ordered L has a linked all-dominated-increment chain (stages M_j, j<=delta, M_0=A, continuity at limits, marks = list entries in a common ambient, tp(b_i/M_i) free from A); (2) lists with linked chains and the same marginals have the same whole type. Empty-chain vacuity removed (old API audit kept). Open sorry; blocked on lemma_7_11."
     },
     {
       "id": "lemma_7_2",
@@ -632,7 +631,7 @@
       "file": "AEC/Section7/Results.lean",
       "status": "blocked",
       "blocker": null,
-      "detail": "Blocked; first clause shares lemma_7_12's vacuity (empty WitnessingChain, AEC.Audit.lemma_7_12_statement_vacuous); second clause (exists p SatisfiesContinuity p) is not tied to the list's marginal. Clause 1 uniqueness/free-lift product-independence and clause 3 primeness absent. Needs the list-linked chain API before restating."
+      "detail": "RESTATED (grokbot_02): bounded product-independent L over X: (1a) whole type determined by marginals among product-independent lists, (1b) every actual free lift of L.whole is product-independent (finite sublists are IsFiniteProduct of lifted marginals), (2) SatisfiesContinuity L.whole, (3) all-dominated realization over X with a map over X+b into an ambient containing L. Open sorry; blocked on lemma_7_12."
     },
     {
       "id": "theorem_7_9",
@@ -1923,7 +1922,16 @@
       "file": "AEC/Audit/WitnessingChainVacuous.lean",
       "status": "done",
       "blocker": null,
-      "detail": "Done (no sorry): emptyWitnessingChain, emptyWitnessingChain_allDominatedIncrement, lemma_7_12_statement_vacuous."
+      "detail": "Done (no sorry): emptyWitnessingChain, emptyWitnessingChain_allDominatedIncrement, lemma_7_12_statement_vacuous. Audits the superseded WitnessingChain API; 7.11-7.13 now use ListWitnessingChain."
+    },
+    {
+      "id": "infra_7_10_list_chain",
+      "label": "Def 7.10 list-linked witnessing chain",
+      "section": 7,
+      "file": "AEC/Section7/ListChain.lean",
+      "status": "done",
+      "blocker": null,
+      "detail": "Done (definitions only, no sorry): TupleList.whole, ListWitnessingChain L, AllDominatedIncrement, selectionOver, jointWith."
     }
   ],
   "edges": [

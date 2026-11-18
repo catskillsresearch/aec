@@ -9,6 +9,7 @@ public import AEC.Section7.AllDominated
 public import AEC.Section7.ContinuityCondition
 public import AEC.Section7.ProductIndependent
 public import AEC.Section7.WitnessingChain
+public import AEC.Section7.ListChain
 public import AEC.Section7.MixedLevel
 public import AEC.Section6.Results
 
@@ -247,46 +248,89 @@ theorem theorem_7_9 {K : AbstractElementaryClass.{u}} (P : SingleModelData K) :
           SameGaloisType p (asTuple f hf b) (Equiv.refl p.idx) (Equiv.refl p.idx) := by
   sorry
 
-/-- **Lemma 7.11.** A finite tuple that has product over `A` with every finite selection from
-an all-dominated-increment chain is free from `A` over the last stage. -/
+/-- **Lemma 7.11.** Let `C` be an all-dominated-increment witnessing chain for the list `L`
+over `A`, and let `x` be a finite tuple over the last stage `M_δ`, realized in an actual coupling
+(`x.ν = μ`).  If `x` has product over `A` with every finite selection of the marks `bᵢ`, then
+`tp(x/M_δ)` is free from `A`. -/
 theorem lemma_7_11 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
     (W : WorkingScheme K S) :
     ∃ T, ∃ hT : Tail W.eligible T,
       ∀ μ (hμ : μ ∈ T) (A : W.Object μ (Tail.mem hT hμ))
-        (C : WitnessingChain W (Tail.mem hT hμ) A),
-        AllDominatedIncrement C →
-        ∀ (p : TupleOver K S W (Tail.mem hT hμ) A), Finite p.idx →
-          (∀ i, ∃ joint : TupleOver K S W (Tail.mem hT hμ) A,
-            ∃ e : p.idx ⊕ (C.markIdx i) ≃ joint.idx,
-              IsProduct p (asTuple (C.into (C.next i)) (C.into_arrow (C.next i)) (C.mark i))
-                joint e) →
-          ∀ i, ∃ q : TupleOver K S W (Tail.mem hT hμ) (C.obj i),
-            ∃ e : p.idx ≃ q.idx, IsFreeLift p q (C.into i) (C.into_arrow i) e := by
+        (L : TupleList W (Tail.mem hT hμ) A) [LinearOrder L.δ] [WellFoundedLT L.δ]
+        (C : ListWitnessingChain L),
+        C.AllDominatedIncrement →
+        ∀ (x : TupleOver K S W (Tail.mem hT hμ) (C.stage ⊤)), Finite x.idx → x.ν = μ →
+          (∀ (n : ℕ) (ix : Fin n → L.δ), Function.Injective ix →
+            IsProduct (x.restrict (C.into ⊤) (C.into_arrow ⊤)) (C.selectionOver x n ix)
+              (C.jointWith x n ix) (Equiv.refl _)) →
+          IsFreeFrom (C.into ⊤) (C.into_arrow ⊤) x := by
   sorry
 
-/-- **Lemma 7.12.** A product-independent list of finite tuples has an all-dominated-increment
-witnessing chain, and the whole amalgamation type is determined by the successive marginal
-types. -/
+/-- **Lemma 7.12.** (1) A product-independent list `L` of finite tuples over `A`, well-ordered,
+has an all-dominated-increment witnessing chain linked to `L` (its marks are the entries of `L`
+in a common ambient).  (2) Lists with witnessing chains are determined, as a whole, by their
+successive marginal types over `A`. -/
 theorem lemma_7_12 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
     (W : WorkingScheme K S) :
     ∃ T, ∃ hT : Tail W.eligible T,
-      ∀ μ (hμ : μ ∈ T) (A : W.Object μ (Tail.mem hT hμ))
-        (L : TupleList W (Tail.mem hT hμ) A),
-        ProductIndependent L →
-        ∃ C : WitnessingChain W (Tail.mem hT hμ) A, AllDominatedIncrement C := by
+      ∀ μ (hμ : μ ∈ T) (A : W.Object μ (Tail.mem hT hμ)),
+        (∀ (L : TupleList W (Tail.mem hT hμ) A) [LinearOrder L.δ] [WellFoundedLT L.δ],
+          ProductIndependent L →
+          ∃ C : ListWitnessingChain L, C.AllDominatedIncrement) ∧
+        (∀ (L L' : TupleList W (Tail.mem hT hμ) A) [LinearOrder L.δ] [WellFoundedLT L.δ]
+            [LinearOrder L'.δ] [WellFoundedLT L'.δ]
+            (e : L.δ ≃o L'.δ) (ei : ∀ i, L.indexAt i ≃ L'.indexAt (e i)),
+          Nonempty (ListWitnessingChain L) → Nonempty (ListWitnessingChain L') →
+          (∀ i, SameGaloisType (L.one i) (L'.one (e i)) (ei i) (Equiv.refl _)) →
+          SameGaloisType L.whole L'.whole
+            (Equiv.sigmaCongr e.toEquiv ei) (Equiv.refl _)) := by
   sorry
 
-/-- **Theorem 7.13.** The whole type of a bounded product-independent list of finite tuples is
-determined by its finite sublists, its free lift is product-independent, and it has an
-all-dominated realization. -/
+/-- **Theorem 7.13.** Let `L` be a bounded product-independent list of finite tuples over `X`.
+(1) Its whole type is determined by its product data on finite sublists (equivalently, given
+product independence, by its marginals), and every actual free lift of the whole type along
+`X → B` is again product-independent: each finite sublist of the lift is the finite product of
+the lifted marginals.  (2) The whole type satisfies the continuity condition.  (3) It is
+realized all-dominated in an extension `Y` of `X`, and `Y` embeds over `X + b` into an ambient
+containing the given list. -/
 theorem theorem_7_13 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
     (W : WorkingScheme K S) :
     ∃ T, ∃ hT : Tail W.eligible T,
-      ∀ μ (hμ : μ ∈ T) (A : W.Object μ (Tail.mem hT hμ))
-        (L : TupleList W (Tail.mem hT hμ) A),
-        ProductIndependent L → #L.δ < μ →
-        (∃ C : WitnessingChain W (Tail.mem hT hμ) A, AllDominatedIncrement C) ∧
-        (∃ p : TupleOver K S W (Tail.mem hT hμ) A, SatisfiesContinuity p) := by
+      ∀ μ (hμ : μ ∈ T) (X : W.Object μ (Tail.mem hT hμ))
+        (L : TupleList W (Tail.mem hT hμ) X),
+        ProductIndependent L → #(Σ i, L.indexAt i) < μ →
+        -- (1a) uniqueness from finite product data
+        (∀ (L' : TupleList W (Tail.mem hT hμ) X) (e : L.δ ≃ L'.δ)
+            (ei : ∀ i, L.indexAt i ≃ L'.indexAt (e i)),
+          ProductIndependent L' →
+          (∀ i, SameGaloisType (L.one i) (L'.one (e i)) (ei i) (Equiv.refl _)) →
+          SameGaloisType L.whole L'.whole (Equiv.sigmaCongr e ei) (Equiv.refl _)) ∧
+        -- (1b) free lifts stay product-independent
+        (∀ (B : W.Object μ (Tail.mem hT hμ))
+            (f : SystemArrow K S (W.asSystem _ X) (W.asSystem _ B))
+            (hf : W.permitted (X := X) (Y := B) f)
+            (q : TupleOver K S W (Tail.mem hT hμ) B) (eq : L.whole.idx ≃ q.idx),
+          IsFreeLift L.whole q f hf eq → q.ν = μ →
+          ∀ (n : ℕ) (ix : Fin n → L.δ), Function.Injective ix →
+            IsFiniteProduct n
+              (fun s => q.reindex (fun a : L.indexAt (ix s) => eq ⟨ix s, a⟩))
+              (q.reindex (fun p : Σ s : Fin n, L.indexAt (ix s) => eq ⟨ix p.1, p.2⟩))) ∧
+        -- (2) continuity
+        SatisfiesContinuity L.whole ∧
+        -- (3) all-dominated realization, prime over `X + b`
+        (∃ (Y : W.Object μ (Tail.mem hT hμ))
+          (f : SystemArrow K S (W.asSystem _ X) (W.asSystem _ Y))
+          (hf : W.permitted (X := X) (Y := Y) f)
+          (b : L.whole.idx → Occurrence K S (W.asSystem _ Y)),
+          AllDominated f hf L.whole.idx b ∧
+          SameGaloisType L.whole (asTuple f hf b) (Equiv.refl _) (Equiv.refl _) ∧
+          ∃ (N : W.Object μ (Tail.mem hT hμ))
+            (h : SystemArrow K S (W.asSystem _ L.host) (W.asSystem _ N))
+            (_ : W.permitted (X := L.host) (Y := N) h)
+            (g : SystemArrow K S (W.asSystem _ Y) (W.asSystem _ N))
+            (_ : W.permitted (X := Y) (Y := N) g),
+            (∀ v, (g.onVertex v).comp (f.onVertex v) = (h.onVertex v).comp (L.incl.onVertex v)) ∧
+            ∀ a, g.mapOcc (b a) = h.mapOcc (L.whole.val a)) := by
   sorry
 
 end
