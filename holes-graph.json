@@ -1952,7 +1952,7 @@
    "file": "AEC/Section7/MixedTiedLift.lean",
    "status": "open",
    "blocker": null,
-   "detail": "OPEN (grokbot_02 sub-tip of infra_78_cross_level_galois). ClosedLevel.exists_tuple_amalgam with card B1 >= mu (amalgam of size card B1). Known obstruction: exists_strong_embedding_over embeds B1 over A into E(J) along a countable tower of submodels of size < mu with LiftsTuple lifts (#alpha < mu), which cannot exhaust a larger B1; needs lifts of submodels of size >= mu or an amalgamation property over mu-sized models. Truth not verified; no consumer on the main path. | Cycle 93 audit: NO consumer left (infra_78_cross_level_galois re-proved without it). B1 is an arbitrary K-model of size >= mu (not necessarily categorical / an EM model E(J)); the statement is an amalgamation property over a mu-model with an arbitrary larger model, not derivable from the AEC axioms + closed-level tools available (no upward extension of B1 to a categorical size is available). When #B1 is categorical and >= D.t mu the left_large method applies (embedding into E(J) over a mu-sized sub-presentation). Neither proved nor refuted; a counterexample would need a full SingleModelData-style class. Recommend: keep as an off-path open tip or delete as unused (needs ruling). | Cycle 93: special case proved (infra_78_tuple_amalgam_large_cat: #B1 categorical and >= D.t mu). Residual: arbitrary (non-EM) B1, or mu < #B1 < D.t mu."
+   "detail": "OPEN (grokbot_02 sub-tip of infra_78_cross_level_galois). ClosedLevel.exists_tuple_amalgam with card B1 >= mu (amalgam of size card B1). Known obstruction: exists_strong_embedding_over embeds B1 over A into E(J) along a countable tower of submodels of size < mu with LiftsTuple lifts (#alpha < mu), which cannot exhaust a larger B1; needs lifts of submodels of size >= mu or an amalgamation property over mu-sized models. Truth not verified; no consumer on the main path. | Cycle 93 audit: NO consumer left (infra_78_cross_level_galois re-proved without it). B1 is an arbitrary K-model of size >= mu (not necessarily categorical / an EM model E(J)); the statement is an amalgamation property over a mu-model with an arbitrary larger model, not derivable from the AEC axioms + closed-level tools available (no upward extension of B1 to a categorical size is available). When #B1 is categorical and >= D.t mu the left_large method applies (embedding into E(J) over a mu-sized sub-presentation). Neither proved nor refuted; a counterexample would need a full SingleModelData-style class. Recommend: keep as an off-path open tip or delete as unused (needs ruling). | Cycle 93: special case proved (infra_78_tuple_amalgam_large_cat: #B1 categorical and >= D.t mu). Residual: arbitrary (non-EM) B1, or mu < #B1 < D.t mu. | Cycle 93 later: the categorical case is fully proved (infra_78_tuple_amalgam_large_categorical, any categorical #B1 >= mu). Residual: #B1 a non-categoricity cardinal only."
   },
   {
    "id": "infra_78_stationary_combinatorics",
@@ -3619,6 +3619,15 @@
    "status": "done",
    "blocker": null,
    "detail": "PROVED cycle 93 (axioms clean): infra_78_tuple_amalgam_large under Categorical K (#B1) and D.t mu <= #B1; chart B1 onto E(Below #B1), mu-sized sub-presentation, level-mu amalgam, exists_strong_embedding_over; the amalgam is B1 itself. Full claim stays open as infra_78_tuple_amalgam_large (residual: #B1 non-categorical, or mu < #B1 < D.t mu)."
+  },
+  {
+   "id": "infra_78_tuple_amalgam_large_categorical",
+   "label": "Thm 6.6 clause 2, large host of any categorical size",
+   "section": 7,
+   "file": "AEC/Section7/MixedTiedLift.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "PROVED cycle 93 (axioms clean): infra_78_tuple_amalgam_large under only Categorical K (#B1): push B1 = E(lvlOrder #B1) into E(lvlOrder lam), lam >= #B1, t(mu) categorical, apply infra_78_tuple_amalgam_large_cat, cut down by exists_strong_hull_exact_card. Residual of the full claim: #B1 not a categoricity cardinal (B1 need not be an EM model)."
   }
  ],
  "edges": [
@@ -7235,8 +7244,20 @@
    "to": "infra_78_tuple_amalgam_large",
    "kind": "soft",
    "note": "cycle 93 special case"
+  },
+  {
+   "from": "infra_78_tuple_amalgam_large_cat",
+   "to": "infra_78_tuple_amalgam_large_categorical",
+   "kind": "hard",
+   "note": "cycle 93"
+  },
+  {
+   "from": "infra_78_tuple_amalgam_large_categorical",
+   "to": "infra_78_tuple_amalgam_large",
+   "kind": "soft",
+   "note": "cycle 93 special case"
   }
  ],
- "doneCount": 344,
+ "doneCount": 345,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

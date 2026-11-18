@@ -534,6 +534,7 @@ Counts are standalone `sorry` lines in `AEC/` (`git grep -nE '^\s*sorry\s*$'`), 
 | `infra_78_cross_level_galois` | infra_78_cross_level_galois | `AEC/Section7/MixedTiedLift.lean` (**done** cycle 93, directly via `infra_612_same_galois_left_large`; no longer uses `infra_78_tuple_amalgam_large`) |
 | `infra_78_tuple_amalgam_large` | infra_78_tuple_amalgam_large | `AEC/Section7/MixedTiedLift.lean` (**open**, off-path: Thm 6.6 clause 2 with an arbitrary host of size ≥ μ; no consumer since cycle 93; an amalgamation property over a μ-model with an arbitrary larger model) |
 | `infra_78_tuple_amalgam_large_cat` | infra_78_tuple_amalgam_large, `#B₁` categorical and `≥ t(μ)` | `AEC/Section7/MixedTiedLift.lean` (**done** cycle 93) |
+| `infra_78_tuple_amalgam_large_categorical` | infra_78_tuple_amalgam_large, any categorical `#B₁` | `AEC/Section7/MixedTiedLift.lean` (**done** cycle 93; residual of the full claim: non-categorical `#B₁`) |
 | `infra_78_lemma_7_6_mixed` | infra_78_lemma_7_6_mixed | `AEC/Section7/MixedDescent.lean` (**done**, grokbot_02) |
 | `infra_78_mixed_level_isolation` | infra_78_mixed_level_isolation | `AEC/Section7/MixedDescent.lean` (**done**, cycle 67: all hard deps done; conclusion delivered by `infra_78_marginal_general_level`) |
 | `infra_78_fixed_list_eventually_free` | Prop 7.8 fixed list eventually free | `AEC/Section7/TiedLocalCharacter.lean` (**done**: past some stage `j`, `p ↾ X_k` is tied free from `X_i` for all `j ≤ i ≤ k`) |
