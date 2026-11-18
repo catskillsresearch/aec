@@ -25,6 +25,7 @@ public import AEC.Section7.Theorem79Existence
 public import AEC.Section7.RetractionPair
 public import AEC.Section7.MixedDescent
 public import AEC.Section6.Results
+public import AEC.Section7.Theorem713
 
 @[expose] public section
 
@@ -389,35 +390,61 @@ theorem lemma_7_12_bounded {K : AbstractElementaryClass.{u}} (P : SingleModelDat
   have h1 := infra_712_trans_level P _ h0 _ _ _ rfl rfl rfl hA' hM
   exact infra_712_trans_level P _ h0 _ _ _ rfl rfl rfl h1 C'.marksWhole_sameGalois
 
-/-- **Definition 7.7, tied form (cycle 90; widened to the English level quantifier, cycle 91).**
-English: "A bounded marginal type `p` satisfies the continuity condition used here if the
-following holds at every sufficiently closed eligible level to which `p` is freely lifted.
-Suppose `X₀ ≤ X₁ ≤ ⋯ (i < δ)` is a continuous chain at that level, its union is an object at that
-level, and a fixed realization `b` in a coupled extension satisfies
-`tp(b/Xᵢ) = tp(b/X₀)^fr_{Xᵢ}` (`i < δ`). Then the same equality holds over the union. The type at
-`X₀` is required to be the appropriate free lift of `p`."
-Formalized: there is a tail `T` of eligible levels ("sufficiently closed") such that at every
-`μ' ∈ T` with `μ ≤ μ'` (a level to which `p`, at level `μ`, is freely lifted), for every
-continuous same-level chain at `μ'` (`SameLevelChain`, union an object at `μ'`), every base arrow
-`A → X₀` (mixed level `μ → μ'`), and every realization `b` over the union at `μ'`: if `tp(b/X₀)` is
-the tied free lift of `p` (`IsTiedFreeMixed`; for `μ' = μ` the shape of `IsTiedFree`) and
-`tp(b/Xᵢ) = tp(b/X₀)^fr_{Xᵢ}` (tied) for every `i < δ`, then the same holds over the union. -/
-def SatisfiesContinuityTied {K : AbstractElementaryClass.{u}} {P : SingleModelData K}
-    {μ : Cardinal.{u}} {hμ : μ ∈ P.eligible} {A : P.scheme.Object μ hμ}
-    (p : TupleOver K oneVertexShape P.scheme hμ A) : Prop :=
-  ∃ T, ∃ hT : Tail P.eligible T, ∀ μ' (hμ' : μ' ∈ T), μ ≤ μ' →
-  ∀ (C : SameLevelChain P (Tail.mem hT hμ'))
-    (g : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A)
-      (P.scheme.asSystem (Tail.mem hT hμ') (C.obj 0 C.hlim.1)))
-    (b : TupleOver K oneVertexShape P.scheme (Tail.mem hT hμ') C.unionObj) (e : p.idx ≃ b.idx),
-    b.ν = μ' →
-    IsTiedFreeMixed g p (b.restrict (C.toUnion 0 C.hlim.1) (C.toUnion_arrow 0 C.hlim.1)) e →
-    (∀ (i : Ordinal.{u}) (hi : i < C.δ),
-      IsTiedFree (C.le C.hlim.1 hi (bot_le : (0 : Ordinal.{u}) ≤ i))
-        (b.restrict (C.toUnion 0 C.hlim.1) (C.toUnion_arrow 0 C.hlim.1))
-        (b.restrict (C.toUnion i hi) (C.toUnion_arrow i hi)) (Equiv.refl _)) →
-    IsTiedFree (C.toUnion 0 C.hlim.1)
-      (b.restrict (C.toUnion 0 C.hlim.1) (C.toUnion_arrow 0 C.hlim.1)) b (Equiv.refl _)
+/-- **Theorem 7.13 from its level-wise clauses (proved glue, cycle 91).** Tail: the 7.12
+levels; (1a) is `infra_713_unique`. -/
+theorem infra_713_of_parts {K : AbstractElementaryClass.{u}} (P : SingleModelData K)
+    (h1b : infra_713_lift_statement P) (h2 : infra_713_continuity_statement P)
+    (h3 : infra_713_realize_statement P) :
+    ∃ T, ∃ hT : Tail P.eligible T,
+      ∀ μ (hμ : μ ∈ T) (X : P.scheme.Object μ (Tail.mem hT hμ))
+        (L : TupleList P.scheme (Tail.mem hT hμ) X) [LinearOrder L.δ] [L.FiniteEach]
+        [WellFoundedLT L.δ],
+        ProductIndependentTied L → #(Σ i, L.indexAt i) < μ →
+        -- (1a) uniqueness from finite product data
+        (∀ (L' : TupleList P.scheme (Tail.mem hT hμ) X) [L'.FiniteEach] (e : L.δ ≃ L'.δ)
+            (ei : ∀ i, L.indexAt i ≃ L'.indexAt (e i)),
+          ProductIndependentTied L' →
+          (∀ i, SameGaloisType (L.one i) (L'.one (e i)) (ei i) (Equiv.refl _)) →
+          SameGaloisType L.whole L'.whole (Equiv.sigmaCongr e ei) (Equiv.refl _)) ∧
+        -- (1b) the tied free lift is product-independent and determined by its finite data
+        (∀ (B : P.scheme.Object μ (Tail.mem hT hμ))
+            (f : SystemArrow K oneVertexShape (P.scheme.asSystem _ X) (P.scheme.asSystem _ B))
+            (q : TupleOver K oneVertexShape P.scheme (Tail.mem hT hμ) B)
+            (eq : L.whole.idx ≃ q.idx),
+          IsTiedFree f L.whole q eq → q.ν = μ →
+          (∀ (n : ℕ) (ix : Fin n → L.δ), Function.Injective ix →
+            ∃ (joint : TupleOver K oneVertexShape P.scheme (Tail.mem hT hμ) B)
+              (E : (Σ s, ((q.reindex (fun a : L.indexAt (ix s) => eq ⟨ix s, a⟩))).idx) ≃
+                joint.idx),
+              IsFiniteProductTied n (fun s => q.reindex (fun a : L.indexAt (ix s) => eq ⟨ix s, a⟩))
+                joint E ∧
+              SameGaloisType
+                (q.reindex (fun p : Σ s : Fin n, L.indexAt (ix s) => eq ⟨ix p.1, p.2⟩)) joint E
+                (Equiv.refl _)) ∧
+          ∀ (q' : TupleOver K oneVertexShape P.scheme (Tail.mem hT hμ) B) (eq' : q.idx ≃ q'.idx),
+            q'.ν = μ →
+            (∀ (ι : Type u) [Finite ι] (ix : ι → q.idx), Function.Injective ix →
+              SameGaloisType (q.reindex ix) (q'.reindex (fun s => eq' (ix s)))
+                (Equiv.refl _) (Equiv.refl _)) →
+            SameGaloisType q q' eq' (Equiv.refl _)) ∧
+        -- (2) continuity (Definition 7.7, tied)
+        SatisfiesContinuityTied L.whole ∧
+        -- (3) all-dominated realization, embedding into an ambient containing the list
+        (∃ (Y : P.scheme.Object μ (Tail.mem hT hμ))
+          (f : SystemArrow K oneVertexShape (P.scheme.asSystem _ X) (P.scheme.asSystem _ Y))
+          (b : L.whole.idx → Occurrence K oneVertexShape (P.scheme.asSystem _ Y)),
+          AllDominated f trivial L.whole.idx b ∧
+          SameGaloisType L.whole (asTuple f trivial b) (Equiv.refl _) (Equiv.refl _) ∧
+          ∃ (N : P.scheme.Object μ (Tail.mem hT hμ))
+            (h : SystemArrow K oneVertexShape (P.scheme.asSystem _ L.host)
+              (P.scheme.asSystem _ N))
+            (g : SystemArrow K oneVertexShape (P.scheme.asSystem _ Y) (P.scheme.asSystem _ N)),
+            (∀ v, (g.onVertex v).comp (f.onVertex v) = (h.onVertex v).comp (L.incl.onVertex v)) ∧
+            ∀ a, g.mapOcc (b a) = h.mapOcc (L.whole.val a)) := by
+  refine ⟨infra_712_levels P, infra_712_levels_tail P,
+    fun μ hμ X L _ _ _ hPI hS => ⟨fun L' _ e ei hPI' hm => ?_, h1b _ hμ X L hPI hS,
+      h2 _ hμ X L hPI hS, h3 _ hμ X L hPI hS⟩⟩
+  exact infra_713_unique P _ hμ X L L' e ei hS.le hPI hPI' hm
 
 /-- **Theorem 7.13 (restated cycle 90 to the tied notions, per the cycle-76 7.12 precedent).**
 At the levels of a tail, let `L = (bᵢ)_{i<δ}` be a *bounded* (`#(Σ i, idx bᵢ) < μ`)
@@ -478,8 +505,8 @@ theorem theorem_7_13 {K : AbstractElementaryClass.{u}} (P : SingleModelData K) :
               (P.scheme.asSystem _ N))
             (g : SystemArrow K oneVertexShape (P.scheme.asSystem _ Y) (P.scheme.asSystem _ N)),
             (∀ v, (g.onVertex v).comp (f.onVertex v) = (h.onVertex v).comp (L.incl.onVertex v)) ∧
-            ∀ a, g.mapOcc (b a) = h.mapOcc (L.whole.val a)) := by
-  sorry
+            ∀ a, g.mapOcc (b a) = h.mapOcc (L.whole.val a)) :=
+  infra_713_of_parts P (infra_713_lift P) (infra_713_continuity P) (infra_713_realize P)
 
 end
 end AEC

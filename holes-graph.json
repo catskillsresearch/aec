@@ -1,6 +1,6 @@
 {
- "updated": "2026-11-18 17:27 grokbot_01",
- "sorryCount": 40,
+ "updated": "2026-11-18 17:29 grokbot_01",
+ "sorryCount": 42,
  "legend": {
   "open": "No unfinished required proof-deps — try next",
   "blocked": "Waiting on incomplete required proof-deps",
@@ -631,9 +631,9 @@
    "label": "Thm 7.13",
    "section": 7,
    "file": "AEC/Section7/Results.lean",
-   "status": "open",
+   "status": "blocked",
    "blocker": null,
-   "detail": "RESTATED cycle 90 to the tied notions (per the cycle-76 7.12 precedent), matching the English: over SingleModelData P, a tail; L well-ordered, finite entries (TupleList.FiniteEach), ProductIndependentTied, bounded (#(Sigma i, idx) < mu). (1a) any product-independent L' of finite tuples with the same marginals has the same whole type; (1b) a tied free lift q of L.whole along X -> B (IsTiedFree) has every finite sublist the IsFiniteProductTied of the lifted marginals, and any q' over B with the same finite-subtuple types has q's type; (2) SatisfiesContinuityTied L.whole (tied Definition 7.7, WIDENED cycle 91 per review to the English quantifier: exists a tail T such that at every mu' in T with mu <= mu', every SameLevelChain at mu', base arrow A -> X_0 across levels, tied free lift at X_0 via IsTiedFreeMixed, tied freeness at every stage ==> tied freeness over the union; no proved result used the narrow same-level form); (3) all-dominated Y over X + b realizing tp(b/X), mapped over X, b into an ambient containing L. Old untied statement (WorkingScheme, ProductIndependent, IsFreeLift, SatisfiesContinuity) removed (no consumers). Open sorry. Plan: (1a) from lemma_7_12 existence + uniqueness (transport the order along e); (1b) Prop 6.12 tied finite projections + (1a) at base B; (2) infra_78_tied_continuity on finite subtuples + (1b); (3) Theorem 7.9 general form (needs bounded marks: infra_78_def77_bounded_marks / Prop 7.8 general) -- clause (3) is the hard one."
+   "detail": "Cycle 91: ASSEMBLED theorem_7_13 := infra_713_of_parts P (infra_713_lift P) (infra_713_continuity P) (infra_713_realize P) on the tail infra_712_levels P; (1a) = infra_713_unique (done). Remaining sorries: infra_713_lift (1b), infra_713_continuity (2), infra_713_realize (3). RESTATED cycle 90 to the tied notions (per the cycle-76 7.12 precedent), matching the English: over SingleModelData P, a tail; L well-ordered, finite entries (TupleList.FiniteEach), ProductIndependentTied, bounded (#(Sigma i, idx) < mu). (1a) any product-independent L' of finite tuples with the same marginals has the same whole type; (1b) a tied free lift q of L.whole along X -> B (IsTiedFree) has every finite sublist the IsFiniteProductTied of the lifted marginals, and any q' over B with the same finite-subtuple types has q's type; (2) SatisfiesContinuityTied L.whole (tied Definition 7.7, WIDENED cycle 91 per review to the English quantifier: exists a tail T such that at every mu' in T with mu <= mu', every SameLevelChain at mu', base arrow A -> X_0 across levels, tied free lift at X_0 via IsTiedFreeMixed, tied freeness at every stage ==> tied freeness over the union; no proved result used the narrow same-level form); (3) all-dominated Y over X + b realizing tp(b/X), mapped over X, b into an ambient containing L. Old untied statement (WorkingScheme, ProductIndependent, IsFreeLift, SatisfiesContinuity) removed (no consumers). Open sorry. Plan: (1a) from lemma_7_12 existence + uniqueness (transport the order along e); (1b) Prop 6.12 tied finite projections + (1a) at base B; (2) infra_78_tied_continuity on finite subtuples + (1b); (3) Theorem 7.9 general form (needs bounded marks: infra_78_def77_bounded_marks / Prop 7.8 general) -- clause (3) is the hard one."
   },
   {
    "id": "theorem_7_9",
@@ -3384,16 +3384,43 @@
    "file": "AEC/Section7/Theorem713.lean",
    "status": "done",
    "blocker": null,
-   "detail": "PROVED cycle 90 (axioms clean): on lemma_7_12's tail, L well-ordered, finite entries, |delta| <= mu, total <= mu, L and L' ProductIndependentTied with the same marginals (plain index bijection; order transported) ==> SameGaloisType L.whole L'.whole. From lemma_7_12 (1) chains for both + (2)."
+   "detail": "PROVED cycle 90 (axioms clean): on lemma_7_12's tail, L well-ordered, finite entries, |delta| <= mu, total <= mu, L and L' ProductIndependentTied with the same marginals (plain index bijection; order transported) ==> SameGaloisType L.whole L'.whole. From lemma_7_12 (1) chains for both + (2). Cycle 91: restated level-wise (mu in infra_712_levels P) so the clauses of theorem_7_13 share one tail."
   },
   {
    "id": "infra_713_unique_long",
    "label": "Thm 7.13 (1a) for |delta| > mu (bounded total)",
    "section": 7,
    "file": "AEC/Section7/Results.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "PROVED cycle 91 as infra_713_unique (Theorem713.lean): (1a) of theorem_7_13 at every 7.12 level, any |delta|, total <= mu: drop the empty entries (TupleList.nonemptyPart, |delta'| <= total) and apply infra_713_unique_short (now level-wise at infra_712_levels P via lemma_7_12_existence + infra_712u_marks). Axioms clean."
+  },
+  {
+   "id": "infra_713_lift",
+   "label": "Thm 7.13 (1b) level-wise",
+   "section": 7,
+   "file": "AEC/Section7/Theorem713.lean",
    "status": "open",
    "blocker": null,
-   "detail": "Open (cycle 90). Remaining case of theorem_7_13 (1a): |delta| > mu with total length < mu (all but < mu entries empty). Lemma 7.12 (1) needs |delta| <= mu; route: drop the empty entries (sub-list on the nonempty indices, whole type unchanged) and apply infra_713_unique_short, or extend 7.12 existence to long lists with few nonempty entries."
+   "detail": "Open (cycle 91). infra_713_lift_statement (Theorem713.lean): at a 7.12 level, a tied free lift q of L.whole along X -> B is product-independent (finite sublists = IsFiniteProductTied of lifted marginals) and determined by its finite-subtuple types. Plan: Prop 6.12 tied finite projections of free lifts + (1a) (infra_713_unique) at base B."
+  },
+  {
+   "id": "infra_713_continuity",
+   "label": "Thm 7.13 (2) level-wise",
+   "section": 7,
+   "file": "AEC/Section7/Theorem713.lean",
+   "status": "open",
+   "blocker": null,
+   "detail": "Open (cycle 91). infra_713_continuity_statement: SatisfiesContinuityTied L.whole (tied Def 7.7, every sufficiently closed level mu' >= mu, IsTiedFreeMixed base). Plan: infra_78_tied_continuity on finite subtuples at mu' + (1b)/(1a) at the union. The mu' > mu part needs cross-level (mixed) tied machinery; if so, split it off as its own tip rather than weakening."
+  },
+  {
+   "id": "infra_713_realize",
+   "label": "Thm 7.13 (3) level-wise",
+   "section": 7,
+   "file": "AEC/Section7/Theorem713.lean",
+   "status": "open",
+   "blocker": null,
+   "detail": "Open, not started (cycle 91) per instruction. infra_713_realize_statement: all-dominated Y over X + b realizing tp(b/X), mapped over X, b into an ambient containing L. Needs the general bounded-mark Prop 7.8 / Thm 7.9 (cf. infra_78_def77_bounded_marks, soft) -- hard."
   }
  ],
  "edges": [
@@ -6835,8 +6862,32 @@
    "to": "theorem_7_13",
    "kind": "hard",
    "note": ""
+  },
+  {
+   "from": "infra_713_lift",
+   "to": "theorem_7_13",
+   "kind": "hard",
+   "note": ""
+  },
+  {
+   "from": "infra_713_continuity",
+   "to": "theorem_7_13",
+   "kind": "hard",
+   "note": ""
+  },
+  {
+   "from": "infra_713_realize",
+   "to": "theorem_7_13",
+   "kind": "hard",
+   "note": ""
+  },
+  {
+   "from": "infra_78_def77_bounded_marks",
+   "to": "infra_713_realize",
+   "kind": "soft",
+   "note": "bounded marks in the general Prop 7.8 / Thm 7.9"
   }
  ],
- "doneCount": 319,
+ "doneCount": 320,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
