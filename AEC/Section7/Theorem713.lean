@@ -284,6 +284,62 @@ def infra_713_realize_statement (P : SingleModelData K) : Prop :=
             (∀ v, (g.onVertex v).comp (f.onVertex v) = (h.onVertex v).comp (L.incl.onVertex v)) ∧
             ∀ a, g.mapOcc (b a) = h.mapOcc (L.whole.val a))
 
+/-- **Finite products from tied free factor and selection lifts (proved, cycle 92).** For a PI
+list over `X` and an injective selection `ix`, if `qs s` are tied free lifts of the factors
+`L.one (ix s)` and `qJ` one of the selection `L.subConcat n ix` along a permitted `f : X → B`
+(all at the level), then `qJ` is the finite tied product of the `qs s`. -/
+theorem infra_713_pi_core (P : SingleModelData K) {μ : Cardinal.{u}}
+    (hμ : μ ∈ P.eligible) (hl : μ ∈ infra_712_levels P)
+    (X : P.scheme.Object μ hμ) (L : TupleList P.scheme hμ X) [LinearOrder L.δ] [L.FiniteEach]
+    (hPI : ProductIndependentTied L) (hS : #(Σ i, L.indexAt i) < μ)
+    (B : P.scheme.Object μ hμ)
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ B))
+    (hf : P.scheme.permitted (X := X) (Y := B) f)
+    (n : ℕ) (ix : Fin n → L.δ) (hinj : Function.Injective ix)
+    (qs : Fin n → TupleOver K oneVertexShape P.scheme hμ B)
+    (es : ∀ s, L.indexAt (ix s) ≃ (qs s).idx) (hqs : ∀ s, (qs s).ν = μ)
+    (hTs : ∀ s, IsTiedFree f (L.one (ix s)) (qs s) (es s))
+    (qJ : TupleOver K oneVertexShape P.scheme hμ B) (eJ : (Σ s, L.indexAt (ix s)) ≃ qJ.idx)
+    (hqJ : qJ.ν = μ) (hTJ : IsTiedFree f (L.subConcat n ix) qJ eJ) :
+    IsFiniteProductTied n qs qJ ((Equiv.sigmaCongrRight es).symm.trans eJ) := by
+  classical
+  obtain ⟨ht, hc, hw⟩ := hl
+  have hw0 : ℵ₀ ≤ infra_75_wide P ℵ₀ := le_self_add
+  have h0lt : ℵ₀ < μ := hw0.trans_lt hw
+  set σ : Cardinal.{u} := max ℵ₀ #(Σ i, L.indexAt i) with hσdef
+  have hσ : ℵ₀ ≤ σ := le_max_left _ _
+  have hσlt : σ < μ := max_lt h0lt hS
+  have hrec : μ ∈ recursionClosedLevels P σ := infra_712_recursionClosed_of_615 hc hσ hσlt
+  have hσμ : Order.succ σ ≤ μ := Order.succ_le_of_lt hσlt
+  have hfin : ∀ s, Finite (L.indexAt (ix s)) := fun s => L.finite_each _
+  have hb : ∀ s, (L.one (ix s)).ν = μ ∧ #(L.one (ix s)).idx ≤ σ := fun s =>
+    ⟨rfl, (Cardinal.lt_aleph0_of_finite (L.indexAt (ix s))).le.trans hσ⟩
+  obtain ⟨joint0, E0, hF0, hS0⟩ := hPI n ix hinj
+  have hfS : Finite (Σ s : Fin n, L.indexAt (ix s)) := inferInstance
+  have hfJ0 : Finite joint0.idx := Finite.of_equiv (Σ s : Fin n, L.indexAt (ix s)) E0
+  obtain ⟨joint0', eJ0, r0, hJ0ν, hr0, hR0⟩ := infra_712_level_copy joint0 (infra_712_card_le_fin hμ)
+  have hQ1 := (infra_712_sameGalois_pull hr0 hR0 hS0.symm).symm
+  have hlev0 := infra_712_finiteProduct_toLevel n (fun s => L.one (ix s)) hfin joint0 E0 hF0
+    joint0' eJ0 r0 hr0 hR0
+  have hQ2 : SameGaloisType joint0' (L.subConcat n ix) (eJ0.trans E0.symm) (Equiv.refl _) := by
+    have h := infra_612_sameGalois_trans_equiv hQ1.symm E0.symm
+    exact infra_712u_sg_congr_right (infra_712_sg_congr_left h (fun t => rfl))
+      (fun t => E0.symm_apply_apply t)
+  have hsub : #(L.subConcat n ix).idx < μ :=
+    (Cardinal.lt_aleph0_of_finite (Σ s : Fin n, L.indexAt (ix s))).trans h0lt
+  have hTJ' : IsTiedFree f joint0' qJ ((eJ0.trans E0.symm).trans eJ) :=
+    infra_712u_tiedFree_base_sameGalois f (L.subConcat n ix) joint0' rfl hJ0ν hsub
+      (eJ0.trans E0.symm) hQ2 _ _ hTJ
+  have H := infra_713_finite_base_change P σ hσ hμ hrec hσμ f hf n (fun s => L.one (ix s)) hb
+    joint0' (E0.trans eJ0.symm) hJ0ν hlev0 qs es hqs hTs qJ _ hqJ hTJ'
+  have hE : (Equiv.sigmaCongrRight es).symm.trans
+      ((E0.trans eJ0.symm).trans ((eJ0.trans E0.symm).trans eJ)) =
+      (Equiv.sigmaCongrRight es).symm.trans eJ := by
+    ext t
+    show eJ (E0.symm (eJ0 (eJ0.symm (E0 _)))) = eJ _
+    exact congrArg eJ ((congrArg E0.symm (eJ0.apply_symm_apply _)).trans (E0.symm_apply_apply _))
+  exact hE ▸ H.toPlain n _ _ _
+
 /-- **Theorem 7.13 (1b), product independence, for a permitted base arrow (proved, cycle 92).**
 The level copy of the PI product of the selection (`infra_712_finiteProduct_toLevel`) is a level
 finite product with the selection's type; the projections of `q` are tied free lifts of the

@@ -3484,6 +3484,15 @@
    "status": "done",
    "blocker": null,
    "detail": "PROVED cycle 92 (axioms clean): IsFiniteProductTiedLevel n b j E over X (factors and j at mu, factors <= sigma), tied free lifts bB i, jB along f at mu ==> IsFiniteProductTiedLevel n bB jB (sigmaCongrRight eB).symm . E . eJ. Induction on n, lifting left partial products by infra_610_tied_free_lift. Remaining for infra_713_lift_pi: PI (Def 7.10 tied) only provides plain IsFiniteProductTied (partial products' levels unknown) -- need a level finite product over X identified with L.subConcat, then infra_713_tiedFree_reindex + this lemma."
+  },
+  {
+   "id": "infra_713_pi_core",
+   "label": "Finite products from tied free factor/selection lifts",
+   "section": 7,
+   "file": "AEC/Section7/Theorem713.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "PROVED cycle 92 (axioms clean): PI list over X, injective selection ix; qs s tied free lifts of L.one (ix s), qJ tied free lift of L.subConcat n ix along permitted f (all at mu) ==> IsFiniteProductTied n qs qJ. Used for lift_det: q' with the same finite projection types as q has tied free projections (infra_79_tiedFreeMixed_right_congr), hence is PI over B."
   }
  ],
  "edges": [
@@ -6997,8 +7006,14 @@
    "to": "infra_713_lift_pi",
    "kind": "hard",
    "note": ""
+  },
+  {
+   "from": "infra_713_pi_core",
+   "to": "infra_713_lift_det",
+   "kind": "hard",
+   "note": ""
   }
  ],
- "doneCount": 326,
+ "doneCount": 327,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
