@@ -389,22 +389,29 @@ theorem lemma_7_12_bounded {K : AbstractElementaryClass.{u}} (P : SingleModelDat
   have h1 := infra_712_trans_level P _ h0 _ _ _ rfl rfl rfl hA' hM
   exact infra_712_trans_level P _ h0 _ _ _ rfl rfl rfl h1 C'.marksWhole_sameGalois
 
-/-- **Definition 7.7, tied form (cycle 90).** A bounded marginal `p` over `A` satisfies the
-continuity condition: for every continuous same-level chain `X₀ ≤ X₁ ≤ ⋯ (i < δ)` with union
-`X_δ` (`SameLevelChain`), every base arrow `A → X₀`, and every realization `b` over the union,
-if `tp(b/X₀)` is the tied free lift of `p` and `tp(b/Xᵢ) = tp(b/X₀)^fr_{Xᵢ}` for every `i < δ`
-(tied), then the same holds over the union. Tied freeness (`IsTiedFree`) replaces the untied
-`IsFreeLift` / `IsFreeFrom` of `SatisfiesContinuity`; the level is that of `A` (the theorem's
-"sufficiently closed eligible level"). -/
+/-- **Definition 7.7, tied form (cycle 90; widened to the English level quantifier, cycle 91).**
+English: "A bounded marginal type `p` satisfies the continuity condition used here if the
+following holds at every sufficiently closed eligible level to which `p` is freely lifted.
+Suppose `X₀ ≤ X₁ ≤ ⋯ (i < δ)` is a continuous chain at that level, its union is an object at that
+level, and a fixed realization `b` in a coupled extension satisfies
+`tp(b/Xᵢ) = tp(b/X₀)^fr_{Xᵢ}` (`i < δ`). Then the same equality holds over the union. The type at
+`X₀` is required to be the appropriate free lift of `p`."
+Formalized: there is a tail `T` of eligible levels ("sufficiently closed") such that at every
+`μ' ∈ T` with `μ ≤ μ'` (a level to which `p`, at level `μ`, is freely lifted), for every
+continuous same-level chain at `μ'` (`SameLevelChain`, union an object at `μ'`), every base arrow
+`A → X₀` (mixed level `μ → μ'`), and every realization `b` over the union at `μ'`: if `tp(b/X₀)` is
+the tied free lift of `p` (`IsTiedFreeMixed`; for `μ' = μ` the shape of `IsTiedFree`) and
+`tp(b/Xᵢ) = tp(b/X₀)^fr_{Xᵢ}` (tied) for every `i < δ`, then the same holds over the union. -/
 def SatisfiesContinuityTied {K : AbstractElementaryClass.{u}} {P : SingleModelData K}
     {μ : Cardinal.{u}} {hμ : μ ∈ P.eligible} {A : P.scheme.Object μ hμ}
     (p : TupleOver K oneVertexShape P.scheme hμ A) : Prop :=
-  ∀ (C : SameLevelChain P hμ)
+  ∃ T, ∃ hT : Tail P.eligible T, ∀ μ' (hμ' : μ' ∈ T), μ ≤ μ' →
+  ∀ (C : SameLevelChain P (Tail.mem hT hμ'))
     (g : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A)
-      (P.scheme.asSystem hμ (C.obj 0 C.hlim.1)))
-    (b : TupleOver K oneVertexShape P.scheme hμ C.unionObj) (e : p.idx ≃ b.idx),
-    b.ν = μ →
-    IsTiedFree g p (b.restrict (C.toUnion 0 C.hlim.1) (C.toUnion_arrow 0 C.hlim.1)) e →
+      (P.scheme.asSystem (Tail.mem hT hμ') (C.obj 0 C.hlim.1)))
+    (b : TupleOver K oneVertexShape P.scheme (Tail.mem hT hμ') C.unionObj) (e : p.idx ≃ b.idx),
+    b.ν = μ' →
+    IsTiedFreeMixed g p (b.restrict (C.toUnion 0 C.hlim.1) (C.toUnion_arrow 0 C.hlim.1)) e →
     (∀ (i : Ordinal.{u}) (hi : i < C.δ),
       IsTiedFree (C.le C.hlim.1 hi (bot_le : (0 : Ordinal.{u}) ≤ i))
         (b.restrict (C.toUnion 0 C.hlim.1) (C.toUnion_arrow 0 C.hlim.1))
