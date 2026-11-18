@@ -2421,7 +2421,7 @@
    "status": "open",
    "blocker": null,
    "hypothesis_only": true,
-   "detail": "Open (board-only; PAPER HYPOTHESIS, not a theorem of the paper). Prop 7.8's 'more general' form assumes the bounded mark b satisfies Definition 7.7 (continuity of the marked marginal over chain unions). Proved instances: |b| < cf delta, in particular all finite marks (infra_78_limit_invariant5, via Prop 6.13). For |b| >= cf delta the paper gives no proof ('This will let us identify exactly where the proof for a finite mark must be supplemented for a long independent list'). Not on the path of the Lean proposition_7_8 (Finite p.idx). To be formalized as an explicit hypothesis if the bounded-mark generalization of Prop 7.8 / Theorem 7.9 is ever stated; do not try to prove it unconditionally."
+   "detail": "Open (board-only; PAPER HYPOTHESIS, not a theorem of the paper). Prop 7.8's 'more general' form assumes the bounded mark b satisfies Definition 7.7 (continuity of the marked marginal over chain unions). Proved instances: |b| < cf delta, in particular all finite marks (infra_78_limit_invariant5, via Prop 6.13). For |b| >= cf delta the paper gives no proof ('This will let us identify exactly where the proof for a finite mark must be supplemented for a long independent list'). Not on the path of the Lean proposition_7_8 (Finite p.idx). To be formalized as an explicit hypothesis if the bounded-mark generalization of Prop 7.8 / Theorem 7.9 is ever stated; do not try to prove it unconditionally. | Cycle 93: not needed by Thm 7.13(3) (Def 7.7 for product-independent lists is 7.13(2), proved)."
   },
   {
    "id": "infra_78_matrix_recursion",
@@ -3607,9 +3607,9 @@
    "label": "Thm 7.13 (3) for an infinite list (bounded marks)",
    "section": 7,
    "file": "AEC/Section7/Theorem713.lean",
-   "status": "open",
-   "blocker": null,
-   "detail": "OPEN, hard (cycle 93 split of infra_713_realize). Infinite L.whole.idx of size < mu. Needs bounded-mark Prop 7.8 / Thm 7.9 (not formalized; proposition_7_8/theorem_7_9 are Finite p.idx). Their Def 7.7 input is proved for |b| < cf delta (infra_78_limit_invariant5) and is the paper hypothesis infra_78_def77_bounded_marks for |b| >= cf delta. Even the |b| < cf delta case needs a bounded-mark 7.8/7.9 formalization first."
+   "status": "blocked",
+   "blocker": "infra_79_general",
+   "detail": "OPEN, hard (cycle 93 split of infra_713_realize). Infinite L.whole.idx of size < mu. Needs bounded-mark Prop 7.8 / Thm 7.9 (not formalized; proposition_7_8/theorem_7_9 are Finite p.idx). Their Def 7.7 input is proved for |b| < cf delta (infra_78_limit_invariant5) and is the paper hypothesis infra_78_def77_bounded_marks for |b| >= cf delta. Even the |b| < cf delta case needs a bounded-mark 7.8/7.9 formalization first. | Cycle 93 later: REDUCED (proved glue infra_713_realize_of_general) to infra_79_general. Finding: the English 7.13 proof ('The marked marginal tp(b/X) satisfies Definition 7.7' = clause 2; 'We may now apply the general forms of Proposition 7.8 and Theorem 7.9') supplies Def 7.7 from clause (2), which is proved (infra_713_continuity). So infra_78_def77_bounded_marks is NOT a dependency of 7.13(3)."
   },
   {
    "id": "infra_78_tuple_amalgam_large_cat",
@@ -3628,6 +3628,33 @@
    "status": "done",
    "blocker": null,
    "detail": "PROVED cycle 93 (axioms clean): infra_78_tuple_amalgam_large under only Categorical K (#B1): push B1 = E(lvlOrder #B1) into E(lvlOrder lam), lam >= #B1, t(mu) categorical, apply infra_78_tuple_amalgam_large_cat, cut down by exists_strong_hull_exact_card. Residual of the full claim: #B1 not a categoricity cardinal (B1 need not be an EM model)."
+  },
+  {
+   "id": "infra_713_realize_of_general",
+   "label": "Thm 7.13 (3) from general Thm 7.9",
+   "section": 7,
+   "file": "AEC/Section7/Theorem713.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "PROVED cycle 93 (axioms clean): infra_79_general_statement P -> infra_713_realize_statement P, Def 7.7 from infra_713_continuity; embedding into L.host by same-level primeness."
+  },
+  {
+   "id": "infra_79_general",
+   "label": "General Thm 7.9: bounded marginal satisfying Def 7.7 (level-wise)",
+   "section": 7,
+   "file": "AEC/Section7/Theorem713.lean",
+   "status": "blocked",
+   "blocker": "infra_78_general",
+   "detail": "OPEN (cycle 93; Lean statement infra_79_general_statement, sorry'd theorem infra_79_general). English: 'More generally this holds for a bounded marginal satisfying Definition 7.7.' Hypothesis SatisfiesContinuityTied p, #p.idx < mu, at infra_712_levels; existence of an all-dominated realization + same-level primeness. Proof: as infra_79_existence_of_parts, with the general Prop 7.8."
+  },
+  {
+   "id": "infra_78_general",
+   "label": "General Prop 7.8: bounded mark satisfying Def 7.7, |b| <= theta",
+   "section": 7,
+   "file": null,
+   "status": "open",
+   "blocker": null,
+   "detail": "OPEN, board-only (cycle 93). English: 'More generally the assertion holds for a bounded mark b satisfying Definition 7.7, with |b| <= theta.' The finite proof (infra_78_marginal_general_level, matrix construction) uses finiteness at: limit invariance of the fixed mark (replace infra_78_limit_invariant5 by the Def 7.7 hypothesis), and isolation bounds at the joint arity (|b| <= theta). Hard; first step is to state it."
   }
  ],
  "edges": [
@@ -7229,12 +7256,6 @@
    "note": "cycle 93"
   },
   {
-   "from": "infra_78_def77_bounded_marks",
-   "to": "infra_713_realize_infinite",
-   "kind": "soft",
-   "note": "cycle 93"
-  },
-  {
    "from": "infra_78_tuple_amalgam_large_cat",
    "to": "infra_78_tuple_amalgam_large",
    "kind": "soft",
@@ -7257,8 +7278,32 @@
    "to": "infra_612_tied_independence",
    "kind": "hard",
    "note": "cycle 93 faithful copy form"
+  },
+  {
+   "from": "infra_713_realize_of_general",
+   "to": "infra_713_realize_infinite",
+   "kind": "hard",
+   "note": "cycle 93"
+  },
+  {
+   "from": "infra_79_general",
+   "to": "infra_713_realize_infinite",
+   "kind": "hard",
+   "note": "cycle 93"
+  },
+  {
+   "from": "infra_713_continuity",
+   "to": "infra_713_realize_of_general",
+   "kind": "hard",
+   "note": "cycle 93"
+  },
+  {
+   "from": "infra_78_general",
+   "to": "infra_79_general",
+   "kind": "hard",
+   "note": "cycle 93"
   }
  ],
- "doneCount": 346,
+ "doneCount": 347,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

@@ -414,7 +414,9 @@ Lean: imports `AEC.Section6.Results`.
 | `infra_713_tiedFree_reindex_mixed` | finite projections of mixed tied free lifts | **done** (cycle 93) |
 | `infra_713_realize` | Thm 7.13 (3) | split (cycle 93): glue proved, blocked on `infra_713_realize_infinite` |
 | `infra_713_realize_finite` | Thm 7.13 (3), finite list | **done** (cycle 93, via Thm 7.9 at the level) |
-| `infra_713_realize_infinite` | Thm 7.13 (3), infinite list | **open**, hard (bounded-mark 7.8/7.9; `infra_78_def77_bounded_marks` at `|b| ≥ cf δ`) |
+| `infra_713_realize_infinite` | Thm 7.13 (3), infinite list | reduced (cycle 93) to `infra_79_general` via `infra_713_realize_of_general` (**done**); Def 7.7 comes from 7.13(2), so def77 is not needed |
+| `infra_79_general` | Thm 7.9 general form (bounded marginal with Def 7.7) | **open**, blocked on `infra_78_general` (1 `sorry` in `Theorem713.lean`) |
+| `infra_78_general` | Prop 7.8 general form (bounded mark with Def 7.7, `|b| ≤ θ`) | **open**, hard, board-only |
 
 ### L4 — Section 8 (5 sorry)
 

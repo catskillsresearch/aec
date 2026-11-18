@@ -1040,13 +1040,69 @@ theorem infra_713_realize_finite (P : SingleModelData K) {μ : Cardinal.{u}} (h�
     intro h1
     exact congrArg (Sigma.mk PUnit.unit) h1
 
-/-- **Theorem 7.13 (3) for an infinite list (open tip `infra_713_realize_infinite`).** Needs the
-bounded-mark forms of Prop 7.8 / Thm 7.9 (not formalized; their Definition 7.7 input at small
-cofinality is the paper hypothesis `infra_78_def77_bounded_marks`). -/
+/-- **General Theorem 7.9 for a bounded marginal satisfying Definition 7.7, level-wise
+(statement; open tip `infra_79_general`).** English (Thm 7.9): "More generally this holds for a
+bounded marginal satisfying Definition 7.7. An all-dominated realization embeds over X, b into any
+actual ambient containing a realization of that type". Stated at the 7.12 levels, same-level
+ambient (the form Theorem 7.13 (3) consumes). Its proof needs the general Prop 7.8 (open tip
+`infra_78_general`). -/
+def infra_79_general_statement (P : SingleModelData K) : Prop :=
+  ∀ {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible), μ ∈ infra_712_levels P →
+    ∀ (X : P.scheme.Object μ hμ) (p : TupleOver K oneVertexShape P.scheme hμ X),
+      p.ν = μ → #p.idx < μ → SatisfiesContinuityTied p →
+      (∃ (Y : P.scheme.Object μ hμ)
+        (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ Y))
+        (b : p.idx → Occurrence K oneVertexShape (P.scheme.asSystem hμ Y)),
+        AllDominated f trivial p.idx b ∧
+        SameGaloisType p (asTuple f trivial b) (Equiv.refl _) (Equiv.refl _)) ∧
+      ∀ (Y : P.scheme.Object μ hμ)
+        (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ Y))
+        (b : p.idx → Occurrence K oneVertexShape (P.scheme.asSystem hμ Y)),
+        AllDominated f trivial p.idx b →
+        SameGaloisType p (asTuple f trivial b) (Equiv.refl _) (Equiv.refl _) →
+        ∀ (N : P.scheme.Object μ hμ)
+          (g : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ N))
+          (b' : p.idx → Occurrence K oneVertexShape (P.scheme.asSystem hμ N)),
+          SameGaloisType p (asTuple g trivial b') (Equiv.refl _) (Equiv.refl _) →
+          ∃ h : SystemArrow K oneVertexShape (P.scheme.asSystem hμ Y) (P.scheme.asSystem hμ N),
+            SystemArrow.comp f h = g ∧ ∀ i, h.onVertex (b i).1 (b i).2 = (b' i).2
+
+/-- **Theorem 7.13 (3) from the general Theorem 7.9 (proved reduction, cycle 93).** As in the
+English proof, Definition 7.7 for the marked marginal is clause (2) (`infra_713_continuity`), so the
+paper hypothesis `infra_78_def77_bounded_marks` is not needed here. -/
+theorem infra_713_realize_of_general (P : SingleModelData K) (hG : infra_79_general_statement P) :
+    infra_713_realize_statement P := by
+  intro μ hμ hl X L _ _ _ hPI hS
+  have hC := infra_713_continuity P hμ hl X L hPI hS
+  obtain ⟨⟨Y, f, b, hAll, hSG⟩, hprime⟩ := hG hμ hl X L.whole rfl hS hC
+  have hN : SameGaloisType L.whole (asTuple L.incl trivial L.whole.val)
+      (Equiv.refl _) (Equiv.refl _) := SameGaloisType.refl L.whole
+  obtain ⟨g, hcomp, hval⟩ := hprime Y f b hAll hSG L.host L.incl L.whole.val hN
+  refine ⟨Y, f, b, hAll, hSG, L.host, SystemArrow.refl _, g, ?_, ?_⟩
+  · intro v
+    ext x
+    exact congrArg (fun a => a.onVertex v x) hcomp
+  · intro a
+    have h1 := hval a
+    revert h1
+    generalize b a = o1
+    generalize L.whole.val a = o2
+    obtain ⟨⟨⟩, x1⟩ := o1
+    obtain ⟨⟨⟩, x2⟩ := o2
+    intro h1
+    exact congrArg (Sigma.mk PUnit.unit) h1
+
+/-- **General Theorem 7.9 (open tip `infra_79_general`; needs the general Prop 7.8,
+`infra_78_general`, for bounded marks satisfying Definition 7.7).** -/
+theorem infra_79_general (P : SingleModelData K) : infra_79_general_statement P := by
+  sorry
+
+/-- **Theorem 7.13 (3) for an infinite list (reduced, cycle 93: from `infra_79_general`).** Follows from the
+general Theorem 7.9 (`infra_79_general`); Definition 7.7 for the mark is clause (2). -/
 theorem infra_713_realize_infinite (P : SingleModelData K) {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
     (hl : μ ∈ infra_712_levels P) (X : P.scheme.Object μ hμ) (L : TupleList P.scheme hμ X)
     [LinearOrder L.δ] [L.FiniteEach] [WellFoundedLT L.δ] (hPI : ProductIndependentTied L)
-    (hS : #(Σ i, L.indexAt i) < μ) (hinf : ¬ Finite L.whole.idx) :
+    (hS : #(Σ i, L.indexAt i) < μ) (_hinf : ¬ Finite L.whole.idx) :
     ∃ (Y : P.scheme.Object μ hμ)
       (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ Y))
       (b : L.whole.idx → Occurrence K oneVertexShape (P.scheme.asSystem hμ Y)),
@@ -1057,8 +1113,8 @@ theorem infra_713_realize_infinite (P : SingleModelData K) {μ : Cardinal.{u}} (
           (P.scheme.asSystem hμ N))
         (g : SystemArrow K oneVertexShape (P.scheme.asSystem hμ Y) (P.scheme.asSystem hμ N)),
         (∀ v, (g.onVertex v).comp (f.onVertex v) = (h.onVertex v).comp (L.incl.onVertex v)) ∧
-        ∀ a, g.mapOcc (b a) = h.mapOcc (L.whole.val a) := by
-  sorry
+        ∀ a, g.mapOcc (b a) = h.mapOcc (L.whole.val a) :=
+  infra_713_realize_of_general P (infra_79_general P) hμ hl X L hPI hS
 
 /-- **Theorem 7.13 (3) (split, cycle 93):** the finite case is proved
 (`infra_713_realize_finite`); the infinite case is the open tip `infra_713_realize_infinite`. -/
