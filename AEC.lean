@@ -189,6 +189,7 @@ public import AEC.Section7.Lemma711Induction
 public import AEC.Section7.Lemma711Successor
 public import AEC.Section7.Lemma712Existence
 public import AEC.Section7.Lemma712Recursion
+public import AEC.Section7.Lemma712Products
 public import AEC.Section7.ProductFreeLevel
 public import AEC.Section8.MarkedPair
 public import AEC.Section8.Results

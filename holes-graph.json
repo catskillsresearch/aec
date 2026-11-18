@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-18 15:51",
+ "updated": "2026-11-18 15:56",
  "sorryCount": 41,
  "legend": {
   "open": "No unfinished required proof-deps — try next",
@@ -3132,7 +3132,7 @@
    "file": "AEC/Section7/Lemma712Existence.lean",
    "status": "open",
    "blocker": null,
-   "detail": "infra_712_products_statement (see Lemma712Existence.lean). Plan (cycle 85d review): take the injective sublist Fin.snoc ix i (b_i LAST); unfolding IsFiniteProductTied (n+1) gives left (product of the selection) and IsProductTied left (L.one i) joint e; then (1) level-joint symmetry (as in infra_711_succ_pair) to put b_i first, (2) replace components/joint by the chain-hosted tuples using SameGaloisType: chain marks go to L.val under toTop / listToTop (mark_spec), so selectionOver/jointWith agree with subConcat in C.top; left ~ restriction of joint, joint ~ subConcat(snoc) (ProductIndependentTied), needing a Galois-type restriction-to-subtuple lemma; (3) infra_711_product_joint_transfer for the joint move. Medium difficulty (not cardinal-hard); main missing piece is the sub-tuple restriction of SameGaloisType."
+   "detail": "infra_712_products_statement. ANALYSIS (cycle 86): does NOT hit infra_612_galois_trans_cross_level_both_off. The non-level partial products of ProductIndependentTied convert to level products by level copies + one-amalgam pullback (infra_712_finiteProduct_toLevel, proved). Remaining (all at level mu, proved tools): (1) take sublist Fin.cons i ix (or snoc) of L, level-convert; (2) regroup (b_i, s_1..s_n) into b_i ⊗ (s_1⊗...⊗s_n) by n-fold level associativity (infra_612_tied_assoc_level_joints) / permutation (infra_612_tied_finite_perm_level), identifying the inner product with subConcat(ix) (ProductIndependentTied of ix, also level-converted; uniqueness via the same perm lemma with identity); (3) move the factors/joint to the truncated chain's tuples: chain marks and L entries coincide in C.top (mark_spec: toTop(mark) = listToTop(val)), a direct one-amalgam SameGaloisType (no transitivity); (4) infra_711_product_joint_transfer / galois_trans_cross_level_of_base_end (middle at mu) for the joint move. Medium; mostly the n-fold regrouping."
   },
   {
    "id": "infra_712_succ",
@@ -3160,6 +3160,15 @@
    "status": "done",
    "blocker": null,
    "detail": "infra_712_recursion PROVED cycle 86 (AEC/Section7/Lemma712Recursion.lean): stages = StrongSub L.host (level-mu object + strong embedding into L.host; subset = range), built by infra_78_coherent_chain_engine (WellFounded.fix, maps Unit, Arr = subset); scheme arrows = factorEmbedding through the larger stage, strong by K.coherence (no new axiom/field); successors infra_712_succ, limits infra_712_limit (image of the union = union of images); marks = preimages of L.val; top = L.host, listToTop = id. Axioms: propext, Classical.choice, Quot.sound."
+  },
+  {
+   "id": "infra_712_products_level",
+   "label": "7.12: plain finite tied products -> level products",
+   "section": 7,
+   "file": "AEC/Section7/Lemma712Products.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "infra_712_finiteProduct_toLevel PROVED cycle 86: a plain IsFiniteProductTied of finite factors (partial products at any level) gives IsFiniteProductTiedLevel for any level copy of the joint, by replacing every partial product with its level-mu copy (infra_612_exists_level_copy_arrow, via infra_712_level_copy) and pulling Galois identifications back along the copy's host arrow inside the SAME amalgam (infra_712_sameGalois_pull, infra_712_productTied_pull_joint/_left). No cross-level transitivity; does not use infra_612_galois_trans_cross_level_both_off. Axioms clean."
   }
  ],
  "edges": [
@@ -6469,8 +6478,13 @@
    "from": "infra_78_chain_union_kappa",
    "to": "infra_712_limit",
    "kind": "hard"
+  },
+  {
+   "from": "infra_712_products_level",
+   "to": "infra_712_products",
+   "kind": "hard"
   }
  ],
- "doneCount": 287,
+ "doneCount": 288,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
