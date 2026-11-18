@@ -378,7 +378,10 @@ Lean: imports `AEC.Section6.Results`.
 | `infra_75_product_free` | Prop 7.5(3) tied: product with `b` + all-dominated `Y` ⇒ `tp(x/Y)` free from `X` | **blocked** on `infra_612_tied_symmetry`, `infra_612_tied_finite` |
 | `infra_711_induction` | Lemma 7.11 induction assembly | [`Lemma711Induction.lean`](AEC/Section7/Lemma711Induction.lean) (**done**, cycle 75; `lemma_7_11` from `infra_711_successor_statement`; first stage via `infra_711_tiedFree_of_bijective`, limit via tied 6.13) |
 | `lemma_7_12` | Lemma 7.12 | `AEC/Section7/Results.lean` (**blocked**; restated cycle 76 to the tied notions: `ProductIndependentTied`, `TiedListWitnessingChain`; old untied form removed, unused) |
-| `lemma_7_12_existence` | Lemma 7.12(1) | **open** (cycle 83: `lemma_7_11` done, all hard deps done) |
+| `lemma_7_12_existence` | Lemma 7.12(1) | [`Lemma712Existence.lean`](AEC/Section7/Lemma712Existence.lean) (**blocked**, split cycle 85: `infra_712_existence_at_of_parts` proved from `infra_712_prechain` and `infra_712_free_marks`; `TiedListPreChain` = Def 7.10 chain without `free`) |
+| `infra_712_prechain` | 7.12(1) pre-chain construction | **open** (cycle 85; successor by 7.9 existence + primeness into `L.host`, limits by directed unions) |
+| `infra_712_free_marks` | 7.12(1) all marks free | **blocked** on `infra_712_free_step` (glue `infra_712_free_marks_of_step` proved, cycle 85) |
+| `infra_712_free_step` | 7.12(1) one freeness step | **open** (cycle 85; 7.11 on the chain truncated at `i`; products from `ProductIndependentTied`) |
 | `lemma_7_12_uniqueness` | Lemma 7.12(2) | **open** (cycle 76; all dependencies done; successor amalgam via 7.9 primeness, not a large amalgam) |
 | `lemma_7_12_bounded` | Lemma 7.12(2), bounded individual tuples | **blocked** on `lemma_7_12_uniqueness`; HARD edge `lemma_7_12_bounded --> lemma_7_12` (cycle 78) |
 | `theorem_7_13` | Theorem 7.13 | `AEC/Section7/Results.lean:296` (restated: uniqueness, product-independent free lift, continuity, primeness) |

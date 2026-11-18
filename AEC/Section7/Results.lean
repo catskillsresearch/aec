@@ -13,6 +13,7 @@ public import AEC.Section7.ListChain
 public import AEC.Section7.TiedListChain
 public import AEC.Section7.Lemma711Induction
 public import AEC.Section7.Lemma711Successor
+public import AEC.Section7.Lemma712Existence
 public import AEC.Section7.ProductFreeLevel
 public import AEC.Section7.GeneralLevel
 public import AEC.Section7.Theorem79
@@ -325,7 +326,10 @@ joint configuration in an extension `top` of the given ambient (`listToTop`, `ma
 successive marginal types over `A` have one amalgam identifying the entire lists
 (`SameGaloisType` of the whole lists). The paper's extension of (2) to bounded individual
 tuples is tracked separately (`lemma_7_12_bounded`). The former statement over the untied
-`ListWitnessingChain` / `ProductIndependent` was unused and has been removed. -/
+`ListWitnessingChain` / `ProductIndependent` was unused and has been removed. Clause (1) at a
+level is `infra_712_existence_at`, assembled by `infra_712_existence_at_of_parts`
+(`AEC/Section7/Lemma712Existence.lean`, cycle 85) from `infra_712_prechain_statement` and
+`infra_712_free_marks_statement` (both open). -/
 theorem lemma_7_12 {K : AbstractElementaryClass.{u}} (P : SingleModelData K) :
     ∃ T, ∃ hT : Tail P.eligible T,
       ∀ μ (hμ : μ ∈ T) (A : P.scheme.Object μ (Tail.mem hT hμ)),

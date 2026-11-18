@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-18 15:27",
+ "updated": "2026-11-18 15:34",
  "sorryCount": 41,
  "legend": {
   "open": "No unfinished required proof-deps — try next",
@@ -2985,9 +2985,9 @@
    "id": "lemma_7_12_existence",
    "label": "Lemma 7.12(1): product-independent lists have all-dominated-increment tied chains",
    "section": 7,
-   "file": "AEC/Section7/Results.lean",
-   "status": "open",
-   "blocker": "lemma_7_11",
+   "file": "AEC/Section7/Lemma712Existence.lean",
+   "status": "blocked",
+   "blocker": "infra_712_prechain, infra_712_free_marks",
    "detail": "Blocked (cycle 76). Exactly clause (1) of the restated lemma_7_12. English proof: maintain a common ambient containing L and the chain built so far; at stage i, finite domination (Lemma 7.11, via its products with previous marks = the original ones) makes the actual b_i free over M_i from A (the tied free field); Theorem 7.9 gives an all-dominated realization over M_i + b_i and its primeness clause embeds it into a compatible actual ambient over the tuple; limits: coherent unions (same-level chain closure). Needs lemma_7_11 (blocked on infra_711_successor)."
   },
   {
@@ -3097,6 +3097,33 @@
    "status": "done",
    "blocker": "",
    "detail": "Proved (cycle 81): infra_711_succ_product_of_parts (IH applied to x and to (x, b_i)). Axioms clean."
+  },
+  {
+   "id": "infra_712_prechain",
+   "label": "7.12(1) pre-chain construction",
+   "section": 7,
+   "file": "AEC/Section7/Lemma712Existence.lean",
+   "status": "open",
+   "blocker": null,
+   "detail": "infra_712_prechain_statement: at a 7.9 level (infra_78_closedTail ∩ infra_615_closed), every well-ordered TupleList of length <= mu has a TiedListPreChain (Def 7.10 chain without freeness) with all-dominated increments. Plan: chain of subobjects of L.host (top = L.host, listToTop = id, M_0 = A); successor via 7.9 existence over M_i + b_i and 7.9 primeness into L.host over the tuple; limits via SingleModelPackage.exists_directed_union; recursion by the WellFounded.fix pattern of ChainEngine (state Sigma M, arrow into L.host). Likely to split into successor / limit / recursion."
+  },
+  {
+   "id": "infra_712_free_marks",
+   "label": "7.12(1) freeness of marks",
+   "section": 7,
+   "file": "AEC/Section7/Lemma712Existence.lean",
+   "status": "blocked",
+   "blocker": "infra_712_free_step",
+   "detail": "infra_712_free_marks_statement: at a 7.11 level, in an all-dominated pre-chain of a ProductIndependentTied list, every C.FreeAt i. Glue infra_712_free_marks_of_step (proved, WellFoundedLT.induction) from infra_712_free_step."
+  },
+  {
+   "id": "infra_712_free_step",
+   "label": "7.12(1) one freeness step",
+   "section": 7,
+   "file": "AEC/Section7/Lemma712Existence.lean",
+   "status": "open",
+   "blocker": null,
+   "detail": "infra_712_free_step_statement: marks below i free => b_i free over M_i from A. Plan: truncate the pre-chain at i (TupleList below i, stages lifted, top via step i<=top), giving a TiedListWitnessingChain of L below i whose stage top is M_i; apply Lemma 7.11 (infra_711_induction at the explicit 7.11 level hyps) to x = b_i; the product hypotheses (b_i with finite selections below i, binary IsProductTied over A) must be derived from ProductIndependentTied (non-level IsFiniteProductTied of finite sublists) — expected to be the hard part; split truncation / products / glue next."
   }
  ],
  "edges": [
@@ -6346,6 +6373,36 @@
    "to": "infra_711_succ_pair",
    "kind": "hard",
    "note": "joint transfer (infra_711_product_joint_transfer)"
+  },
+  {
+   "from": "infra_712_prechain",
+   "to": "lemma_7_12_existence",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_712_free_marks",
+   "to": "lemma_7_12_existence",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_712_free_step",
+   "to": "infra_712_free_marks",
+   "kind": "hard"
+  },
+  {
+   "from": "theorem_7_9",
+   "to": "infra_712_prechain",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_711_tied_chain",
+   "to": "infra_712_prechain",
+   "kind": "hard"
+  },
+  {
+   "from": "lemma_7_11",
+   "to": "infra_712_free_step",
+   "kind": "hard"
   }
  ],
  "doneCount": 283,
