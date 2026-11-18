@@ -4,6 +4,7 @@ public import AEC.Section7.Lemma711Successor
 public import AEC.Section7.ClosureLevel
 public import AEC.Section7.SuccessorStep
 public import AEC.Section7.RetractionPair
+public import AEC.Section7.LimitStep
 
 /-!
 # Lemma 7.12 (1): existence of a tied witnessing chain (split, cycle 85)
@@ -333,7 +334,7 @@ theorem infra_712_succ (P : SingleModelData K) {μ : Cardinal.{u}} (hμ : μ ∈
   exact ⟨Y, f, hf, b, h, hAll, hh, hcomp, hb⟩
 
 
-/-- **7.12(1) limit step (statement; open tip `infra_712_limit`).** A nonempty linearly ordered
+/-- **7.12(1) limit step (statement; proved below as `infra_712_limit`).** A nonempty linearly ordered
 system of level-`μ` stages of size `≤ μ`, compatibly mapped into an ambient `N`, has a union
 stage: compatible maps into it, covering, and a map from it into `N` over the stages
 (`SingleModelPackage.exists_directed_union` with its universal property). -/
@@ -358,6 +359,34 @@ def infra_712_limit_statement (P : SingleModelData K) : Prop :=
           (∀ v (x : ((P.scheme.asSystem hμ U).obj v).carrier), ∃ i y, (u i).onVertex v y = x) ∧
           ∀ i (v : oneVertexShape.Vertex), (h.onVertex v).comp ((u i).onVertex v) = (g i).onVertex v
 
+/-- **7.12(1) limit step (proved, cycle 85d).** `infra_78_chain_union_kappa` (the directed
+union at the level with its universal property); identities from the composition law and
+injectivity. -/
+theorem infra_712_limit (P : SingleModelData K) : infra_712_limit_statement P := by
+  intro μ hμ N ι _ _ hι M m hm g hg
+  have hrefl : ∀ a, m (le_refl a) = SystemArrow.refl _ := by
+    intro a
+    apply SystemArrow.ext
+    intro v
+    ext x
+    have h2 := congrArg (fun e => e x) (hm (le_refl a) (le_refl a) v)
+    exact ((m (le_refl a)).onVertex v).injective h2
+  have htrans : ∀ {a b c : ι} (h₁ : a ≤ b) (h₂ : b ≤ c),
+      m (h₁.trans h₂) = SystemArrow.comp (m h₁) (m h₂) := by
+    intro a b c h₁ h₂
+    apply SystemArrow.ext
+    intro v
+    exact (hm h₁ h₂ v).symm
+  obtain ⟨U, leg, -, hleg, hcov, huniv, -⟩ :=
+    infra_78_chain_union_kappa hμ hι M (fun h => m h) hrefl htrans
+  obtain ⟨f, -, hf⟩ := huniv N g (fun h => SystemArrow.ext (fun v => hg h v))
+  refine ⟨U, leg, f, fun h v => congrArg (fun e => e.onVertex v) (hleg h), fun v x => ?_,
+    fun i v => congrArg (fun e => e.onVertex v) (hf i)⟩
+  obtain ⟨a, ⟨w, y⟩, hy⟩ := hcov ⟨v, x⟩
+  cases w
+  cases v
+  exact ⟨a, y, eq_of_heq (Sigma.mk.inj_iff.1 hy).2⟩
+
 /-- **7.12(1) recursion (statement; open tip `infra_712_recursion`).** The pre-chain by
 well-founded recursion along `WithTop L.δ` (the `WellFounded.fix` pattern of `ChainEngine`),
 every stage carrying a map into the ambient `L.host` that sends the marks to the list's entries:
@@ -368,6 +397,11 @@ def infra_712_recursion_statement (P : SingleModelData K) : Prop :=
 /-- **The pre-chain from recursion and the limit step (proved glue).** -/
 theorem infra_712_prechain_of_parts (P : SingleModelData K) (hr : infra_712_recursion_statement P)
     (hl : infra_712_limit_statement P) : infra_712_prechain_statement P := hr hl
+
+/-- **The pre-chain from the recursion alone (proved glue, cycle 85d).** -/
+theorem infra_712_prechain_of_recursion (P : SingleModelData K)
+    (hr : infra_712_recursion_statement P) : infra_712_prechain_statement P :=
+  infra_712_prechain_of_parts P hr (infra_712_limit P)
 
 /-- **7.12(1), freeness of the marks (statement; open tip `infra_712_free_marks`).** At a Lemma
 7.11 level, in an all-dominated-increment pre-chain of a product-independent list, every actual

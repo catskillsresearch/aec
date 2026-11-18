@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-18 15:41",
+ "updated": "2026-11-18 15:43",
  "sorryCount": 41,
  "legend": {
   "open": "No unfinished required proof-deps — try next",
@@ -3104,7 +3104,7 @@
    "section": 7,
    "file": "AEC/Section7/Lemma712Existence.lean",
    "status": "blocked",
-   "blocker": "infra_712_limit, infra_712_recursion",
+   "blocker": "infra_712_recursion",
    "detail": "infra_712_prechain_statement (at a 7.9 level closedTail ∩ 615closed): every well-ordered TupleList of length <= mu has an all-dominated TiedListPreChain. Split cycle 85c: infra_712_prechain_of_parts (proved glue) from infra_712_recursion_statement (WellFounded.fix recursion along WithTop L.δ, stages mapped into L.host with marks sent to entries) and infra_712_limit_statement (directed union of a linear system of stages mapped into N, with covering and a compatible map into N); successor step infra_712_succ PROVED (Theorem 7.9 existence at the level, infra_79_existence_at, + same-level primeness)."
   },
   {
@@ -3148,9 +3148,9 @@
    "label": "7.12(1) limit step",
    "section": 7,
    "file": "AEC/Section7/Lemma712Existence.lean",
-   "status": "open",
+   "status": "done",
    "blocker": null,
-   "detail": "infra_712_limit_statement: a nonempty linearly ordered system (size <= mu) of level-mu stages with compatible maps into N has a union stage U with compatible maps, covering, and h : U -> N over the stages. Plan: SingleModelPackage.exists_directed_union on the DirectedSystem of the stage models (linear order is directed; identities from comp law + injectivity) and its universal property."
+   "detail": "infra_712_limit PROVED cycle 85d via infra_78_chain_union_kappa (directed union at the level + universal property); identity law from the composition law and injectivity; covering read off pushOcc. Axioms: propext, Classical.choice, Quot.sound."
   },
   {
    "id": "infra_712_recursion",
@@ -6464,8 +6464,13 @@
    "from": "theorem_7_9",
    "to": "infra_712_succ",
    "kind": "hard"
+  },
+  {
+   "from": "infra_78_chain_union_kappa",
+   "to": "infra_712_limit",
+   "kind": "hard"
   }
  ],
- "doneCount": 284,
+ "doneCount": 285,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
