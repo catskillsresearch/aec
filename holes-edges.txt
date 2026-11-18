@@ -539,7 +539,7 @@ infra_612_tied_finite --> infra_75_product_free
 proposition_6_13 --> infra_711_limit
 infra_78_tiedFree_trans --> infra_711_limit
 infra_711_tied_chain --> infra_711_limit
-infra_711_tied_chain --> infra_711_successor
+infra_711_tied_chain --> infra_711_succ_product
 infra_7_10_list_chain --> infra_711_tied_chain
 infra_75_product_free_level --> infra_75_product_free
 infra_612_tied_symm_level_joints --> infra_75_product_free_level
@@ -547,12 +547,12 @@ infra_612_tied_finite_proj_level --> infra_75_product_free_level
 lemma_7_2 --> infra_75_product_free_level
 infra_612_tied_exists --> infra_75_product_free_level
 infra_75_product_free_level --> infra_711_successor
-infra_612_tied_base_change_level_joints --> infra_711_successor
-infra_612_tied_assoc_level_joints --> infra_711_successor
-infra_612_tied_symm_level_joints --> infra_711_successor
-infra_612_tied_finite_proj_level --> infra_711_successor
-infra_612_tied_finite_perm_level --> infra_711_successor
-infra_612_tied_exists --> infra_711_successor
+infra_612_tied_base_change_level_joints --> infra_711_succ_product
+infra_612_tied_assoc_level_joints --> infra_711_succ_product
+infra_612_tied_symm_level_joints --> infra_711_succ_product
+infra_612_tied_finite_proj_level --> infra_711_succ_product
+infra_612_tied_finite_perm_level --> infra_711_succ_product
+infra_612_tied_exists --> infra_711_succ_product
 infra_711_successor --> lemma_7_11
 lemma_7_12_existence --> lemma_7_12
 lemma_7_12_uniqueness --> lemma_7_12
@@ -577,3 +577,8 @@ infra_612_tied_indep_level_joints --> infra_75_eval_product
 infra_612_tied_symm_level_joints --> infra_75_eval_project
 infra_612_tied_finite_proj_level --> infra_75_eval_project
 infra_78_same_level_type_amalgam --> infra_75_eval_product
+infra_711_succ_assembly --> infra_711_successor
+infra_711_succ_product --> infra_711_successor
+infra_711_tied_chain --> infra_711_succ_assembly
+infra_75_product_free_level --> infra_711_succ_assembly
+infra_78_tiedFree_trans --> infra_711_succ_assembly

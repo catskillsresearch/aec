@@ -186,6 +186,7 @@ public import AEC.Section7.ListChain
 public import AEC.Section7.TiedListChain
 public import AEC.Section7.Lemma711Limit
 public import AEC.Section7.Lemma711Induction
+public import AEC.Section7.Lemma711Successor
 public import AEC.Section7.ProductFreeLevel
 public import AEC.Section8.MarkedPair
 public import AEC.Section8.Results

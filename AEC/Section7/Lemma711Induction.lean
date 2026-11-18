@@ -1,6 +1,8 @@
 module
 
 public import AEC.Section7.Lemma711Limit
+public import AEC.Section7.ProductFreeLevel
+public import AEC.Section7.TiedDescent
 
 /-!
 # Lemma 7.11, induction on the stage (tied)
@@ -217,6 +219,7 @@ chain with all-dominated increments, the induction claim passes from `i` to `j`.
 def infra_711_successor_statement (P : SingleModelData K) : Prop :=
   ∀ {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible), μ ∈ recursionClosedLevels P ℵ₀ →
     Order.succ ℵ₀ ≤ μ →
+    μ ∈ recursionClosedLevels P (infra_75_wide P ℵ₀) → Order.succ (infra_75_wide P ℵ₀) ≤ μ →
     ∀ (A : P.scheme.Object μ hμ) (L : TupleList P.scheme hμ A) [LinearOrder L.δ]
       [WellFoundedLT L.δ] (C : TiedListWitnessingChain L), C.AllDominatedIncrement →
       ∀ i j : WithTop L.δ, i ⋖ j → C.Claim i → C.Claim j
@@ -236,16 +239,20 @@ theorem infra_711_induction (P : SingleModelData K) (hsucc : infra_711_successor
               (C.jointWith x n ix) (Equiv.refl _)) →
           IsTiedFree (C.into ⊤) (x.restrict (C.into ⊤) (C.into_arrow ⊤)) x (Equiv.refl _) := by
   classical
+  let w : Cardinal.{u} := infra_75_wide P ℵ₀
+  have hw : ℵ₀ ≤ w := le_self_add
   let T : Set Cardinal.{u} :=
-    {μ | μ ∈ recursionClosedLevels P ℵ₀ ∧ Order.succ ℵ₀ ≤ μ}
+    {μ | μ ∈ recursionClosedLevels P w ∧ Order.succ w ≤ μ}
   have hT : Tail P.eligible T := by
     refine ⟨fun μ hμ => hμ.1.1, fun κ => ?_⟩
     obtain ⟨μ, hle, hμ, hrec⟩ :=
-      (infra_69_recursion_tail P (le_refl ℵ₀)).2 (max κ (Order.succ ℵ₀))
+      (infra_69_recursion_tail P hw).2 (max κ (Order.succ w))
     exact ⟨μ, (le_max_left _ _).trans hle, ⟨⟨hμ, hrec⟩, (le_max_right _ _).trans hle⟩⟩
   refine ⟨T, hT, fun μ hμ A L _ _ C hinc x hfin hxν hprod => ?_⟩
-  have hall := C.claim_all hμ.1 hμ.2
-    (fun i j h => hsucc (Tail.mem hT hμ) hμ.1 hμ.2 A L C hinc i j h) ⊤
+  have h0 : μ ∈ recursionClosedLevels P ℵ₀ := infra_76_rec_mono hw hμ.1
+  have h1 : Order.succ ℵ₀ ≤ μ := (Order.succ_le_succ hw).trans hμ.2
+  have hall := C.claim_all h0 h1
+    (fun i j h => hsucc (Tail.mem hT hμ) h0 h1 hμ.1 hμ.2 A L C hinc i j h) ⊤
   have hfree := hall x hfin hxν (fun n ix hinj _ => hprod n ix hinj)
   have hid : ∀ v y, (C.step (le_top : (⊤ : WithTop L.δ) ≤ ⊤)).onVertex v y = y := by
     intro v y
