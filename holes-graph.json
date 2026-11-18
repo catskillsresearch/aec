@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-18 13:18",
+  "updated": "2026-11-18 13:24",
   "sorryCount": 44,
   "legend": {
     "open": "No unfinished required proof-deps — try next",
@@ -2712,13 +2712,22 @@
       "detail": "Open (sub-tip of infra_78_matrix_assembly_level, cycle 64). For p over X with p.nu = lambda: a level-kappa X_0 with iota0 : X -> X_0 (presentation arrow); the mixed free lift qB of p over X_0 (infra_78_tied_free_lift_mixed: IsTiedFreeMixed + small-test diagrams), Y_0 := qB.host recast at kappa; a Lemma 6.9 approximation sequence for p at arity >= g sigma + ls K with long index; the seed stage infra_78_seedStage (base id, mark b0 from qB.val, seeds infra_78_seedSet (iota0 '' anchors) b0 y) with infra_78_seedStage_inv5, seedStage_closed / card, S_0 nonempty. Existing: seedStage, seedSet, seedSet_card, seedStage_inv5, recursion_outputs (I_p carried into every R_k)."
     },
     {
+      "id": "infra_78_tiedFreeMixed_forward",
+      "label": "Prop 7.8: mixed tied freeness and small-test diagrams carried forward along the upper arrow of a commuting square",
+      "section": 7,
+      "file": "AEC/Section7/StageTransport.lean",
+      "status": "done",
+      "blocker": null,
+      "detail": "DONE (grokbot cycle 65). iota0 : X -> B (X at nu <= kappa), pr1 : B -> Y1, pr2 : Xk -> Y2, g : B -> Xk, h : Y1 -> Y2 with h o pr1 = pr2 o g and h b1 = b2: IsTiedFreeMixed iota0 of the b1 mark gives IsTiedFreeMixed iota0 of (b2 mark | g), and DiagramEq of the small-test joints over X. Uses diagram_preserved h with pointwise equalities only (no reindexing); approximation sequence transported with its family unchanged."
+    },
+    {
       "id": "infra_78_stage_transport",
       "label": "Prop 7.8: the seed mark and base map carried to every matrix stage",
       "section": 7,
-      "file": "AEC/Section7/AssemblyLevel.lean",
-      "status": "open",
+      "file": "AEC/Section7/StageTransport.lean",
+      "status": "done",
       "blocker": null,
-      "detail": "Open (sub-tip of infra_78_matrix_assembly_level, cycle 64). In infra_78_rcMatrix: the mark at stage k is the Y-step image of the seed mark (e.b = rcMap.2 o b0), the base map is the X-step from X_0 (e.g = rcMap.1), and each step is a stage arrow (Y-step o p0 = p_k o X-step), so the mark restricted to X_0 at stage k is the seed mark transported along Y_0 -> Y_k (host transfer of IsTiedFreeMixed and of the small-test diagrams). Pure matrix bookkeeping from the engine laws (IdLaw, CompLaw, succOp_stageArr)."
+      "detail": "DONE (grokbot cycle 65; StageTransport.lean, theorem infra_78_stage_transport). In infra_78_rcMatrix with seed base map id, from the least stage i0 to every k: e.g_k = rcMap(i0,k).1 (X-step), e.b_k = rcMap(i0,k).2 o b0 (Y-step image of the seed mark, 'a single fixed b in all the upper objects'), and for any base arrow g with value e.g_k the seed's IsTiedFreeMixed over X (along iota0 : X -> X_0) and its small-test diagrams over X hold for the stage-k mark restricted to X_0 along g. Proof: opMatrix_coherent + pairChain_laws (stage arrow square) + pairMatrix_min, then the generic host transfer infra_78_tiedFreeMixed_forward. Axioms: propext, Classical.choice, Quot.sound."
     },
     {
       "id": "infra_78_assembly_glue",
@@ -2726,8 +2735,8 @@
       "section": 7,
       "file": "AEC/Section7/AssemblyLevel.lean",
       "status": "blocked",
-      "blocker": "infra_78_seed_stage, infra_78_stage_transport",
-      "detail": "Blocked (sub-tip of infra_78_matrix_assembly_level, cycle 64). Combine: infra_78_assembly_levels; infra_78_seed_stage; infra_78_isolation_over_A with s0 containing iota(I_p) and b (cIdx of size theta); infra_78_stage_transport + infra_78_tiedFreeMixed_trans (tied freeness of the stage-i mark over X along iota0 >> g_i); infra_78_seq_diagram_transfer (I_p as a sequence for the mark); infra_78_marginal_identify_level (phi : X ~ A, Galois type); infra_78_iso_rename_asTuple (rename U). Output: infra_78_matrix_assembly_level_statement."
+      "blocker": "infra_78_seed_stage",
+      "detail": "Blocked only on infra_78_seed_stage after cycle 65 (sub-tip of infra_78_matrix_assembly_level, cycle 64). Combine: infra_78_assembly_levels; infra_78_seed_stage; infra_78_isolation_over_A with s0 containing iota(I_p) and b (cIdx of size theta); infra_78_stage_transport + infra_78_tiedFreeMixed_trans (tied freeness of the stage-i mark over X along iota0 >> g_i); infra_78_seq_diagram_transfer (I_p as a sequence for the mark); infra_78_marginal_identify_level (phi : X ~ A, Galois type); infra_78_iso_rename_asTuple (rename U). Output: infra_78_matrix_assembly_level_statement."
     }
   ],
   "edges": [
@@ -5408,8 +5417,13 @@
       "to": "infra_78_marginal_general_level",
       "kind": "soft",
       "note": "alternative route (cycle 64 check)"
+    },
+    {
+      "from": "infra_78_tiedFreeMixed_forward",
+      "to": "infra_78_stage_transport",
+      "kind": "hard"
     }
   ],
-  "doneCount": 236,
+  "doneCount": 238,
   "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 43. Uncommitted in /tmp/aec-grok."
 }

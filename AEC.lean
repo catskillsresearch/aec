@@ -165,6 +165,7 @@ public import AEC.Section7.IsolationTransfer
 public import AEC.Section7.IsoRename
 public import AEC.Section7.MarginalAnchor
 public import AEC.Section7.AssemblyLevel
+public import AEC.Section7.StageTransport
 public import AEC.Section6.LocalCharacterTied
 public import AEC.Section6.AverageDescentTied
 public import AEC.Section6.DescentRetractionTied
