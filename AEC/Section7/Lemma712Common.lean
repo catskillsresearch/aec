@@ -427,14 +427,15 @@ theorem infra_712u_packed_limit_stable (E : WithTop L.δ ≃o WithTop L'.δ) (k 
       n i j (G i x) = G j ((C.step (show i.1 ≤ j.1 from h)).onVertex PUnit.unit x))
     (hnG' : ∀ i j (h : i ≤ j) x,
       n i j (G' i x) = G' j ((C'.step (E.monotone (show i.1 ≤ j.1 from h))).onVertex PUnit.unit x)) :
-    ∃ (U : P.scheme.Object μ hμ) (Gk Gk' : μ.ord.ToType → μ.ord.ToType)
+    ∃ (Gk Gk' : μ.ord.ToType → μ.ord.ToType)
       (l : Set.Iio k → μ.ord.ToType → μ.ord.ToType),
-      infra_712u_IsArr (C.stage k) U Gk ∧ infra_712u_IsArr (C'.stage (E k)) U Gk' ∧
-      (∀ i, infra_712u_IsArr (N i) U (l i)) ∧
+      infra_712u_IsArr (C.stage k) (N b) Gk ∧ infra_712u_IsArr (C'.stage (E k)) (N b) Gk' ∧
+      (∀ i, infra_712u_IsArr (N i) (N b) (l i)) ∧
       (∀ i j, i ≤ j → ∀ x, l j (n i j x) = l i x) ∧
       (∀ i x, Gk ((C.step (le_of_lt i.2)).onVertex PUnit.unit x) = l i (G i x)) ∧
       (∀ i x, Gk' ((C'.step (E.monotone (le_of_lt i.2))).onVertex PUnit.unit x) =
-        l i (G' i x)) := by
+        l i (G' i x)) ∧
+      (∀ i, b ≤ i → ∀ x, l i x = x) := by
   obtain ⟨Gk, hGk, HGk⟩ := infra_712u_stable_side C k hs b (N b) G n hG hnb hsb hnG
   have hs' : ∀ i', ¬ i' ⋖ E k := fun i' hc => by
     obtain ⟨i, rfl⟩ := E.surjective i'
@@ -484,9 +485,9 @@ theorem infra_712u_packed_limit_stable (E : WithTop L.δ ≃o WithTop L'.δ) (k 
       (E.monotone (le_of_lt m.2)) PUnit.unit) z
     exact (congrArg (fun y => G' b (ψ'.onVertex PUnit.unit y)) e1).trans
       ((congrArg (G' b) (hψ' z)).trans ((hnb m hbm (G' b z)).symm.trans (hnG' b m hbm z)))
-  refine ⟨N b, Gk, fun x => G' b (ψ'.onVertex PUnit.unit x), l, hGk,
+  refine ⟨Gk, fun x => G' b (ψ'.onVertex PUnit.unit x), l, hGk,
     (infra_712u_IsArr.of_arrow ψ').comp hG', hl, fun i j hij x => ?_, fun i x => ?_,
-    fun i x => ?_⟩
+    fun i x => ?_, fun i hbi x => hid i (mx i) hbi (hmx1 i) x⟩
   · rw [hl_up i (mx j) (hij.trans (hmx1 j)) (hmx2 j), hntr i j (mx j) hij (hmx1 j) x]
   · have e1 := DFunLike.congr_fun (C.step_comp (show i.1 ≤ (mx i).1 from hmx1 i)
       (le_of_lt (mx i).2) PUnit.unit) x
@@ -968,6 +969,407 @@ theorem infra_712u_good (k : WithTop L.δ) : infra_712u_Good C C' e ei h0 h1 hm 
 
 end Assembly
 
+section LongAssembly
+variable {P : SingleModelData K} {μ : Cardinal.{u}} {hμ : μ ∈ P.eligible}
+  {A : P.scheme.Object μ hμ} {L L' : TupleList P.scheme hμ A} [LinearOrder L.δ]
+  [LinearOrder L'.δ] (C : TiedListWitnessingChain L) (C' : TiedListWitnessingChain L')
+  (e : L.δ ≃o L'.δ) (ei : ∀ i, L.indexAt i ≃ L'.indexAt (e i))
+  (h0 : μ ∈ recursionClosedLevels P ℵ₀) (h1 : Order.succ ℵ₀ ≤ μ)
+  (hm : ∀ i, SameGaloisType (L.one i) (L'.one (e i)) (ei i) (Equiv.refl _))
+
+theorem infra_712u_succ_unique {β k₁ k₂ : WithTop L.δ} (h₁ : β ⋖ k₁) (h₂ : β ⋖ k₂) : k₁ = k₂ := by
+  rcases lt_trichotomy k₁ k₂ with hlt | heq | hgt
+  · exact absurd hlt (h₂.2 h₁.lt)
+  · exact heq
+  · exact absurd hgt (h₁.2 h₂.lt)
+
+open Classical in
+/-- Successor operator for long lists: keep the state at trivial indices. -/
+def infra_712u_sop2 (β : WithTop L.δ) (s : infra_712u_State P μ hμ) :
+    infra_712u_State P μ hμ × (μ.ord.ToType → μ.ord.ToType) :=
+  if H : infra_712u_Triv C C' e β ∧ ∃ k, β ⋖ k ∧ infra_712u_StateOK C C' e ei β s then
+    Classical.choose (infra_712u_trivial_R C C' e ei β H.2.choose H.2.choose_spec.1 s
+      H.2.choose_spec.2 H.1.1 (H.1.2 _ H.2.choose_spec.1).1 (H.1.2 _ H.2.choose_spec.1).2)
+  else infra_712u_sop C C' e ei h0 h1 hm β s
+
+theorem infra_712u_sop2_spec {β k : WithTop L.δ} (hβ : β ⋖ k) (s : infra_712u_State P μ hμ)
+    (hs : infra_712u_StateOK C C' e ei β s) :
+    infra_712u_SuccSpec C C' e ei β k s (infra_712u_sop2 C C' e ei h0 h1 hm β s) ∧
+      (infra_712u_Triv C C' e β → (infra_712u_sop2 C C' e ei h0 h1 hm β s).1.1 = s.1 ∧
+        (infra_712u_sop2 C C' e ei h0 h1 hm β s).2 = id) := by
+  classical
+  by_cases hT : infra_712u_Triv C C' e β
+  · have H : infra_712u_Triv C C' e β ∧ ∃ k, β ⋖ k ∧ infra_712u_StateOK C C' e ei β s :=
+      ⟨hT, k, hβ, hs⟩
+    have hck : H.2.choose = k := infra_712u_succ_unique H.2.choose_spec.1 hβ
+    have hdef : infra_712u_sop2 C C' e ei h0 h1 hm β s = Classical.choose
+        (infra_712u_trivial_R C C' e ei β H.2.choose H.2.choose_spec.1 s
+        H.2.choose_spec.2 H.1.1 (H.1.2 _ H.2.choose_spec.1).1 (H.1.2 _ H.2.choose_spec.1).2) :=
+      dif_pos H
+    have spec := Classical.choose_spec (infra_712u_trivial_R C C' e ei β H.2.choose
+      H.2.choose_spec.1 s H.2.choose_spec.2 H.1.1 (H.1.2 _ H.2.choose_spec.1).1
+      (H.1.2 _ H.2.choose_spec.1).2)
+    rw [← hdef, hck] at spec
+    exact ⟨spec.1, fun _ => spec.2⟩
+  · have hdef : infra_712u_sop2 C C' e ei h0 h1 hm β s = infra_712u_sop C C' e ei h0 h1 hm β s :=
+      dif_neg fun H => hT H.1
+    rw [hdef]
+    refine ⟨?_, fun h => absurd h hT⟩
+    have Hc : ∃ k', β ⋖ k' ∧ infra_712u_StateOK C C' e ei β s := ⟨k, hβ, hs⟩
+    have hck : Hc.choose = k := infra_712u_succ_unique Hc.choose_spec.1 hβ
+    have hsop : infra_712u_sop C C' e ei h0 h1 hm β s =
+        Classical.choose (infra_712u_succ_R C C' e ei h0 h1 hm β Hc.choose Hc.choose_spec.1
+          s Hc.choose_spec.2) := dif_pos Hc
+    have spec := Classical.choose_spec (infra_712u_succ_R C C' e ei h0 h1 hm β Hc.choose
+      Hc.choose_spec.1 s Hc.choose_spec.2)
+    rw [← hsop, hck] at spec
+    exact spec
+
+/-- The system is constant from `b` on. -/
+def infra_712u_StableAt (k : WithTop L.δ) (cf : Set.Iio k → infra_712u_State P μ hμ)
+    (mf : Set.Iio k → Set.Iio k → μ.ord.ToType → μ.ord.ToType) (b : Set.Iio k) : Prop :=
+  (∀ i, b ≤ i → (cf i).1 = (cf b).1) ∧ (∀ i, b ≤ i → ∀ x, mf b i x = x) ∧
+  (∀ i (h : b ≤ i), Function.Surjective ((C.step (show b.1 ≤ i.1 from h)).onVertex PUnit.unit)) ∧
+  (∀ i (h : b ≤ i), Function.Surjective
+    ((C'.step (e.withTopCongr.monotone (show b.1 ≤ i.1 from h))).onVertex PUnit.unit))
+
+theorem infra_712u_stable_R (k : WithTop L.δ) (cf : Set.Iio k → infra_712u_State P μ hμ)
+    (mf : Set.Iio k → Set.Iio k → μ.ord.ToType → μ.ord.ToType)
+    (H : infra_712u_LimHyp C C' e ei k cf mf) (HS : ∃ b, infra_712u_StableAt C C' e k cf mf b) :
+    ∃ R, infra_712u_LimSpec C C' e ei k cf mf R ∧ ∃ b, infra_712u_StableAt C C' e k cf mf b ∧
+      R.1.1 = (cf b).1 ∧ ∀ i, b ≤ i → ∀ x, R.2 i x = x := by
+  obtain ⟨hs, hne, hok, hn, hnid, hntr, hnG, hnG'⟩ := H
+  obtain ⟨b, hNb, hnb, hsb, hsb'⟩ := HS
+  obtain ⟨Gk, Gk', l, HG, HG', Hl, Hln, H1, H2, Hid⟩ := infra_712u_packed_limit_stable C C'
+    e.withTopCongr k hs b (fun i => (cf i).1) (fun i => (cf i).2.1) (fun i => (cf i).2.2) mf
+    (hok b).1 (hok b).2.1 hn hntr hNb hnb hsb hsb' hnG hnG'
+  refine ⟨(((cf b).1, Gk, Gk'), l), ⟨?_, Hl, Hln, H1, H2⟩, b, ⟨hNb, hnb, hsb, hsb'⟩, rfl, Hid⟩
+  exact infra_712u_limit_finish C C' e ei k hs hne cf hok ((cf b).1, Gk, Gk') l HG HG' H1 H2
+
+theorem infra_712u_cof_R (k : WithTop L.δ) (cf : Set.Iio k → infra_712u_State P μ hμ)
+    (mf : Set.Iio k → Set.Iio k → μ.ord.ToType → μ.ord.ToType)
+    (H : infra_712u_LimHyp C C' e ei k cf mf)
+    (HC : ∃ D : Set (Set.Iio k), #D ≤ μ ∧ ∀ i, ∃ d ∈ D, i ≤ d) :
+    ∃ R, infra_712u_LimSpec C C' e ei k cf mf R := by
+  obtain ⟨hs, hne, hok, hn, hnid, hntr, hnG, hnG'⟩ := H
+  obtain ⟨D, hD, hcof⟩ := HC
+  obtain ⟨U, Gk, Gk', l, HG, HG', Hl, Hln, H1, H2⟩ := infra_712u_packed_limit_cofinal C C'
+    e.withTopCongr k hs D hD hcof hne (fun i => (cf i).1) (fun i => (cf i).2.1)
+    (fun i => (cf i).2.2) mf (fun i => (hok i).1) (fun i => (hok i).2.1) hn hnid hntr hnG hnG'
+  exact ⟨((U, Gk, Gk'), l), infra_712u_limit_finish C C' e ei k hs hne cf hok (U, Gk, Gk') l
+    HG HG' H1 H2, Hl, Hln, H1, H2⟩
+
+open Classical in
+/-- Limit operator for long lists: stable if possible, else a small cofinal union. -/
+def infra_712u_lop2 (k : WithTop L.δ) (cf : Set.Iio k → infra_712u_State P μ hμ)
+    (mf : Set.Iio k → Set.Iio k → μ.ord.ToType → μ.ord.ToType) :
+    infra_712u_State P μ hμ × (Set.Iio k → μ.ord.ToType → μ.ord.ToType) :=
+  if H : infra_712u_LimHyp C C' e ei k cf mf then
+    if HS : ∃ b, infra_712u_StableAt C C' e k cf mf b then
+      Classical.choose (infra_712u_stable_R C C' e ei k cf mf H HS)
+    else if HC : ∃ D : Set (Set.Iio k), #D ≤ μ ∧ ∀ i, ∃ d ∈ D, i ≤ d then
+      Classical.choose (infra_712u_cof_R C C' e ei k cf mf H HC)
+    else ((A, id, id), fun _ => id)
+  else ((A, id, id), fun _ => id)
+
+variable [WellFoundedLT L.δ]
+
+/-- The long-list recursion's stage. -/
+def infra_712u_O2 (k : WithTop L.δ) : infra_712u_State P μ hμ :=
+  infra_78_engineObj (infra_712u_s0 C C' e ei) id (fun f g => g ∘ f)
+    (infra_712u_sop2 C C' e ei h0 h1 hm) (infra_712u_lop2 C C' e ei) k
+
+/-- The long-list recursion's transition functions. -/
+def infra_712u_Mp2 (i k : WithTop L.δ) : μ.ord.ToType → μ.ord.ToType :=
+  infra_78_engineMap (infra_712u_s0 C C' e ei) id (fun f g => g ∘ f)
+    (infra_712u_sop2 C C' e ei h0 h1 hm) (infra_712u_lop2 C C' e ei) i k
+
+/-- Validity of the long-list recursion up to stage `k`. -/
+def infra_712u_Good2 (k : WithTop L.δ) : Prop :=
+  infra_712u_StateOK C C' e ei k (infra_712u_O2 C C' e ei h0 h1 hm k) ∧
+  (∀ i (h : i ≤ k),
+    infra_712u_IsArr (infra_712u_O2 C C' e ei h0 h1 hm i).1
+      (infra_712u_O2 C C' e ei h0 h1 hm k).1 (infra_712u_Mp2 C C' e ei h0 h1 hm i k) ∧
+    (∀ x, infra_712u_Mp2 C C' e ei h0 h1 hm i k ((infra_712u_O2 C C' e ei h0 h1 hm i).2.1 x) =
+      (infra_712u_O2 C C' e ei h0 h1 hm k).2.1 ((C.step h).onVertex PUnit.unit x)) ∧
+    (∀ x, infra_712u_Mp2 C C' e ei h0 h1 hm i k ((infra_712u_O2 C C' e ei h0 h1 hm i).2.2 x) =
+      (infra_712u_O2 C C' e ei h0 h1 hm k).2.2
+        ((C'.step (e.withTopCongr.monotone h)).onVertex PUnit.unit x))) ∧
+  (∀ x, infra_712u_Mp2 C C' e ei h0 h1 hm k k x = x) ∧
+  (∀ i j, i ≤ j → j ≤ k → ∀ x, infra_712u_Mp2 C C' e ei h0 h1 hm i k x =
+    infra_712u_Mp2 C C' e ei h0 h1 hm j k (infra_712u_Mp2 C C' e ei h0 h1 hm i j x))
+
+theorem infra_712u_Mp2_self (k : WithTop L.δ) (x) :
+    infra_712u_Mp2 C C' e ei h0 h1 hm k k x = x := by
+  unfold infra_712u_Mp2
+  by_cases hs : ∃ β, β ⋖ k
+  · obtain ⟨β, hβ⟩ := hs
+    rw [(infra_78_engine_succ_eq _ _ _ _ _ hβ).2 k, if_neg (lt_irrefl k)]
+    rfl
+  by_cases hk : IsMin k
+  · rw [(infra_78_engine_min_eq _ _ _ _ _ hk).2 k]
+    rfl
+  · rw [(infra_78_engine_lim_eq _ _ _ _ _ hk hs).2 k]
+    simp only [lt_irrefl, ↓reduceDIte]
+    rfl
+
+/-- **The long-list recursion is valid at every stage (proved, cycle 89).** As
+`infra_712u_good`; at a limit the system is either constant from some stage on (stable limit)
+or the nontrivial indices below it are cofinal (inner induction: a bound on them makes the
+system constant above it), giving a cofinal set of size `≤ μ` (`infra_712u_nontriv_card`). -/
+theorem infra_712u_good2 (hμ0 : ℵ₀ ≤ μ) (hsig : #(Σ i, L.indexAt i) ≤ μ) (k : WithTop L.δ) :
+    infra_712u_Good2 C C' e ei h0 h1 hm k := by
+  classical
+  induction k using WellFoundedLT.induction with
+  | _ k IH =>
+  unfold infra_712u_Good2
+  set O := infra_712u_O2 C C' e ei h0 h1 hm with hOdef
+  set Mp := infra_712u_Mp2 C C' e ei h0 h1 hm with hMpdef
+  have hself : ∀ j x, Mp j j x = x := infra_712u_Mp2_self C C' e ei h0 h1 hm
+  by_cases hs : ∃ β, β ⋖ k
+  · obtain ⟨β, hβ⟩ := hs
+    have IHβ := IH β hβ.lt
+    have spec := (infra_712u_sop2_spec C C' e ei h0 h1 hm hβ (O β) IHβ.1).1
+    set R := infra_712u_sop2 C C' e ei h0 h1 hm β (O β) with hRdef
+    obtain ⟨okR, harr, hstep⟩ := spec
+    have hO : O k = R.1 := (infra_78_engine_succ_eq _ _ _ _ _ hβ).1
+    have hM : ∀ i, Mp i k = if i < k then R.2 ∘ Mp i β else id :=
+      (infra_78_engine_succ_eq _ _ _ _ _ hβ).2
+    have hle : ∀ i, i < k → i ≤ β := fun i hi => by
+      by_contra hc
+      exact hβ.2 (lt_of_not_ge hc) hi
+    refine ⟨hO ▸ okR, fun i hik => ?_, hself k, fun i j hij hjk x => ?_⟩
+    · rcases hik.lt_or_eq with hik | rfl
+      · have hiβ := hle i hik
+        obtain ⟨a1, a2, a3⟩ := IHβ.2.1 i hiβ
+        rw [hM i, if_pos hik, hO]
+        refine ⟨a1.comp harr, fun x => ?_, fun x => ?_⟩
+        · show R.2 (Mp i β ((O i).2.1 x)) = _
+          have := DFunLike.congr_fun (C.step_comp hiβ hβ.le PUnit.unit) x
+          exact (congrArg R.2 (a2 x)).trans (((hstep hβ.le).1 _).symm.trans
+            (congrArg R.1.2.1 this))
+        · show R.2 (Mp i β ((O i).2.2 x)) = _
+          have := DFunLike.congr_fun (C'.step_comp (e.withTopCongr.monotone hiβ)
+            (e.withTopCongr.monotone hβ.le) PUnit.unit) x
+          exact (congrArg R.2 (a3 x)).trans (((hstep hβ.le).2 _).symm.trans
+            (congrArg R.1.2.2 this))
+      · refine ⟨?_, fun x => ?_, fun x => ?_⟩
+        · have : Mp i i = id := funext (hself i)
+          rw [this]
+          exact infra_712u_IsArr.id _
+        · rw [hself]; exact congrArg _ (infra_712u_step_self _ _ x).symm
+        · rw [hself]; exact congrArg _ (infra_712u_step_self _ _ x).symm
+    · rcases hjk.lt_or_eq with hjk | rfl
+      · have hik := lt_of_le_of_lt hij hjk
+        rw [hM i, if_pos hik, hM j, if_pos hjk]
+        exact congrArg R.2 (IHβ.2.2.2 i j hij (hle j hjk) x)
+      · rw [hself]
+  by_cases hk : IsMin k
+  · have hk' : ∀ j, k ≤ j := fun j => (le_total k j).elim id (fun h => hk h)
+    have H : ∃ k : WithTop L.δ, IsMin k := ⟨k, hk⟩
+    have hck : H.choose = k := le_antisymm (H.choose_spec (hk' _)) (hk' _)
+    have hs0 : infra_712u_s0 C C' e ei = Classical.choose
+        (infra_712u_base_R C C' e ei H.choose H.choose_spec) := dif_pos H
+    have spec := Classical.choose_spec (infra_712u_base_R C C' e ei H.choose H.choose_spec)
+    rw [← hs0, hck] at spec
+    have hO : O k = infra_712u_s0 C C' e ei := (infra_78_engine_min_eq _ _ _ _ _ hk).1
+    have hieq : ∀ i, i ≤ k → i = k := fun i hi => le_antisymm hi (hk' i)
+    refine ⟨hO ▸ spec, fun i hik => ?_, hself k, fun i j hij hjk x => ?_⟩
+    · obtain rfl := hieq i hik
+      refine ⟨?_, fun x => ?_, fun x => ?_⟩
+      · have : Mp i i = id := funext (hself i)
+        rw [this]
+        exact infra_712u_IsArr.id _
+      · rw [hself]; exact congrArg _ (infra_712u_step_self _ _ x).symm
+      · rw [hself]; exact congrArg _ (infra_712u_step_self _ _ x).symm
+    · obtain rfl := hieq j hjk
+      obtain rfl := hieq i (hij.trans hjk)
+      rw [hself, hself]
+  -- limit stage
+  have hs' : ∀ i, ¬ i ⋖ k := fun i h => hs ⟨i, h⟩
+  have hne : ∃ i, i < k := by
+    rw [not_isMin_iff] at hk
+    exact hk
+  let cf : Set.Iio k → infra_712u_State P μ hμ := fun j => O j.1
+  let mf : Set.Iio k → Set.Iio k → μ.ord.ToType → μ.ord.ToType := fun i j => Mp i.1 j.1
+  have HL : infra_712u_LimHyp C C' e ei k cf mf :=
+    ⟨hs', hne, fun i => (IH i.1 i.2).1, fun i j h => ((IH j.1 j.2).2.1 i.1 h).1,
+      fun i x => hself i.1 x, fun i j l hij hjl x => (IH l.1 l.2).2.2.2 i.1 j.1 hij hjl x,
+      fun i j h x => ((IH j.1 j.2).2.1 i.1 h).2.1 x, fun i j h x => ((IH j.1 j.2).2.1 i.1 h).2.2 x⟩
+  have hO : O k = (infra_712u_lop2 C C' e ei k cf mf).1 := (infra_78_engine_lim_eq _ _ _ _ _ hk hs).1
+  have hM : ∀ i (hi : i < k), Mp i k = (infra_712u_lop2 C C' e ei k cf mf).2 ⟨i, hi⟩ :=
+    fun i hi => by
+      have := (infra_78_engine_lim_eq (infra_712u_s0 C C' e ei) id (fun f g => g ∘ f)
+        (infra_712u_sop2 C C' e ei h0 h1 hm) (infra_712u_lop2 C C' e ei) hk hs).2 i
+      rw [dif_pos hi] at this
+      exact this
+  have spec : infra_712u_LimSpec C C' e ei k cf mf (infra_712u_lop2 C C' e ei k cf mf) := by
+    by_cases HS : ∃ b, infra_712u_StableAt C C' e k cf mf b
+    · have hdef : infra_712u_lop2 C C' e ei k cf mf =
+          Classical.choose (infra_712u_stable_R C C' e ei k cf mf HL HS) := by
+        unfold infra_712u_lop2
+        rw [dif_pos HL, dif_pos HS]
+      rw [hdef]
+      exact (Classical.choose_spec (infra_712u_stable_R C C' e ei k cf mf HL HS)).1
+    · -- the nontrivial indices below `k` are cofinal
+      have HC : ∃ D : Set (Set.Iio k), #D ≤ μ ∧ ∀ i, ∃ d ∈ D, i ≤ d := by
+        refine ⟨{i | ¬ infra_712u_Triv C C' e i.1}, ?_, ?_⟩
+        · refine (Cardinal.mk_le_of_injective (f := fun d : {i : Set.Iio k |
+              ¬ infra_712u_Triv C C' e i.1} => (⟨d.1.1, d.2⟩ :
+              {β : WithTop L.δ // ¬ infra_712u_Triv C C' e β})) ?_).trans
+            (infra_712u_nontriv_card C C' e hμ0 hsig)
+          intro d1 d2 h
+          apply Subtype.ext; apply Subtype.ext
+          exact congrArg (fun z : {β : WithTop L.δ // ¬ infra_712u_Triv C C' e β} => z.1) h
+        · by_contra hcon
+          push Not at hcon
+          obtain ⟨i0, hi0⟩ := hcon
+          have hT : ∀ β, i0.1 ≤ β → (hβk : β < k) → infra_712u_Triv C C' e β := by
+            intro β hb hβk
+            by_contra hn
+            exact absurd (hi0 ⟨β, hβk⟩ hn) (not_lt.2 hb)
+          -- inner induction: the system is constant from `i0` on
+          have inner : ∀ j (hij : i0.1 ≤ j), j < k → (O j).1 = (O i0.1).1 ∧
+              (∀ x, Mp i0.1 j x = x) ∧
+              Function.Surjective ((C.step hij).onVertex PUnit.unit) ∧
+              Function.Surjective ((C'.step (e.withTopCongr.monotone hij)).onVertex PUnit.unit) := by
+            intro j
+            induction j using WellFoundedLT.induction with
+            | _ j IHj =>
+            intro hij hjk
+            rcases hij.lt_or_eq with hlt | heq
+            · by_cases hsj : ∃ β, β ⋖ j
+              · obtain ⟨β, hβ⟩ := hsj
+                have hiβ : i0.1 ≤ β := le_of_not_gt fun h => hβ.2 h hlt
+                have hβk : β < k := hβ.lt.trans hjk
+                obtain ⟨n1, n2, n3, n4⟩ := IHj β hβ.lt hiβ hβk
+                have sp := infra_712u_sop2_spec C C' e ei h0 h1 hm hβ (O β) (IH β hβk).1
+                obtain ⟨t1, t2⟩ := sp.2 (hT β hiβ hβk)
+                have hOj : O j = (infra_712u_sop2 C C' e ei h0 h1 hm β (O β)).1 :=
+                  (infra_78_engine_succ_eq _ _ _ _ _ hβ).1
+                have hMj : Mp i0.1 j =
+                    (infra_712u_sop2 C C' e ei h0 h1 hm β (O β)).2 ∘ Mp i0.1 β := by
+                  have := (infra_78_engine_succ_eq (infra_712u_s0 C C' e ei) id
+                    (fun f g => g ∘ f) (infra_712u_sop2 C C' e ei h0 h1 hm)
+                    (infra_712u_lop2 C C' e ei) hβ).2 i0.1
+                  rw [if_pos hlt] at this
+                  exact this
+                obtain ⟨-, s2⟩ := (hT β hiβ hβk).2 j hβ
+                obtain ⟨s1, -⟩ := (hT β hiβ hβk).2 j hβ
+                refine ⟨by rw [hOj, t1, n1], fun x => ?_, ?_, ?_⟩
+                · show Mp i0.1 j x = x
+                  rw [hMj]
+                  show (infra_712u_sop2 C C' e ei h0 h1 hm β (O β)).2 (Mp i0.1 β x) = x
+                  rw [t2]
+                  exact n2 x
+                · intro y
+                  obtain ⟨z1, hz1⟩ := s1 y
+                  obtain ⟨z2, hz2⟩ := n3 z1
+                  refine ⟨z2, ?_⟩
+                  have := DFunLike.congr_fun (C.step_comp hiβ hβ.le PUnit.unit) z2
+                  rw [← this]
+                  show (C.step hβ.le).onVertex PUnit.unit ((C.step hiβ).onVertex PUnit.unit z2) = y
+                  rw [hz2, hz1]
+                · intro y
+                  obtain ⟨z1, hz1⟩ := s2 y
+                  obtain ⟨z2, hz2⟩ := n4 z1
+                  refine ⟨z2, ?_⟩
+                  have := DFunLike.congr_fun (C'.step_comp (e.withTopCongr.monotone hiβ)
+                    (e.withTopCongr.monotone hβ.le) PUnit.unit) z2
+                  rw [← this]
+                  show (C'.step (e.withTopCongr.monotone hβ.le)).onVertex PUnit.unit
+                    ((C'.step (e.withTopCongr.monotone hiβ)).onVertex PUnit.unit z2) = y
+                  rw [hz2, hz1]
+              · -- `j` is a limit above `i0`
+                have hjmin : ¬ IsMin j := fun h => absurd (h hlt.le) (not_le.2 hlt)
+                have hsj' : ∀ i, ¬ i ⋖ j := fun i h => hsj ⟨i, h⟩
+                let cfj : Set.Iio j → infra_712u_State P μ hμ := fun i => O i.1
+                let mfj : Set.Iio j → Set.Iio j → μ.ord.ToType → μ.ord.ToType :=
+                  fun a b => Mp a.1 b.1
+                have HLj : infra_712u_LimHyp C C' e ei j cfj mfj :=
+                  ⟨hsj', ⟨i0.1, hlt⟩, fun i => (IH i.1 (i.2.trans hjk)).1,
+                    fun i i' h => ((IH i'.1 (i'.2.trans hjk)).2.1 i.1 h).1,
+                    fun i x => hself i.1 x,
+                    fun i i' l hii hil x => (IH l.1 (l.2.trans hjk)).2.2.2 i.1 i'.1 hii hil x,
+                    fun i i' h x => ((IH i'.1 (i'.2.trans hjk)).2.1 i.1 h).2.1 x,
+                    fun i i' h x => ((IH i'.1 (i'.2.trans hjk)).2.1 i.1 h).2.2 x⟩
+                have hb0 : ∀ i : Set.Iio j, ∀ (h : i0.1 ≤ i.1), (O i.1).1 = (O i0.1).1 ∧
+                    (∀ x, Mp i0.1 i.1 x = x) ∧
+                    Function.Surjective ((C.step h).onVertex PUnit.unit) ∧
+                    Function.Surjective ((C'.step (e.withTopCongr.monotone h)).onVertex PUnit.unit) :=
+                  fun i h => IHj i.1 i.2 h (i.2.trans hjk)
+                have HSj : ∃ b, infra_712u_StableAt C C' e j cfj mfj b :=
+                  ⟨⟨i0.1, hlt⟩, fun i h => (hb0 i h).1, fun i h x => (hb0 i h).2.1 x,
+                    fun i h => (hb0 i h).2.2.1, fun i h => (hb0 i h).2.2.2⟩
+                have hdef : infra_712u_lop2 C C' e ei j cfj mfj =
+                    Classical.choose (infra_712u_stable_R C C' e ei j cfj mfj HLj HSj) := by
+                  unfold infra_712u_lop2
+                  rw [dif_pos HLj, dif_pos HSj]
+                obtain ⟨hLS, b', hb'st, hU, hid⟩ :=
+                  Classical.choose_spec (infra_712u_stable_R C C' e ei j cfj mfj HLj HSj)
+                rw [← hdef] at hLS hU hid
+                have hOj : O j = (infra_712u_lop2 C C' e ei j cfj mfj).1 :=
+                  (infra_78_engine_lim_eq _ _ _ _ _ hjmin hsj).1
+                have hMj : Mp i0.1 j = (infra_712u_lop2 C C' e ei j cfj mfj).2 ⟨i0.1, hlt⟩ := by
+                  have := (infra_78_engine_lim_eq (infra_712u_s0 C C' e ei) id
+                    (fun f g => g ∘ f) (infra_712u_sop2 C C' e ei h0 h1 hm)
+                    (infra_712u_lop2 C C' e ei) hjmin hsj).2 i0.1
+                  rw [dif_pos hlt] at this
+                  exact this
+                refine ⟨?_, fun x => ?_, ?_, ?_⟩
+                · rw [hOj, hU]
+                  rcases le_total i0.1 b'.1 with h | h
+                  · exact (hb0 b' h).1
+                  · exact (hb'st.1 ⟨i0.1, hlt⟩ h).symm
+                · show Mp i0.1 j x = x
+                  rw [hMj]
+                  rcases le_total b' ⟨i0.1, hlt⟩ with h | h
+                  · exact hid _ h x
+                  · rw [← hLS.2.2.1 ⟨i0.1, hlt⟩ b' h x]
+                    rw [hid b' le_rfl]
+                    exact (hb0 b' h).2.1 x
+                · exact infra_712u_surj_limit C j hsj' i0.1 hlt
+                    (fun i h hij' => (hb0 ⟨i, hij'⟩ h).2.2.1)
+                · have hsjE : ∀ i', ¬ i' ⋖ e.withTopCongr j := fun i' hc => by
+                    obtain ⟨i, rfl⟩ := e.withTopCongr.surjective i'
+                    exact hsj' i ((apply_covBy_apply_iff e.withTopCongr).1 hc)
+                  refine infra_712u_surj_limit C' (e.withTopCongr j) hsjE (e.withTopCongr i0.1)
+                    (e.withTopCongr.strictMono hlt) (fun i' h hij' => ?_)
+                  obtain ⟨i, rfl⟩ := e.withTopCongr.surjective i'
+                  exact (hb0 ⟨i, e.withTopCongr.lt_iff_lt.1 hij'⟩
+                    (e.withTopCongr.le_iff_le.1 h)).2.2.2
+            · subst heq
+              refine ⟨rfl, hself _, fun y => ⟨y, infra_712u_step_self _ _ y⟩,
+                fun y => ⟨y, infra_712u_step_self _ _ y⟩⟩
+          apply HS
+          refine ⟨i0, fun i h => (inner i.1 h i.2).1, fun i h x => (inner i.1 h i.2).2.1 x,
+            fun i h => (inner i.1 h i.2).2.2.1, fun i h => (inner i.1 h i.2).2.2.2⟩
+      have hdef : infra_712u_lop2 C C' e ei k cf mf =
+          Classical.choose (infra_712u_cof_R C C' e ei k cf mf HL HC) := by
+        unfold infra_712u_lop2
+        rw [dif_pos HL, dif_neg HS, dif_pos HC]
+      rw [hdef]
+      exact Classical.choose_spec (infra_712u_cof_R C C' e ei k cf mf HL HC)
+  set R := infra_712u_lop2 C C' e ei k cf mf with hRdef
+  obtain ⟨okR, harr, hcoh, hst1, hst2⟩ := spec
+  refine ⟨hO ▸ okR, fun i hik => ?_, hself k, fun i j hij hjk x => ?_⟩
+  · rcases hik.lt_or_eq with hik | rfl
+    · rw [hM i hik, hO]
+      exact ⟨harr ⟨i, hik⟩, fun x => (hst1 ⟨i, hik⟩ x).symm, fun x => (hst2 ⟨i, hik⟩ x).symm⟩
+    · refine ⟨?_, fun x => ?_, fun x => ?_⟩
+      · have : Mp i i = id := funext (hself i)
+        rw [this]
+        exact infra_712u_IsArr.id _
+      · rw [hself]; exact congrArg _ (infra_712u_step_self _ _ x).symm
+      · rw [hself]; exact congrArg _ (infra_712u_step_self _ _ x).symm
+  · rcases hjk.lt_or_eq with hjk | rfl
+    · have hik := lt_of_le_of_lt hij hjk
+      rw [hM i hik, hM j hjk]
+      exact (hcoh ⟨i, hik⟩ ⟨j, hjk⟩ hij x).symm
+    · rw [hself]
+
+end LongAssembly
+
 /-- **7.12(2), the common object for lists of length at most the level (statement).** -/
 def infra_712u_common_short_statement (P : SingleModelData K) : Prop :=
   ∀ {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible), μ ∈ infra_712_levels P →
@@ -1006,7 +1408,7 @@ theorem infra_712u_common_short (P : SingleModelData K) : infra_712u_common_shor
   · exact Sigma.ext (Subsingleton.elim _ _) (heq_of_eq ((hG.arr_apply _).trans
       ((hmk i (WithTop.coe_lt_top i) a).trans (hG'.arr_apply _).symm)))
 
-/-- **7.12(2), the common object for lists longer than the level (statement; open tip
+/-- **7.12(2), the common object for lists longer than the level (statement; proved
 `infra_712u_common_long`).** Total length `≤ μ` but `|δ| > μ`, so all but at most `μ` entries
 are empty tuples; the packed recursion's limit unions are then indexed by more than `μ` stages
 (`infra_712u_packed_limit` needs `|WithTop δ| ≤ μ`). -/
@@ -1038,12 +1440,23 @@ theorem infra_712u_common_of_parts (P : SingleModelData K)
   · exact hs hμ hlev A L L' e ei hδ C C' hm
   · exact hl hμ hlev A L L' e ei h1 h2 hδ C C' hm
 
-/-- **7.12(2), long lists (open tip `infra_712u_common_long`).** -/
+/-- **7.12(2), long lists (proved, cycle 89).** The long-list recursion `infra_712u_good2`
+(trivial steps keep the state; stable or small-cofinal limits) read off at the top stage. -/
 theorem infra_712u_common_long (P : SingleModelData K) : infra_712u_common_long_statement P := by
-  sorry
+  intro μ hμ hl A L L' _ _ _ _ e ei hsig _ _ C C' hm
+  have hw : ℵ₀ < μ := (le_self_add : ℵ₀ ≤ infra_75_wide P ℵ₀).trans_lt hl.2.2
+  have h0 : μ ∈ recursionClosedLevels P ℵ₀ := infra_712_recursionClosed_of_615 hl.2.1 le_rfl hw
+  have h1 : Order.succ ℵ₀ ≤ μ := Order.succ_le_of_lt hw
+  obtain ⟨⟨hG, hG', hA, hmk⟩, -⟩ := infra_712u_good2 C C' e ei h0 h1 hm hw.le hsig ⊤
+  refine ⟨_, hG.arr, hG'.arr, fun v => ?_, fun i a => ?_⟩
+  · obtain rfl : v = PUnit.unit := Subsingleton.elim _ _
+    exact DFunLike.ext _ _ fun x =>
+      (hG.arr_apply _).trans ((hA x).trans (hG'.arr_apply _).symm)
+  · exact Sigma.ext (Subsingleton.elim _ _) (heq_of_eq ((hG.arr_apply _).trans
+      ((hmk i (WithTop.coe_lt_top i) a).trans (hG'.arr_apply _).symm)))
 
-/-- **7.12(2), the common object (glue, cycle 89).** The `|δ| ≤ μ` case is proved
-(`infra_712u_common_short`); the long case is the open tip `infra_712u_common_long`. -/
+/-- **7.12(2), the common object (proved, cycle 89).** The `|δ| ≤ μ` case
+(`infra_712u_common_short`) and the long case (`infra_712u_common_long`). -/
 theorem infra_712u_common (P : SingleModelData K) : infra_712u_common_statement P :=
   infra_712u_common_of_parts P (infra_712u_common_short P) (infra_712u_common_long P)
 

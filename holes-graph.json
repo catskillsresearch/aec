@@ -1,6 +1,6 @@
 {
- "updated": "2026-11-18 16:47",
- "sorryCount": 41,
+ "updated": "2026-11-18 16:59",
+ "sorryCount": 40,
  "legend": {
   "open": "No unfinished required proof-deps — try next",
   "blocked": "Waiting on incomplete required proof-deps",
@@ -576,9 +576,9 @@
    "label": "Lem 7.12",
    "section": 7,
    "file": "AEC/Section7/Results.lean",
-   "status": "blocked",
-   "blocker": "infra_712u_common",
-   "detail": "RESTATED cycle 76 to the tied notions (English Lemma 7.12): over SingleModelData P, a tail of levels; (1) L well-ordered, #L.delta <= mu (Def 7.10 size convention), ProductIndependentTied L (tied finite products of finite sublists, IsFiniteProductTied)  ==>  exists C : TiedListWitnessingChain L with C.AllDominatedIncrement (top/listToTop/mark_spec = the whole configuration retained in an extension of the given ambient); (2) L, L' of total length <= mu with tied witnessing chains and the same successive marginal types over A (order iso e, per-entry equivs ei)  ==>  SameGaloisType L.whole L'.whole (one amalgam identifies the entire lists). Old untied statement removed (unused). Split: lemma_7_12_existence (clause 1), lemma_7_12_uniqueness (clause 2); the paper's extension of (2) to bounded individual tuples is lemma_7_12_bounded. Remaining untied consumer: theorem_7_13 still uses ProductIndependent / ListWitnessingChain-era notions."
+   "status": "done",
+   "blocker": null,
+   "detail": "PROVED cycle 89 (sorry-free; #print axioms: propext, Classical.choice, Quot.sound). RESTATED cycle 76 to the tied notions (English Lemma 7.12): over SingleModelData P, a tail of levels; (1) L well-ordered, #L.delta <= mu (Def 7.10 size convention), ProductIndependentTied L (tied finite products of finite sublists, IsFiniteProductTied)  ==>  exists C : TiedListWitnessingChain L with C.AllDominatedIncrement (top/listToTop/mark_spec = the whole configuration retained in an extension of the given ambient); (2) L, L' of total length <= mu with tied witnessing chains and the same successive marginal types over A (order iso e, per-entry equivs ei)  ==>  SameGaloisType L.whole L'.whole (one amalgam identifies the entire lists). Old untied statement removed (unused). Split: lemma_7_12_existence (clause 1), lemma_7_12_uniqueness (clause 2); the paper's extension of (2) to bounded individual tuples is lemma_7_12_bounded. Remaining untied consumer: theorem_7_13 still uses ProductIndependent / ListWitnessingChain-era notions."
   },
   {
    "id": "lemma_7_2",
@@ -631,9 +631,9 @@
    "label": "Thm 7.13",
    "section": 7,
    "file": "AEC/Section7/Results.lean",
-   "status": "blocked",
+   "status": "open",
    "blocker": null,
-   "detail": "RESTATED (grokbot_02): bounded product-independent L over X: (1a) whole type determined by marginals among product-independent lists, (1b) every actual free lift of L.whole is product-independent (finite sublists are IsFiniteProduct of lifted marginals), (2) SatisfiesContinuity L.whole, (3) all-dominated realization over X with a map over X+b into an ambient containing L. Open sorry; blocked on lemma_7_12."
+   "detail": "RESTATED (grokbot_02): bounded product-independent L over X: (1a) whole type determined by marginals among product-independent lists, (1b) every actual free lift of L.whole is product-independent (finite sublists are IsFiniteProduct of lifted marginals), (2) SatisfiesContinuity L.whole, (3) all-dominated realization over X with a map over X+b into an ambient containing L. Open sorry; ready (cycle 89: lemma_7_12 proved)."
   },
   {
    "id": "theorem_7_9",
@@ -2995,18 +2995,18 @@
    "label": "Lemma 7.12(2): lists with tied chains and equal marginals have one whole amalgam",
    "section": 7,
    "file": "AEC/Section7/Lemma712Uniqueness.lean",
-   "status": "blocked",
-   "blocker": "infra_712u_common",
-   "detail": "Blocked (cycle 88) only on infra_712u_marks: lemma_7_12_of_marks (proved) derives clause (2), verbatim, from it via C.marksWhole_sameGalois and infra_712_trans_level. No large amalgam needed."
+   "status": "done",
+   "blocker": null,
+   "detail": "PROVED cycle 89: clause (2) of lemma_7_12 via lemma_7_12_of_marks from infra_712u_marks. Axioms clean."
   },
   {
    "id": "lemma_7_12_bounded",
    "label": "Lemma 7.12(2) for bounded individual tuples",
    "section": 7,
    "file": "AEC/Section7/Results.lean",
-   "status": "blocked",
-   "blocker": "lemma_7_12_uniqueness",
-   "detail": "Blocked/tracked (cycle 76). The paper: \"This assertion also permits bounded, rather than finite, individual tuples in the witnessing chains.\" Needs a TupleList variant without finite_each (bounded entries) and the corresponding tied chain; same proof as lemma_7_12_uniqueness (\"only bounded individual marginal types were used in a single step\")."
+   "status": "open",
+   "blocker": null,
+   "detail": "Open (ready since cycle 89; tracked cycle 76). The paper: \"This assertion also permits bounded, rather than finite, individual tuples in the witnessing chains.\" Needs a TupleList variant without finite_each (bounded entries) and the corresponding tied chain; same proof as lemma_7_12_uniqueness (\"only bounded individual marginal types were used in a single step\")."
   },
   {
    "id": "infra_75_tests_reduction",
@@ -3211,9 +3211,9 @@
    "label": "7.12(2): two witnessing chains' marks have the same type",
    "section": 7,
    "file": "AEC/Section7/Lemma712Uniqueness.lean",
-   "status": "blocked",
-   "blocker": "infra_712u_common",
-   "detail": "Reduced (cycle 88) to infra_712u_common via infra_712u_marks_of_common (proved readout through the common object). Open (cycle 88; the one sorry under lemma_7_12). infra_712u_marks_statement: at mu in infra_712_levels P, chains C, C' of L, L' (order iso e, per-entry equivs ei, same marginals over A) => SameGaloisType C.marksWhole C'.marksWhole. Plan (text.md l.238-242): recursion on j <= top of common N_j (level mu) with arrows M_j -> N_j, M'_j -> N_j agreeing on A and on marks < j. Successor: tied free lift c of p_j over N_j (infra_610_tied_free_lift), restrictions to both images are free over M_j / M'_j (host_target/host_source'), equal to tp(b_j/M_j) by free-lift uniqueness (infra_610_majority_unique), then infra_78_same_level_type_amalgam for M_{j+1} with (N_j, c) over M_j, then again for M'_{j+1} (types preserved by arrows); limits: infra_78_chain_union_kappa + continuity of both chains; base: M_0 = A (first). infra_712_trans_level makes all compositions level-safe (no large amalgam). Cycle 88: successor comparison infra_712u_step PROVED; remaining = the transfinite recursion of common objects N_j (successor: tied free lift + infra_712u_step twice + infra_78_same_level_type_amalgam twice + Thm 4.11(1) to merge; limit: infra_78_chain_union_kappa with both chains continuous; base M_0 = A via first) and reading off the marks at top. Cycle 88c: the full successor step infra_712u_succ is PROVED; remaining = coherent transfinite recursion (chain engine) carrying N_j, arrows M_j -> N_j, M'_j -> N_j (successor: infra_712u_succ applied to q = mark tuple hosted in M_{j+1} via TiedListPreChain.free_pull-style HostRel, marginals identified through C.top/C'.top and the hypothesis; limit: infra_78_chain_union_kappa + continuity of both chains), then read off SameGaloisType of the marks at top. Cycle 88f: chain-form successor infra_712u_chain_succ and limit factorization infra_712u_factor_continuous PROVED. Remaining is only the recursion assembly: build (N_j, g_j : M_j -> N_j, g'_j : M'_{e j} -> N_j, coherent N-steps) by infra_78_coherent_chain_engine over WithTop L.delta (transport e to WithTop), successor = infra_712u_chain_succ, limit = chain_union_kappa of the N's + infra_712u_factor_continuous for both chains (continuity field), base = A (first: into bijective, inverse by infra_78_struct_inverse); finally marks at top identified in N_top => SameGaloisType C.marksWhole C'.marksWhole."
+   "status": "done",
+   "blocker": null,
+   "detail": "PROVED cycle 89: infra_712u_marks_of_common (infra_712u_common). Axioms clean."
   },
   {
    "id": "infra_712u_step",
@@ -3256,9 +3256,9 @@
    "label": "7.12(2): common level-mu object receiving both chains' last stages, identifying marks",
    "section": 7,
    "file": "AEC/Section7/Lemma712Common.lean",
-   "status": "blocked",
-   "blocker": "infra_712u_common_long",
-   "detail": "Cycle 89: split by list length. infra_712u_common_of_parts (proved glue): the |delta| <= mu case is infra_712u_common_short (PROVED: packed recursion infra_712u_good over WithTop L.delta via the generic engine's unfolding equations); the |delta| > mu case is the open tip infra_712u_common_long. Moved to AEC/Section7/Lemma712Common.lean."
+   "status": "done",
+   "blocker": null,
+   "detail": "PROVED cycle 89: infra_712u_common_of_parts from infra_712u_common_short (|delta| <= mu) and infra_712u_common_long. AEC/Section7/Lemma712Common.lean. Axioms clean."
   },
   {
    "id": "infra_712u_base",
@@ -3301,9 +3301,9 @@
    "label": "7.12(2) common object for lists with |delta| > mu (total length <= mu, so all but <= mu entries empty)",
    "section": 7,
    "file": "AEC/Section7/Lemma712Common.lean",
-   "status": "open",
+   "status": "done",
    "blocker": null,
-   "detail": "Open (cycle 89). Needed because lemma_7_12 (2) bounds the total length #(Sigma i, indexAt i) <= mu, not #delta. All step lemmas PROVED: infra_712u_trivial_R (trivial successor keeps N), infra_712u_succ_R (nontrivial successor), infra_712u_packed_limit_cofinal (limit with a cofinal set of <= mu stages), infra_712u_packed_limit_stable (limit of a system constant from b on), infra_712u_nontrivial_card (<= mu non-onto steps per chain; <= mu nonempty entries). Remaining: the assembly, as infra_712u_good but with sop = trivial-if-possible and lop = stable-if-possible else cofinal; the extra induction shows that if the stable case fails at k then the nontrivial successor indices below k are cofinal (else the system is constant above their bound), giving the cofinal set of size <= mu. Alternative: if the paper intends nonempty tuples, add #L.delta <= mu to clause (2) only with the user's agreement."
+   "detail": "PROVED cycle 89: infra_712u_common_long via the long-list recursion infra_712u_good2 (sop2: trivial indices keep the state, infra_712u_trivial_R; lop2: stable limit infra_712u_packed_limit_stable if the system is constant from some stage, else a cofinal union over the nontrivial indices, of size <= mu by infra_712u_nontriv_card; an inner induction shows a bound on the nontrivial indices makes the system constant). Axioms clean."
   },
   {
    "id": "infra_712u_packed_limit_cofinal",
@@ -6777,6 +6777,6 @@
    "kind": "hard"
   }
  ],
- "doneCount": 310,
+ "doneCount": 315,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

@@ -4,7 +4,7 @@ Inventory of Lean `sorry` holes in this repository, ordered **prove-first**: Lay
 are holes with no remaining unfinished prerequisites; later layers wait on earlier
 ones. Apex theorems 1.2 and 1.3 are **last**.
 
-**Count:** 41 `sorry`, 0 `admit`.
+**Count:** 40 `sorry`, 0 `admit`.
 Sections **2**, **3**, **4**, and **13** have no holes.
 
 **Dependency basis:** paper/logical order from `dependencies.mermaid`
@@ -377,7 +377,7 @@ Lean: imports `AEC.Section6.Results`.
 | `infra_75_free_eval_glue` | free evaluation from the two steps | **done** (`infra_75_free_eval_of_parts`) |
 | `infra_75_product_free` | Prop 7.5(3) tied: product with `b` + all-dominated `Y` ⇒ `tp(x/Y)` free from `X` | **blocked** on `infra_612_tied_symmetry`, `infra_612_tied_finite` |
 | `infra_711_induction` | Lemma 7.11 induction assembly | [`Lemma711Induction.lean`](AEC/Section7/Lemma711Induction.lean) (**done**, cycle 75; `lemma_7_11` from `infra_711_successor_statement`; first stage via `infra_711_tiedFree_of_bijective`, limit via tied 6.13) |
-| `lemma_7_12` | Lemma 7.12 | `AEC/Section7/Results.lean` (**blocked**; restated cycle 76 to the tied notions: `ProductIndependentTied`, `TiedListWitnessingChain`; old untied form removed, unused) |
+| `lemma_7_12` | Lemma 7.12 | `AEC/Section7/Results.lean` (**done**, cycle 89: sorry-free, axioms propext / Classical.choice / Quot.sound; restated cycle 76 to the tied notions: `ProductIndependentTied`, `TiedListWitnessingChain`) |
 | `lemma_7_12_existence` | Lemma 7.12(1) | done (cycle 87/88): lemma_7_12_existence + lemma_7_12_existence_tail (tail infra_712_levels) |
 | `infra_712_prechain` | 7.12(1) pre-chain construction | **done** (cycle 86; `infra_712_prechain_of_recursion P (infra_712_recursion P)`) |
 | `infra_712_succ` | 7.12(1) successor step | **done** (cycle 85c; `infra_712_succ` via level-wise `infra_79_existence_at` + `infra_79_primeness_same_level`; axioms clean) |
@@ -387,8 +387,8 @@ Lean: imports `AEC.Section6.Results`.
 | `infra_712_free_step` | 7.12(1) one freeness step | done (cycle 87): AEC/Section7/Lemma712Products.lean |
 | `infra_712_products` | 7.12(1) products of `bᵢ` with earlier marks | done (cycle 87): AEC/Section7/Lemma712Products.lean |
 | `infra_712_products_level` | 7.12: plain finite tied products → level | [`Lemma712Products.lean`](AEC/Section7/Lemma712Products.lean) (**done**, cycle 86; level copies + one-amalgam pullback; axioms clean) |
-| `lemma_7_12_uniqueness` | Lemma 7.12(2) | blocked on infra_712u_marks (glue lemma_7_12_of_marks proved) |
-| `lemma_7_12_bounded` | Lemma 7.12(2), bounded individual tuples | **blocked** on `lemma_7_12_uniqueness`; HARD edge `lemma_7_12_bounded --> lemma_7_12` (cycle 78) |
+| `lemma_7_12_uniqueness` | Lemma 7.12(2) | done (cycle 89): lemma_7_12_of_marks + infra_712u_marks |
+| `lemma_7_12_bounded` | Lemma 7.12(2), bounded individual tuples | **open** (cycle 89: `lemma_7_12_uniqueness` done); HARD edge `lemma_7_12_bounded --> lemma_7_12` (cycle 78) |
 | `theorem_7_13` | Theorem 7.13 | `AEC/Section7/Results.lean:296` (restated: uniqueness, product-independent free lift, continuity, primeness) |
 
 ### L4 — Section 8 (5 sorry)
@@ -587,16 +587,16 @@ Counts are standalone `sorry` lines in `AEC/` (`git grep -nE '^\s*sorry\s*$'`), 
 | `infra_712_products_L` | infra_712_products_L | done (cycle 87): AEC/Section7/Lemma712Products.lean |
 | `infra_712_trans_level` | infra_712_trans_level | done (cycle 88): AEC/Section7/Lemma712Uniqueness.lean |
 | `infra_712u_reduce` | infra_712u_reduce | done (cycle 88): AEC/Section7/Lemma712Uniqueness.lean |
-| `infra_712u_marks` | infra_712u_marks | blocked on infra_712u_common (glue infra_712u_marks_of_common proved) |
+| `infra_712u_marks` | infra_712u_marks | done (cycle 89): infra_712u_marks_of_common + infra_712u_common |
 | `infra_712u_step` | infra_712u_step | done (cycle 88): AEC/Section7/Lemma712Uniqueness.lean |
 | `infra_712u_succ` | infra_712u_succ | done (cycle 88): AEC/Section7/Lemma712Uniqueness.lean |
 | `infra_712u_limit` | infra_712u_limit | done (cycle 88): AEC/Section7/Lemma712Uniqueness.lean |
 | `infra_712u_chain_succ` | infra_712u_chain_succ | done (cycle 88): AEC/Section7/Lemma712Uniqueness.lean |
-| `infra_712u_common` | infra_712u_common | blocked on infra_712u_common_long (cycle 89 glue infra_712u_common_of_parts proved): AEC/Section7/Lemma712Common.lean |
+| `infra_712u_common` | infra_712u_common | done (cycle 89): AEC/Section7/Lemma712Common.lean (common_short + common_long) |
 | `infra_712u_packed` | infra_712u_packed | done (cycle 89): AEC/Section7/Lemma712Common.lean |
 | `infra_712u_good` | infra_712u_good | done (cycle 89): AEC/Section7/Lemma712Common.lean |
 | `infra_712u_common_short` | infra_712u_common_short | done (cycle 89): AEC/Section7/Lemma712Common.lean |
-| `infra_712u_common_long` | infra_712u_common_long | open (cycle 89): AEC/Section7/Lemma712Common.lean, the only sorry under lemma_7_12 (lists with more than μ entries, at most μ nonempty) |
+| `infra_712u_common_long` | infra_712u_common_long | done (cycle 89): AEC/Section7/Lemma712Common.lean (long-list recursion infra_712u_good2) |
 | `infra_712u_packed_limit_cofinal` | infra_712u_packed_limit_cofinal | done (cycle 89): AEC/Section7/Lemma712Common.lean |
 | `infra_712u_nontrivial_card` | infra_712u_nontrivial_card | done (cycle 89): AEC/Section7/Lemma712Common.lean |
 | `infra_712u_trivial_R` | infra_712u_trivial_R | done (cycle 89): AEC/Section7/Lemma712Common.lean |
