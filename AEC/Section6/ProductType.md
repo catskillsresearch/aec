@@ -8,7 +8,7 @@ $$(p \otimes q)^B = p_B \otimes q^B.$$
 
 These assertions hold across eligible levels when all originating arities and uniform testing costs are bounded at the smallest level.
 
-**Done** for same-level existence and anchored independence via [`Proposition_6.12.md`](Proposition_6.12.md) / `proposition_6_12`. `IsProduct` is the witness (a realization of `p`, a free lift of `q`, and the joint). Symmetry, `IsFiniteProduct`, base change, mixed levels, and untied free-lift stationarity stay deferred.
+**Restated (grokbot_02):** the honest `proposition_6_12` (all English clauses, tied products `IsProductTied`) is in [`ProductTied.lean`](ProductTied.lean); existence proved (`infra_612_tied_exists`), clauses 2–7 open sub-tips. Earlier untied note (degenerate): same-level existence and anchored independence via [`Proposition_6.12.md`](Proposition_6.12.md) / `proposition_6_12`. `IsProduct` is the witness (a realization of `p`, a free lift of `q`, and the joint). Symmetry, `IsFiniteProduct`, base change, mixed levels, and untied free-lift stationarity stay deferred.
 
 **[ProductType.lean](ProductType.lean)**
 

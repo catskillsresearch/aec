@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-18 08:21",
-  "sorryCount": 44,
+  "updated": "2026-11-18 08:39",
+  "sorryCount": 45,
   "legend": {
     "open": "No unfinished required proof-deps — try next",
     "blocked": "Waiting on incomplete required proof-deps",
@@ -494,11 +494,10 @@
       "id": "proposition_6_12",
       "label": "Prop 6.12",
       "section": 6,
-      "file": "AEC/Section6/Results.lean",
+      "file": "AEC/Section6/ProductTied.lean",
       "status": "blocked",
-      "blocker": null,
-      "detail": "DEGENERATE CLOSURE, NOT DONE (grokbot_02 audit). IsProduct uses the untied IsFreeLift, whose majority clause never mentions q's values or the query (audit_free_from_vacuous), so clause 1 only asserts some joint realization of p and q, not a product. Clause 2 (anchored uniqueness) has real hypotheses but is about this weak IsProduct. Proposed honest restatement: inside IsProduct replace IsFreeLift q y x.incl x.incl_arrow ey by IsTiedFree x.incl q y ey; reprove existence (tied free lift, infra_610_tied_free_lift) and uniqueness. Lean proof stays sorry-free but does not count. Previous note: Done for same-level SingleModelData. Existence via stationary_free_extension_exists (realize p by itself, freely lift q). Independence (infra_612_product_unique): two products along one realization of p have the same Galois type when both free lifts of q are majority values of one code on a common parameter list. Deferred: symmetry, IsFiniteProduct, base change (p⊗q)^B = p_B ⊗ q^B, mixed levels, and stationarity for an untied IsFreeLift.",
-      "degenerate": true
+      "blocker": "infra_612_tied_independence",
+      "detail": "Restated to the full English (grokbot_02): proposition_6_12 in AEC/Section6/ProductTied.lean (moved out of Section6/Results.lean: uses Section 7 tied infra; old degenerate wrapper renamed proposition_6_12_untied). IsProductTied p q joint e: x realizes p (SameGaloisType, host at any eligible level), y is a tied free lift (IsTiedFreeMixed x.incl q y ey), joint = tp(x.join y / A). IsFiniteProductTied: iterated, with explicit coordinate map E. Clauses: (1) existence PROVED (infra_612_tied_exists); (2) independence of all choices; (3) symmetry (sumComm); (4) associativity (sumAssoc; finite association by induction); (5) permutation invariance of finite products (sigmaCongrLeft); (6) commuting with coordinate projections (reindex along s : Fin m ↪ Fin n); (7) base change (p⊗q)^B = p_B ⊗ q^B for A -> B at mu' >= mu in the tail. Across eligible levels via arbitrary host levels. Clauses 2-7 are sorry: sub-tips infra_612_tied_independence, infra_612_tied_symmetry, infra_612_tied_assoc, infra_612_tied_finite, infra_612_tied_base_change."
     },
     {
       "id": "infra_613_freeFrom_trans",
@@ -2044,6 +2043,60 @@
       "status": "open",
       "blocker": null,
       "detail": "Open (sub-tip split off lemma_6_11; the sorry branch of lemma_6_11). Same hypotheses as lemma_6_11 with nu < mu: conclude IsTiedFreeMixed f (q|A) q refl. Route: I is an approximation sequence of q|A at chi (as in infra_611_tied, with mixed diagram_preserved); common mixed moves (infra_78_common_move_mixed) give tied freeness up to the testing arity; needs a mixed testing reduction (bounded-arity IsTiedFreeMixed => all queries below nu), e.g. via the mixed tied free lift infra_78_tied_free_lift_mixed plus Thm 6.6 testing over B at level mu."
+    },
+    {
+      "id": "infra_612_tied_exists",
+      "label": "Prop 6.12 (1) existence of tied product",
+      "section": 6,
+      "file": "AEC/Section6/ProductTied.lean",
+      "status": "done",
+      "blocker": null,
+      "detail": "Done (no sorry; axioms propext/choice/Quot.sound): infra_612_tied_exists in AEC/Section6/ProductTied.lean. Recursion-closed level mu >= sigma^+, p q over A with p.nu = q.nu = mu, #q.idx <= sigma: exists joint e, IsProductTied p q joint e (x = p, y = tied free lift of q to p.host by infra_610_tied_free_lift, joint = p.join y)."
+    },
+    {
+      "id": "infra_612_tied_independence",
+      "label": "Prop 6.12 (2) independence of choices (tied)",
+      "section": 6,
+      "file": "AEC/Section6/ProductTied.lean",
+      "status": "open",
+      "blocker": null,
+      "detail": "Open. Any two IsProductTied p q j1 e1, IsProductTied p q j2 e2 give SameGaloisType j1 j2 e1.symm e2.symm (realizations at any eligible levels). Same-level route: Thm 6.6 testing over A; for a test list Y in A, a move Z0 of (x_k, Y) along x_k.incl over a long sequence of q works for both k (x1 ~ x2 over A, infra_72_diagramEq_of_sameGalois), and tied freeness gives both joints the type of q on Z0. Mixed levels need mixed testing."
+    },
+    {
+      "id": "infra_612_tied_symmetry",
+      "label": "Prop 6.12 (3) symmetry p⊗q = q⊗p (tied)",
+      "section": 6,
+      "file": "AEC/Section6/ProductTied.lean",
+      "status": "blocked",
+      "blocker": "infra_612_tied_independence",
+      "detail": "Open. IsProductTied p q j1 e1 and IsProductTied q p j2 e2 give SameGaloisType j1 j2 e1.symm (e2.symm.trans sumComm)."
+    },
+    {
+      "id": "infra_612_tied_assoc",
+      "label": "Prop 6.12 (4) associativity (tied)",
+      "section": 6,
+      "file": "AEC/Section6/ProductTied.lean",
+      "status": "blocked",
+      "blocker": "infra_612_tied_independence",
+      "detail": "Open. (p⊗q)⊗r = p⊗(q⊗r) with sumAssoc; finite association by induction."
+    },
+    {
+      "id": "infra_612_tied_finite",
+      "label": "Prop 6.12 (5,6) finite products: permutation invariance and projections (tied)",
+      "section": 6,
+      "file": "AEC/Section6/ProductTied.lean",
+      "status": "blocked",
+      "blocker": "infra_612_tied_assoc",
+      "detail": "Open. IsFiniteProductTied: permutation invariance (sigmaCongrLeft) and commuting with coordinate projections (reindex along s : Fin m ↪ Fin n)."
+    },
+    {
+      "id": "infra_612_tied_base_change",
+      "label": "Prop 6.12 (7) base change (p⊗q)^B = p_B⊗q^B (tied)",
+      "section": 6,
+      "file": "AEC/Section6/ProductTied.lean",
+      "status": "blocked",
+      "blocker": "infra_612_tied_independence",
+      "detail": "Open. For f : A -> B (mu <= mu' in the tail), tied free lifts pB, qB, jB of p, q, joint = p⊗q, and IsProductTied pB qB jB' e': SameGaloisType jB jB'."
     }
   ],
   "edges": [
@@ -3785,8 +3838,58 @@
       "from": "infra_611_tied_mixed",
       "to": "lemma_6_11",
       "kind": "hard"
+    },
+    {
+      "from": "infra_612_tied_exists",
+      "to": "proposition_6_12",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_612_tied_independence",
+      "to": "proposition_6_12",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_612_tied_symmetry",
+      "to": "proposition_6_12",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_612_tied_assoc",
+      "to": "proposition_6_12",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_612_tied_finite",
+      "to": "proposition_6_12",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_612_tied_base_change",
+      "to": "proposition_6_12",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_612_tied_independence",
+      "to": "infra_612_tied_symmetry",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_612_tied_independence",
+      "to": "infra_612_tied_assoc",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_612_tied_assoc",
+      "to": "infra_612_tied_finite",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_612_tied_independence",
+      "to": "infra_612_tied_base_change",
+      "kind": "hard"
     }
   ],
-  "doneCount": 171,
+  "doneCount": 172,
   "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 43. Uncommitted in /tmp/aec-grok."
 }

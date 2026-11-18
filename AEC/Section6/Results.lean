@@ -561,8 +561,10 @@ deferred. So is stationarity for an untied `IsFreeLift`: its majority witness ne
 the type joint (`same_head` stays demoted), so a bare `IsProduct` does not by itself fix
 the cross-diagram. 
 
-**Audit (grokbot_02): degenerate as formalized, NOT counted done.** `IsProduct` uses the untied `IsFreeLift`, whose majority clause never mentions `q`'s values (`AEC/Audit/FreeFromVacuous.lean`), so clause 1 only asserts some joint realization; honest form uses `IsTiedFree x.incl q y ey` inside `IsProduct`. -/
-theorem proposition_6_12 {K : AbstractElementaryClass.{u}}
+**Audit (grokbot_02): degenerate as formalized, NOT counted done.** `IsProduct` uses the untied `IsFreeLift`, whose majority clause never mentions `q`'s values (`AEC/Audit/FreeFromVacuous.lean`), so clause 1 only asserts some joint realization. The English `proposition_6_12` (tied
+products, all clauses) is in `AEC/Section6/ProductTied.lean`; this wrapper is kept as
+`proposition_6_12_untied`. -/
+theorem proposition_6_12_untied {K : AbstractElementaryClass.{u}}
     (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ) :
     ∃ T, ∃ hT : Tail P.eligible T,
       ∀ μ (hμ : μ ∈ T) (A : P.scheme.Object μ (Tail.mem hT hμ))
