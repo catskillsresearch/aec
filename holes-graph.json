@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-18 07:22",
+  "updated": "2026-11-18 07:26",
   "sorryCount": 43,
   "legend": {
     "open": "No unfinished required proof-deps — try next",
@@ -1938,9 +1938,18 @@
       "label": "Cross-level Galois identification (Thm 6.6, one host above base level)",
       "section": 7,
       "file": "AEC/Section7/MixedTiedLift.lean",
+      "status": "blocked",
+      "blocker": null,
+      "detail": "DEMOTED (grokbot_02): PROVED MODULO infra_78_tuple_amalgam_large (only sorryAx source). Reduction: diagram agreement below nu -> D.same tests (infra_78_test_of_diagram_ge, hosts of size >= nu) -> model amalgam of the nu-host and the large host over A (sub-tip) -> SMObject top at level q.nu. Not used downstream."
+    },
+    {
+      "id": "infra_78_tuple_amalgam_large",
+      "label": "Thm 6.6 clause 2 with a large second host",
+      "section": 7,
+      "file": "AEC/Section7/MixedTiedLift.lean",
       "status": "open",
       "blocker": null,
-      "detail": "OPEN (grokbot_02 split from infra_78_tied_free_lift_mixed): p over A realized at closed nu, q over A realized at a level >= nu, diagrams agree on all parameter lists below nu => SameGaloisType p q. ClosedLevel.exists_tuple_amalgam needs both hosts of size nu; needs an amalgam of a nu-host with a bigger host over A (truth not yet verified). Not used downstream (mixed 7.6 uses the diagram form)."
+      "detail": "OPEN (grokbot_02 sub-tip of infra_78_cross_level_galois). ClosedLevel.exists_tuple_amalgam with card B1 >= mu (amalgam of size card B1). Known obstruction: exists_strong_embedding_over embeds B1 over A into E(J) along a countable tower of submodels of size < mu with LiftsTuple lifts (#alpha < mu), which cannot exhaust a larger B1; needs lifts of submodels of size >= mu or an amalgamation property over mu-sized models. Truth not verified; no consumer on the main path."
     }
   ],
   "edges": [

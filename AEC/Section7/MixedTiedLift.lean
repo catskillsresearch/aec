@@ -1014,11 +1014,73 @@ theorem infra_78_tied_free_lift_mixed
     simp only [infra_612_anchored, alignJoint, typeJoint, TupleOver.restrict, Equiv.symm_symm]
   | inr b => rfl
 
-/-- **Cross-level Galois identification (open).** Theorem 6.6 with one host above the base
-level: if `p` over `A` is realized at the closed level `ν` and `q` over `A` is realized at any
-level `μ ≥ ν`, and their joint diagrams agree on every parameter list from `A` bounded below `ν`,
-then they have the same Galois type over `A` (one amalgam of the `ν`-host and the `μ`-host).
-`ClosedLevel.exists_tuple_amalgam` needs both hosts of size `ν`. -/
+/-- **Theorem 6.6 clause 2 with a large second host (open sub-tip).** At a closed level `μ`,
+tuples of length `≤ σ < μ` in a `μ`-sized strong extension `B₀` of `A` and in a strong extension
+`B₁` of `A` of any size `≥ μ` are identified in one amalgam over `A` (of size `#B₁`) when their
+diagrams agree over the subsets of `A` of size at most `g(σ) + ℓ`.  `ClosedLevel.exists_tuple_amalgam`
+is the case `#B₁ = μ`; its proof embeds `B₁` over `A` into a presentation `E(J)` along a
+countable tower of submodels of size `< μ` (`exists_strong_embedding_over`), which cannot
+exhaust a larger `B₁`. -/
+theorem infra_78_tuple_amalgam_large [CategoricalUnbounded K]
+    {E : OrderPresentation K} {D : StableDiagram K} {g : Cardinal.{u} → Cardinal.{u}}
+    {μ : Cardinal.{u}} (hL : ClosedLevel K E D g μ) {σ : Cardinal.{u}}
+    (hσinf : aleph0 ≤ σ) (hσ : σ < μ) {α : Type u} (hα : #α ≤ σ) (A B₀ B₁ : Model K.τ)
+    (f₀ : Language.Embedding K.τ A.carrier B₀.carrier)
+    (f₁ : Language.Embedding K.τ A.carrier B₁.carrier)
+    (d₀ : α → B₀.carrier) (d₁ : α → B₁.carrier)
+    (hA : K.Mem A) (hB₀ : K.Mem B₀) (hB₁ : K.Mem B₁) (hf₀ : K.Strong f₀) (hf₁ : K.Strong f₁)
+    (hcA : Model.card A = μ) (hc₀ : Model.card B₀ = μ) (hc₁ : μ ≤ Model.card B₁)
+    (htest : ∀ {β : Type u} (_ : #β ≤ g σ + ls K) (ρ : Cardinal.{u}) (_ : aleph0 ≤ ρ)
+      (_ : ρ < μ) (p : β → A.carrier) (hjoint : #(α ⊕ β) ≤ ρ)
+      (h₀ : D.t ρ ≤ Model.card B₀) (h₁ : D.t ρ ≤ Model.card B₁),
+      D.same hjoint hB₀ hB₁ h₀ h₁
+        (Sum.elim d₀ (fun b => f₀ (p b))) (Sum.elim d₁ (fun b => f₁ (p b)))) :
+    ∃ (P : Model K.τ) (g₀ : Language.Embedding K.τ B₀.carrier P.carrier)
+      (g₁ : Language.Embedding K.τ B₁.carrier P.carrier),
+      K.Mem P ∧ K.Strong g₀ ∧ K.Strong g₁ ∧ Model.card P = Model.card B₁ ∧
+      (∀ x, g₀ (f₀ x) = g₁ (f₁ x)) ∧ ∀ i, g₀ (d₀ i) = g₁ (d₁ i) := by
+  sorry
+
+/-- `infra_612_test_of_diagram` with hosts of size at least `μ` (not exactly `μ`). -/
+theorem infra_78_test_of_diagram_ge
+    {P : SingleModelData K}
+    {ν₁ ν₂ : Cardinal.{u}} {hν₁ : ν₁ ∈ P.eligible} {hν₂ : ν₂ ∈ P.eligible}
+    {Y₁ : P.scheme.Object ν₁ hν₁} {Y₂ : P.scheme.Object ν₂ hν₂}
+    {α : Type u}
+    (xs : α → Occurrence K oneVertexShape (P.scheme.asSystem hν₁ Y₁))
+    (ys : α → Occurrence K oneVertexShape (P.scheme.asSystem hν₂ Y₂))
+    (hDE : P.scheme.DiagramEq (X := Y₁) (Y := Y₂) xs ys)
+    (hα₁ : #α < ν₁) (hα₂ : #α < ν₂)
+    (μ : Cardinal.{u}) (hμ : μ ∈ P.eligible)
+    (hc₁ : μ ≤ Model.card Y₁.model) (hc₂ : μ ≤ Model.card Y₂.model)
+    {β : Type u} {ρ : Cardinal.{u}} (hρinf : aleph0 ≤ ρ) (hρμ : ρ < μ)
+    (hjoint : #β ≤ ρ) (ι : β → α) (hαle : #α ≤ ρ)
+    (h₀ : P.D.t ρ ≤ Model.card Y₁.model) (h₁ : P.D.t ρ ≤ Model.card Y₂.model) :
+    P.D.same hjoint Y₁.mem Y₂.mem h₀ h₁
+      (fun c => Y₁.val (xs (ι c))) (fun c => Y₂.val (ys (ι c))) := by
+  have hSame : P.D.SameD Y₁.model Y₂.model (fun t => Y₁.val (xs t)) (fun t => Y₂.val (ys t)) :=
+    (SingleModelData.diagramEq_iff_sameD (P := P) (α := α) hν₁ hν₂ Y₁ Y₂
+      (fun t => Y₁.val (xs t)) (fun t => Y₂.val (ys t)) hα₁ hα₂).mp hDE
+  obtain ⟨_, _, hMc, hNc, hs⟩ := hSame
+  let ρ0 : Cardinal.{u} := max #α aleph0
+  let ρ' : Cardinal.{u} := max ρ (ls K)
+  have hρ0inf : aleph0 ≤ ρ0 := le_max_right _ _
+  have hρ0le : ρ0 ≤ ρ' :=
+    max_le (hαle.trans (le_max_left _ _)) (hρinf.trans (le_max_left _ _))
+  have hls : ls K ≤ ρ' := le_max_right _ _
+  have hρle' : ρ ≤ ρ' := le_max_left _ _
+  have hρ'μ : ρ' < μ := max_lt hρμ (P.ls_lt hμ)
+  have hρ'inf : aleph0 ≤ ρ' := hρinf.trans hρle'
+  have hMc' : P.D.t ρ' ≤ Model.card Y₁.model := (P.t_lt hμ hρ'inf hρ'μ).le.trans hc₁
+  have hNc' : P.D.t ρ' ≤ Model.card Y₂.model := (P.t_lt hμ hρ'inf hρ'μ).le.trans hc₂
+  exact P.D.same_relevel (σ := ρ0) (τ := ρ) (σ' := ρ')
+    (le_max_left _ _) hρ0inf hρinf hρ0le hρle' hls Y₁.mem Y₂.mem hMc hNc hMc' hNc' h₀ h₁
+    _ _ hs hjoint ι
+
+/-- **Cross-level Galois identification (proved modulo `infra_78_tuple_amalgam_large`).**
+Theorem 6.6 with one host above the base level: if `p` over `A` is realized at the closed level
+`ν` and `q` over `A` is realized at any level `≥ ν`, and their joint diagrams agree on every
+parameter list from `A` bounded below `ν`, then they have the same Galois type over `A`. -/
 theorem infra_78_cross_level_galois
     (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : ℵ₀ ≤ σ)
     {ν : Cardinal.{u}} (hν : ν ∈ P.eligible)
@@ -1031,7 +1093,96 @@ theorem infra_78_cross_level_galois
       P.scheme.DiagramEq (X := p.host) (Y := q.host)
         (typeJoint (p := p) Z) (alignJoint e.symm (typeJoint (p := q) Z))) :
     SameGaloisType p q e (Equiv.refl q.idx) := by
-  sorry
+  classical
+  haveI : CategoricalUnbounded K := P.D.categoricalUnbounded
+  have hL := infra_610_closed_level P σ hσ hν hrec
+  have hσlt : σ < ν := (Order.lt_succ σ).trans_le hσν
+  have hνinf : aleph0 ≤ ν := P.aleph0_le hν
+  have hg : P.g σ < ν := (hν.1.closed P.g (Set.mem_insert_of_mem _ rfl)).below σ hσ hσlt
+  have hgls : P.g σ + ls K < ν := add_lt_of_lt hνinf hg (P.ls_lt hν)
+  let d₀ : q.idx → p.host.model.carrier := fun i => p.host.val (p.val (e.symm i))
+  let d₁ : q.idx → q.host.model.carrier := fun i => q.host.val (q.val i)
+  let f₀ : Language.Embedding K.τ A.model.carrier p.host.model.carrier :=
+    p.incl.onVertex PUnit.unit
+  let f₁ : Language.Embedding K.τ A.model.carrier q.host.model.carrier :=
+    q.incl.onVertex PUnit.unit
+  have hcA : Model.card A.model = ν := A.card
+  have hc₀ : Model.card p.host.model = ν := by simpa [hpν] using p.host.card
+  have hcq : Model.card q.host.model = q.ν := q.host.card
+  have hc₁ : ν ≤ Model.card q.host.model := by rw [hcq]; exact hqν
+  have hα : #q.idx ≤ σ := (Cardinal.mk_congr e).symm.trans_le hidx
+  have htest : ∀ {β : Type u} (_ : #β ≤ P.g σ + ls K) (ρ : Cardinal.{u}) (_ : aleph0 ≤ ρ)
+      (_ : ρ < ν) (params : β → A.model.carrier) (hjoint : #(q.idx ⊕ β) ≤ ρ)
+      (h₀ : P.D.t ρ ≤ Model.card p.host.model) (h₁ : P.D.t ρ ≤ Model.card q.host.model),
+      P.D.same hjoint p.host.mem q.host.mem h₀ h₁
+        (Sum.elim d₀ (fun b => f₀ (params b))) (Sum.elim d₁ (fun b => f₁ (params b))) := by
+    intro β hβ ρ hρinf hρν params hjoint h₀ h₁
+    let Z : β → Occurrence K oneVertexShape (P.scheme.asSystem hν A) :=
+      fun b => A.occ (params b)
+    have hβν : #β < ν := hβ.trans_lt hgls
+    have hDE := hD Z hβν
+    have hcardE : #(p.idx ⊕ β) = #(q.idx ⊕ β) := by
+      rw [mk_sum, mk_sum, Cardinal.mk_congr e]
+    have hαν : #(p.idx ⊕ β) < ν := hcardE ▸ hjoint.trans_lt hρν
+    have hαq : #(p.idx ⊕ β) < q.ν := hαν.trans_le hqν
+    have hαp : #(p.idx ⊕ β) < p.ν := by rw [hpν]; exact hαν
+    have h := infra_78_test_of_diagram_ge (typeJoint (p := p) Z)
+      (alignJoint e.symm (typeJoint (p := q) Z)) hDE hαp hαq ν hν hc₀.ge hc₁ hρinf hρν
+      hjoint (Sum.map e.symm id) (hcardE ▸ hjoint) h₀ h₁
+    convert h using 1
+    · funext c
+      cases c with
+      | inl i => rfl
+      | inr b =>
+        change p.incl.onVertex PUnit.unit (params b) = p.host.val
+          ⟨(Z b).1, p.incl.onVertex (Z b).1 (Z b).2⟩
+        rfl
+    · funext c
+      cases c with
+      | inl i =>
+        simp [d₁, alignJoint, typeJoint]
+      | inr b =>
+        change q.incl.onVertex PUnit.unit (params b) = q.host.val
+          ⟨(Z b).1, q.incl.onVertex (Z b).1 (Z b).2⟩
+        rfl
+  obtain ⟨P₀, g₀, g₁, hP₀, hg₀, hg₁, hcP₀, hbase, hd⟩ :=
+    infra_78_tuple_amalgam_large hL hσ hσlt hα A.model p.host.model q.host.model f₀ f₁ d₀ d₁
+      A.mem p.host.mem q.host.mem (p.incl.onVertex_strong PUnit.unit)
+      (q.incl.onVertex_strong PUnit.unit) hcA hc₀ hc₁ htest
+  let top : SMObject K q.ν := SMObject.ofModel P₀ hP₀ (hcP₀.trans hcq)
+  let φ : P₀.carrier ≃[K.τ] top.model.carrier := SMObject.ofModelEquiv P₀ hP₀ (hcP₀.trans hcq)
+  have hφ : K.Strong φ.toEmbedding := strong_of_equiv K φ hP₀
+  let emb₁ : Language.Embedding K.τ p.host.model.carrier top.model.carrier :=
+    φ.toEmbedding.comp g₀
+  let emb₂ : Language.Embedding K.τ q.host.model.carrier top.model.carrier :=
+    φ.toEmbedding.comp g₁
+  have hs₁ : K.Strong emb₁ := K.strong_trans _ _ hg₀ hφ
+  have hs₂ : K.Strong emb₂ := K.strong_trans _ _ hg₁ hφ
+  let arr₁ : SystemArrow K oneVertexShape (P.scheme.asSystem p.hν p.host)
+      (P.scheme.asSystem q.hν top) :=
+    oneVertexArrow emb₁ hs₁
+  let arr₂ : SystemArrow K oneVertexShape (P.scheme.asSystem q.hν q.host)
+      (P.scheme.asSystem q.hν top) :=
+    oneVertexArrow emb₂ hs₂
+  refine ⟨q.ν, q.hν, top, arr₁, arr₂, trivial, trivial, ?_, ?_⟩
+  · intro v
+    refine DFunLike.ext _ _ fun x => ?_
+    change φ (g₀ (p.incl.onVertex v x)) = φ (g₁ (q.incl.onVertex v x))
+    have hv : v = PUnit.unit := Subsingleton.elim _ _
+    subst hv
+    exact congrArg φ (hbase x)
+  · intro i
+    change
+      (⟨(p.val (e.symm i)).1, emb₁ (p.val (e.symm i)).2⟩ :
+        Occurrence K oneVertexShape (P.scheme.asSystem q.hν top)) =
+      ⟨(q.val ((Equiv.refl q.idx).symm i)).1, emb₂ (q.val ((Equiv.refl q.idx).symm i)).2⟩
+    have hv : (p.val (e.symm i)).1 = PUnit.unit := Subsingleton.elim _ _
+    have hw : (q.val i).1 = PUnit.unit := Subsingleton.elim _ _
+    simp only [Equiv.refl_symm, Equiv.refl_apply, hv, hw]
+    change (⟨PUnit.unit, φ (g₀ (d₀ i))⟩ :
+        Occurrence K oneVertexShape (P.scheme.asSystem q.hν top)) =
+      ⟨PUnit.unit, φ (g₁ (d₁ i))⟩
+    rw [hd i]
 
 end
 end
