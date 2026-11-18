@@ -354,6 +354,113 @@ theorem infra_78_stationary_fixed_list (ρ : Cardinal.{u}) (hρ : ℵ₀ ≤ ρ)
     exact (hcount j).trans_lt (Order.lt_succ_of_not_isMax (not_isMax ρ)))).1 (hj.mono hsub)
   exact ⟨j, x.1, x.2, hx⟩
 
+/-! ### Bookkeeping closure (Prop 7.8, "close the sets under these operations for `λ⁺` steps")
+
+`infra_78_closureStage` iterates a closure operation `F` (sending each small parameter set to
+the at most `ρ` points it requests: mixed Löwenheim–Skolem pairs, Lemma 6.9 copies) along a
+well-order; `infra_78_cardinal_closure` runs it for `λ⁺` steps. Base and top bookkeeping sets
+`R ⊆ S` are handled at once by taking `E` to be a sum of the two carriers. -/
+
+noncomputable def infra_78_closureStage {E : Type u} {W : Type u} [LinearOrder W] [WellFoundedLT W]
+    (R₀ : Set E) (ℓ : Cardinal.{u}) (F : Set E → Set E) : W → Set E :=
+  (wellFounded_lt (α := W)).fix (fun i rec => R₀ ∪ ⋃ j : Set.Iio i, (rec j.1 j.2 ∪
+    ⋃ s : {s : Set E // s ⊆ rec j.1 j.2 ∧ #s ≤ ℓ}, F s.1))
+
+theorem infra_78_closureStage_eq {E W : Type u} [LinearOrder W] [WellFoundedLT W]
+    (R₀ : Set E) (ℓ : Cardinal.{u}) (F : Set E → Set E) (i : W) :
+    infra_78_closureStage R₀ ℓ F i = R₀ ∪ ⋃ j : Set.Iio i, (infra_78_closureStage R₀ ℓ F j.1 ∪
+      ⋃ s : {s : Set E // s ⊆ infra_78_closureStage R₀ ℓ F j.1 ∧ #s ≤ ℓ}, F s.1) := by
+  unfold infra_78_closureStage
+  rw [WellFounded.fix_eq]
+
+theorem infra_78_small_subsets_card {E : Type u} (A : Set E) {ℓ ρ : Cardinal.{u}}
+    (hρ : ℵ₀ ≤ ρ) (hpow : ρ ^ ℓ = ρ) (hA : #A ≤ ρ) :
+    #{s : Set E // s ⊆ A ∧ #s ≤ ℓ} ≤ ρ := by
+  classical
+  have hinj : Function.Injective (fun s : {s : Set E // s ⊆ A ∧ #s ≤ ℓ} =>
+      (⟨Subtype.val ⁻¹' s.1, (Cardinal.mk_preimage_of_injective _ _ Subtype.val_injective).trans
+        s.2.2⟩ : {t : Set A // #t ≤ ℓ})) := by
+    intro t1 t2 hE
+    obtain ⟨s1, h1, k1⟩ := t1
+    obtain ⟨s2, h2, k2⟩ := t2
+    have heq' : (Subtype.val ⁻¹' s1 : Set A) = Subtype.val ⁻¹' s2 := congrArg Subtype.val hE
+    apply Subtype.ext
+    ext x
+    constructor
+    · intro hx
+      have : (⟨x, h1 hx⟩ : A) ∈ (Subtype.val ⁻¹' s2 : Set A) := heq' ▸ hx
+      exact this
+    · intro hx
+      have : (⟨x, h2 hx⟩ : A) ∈ (Subtype.val ⁻¹' s1 : Set A) := heq'.symm ▸ hx
+      exact this
+  refine (Cardinal.mk_le_of_injective hinj).trans ((Cardinal.mk_bounded_set_le A ℓ).trans ?_)
+  calc max #A ℵ₀ ^ ℓ ≤ ρ ^ ℓ := Cardinal.power_le_power_right (max_le hA hρ)
+    _ = ρ := hpow
+
+/-- **Cardinal closure for `λ⁺` steps (proved).** If `ℵ₀ ≤ λ < ρ = ρ^λ` and every set of size
+at most `λ` requests at most `ρ` points, then every `R₀` of size at most `ρ` lies in a set `R` of
+size at most `ρ` closed under the requests: `F s ⊆ R` for every `s ⊆ R` with `#s ≤ λ`
+(regularity of `λ⁺` puts each small `s` inside an earlier stage). -/
+theorem infra_78_cardinal_closure {E : Type u} (R₀ : Set E) {ℓ ρ : Cardinal.{u}}
+    (hℓ : ℵ₀ ≤ ℓ) (hℓρ : ℓ < ρ) (hpow : ρ ^ ℓ = ρ) (F : Set E → Set E)
+    (hF : ∀ s : Set E, #s ≤ ℓ → #(F s) ≤ ρ) (hR₀ : #R₀ ≤ ρ) :
+    ∃ R : Set E, R₀ ⊆ R ∧ #R ≤ ρ ∧ ∀ s ⊆ R, #s ≤ ℓ → F s ⊆ R := by
+  classical
+  let W : Type u := (Order.succ ℓ).ord.ToType
+  have hρ : ℵ₀ ≤ ρ := hℓ.trans hℓρ.le
+  have hW : #W = Order.succ ℓ := mk_ord_toType _
+  have hWρ : #W ≤ ρ := hW.le.trans (Order.succ_le_of_lt hℓρ)
+  have hcof : Order.cof W = Order.succ ℓ := by
+    rw [Ordinal.cof_toType, (Cardinal.isRegular_succ hℓ).cof_ord]
+  have hbound : ∀ T : Set W, #T ≤ ℓ → ∃ a : W, ∀ b ∈ T, b < a := by
+    intro T hT
+    have hnc : ¬ IsCofinal T := fun hc =>
+      (Order.cof_le hc).not_gt (by rw [hcof]; exact hT.trans_lt (Order.lt_succ_of_not_isMax (not_isMax ℓ)))
+    rw [IsCofinal] at hnc
+    push Not at hnc
+    exact hnc
+  have hU : ∀ {ι : Type u} (f : ι → Set E), #ι ≤ ρ → (∀ i, #(f i) ≤ ρ) → #(⋃ i, f i) ≤ ρ :=
+    fun f hι hf => (mk_iUnion_le f).trans ((mul_le_mul' hι (ciSup_le' hf)).trans
+      (mul_eq_self hρ).le)
+  have h2 : ∀ (A B : Set E), #A ≤ ρ → #B ≤ ρ → #(A ∪ B : Set E) ≤ ρ := fun A B hA hB =>
+    (mk_union_le A B).trans ((add_le_add hA hB).trans (add_eq_self hρ).le)
+  let st : W → Set E := infra_78_closureStage R₀ ℓ F
+  have hst : ∀ i, #(st i) ≤ ρ := by
+    intro i
+    refine (wellFounded_lt (α := W)).induction (C := fun i => #(st i) ≤ ρ) i ?_
+    intro i ih
+    change #(infra_78_closureStage R₀ ℓ F i) ≤ ρ
+    rw [infra_78_closureStage_eq]
+    refine h2 _ _ hR₀ (hU _ ((mk_set_le _).trans hWρ) fun j => h2 _ _ (ih j.1 j.2) ?_)
+    exact hU _ (infra_78_small_subsets_card _ hρ hpow (ih j.1 j.2)) fun s => hF _ s.2.2
+  have hmono : ∀ {j i : W}, j < i → st j ⊆ st i := by
+    intro j i hji x hx
+    change x ∈ infra_78_closureStage R₀ ℓ F i
+    rw [infra_78_closureStage_eq]
+    exact Or.inr (Set.mem_iUnion.2 ⟨⟨j, hji⟩, Or.inl hx⟩)
+  have hnew : ∀ {j i : W} (hji : j < i) (s : Set E), s ⊆ st j → #s ≤ ℓ → F s ⊆ st i := by
+    intro j i hji s hs hsl x hx
+    change x ∈ infra_78_closureStage R₀ ℓ F i
+    rw [infra_78_closureStage_eq]
+    exact Or.inr (Set.mem_iUnion.2 ⟨⟨j, hji⟩, Or.inr (Set.mem_iUnion.2 ⟨⟨s, hs, hsl⟩, hx⟩)⟩)
+  have hR0st : ∀ i, R₀ ⊆ st i := by
+    intro i x hx
+    change x ∈ infra_78_closureStage R₀ ℓ F i
+    rw [infra_78_closureStage_eq]
+    exact Or.inl hx
+  have hne : Nonempty W := by
+    rw [← Cardinal.mk_ne_zero_iff, hW]; exact (zero_le.trans_lt (Order.lt_succ_of_not_isMax (not_isMax ℓ))).ne'
+  obtain ⟨i0⟩ := hne
+  refine ⟨⋃ i, st i, fun x hx => Set.mem_iUnion.2 ⟨i0, hR0st i0 hx⟩,
+    hU _ hWρ hst, ?_⟩
+  intro s hs hsl
+  have hmem : ∀ x : s, ∃ i, x.1 ∈ st i := fun x => Set.mem_iUnion.1 (hs x.2)
+  choose g hg using hmem
+  obtain ⟨a, ha⟩ := hbound (Set.range g) (Cardinal.mk_range_le.trans hsl)
+  obtain ⟨k, hk⟩ := hbound {a} (by rw [Cardinal.mk_singleton]; exact one_le_aleph0.trans hℓ)
+  have hsa : s ⊆ st a := fun x hx => hmono (ha _ ⟨⟨x, hx⟩, rfl⟩) (hg ⟨x, hx⟩)
+  exact (hnew (hk a rfl) s hsa hsl).trans (Set.subset_iUnion st k)
+
 /-- **The `ρ⁺` matrix (data of Proposition 7.8's proof).** An increasing `ρ⁺`-chain of
 pairs `X_i ≤ Y_i` at one level `κ`, with permitted inclusions commuting with the pair arrows (continuity at limits, Def 7.7, is not
 encoded here). -/

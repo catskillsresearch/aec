@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-18 10:21",
+  "updated": "2026-11-18 10:24",
   "sorryCount": 44,
   "legend": {
     "open": "No unfinished required proof-deps — try next",
@@ -2213,7 +2213,7 @@
       "file": "AEC/Section7/MixedDescent.lean",
       "status": "blocked",
       "blocker": "infra_78_bookkeeping_assembly",
-      "detail": "Blocked (full claim kept). Split: infra_78_mixed_ls_pair (DONE, requirement 1 supply), infra_78_code_copies_bounded (DONE, requirement 2 supply), infra_78_copies_persist_at_limits (DONE, requirement 2 at limits), infra_78_bookkeeping_assembly (open). Open (board-only). Sets R_i subset S_i of size <= rho with closure requirements (1) level-lambda subpairs A <= U inside R_i,S_i and (2) lambda copies of every <=lambda list computing types over X_i (Lemma 6.9 codes), satisfied at stages of cofinality > lambda via successor closures and local character at limits."
+      "detail": "Blocked (full claim kept). Split: infra_78_mixed_ls_pair (DONE, requirement 1 supply), infra_78_code_copies_bounded (DONE, requirement 2 supply), infra_78_copies_persist_at_limits (DONE, requirement 2 at limits), infra_78_bookkeeping_assembly (blocked; split cycle 37). Open (board-only). Sets R_i subset S_i of size <= rho with closure requirements (1) level-lambda subpairs A <= U inside R_i,S_i and (2) lambda copies of every <=lambda list computing types over X_i (Lemma 6.9 codes), satisfied at stages of cofinality > lambda via successor closures and local character at limits."
     },
     {
       "id": "infra_78_matrix_construction",
@@ -2283,9 +2283,45 @@
       "label": "Prop 7.8: assemble R_i subset S_i along the matrix",
       "section": 7,
       "file": "AEC/Section7/MixedDescent.lean",
+      "status": "blocked",
+      "blocker": "infra_78_bookkeeping_sets_construction",
+      "detail": "Blocked (full claim kept, stated over an arbitrary continuous pair-chain). Split: infra_78_cardinal_closure (DONE), infra_78_bookkeeping_sets_construction (open), infra_78_bookkeeping_req1_high_cof (blocked), infra_78_bookkeeping_req2_high_cof (blocked). Successor closures for lambda^+ steps (rho^lambda = rho lists, each adding <= rho points via infra_78_mixed_ls_pair and infra_78_code_copies_bounded), continuity at limits, and requirements 1-2 at stages of cofinality > lambda via infra_78_bounded_in_earlier_stage and infra_78_copies_persist_at_limits."
+    },
+    {
+      "id": "infra_78_cardinal_closure",
+      "label": "Prop 7.8: cardinal closure for lambda^+ steps",
+      "section": 7,
+      "file": "AEC/Section7/MixedDescent.lean",
+      "status": "done",
+      "blocker": null,
+      "detail": "Done (no sorry; axioms propext/choice/Quot.sound). infra_78_cardinal_closure: aleph0 <= l < rho, rho^l = rho, F : Set E -> Set E with #(F s) <= rho for #s <= l, #R0 <= rho: exists R with R0 subset R, #R <= rho, and F s subset R for all s subset R with #s <= l. Stages infra_78_closureStage along (succ l).ord.ToType (well-founded fix), helper infra_78_small_subsets_card (#{s subset A, #s <= l} <= rho^l). Base and top sets handled together via a sum carrier."
+    },
+    {
+      "id": "infra_78_bookkeeping_sets_construction",
+      "label": "Prop 7.8: build R_i subset S_i along a given pair-chain",
+      "section": 7,
+      "file": "AEC/Section7/MixedDescent.lean",
       "status": "open",
       "blocker": null,
-      "detail": "Open (all supply pieces done). Successor closures for lambda^+ steps (rho^lambda = rho lists, each adding <= rho points via infra_78_mixed_ls_pair and infra_78_code_copies_bounded), continuity at limits, and requirements 1-2 at stages of cofinality > lambda via infra_78_bounded_in_earlier_stage and infra_78_copies_persist_at_limits."
+      "detail": "Open (board-only). Over an arbitrary continuous pair-chain (Infra78Matrix at level kappa plus continuity at limits: every element of X_i, Y_i at a limit i comes from an earlier stage), with lambda^+ <= rho = rho^lambda < kappa and seeds Ip subset X_0, b subset Y_0: increasing continuous R_i subset X_i, S_i subset Y_i (along stepX/stepY), R_i subset S_i (along pair), |R_i|, |S_i| <= rho, and R_{i+1}, S_{i+1} closed (infra_78_cardinal_closure) under the requests of infra_78_mixed_ls_pair and infra_78_code_copies_bounded for <= lambda lists from R_i, S_i."
+    },
+    {
+      "id": "infra_78_bookkeeping_req1_high_cof",
+      "label": "Prop 7.8: closure requirement 1 at cf > lambda",
+      "section": 7,
+      "file": "AEC/Section7/MixedDescent.lean",
+      "status": "blocked",
+      "blocker": "infra_78_bookkeeping_sets_construction",
+      "detail": "Blocked. At a stage i with cf(i) > lambda, any <= lambda sets from R_i, S_i lie in an earlier stage (infra_78_bounded_in_earlier_stage), so the level-lambda pair A <= V requested there (inside R_{j+1}, S_{j+1}) pushes forward to a pair of subobjects of X_i <= Y_i inside R_i, S_i."
+    },
+    {
+      "id": "infra_78_bookkeeping_req2_high_cof",
+      "label": "Prop 7.8: closure requirement 2 at cf > lambda",
+      "section": 7,
+      "file": "AEC/Section7/MixedDescent.lean",
+      "status": "blocked",
+      "blocker": "infra_78_bookkeeping_sets_construction",
+      "detail": "Blocked. At a stage i with cf(i) > lambda, every <= lambda list d from S_i lies in an earlier S_j; local character makes tp(d/X_i) free from an earlier stage, and copies placed in an intervening successor base still compute it over X_i (infra_78_copies_persist_at_limits / infra_78_copies_persist_chain), with the |Z| + aleph0 exception estimate; the copies lie in R_i."
     }
   ],
   "edges": [
@@ -4305,8 +4341,73 @@
       "from": "infra_78_fixed_list_eventually_free",
       "to": "infra_78_copies_persist_at_limits",
       "kind": "hard"
+    },
+    {
+      "from": "infra_78_cardinal_closure",
+      "to": "infra_78_bookkeeping_assembly",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_78_bookkeeping_sets_construction",
+      "to": "infra_78_bookkeeping_assembly",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_78_bookkeeping_req1_high_cof",
+      "to": "infra_78_bookkeeping_assembly",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_78_bookkeeping_req2_high_cof",
+      "to": "infra_78_bookkeeping_assembly",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_78_cardinal_closure",
+      "to": "infra_78_bookkeeping_sets_construction",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_78_mixed_ls_pair",
+      "to": "infra_78_bookkeeping_sets_construction",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_78_code_copies_bounded",
+      "to": "infra_78_bookkeeping_sets_construction",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_78_matrix",
+      "to": "infra_78_bookkeeping_sets_construction",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_78_bookkeeping_sets_construction",
+      "to": "infra_78_bookkeeping_req1_high_cof",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_78_bookkeeping_sets_construction",
+      "to": "infra_78_bookkeeping_req2_high_cof",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_78_stationary_combinatorics",
+      "to": "infra_78_bookkeeping_req1_high_cof",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_78_stationary_combinatorics",
+      "to": "infra_78_bookkeeping_req2_high_cof",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_78_copies_persist_at_limits",
+      "to": "infra_78_bookkeeping_req2_high_cof",
+      "kind": "hard"
     }
   ],
-  "doneCount": 189,
+  "doneCount": 190,
   "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 43. Uncommitted in /tmp/aec-grok."
 }
