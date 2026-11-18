@@ -7,3 +7,5 @@ Lemma 6.17 (Descent through approximate retractions). Let $A \le U$ be objects a
 **[Results.lean](Results.lean)**
 
 @import "Results.lean"
+
+**Restated (cycle 30):** the honest `lemma_6_17` (tied conclusion `IsTiedFreeMixed`, the free lift of Theorem 6.10 across levels) is in [`DescentRetractionTied.lean`](DescentRetractionTied.lean), proved by `infra_617_tied_from_retractions`: the retraction images on `χ⁺` indices satisfy the majority hypothesis of Lemma 6.11, and the mixed Lemma 6.11 (`infra_611_tied_mixed`) with Corollary 6.7 gives the conclusion. The untied wrapper in `Results.lean` is renamed `lemma_6_17_untied` (degenerate).

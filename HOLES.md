@@ -326,7 +326,7 @@ Waits on Section 5 working package. Lean: later Results import this module.
 | `infra_615_terminal` | Infra: terminal fresh strip | `AEC/Section6/FreshStrip.lean` (**done**; demoted from false paper 6.15 close) |
 | `proposition_6_15` | Proposition 6.15 | `AEC/Section6/Results.lean` (**done** for the two-sided strip, `G = P.E`; `FreshStrip.lean`) |
 | `corollary_6_16` | Corollary 6.16 | `AEC/Section6/Results.lean` (**done** for `SingleModelData`: `μ`-indexed approximate retractions; `ApproxRetractionProof.lean`) |
-| `lemma_6_17` | Lemma 6.17 | `AEC/Section6/Results.lean` (**degenerate, NOT done**: untied `IsFreeLift` conclusion; restate as `IsTiedFreeMixed`) |
+| `lemma_6_17` | Lemma 6.17 | `AEC/Section6/DescentRetractionTied.lean` (**done**; no `sorry`. Restated to the English with tied conclusion `IsTiedFreeMixed`; proof via mixed Lemma 6.11 `infra_611_tied_mixed` and Corollary 6.7. Old degenerate wrapper renamed `lemma_6_17_untied`) |
 
 (`lemma_6_14` is proved, widened to χ-indexed queries plus a fixed `T★`, and is a hard dependency of `proposition_6_15`. `lemma_6_1` is done and stays in the table for its statement changes.)
 
@@ -368,7 +368,7 @@ Lean: imports S5/S6 Results. Unlocks boundary story for later geometry.
 | `corollary_9_2` | Corollary 9.2 | `AEC/Section9/Results.lean` (**restated, open**: explicit SchemeProjection) |
 | `theorem_9_3` |  Theorem 9.3 | `AEC/Section9/Results.lean` (**restated, open**: ∃ marked `CubeScheme` with proper increments; emptied-scheme proof retired) |
 | `lemma_9_5` | Lemma 9.5 | `AEC/Section9/Results.lean` (**done**: `hpres` along `J.incl`, `h.onFace`, `Kf.incl`, joined by `htrans`) |
-| `theorem_9_6` | Theorem 9.6 | `AEC/Section9/Results.lean` (**restated, open**: marked `CubeScheme`, permitted top arrows into a common same-level object; degenerate proof retired) |
+| `theorem_9_6` | Theorem 9.6 | `AEC/Section9/Results.lean` (**restated, open**: marked `CubeScheme`, permitted top arrows into a common same-level object; degenerate proof retired; **blocked** on `theorem_9_3`, whose marked-increment scheme the English proof uses) |
 | `lemma_9_7` | Lemma 9.7 | `AEC/Section9/Results.lean` (**restated, open**: marked `CubeScheme`, boundary occurrences, scheme `DiagramEq`) |
 | `theorem_9_8` |  Theorem 9.8 | `AEC/Section9/Results.lean` (**restated, open**: marked `CubeScheme`, `IsStructIso` extension agreeing with `h` on proper faces) |
 
@@ -397,7 +397,7 @@ Lean: imports S5/S6 Results. Soft internal chain:
 | Decl | Title | Location |
 |------|-------|----------|
 | `lemma_11_2` | Lemma 11.2 | `AEC/Section11/Results.lean` (**done**; **statement change**: false 4th clause dropped, refuted by `AEC.Audit.lemma_11_2_inactive_vertex_false`) |
-| `proposition_11_6` | Proposition 11.6 | `AEC/Section11/Results.lean` (**restated, open**: pointed geometric systems `GeometricSystem.IsPointed D`; see board detail) |
+| `proposition_11_6` | Proposition 11.6 | `AEC/Section11/Results.lean` (**restated, open**: pointed geometric systems `GeometricSystem.IsPointed D`; see board detail; **blocked** on `theorem_10_5` and `corollary_10_10`, used by the English proof) |
 | `proposition_11_7` |  Proposition 11.7 | `AEC/Section11/Results.lean` (**restated, open**: pointed geometric systems `GeometricSystem.IsPointed D`; see board detail) |
 | `claim_11_10` | Claim 11.10 | `AEC/Section11/Results.lean` (**restated, open**: pointed geometric systems `GeometricSystem.IsPointed D`; see board detail) |
 | `claim_11_11` | Claim 11.11 | `AEC/Section11/Results.lean:306` |

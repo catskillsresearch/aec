@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-18 10:02",
+  "updated": "2026-11-18 10:07",
   "sorryCount": 44,
   "legend": {
     "open": "No unfinished required proof-deps — try next",
@@ -385,11 +385,11 @@
       "id": "lemma_6_17",
       "label": "Lem 6.17",
       "section": 6,
-      "file": "AEC/Section6/Results.lean",
-      "status": "blocked",
+      "file": "AEC/Section6/DescentRetractionTied.lean",
+      "status": "done",
       "blocker": null,
-      "detail": "DEGENERATE CLOSURE, NOT DONE (grokbot_02 audit). Conclusion is the untied IsFreeLift, which carries only the Galois-type square (from the commuting square of arrows) and a majority clause independent of the tuple (audit_free_from_vacuous); the English content (the large type over A is the free lift of tp(d/A'), majority values = actual joints) is lost. Proposed honest restatement: conclude IsTiedFreeMixed toA (asTuple incl' hincl' d) (asTuple incl hincl (toU o d)) (Equiv.refl _). Lean proof stays sorry-free but does not count. Previous note: Done for SingleModelData mixed ν≤μ. DescentRetraction.lean: restr via factorEmbedding; SameGaloisType from the commuting square; ApproximationSequence from a short restr subsequence; infra_617_move_query (mixed IsSaturated); almost-id exception bounds; IsFreeLift with typeJoint majority. Does not call corollary_6_16. Next tip: lemma_7_2.",
-      "degenerate": true
+      "detail": "Done (no sorry; axioms propext/choice/Quot.sound). Restated to the English (cycle 30): lemma_6_17 in AEC/Section6/DescentRetractionTied.lean concludes IsTiedFreeMixed toA (asTuple incl' hincl' d) (asTuple incl hincl (toU o d)) refl, i.e. the actual type over A is the (tied) free lift of tp(d/A'; U'), for every d in U' with |d| < nu; hypotheses unchanged from the old form (closed tail infra_615_closed, nu <= mu, commuting square, nu-indexed r_i : U -> A almost fixing A, r_i[U'] in A'). Proof infra_617_tied_from_retractions = English proof: sigma = |d|+aleph0, chi = g(sigma)+LS < nu, kappa = chi^+ < nu indices; I = restrictions r_i|U'(d) in A'; majority on queries <= chi off the <= |Z|+aleph0 indices moving Z (infra_617_almost_id_bound'); Lemma 6.11 mixed (infra_611_tied_mixed) gives IsTiedFreeMixed over (q|A'); Corollary 6.7 square (infra_617_same_galois) identifies q|A' with tp(d/A'; U') and sequences are transported (infra_611_seqTransport). Old untied wrapper renamed lemma_6_17_untied in Section6/Results.lean (degenerate, not counted).",
+      "degenerate": false
     },
     {
       "id": "lemma_6_4",
@@ -746,7 +746,7 @@
       "section": 9,
       "file": "AEC/Section9/Results.lean",
       "status": "blocked",
-      "blocker": null,
+      "blocker": "theorem_9_3",
       "detail": "RESTATED (grokbot_01 Phase 0.1), open with sorry. Honest form: C : CubeScheme K n with C.IsMarked (AEC/Section9/CubeScheme.lean: working package on the n-cube shape, objects at every eligible level); J, Kf, Star objects at one level of a tail; toJ, toK permitted SystemArrows of the whole cube (tops included); toJ = toK ∘ h on every proper projection. Old degenerate proof (Star := Kf, no top arrows) retired. Caveat: C_n abstracted as any marked CubeScheme (marked-increment construction not yet formalized). Blocked on Section 9 amalgamation (theorem_9_3, lemma_9_5 inputs, Section 8 package).",
       "restated": true
     },
@@ -917,7 +917,7 @@
       "section": 11,
       "file": "AEC/Section11/Results.lean",
       "status": "blocked",
-      "blocker": null,
+      "blocker": "theorem_10_5",
       "detail": "RESTATED (grokbot_01 Phase 0.2), open with sorry. Honest form: +D, ProductAxioms; exists mu0, for mu >= mu0 a POINTED geometric system (GeometricSystem.IsPointed D) of level mu with every active piece of size mu. Constant-system degenerate proof retired (a constant pointed system cannot have independent nonroot pieces). Tiled-presentation details (template E, tiles, buffers) not in the conclusion. Blocked on theorem_10_5 / corollary_10_10 (pointed pregeometry, no-proper-pair) and Section 4 templates.",
       "restated": true
     },
@@ -4019,8 +4019,26 @@
       "from": "infra_612_tied_finite_proj_level",
       "to": "infra_612_tied_finite",
       "kind": "hard"
+    },
+    {
+      "from": "theorem_9_3",
+      "to": "theorem_9_6",
+      "kind": "hard",
+      "note": "English proof of Lemma 9.5 / Theorem 9.6: the n = 1 case uses Theorem 9.3 (full-scheme diagrams on the base = projected diagrams); C_n is the marked increment of theorem_9_3."
+    },
+    {
+      "from": "theorem_10_5",
+      "to": "proposition_11_6",
+      "kind": "hard",
+      "note": "English proof of Prop 11.6: Theorem 10.5 preserves and reflects the independence relation of the pointed pregeometry."
+    },
+    {
+      "from": "corollary_10_10",
+      "to": "proposition_11_6",
+      "kind": "hard",
+      "note": "Prop 11.6 statement: mu sufficiently large for the pointed pregeometry and the no-proper-pair conclusion (Cor 10.10)."
     }
   ],
-  "doneCount": 182,
+  "doneCount": 183,
   "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 43. Uncommitted in /tmp/aec-grok."
 }

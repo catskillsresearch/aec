@@ -761,8 +761,8 @@ large type joints. Mixed diagrams at arities below `ν` are included. Proof:
 from the square, ApproximationSequence from a short restr subsequence, mixed move-query, and
 almost-identity exceptions. 
 
-**Audit (grokbot_02): degenerate as formalized, NOT counted done.** the untied `IsFreeLift` conclusion carries only the Galois-type square, not the majority/free-lift content (`AEC/Audit/FreeFromVacuous.lean`); honest form concludes `IsTiedFreeMixed toA (asTuple incl' hincl' d) (asTuple incl hincl (toU ∘ d)) (Equiv.refl _)`. -/
-theorem lemma_6_17 {K : AbstractElementaryClass.{u}} (P : SingleModelData K) :
+**Audit (grokbot_02): degenerate as formalized, NOT counted done.** the untied `IsFreeLift` conclusion carries only the Galois-type square, not the majority/free-lift content (`AEC/Audit/FreeFromVacuous.lean`); honest form concludes `IsTiedFreeMixed toA (asTuple incl' hincl' d) (asTuple incl hincl (toU ∘ d)) (Equiv.refl _)`: that is `lemma_6_17` in `AEC/Section6/DescentRetractionTied.lean` (proved). This untied wrapper is kept only under the name `lemma_6_17_untied`. -/
+theorem lemma_6_17_untied {K : AbstractElementaryClass.{u}} (P : SingleModelData K) :
     ∃ T, ∃ hT : Tail P.eligible T,
       ∀ μ (hμ : μ ∈ T) ν (hν : ν ∈ T)
         (A : P.scheme.Object μ (Tail.mem hT hμ)) (U : P.scheme.Object μ (Tail.mem hT hμ))
