@@ -15,9 +15,10 @@ local-character contradiction of Prop 7.8 are run on tied freeness `IsTiedFree`.
 * (b) `infra_78_tiedFree_base_mono` (**proved**): tied freeness along `X → A → B` gives tied
   freeness along `A → B` (Theorem 6.10 uniqueness of the free evaluation, via a common move).
 * (a) bounded form `infra_78_tied_local_bounded` (**proved**): for each query bound
-  `τ₀ < μ` some stage is tied-free up to queries of size `τ₀` (`IsTiedFreeUpTo`). The full
-  (a), one stage for all query sizes, is open: it needs a testing reduction
-  (`infra_78_tied_testing_reduction`) from a sufficient testing arity to all arities.
+  `τ₀ < μ` some stage is tied-free up to queries of size `τ₀` (`IsTiedFreeUpTo`).
+* testing reduction `infra_78_tiedFree_of_upTo` (**proved**): tied freeness up to the testing
+  arity `g(σ) + LS(K)` is full tied freeness (tied free lift + Theorem 6.6).
+* (a) `infra_78_tied_local` (**proved**): one stage is tied-free on every bounded query.
 -/
 
 namespace AEC
@@ -423,6 +424,81 @@ theorem infra_78_tied_local_bounded
   have E := P.scheme.diagram_trans _ _ _ _ _ _ E1 E2
   erw [infra_78_anchored_refl p Z]
   exact E
+
+set_option maxHeartbeats 1600000 in
+/-- **Testing reduction (`infra_78_tied_testing_reduction`).** At a recursion-closed level, a
+small tuple `q` over `B` that is tied-free from `A` on every query up to the testing arity
+`g(σ) + LS(K)` is tied-free on every bounded query (English Theorem 6.10: the free lift is
+computed at every bounded query size, and Theorem 6.6 testing identifies it).
+
+Proof: let `qB` be the tied free lift of `q ↾ A` (`infra_610_tied_free_lift`). On every test of
+size `≤ g(σ) + LS(K)` the tied moves (`infra_73_tied_move`) give both `q` and `qB` the type of
+`q ↾ A`, so Theorem 6.6 (`infra_73_differing_test`) makes them one Galois type over `B`; the
+answer of `qB` on any larger query is carried to `q` (`infra_72_diagramEq_of_sameGalois`). -/
+theorem infra_78_tiedFree_of_upTo
+    (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : ℵ₀ ≤ σ)
+    {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
+    (hrec : μ ∈ recursionClosedLevels P σ) (hσμ : Order.succ σ ≤ μ)
+    {A B : P.scheme.Object μ hμ}
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ B))
+    (hf : P.scheme.permitted (X := A) (Y := B) f)
+    (q : TupleOver K oneVertexShape P.scheme hμ B)
+    (hqν : q.ν = μ) (hidx : #q.idx ≤ σ)
+    (hup : IsTiedFreeUpTo f (q.restrict f hf) q (Equiv.refl _) (P.g σ + ls K)) :
+    IsTiedFree f (q.restrict f hf) q (Equiv.refl _) := by
+  classical
+  have hσlt : σ < μ := (Order.lt_succ σ).trans_le hσμ
+  have hidxμ : #q.idx < μ := hidx.trans_lt hσlt
+  obtain ⟨qB, eB, hBν, -, hTB⟩ :=
+    infra_610_tied_free_lift P σ hσ hμ hrec hσμ f hf (q.restrict f hf) hqν hidx
+  have hidxB : #qB.idx ≤ σ := by rw [← Cardinal.mk_congr eB]; exact hidx
+  have hS : SameGaloisType qB q eB.symm (Equiv.refl q.idx).symm := by
+    by_contra hneq
+    obtain ⟨β, Y, hβ, hnot⟩ :=
+      infra_73_differing_test P σ hσ hμ hrec hσμ qB q eB.symm (Equiv.refl q.idx).symm hBν hqν
+        hidxB (hidxB.trans_lt hσlt) hneq
+    apply hnot
+    obtain ⟨seq, Y0, hlong, hβτ, hβμ, hmv⟩ :=
+      infra_73_tied_move P σ hσ hμ hrec hσμ f hf (q.restrict f hf) hqν hidx Y hβ
+    have d1 := hTB seq Y Y0 hlong hβτ hβμ hmv
+    have d2 := hup seq Y Y0 hlong hβτ hβμ hβ hmv
+    have d := P.scheme.diagram_trans qB.host q.host q.host _ _ _
+      (P.scheme.diagram_symm q.host qB.host _ _ d1) d2
+    exact infra_73_diagramEq_of_eq d (fun t => by cases t <;> rfl)
+      (fun t => by cases t <;> rfl)
+  intro seq' ι Z Z0' hlong' hι' hιμ hmv
+  have dL := hTB seq' Z Z0' hlong' hι' hιμ hmv
+  have dS := infra_72_diagramEq_of_sameGalois (P := P) hS Z hBν hqν hidxμ hιμ
+  have dS' : P.scheme.DiagramEq (X := qB.host) (Y := q.host)
+      (infra_612_anchored eB qB.incl qB.val Z)
+      (infra_612_anchored (Equiv.refl q.idx) q.incl q.val Z) :=
+    infra_73_diagramEq_of_eq dS (fun t => by cases t <;> rfl) (fun t => by cases t <;> rfl)
+  exact P.scheme.diagram_trans q.host qB.host q.host _ _ _ dL dS'
+
+/-- **Tied local character (part (a) of `infra_78_tied_local_character`, English Prop 6.13
+first clause in the tied form).** At a recursion-closed level, a small tuple over the union of
+a same-level chain with `|v| < cf δ` is tied-free from some stage, on every bounded query.
+The bounded form at the testing arity (`infra_78_tied_local_bounded`) plus the testing
+reduction (`infra_78_tiedFree_of_upTo`). -/
+theorem infra_78_tied_local
+    (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ)
+    {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
+    (hrec : μ ∈ recursionClosedLevels P σ) (hσSucc : Order.succ σ ≤ μ)
+    (C : SameLevelChain P hμ)
+    (p : TupleOver K oneVertexShape P.scheme hμ C.unionObj)
+    (hνμ : p.ν = μ) (hidx : #p.idx ≤ σ) (hcof : #p.idx < C.δ.cof) :
+    ∃ i : Ordinal.{u}, ∃ hi : i < C.δ,
+      IsTiedFree (C.toUnion i hi)
+        (p.restrict (C.toUnion i hi) (C.toUnion_arrow i hi)) p (Equiv.refl _) := by
+  have hσlt : σ < μ := (Order.lt_succ σ).trans_le hσSucc
+  have hg : P.g σ < μ :=
+    (hμ.1.closed P.g (Set.mem_insert_of_mem _ rfl)).below σ hσ hσlt
+  have hτ₀μ : P.g σ + ls K < μ := add_lt_of_lt (P.aleph0_le hμ) hg (P.ls_lt hμ)
+  have hτ₀ : ℵ₀ ≤ P.g σ + ls K := (isLSBound_ls K).1.trans le_add_self
+  obtain ⟨i, hi, hup⟩ :=
+    infra_78_tied_local_bounded P σ hσ hμ hrec hσSucc C p hνμ hidx hcof hτ₀ hτ₀μ
+  exact ⟨i, hi, infra_78_tiedFree_of_upTo P σ hσ hμ hrec hσSucc (C.toUnion i hi)
+    (C.toUnion_arrow i hi) p hνμ hidx hup⟩
 
 end
 end AEC

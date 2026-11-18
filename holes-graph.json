@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-18 07:45",
+  "updated": "2026-11-18 07:48",
   "sorryCount": 43,
   "legend": {
     "open": "No unfinished required proof-deps — try next",
@@ -1846,9 +1846,9 @@
       "label": "Infra 7.8 mixed-level isolation",
       "section": 7,
       "file": "AEC/Section7/MixedDescent.lean",
-      "status": "blocked",
-      "blocker": "infra_78_tied_local_character",
-      "detail": "Open. Done toward it: mixed tied free lift and mixed Lemma 7.6 (sorry-free), Fodor, matrix data, stationary combinatorics (infra_78_stationary_combinatorics: high-cofinality stages stationary, small sets appear early, one fixed failing list on a stationary set). Blocked on infra_78_tied_local_character (the local-character contradiction for the fixed list needs tied freeness; untied IsFreeFrom is vacuous, audit_free_from_vacuous). Remaining for Prop 7.8: the rho^+ matrix construction at level kappa with level-lambda pairs inside R_i,S_i (bookkeeping closures), type-identifying amalgamation at kappa, the local-character contradiction for the fixed list, the theta^+ shrink to A<=U with the majority free-extension identity, Def 7.7 continuity at matrix limits (only finite marks done: infra_78_finite_continuity)."
+      "status": "open",
+      "blocker": null,
+      "detail": "Open. Done toward it: mixed tied free lift and mixed Lemma 7.6 (sorry-free), Fodor, matrix data, stationary combinatorics (infra_78_stationary_combinatorics: high-cofinality stages stationary, small sets appear early, one fixed failing list on a stationary set). Tied local character now done (infra_78_tied_local_character: infra_78_tied_local, base mono, restrict); untied IsFreeFrom is vacuous (audit_free_from_vacuous). Remaining for Prop 7.8: the rho^+ matrix construction at level kappa with level-lambda pairs inside R_i,S_i (bookkeeping closures), type-identifying amalgamation at kappa, the local-character contradiction for the fixed list, the theta^+ shrink to A<=U with the majority free-extension identity, Def 7.7 continuity at matrix limits (only finite marks done: infra_78_finite_continuity)."
     },
     {
       "id": "infra_9_cube_scheme",
@@ -1981,9 +1981,9 @@
       "label": "Tied local character + base monotonicity (Prop 6.13 tied form)",
       "section": 6,
       "file": "AEC/Section7/TiedLocalCharacter.lean",
-      "status": "blocked",
-      "blocker": "infra_78_tied_testing_reduction",
-      "detail": "Open; part (c) RESTRICT done (infra_78_tied_restrict: infra_78_tiedFree_restrict in AEC/Section7/TiedLocalCharacter.lean) and part (b) BASE MONO done (infra_78_tied_base_mono: infra_78_tiedFree_base_mono); (a) proved at every bounded arity (infra_78_tied_local_bounded); the full one-stage-for-all-arities (a) is blocked on infra_78_tied_testing_reduction. (Precise sub-tip split off infra_78_mixed_level_isolation; English Prop 6.13 + Thm 6.10 uniqueness in the tied form). (a) LOCAL: at a recursion-closed level mu (succ sigma <= mu), for C : SameLevelChain P hmu and p over C.unionObj with p.nu = mu, #p.idx <= sigma, #p.idx < C.delta.cof: exists i hi, IsTiedFree (C.toUnion i hi) (p.restrict (C.toUnion i hi) _) p (Equiv.refl _). (b) BASE MONO: X -g-> A -f-> B same level, q over B small: IsTiedFree (comp g f) (q.restrict (comp g f) _) q refl -> IsTiedFree f (q.restrict f hf) q refl. (c) RESTRICT: same hypothesis gives IsTiedFree g ((q.restrict f hf).restrict g hg) (q.restrict f hf) refl. Needed for Prop 7.8: the fixed list (b,d) is tied-free over the union from some X_j, hence at each later successor tied-free over X_i, contradicting the Prop 7.3 alt-2 (not IsTiedFree) extensions chosen stationarily often. The untied IsFreeFrom version is vacuous (audit_free_from_vacuous)."
+      "status": "done",
+      "blocker": null,
+      "detail": "Done (no sorry; axioms propext/choice/Quot.sound), all three parts in AEC/Section7/TiedLocalCharacter.lean. (a) LOCAL infra_78_tied_local: at a recursion-closed level mu (succ sigma <= mu), for C : SameLevelChain P hmu and p over C.unionObj with p.nu = mu, #p.idx <= sigma, #p.idx < C.delta.cof: exists i hi, IsTiedFree (C.toUnion i hi) (p.restrict (C.toUnion i hi) _) p (Equiv.refl _) (infra_78_tied_local_bounded at tau0 = g sigma + ls K, then infra_78_tiedFree_of_upTo). (b) BASE MONO infra_78_tiedFree_base_mono (infra_78_tied_base_mono). (c) RESTRICT infra_78_tiedFree_restrict (infra_78_tied_restrict). Feeds the Prop 7.8 local-character contradiction and the honest (tied) restatements of 6.11/6.12/6.13/6.17/infra_78_finite_continuity."
     },
     {
       "id": "infra_78_tied_restrict",
@@ -2017,9 +2017,9 @@
       "label": "Tied freeness: testing reduction to all arities",
       "section": 7,
       "file": "AEC/Section7/TiedLocalCharacter.lean",
-      "status": "open",
+      "status": "done",
       "blocker": null,
-      "detail": "Open (precise sub-tip split off part (a) of infra_78_tied_local_character). infra_78_tied_local_bounded gives, for each tau0 < mu, a stage i(tau0) tied-free up to arity tau0; IsTiedFree needs ONE stage for all query sizes < mu, and cf(delta) may be smaller than the number of arities. Needed (either route): (1) testing reduction: at a recursion-closed level, for same-level f : A -> B and small q over B, IsTiedFreeUpTo f (q|A) q refl tau0 with tau0 a scheme testing arity (e.g. P.g sigma + ls K + aleph0, Thm 6.6 testing) implies IsTiedFree f (q|A) q refl; then (a) follows from infra_78_tied_local_bounded at tau0. (2) Or restate the honest 6.11/6.13 freeness at the English 'sufficient testing arity' (IsTiedFreeUpTo at tau0) if (1) fails, with a counterexample in AEC/Audit. Caution: DiagramEq of long lists is not determined by sublists (IsolationBound note), so (1) must go through a Galois-type (Thm 6.6) argument, not concatenation."
+      "detail": "Done (no sorry; axioms propext/choice/Quot.sound): infra_78_tiedFree_of_upTo in AEC/Section7/TiedLocalCharacter.lean. Recursion-closed level mu (succ sigma <= mu), same-level f : A -> B, q over B with q.nu = mu, #q.idx <= sigma: IsTiedFreeUpTo f (q|A) q refl (g sigma + ls K) -> IsTiedFree f (q|A) q refl (full statement, every bounded query; English Thm 6.10 'at every bounded query size' with Thm 6.6 testing at arity g(sigma)+LS(K)). Proof: tied free lift qB of q|A (infra_610_tied_free_lift); tied moves (infra_73_tied_move) give q and qB the type of q|A on every test of size <= g sigma + ls K, so Thm 6.6 (infra_73_differing_test) gives SameGaloisType qB q over B; larger queries transfer by infra_72_diagramEq_of_sameGalois."
     }
   ],
   "edges": [
@@ -3748,6 +3748,6 @@
       "kind": "hard"
     }
   ],
-  "doneCount": 165,
+  "doneCount": 167,
   "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 43. Uncommitted in /tmp/aec-grok."
 }
