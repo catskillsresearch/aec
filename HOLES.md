@@ -4,7 +4,7 @@ Inventory of Lean `sorry` holes in this repository, ordered **prove-first**: Lay
 are holes with no remaining unfinished prerequisites; later layers wait on earlier
 ones. Apex theorems 1.2 and 1.3 are **last**.
 
-**Count:** 41 `sorry`, 0 `admit`.
+**Count:** 40 `sorry`, 0 `admit`.
 Sections **2**, **3**, **4**, and **13** have no holes.
 
 **Dependency basis:** paper/logical order from `dependencies.mermaid`
@@ -34,7 +34,7 @@ Section 13 is complete and was never on that chain.
 | 4 | 0 | — |
 | 5 | 0 | — |
 | 6 | 1 | `AEC/Section6/ProductTied.lean` (1) |
-| 7 | 3 | `AEC/Section7/MixedTiedLift.lean` (1), `AEC/Section7/Theorem713.lean` (2) |
+| 7 | 2 | `AEC/Section7/MixedTiedLift.lean` (1), `AEC/Section7/Theorem713.lean` (1) |
 | 8 | 5 | `AEC/Section8/Results.lean` (5) |
 | 9 | 6 | `AEC/Section9/Results.lean` (6) |
 | 10 | 9 | `AEC/Section10/Results.lean` (9) |
@@ -42,7 +42,7 @@ Section 13 is complete and was never on that chain.
 | 12 | 4 | `AEC/Section12/Results.lean` (4) |
 | 13 | 0 | — |
 | 14 | 4 | `AEC/Section14/Results.lean` (4) |
-| **Total** | **41** | |
+| **Total** | **40** | |
 
 The table is the previous `Results.lean` rollup. The live count of declarations using
 `sorry` is **32** (48 at the start of the overnight run). `WorkingScheme.exists_approximationSequence`
@@ -404,11 +404,12 @@ Lean: imports `AEC.Section6.Results`.
 | `infra_713_pi_core` | finite products from tied free factor/selection lifts | **done** (cycle 92, `Theorem713.lean`) |
 | `infra_713_lift_det` | Thm 7.13 (1b-ii), determined by finite data | **done** (cycle 92, `infra_713_lift_det_permitted`) |
 | `infra_713_tiedFree_of_finite` | tied freeness of a bounded PI list from its finite subtuples | **done** (cycle 92, `Theorem713.lean`; toward `infra_713_continuity`) |
-| `infra_713_continuity` | Thm 7.13 (2), tied Def 7.7 | split (cycle 93): glue proved, blocked on `infra_713_continuity_up` |
+| `infra_713_continuity` | Thm 7.13 (2), tied Def 7.7 | **done** (cycle 93: same-level + higher levels) |
 | `infra_713_finite_continuity_level` | level-wise finite tied continuity from `X₀` | **done** (cycle 93) |
 | `infra_713_continuity_same_level` | Thm 7.13 (2), level `μ' = μ` | **done** (cycle 93) |
-| `infra_713_continuity_up` | Thm 7.13 (2), levels `μ' > μ` (mixed base) | blocked on `infra_713_lift_pi_mixed` (reduction proved: `infra_713_continuity_up_of_pi_mixed`) |
-| `infra_713_lift_pi_mixed` | Thm 7.13 (1b) across levels: mixed tied free lift of a PI list is PI | **open** |
+| `infra_713_continuity_up` | Thm 7.13 (2), levels `μ' > μ` (mixed base) | **done** (cycle 93, via `infra_713_continuity_up_of_pi_mixed`) |
+| `infra_713_lift_pi_mixed` | Thm 7.13 (1b) across levels: mixed tied free lift of a PI list is PI | **done** (cycle 93; no cross-level transitivity needed) |
+| `infra_713_productTied_base_change_mixed` / `infra_713_finite_base_change_mixed` / `infra_713_tiedFreeMixed_base_sameGalois` | mixed base change and source transfer | **done** (cycle 93) |
 | `infra_713_tied_move_mixed` | mixed tied move | **done** (cycle 93) |
 | `infra_713_tiedFree_reindex_mixed` | finite projections of mixed tied free lifts | **done** (cycle 93) |
 | `infra_713_realize` | Thm 7.13 (3) | **open**, hard (bounded-mark 7.8/7.9) |

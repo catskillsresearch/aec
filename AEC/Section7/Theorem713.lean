@@ -832,6 +832,26 @@ theorem infra_713_tiedFree_reindex_mixed
     infra_73_diagramEq_of_eq dS (fun t => by cases t <;> rfl) (fun t => by cases t <;> rfl)
   exact P.scheme.diagram_trans _ r.host q'.host _ _ _ dL dS'
 
+/-- **Source transfer of mixed tied freeness along a Galois identification (proved, cycle 93).**
+Mixed analogue of `infra_712u_tiedFree_base_sameGalois`. -/
+theorem infra_713_tiedFreeMixed_base_sameGalois {P : SingleModelData K} {μ μ' : Cardinal.{u}}
+    {hμ : μ ∈ P.eligible} {hμ' : μ' ∈ P.eligible}
+    {A : P.scheme.Object μ hμ} {B : P.scheme.Object μ' hμ'}
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ' B))
+    (p p' : TupleOver K oneVertexShape P.scheme hμ A) (hν : p.ν = μ) (hν' : p'.ν = μ)
+    (hlt : #p.idx < μ) (e : p'.idx ≃ p.idx)
+    (hS : SameGaloisType p' p e (Equiv.refl _))
+    (r : TupleOver K oneVertexShape P.scheme hμ' B) (er : p.idx ≃ r.idx)
+    (hT : IsTiedFreeMixed f p r er) : IsTiedFreeMixed f p' r (e.trans er) :=
+  infra_711_tiedFree_base_equiv f p p' e r er (fun {β} Z hβ => by
+    have D := infra_72_diagramEq_of_sameGalois hS Z hν' hν hlt hβ
+    refine infra_612_dEq_comp D (Sum.map e id) ?_ ?_
+    · rintro (k | j)
+      · show _ = typeJoint (p := p') Z (Sum.inl (e.symm (e k)))
+        rw [Equiv.symm_apply_apply]
+      · rfl
+    · rintro (k | j) <;> rfl) hT
+
 /-- **Theorem 7.13 (1b) across levels (statement; open tip `infra_713_lift_pi_mixed`).** A tied
 free lift (`IsTiedFreeMixed`) of a bounded PI list from level `μ` to a higher level `μ'` of the
 7.12 tail is product-independent (each finite selection has the tied finite product of the
@@ -855,9 +875,72 @@ def infra_713_lift_pi_mixed_statement (P : SingleModelData K) : Prop :=
             (q.reindex (fun p : Σ s : Fin n, L.indexAt (ix s) => eq ⟨ix p.1, p.2⟩)) joint E
             (Equiv.refl _)
 
-/-- **Theorem 7.13 (1b) across levels (open tip `infra_713_lift_pi_mixed`).** -/
+/-- **Theorem 7.13 (1b) across levels (proved, cycle 93; was tip `infra_713_lift_pi_mixed`).**
+The proof of `infra_713_lift_pi_permitted` with the mixed projection, source transfer and finite
+base change lemmas. -/
 theorem infra_713_lift_pi_mixed (P : SingleModelData K) : infra_713_lift_pi_mixed_statement P := by
-  sorry
+  intro μ hμ hl X L _ _ _ hPI hS μ' hμ' hl' hlt B f hf q eq hq hqν n ix hinj
+  classical
+  obtain ⟨ht, hc, hw⟩ := hl
+  have hw0 : ℵ₀ ≤ infra_75_wide P ℵ₀ := le_self_add
+  have h0lt : ℵ₀ < μ := hw0.trans_lt hw
+  set σ : Cardinal.{u} := max ℵ₀ #(Σ i, L.indexAt i) with hσdef
+  have hσ : ℵ₀ ≤ σ := le_max_left _ _
+  have hσlt : σ < μ := max_lt h0lt hS
+  have hrec : μ ∈ recursionClosedLevels P σ := infra_712_recursionClosed_of_615 hc hσ hσlt
+  have hσμ : Order.succ σ ≤ μ := Order.succ_le_of_lt hσlt
+  obtain ⟨-, hc', -⟩ := hl'
+  have hrec' : μ' ∈ recursionClosedLevels P σ :=
+    infra_712_recursionClosed_of_615 hc' hσ (hσlt.trans hlt)
+  have hσμ' : Order.succ σ ≤ μ' := Order.succ_le_of_lt (hσlt.trans hlt)
+  have hwhole : #L.whole.idx ≤ σ := le_max_right _ _
+  have hfin : ∀ s, Finite (L.indexAt (ix s)) := fun s => L.finite_each _
+  have hb : ∀ s, (L.one (ix s)).ν = μ ∧ #(L.one (ix s)).idx ≤ σ := fun s =>
+    ⟨rfl, (Cardinal.lt_aleph0_of_finite (L.indexAt (ix s))).le.trans hσ⟩
+  -- tied free lifts of the factors and of the selection
+  have hTs : ∀ s, IsTiedFreeMixed f (L.one (ix s))
+      (q.reindex (fun a : L.indexAt (ix s) => eq ⟨ix s, a⟩)) (Equiv.refl _) := fun s =>
+    infra_713_tiedFree_reindex_mixed P σ hσ hμ hrec hσμ hμ' hrec' hσμ' hlt.le f hf L.whole rfl hwhole q eq hqν hq
+      (fun a : L.indexAt (ix s) => (⟨ix s, a⟩ : Σ i, L.indexAt i)) sigma_mk_injective
+  have hinjJ : Function.Injective
+      (fun p : Σ s : Fin n, L.indexAt (ix s) => (⟨ix p.1, p.2⟩ : Σ i, L.indexAt i)) := by
+    rintro ⟨s, a⟩ ⟨t, b⟩ h
+    simp only [Sigma.mk.inj_iff] at h
+    obtain ⟨h1, h2⟩ := h
+    obtain rfl := hinj h1
+    simp only [heq_eq_eq] at h2
+    subst h2; rfl
+  have hTJ : IsTiedFreeMixed f (L.subConcat n ix)
+      (q.reindex (fun p : Σ s : Fin n, L.indexAt (ix s) => eq ⟨ix p.1, p.2⟩)) (Equiv.refl _) :=
+    infra_713_tiedFree_reindex_mixed P σ hσ hμ hrec hσμ hμ' hrec' hσμ' hlt.le f hf L.whole rfl hwhole q eq hqν hq _ hinjJ
+  -- the level product over `X`
+  obtain ⟨joint0, E0, hF0, hS0⟩ := hPI n ix hinj
+  have hfS : Finite (Σ s : Fin n, L.indexAt (ix s)) := inferInstance
+  have hfJ0 : Finite joint0.idx := Finite.of_equiv (Σ s : Fin n, L.indexAt (ix s)) E0
+  obtain ⟨joint0', eJ0, r0, hJ0ν, hr0, hR0⟩ := infra_712_level_copy joint0 (infra_712_card_le_fin hμ)
+  have hQ1 := (infra_712_sameGalois_pull hr0 hR0 hS0.symm).symm
+  have hlev0 := infra_712_finiteProduct_toLevel n (fun s => L.one (ix s)) hfin joint0 E0 hF0
+    joint0' eJ0 r0 hr0 hR0
+  have hQ2 : SameGaloisType joint0' (L.subConcat n ix) (eJ0.trans E0.symm) (Equiv.refl _) := by
+    have h := infra_612_sameGalois_trans_equiv hQ1.symm E0.symm
+    exact infra_712u_sg_congr_right (infra_712_sg_congr_left h (fun t => rfl))
+      (fun t => E0.symm_apply_apply t)
+  have hsub : #(L.subConcat n ix).idx < μ :=
+    (Cardinal.lt_aleph0_of_finite (Σ s : Fin n, L.indexAt (ix s))).trans h0lt
+  have hTJ' : IsTiedFreeMixed f joint0'
+      (q.reindex (fun p : Σ s : Fin n, L.indexAt (ix s) => eq ⟨ix p.1, p.2⟩))
+      ((eJ0.trans E0.symm).trans (Equiv.refl _)) :=
+    infra_713_tiedFreeMixed_base_sameGalois f (L.subConcat n ix) joint0' rfl hJ0ν hsub
+      (eJ0.trans E0.symm) hQ2 _ _ hTJ
+  have H := infra_713_finite_base_change_mixed P σ hσ hμ hrec hσμ hμ' hrec' hσμ' hlt.le f hf n (fun s => L.one (ix s)) hb
+    joint0' (E0.trans eJ0.symm) hJ0ν hlev0
+    (fun s => q.reindex (fun a : L.indexAt (ix s) => eq ⟨ix s, a⟩)) (fun s => Equiv.refl _)
+    (fun s => hqν) hTs
+    (q.reindex (fun p : Σ s : Fin n, L.indexAt (ix s) => eq ⟨ix p.1, p.2⟩)) _ hqν hTJ'
+  refine ⟨_, _, H.toPlain n _ _ _, ?_⟩
+  refine infra_712_sg_congr_left (SameGaloisType.refl _) (fun t => ?_)
+  show t = E0.symm (eJ0 (eJ0.symm (E0 t)))
+  exact ((congrArg E0.symm (eJ0.apply_symm_apply (E0 t))).trans (E0.symm_apply_apply t)).symm
 
 /-- **7.13 (2) at higher levels from (1b) across levels (proved, cycle 93).** At `μ' > μ`, the
 coordinates of `b ↾ X₀` form a PI list `L₀` over `X₀` at `μ'` (`infra_713_lift_pi_mixed`), and
