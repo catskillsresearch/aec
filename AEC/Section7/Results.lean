@@ -329,7 +329,7 @@ joint configuration in an extension `top` of the given ambient (`listToTop`, `ma
 (2) two lists of finite tuples (`TupleList.FiniteEach`) of total length at most the level, supplied with witnessing chains, with the same
 successive marginal types over `A` have one amalgam identifying the entire lists
 (`SameGaloisType` of the whole lists). The paper's extension of (2) to bounded individual
-tuples is tracked separately (`lemma_7_12_bounded`). The former statement over the untied
+tuples is `lemma_7_12_bounded` (proved, cycle 90). The former statement over the untied
 `ListWitnessingChain` / `ProductIndependent` was unused and has been removed. Clause (1) at a
 level is `infra_712_existence_at`, assembled by `infra_712_existence_at_of_parts`
 (`AEC/Section7/Lemma712Existence.lean`, cycle 85) from `infra_712_prechain_statement` and
@@ -357,7 +357,7 @@ theorem lemma_7_12 {K : AbstractElementaryClass.{u}} (P : SingleModelData K) :
             (Equiv.sigmaCongr e.toEquiv ei) (Equiv.refl _)) :=
   lemma_7_12_of_marks P (infra_712u_marks P)
 
-/-- **Lemma 7.12 (2), bounded tuples (statement; open tip `lemma_7_12_bounded`).** The English
+/-- **Lemma 7.12 (2), bounded tuples (proved, cycle 90).** The English
 of 7.12(2): "This assertion also permits bounded, rather than finite, individual tuples in the
 witnessing chains. For a list of total length at most the level, the assertion means that one
 amalgam identifies the entire lists; for a bounded total list it is an equality of the
@@ -378,7 +378,16 @@ theorem lemma_7_12_bounded {K : AbstractElementaryClass.{u}} (P : SingleModelDat
         Nonempty (TiedListWitnessingChain L) → Nonempty (TiedListWitnessingChain L') →
         (∀ i, SameGaloisType (L.one i) (L'.one (e i)) (ei i) (Equiv.refl _)) →
         SameGaloisType L.whole L'.whole (Equiv.sigmaCongr e.toEquiv ei) (Equiv.refl _) := by
-  sorry
+  refine ⟨infra_712_levels P, infra_712_levels_tail P, fun μ hμ A L L' _ _ _ _ e ei hb _ hs hs'
+    ⟨C⟩ ⟨C'⟩ hm1 => ?_⟩
+  have h0 : μ ∈ recursionClosedLevels P ℵ₀ :=
+    infra_712_recursionClosed_of_615 hμ.2.1 le_rfl (le_self_add.trans_lt hμ.2.2)
+  have hM := infra_712u_marks P _ hμ A L L' e ei hb hs hs' C C' hm1
+  have hA' : SameGaloisType L.whole C.marksWhole (Equiv.sigmaCongr e.toEquiv ei)
+      (Equiv.sigmaCongr e.toEquiv ei) :=
+    infra_612_sameGalois_trans_equiv C.marksWhole_sameGalois.symm (Equiv.sigmaCongr e.toEquiv ei)
+  have h1 := infra_712_trans_level P _ h0 _ _ _ rfl rfl rfl hA' hM
+  exact infra_712_trans_level P _ h0 _ _ _ rfl rfl rfl h1 C'.marksWhole_sameGalois
 
 /-- **Theorem 7.13.** Let `L` be a bounded product-independent list of finite tuples over `X`.
 (1) Its whole type is determined by its product data on finite sublists (equivalently, given

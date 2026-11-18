@@ -1,6 +1,6 @@
 {
- "updated": "2026-11-18 17:13 grokbot_01",
- "sorryCount": 41,
+ "updated": "2026-11-18 17:18 grokbot_01",
+ "sorryCount": 40,
  "legend": {
   "open": "No unfinished required proof-deps — try next",
   "blocked": "Waiting on incomplete required proof-deps",
@@ -3004,9 +3004,9 @@
    "label": "Lemma 7.12(2) for bounded individual tuples",
    "section": 7,
    "file": "AEC/Section7/Results.lean",
-   "status": "open",
+   "status": "done",
    "blocker": null,
-   "detail": "Open, Lean statement added cycle 90 (sorry): AEC/Section7/Results.lean lemma_7_12_bounded = 7.12(2) with each entry bounded (#(indexAt i) < mu, no TupleList.FiniteEach), total lengths <= mu, tied witnessing chains (TiedListWitnessingChain; IsTiedFree is arity-free), same successive marginals ==> SameGaloisType L.whole L'.whole (one amalgam identifies the entire lists; bounded total list = special case). Cycle 90 refactor: TupleList no longer hard-codes finite entries; finiteness is the class TupleList.FiniteEach, carried by lemma_7_11 / lemma_7_12 and their infrastructure (matches the English 'finite tuples'). Remaining: bounded versions of infra_712u_chain_succ (infra_712b_chain_succ: needs infra_712_trans_level / infra_712u_succ at arity max(#idx, aleph0) < mu, i.e. recursionClosedLevels P sigma via infra_712_recursionClosed_of_615) and then the Lemma712Common packed recursion without FiniteEach."
+   "detail": "PROVED cycle 90 (sorry-free; axioms propext, Classical.choice, Quot.sound). AEC/Section7/Results.lean lemma_7_12_bounded = 7.12(2) with each entry bounded (#(indexAt i) < mu, no TupleList.FiniteEach), total lengths <= mu, tied witnessing chains, same successive marginals ==> SameGaloisType L.whole L'.whole (one amalgam identifies the entire lists; a bounded total list is the special case). Refactor: TupleList finiteness is now the class TupleList.FiniteEach (carried by lemma_7_11 / lemma_7_12 clause 1-2, matching 'finite tuples'). Proof: infra_712b_chain_succ (successor at arity sigma = max(#idx, aleph0) < mu), the Lemma712Common packed recursion under infra_712b_Bnd, and infra_712u_common/marks generalized to bounded entries."
   },
   {
    "id": "infra_75_tests_reduction",
@@ -3373,9 +3373,9 @@
    "label": "7.12(2) bounded: successor step of the common-object recursion for bounded entries",
    "section": 7,
    "file": "AEC/Section7/Lemma712Uniqueness.lean",
-   "status": "open",
+   "status": "done",
    "blocker": null,
-   "detail": "Open (cycle 90). Bounded analogue of infra_712u_chain_succ (currently [L.FiniteEach]): uses infra_712_trans_level and infra_712u_succ at arity aleph0; needs their versions at sigma = max(#indexAt j, aleph0) < mu on recursionClosedLevels P sigma (infra_712_recursionClosed_of_615)."
+   "detail": "PROVED cycle 90: infra_712b_chain_succ (Lemma712Uniqueness.lean), with infra_712u_step / infra_712u_succ generalized to arity sigma (recursionClosedLevels P sigma, succ sigma <= mu, #idx <= sigma) and infra_712u_tiedFree_base_sameGalois to #idx < mu; infra_712u_chain_succ is the finite corollary."
   }
  ],
  "edges": [
@@ -6807,6 +6807,6 @@
    "note": ""
   }
  ],
- "doneCount": 316,
+ "doneCount": 318,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

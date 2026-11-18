@@ -4,7 +4,7 @@ Inventory of Lean `sorry` holes in this repository, ordered **prove-first**: Lay
 are holes with no remaining unfinished prerequisites; later layers wait on earlier
 ones. Apex theorems 1.2 and 1.3 are **last**.
 
-**Count:** 41 `sorry`, 0 `admit`.
+**Count:** 40 `sorry`, 0 `admit`.
 Sections **2**, **3**, **4**, and **13** have no holes.
 
 **Dependency basis:** paper/logical order from `dependencies.mermaid`
@@ -388,9 +388,9 @@ Lean: imports `AEC.Section6.Results`.
 | `infra_712_products` | 7.12(1) products of `bᵢ` with earlier marks | done (cycle 87): AEC/Section7/Lemma712Products.lean |
 | `infra_712_products_level` | 7.12: plain finite tied products → level | [`Lemma712Products.lean`](AEC/Section7/Lemma712Products.lean) (**done**, cycle 86; level copies + one-amalgam pullback; axioms clean) |
 | `lemma_7_12_uniqueness` | Lemma 7.12(2) | done (cycle 89): lemma_7_12_of_marks + infra_712u_marks |
-| `lemma_7_12_bounded` | Lemma 7.12(2), bounded individual tuples | **open** (cycle 90: Lean statement added in `Results.lean` (sorry); `TupleList.FiniteEach` refactor; `infra_712b_free_pull` done; next `infra_712b_chain_succ`) |
+| `lemma_7_12_bounded` | Lemma 7.12(2), bounded individual tuples | **done** (cycle 90, sorry-free; `TupleList.FiniteEach` refactor) |
 | `infra_712b_free_pull` | 7.12(2) bounded: `free_pull_of_lt` | **done** (cycle 90) |
-| `infra_712b_chain_succ` | 7.12(2) bounded: successor step at arity `max(#idx, ℵ₀) < μ` | **open** (cycle 90) |
+| `infra_712b_chain_succ` | 7.12(2) bounded: successor step at arity `max(#idx, ℵ₀) < μ` | **done** (cycle 90) |
 | `theorem_7_13` | Theorem 7.13 | `AEC/Section7/Results.lean:296` (restated: uniqueness, product-independent free lift, continuity, primeness) |
 
 ### L4 — Section 8 (5 sorry)

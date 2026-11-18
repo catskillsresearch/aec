@@ -66,14 +66,22 @@ theorem infra_712u_arrow_ext {P : SingleModelData K} {μ : Cardinal.{u}} {hμ : 
     subst hv
     exact DFunLike.ext _ _ h
 
+/-- Level data for the successor step of the common-object recursion (cycle 90): `ℵ₀ < μ`,
+`μ` recursion-closed at every infinite `σ < μ`, and every entry of `L` bounded (`< μ`). Finite
+entries at a 7.12 level give it (`infra_712b_Bnd.of_finite`); so do bounded ones. -/
+def infra_712b_Bnd (P : SingleModelData K) {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
+    {A : P.scheme.Object μ hμ} (L : TupleList P.scheme hμ A) : Prop :=
+  ℵ₀ < μ ∧ (∀ σ : Cardinal.{u}, ℵ₀ ≤ σ → σ < μ → μ ∈ recursionClosedLevels P σ) ∧
+    ∀ j, #(L.indexAt j) < μ
+
 section Packed
 variable {P : SingleModelData K} {μ : Cardinal.{u}} {hμ : μ ∈ P.eligible}
-  {A : P.scheme.Object μ hμ} {L L' : TupleList P.scheme hμ A} [LinearOrder L.δ] [L.FiniteEach]
-  [LinearOrder L'.δ] [L'.FiniteEach] (C : TiedListWitnessingChain L) (C' : TiedListWitnessingChain L')
+  {A : P.scheme.Object μ hμ} {L L' : TupleList P.scheme hμ A} [LinearOrder L.δ]
+  [LinearOrder L'.δ] (C : TiedListWitnessingChain L) (C' : TiedListWitnessingChain L')
 
 /-- **7.12(2) successor, packed form (proved, cycle 89).** `infra_712u_chain_succ` with the
 arrows recorded as functions on the fixed carrier. -/
-theorem infra_712u_packed_succ (h0 : μ ∈ recursionClosedLevels P ℵ₀) (h1 : Order.succ ℵ₀ ≤ μ)
+theorem infra_712u_packed_succ (h0 : μ ∈ recursionClosedLevels P ℵ₀) (h1 : infra_712b_Bnd P hμ L)
     (e : L.δ ≃o L'.δ) (ei : ∀ i, L.indexAt i ≃ L'.indexAt (e i))
     (hm : ∀ i, SameGaloisType (L.one i) (L'.one (e i)) (ei i) (Equiv.refl _))
     (j : L.δ) (k : WithTop L.δ) (hj : (j : WithTop L.δ) < k)
@@ -93,7 +101,10 @@ theorem infra_712u_packed_succ (h0 : μ ∈ recursionClosedLevels P ℵ₀) (h1 
         hG'.arr.onVertex PUnit.unit ((C'.into (e j)).onVertex PUnit.unit x)
       rw [hG.arr_apply, hG'.arr_apply]
       exact hA x
-  obtain ⟨N₁, h, k₁, k₁', H1, H2, H3⟩ := infra_712u_chain_succ P hμ h0 h1 C C' e ei hm j k hj k' hj'
+  have hσ : ℵ₀ ≤ max #(L.indexAt j) ℵ₀ := le_max_right _ _
+  have hσμ : max #(L.indexAt j) ℵ₀ < μ := max_lt (h1.2.2 j) h1.1
+  obtain ⟨N₁, h, k₁, k₁', H1, H2, H3⟩ := infra_712b_chain_succ P hμ (max #(L.indexAt j) ℵ₀) hσ
+    (h1.2.1 _ hσ hσμ) (Order.succ_le_of_lt hσμ) h0 C C' e ei hm j k hj k' hj' (le_max_left _ _)
     hG.arr hG'.arr hcomm
   refine ⟨N₁, fun x => k₁.onVertex PUnit.unit x, fun x => k₁'.onVertex PUnit.unit x,
     fun x => h.onVertex PUnit.unit x, infra_712u_IsArr.of_arrow h, infra_712u_IsArr.of_arrow k₁,
@@ -105,7 +116,7 @@ theorem infra_712u_packed_succ (h0 : μ ∈ recursionClosedLevels P ℵ₀) (h1 
   · exact eq_of_heq (Sigma.mk.inj_iff.mp (H3 a)).2
 
 /-- A witnessing chain's reflexive step is the identity (idempotent and injective). -/
-theorem infra_712u_step_refl {L₀ : TupleList P.scheme hμ A} [LinearOrder L₀.δ] [L₀.FiniteEach]
+theorem infra_712u_step_refl {L₀ : TupleList P.scheme hμ A} [LinearOrder L₀.δ]
     (D : TiedListWitnessingChain L₀) (i : WithTop L₀.δ) :
     D.step (le_refl i) = SystemArrow.refl _ :=
   infra_712u_arrow_ext fun x => by
@@ -113,7 +124,7 @@ theorem infra_712u_step_refl {L₀ : TupleList P.scheme hμ A} [LinearOrder L₀
     exact ((D.step (le_refl i)).onVertex PUnit.unit).injective h
 
 /-- A witnessing chain's steps compose. -/
-theorem infra_712u_step_trans {L₀ : TupleList P.scheme hμ A} [LinearOrder L₀.δ] [L₀.FiniteEach]
+theorem infra_712u_step_trans {L₀ : TupleList P.scheme hμ A} [LinearOrder L₀.δ]
     (D : TiedListWitnessingChain L₀) {a b c : WithTop L₀.δ} (h₁ : a ≤ b) (h₂ : b ≤ c) :
     D.step (h₁.trans h₂) = SystemArrow.comp (D.step h₁) (D.step h₂) :=
   infra_712u_arrow_ext fun x => (DFunLike.congr_fun (D.step_comp h₁ h₂ PUnit.unit) x).symm
@@ -340,7 +351,7 @@ theorem infra_712u_packed_limit_cofinal (E : WithTop L.δ ≃o WithTop L'.δ) (k
 /-- **Few non-surjective successor steps (proved, cycle 89).** In a witnessing chain at level
 `μ`, at most `μ` successor steps `M_β → M_{β+1}` fail to be onto: each such `β` yields an element
 of `M_⊤` first appearing at `β + 1`. Counting input for `infra_712u_common_long`. -/
-theorem infra_712u_nontrivial_card {L₀ : TupleList P.scheme hμ A} [LinearOrder L₀.δ] [L₀.FiniteEach]
+theorem infra_712u_nontrivial_card {L₀ : TupleList P.scheme hμ A} [LinearOrder L₀.δ]
     (D : TiedListWitnessingChain L₀) :
     #{β : WithTop L₀.δ // ∃ k, ∃ h : β ⋖ k,
       ¬ Function.Surjective ((D.step h.le).onVertex PUnit.unit)} ≤ μ := by
@@ -373,7 +384,7 @@ theorem infra_712u_nontrivial_card {L₀ : TupleList P.scheme hμ A} [LinearOrde
   · exact absurd h.symm (key b2 b1 hg)
 
 /-- One side of `infra_712u_packed_limit_stable`. -/
-theorem infra_712u_stable_side {L₀ : TupleList P.scheme hμ A} [LinearOrder L₀.δ] [L₀.FiniteEach]
+theorem infra_712u_stable_side {L₀ : TupleList P.scheme hμ A} [LinearOrder L₀.δ]
     (D : TiedListWitnessingChain L₀) (k : WithTop L₀.δ) (hs : ∀ i, ¬ i ⋖ k)
     (b : Set.Iio k) (Nb : P.scheme.Object μ hμ)
     (G : Set.Iio k → μ.ord.ToType → μ.ord.ToType)
@@ -503,8 +514,8 @@ end Packed
 
 section Assembly
 variable {P : SingleModelData K} {μ : Cardinal.{u}} {hμ : μ ∈ P.eligible}
-  {A : P.scheme.Object μ hμ} {L L' : TupleList P.scheme hμ A} [LinearOrder L.δ] [L.FiniteEach]
-  [LinearOrder L'.δ] [L'.FiniteEach] (C : TiedListWitnessingChain L) (C' : TiedListWitnessingChain L')
+  {A : P.scheme.Object μ hμ} {L L' : TupleList P.scheme hμ A} [LinearOrder L.δ]
+  [LinearOrder L'.δ] (C : TiedListWitnessingChain L) (C' : TiedListWitnessingChain L')
   (e : L.δ ≃o L'.δ) (ei : ∀ i, L.indexAt i ≃ L'.indexAt (e i))
 
 /-- A packed state of the common-object recursion: `N` with the functions of `M_k → N`,
@@ -530,7 +541,7 @@ def infra_712u_SuccSpec (β k : WithTop L.δ) (s : infra_712u_State P μ hμ)
   ∀ h : β ≤ k, (∀ x, R.1.2.1 ((C.step h).onVertex PUnit.unit x) = R.2 (s.2.1 x)) ∧
     (∀ x, R.1.2.2 ((C'.step (e.withTopCongr.monotone h)).onVertex PUnit.unit x) = R.2 (s.2.2 x))
 
-theorem infra_712u_succ_R (h0 : μ ∈ recursionClosedLevels P ℵ₀) (h1 : Order.succ ℵ₀ ≤ μ)
+theorem infra_712u_succ_R (h0 : μ ∈ recursionClosedLevels P ℵ₀) (h1 : infra_712b_Bnd P hμ L)
     (hm : ∀ i, SameGaloisType (L.one i) (L'.one (e i)) (ei i) (Equiv.refl _))
     (β k : WithTop L.δ) (hβ : β ⋖ k) (s : infra_712u_State P μ hμ)
     (hs : infra_712u_StateOK C C' e ei β s) :
@@ -686,7 +697,7 @@ theorem infra_712u_limit_finish (k : WithTop L.δ) (hs : ∀ i, ¬ i ⋖ k) (hne
 
 /-- **Onto steps pass to limits (proved, cycle 89).** If every step `b → i` (`b ≤ i < k`) of a
 witnessing chain is onto and `k` is a limit, the step `b → k` is onto (continuity). -/
-theorem infra_712u_surj_limit {L₀ : TupleList P.scheme hμ A} [LinearOrder L₀.δ] [L₀.FiniteEach]
+theorem infra_712u_surj_limit {L₀ : TupleList P.scheme hμ A} [LinearOrder L₀.δ]
     (D : TiedListWitnessingChain L₀) (k : WithTop L₀.δ) (hs : ∀ i, ¬ i ⋖ k) (b : WithTop L₀.δ)
     (hb : b < k)
     (hsb : ∀ i (h : b ≤ i), i < k → Function.Surjective ((D.step h).onVertex PUnit.unit)) :
@@ -768,13 +779,13 @@ theorem infra_712u_lim_R (hcard : #(WithTop L.δ) ≤ μ) (k : WithTop L.δ)
     exact (H1 ⟨i, hik⟩ _).trans ((congrArg (l ⟨i, hik⟩) ((hok ⟨i, hik⟩).2.2.2 m hmi a)).trans
       (H2 ⟨i, hik⟩ _).symm)
 
-theorem infra_712u_step_self {L₀ : TupleList P.scheme hμ A} [LinearOrder L₀.δ] [L₀.FiniteEach]
+theorem infra_712u_step_self {L₀ : TupleList P.scheme hμ A} [LinearOrder L₀.δ]
     (D : TiedListWitnessingChain L₀) {i : WithTop L₀.δ} (h : i ≤ i) (x) :
     (D.step h).onVertex PUnit.unit x = x := by
   rw [infra_712u_step_refl D i]
   rfl
 
-variable (h0 : μ ∈ recursionClosedLevels P ℵ₀) (h1 : Order.succ ℵ₀ ≤ μ)
+variable (h0 : μ ∈ recursionClosedLevels P ℵ₀) (h1 : infra_712b_Bnd P hμ L)
   (hm : ∀ i, SameGaloisType (L.one i) (L'.one (e i)) (ei i) (Equiv.refl _))
   (hcard : #(WithTop L.δ) ≤ μ)
 
@@ -971,10 +982,10 @@ end Assembly
 
 section LongAssembly
 variable {P : SingleModelData K} {μ : Cardinal.{u}} {hμ : μ ∈ P.eligible}
-  {A : P.scheme.Object μ hμ} {L L' : TupleList P.scheme hμ A} [LinearOrder L.δ] [L.FiniteEach]
-  [LinearOrder L'.δ] [L'.FiniteEach] (C : TiedListWitnessingChain L) (C' : TiedListWitnessingChain L')
+  {A : P.scheme.Object μ hμ} {L L' : TupleList P.scheme hμ A} [LinearOrder L.δ]
+  [LinearOrder L'.δ] (C : TiedListWitnessingChain L) (C' : TiedListWitnessingChain L')
   (e : L.δ ≃o L'.δ) (ei : ∀ i, L.indexAt i ≃ L'.indexAt (e i))
-  (h0 : μ ∈ recursionClosedLevels P ℵ₀) (h1 : Order.succ ℵ₀ ≤ μ)
+  (h0 : μ ∈ recursionClosedLevels P ℵ₀) (h1 : infra_712b_Bnd P hμ L)
   (hm : ∀ i, SameGaloisType (L.one i) (L'.one (e i)) (ei i) (Equiv.refl _))
 
 theorem infra_712u_succ_unique {β k₁ k₂ : WithTop L.δ} (h₁ : β ⋖ k₁) (h₂ : β ⋖ k₂) : k₁ = k₂ := by
@@ -1373,9 +1384,9 @@ end LongAssembly
 /-- **7.12(2), the common object for lists of length at most the level (statement).** -/
 def infra_712u_common_short_statement (P : SingleModelData K) : Prop :=
   ∀ {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible), μ ∈ infra_712_levels P →
-    ∀ (A : P.scheme.Object μ hμ) (L L' : TupleList P.scheme hμ A) [LinearOrder L.δ] [L.FiniteEach]
-      [WellFoundedLT L.δ] [LinearOrder L'.δ] [L'.FiniteEach] [WellFoundedLT L'.δ]
-      (e : L.δ ≃o L'.δ) (ei : ∀ i, L.indexAt i ≃ L'.indexAt (e i)), #L.δ ≤ μ →
+    ∀ (A : P.scheme.Object μ hμ) (L L' : TupleList P.scheme hμ A) [LinearOrder L.δ]
+      [WellFoundedLT L.δ] [LinearOrder L'.δ] [WellFoundedLT L'.δ]
+      (e : L.δ ≃o L'.δ) (ei : ∀ i, L.indexAt i ≃ L'.indexAt (e i)), (∀ i, #(L.indexAt i) < μ) → #L.δ ≤ μ →
       ∀ (C : TiedListWitnessingChain L) (C' : TiedListWitnessingChain L'),
       (∀ i, SameGaloisType (L.one i) (L'.one (e i)) (ei i) (Equiv.refl _)) →
       ∃ (N : P.scheme.Object μ hμ)
@@ -1392,10 +1403,11 @@ def infra_712u_common_short_statement (P : SingleModelData K) : Prop :=
 /-- **7.12(2), the common object, `|δ| ≤ μ` (proved, cycle 89).** The packed recursion
 (`infra_712u_good`) read off at the top stage. -/
 theorem infra_712u_common_short (P : SingleModelData K) : infra_712u_common_short_statement P := by
-  intro μ hμ hl A L L' _ _ _ _ _ _ e ei hδ C C' hm
+  intro μ hμ hl A L L' _ _ _ _ e ei hb hδ C C' hm
   have hw : ℵ₀ < μ := (le_self_add : ℵ₀ ≤ infra_75_wide P ℵ₀).trans_lt hl.2.2
   have h0 : μ ∈ recursionClosedLevels P ℵ₀ := infra_712_recursionClosed_of_615 hl.2.1 le_rfl hw
-  have h1 : Order.succ ℵ₀ ≤ μ := Order.succ_le_of_lt hw
+  have h1 : infra_712b_Bnd P hμ L := ⟨hw, fun σ hσ hlt => infra_712_recursionClosed_of_615 hl.2.1 hσ hlt,
+    hb⟩
   have hcard : #(WithTop L.δ) ≤ μ := by
     show #(Option L.δ) ≤ μ
     rw [Cardinal.mk_option]
@@ -1414,9 +1426,9 @@ are empty tuples; the packed recursion's limit unions are then indexed by more t
 (`infra_712u_packed_limit` needs `|WithTop δ| ≤ μ`). -/
 def infra_712u_common_long_statement (P : SingleModelData K) : Prop :=
   ∀ {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible), μ ∈ infra_712_levels P →
-    ∀ (A : P.scheme.Object μ hμ) (L L' : TupleList P.scheme hμ A) [LinearOrder L.δ] [L.FiniteEach]
-      [WellFoundedLT L.δ] [LinearOrder L'.δ] [L'.FiniteEach] [WellFoundedLT L'.δ]
-      (e : L.δ ≃o L'.δ) (ei : ∀ i, L.indexAt i ≃ L'.indexAt (e i)),
+    ∀ (A : P.scheme.Object μ hμ) (L L' : TupleList P.scheme hμ A) [LinearOrder L.δ]
+      [WellFoundedLT L.δ] [LinearOrder L'.δ] [WellFoundedLT L'.δ]
+      (e : L.δ ≃o L'.δ) (ei : ∀ i, L.indexAt i ≃ L'.indexAt (e i)), (∀ i, #(L.indexAt i) < μ) →
       #(Σ i, L.indexAt i) ≤ μ → #(Σ i, L'.indexAt i) ≤ μ → μ < #L.δ →
       ∀ (C : TiedListWitnessingChain L) (C' : TiedListWitnessingChain L'),
       (∀ i, SameGaloisType (L.one i) (L'.one (e i)) (ei i) (Equiv.refl _)) →
@@ -1435,18 +1447,19 @@ def infra_712u_common_long_statement (P : SingleModelData K) : Prop :=
 theorem infra_712u_common_of_parts (P : SingleModelData K)
     (hs : infra_712u_common_short_statement P) (hl : infra_712u_common_long_statement P) :
     infra_712u_common_statement P := by
-  intro μ hμ hlev A L L' _ _ _ _ _ _ e ei h1 h2 C C' hm
+  intro μ hμ hlev A L L' _ _ _ _ e ei hb h1 h2 C C' hm
   rcases le_or_gt #L.δ μ with hδ | hδ
-  · exact hs hμ hlev A L L' e ei hδ C C' hm
-  · exact hl hμ hlev A L L' e ei h1 h2 hδ C C' hm
+  · exact hs hμ hlev A L L' e ei hb hδ C C' hm
+  · exact hl hμ hlev A L L' e ei hb h1 h2 hδ C C' hm
 
 /-- **7.12(2), long lists (proved, cycle 89).** The long-list recursion `infra_712u_good2`
 (trivial steps keep the state; stable or small-cofinal limits) read off at the top stage. -/
 theorem infra_712u_common_long (P : SingleModelData K) : infra_712u_common_long_statement P := by
-  intro μ hμ hl A L L' _ _ _ _ _ _ e ei hsig _ _ C C' hm
+  intro μ hμ hl A L L' _ _ _ _ e ei hb hsig _ _ C C' hm
   have hw : ℵ₀ < μ := (le_self_add : ℵ₀ ≤ infra_75_wide P ℵ₀).trans_lt hl.2.2
   have h0 : μ ∈ recursionClosedLevels P ℵ₀ := infra_712_recursionClosed_of_615 hl.2.1 le_rfl hw
-  have h1 : Order.succ ℵ₀ ≤ μ := Order.succ_le_of_lt hw
+  have h1 : infra_712b_Bnd P hμ L := ⟨hw, fun σ hσ hlt => infra_712_recursionClosed_of_615 hl.2.1 hσ hlt,
+    hb⟩
   obtain ⟨⟨hG, hG', hA, hmk⟩, -⟩ := infra_712u_good2 C C' e ei h0 h1 hm hw.le hsig ⊤
   refine ⟨_, hG.arr, hG'.arr, fun v => ?_, fun i a => ?_⟩
   · obtain rfl : v = PUnit.unit := Subsingleton.elim _ _
