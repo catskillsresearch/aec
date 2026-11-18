@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-18 16:09",
+ "updated": "2026-11-18 16:11",
  "sorryCount": 41,
  "legend": {
   "open": "No unfinished required proof-deps — try next",
@@ -2997,7 +2997,7 @@
    "file": "AEC/Section7/Results.lean",
    "status": "open",
    "blocker": null,
-   "detail": "Open (cycle 76). Exactly clause (2) of the restated lemma_7_12 (total length <= mu). English proof: build common N_i with coherent arrows from both chains agreeing on A and identifying processed marks; successor: free lift over N_i of the next common marginal (infra_610_tied_free_lift) realized by c; restriction to either image is the prescribed type by transitivity; amalgamate M_{i+1} (all-dominated over M_i + b_i) over the old stage identifying b_i with c - use the primeness clause of Theorem 7.9 / Prop 7.5(1) (an arrow M_{i+1} -> N over M_i sending b_i to c), NOT a large amalgam; then the same for the other chain; limits: coherent unions. All dependencies done; a substantial construction (two interleaved transfinite recursions)."
+   "detail": "Open (cycle 76; plan updated cycle 87). Exactly clause (2) of lemma_7_12 (total length <= mu); hypotheses are plain TiedListWitnessingChains (no all-dominated increments), matching the English ('two lists supplied with witnessing chains'), so the 7.9 primeness route of 7.12(1) is NOT available. English proof (text.md l.238-242): common N_i with coherent arrows from M_i^0, M_i^1 agreeing on A and identifying processed marks; successor: tied free lift over N_i of the common marginal (infra_610_tied_free_lift, needs N_i at level mu) realized by c; restriction to each image of M_i^r is tp(b_i^r/M_i^r) (tied free restriction + infra_610 majority uniqueness); then type-identifying amalgamation of M_{i+1}^r with the realization over M_i^r identifying b_i^r with c - this is literally the SameGaloisType witness (top at any level rho), so NO large amalgam (infra_78_tuple_amalgam_large) is needed provided each new common object is pulled back to level mu by a level copy of its mu-sized generated part (infra_712_level_copy / infra_612_exists_level_copy_arrow on the tuple enumerating the images; arrows M_i^r -> copy by factoring through the copy's host arrow, as in Infra712Rec.StrongSub). Limits: coherent unions at mu (infra_78_chain_union_kappa, as in infra_712_limit). Plan for splitting: (a) infra_712u_step (one successor amalgamation at mu, two chains), (b) infra_712u_limit, (c) recursion via infra_78_coherent_chain_engine, (d) final: the top common object identifies L.whole with L'.whole via mark_spec of both chains (one amalgam, SameGaloisType). Substantial (two interleaved recursions)."
   },
   {
    "id": "lemma_7_12_bounded",

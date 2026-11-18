@@ -387,7 +387,7 @@ Lean: imports `AEC.Section6.Results`.
 | `infra_712_free_step` | 7.12(1) one freeness step | done (cycle 87): AEC/Section7/Lemma712Products.lean |
 | `infra_712_products` | 7.12(1) products of `bᵢ` with earlier marks | done (cycle 87): AEC/Section7/Lemma712Products.lean |
 | `infra_712_products_level` | 7.12: plain finite tied products → level | [`Lemma712Products.lean`](AEC/Section7/Lemma712Products.lean) (**done**, cycle 86; level copies + one-amalgam pullback; axioms clean) |
-| `lemma_7_12_uniqueness` | Lemma 7.12(2) | **open** (cycle 76; all dependencies done; successor amalgam via 7.9 primeness, not a large amalgam) |
+| `lemma_7_12_uniqueness` | Lemma 7.12(2) | open: plan updated cycle 87 (no large amalgam needed; level copies + SameGaloisType witnesses) |
 | `lemma_7_12_bounded` | Lemma 7.12(2), bounded individual tuples | **blocked** on `lemma_7_12_uniqueness`; HARD edge `lemma_7_12_bounded --> lemma_7_12` (cycle 78) |
 | `theorem_7_13` | Theorem 7.13 | `AEC/Section7/Results.lean:296` (restated: uniqueness, product-independent free lift, continuity, primeness) |
 
