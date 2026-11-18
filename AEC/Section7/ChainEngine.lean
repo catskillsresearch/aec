@@ -108,7 +108,7 @@ theorem infra_78_engine_lim_eq {k : ι} (hk : ¬ IsMin k) (hs : ¬ ∃ β, β �
   exact ⟨trivial, fun i => trivial⟩
 
 /-- **Generic coherent-chain engine.** From a successor operator `sop` and a limit operator
-`lop` (each producing valid arrows when fed a valid chain), well-founded recursion yields a
+`lop` (each producing valid arrows when fed a valid chain; `lop` only at limit indices), well-founded recursion yields a
 total chain of stages with arrows for all `i ≤ k`, satisfying the arrow, identity and
 composition laws, and computed by `sop` at successors and by `lop` at limits. Stages and maps
 are non-dependent data (`S`, `M`), so no casts are needed. -/
@@ -118,7 +118,8 @@ theorem infra_78_coherent_chain_engine (Arr : S → S → M → Prop)
     (hidr : ∀ f, compM f idM = f)
     (hassoc : ∀ f g h, compM (compM f g) h = compM f (compM g h))
     (hsop : ∀ β s, Arr s (sop β s).1 (sop β s).2)
-    (hlop : ∀ (k : ι) (cf : Set.Iio k → S) (mf : Set.Iio k → Set.Iio k → M),
+    (hlop : ∀ (k : ι), ¬ IsMin k → (¬ ∃ β, β ⋖ k) →
+      ∀ (cf : Set.Iio k → S) (mf : Set.Iio k → Set.Iio k → M),
       (∀ i j, i ≤ j → Arr (cf i) (cf j) (mf i j)) → (∀ i, mf i i = idM) →
       (∀ i j l, i ≤ j → j ≤ l → mf i l = compM (mf i j) (mf j l)) →
       (∀ j, Arr (cf j) (lop k cf mf).1 ((lop k cf mf).2 j)) ∧
@@ -162,7 +163,7 @@ theorem infra_78_coherent_chain_engine (Arr : S → S → M → Prop)
     obtain ⟨hck, hmk⟩ := infra_78_engine_lim_eq s0 idM compM sop lop hmin hs
     simp only [← hc, ← hm] at hck hmk
     have hkk : m k k = idM := by rw [hmk]; simp
-    obtain ⟨hA, hC⟩ := hlop k (fun j => c j.1) (fun i j => m i.1 j.1)
+    obtain ⟨hA, hC⟩ := hlop k hmin hs (fun j => c j.1) (fun i j => m i.1 j.1)
       (fun i j hij => (IH j.1 j.2).1 i.1 hij) (fun i => (IH i.1 i.2).2.1)
       (fun i j l hij hjl => (IH l.1 l.2).2.2 i.1 j.1 hij hjl)
     refine ⟨fun i hi => ?_, hkk, fun i j hij hjk => ?_⟩
