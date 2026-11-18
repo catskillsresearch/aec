@@ -372,6 +372,132 @@ theorem infra_712u_nontrivial_card {L₀ : TupleList P.scheme hμ A} [LinearOrde
   · exact Subtype.ext he
   · exact absurd h.symm (key b2 b1 hg)
 
+/-- One side of `infra_712u_packed_limit_stable`. -/
+theorem infra_712u_stable_side {L₀ : TupleList P.scheme hμ A} [LinearOrder L₀.δ]
+    (D : TiedListWitnessingChain L₀) (k : WithTop L₀.δ) (hs : ∀ i, ¬ i ⋖ k)
+    (b : Set.Iio k) (Nb : P.scheme.Object μ hμ)
+    (G : Set.Iio k → μ.ord.ToType → μ.ord.ToType)
+    (n : Set.Iio k → Set.Iio k → μ.ord.ToType → μ.ord.ToType)
+    (hGb : infra_712u_IsArr (D.stage b.1) Nb (G b))
+    (hnb : ∀ i, b ≤ i → ∀ x, n b i x = x)
+    (hsb : ∀ i (h : b ≤ i), Function.Surjective ((D.step (show b.1 ≤ i.1 from h)).onVertex PUnit.unit))
+    (hnG : ∀ i j (h : i ≤ j) x,
+      n i j (G i x) = G j ((D.step (show i.1 ≤ j.1 from h)).onVertex PUnit.unit x)) :
+    ∃ Gk : μ.ord.ToType → μ.ord.ToType, infra_712u_IsArr (D.stage k) Nb Gk ∧
+      ∀ m, b ≤ m → ∀ w, Gk ((D.step (le_of_lt m.2)).onVertex PUnit.unit w) = G m w := by
+  have hsurj : Function.Surjective ((D.step (le_of_lt b.2)).onVertex PUnit.unit) := by
+    intro x
+    obtain ⟨i, h, y, rfl⟩ := D.continuous k hs ⟨b.1, b.2⟩ PUnit.unit x
+    let m : Set.Iio k := ⟨max i b.1, show max i b.1 < k from max_lt h b.2⟩
+    have him : i ≤ m.1 := le_max_left _ _
+    have hbm : b ≤ m := (le_max_right i b.1 : b.1 ≤ max i b.1)
+    obtain ⟨z, hz⟩ := hsb m hbm ((D.step him).onVertex PUnit.unit y)
+    refine ⟨z, ?_⟩
+    have e1 := DFunLike.congr_fun (D.step_comp (show b.1 ≤ m.1 from hbm) (le_of_lt m.2) PUnit.unit) z
+    have e2 := DFunLike.congr_fun (D.step_comp him (le_of_lt m.2) PUnit.unit) y
+    exact e1.symm.trans ((congrArg _ hz).trans e2)
+  obtain ⟨ψ, -, hψ⟩ := infra_78_struct_inverse (D.step (le_of_lt b.2)) (fun v => by
+    obtain rfl : v = PUnit.unit := Subsingleton.elim _ _
+    exact ⟨((D.step (le_of_lt b.2)).onVertex PUnit.unit).injective, hsurj⟩)
+  refine ⟨fun x => G b (ψ.onVertex PUnit.unit x), (infra_712u_IsArr.of_arrow ψ).comp hGb,
+    fun m hbm w => ?_⟩
+  obtain ⟨z, rfl⟩ := hsb m hbm w
+  have e1 := DFunLike.congr_fun (D.step_comp (show b.1 ≤ m.1 from hbm) (le_of_lt m.2) PUnit.unit) z
+  exact (congrArg (fun y => G b (ψ.onVertex PUnit.unit y)) e1).trans
+    ((congrArg (G b) (hψ z)).trans ((hnb m hbm (G b z)).symm.trans (hnG b m hbm z)))
+
+/-- **7.12(2) limit, stable case (proved, cycle 89).** At a limit `k` whose system is constant
+from some `b < k` on (same `N`, identity transitions, onto chain steps on both sides), the
+limit state is `N_b` itself: the functions on `M_k`, `M'_{E k}` are those of `M_b`, `M'_{E b}`
+after the inverse of the (onto, by continuity) steps `b → k`. Limit op for
+`infra_712u_common_long` at limits of cofinality `> μ`. -/
+theorem infra_712u_packed_limit_stable (E : WithTop L.δ ≃o WithTop L'.δ) (k : WithTop L.δ)
+    (hs : ∀ i, ¬ i ⋖ k) (b : Set.Iio k)
+    (N : Set.Iio k → P.scheme.Object μ hμ) (G G' : Set.Iio k → μ.ord.ToType → μ.ord.ToType)
+    (n : Set.Iio k → Set.Iio k → μ.ord.ToType → μ.ord.ToType)
+    (hG : infra_712u_IsArr (C.stage b.1) (N b) (G b))
+    (hG' : infra_712u_IsArr (C'.stage (E b.1)) (N b) (G' b))
+    (hn : ∀ i j, i ≤ j → infra_712u_IsArr (N i) (N j) (n i j))
+    (hntr : ∀ i j l, i ≤ j → j ≤ l → ∀ x, n i l x = n j l (n i j x))
+    (hNb : ∀ i, b ≤ i → N i = N b) (hnb : ∀ i, b ≤ i → ∀ x, n b i x = x)
+    (hsb : ∀ i (h : b ≤ i), Function.Surjective ((C.step (show b.1 ≤ i.1 from h)).onVertex PUnit.unit))
+    (hsb' : ∀ i (h : b ≤ i), Function.Surjective
+      ((C'.step (E.monotone (show b.1 ≤ i.1 from h))).onVertex PUnit.unit))
+    (hnG : ∀ i j (h : i ≤ j) x,
+      n i j (G i x) = G j ((C.step (show i.1 ≤ j.1 from h)).onVertex PUnit.unit x))
+    (hnG' : ∀ i j (h : i ≤ j) x,
+      n i j (G' i x) = G' j ((C'.step (E.monotone (show i.1 ≤ j.1 from h))).onVertex PUnit.unit x)) :
+    ∃ (U : P.scheme.Object μ hμ) (Gk Gk' : μ.ord.ToType → μ.ord.ToType)
+      (l : Set.Iio k → μ.ord.ToType → μ.ord.ToType),
+      infra_712u_IsArr (C.stage k) U Gk ∧ infra_712u_IsArr (C'.stage (E k)) U Gk' ∧
+      (∀ i, infra_712u_IsArr (N i) U (l i)) ∧
+      (∀ i j, i ≤ j → ∀ x, l j (n i j x) = l i x) ∧
+      (∀ i x, Gk ((C.step (le_of_lt i.2)).onVertex PUnit.unit x) = l i (G i x)) ∧
+      (∀ i x, Gk' ((C'.step (E.monotone (le_of_lt i.2))).onVertex PUnit.unit x) =
+        l i (G' i x)) := by
+  obtain ⟨Gk, hGk, HGk⟩ := infra_712u_stable_side C k hs b (N b) G n hG hnb hsb hnG
+  have hs' : ∀ i', ¬ i' ⋖ E k := fun i' hc => by
+    obtain ⟨i, rfl⟩ := E.surjective i'
+    exact hs i ((apply_covBy_apply_iff E).1 hc)
+  -- transport the index set along `E` for the primed side
+  let mx : Set.Iio k → Set.Iio k := fun i =>
+    ⟨max i.1 b.1, show max i.1 b.1 < k from max_lt i.2 b.2⟩
+  have hmx1 : ∀ i, i ≤ mx i := fun i => (le_max_left i.1 b.1 : i.1 ≤ max i.1 b.1)
+  have hmx2 : ∀ i, b ≤ mx i := fun i => (le_max_right i.1 b.1 : b.1 ≤ max i.1 b.1)
+  have hid : ∀ i j, b ≤ i → i ≤ j → ∀ x, n i j x = x := fun i j hbi hij x => by
+    have := hntr b i j hbi hij x
+    rw [hnb i hbi, hnb j (hbi.trans hij)] at this
+    exact this.symm
+  let l : Set.Iio k → μ.ord.ToType → μ.ord.ToType := fun i x => n i (mx i) x
+  have hl : ∀ i, infra_712u_IsArr (N i) (N b) (l i) := fun i =>
+    hNb (mx i) (hmx2 i) ▸ hn i (mx i) (hmx1 i)
+  have hl_up : ∀ i (m : Set.Iio k), i ≤ m → b ≤ m → ∀ x, l i x = n i m x := by
+    intro i m him hbm x
+    rcases le_total (mx i) m with h | h
+    · rw [hntr i (mx i) m (hmx1 i) h x, hid (mx i) m (hmx2 i) h]
+    · show n i (mx i) x = n i m x
+      rw [hntr i m (mx i) him h x, hid m (mx i) hbm h]
+  -- the `C'` side via a shifted chain index is not available; argue directly
+  have hsurj' : Function.Surjective ((C'.step (E.monotone (le_of_lt b.2))).onVertex PUnit.unit) := by
+    intro x
+    obtain ⟨i', h, y, rfl⟩ := C'.continuous (E k) hs' ⟨E b.1, E.strictMono b.2⟩ PUnit.unit x
+    obtain ⟨i, rfl⟩ := E.surjective i'
+    let m : Set.Iio k := ⟨max i b.1, show max i b.1 < k from max_lt (E.lt_iff_lt.1 h) b.2⟩
+    have him : i ≤ m.1 := le_max_left _ _
+    have hbm : b ≤ m := (le_max_right i b.1 : b.1 ≤ max i b.1)
+    obtain ⟨z, hz⟩ := hsb' m hbm ((C'.step (E.monotone him)).onVertex PUnit.unit y)
+    refine ⟨z, ?_⟩
+    have e1 := DFunLike.congr_fun (C'.step_comp (E.monotone (show b.1 ≤ m.1 from hbm))
+      (E.monotone (le_of_lt m.2)) PUnit.unit) z
+    have e2 := DFunLike.congr_fun (C'.step_comp (E.monotone him) (E.monotone (le_of_lt m.2))
+      PUnit.unit) y
+    exact e1.symm.trans ((congrArg _ hz).trans e2)
+  obtain ⟨ψ', -, hψ'⟩ := infra_78_struct_inverse (C'.step (E.monotone (le_of_lt b.2))) (fun v => by
+    obtain rfl : v = PUnit.unit := Subsingleton.elim _ _
+    exact ⟨((C'.step (E.monotone (le_of_lt b.2))).onVertex PUnit.unit).injective, hsurj'⟩)
+  have HGk' : ∀ m, b ≤ m → ∀ w,
+      G' b (ψ'.onVertex PUnit.unit ((C'.step (E.monotone (le_of_lt m.2))).onVertex PUnit.unit w)) =
+        G' m w := by
+    intro m hbm w
+    obtain ⟨z, rfl⟩ := hsb' m hbm w
+    have e1 := DFunLike.congr_fun (C'.step_comp (E.monotone (show b.1 ≤ m.1 from hbm))
+      (E.monotone (le_of_lt m.2)) PUnit.unit) z
+    exact (congrArg (fun y => G' b (ψ'.onVertex PUnit.unit y)) e1).trans
+      ((congrArg (G' b) (hψ' z)).trans ((hnb m hbm (G' b z)).symm.trans (hnG' b m hbm z)))
+  refine ⟨N b, Gk, fun x => G' b (ψ'.onVertex PUnit.unit x), l, hGk,
+    (infra_712u_IsArr.of_arrow ψ').comp hG', hl, fun i j hij x => ?_, fun i x => ?_,
+    fun i x => ?_⟩
+  · rw [hl_up i (mx j) (hij.trans (hmx1 j)) (hmx2 j), hntr i j (mx j) hij (hmx1 j) x]
+  · have e1 := DFunLike.congr_fun (C.step_comp (show i.1 ≤ (mx i).1 from hmx1 i)
+      (le_of_lt (mx i).2) PUnit.unit) x
+    rw [← e1]
+    exact (HGk (mx i) (hmx2 i) _).trans (hnG i (mx i) (hmx1 i) x).symm
+  · have e1 := DFunLike.congr_fun (C'.step_comp (E.monotone (show i.1 ≤ (mx i).1 from hmx1 i))
+      (E.monotone (le_of_lt (mx i).2)) PUnit.unit) x
+    show G' b (ψ'.onVertex PUnit.unit _) = _
+    rw [← e1]
+    exact (HGk' (mx i) (hmx2 i) _).trans (hnG' i (mx i) (hmx1 i) x).symm
+
 end Packed
 
 section Assembly
