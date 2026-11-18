@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-18 11:43",
+  "updated": "2026-11-18 11:53",
   "sorryCount": 44,
   "legend": {
     "open": "No unfinished required proof-deps — try next",
@@ -1843,7 +1843,7 @@
       "section": 7,
       "file": "AEC/Section7/MixedDescent.lean",
       "status": "blocked",
-      "blocker": "infra_78_matrix_construction",
+      "blocker": "infra_78_isolated_stage",
       "detail": "Blocked (full claim kept: everything Prop 7.8 needs beyond the done infra). Split into tracked sub-tips: infra_78_fixed_list_eventually_free (DONE), infra_78_nonfree_extension_tied (DONE), infra_78_same_level_type_amalgam (DONE), infra_78_bookkeeping_closure (DONE cycle 41 via infra_78_bookkeeping_assembly), infra_78_matrix_construction (blocked; split cycle 42: infra_78_bookkeeping_stage_local DONE, infra_78_matrix_successor_step open, infra_78_matrix_limit_step open, infra_78_matrix_recursion blocked), infra_78_isolated_stage (blocked), infra_78_theta_shrink (blocked), infra_78_isolation_transfer (blocked). Previously done toward it: mixed tied free lift, mixed Lemma 7.6, Fodor, matrix data, stationary combinatorics, tied local character. Open. Done toward it: mixed tied free lift and mixed Lemma 7.6 (sorry-free), Fodor, matrix data, stationary combinatorics (infra_78_stationary_combinatorics: high-cofinality stages stationary, small sets appear early, one fixed failing list on a stationary set). Tied local character now done (infra_78_tied_local_character: infra_78_tied_local, base mono, restrict); untied IsFreeFrom is vacuous (audit_free_from_vacuous). Remaining for Prop 7.8: the rho^+ matrix construction at level kappa with level-lambda pairs inside R_i,S_i (bookkeeping closures), type-identifying amalgamation at kappa, the local-character contradiction for the fixed list, the theta^+ shrink to A<=U with the majority free-extension identity, Def 7.7 continuity at matrix limits (only finite marks done: infra_78_finite_continuity)."
     },
     {
@@ -2220,18 +2220,18 @@
       "label": "Prop 7.8: rho^+ matrix with invariant (5)",
       "section": 7,
       "file": "AEC/Section7/MixedDescent.lean",
-      "status": "blocked",
-      "blocker": "infra_78_matrix_recursion",
-      "detail": "Blocked (full claim kept; split cycle 42 into infra_78_bookkeeping_stage_local (DONE), infra_78_matrix_successor_step (DONE cycle 43), infra_78_matrix_limit_step (open), infra_78_matrix_recursion (blocked on the limit step; carries the CompLaw/ContAtLimits outputs and the interleaving caveat)). Transfinite construction of continuous pairs X_i <= Y_i (i <= rho^+) at level kappa (Infra78Matrix plus SameLevelChain unions) with invariant (5) tp(b/X_i) = free lift of tp(b/X_0) (tied), failing stages extended by infra_78_nonfree_extension_tied + infra_78_same_level_type_amalgam (transitivity for (5)), Def 7.7 continuity at limits (finite marks: infra_78_finite_continuity), bookkeeping from infra_78_bookkeeping_closure. REQUIRED OUTPUT (tracked obligations, cycle 39): besides an Infra78Matrix, this node must produce (i) the composition law stepX (le_refl) = id, stepX (h1.trans h2) = stepX h1 >> stepX h2 and the same for stepY, and (ii) continuity at limits: for limit i every element of X_i and of Y_i is stepX/stepY of an element of some earlier stage (Def 7.7 continuous pairs). These are consumed by infra_78_bookkeeping_req1_high_cof, infra_78_bookkeeping_req2_high_cof and infra_78_bookkeeping_assembly. CAVEAT (cycle 41): infra_78_bookkeeping_assembly is stated over a completed matrix, while the paper interleaves (the extension at stage i is chosen from a failing list in S_i). This node must either prove that R_i depends only on the matrix restricted to stages <= i (stage-local bookkeeping) or restructure the choice of failing lists; that step is part of this node's tracked claim. IDENTITY LAW (cycle 45, tracked obligation): this node must also produce Infra78Matrix.IdLaw (stepX (le_refl i) = SystemArrow.refl, same for stepY), consumed by infra_78_limit_pair / infra_78_chain_union_kappa at limit stages. The limit stages use the paper's hypothesis rho^+ < kappa (Order.succ rho < kappa)."
+      "status": "done",
+      "blocker": null,
+      "detail": "DONE (grokbot cycle 54): all parts done: infra_78_bookkeeping_stage_local (cycle 42), infra_78_matrix_successor_step (cycle 43), infra_78_matrix_limit_step (cycle 47), infra_78_matrix_recursion (cycle 54). Required outputs delivered by infra_78_recursion_outputs (AEC/Section7/RecursionOutputs.lean): (i) CompLaw and IdLaw, (ii) ContAtLimits, invariant (5) tp(b/X_i) = tied free lift of tp(b/X_0) at every stage, bookkeeping R_i with requirement-1/2 supply consumed by infra_78_bookkeeping_req1_high_cof / req2_high_cof, interleaving caveat resolved (R_i chosen from the stage-i pair only, infra_78_rcl). Stages are indexed by (succ rho).ord.ToType (i < rho^+); rho^+ < kappa. Marks: shorter than every limit cofinality (all finite marks); longer bounded marks need infra_78_def77_bounded_marks (paper hypothesis)."
     },
     {
       "id": "infra_78_isolated_stage",
       "label": "Prop 7.8: a stage where every list is isolated",
       "section": 7,
       "file": "AEC/Section7/MixedDescent.lean",
-      "status": "blocked",
-      "blocker": "infra_78_matrix_construction",
-      "detail": "Blocked on the matrix. If every high-cofinality stage fails, Fodor/infra_78_stationary_fixed_list fixes one list d on a stationary set, which is non-free at stationarily many successors; infra_78_fixed_list_eventually_free (done) contradicts it. Hence some stage i (cf i > lambda) has every <= theta list relatively isolated. REQUIRED INPUT (cycle 52): the failing-list/coverage property infra_78_opMatrix_failing_list (candidates = all cIdx-lists from S_i at stage i, no enumeration needed per the paper) and the list count infra_78_Slists_card. Caveat: lists are indexed by a fixed cIdx; shorter lists (|c| <= theta) must be handled by repetition padding + subtuple projection here."
+      "status": "open",
+      "blocker": null,
+      "detail": "Open (unblocked grokbot cycle 54: infra_78_matrix_construction done). If every high-cofinality stage fails, Fodor/infra_78_stationary_fixed_list fixes one list d on a stationary set, which is non-free at stationarily many successors; infra_78_fixed_list_eventually_free (done) contradicts it. Hence some stage i (cf i > lambda) has every <= theta list relatively isolated. INPUTS (available): the matrix infra_78_rcMatrix with infra_78_recursion_outputs (laws, (5) everywhere, continuity of R/S, S_i nonempty), the failing-list/coverage property at every stage infra_78_rc_failing_list (candidates = all cIdx-lists from S_i, no enumeration needed per the paper), the list count infra_78_Slists_card, infra_78_bounded_in_earlier_stage. Caveat: lists are indexed by a fixed cIdx; shorter lists (|c| <= theta) must be handled by repetition padding + subtuple projection here."
     },
     {
       "id": "infra_78_theta_shrink",
@@ -2410,9 +2410,9 @@
       "label": "Prop 7.8: interleaved rho^+ recursion of pairs and bookkeeping sets",
       "section": 7,
       "file": "AEC/Section7/MixedDescent.lean",
-      "status": "blocked",
-      "blocker": "infra_78_recursion_plumbing",
-      "detail": "Blocked (full claim kept; split cycle 48 into infra_78_recursion_succ_stage (DONE), infra_78_recursion_plumbing (blocked; split cycle 49: infra_78_coherent_chain_engine DONE, infra_78_engine_matrix_instantiate open), infra_78_recursion_outputs (blocked on plumbing)). Blocked on infra_78_matrix_limit_step (split cycle 44: infra_78_chain_union_kappa DONE, infra_78_limit_pair DONE cycle 45, infra_78_limit_invariant5 DONE cycle 46, limit step itself open (assembly); infra_78_matrix_successor_step DONE cycle 43; non-failing stages take the identity step). Transfinite recursion over (succ rho).ord.ToType with state (pair X_i <= Y_i, bookkeeping set R_i subset X_i + Y_i): successor stages close the image of R_i (plus seeds Ip, b) by infra_78_bookkeeping_stage_local and extend by infra_78_matrix_successor_step on a failing list chosen from the S-part of R_i (if any); limit stages take infra_78_matrix_limit_step and the union of earlier images. Outputs: an Infra78Matrix with Infra78Matrix.CompLaw and Infra78Matrix.ContAtLimits, invariant (5) at every stage, R forward-closed, continuous at limits and with requirement-1/2 supply at non-limit stages (so infra_78_bookkeeping_req1_high_cof / req2_high_cof apply to the completed (M, R)), and the failing-list property at every stage. This node carries the interleaving caveat: R_i is chosen inside the recursion from the current pair only. Outputs also include Infra78Matrix.IdLaw (identity at each stage; at limits set stepX/stepY (le_refl delta) := refl); limit stages need rho^+ < kappa (paper's hypothesis). Interface note (cycle 47): the successor step states (5) on q.marginal e (host Y_i, inclusion pair_i, values of b), which is the limit step's infra_78_markTuple (pair_i) b_i; non-failing successor stages take the identity step."
+      "status": "done",
+      "blocker": null,
+      "detail": "DONE (grokbot cycle 54): all parts done: infra_78_recursion_succ_stage (cycle 48), infra_78_recursion_plumbing (cycles 49-53) and infra_78_recursion_outputs (cycle 54). The recursion matrix is infra_78_rcMatrix (AEC/Section7/RnextClosure.lean) from the seed stage of infra_78_recursion_outputs; outputs: IdLaw, CompLaw, ContAtLimits, invariant (5) at every stage, R forward-closed / continuous / requirement-1/2 supply (infra_78_rnext_closure), failing-list property (infra_78_rc_failing_list), interleaving (R_k from the stage-k pair only). Non-failing successor stages take the dichotomy's isolated case; the identity fallback of infra_78_succOp never fires under (5). Limit stages use rho^+ < kappa."
     },
     {
       "id": "infra_78_recursion_succ_stage",
@@ -2509,9 +2509,9 @@
       "label": "Prop 7.8 recursion: verification of the required outputs",
       "section": 7,
       "file": "AEC/Section7/MatrixRecursion.lean",
-      "status": "open",
+      "status": "done",
       "blocker": null,
-      "detail": "Open (unblocked grokbot cycle 53: infra_78_recursion_plumbing done). For the matrix infra_78_rcMatrix / infra_78_rcObj (AEC/Section7/RnextClosure.lean) built from a seed stage infra_78_seedStage (X_0 -> Y_0 with base g_0 and mark b_0; seeds with |seeds| <= rho containing I_p, b and a Y-point): prove invariant (5) at EVERY stage by induction (successor: infra_78_opMatrix_succ; limit: infra_78_matrix_limit_step / infra_78_limit_invariant5 with the mark/base coherence infra_78_opMatrix_coherent, rho^+ < kappa, finite mark |b| < cf delta), and at the seed stage. Then infra_78_rnext_closure gives the bookkeeping outputs (sizes, forward closure, continuity, pair closure, S_i nonempty, requirement 1/2 at non-limit and cofinality > lambda stages), infra_78_pairMatrix_idLaw / compLaw / contAtLimits the matrix laws, and infra_78_opMatrix_failing_list the failing-list property (needs (5) + S_beta nonempty, both then available). Interleaving: R_k depends only on the pair at stage k (infra_78_rcl)."
+      "detail": "DONE (grokbot cycle 54, sorry-free, standard axioms; AEC/Section7/RecursionOutputs.lean). Seeds (paper: (5) is relative to X_0): base X_b = X_0 with the identity base map; seed stage infra_78_seedStage X_0 Y_0 p_0 id b_0 (infra_78_seedSet I_p b_0 y) (I_p on the X-side, b and one extra point y on the Y-side; |seeds| <= rho via infra_78_seedSet_card). (5) at the seed: infra_78_tiedFree_of_id (tied freeness along an identity arrow, from two good copies of a long approximation sequence) / infra_78_seedStage_inv5. (5) at every stage: infra_78_rc_inv5_all by induction (successor: infra_78_opMatrix_succ; limit: infra_78_limit_inv5_cocone = tied continuity on the engine's chosen covering cocone, with mark/base coherence infra_78_opMatrix_coherent), for marks shorter than every limit cofinality (finite marks: infra_78_finite_lt_stage_cof; bounded marks at small cofinality = infra_78_def77_bounded_marks, paper hypothesis). infra_78_recursion_outputs: IdLaw, CompLaw, ContAtLimits of infra_78_rcMatrix, (5) at every stage, b_k subset S_k, I_p (moved) subset R_k, and all bookkeeping outputs of infra_78_rnext_closure (sizes, forward closure, continuity, pair closure, S_k nonempty, requirement 1/2 at non-limit and cofinality > lambda stages). infra_78_rc_failing_list: the failing-list property at every successor pair beta < k for the S-part candidates. Interleaving: R_k depends only on the pair at stage k (infra_78_rcl)."
     }
   ],
   "edges": [
@@ -4906,8 +4906,13 @@
       "from": "infra_78_rnext_closure",
       "to": "infra_78_recursion_outputs",
       "kind": "hard"
+    },
+    {
+      "from": "infra_78_recursion_outputs",
+      "to": "infra_78_isolated_stage",
+      "kind": "hard"
     }
   ],
-  "doneCount": 213,
+  "doneCount": 216,
   "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 43. Uncommitted in /tmp/aec-grok."
 }
