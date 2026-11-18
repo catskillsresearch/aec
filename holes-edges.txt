@@ -1,4 +1,4 @@
-# Nodes: (see holes-graph.json)  Hard edges: 541
+# Nodes: (see holes-graph.json)  Hard edges: 551
 # Convention: FROM --> TO means the English proof of TO requires FROM.
 # infra_78_mixed_level_isolation (Prop 7.8 rho^+ matrix argument; mixed tied free lift and mixed Lemma 7.6 done grokbot_02)
 # Retired: infra_610_qPres_empty_joint_on_I, infra_610_same_head_transfers_joint, infra_69_transfer_sequence, WorkingScheme.exists_approximationSequence.
@@ -531,10 +531,7 @@ infra_79_retraction_pair --> infra_79_existence
 infra_79_tail --> infra_79_existence
 infra_711_tied_chain --> lemma_7_11
 infra_711_induction --> lemma_7_11
-infra_711_successor --> infra_711_induction
 infra_711_limit --> infra_711_induction
-infra_75_product_free --> infra_711_successor
-infra_612_tied_base_change --> infra_711_successor
 infra_78_tiedFree_trans --> infra_711_successor
 lemma_7_2 --> infra_75_product_free
 infra_612_tied_symmetry --> infra_75_product_free
@@ -544,3 +541,16 @@ infra_78_tiedFree_trans --> infra_711_limit
 infra_711_tied_chain --> infra_711_limit
 infra_711_tied_chain --> infra_711_successor
 infra_7_10_list_chain --> infra_711_tied_chain
+infra_75_product_free_level --> infra_75_product_free
+infra_612_tied_symm_level_joints --> infra_75_product_free_level
+infra_612_tied_finite_proj_level --> infra_75_product_free_level
+lemma_7_2 --> infra_75_product_free_level
+infra_612_tied_exists --> infra_75_product_free_level
+infra_75_product_free_level --> infra_711_successor
+infra_612_tied_base_change_level_joints --> infra_711_successor
+infra_612_tied_assoc_level_joints --> infra_711_successor
+infra_612_tied_symm_level_joints --> infra_711_successor
+infra_612_tied_finite_proj_level --> infra_711_successor
+infra_612_tied_finite_perm_level --> infra_711_successor
+infra_612_tied_exists --> infra_711_successor
+infra_711_successor --> lemma_7_11

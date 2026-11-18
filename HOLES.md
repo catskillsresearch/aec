@@ -363,9 +363,10 @@ Lean: imports `AEC.Section6.Results`.
 | `lemma_7_11` | Lemma 7.11 | `AEC/Section7/Results.lean` (**blocked**; restated cycle 73 to the tied notions over [`TiedListWitnessingChain`](AEC/Section7/TiedListChain.lean): `IsProductTied` hypotheses, `IsTiedFree (A → M_δ)` conclusion; old untied form removed, unused) |
 | `infra_711_tied_chain` | Def 7.10 tied list-linked chain | [`TiedListChain.lean`](AEC/Section7/TiedListChain.lean) (**done**, cycle 73; `free` = tied `tp(bᵢ/Mᵢ) = tp(bᵢ/A)^fr`) |
 | `infra_711_limit` | Lemma 7.11 limit step | [`Lemma711Limit.lean`](AEC/Section7/Lemma711Limit.lean) (**done**, cycle 73b; stages below `j` as a `SameLevelChain` via `Ordinal.enum`, union `M_j`; second clause of the tied Prop 6.13) |
-| `infra_711_successor` | Lemma 7.11 successor step | **blocked** on `infra_75_product_free`, `infra_612_tied_base_change` |
+| `infra_711_successor` | Lemma 7.11 successor step | [`Lemma711Induction.lean`](AEC/Section7/Lemma711Induction.lean) statement `infra_711_successor_statement`; **blocked** on `infra_75_product_free_level` (cycle 75: verified that every product in the step is level-joint; re-routed to the proved level-joint 6.12 cases) |
+| `infra_75_product_free_level` | Prop 7.5(3) tied, actual coupling, level joints | [`ProductFreeLevel.lean`](AEC/Section7/ProductFreeLevel.lean) (**open**, cycle 75; statement only; narrowed form of `infra_75_product_free`) |
 | `infra_75_product_free` | Prop 7.5(3) tied: product with `b` + all-dominated `Y` ⇒ `tp(x/Y)` free from `X` | **blocked** on `infra_612_tied_symmetry`, `infra_612_tied_finite` |
-| `infra_711_induction` | Lemma 7.11 induction assembly | **blocked** on `infra_711_successor` (`infra_711_limit` done) |
+| `infra_711_induction` | Lemma 7.11 induction assembly | [`Lemma711Induction.lean`](AEC/Section7/Lemma711Induction.lean) (**done**, cycle 75; `lemma_7_11` from `infra_711_successor_statement`; first stage via `infra_711_tiedFree_of_bijective`, limit via tied 6.13) |
 | `lemma_7_12` | Lemma 7.12 | `AEC/Section7/Results.lean:273` (restated over list-linked `ListWitnessingChain`; old vacuity audit in `AEC/Audit/WitnessingChainVacuous.lean`) |
 | `theorem_7_13` | Theorem 7.13 | `AEC/Section7/Results.lean:296` (restated: uniqueness, product-independent free lift, continuity, primeness) |
 

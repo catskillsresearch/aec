@@ -11,6 +11,8 @@ public import AEC.Section7.ProductIndependent
 public import AEC.Section7.WitnessingChain
 public import AEC.Section7.ListChain
 public import AEC.Section7.TiedListChain
+public import AEC.Section7.Lemma711Induction
+public import AEC.Section7.ProductFreeLevel
 public import AEC.Section7.GeneralLevel
 public import AEC.Section7.Theorem79
 public import AEC.Section7.Theorem79Existence
@@ -292,9 +294,10 @@ product over `A` (`IsProductTied`, Proposition 6.12's tied product) with every f
 of the accumulated `b_i`, then `tp(x/M_δ)` is free from `A`
 (`IsTiedFree (A → M_δ) tp(x/A) tp(x/M_δ)`). The former statement used the vacuous untied
 `IsFreeFrom` / `IsProduct` over an arbitrary `WorkingScheme`; nothing used it, so it was removed.
-Proof split (board): `infra_711_successor`, `infra_711_limit`, `infra_711_induction`;
-the successor step needs Proposition 7.5(3) (`infra_75_product_free`) and products lifting
-freely (`infra_612_tied_base_change`). -/
+Proof: `infra_711_induction` (cycle 75: induction on the stage; first stage and limit stage
+proved) reduces it to `infra_711_successor_statement` (open tip `infra_711_successor`), whose
+English proof needs only level-joint products: Proposition 7.5(3) in the actual-coupling form
+(`infra_75_product_free_level_statement`) and the proved level-joint cases of 6.12. -/
 theorem lemma_7_11 {K : AbstractElementaryClass.{u}} (P : SingleModelData K) :
     ∃ T, ∃ hT : Tail P.eligible T,
       ∀ μ (hμ : μ ∈ T) (A : P.scheme.Object μ (Tail.mem hT hμ))
@@ -307,6 +310,7 @@ theorem lemma_7_11 {K : AbstractElementaryClass.{u}} (P : SingleModelData K) :
             IsProductTied (x.restrict (C.into ⊤) (C.into_arrow ⊤)) (C.selectionOver x n ix)
               (C.jointWith x n ix) (Equiv.refl _)) →
           IsTiedFree (C.into ⊤) (x.restrict (C.into ⊤) (C.into_arrow ⊤)) x (Equiv.refl _) := by
+  refine infra_711_induction P ?_
   sorry
 
 /-- **Lemma 7.12.** (1) A product-independent list `L` of finite tuples over `A`, well-ordered,
