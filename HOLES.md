@@ -447,7 +447,9 @@ layer (and thus the whole stack).
 | `infra_78_mixed_level_isolation` | infra_78_mixed_level_isolation | `AEC/Section7/MixedDescent.lean` (**blocked** on `infra_78_tied_local_character`; stationary combinatorics done; ρ⁺ matrix construction, amalgamation at κ, θ⁺ shrink remain) |
 | `infra_78_stationary_combinatorics` | infra_78_stationary_combinatorics | `AEC/Section7/MixedDescent.lean` (**done**: `infra_78_stationary_high_cof`, `infra_78_bounded_in_earlier_stage`, `infra_78_stationary_fixed_list`) |
 | `audit_free_from_vacuous` | audit_free_from_vacuous | `AEC/Audit/FreeFromVacuous.lean` (**done**: `Audit.isFreeFrom_of_approximationSequence`, untied `IsFreeFrom` holds whenever the restriction has an approximation sequence) |
-| `infra_78_tied_local_character` | infra_78_tied_local_character | `AEC/Section7/TiedLocalCharacter.lean` (**open**: (c) restriction and (b) base monotonicity done; (a) tied local character remains) |
+| `infra_78_tied_local_character` | infra_78_tied_local_character | `AEC/Section7/TiedLocalCharacter.lean` (**blocked** on `infra_78_tied_testing_reduction`; (c), (b) done; (a) done at bounded arity) |
 | `infra_78_finite_continuity` | infra_78_finite_continuity | `AEC/Section7/FiniteIsolation.lean` (**degenerate, NOT done**: untied `IsFreeFrom`; restate with `IsTiedFree`; blocked on `infra_78_tied_local_character`) |
 | `infra_78_tied_restrict` | infra_78_tied_restrict | `AEC/Section7/TiedLocalCharacter.lean` (**done**: `infra_78_tiedFree_restrict`) |
 | `infra_78_tied_base_mono` | infra_78_tied_base_mono | `AEC/Section7/TiedLocalCharacter.lean` (**done**: `infra_78_tiedFree_base_mono`) |
+| `infra_78_tied_local_bounded` | infra_78_tied_local_bounded | `AEC/Section7/TiedLocalCharacter.lean` (**done**: `infra_78_tied_local_bounded`, `IsTiedFreeUpTo`) |
+| `infra_78_tied_testing_reduction` | infra_78_tied_testing_reduction | `AEC/Section7/TiedLocalCharacter.lean` (**open**: bounded-arity tied freeness ⇒ full `IsTiedFree`, via Thm 6.6 testing) |

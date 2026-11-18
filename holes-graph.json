@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-18 07:42",
+  "updated": "2026-11-18 07:45",
   "sorryCount": 43,
   "legend": {
     "open": "No unfinished required proof-deps — try next",
@@ -1981,9 +1981,9 @@
       "label": "Tied local character + base monotonicity (Prop 6.13 tied form)",
       "section": 6,
       "file": "AEC/Section7/TiedLocalCharacter.lean",
-      "status": "open",
-      "blocker": null,
-      "detail": "Open; part (c) RESTRICT done (infra_78_tied_restrict: infra_78_tiedFree_restrict in AEC/Section7/TiedLocalCharacter.lean) and part (b) BASE MONO done (infra_78_tied_base_mono: infra_78_tiedFree_base_mono); only (a) tied local character remains. (Precise sub-tip split off infra_78_mixed_level_isolation; English Prop 6.13 + Thm 6.10 uniqueness in the tied form). (a) LOCAL: at a recursion-closed level mu (succ sigma <= mu), for C : SameLevelChain P hmu and p over C.unionObj with p.nu = mu, #p.idx <= sigma, #p.idx < C.delta.cof: exists i hi, IsTiedFree (C.toUnion i hi) (p.restrict (C.toUnion i hi) _) p (Equiv.refl _). (b) BASE MONO: X -g-> A -f-> B same level, q over B small: IsTiedFree (comp g f) (q.restrict (comp g f) _) q refl -> IsTiedFree f (q.restrict f hf) q refl. (c) RESTRICT: same hypothesis gives IsTiedFree g ((q.restrict f hf).restrict g hg) (q.restrict f hf) refl. Needed for Prop 7.8: the fixed list (b,d) is tied-free over the union from some X_j, hence at each later successor tied-free over X_i, contradicting the Prop 7.3 alt-2 (not IsTiedFree) extensions chosen stationarily often. The untied IsFreeFrom version is vacuous (audit_free_from_vacuous)."
+      "status": "blocked",
+      "blocker": "infra_78_tied_testing_reduction",
+      "detail": "Open; part (c) RESTRICT done (infra_78_tied_restrict: infra_78_tiedFree_restrict in AEC/Section7/TiedLocalCharacter.lean) and part (b) BASE MONO done (infra_78_tied_base_mono: infra_78_tiedFree_base_mono); (a) proved at every bounded arity (infra_78_tied_local_bounded); the full one-stage-for-all-arities (a) is blocked on infra_78_tied_testing_reduction. (Precise sub-tip split off infra_78_mixed_level_isolation; English Prop 6.13 + Thm 6.10 uniqueness in the tied form). (a) LOCAL: at a recursion-closed level mu (succ sigma <= mu), for C : SameLevelChain P hmu and p over C.unionObj with p.nu = mu, #p.idx <= sigma, #p.idx < C.delta.cof: exists i hi, IsTiedFree (C.toUnion i hi) (p.restrict (C.toUnion i hi) _) p (Equiv.refl _). (b) BASE MONO: X -g-> A -f-> B same level, q over B small: IsTiedFree (comp g f) (q.restrict (comp g f) _) q refl -> IsTiedFree f (q.restrict f hf) q refl. (c) RESTRICT: same hypothesis gives IsTiedFree g ((q.restrict f hf).restrict g hg) (q.restrict f hf) refl. Needed for Prop 7.8: the fixed list (b,d) is tied-free over the union from some X_j, hence at each later successor tied-free over X_i, contradicting the Prop 7.3 alt-2 (not IsTiedFree) extensions chosen stationarily often. The untied IsFreeFrom version is vacuous (audit_free_from_vacuous)."
     },
     {
       "id": "infra_78_tied_restrict",
@@ -2002,6 +2002,24 @@
       "status": "done",
       "blocker": null,
       "detail": "Done (no sorry; axioms propext/choice/Quot.sound): infra_78_tiedFree_base_mono. At a recursion-closed level (succ sigma <= mu), q over B with q.nu = mu, #q.idx <= sigma: IsTiedFree (g;f) (q|X) q refl -> IsTiedFree f (q|A) q refl. Proof (Thm 6.10 uniqueness of free evaluation): Lemma 6.9 sequence x for q|X (infra_78_exists_seq_ge); by part (c) g(x) is an approximation sequence for q|A; common move Z1 over the given sequence and g(x) (infra_78_common_move_mixed at nu=mu); majorities compared via infra_78_exists_outside_two; hypothesis applied to x and a move of Z along g;f. Helpers: infra_78_anchored_refl, infra_78_exists_outside_two, infra_78_exists_seq_ge."
+    },
+    {
+      "id": "infra_78_tied_local_bounded",
+      "label": "Tied local character at bounded arity (part a, bounded)",
+      "section": 7,
+      "file": "AEC/Section7/TiedLocalCharacter.lean",
+      "status": "done",
+      "blocker": null,
+      "detail": "Done (no sorry; axioms propext/choice/Quot.sound): infra_78_tied_local_bounded. Recursion-closed level, C : SameLevelChain, p over the union with p.nu = mu, #p.idx <= sigma, #p.idx < cf delta; for each aleph0 <= tau0 < mu: exists stage i with IsTiedFreeUpTo (toUnion i) (p|A_i) p refl tau0 (IsTiedFree restricted to queries of size <= tau0). Proof: Lemma 6.9 code at arity tau0 (infra_78_exists_trappable_seq) trapped in a stage (infra_613_trap_in_stage); common move with any sequence of p|A_i; trapped majority over the union is p."
+    },
+    {
+      "id": "infra_78_tied_testing_reduction",
+      "label": "Tied freeness: testing reduction to all arities",
+      "section": 7,
+      "file": "AEC/Section7/TiedLocalCharacter.lean",
+      "status": "open",
+      "blocker": null,
+      "detail": "Open (precise sub-tip split off part (a) of infra_78_tied_local_character). infra_78_tied_local_bounded gives, for each tau0 < mu, a stage i(tau0) tied-free up to arity tau0; IsTiedFree needs ONE stage for all query sizes < mu, and cf(delta) may be smaller than the number of arities. Needed (either route): (1) testing reduction: at a recursion-closed level, for same-level f : A -> B and small q over B, IsTiedFreeUpTo f (q|A) q refl tau0 with tau0 a scheme testing arity (e.g. P.g sigma + ls K + aleph0, Thm 6.6 testing) implies IsTiedFree f (q|A) q refl; then (a) follows from infra_78_tied_local_bounded at tau0. (2) Or restate the honest 6.11/6.13 freeness at the English 'sufficient testing arity' (IsTiedFreeUpTo at tau0) if (1) fails, with a counterexample in AEC/Audit. Caution: DiagramEq of long lists is not determined by sublists (IsolationBound note), so (1) must go through a Galois-type (Thm 6.6) argument, not concatenation."
     }
   ],
   "edges": [
@@ -3718,8 +3736,18 @@
       "from": "infra_78_tied_restrict",
       "to": "infra_78_tied_base_mono",
       "kind": "hard"
+    },
+    {
+      "from": "infra_78_tied_local_bounded",
+      "to": "infra_78_tied_local_character",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_78_tied_testing_reduction",
+      "to": "infra_78_tied_local_character",
+      "kind": "hard"
     }
   ],
-  "doneCount": 164,
+  "doneCount": 165,
   "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 43. Uncommitted in /tmp/aec-grok."
 }

@@ -14,7 +14,10 @@ local-character contradiction of Prop 7.8 are run on tied freeness `IsTiedFree`.
   tied freeness along `X → A` of the restriction to `A`.
 * (b) `infra_78_tiedFree_base_mono` (**proved**): tied freeness along `X → A → B` gives tied
   freeness along `A → B` (Theorem 6.10 uniqueness of the free evaluation, via a common move).
-* (a) tied local character: open.
+* (a) bounded form `infra_78_tied_local_bounded` (**proved**): for each query bound
+  `τ₀ < μ` some stage is tied-free up to queries of size `τ₀` (`IsTiedFreeUpTo`). The full
+  (a), one stage for all query sizes, is open: it needs a testing reduction
+  (`infra_78_tied_testing_reduction`) from a sufficient testing arity to all arities.
 -/
 
 namespace AEC
@@ -244,6 +247,182 @@ theorem infra_78_tiedFree_base_mono
     have b3 := P.scheme.diagram_trans _ _ _ _ _ _ b2 (P.scheme.diagram_symm _ _ _ _ hj2)
     exact P.scheme.diagram_trans _ _ _ _ _ _ b3 hq
   exact P.scheme.diagram_trans _ _ _ _ _ _ E1 E2
+
+/-- Tied freeness for queries of size at most `τ₀` (the bounded-arity form of `IsTiedFree`). -/
+def IsTiedFreeUpTo
+    {P : SingleModelData K} {μ : Cardinal.{u}} {hμ : μ ∈ P.eligible}
+    {A B : P.scheme.Object μ hμ}
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ B))
+    (q : TupleOver K oneVertexShape P.scheme hμ A)
+    (qB : TupleOver K oneVertexShape P.scheme hμ B)
+    (eB : q.idx ≃ qB.idx) (τ₀ : Cardinal.{u}) : Prop :=
+  ∀ (seq : ApproximationSequence q) {ι : Type u}
+    (Z : ι → Occurrence K oneVertexShape (P.scheme.asSystem hμ B))
+    (Z0 : ι → Occurrence K oneVertexShape (P.scheme.asSystem hμ A)),
+    seq.τ + ℵ₀ < #(seq.κIndex) →
+    #ι ≤ seq.τ → #ι < μ → #ι ≤ τ₀ →
+    infra_73_isMove f seq Z Z0 →
+    P.scheme.DiagramEq (X := q.host) (Y := qB.host)
+      (typeJoint (p := q) Z0)
+      (infra_612_anchored eB qB.incl qB.val Z)
+
+theorem IsTiedFree.upTo
+    {P : SingleModelData K} {μ : Cardinal.{u}} {hμ : μ ∈ P.eligible}
+    {A B : P.scheme.Object μ hμ}
+    {f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ B)}
+    {q : TupleOver K oneVertexShape P.scheme hμ A}
+    {qB : TupleOver K oneVertexShape P.scheme hμ B}
+    {eB : q.idx ≃ qB.idx} (h : IsTiedFree f q qB eB) (τ₀ : Cardinal.{u}) :
+    IsTiedFreeUpTo f q qB eB τ₀ :=
+  fun seq _ Z Z0 hκ hι hιμ _ hmove => h seq Z Z0 hκ hι hιμ hmove
+
+/-- A Lemma 6.9 sequence over the union of a chain, at query size `τ₀`, with a regular
+length placed on one side of `cf(δ)` (the hypotheses of `infra_613_trap_in_stage`). -/
+theorem infra_78_exists_trappable_seq
+    (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ)
+    {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
+    (hrec : μ ∈ recursionClosedLevels P σ) (hσSucc : Order.succ σ ≤ μ)
+    (C : SameLevelChain P hμ)
+    (p : TupleOver K oneVertexShape P.scheme hμ C.unionObj)
+    (hνμ : p.ν = μ) (hidx : #p.idx ≤ σ)
+    {τ₀ : Cardinal.{u}} (hτ₀ : ℵ₀ ≤ τ₀) (hτ₀μ : τ₀ < μ) :
+    ∃ seq : ApproximationSequence p, seq.τ = τ₀ ∧
+      #seq.κIndex * #p.idx < μ ∧ seq.τ + aleph0 < #seq.κIndex ∧
+      #seq.κIndex < μ ∧ (#seq.κIndex).IsRegular ∧
+      (#seq.κIndex < C.δ.cof ∨ C.δ.cof < #seq.κIndex) := by
+  have hσlt : σ < μ := (Order.lt_succ σ).trans_le hσSucc
+  have hidxμ : #p.idx < μ := hidx.trans_lt hσlt
+  have hclosed : infra_69_pad_recursion_closed σ (max (ls K) aleph0)
+      (max (max σ τ₀) (max (ls K) aleph0)) μ := by
+    apply hrec.2
+    exact max_lt (max_lt hσlt hτ₀μ) (max_lt (P.ls_lt hμ) (P.aleph0_lt hμ))
+  have hκex : ∃ κ : Cardinal.{u}, aleph0 ≤ κ ∧ κ < μ ∧ κ.IsRegular ∧
+      κ * #p.idx < μ ∧ τ₀ + aleph0 < κ ∧ (κ < C.δ.cof ∨ C.δ.cof < κ) := by
+    let ρ : Cardinal.{u} := if C.δ.cof < μ then max τ₀ (max #p.idx C.δ.cof)
+      else max τ₀ #p.idx
+    have hρinf : aleph0 ≤ ρ := by
+      simp only [ρ]; split_ifs <;> exact hτ₀.trans (le_max_left _ _)
+    have hρμ : ρ < μ := by
+      simp only [ρ]; split_ifs with h
+      · exact max_lt hτ₀μ (max_lt hidxμ h)
+      · exact max_lt hτ₀μ hidxμ
+    have hτρ : τ₀ ≤ ρ := by simp only [ρ]; split_ifs <;> exact le_max_left _ _
+    let κ : Cardinal.{u} := Order.succ ρ
+    have hκinf : aleph0 ≤ κ := hρinf.trans (Order.le_succ _)
+    have hκμ : κ < μ :=
+      (Order.succ_le_of_lt (cantor ρ)).trans_lt
+        (hμ.1.working.strongLimit.isStrongPrelimit hρμ)
+    have hprodκ : κ * #p.idx < μ := by
+      have hmul : κ * #p.idx ≤ κ * σ := mul_le_mul' le_rfl hidx
+      rcases le_total σ κ with hσκ | hκσ
+      · have heq : κ * σ = κ :=
+          mul_eq_left hκinf hσκ (aleph0_pos.trans_le hσ).ne'
+        rw [heq] at hmul
+        exact hmul.trans_lt hκμ
+      · have heq : κ * σ = σ := by
+          rw [mul_comm]
+          exact mul_eq_left hσ hκσ (aleph0_pos.trans_le hκinf).ne'
+        rw [heq] at hmul
+        exact hmul.trans_lt hσlt
+    have hlenκ : τ₀ + aleph0 < κ := by
+      rw [add_eq_left hτ₀ hτ₀]
+      exact hτρ.trans_lt (Order.lt_succ ρ)
+    have hside : κ < C.δ.cof ∨ C.δ.cof < κ := by
+      by_cases hcf : C.δ.cof < μ
+      · right
+        have : C.δ.cof ≤ ρ := by
+          simp only [ρ, hcf, ↓reduceIte]
+          exact (le_max_right #p.idx C.δ.cof).trans (le_max_right τ₀ _)
+        exact this.trans_lt (Order.lt_succ ρ)
+      · left
+        exact hκμ.trans_le (le_of_not_gt hcf)
+    exact ⟨κ, hκinf, hκμ, isRegular_succ hρinf, hprodκ, hlenκ, hside⟩
+  obtain ⟨κ, hκinf, hκμ, hregκ, hprodκ, hlenκ, hsideκ⟩ := hκex
+  obtain ⟨seq, hseqτ, hseqκ⟩ :=
+    P.exists_approximationSequence hμ C.unionObj p hνμ σ τ₀ κ hσ hσlt hidx hτ₀ hτ₀μ
+      hκinf hκμ hprodκ hclosed
+  refine ⟨seq, hseqτ, ?_, ?_, ?_, ?_, ?_⟩
+  · rw [hseqκ]; exact hprodκ
+  · rw [hseqτ, hseqκ]; exact hlenκ
+  · rw [hseqκ]; exact hκμ
+  · rw [hseqκ]; exact hregκ
+  · rw [hseqκ]; exact hsideκ
+
+/-- **(a) Tied local character at a bounded arity (proved).** At a recursion-closed level,
+for a same-level chain `C` and a small tuple `p` over its union (`#p.idx < cf δ`), for every
+query bound `ℵ₀ ≤ τ₀ < μ` some stage `A_i` has `p` tied free from `p ↾ A_i` on all queries of
+size at most `τ₀`. A Lemma 6.9 code at arity `τ₀` is trapped in a stage
+(`infra_613_trap_in_stage`); any approximation sequence of `p ↾ A_i` with a move is compared
+with the trapped code through a common move, and the trapped code's majority over the union is
+`p` itself. -/
+theorem infra_78_tied_local_bounded
+    (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ)
+    {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
+    (hrec : μ ∈ recursionClosedLevels P σ) (hσSucc : Order.succ σ ≤ μ)
+    (C : SameLevelChain P hμ)
+    (p : TupleOver K oneVertexShape P.scheme hμ C.unionObj)
+    (hνμ : p.ν = μ) (hidx : #p.idx ≤ σ) (hcof : #p.idx < C.δ.cof)
+    {τ₀ : Cardinal.{u}} (hτ₀ : ℵ₀ ≤ τ₀) (hτ₀μ : τ₀ < μ) :
+    ∃ i : Ordinal.{u}, ∃ hi : i < C.δ,
+      IsTiedFreeUpTo (C.toUnion i hi)
+        (p.restrict (C.toUnion i hi) (C.toUnion_arrow i hi)) p (Equiv.refl _) τ₀ := by
+  classical
+  have hσlt : σ < μ := (Order.lt_succ σ).trans_le hσSucc
+  have hidxμ : #p.idx < μ := hidx.trans_lt hσlt
+  obtain ⟨seq, hseqτ, hprod, hlen, hκμ, hreg, hside⟩ :=
+    infra_78_exists_trappable_seq P σ hσ hμ hrec hσSucc C p hνμ hidx hτ₀ hτ₀μ
+  obtain ⟨i, hi, seq', emb, hτeq, hlen', _, hpush⟩ :=
+    infra_613_trap_in_stage C p seq hcof hidxμ (hseqτ ▸ hτ₀μ) hprod hlen hκμ hreg hside
+  refine ⟨i, hi, ?_⟩
+  intro seqA ι Z Z0 hκA hιA hιμ hι0 hmove
+  have hι' : #ι ≤ seq'.τ := by rw [hτeq, hseqτ]; exact hι0
+  have hιs : #ι ≤ seq.τ := by rw [hseqτ]; exact hι0
+  obtain ⟨Z1, hZ1a, hZ1b⟩ :=
+    infra_78_common_move_mixed (C.toUnion i hi) (C.toUnion_arrow i hi) le_rfl seqA seq' Z hιμ
+  have hcι : ℵ₀ ≤ #ι + ℵ₀ := le_add_self
+  obtain ⟨a, ha1, ha2⟩ := infra_78_exists_outside_two
+    {a | ¬ P.scheme.DiagramEq (X := p.host) (Y := C.obj i hi)
+      (typeJoint (p := p.restrict (C.toUnion i hi) (C.toUnion_arrow i hi)) Z0)
+      (seqJoint (seqA.family a) Z0)}
+    {a | ¬ P.scheme.DiagramEq (X := p.host) (Y := C.obj i hi)
+      (typeJoint (p := p.restrict (C.toUnion i hi) (C.toUnion_arrow i hi)) Z1)
+      (seqJoint (seqA.family a) Z1)}
+    hcι (seqA.few_exceptions Z0 hιA) (seqA.few_exceptions Z1 hιA)
+    ((add_le_add hιA le_rfl).trans_lt hκA)
+  simp only [Set.mem_ofPred_eq, not_not] at ha1 ha2
+  have E1 := P.scheme.diagram_trans _ _ _ _ _ _
+    (P.scheme.diagram_trans _ _ _ _ _ _
+      (P.scheme.diagram_trans _ _ _ _ _ _ ha1 (hmove a))
+      (P.scheme.diagram_symm _ _ _ _ (hZ1a a)))
+    (P.scheme.diagram_symm _ _ _ _ ha2)
+  have hexc : #{s : seq'.κIndex // ¬ P.scheme.DiagramEq (X := p.host) (Y := C.unionObj)
+      (typeJoint (p := p) Z) (seqJoint (seq.family (emb s)) Z)} ≤ #ι + ℵ₀ := by
+    refine le_trans ?_ (seq.few_exceptions Z hιs)
+    refine Cardinal.mk_le_of_injective (f := fun s => ⟨emb s.1, s.2⟩) ?_
+    intro s₁ s₂ hs
+    apply Subtype.ext
+    have := congrArg Subtype.val hs
+    exact emb.injective this
+  obtain ⟨s, hs1, hs2⟩ := infra_78_exists_outside_two
+    {s | ¬ P.scheme.DiagramEq (X := p.host) (Y := C.obj i hi)
+      (typeJoint (p := p.restrict (C.toUnion i hi) (C.toUnion_arrow i hi)) Z1)
+      (seqJoint (seq'.family s) Z1)}
+    {s | ¬ P.scheme.DiagramEq (X := p.host) (Y := C.unionObj)
+      (typeJoint (p := p) Z) (seqJoint (seq.family (emb s)) Z)}
+    hcι (seq'.few_exceptions Z1 hι') hexc
+    ((add_le_add (hιs) le_rfl).trans_lt hlen')
+  simp only [Set.mem_ofPred_eq, not_not] at hs1 hs2
+  have hfam : (fun j => (⟨(seq'.family s j).1,
+      (C.toUnion i hi).onVertex (seq'.family s j).1 (seq'.family s j).2⟩ :
+        Occurrence K oneVertexShape (P.scheme.asSystem hμ C.unionObj))) =
+      seq.family (emb s) := funext fun j => hpush s j
+  have hmv := hZ1b s
+  rw [hfam] at hmv
+  have E2 := P.scheme.diagram_trans _ _ _ _ _ _
+    (P.scheme.diagram_trans _ _ _ _ _ _ hs1 hmv) (P.scheme.diagram_symm _ _ _ _ hs2)
+  have E := P.scheme.diagram_trans _ _ _ _ _ _ E1 E2
+  erw [infra_78_anchored_refl p Z]
+  exact E
 
 end
 end AEC
