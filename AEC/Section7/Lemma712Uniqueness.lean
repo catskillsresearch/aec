@@ -208,6 +208,134 @@ theorem infra_712u_step (P : SingleModelData K) {μ : Cardinal.{u}} (hμ : μ �
   exact infra_712u_sg_congr_right (infra_712_sg_congr_left H2 (fun _ => rfl))
     (fun x => er.apply_symm_apply x)
 
+/-- **Tied freeness depends on the base tuple only through its Galois type (proved, cycle 88).**
+Finite base tuples at the level. -/
+theorem infra_712u_tiedFree_base_sameGalois {P : SingleModelData K} {μ : Cardinal.{u}}
+    {hμ : μ ∈ P.eligible} {A B : P.scheme.Object μ hμ}
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ B))
+    (p p' : TupleOver K oneVertexShape P.scheme hμ A) (hν : p.ν = μ) (hν' : p'.ν = μ)
+    (hfin : Finite p.idx) (e : p'.idx ≃ p.idx)
+    (hS : SameGaloisType p' p e (Equiv.refl _))
+    (r : TupleOver K oneVertexShape P.scheme hμ B) (er : p.idx ≃ r.idx)
+    (hT : IsTiedFree f p r er) : IsTiedFree f p' r (e.trans er) := by
+  have hM : IsTiedFreeMixed f p r er := hT
+  have H := infra_711_tiedFree_base_equiv f p p' e r er (fun {β} Z hβ => by
+    have D := infra_72_diagramEq_of_sameGalois hS Z hν' hν
+      ((Cardinal.lt_aleph0_of_finite p.idx).trans_le (P.aleph0_le hμ)) hβ
+    refine infra_612_dEq_comp D (Sum.map e id) ?_ ?_
+    · rintro (k | j)
+      · show _ = typeJoint (p := p') Z (Sum.inl (e.symm (e k)))
+        rw [Equiv.symm_apply_apply]
+      · rfl
+    · rintro (k | j) <;> rfl) hM
+  exact H
+
+/-- **7.12(2) successor of the common objects (proved, cycle 88).** Old stages `M`, `M'` mapped
+into a common `N` compatibly over `A`; next marks `q` over `M`, `q'` over `M'` tied free from
+marginals of the same type. Then there is a level-`μ` `N₁ ⊇ N` receiving both new stages over
+the old ones and identifying the marks: the common tied free lift `c` over `N`
+(`infra_610_tied_free_lift`), `infra_712u_step` on both sides, two type-identifying amalgams
+(`infra_78_same_level_type_amalgam`) merged over `c`'s host by Theorem 4.11(1). -/
+theorem infra_712u_succ (P : SingleModelData K) {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
+    (h0 : μ ∈ recursionClosedLevels P ℵ₀) (h1 : Order.succ ℵ₀ ≤ μ)
+    {A M M' N : P.scheme.Object μ hμ}
+    (a : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ M))
+    (a' : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ M'))
+    (g : SystemArrow K oneVertexShape (P.scheme.asSystem hμ M) (P.scheme.asSystem hμ N))
+    (g' : SystemArrow K oneVertexShape (P.scheme.asSystem hμ M') (P.scheme.asSystem hμ N))
+    (hcomm : SystemArrow.comp a g = SystemArrow.comp a' g')
+    (q : TupleOver K oneVertexShape P.scheme hμ M) (q' : TupleOver K oneVertexShape P.scheme hμ M')
+    (hqν : q.ν = μ) (hqν' : q'.ν = μ) (hfin : Finite q.idx)
+    (hq : IsTiedFree a (q.restrict a trivial) q (Equiv.refl _))
+    (hq' : IsTiedFree a' (q'.restrict a' trivial) q' (Equiv.refl _))
+    (e : q'.idx ≃ q.idx)
+    (hS : SameGaloisType (q'.restrict a' trivial) (q.restrict a trivial) e (Equiv.refl _)) :
+    ∃ (N₁ : P.scheme.Object μ hμ)
+      (h : SystemArrow K oneVertexShape (P.scheme.asSystem hμ N) (P.scheme.asSystem hμ N₁))
+      (k : SystemArrow K oneVertexShape (P.scheme.asSystem q.hν q.host) (P.scheme.asSystem hμ N₁))
+      (k' : SystemArrow K oneVertexShape (P.scheme.asSystem q'.hν q'.host)
+        (P.scheme.asSystem hμ N₁)),
+      (∀ v, (k.onVertex v).comp (q.incl.onVertex v) = (h.onVertex v).comp (g.onVertex v)) ∧
+      (∀ v, (k'.onVertex v).comp (q'.incl.onVertex v) = (h.onVertex v).comp (g'.onVertex v)) ∧
+      ∀ x : q.idx, (⟨(q.val x).1, k.onVertex _ (q.val x).2⟩ :
+          Occurrence K oneVertexShape (P.scheme.asSystem hμ N₁)) =
+        ⟨(q'.val (e.symm x)).1, k'.onVertex _ (q'.val (e.symm x)).2⟩ := by
+  classical
+  have : CategoricalUnbounded K := P.D.categoricalUnbounded
+  have hL := infra_610_closed_level P ℵ₀ le_rfl hμ h0
+  obtain ⟨r, er, hrν, -, hr⟩ := infra_610_tied_free_lift P ℵ₀ le_rfl hμ h0 h1
+    (SystemArrow.comp a g) trivial (q.restrict a trivial) hqν (Cardinal.lt_aleph0_of_finite q.idx).le
+  have S1 := infra_712u_step P hμ h0 h1 a trivial g trivial q hqν hfin hq r hrν er hr
+  have hr' : IsTiedFree (SystemArrow.comp a' g') (q'.restrict a' trivial) r (e.trans er) := by
+    rw [← hcomm]
+    exact infra_712u_tiedFree_base_sameGalois _ (q.restrict a trivial) (q'.restrict a' trivial)
+      hqν hqν' hfin e hS r er hr
+  have hfin' : Finite q'.idx := Finite.of_equiv _ e.symm
+  have S2 := infra_712u_step P hμ h0 h1 a' trivial g' trivial q' hqν' hfin' hq' r hrν _ hr'
+  obtain ⟨T1, f1, f2, -, -, hc1, hv1⟩ := infra_78_same_level_type_amalgam q (r.restrict g trivial)
+    er (Equiv.refl _) hqν hrν S1
+  obtain ⟨T2, f1', f2', -, -, hc2, hv2⟩ := infra_78_same_level_type_amalgam q'
+    (r.restrict g' trivial) (e.trans er) (Equiv.refl _) hqν' hrν S2
+  have hcr : Model.card r.host.model = μ := by simpa [hrν] using r.host.card
+  obtain ⟨M0, k1, k2, hM, hk1, hk2, hcM, hbase⟩ :=
+    ClosedLevel.amalgamation hL r.host.model T1.model T2.model (f2.onVertex PUnit.unit)
+      (f2'.onVertex PUnit.unit) r.host.mem T1.mem T2.mem (f2.onVertex_strong _)
+      (f2'.onVertex_strong _) hcr T1.card T2.card
+  let top : SMObject K μ := SMObject.ofModel M0 hM hcM
+  let φ : M0.carrier ≃[K.τ] top.model.carrier := SMObject.ofModelEquiv M0 hM hcM
+  have hφ : K.Strong φ.toEmbedding := strong_of_equiv K φ hM
+  let b1 : SystemArrow K oneVertexShape (P.scheme.asSystem hμ T1) (P.scheme.asSystem hμ top) :=
+    oneVertexArrow (φ.toEmbedding.comp k1) (K.strong_trans _ _ hk1 hφ)
+  let b2 : SystemArrow K oneVertexShape (P.scheme.asSystem hμ T2) (P.scheme.asSystem hμ top) :=
+    oneVertexArrow (φ.toEmbedding.comp k2) (K.strong_trans _ _ hk2 hφ)
+  have hmid : ∀ y, b1.onVertex PUnit.unit (f2.onVertex PUnit.unit y) =
+      b2.onVertex PUnit.unit (f2'.onVertex PUnit.unit y) := fun y => congrArg φ (hbase y)
+  refine ⟨top, SystemArrow.comp r.incl (SystemArrow.comp f2 b1), SystemArrow.comp f1 b1,
+    SystemArrow.comp f1' b2, fun v => ?_, fun v => ?_, fun x => ?_⟩
+  · have hv : v = PUnit.unit := Subsingleton.elim _ _
+    subst hv
+    refine DFunLike.ext _ _ fun y => ?_
+    have q1 : f1.onVertex PUnit.unit (q.incl.onVertex PUnit.unit y) =
+        f2.onVertex PUnit.unit (r.incl.onVertex PUnit.unit (g.onVertex PUnit.unit y)) :=
+      DFunLike.congr_fun (hc1 PUnit.unit) y
+    exact congrArg (b1.onVertex PUnit.unit) q1
+  · have hv : v = PUnit.unit := Subsingleton.elim _ _
+    subst hv
+    refine DFunLike.ext _ _ fun y => ?_
+    have q2 : f1'.onVertex PUnit.unit (q'.incl.onVertex PUnit.unit y) =
+        f2'.onVertex PUnit.unit (r.incl.onVertex PUnit.unit (g'.onVertex PUnit.unit y)) :=
+      DFunLike.congr_fun (hc2 PUnit.unit) y
+    exact (congrArg (b2.onVertex PUnit.unit) q2).trans (hmid _).symm
+  · let Φ1 : q.idx → Occurrence K oneVertexShape (P.scheme.asSystem hμ top) := fun y =>
+      ⟨(q.val y).1, (SystemArrow.comp f1 b1).onVertex _ (q.val y).2⟩
+    let Φ2 : q'.idx → Occurrence K oneVertexShape (P.scheme.asSystem hμ top) := fun y =>
+      ⟨(q'.val y).1, (SystemArrow.comp f1' b2).onVertex _ (q'.val y).2⟩
+    let Ψ1 : r.idx → Occurrence K oneVertexShape (P.scheme.asSystem hμ top) := fun i =>
+      ⟨(r.val i).1, b1.onVertex _ (f2.onVertex _ (r.val i).2)⟩
+    let Ψ2 : r.idx → Occurrence K oneVertexShape (P.scheme.asSystem hμ top) := fun i =>
+      ⟨(r.val i).1, b2.onVertex _ (f2'.onVertex _ (r.val i).2)⟩
+    have E1 : ∀ i, Φ1 (er.symm i) = Ψ1 i := fun i =>
+      congrArg (fun o : Occurrence K oneVertexShape (P.scheme.asSystem hμ T1) =>
+        (⟨o.1, b1.onVertex o.1 o.2⟩ : Occurrence K oneVertexShape (P.scheme.asSystem hμ top)))
+        (hv1 i)
+    have E2 : ∀ i, Φ2 ((e.trans er).symm i) = Ψ2 i := fun i =>
+      congrArg (fun o : Occurrence K oneVertexShape (P.scheme.asSystem hμ T2) =>
+        (⟨o.1, b2.onVertex o.1 o.2⟩ : Occurrence K oneVertexShape (P.scheme.asSystem hμ top)))
+        (hv2 i)
+    have hmid' : ∀ i, Ψ1 i = Ψ2 i := by
+      intro i
+      show (⟨(r.val i).1, _⟩ : Occurrence K oneVertexShape (P.scheme.asSystem hμ top)) = ⟨_, _⟩
+      generalize r.val i = o
+      obtain ⟨⟨⟩, y⟩ := o
+      exact Sigma.ext rfl (heq_of_eq (hmid y))
+    have i2 : (e.trans er).symm (er x) = e.symm x := congrArg e.symm (er.symm_apply_apply x)
+    show Φ1 x = Φ2 (e.symm x)
+    calc Φ1 x = Φ1 (er.symm (er x)) := congrArg Φ1 (er.symm_apply_apply x).symm
+      _ = Ψ1 (er x) := E1 _
+      _ = Ψ2 (er x) := hmid' _
+      _ = Φ2 ((e.trans er).symm (er x)) := (E2 _).symm
+      _ = Φ2 (e.symm x) := congrArg Φ2 i2
+
 /-- **7.12(2), the marks (open tip `infra_712u_marks`).** -/
 theorem infra_712u_marks (P : SingleModelData K) : infra_712u_marks_statement P := by
   sorry

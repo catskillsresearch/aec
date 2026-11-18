@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-18 16:19",
+ "updated": "2026-11-18 16:22",
  "sorryCount": 41,
  "legend": {
   "open": "No unfinished required proof-deps — try next",
@@ -3213,7 +3213,7 @@
    "file": "AEC/Section7/Lemma712Uniqueness.lean",
    "status": "open",
    "blocker": null,
-   "detail": "Open (cycle 88; the one sorry under lemma_7_12). infra_712u_marks_statement: at mu in infra_712_levels P, chains C, C' of L, L' (order iso e, per-entry equivs ei, same marginals over A) => SameGaloisType C.marksWhole C'.marksWhole. Plan (text.md l.238-242): recursion on j <= top of common N_j (level mu) with arrows M_j -> N_j, M'_j -> N_j agreeing on A and on marks < j. Successor: tied free lift c of p_j over N_j (infra_610_tied_free_lift), restrictions to both images are free over M_j / M'_j (host_target/host_source'), equal to tp(b_j/M_j) by free-lift uniqueness (infra_610_majority_unique), then infra_78_same_level_type_amalgam for M_{j+1} with (N_j, c) over M_j, then again for M'_{j+1} (types preserved by arrows); limits: infra_78_chain_union_kappa + continuity of both chains; base: M_0 = A (first). infra_712_trans_level makes all compositions level-safe (no large amalgam). Cycle 88: successor comparison infra_712u_step PROVED; remaining = the transfinite recursion of common objects N_j (successor: tied free lift + infra_712u_step twice + infra_78_same_level_type_amalgam twice + Thm 4.11(1) to merge; limit: infra_78_chain_union_kappa with both chains continuous; base M_0 = A via first) and reading off the marks at top."
+   "detail": "Open (cycle 88; the one sorry under lemma_7_12). infra_712u_marks_statement: at mu in infra_712_levels P, chains C, C' of L, L' (order iso e, per-entry equivs ei, same marginals over A) => SameGaloisType C.marksWhole C'.marksWhole. Plan (text.md l.238-242): recursion on j <= top of common N_j (level mu) with arrows M_j -> N_j, M'_j -> N_j agreeing on A and on marks < j. Successor: tied free lift c of p_j over N_j (infra_610_tied_free_lift), restrictions to both images are free over M_j / M'_j (host_target/host_source'), equal to tp(b_j/M_j) by free-lift uniqueness (infra_610_majority_unique), then infra_78_same_level_type_amalgam for M_{j+1} with (N_j, c) over M_j, then again for M'_{j+1} (types preserved by arrows); limits: infra_78_chain_union_kappa + continuity of both chains; base: M_0 = A (first). infra_712_trans_level makes all compositions level-safe (no large amalgam). Cycle 88: successor comparison infra_712u_step PROVED; remaining = the transfinite recursion of common objects N_j (successor: tied free lift + infra_712u_step twice + infra_78_same_level_type_amalgam twice + Thm 4.11(1) to merge; limit: infra_78_chain_union_kappa with both chains continuous; base M_0 = A via first) and reading off the marks at top. Cycle 88c: the full successor step infra_712u_succ is PROVED; remaining = coherent transfinite recursion (chain engine) carrying N_j, arrows M_j -> N_j, M'_j -> N_j (successor: infra_712u_succ applied to q = mark tuple hosted in M_{j+1} via TiedListPreChain.free_pull-style HostRel, marginals identified through C.top/C'.top and the hypothesis; limit: infra_78_chain_union_kappa + continuity of both chains), then read off SameGaloisType of the marks at top."
   },
   {
    "id": "infra_712u_step",
@@ -3223,6 +3223,15 @@
    "status": "done",
    "blocker": null,
    "detail": "PROVED cycle 88: infra_712u_step (q over M tied free along a from its marginal, r tied free over N along a;g from the same marginal => SameGaloisType q (r restrict g)); via infra_712u_tiedFree_restrict (general-base restriction of tied freeness) and infra_73_tied_unique. With infra_78_same_level_type_amalgam this is the English 'amalgamate M_{i+1} with the realization c identifying b_i with c'. Axioms clean."
+  },
+  {
+   "id": "infra_712u_succ",
+   "label": "7.12(2) successor of the common objects N_j (both chains, marks identified)",
+   "section": 7,
+   "file": "AEC/Section7/Lemma712Uniqueness.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "PROVED cycle 88: infra_712u_succ: old stages M, M' into N compatibly over A, next marks q over M, q' over M' tied free from marginals of the same type => level-mu N1 with N -> N1, q.host -> N1, q'.host -> N1 commuting over the old stages and identifying the marks. Common tied free lift (infra_610_tied_free_lift), infra_712u_step twice (base change of the marginal by infra_712u_tiedFree_base_sameGalois), two infra_78_same_level_type_amalgam merged over the lift's host by Thm 4.11(1). Axioms clean."
   }
  ],
  "edges": [
@@ -6559,8 +6568,13 @@
    "from": "infra_712u_step",
    "to": "infra_712u_marks",
    "kind": "hard"
+  },
+  {
+   "from": "infra_712u_succ",
+   "to": "infra_712u_marks",
+   "kind": "hard"
   }
  ],
- "doneCount": 297,
+ "doneCount": 298,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
