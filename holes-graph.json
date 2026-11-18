@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-18 13:24",
+  "updated": "2026-11-18 13:33",
   "sorryCount": 44,
   "legend": {
     "open": "No unfinished required proof-deps — try next",
@@ -623,7 +623,7 @@
       "file": "AEC/Section7/Results.lean",
       "status": "blocked",
       "blocker": "infra_78_mixed_level_isolation",
-      "detail": "RESTATED (grokbot_01 Phase 1.1), open with sorry. Now over SingleModelData P (P.scheme, oneVertexShape: the package of theorem_6_10, proposition_6_13, proposition_7_3_uniform, lemma_7_6_tied) instead of a bare WorkingScheme; tail T chosen before theta (uniform closure). Bounded-mark (Def 7.7) generalization not stated. Blocked on infra_78_mixed_level_isolation (stubs in AEC/Section7/MixedLevel.lean). AUDIT NOTE (cycle 64, no statement change): paper 'Proposition 7.8. Let lambda be a sufficiently closed eligible level, let X be an object there, and let p = tp(b/X) be a finite-tuple type. For every infinite theta < lambda there is a same-level extension X <= U containing a realization of p such that tp(b, c/X) is isolated relative to b for every c in U with |c| <= theta.' Types are Theorem 6.6's tp(v/A; B) for arrows A -> B0, B1 (identification in an amalgam over A), with no restriction on the level of B; so the Lean p with any host level >= lambda matches the English as written. Its proof for hosts above lambda uses the cross-level identification the paper takes from Theorem 6.6, whose Lean form (infra_78_cross_level_galois / infra_612_galois_trans_cross_level, via infra_78_tuple_amalgam_large) is unverified. The case p.nu = lambda is infra_78_matrix_assembly_level.",
+      "detail": "RESTATED (grokbot_01 Phase 1.1), open with sorry. Now over SingleModelData P (P.scheme, oneVertexShape: the package of theorem_6_10, proposition_6_13, proposition_7_3_uniform, lemma_7_6_tied) instead of a bare WorkingScheme; tail T chosen before theta (uniform closure). Bounded-mark (Def 7.7) generalization not stated. Blocked on infra_78_mixed_level_isolation (stubs in AEC/Section7/MixedLevel.lean). AUDIT NOTE (cycle 64, no statement change): paper 'Proposition 7.8. Let lambda be a sufficiently closed eligible level, let X be an object there, and let p = tp(b/X) be a finite-tuple type. For every infinite theta < lambda there is a same-level extension X <= U containing a realization of p such that tp(b, c/X) is isolated relative to b for every c in U with |c| <= theta.' Types are Theorem 6.6's tp(v/A; B) for arrows A -> B0, B1 (identification in an amalgam over A), with no restriction on the level of B; so the Lean p with any host level >= lambda matches the English as written. Its proof for hosts above lambda uses the cross-level identification the paper takes from Theorem 6.6, whose Lean form (infra_78_cross_level_galois / infra_612_galois_trans_cross_level, via infra_78_tuple_amalgam_large) is unverified. The case p.nu = lambda is infra_78_matrix_assembly_level. Cycle 66: the case p.nu = lambda is proved (infra_78_matrix_assembly_level, sorry-free); proposition_7_8 unchanged and still sorry.",
       "restated": true
     },
     {
@@ -1844,7 +1844,7 @@
       "file": "AEC/Section7/MixedDescent.lean",
       "status": "blocked",
       "blocker": "infra_78_isolation_transfer",
-      "detail": "Blocked (full claim kept: everything Prop 7.8 needs beyond the done infra). Split into tracked sub-tips: infra_78_fixed_list_eventually_free (DONE), infra_78_nonfree_extension_tied (DONE), infra_78_same_level_type_amalgam (DONE), infra_78_bookkeeping_closure (DONE cycle 41 via infra_78_bookkeeping_assembly), infra_78_matrix_construction (blocked; split cycle 42: infra_78_bookkeeping_stage_local DONE, infra_78_matrix_successor_step open, infra_78_matrix_limit_step open, infra_78_matrix_recursion blocked), infra_78_isolated_stage (DONE cycle 56), infra_78_theta_shrink (open), infra_78_isolation_transfer (blocked). Previously done toward it: mixed tied free lift, mixed Lemma 7.6, Fodor, matrix data, stationary combinatorics, tied local character. Open. Done toward it: mixed tied free lift and mixed Lemma 7.6 (sorry-free), Fodor, matrix data, stationary combinatorics (infra_78_stationary_combinatorics: high-cofinality stages stationary, small sets appear early, one fixed failing list on a stationary set). Tied local character now done (infra_78_tied_local_character: infra_78_tied_local, base mono, restrict); untied IsFreeFrom is vacuous (audit_free_from_vacuous). Remaining for Prop 7.8: the rho^+ matrix construction at level kappa with level-lambda pairs inside R_i,S_i (bookkeeping closures), type-identifying amalgamation at kappa, the local-character contradiction for the fixed list, the theta^+ shrink to A<=U with the majority free-extension identity, Def 7.7 continuity at matrix limits (only finite marks done: infra_78_finite_continuity). Cycle 63: new sub-tip infra_78_matrix_assembly_level (open; the assembly for p realized at the level of X); the general host level waits on infra_78_marginal_general_level via infra_78_isolation_transfer. Cycle 64: infra_78_matrix_assembly_level split (assembly_levels, seq_diagram_transfer done; seed_stage, stage_transport open; assembly_glue blocked)."
+      "detail": "Blocked (full claim kept: everything Prop 7.8 needs beyond the done infra). Split into tracked sub-tips: infra_78_fixed_list_eventually_free (DONE), infra_78_nonfree_extension_tied (DONE), infra_78_same_level_type_amalgam (DONE), infra_78_bookkeeping_closure (DONE cycle 41 via infra_78_bookkeeping_assembly), infra_78_matrix_construction (blocked; split cycle 42: infra_78_bookkeeping_stage_local DONE, infra_78_matrix_successor_step open, infra_78_matrix_limit_step open, infra_78_matrix_recursion blocked), infra_78_isolated_stage (DONE cycle 56), infra_78_theta_shrink (open), infra_78_isolation_transfer (blocked). Previously done toward it: mixed tied free lift, mixed Lemma 7.6, Fodor, matrix data, stationary combinatorics, tied local character. Open. Done toward it: mixed tied free lift and mixed Lemma 7.6 (sorry-free), Fodor, matrix data, stationary combinatorics (infra_78_stationary_combinatorics: high-cofinality stages stationary, small sets appear early, one fixed failing list on a stationary set). Tied local character now done (infra_78_tied_local_character: infra_78_tied_local, base mono, restrict); untied IsFreeFrom is vacuous (audit_free_from_vacuous). Remaining for Prop 7.8: the rho^+ matrix construction at level kappa with level-lambda pairs inside R_i,S_i (bookkeeping closures), type-identifying amalgamation at kappa, the local-character contradiction for the fixed list, the theta^+ shrink to A<=U with the majority free-extension identity, Def 7.7 continuity at matrix limits (only finite marks done: infra_78_finite_continuity). Cycle 63: new sub-tip infra_78_matrix_assembly_level (open; the assembly for p realized at the level of X); the general host level waits on infra_78_marginal_general_level via infra_78_isolation_transfer. Cycle 64: infra_78_matrix_assembly_level split (assembly_levels, seq_diagram_transfer done; seed_stage, stage_transport open; assembly_glue blocked). Cycle 66: infra_78_matrix_assembly_level DONE (seed_stage, assembly_glue; AssemblyGlue.lean), so Prop 7.8's conclusion is proved for p realized at the level of X; still blocked on infra_78_isolation_transfer (marginal_general_level, hosts above lambda)."
     },
     {
       "id": "infra_9_cube_scheme",
@@ -2679,10 +2679,10 @@
       "id": "infra_78_matrix_assembly_level",
       "label": "Prop 7.8 assembly for p realized at the level of X",
       "section": 7,
-      "file": "AEC/Section7/AssemblyLevel.lean",
-      "status": "blocked",
-      "blocker": "infra_78_assembly_glue",
-      "detail": "Blocked (split grokbot cycle 64). Lean: def infra_78_matrix_assembly_level_statement (full claim: the proposition_7_8 conclusion on the tail infra_78_closedTail P for p with p.nu = lambda). = infra_78_assembly_levels (done) + infra_78_seq_diagram_transfer (done) + infra_78_seed_stage (open) + infra_78_stage_transport (open) + infra_78_assembly_glue (blocked on the two open parts)."
+      "file": "AEC/Section7/AssemblyGlue.lean",
+      "status": "done",
+      "blocker": null,
+      "detail": "DONE (grokbot cycle 66). theorem infra_78_matrix_assembly_level : infra_78_matrix_assembly_level_statement P (the proposition_7_8 conclusion on the tail infra_78_closedTail P for finite p with p.nu = lambda, statement unchanged since cycle 64). Full claim = infra_78_assembly_levels + infra_78_seq_diagram_transfer + infra_78_stage_transport + infra_78_seed_stage + infra_78_assembly_glue, all done. Axioms: propext, Classical.choice, Quot.sound. proposition_7_8 itself stays sorry: hosts above lambda need infra_78_marginal_general_level (blocked on infra_612_galois_trans_cross_level)."
     },
     {
       "id": "infra_78_assembly_levels",
@@ -2703,13 +2703,40 @@
       "detail": "DONE (grokbot cycle 64). infra_78_seq_diagram_transfer: an ApproximationSequence for t1 over X gives one for t2 (same family reindexed along e : t1.idx ~ t2.idx, same tau and kappaIndex) when their diagrams agree on tests of size <= tau. Used to read I_p (fixed in X from p before the matrix) as a sequence for the mark restricted to X at the isolated stage."
     },
     {
+      "id": "infra_78_presentation_arrow",
+      "label": "Prop 7.8: a level-kappa object X_0 with an arrow X -> X_0",
+      "section": 7,
+      "file": "AEC/Section7/SeedStage.lean",
+      "status": "done",
+      "blocker": null,
+      "detail": "DONE (grokbot cycle 66). X_0 = SMObject.ofModel (G kappa); arrow = (ofModelEquiv) o push (chart of X then the order arrow E(nu) -> E(kappa)); strong by strong_trans."
+    },
+    {
+      "id": "infra_78_tiedFreeMixed_left_congr",
+      "label": "Prop 7.8: mixed tied freeness depends only on the small-test diagrams of the restricted type",
+      "section": 7,
+      "file": "AEC/Section7/SeedStage.lean",
+      "status": "done",
+      "blocker": null,
+      "detail": "DONE (grokbot cycle 66). IsTiedFreeMixed f q qB eB and DiagramEq (typeJoint q' Z) (typeJoint q Z o Sum.map e id) for |Z| < nu give IsTiedFreeMixed f q' qB (e.trans eB). Sequence shrunk to tau = |iota| and transported by infra_78_seq_diagram_transfer; moves and anchored lists reindexed by Equiv.sumCongr (bijective reindexing only)."
+    },
+    {
+      "id": "infra_78_seed_lift",
+      "label": "Prop 7.8: Y_0, p0 : X_0 -> Y_0 and b0 carrying the mixed tied free lift of p in matrix mark form",
+      "section": 7,
+      "file": "AEC/Section7/SeedStage.lean",
+      "status": "done",
+      "blocker": null,
+      "detail": "DONE (grokbot cycle 66). From infra_78_presentation_arrow + infra_78_tied_free_lift_mixed (host recast at kappa by subst of qB.nu = kappa) + infra_78_tiedFreeMixed_left_congr: small-test diagrams of p equal those of (markTuple (toArr hp0) b0) restricted along iota0, and IsTiedFreeMixed iota0 of that restriction."
+    },
+    {
       "id": "infra_78_seed_stage",
       "label": "Prop 7.8: the seed X -> X_0, Y_0 with the mixed free lift of p, R_0 = closure of iota(I_p) + b",
       "section": 7,
-      "file": "AEC/Section7/AssemblyLevel.lean",
-      "status": "open",
+      "file": "AEC/Section7/SeedStage.lean",
+      "status": "done",
       "blocker": null,
-      "detail": "Open (sub-tip of infra_78_matrix_assembly_level, cycle 64). For p over X with p.nu = lambda: a level-kappa X_0 with iota0 : X -> X_0 (presentation arrow); the mixed free lift qB of p over X_0 (infra_78_tied_free_lift_mixed: IsTiedFreeMixed + small-test diagrams), Y_0 := qB.host recast at kappa; a Lemma 6.9 approximation sequence for p at arity >= g sigma + ls K with long index; the seed stage infra_78_seedStage (base id, mark b0 from qB.val, seeds infra_78_seedSet (iota0 '' anchors) b0 y) with infra_78_seedStage_inv5, seedStage_closed / card, S_0 nonempty. Existing: seedStage, seedSet, seedSet_card, seedStage_inv5, recursion_outputs (I_p carried into every R_k)."
+      "detail": "DONE (grokbot cycle 66; SeedStage.lean, theorem infra_78_seed_stage). For p over X (level nu, p.nu = nu, |p| <= sigma, nu and kappa recursion-closed at sigma, sigma^+ <= nu <= kappa): X_0 at kappa with iota0 : X -> X_0 (infra_78_presentation_arrow: chart + order arrow E(nu) -> E(kappa)); Y_0 = the host of the mixed tied free lift (infra_78_tied_free_lift_mixed) recast at kappa, pair p0, mark b0 (infra_78_seed_lift: small-test diagrams of p equal those of the mark restricted to X; IsTiedFreeMixed iota0 in the matrix mark form, via infra_78_tiedFreeMixed_left_congr); a Lemma 6.9 approximation sequence for p at arity >= max(lam', g sigma + ls K), long index, tau < nu (infra_78_tied_at_mixed); |iota0(I_p)| < nu; and for every y the seed stage with base map id and seeds infra_78_seedSet (iota0 '' anchors) b0 y: invariant (5), seeds in R_0, |R_0| <= rho, R_0 pair-closed, S_0 nonempty. Axioms: propext, Classical.choice, Quot.sound."
     },
     {
       "id": "infra_78_tiedFreeMixed_forward",
@@ -2733,10 +2760,10 @@
       "id": "infra_78_assembly_glue",
       "label": "Prop 7.8 assembly glue for p realized at the level of X",
       "section": 7,
-      "file": "AEC/Section7/AssemblyLevel.lean",
-      "status": "blocked",
-      "blocker": "infra_78_seed_stage",
-      "detail": "Blocked only on infra_78_seed_stage after cycle 65 (sub-tip of infra_78_matrix_assembly_level, cycle 64). Combine: infra_78_assembly_levels; infra_78_seed_stage; infra_78_isolation_over_A with s0 containing iota(I_p) and b (cIdx of size theta); infra_78_stage_transport + infra_78_tiedFreeMixed_trans (tied freeness of the stage-i mark over X along iota0 >> g_i); infra_78_seq_diagram_transfer (I_p as a sequence for the mark); infra_78_marginal_identify_level (phi : X ~ A, Galois type); infra_78_iso_rename_asTuple (rename U). Output: infra_78_matrix_assembly_level_statement."
+      "file": "AEC/Section7/AssemblyGlue.lean",
+      "status": "done",
+      "blocker": null,
+      "detail": "DONE (grokbot cycle 66; AssemblyGlue.lean, theorem infra_78_matrix_assembly_level). Levels by infra_78_assembly_levels (rho = 2^lambda, kappa > rho^+, sigma = lambda, sigma_d = theta, cIdx = theta.ord.ToType); seed by infra_78_seed_stage at sigma = theta; isolated stage i and A <= U inside X_i <= Y_i containing iota0(I_p) carried to X_i and the stage mark by infra_78_isolation_over_A (s_0 = rcMap(i0,i).1 '' iota0(I_p) + b_i, of size < lambda); stage-i mark tied free over X along iota0 >> g_i by infra_78_stage_transport + infra_78_tiedFreeMixed_trans with invariant (5) at i; I_p as a sequence for the stage mark by infra_78_seq_diagram_transfer; phi : X ~ A with tp(bU/X) = p by infra_78_marginal_identify_level; isolation over X by infra_78_iso_rename_asTuple. Axioms: propext, Classical.choice, Quot.sound."
     }
   ],
   "edges": [
@@ -5422,8 +5449,33 @@
       "from": "infra_78_tiedFreeMixed_forward",
       "to": "infra_78_stage_transport",
       "kind": "hard"
+    },
+    {
+      "from": "infra_78_presentation_arrow",
+      "to": "infra_78_seed_stage",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_78_tiedFreeMixed_left_congr",
+      "to": "infra_78_seed_stage",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_78_seed_lift",
+      "to": "infra_78_seed_stage",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_78_tiedFreeMixed_left_congr",
+      "to": "infra_78_seed_lift",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_78_presentation_arrow",
+      "to": "infra_78_seed_lift",
+      "kind": "hard"
     }
   ],
-  "doneCount": 238,
+  "doneCount": 244,
   "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 43. Uncommitted in /tmp/aec-grok."
 }

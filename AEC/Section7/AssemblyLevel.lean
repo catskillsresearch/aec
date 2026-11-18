@@ -17,10 +17,9 @@ on the tail `infra_78_closedTail P`, for every finite-tuple `p` over `X` realize
 * `infra_78_seq_diagram_transfer` (proved): an approximation sequence for `p` (the list `I_p`,
   fixed in `X` before the matrix) is one for any tuple with the same small-test diagrams (the mark
   restricted to `X` at the isolated stage).
-* Open (tracked on the board): `infra_78_seed_stage` (seed `X → X_0`, `Y_0` with the mixed free
-  lift of `p`, `R_0 ⊇ ι(I_p) ∪ b`, closed, `≤ ρ`), `infra_78_stage_transport` (at every stage the
-  mark is the seed mark, `Y_0 → Y_i` commutes with the base maps, `R_0 ⊆ R_i`), and the final glue
-  `infra_78_assembly_glue`.
+* `infra_78_stage_transport` (`StageTransport.lean`), `infra_78_seed_stage` (`SeedStage.lean`)
+  and the final glue `infra_78_matrix_assembly_level` (`AssemblyGlue.lean`): all proved
+  (cycles 65-66).
 -/
 
 universe u
@@ -30,7 +29,7 @@ namespace AEC
 
 variable {K : AbstractElementaryClass.{u}}
 
-/-- **Full claim of `infra_78_matrix_assembly_level`** (statement only; open). The
+/-- **Full claim of `infra_78_matrix_assembly_level`** (proved in `AssemblyGlue.lean`). The
 `proposition_7_8` conclusion on the tail `infra_78_closedTail P` for `p` realized at the level of
 `X`. -/
 def infra_78_matrix_assembly_level_statement (P : SingleModelData K) : Prop :=
