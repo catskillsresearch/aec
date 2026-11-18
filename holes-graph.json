@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-18 09:33",
+  "updated": "2026-11-18 09:39",
   "sorryCount": 45,
   "legend": {
     "open": "No unfinished required proof-deps — try next",
@@ -2096,7 +2096,7 @@
       "file": "AEC/Section6/ProductTied.lean",
       "status": "blocked",
       "blocker": "infra_612_tied_independence",
-      "detail": "Open. For f : A -> B (mu <= mu' in the tail), tied free lifts pB, qB, jB of p, q, joint = p⊗q, and IsProductTied pB qB jB' e': SameGaloisType jB jB'."
+      "detail": "Blocked (full clause 7). Base change (p ⊗ q)^B = p_B ⊗ q^B for f : A -> B, mu <= mu' in the tail, joints at ANY eligible levels. Case joint.nu = mu, jB.nu = jB'.nu = mu' DONE as infra_612_tied_base_change_level_joints (realizations/free lifts at any levels). Remaining: off-level joints, same gap as infra_612_tied_independence (infra_612_galois_trans_cross_level)."
     },
     {
       "id": "infra_612_tied_indep_same_level",
@@ -2142,6 +2142,15 @@
       "status": "done",
       "blocker": null,
       "detail": "Done (no sorry; axioms propext/choice/Quot.sound): infra_612_tied_symm_level_joints. Recursion-closed mu >= sigma^+, p q over A at mu of size <= sigma; IsProductTied p q j1 e1, IsProductTied q p j2 e2 with j1.nu = j2.nu = mu (x_k, y_k at any levels): SameGaloisType j1 j2 e1.symm (e2.symm.trans sumComm). English array proof: Thm 6.6 test Y; sequence a for p (query size |p|+|q|+|Y|, length kappa < mu, infra_612_exists_seq_small) and b for q with b.tau >= kappa (length lambda > kappa); tied freeness of y1 along b and of y2 along a; a column outside badCol and the kappa*e row-wise exceptions, then a row outside both row exceptions, give one entry D(a_i, b_j, Y) equal to both joints."
+    },
+    {
+      "id": "infra_612_tied_base_change_level_joints",
+      "label": "Prop 6.12 (7) base change, joints at base levels (tied)",
+      "section": 6,
+      "file": "AEC/Section6/ProductTied.lean",
+      "status": "done",
+      "blocker": null,
+      "detail": "Done (no sorry; axioms propext/choice/Quot.sound): infra_612_tied_base_change_level_joints. mu, mu' recursion-closed >= sigma^+, mu <= mu', f : A -> B permitted; IsProductTied p q joint e (joint.nu = mu); tied free lifts pB, qB, jB of p, q, joint along f; IsProductTied pB qB jB' e' with jB.nu = jB'.nu = mu': SameGaloisType jB jB' (eJ.symm.trans e.symm) (e'.symm.trans (sumCongr eP.symm eQ.symm)). English proof of formula (4): sequences a (p), b (q), K (p⊗q) in A; Thm 6.6 test Y in B moved into A over all three (infra_78_move_mixed); infra_612_pushSeq makes f(a), f(b) approximation sequences of pB, qB; infra_612_product_entry over A and over B puts both joints on the entry D(a_i, b_j, ·) for a common good (i, j) (infra_78_exists_outside_two twice)."
     }
   ],
   "edges": [
@@ -3963,8 +3972,13 @@
       "from": "infra_612_tied_symm_level_joints",
       "to": "infra_612_tied_symmetry",
       "kind": "hard"
+    },
+    {
+      "from": "infra_612_tied_base_change_level_joints",
+      "to": "infra_612_tied_base_change",
+      "kind": "hard"
     }
   ],
-  "doneCount": 176,
+  "doneCount": 177,
   "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 43. Uncommitted in /tmp/aec-grok."
 }

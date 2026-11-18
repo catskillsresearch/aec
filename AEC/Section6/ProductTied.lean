@@ -25,6 +25,8 @@ joints sit at the level of `A`, with realizations and free lifts at any levels
 needs Galois-type transitivity through a `μ`-level middle (open `infra_612_galois_trans_cross_level`).
 Symmetry is proved for joints at the level of `A` (`infra_612_tied_symm_level_joints`, the
 English array argument with sequences of lengths `κ < λ`).
+Base change is proved for joints at their base levels (`infra_612_tied_base_change_level_joints`,
+via `infra_612_pushSeq` and `infra_612_product_entry`).
 Independence across levels (full clause 2), symmetry,
 associativity, permutation invariance, projections, and base change are the open sub-tips
 `infra_612_tied_independence`, `infra_612_tied_symmetry`, `infra_612_tied_assoc`,
@@ -736,6 +738,283 @@ theorem infra_612_tied_symm_level_joints
     (fun _ => rfl) (by rintro ((k | l) | c) <;> rfl)
   exact P.scheme.diagram_trans _ _ _ _ _ _ DJ₁
     (P.scheme.diagram_trans _ _ _ _ _ _ H' DJ₂')
+
+
+/-- **Pushed approximation sequence.** If `qB` over `B` is tied free from `q` along
+`f : A → B`, an approximation sequence `b` for `q` pushed along `f` is one for `qB`
+(same length, same query size; English Theorem 6.10, transitivity of the free evaluation). -/
+noncomputable def infra_612_pushSeq
+    {P : SingleModelData K} {ν μ : Cardinal.{u}} {hν : ν ∈ P.eligible} {hμ : μ ∈ P.eligible}
+    {A : P.scheme.Object ν hν} {B : P.scheme.Object μ hμ}
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hν A) (P.scheme.asSystem hμ B))
+    (hf : P.scheme.permitted (X := A) (Y := B) f) (hνμ : ν ≤ μ)
+    (q : TupleOver K oneVertexShape P.scheme hν A)
+    (qB : TupleOver K oneVertexShape P.scheme hμ B) (eQ : q.idx ≃ qB.idx)
+    (hQ : IsTiedFreeMixed f q qB eQ) (b : ApproximationSequence q)
+    (hb : b.τ + ℵ₀ < #b.κIndex) (hbν : b.τ < ν) : ApproximationSequence qB where
+  τ := b.τ
+  κIndex := b.κIndex
+  family := fun j k => ⟨(b.family j (eQ.symm k)).1,
+    f.onVertex (b.family j (eQ.symm k)).1 (b.family j (eQ.symm k)).2⟩
+  concat_bounded := by
+    rw [← Cardinal.mk_congr (Equiv.prodCongr (Equiv.refl b.κIndex) eQ)]
+    exact b.concat_bounded.trans_le hνμ
+  few_exceptions := fun {ι} W hW => by
+    classical
+    obtain ⟨W0, hW0⟩ := infra_78_move_query_mixed f hf hνμ b W (hW.trans_lt hbν)
+    have ht := hQ b W W0 hb hW (hW.trans_lt hbν) hW0
+    refine le_trans ?_ (b.few_exceptions W0 hW)
+    refine Cardinal.mk_le_of_injective (f := fun j => ⟨j.1, fun hgood => j.2 ?_⟩)
+      (by
+        intro j₁ j₂ hj
+        apply Subtype.ext
+        have := congrArg Subtype.val hj
+        exact this)
+    have e3 := P.scheme.diagram_trans _ _ _ _ _ _
+      (P.scheme.diagram_trans _ _ _ _ _ _ (P.scheme.diagram_symm _ _ _ _ ht) hgood) (hW0 j.1)
+    refine infra_612_dEq_transport e3 (Equiv.sumCongr eQ.symm (Equiv.refl ι)) ?_ ?_
+    · rintro (k | c)
+      · simp [typeJoint, infra_612_anchored]
+      · rfl
+    · rintro (k | c) <;> rfl
+
+set_option maxHeartbeats 1600000 in
+/-- **Product entry (proved).** For a tied product `(x, y)` of `p` and `q` over a base `A₀`
+(any eligible level), sequences `a` for `p` and `b` for `q`, and a test list `Y` from `A₀`:
+off a set of at most `|p| + |Y| + ℵ₀` columns `j`, every row `i` that is good for the query
+`bⱼ ⌢ Y` makes the joint `(x, y, Y)` agree with the array entry `D(aᵢ, bⱼ, Y)` (English
+Proposition 6.12, first-realize-`x` order). -/
+theorem infra_612_product_entry
+    {P : SingleModelData K} {ν : Cardinal.{u}} {hν : ν ∈ P.eligible}
+    {A : P.scheme.Object ν hν}
+    (p q : TupleOver K oneVertexShape P.scheme hν A)
+    (x : TupleOver K oneVertexShape P.scheme hν A) (ex : p.idx ≃ x.idx)
+    (hS : SameGaloisType p x ex (Equiv.refl x.idx))
+    (y : TupleOver K oneVertexShape P.scheme x.hν x.host) (ey : q.idx ≃ y.idx)
+    (hT : IsTiedFreeMixed x.incl q y ey)
+    (a : ApproximationSequence p) (b : ApproximationSequence q)
+    {β : Type u} (Y : β → Occurrence K oneVertexShape (P.scheme.asSystem hν A))
+    (hpν : #p.idx < ν) (hpβν : #(p.idx ⊕ β) < ν) (hqβν : #(q.idx ⊕ β) < ν)
+    (hpβb : #(p.idx ⊕ β) ≤ b.τ) (hblong : b.τ + ℵ₀ < #b.κIndex) :
+    ∃ C : Set b.κIndex, #C ≤ #(p.idx ⊕ β) + ℵ₀ ∧ ∀ j, j ∉ C → ∀ i,
+      P.scheme.DiagramEq (X := p.host) (Y := A)
+        (typeJoint (p := p) (Sum.elim (b.family j) Y))
+        (seqJoint (a.family i) (Sum.elim (b.family j) Y)) →
+      P.scheme.DiagramEq (X := y.host) (Y := A)
+        (alignJoint (Equiv.sumCongr ex ey).symm (typeJoint (p := x.join y) Y))
+        (fun t => seqJoint (a.family i) (Sum.elim (b.family j) Y) (Equiv.sumAssoc _ _ _ t)) := by
+  classical
+  have hS' : SameGaloisType p x (Equiv.refl p.idx) ex.symm := by
+    have h := infra_612_sameGalois_trans_equiv hS ex.symm
+    rwa [Equiv.self_trans_symm, Equiv.refl_trans] at h
+  let W : p.idx ⊕ β → Occurrence K oneVertexShape (P.scheme.asSystem x.hν x.host) :=
+    fun t => typeJoint (p := x) Y (Equiv.sumCongr ex (Equiv.refl β) t)
+  obtain ⟨Z0, hZ0⟩ :=
+    infra_78_move_query_mixed x.incl x.incl_arrow (infra_612_le_nu x) b W hpβν
+  have T := hT b W Z0 hblong hpβb hpβν hZ0
+  refine ⟨{j | ¬ P.scheme.DiagramEq (X := q.host) (Y := A)
+    (typeJoint (p := q) Z0) (seqJoint (b.family j) Z0)}, b.few_exceptions Z0 hpβb, ?_⟩
+  intro j hj i Gij
+  have Fj : P.scheme.DiagramEq (X := q.host) (Y := A)
+      (typeJoint (p := q) Z0) (seqJoint (b.family j) Z0) := not_not.1 hj
+  have C1 := P.scheme.diagram_trans _ _ _ _ _ _ (P.scheme.diagram_symm _ _ _ _ T)
+    (P.scheme.diagram_trans _ _ _ _ _ _ Fj (hZ0 j))
+  have D₁ := infra_612_dEq_of_sameGalois (P := P) hS' (Sum.elim (b.family j) Y) hpν hqβν
+  have C1' := infra_612_dEq_transport C1 (infra_612_swap3 p.idx q.idx β)
+    (xs' := fun s => infra_612_anchored ey y.incl y.val W (infra_612_swap3 p.idx q.idx β s))
+    (ys' := alignJoint ex.symm (typeJoint (p := x) (Sum.elim (b.family j) Y)))
+    (fun _ => rfl) (by rintro (k | l | c) <;> rfl)
+  have G1' := infra_612_dEq_transport Gij (Equiv.refl _)
+    (xs' := alignJoint (Equiv.refl p.idx) (typeJoint (p := p) (Sum.elim (b.family j) Y)))
+    (ys' := seqJoint (a.family i) (Sum.elim (b.family j) Y))
+    (by rintro (k | l | c) <;> rfl) (fun _ => rfl)
+  have fin1 := P.scheme.diagram_trans _ _ _ _ _ _ C1'
+    (P.scheme.diagram_trans _ _ _ _ _ _ (P.scheme.diagram_symm _ _ _ _ D₁) G1')
+  exact infra_612_dEq_transport fin1 (Equiv.sumAssoc p.idx q.idx β)
+    (by rintro ((k | l) | c) <;> rfl) (fun _ => rfl)
+
+
+set_option maxHeartbeats 3200000 in
+/-- **Base change `(p ⊗ q)^B = p_B ⊗ q^B`, joints at their base levels (proved).** For
+`f : A → B` from the level `μ` of `A` to a closed level `μ' ≥ μ`, a tied product `joint` of
+`p, q` over `A` with `joint` at `μ`, tied free lifts `pB, qB, jB` along `f`, and a tied product
+`jB'` of `pB, qB` over `B`, with `jB, jB'` at `μ'`: `jB` and `jB'` have one Galois type.
+English proof (Proposition 6.12, formula (4)): sequences `a` for `p`, `b` for `q` (pushed to
+`B` by `infra_612_pushSeq`) and `K` for `p ⊗ q`; a test list `Y` in `B` is moved into `A` over
+all three; both sides are an entry of the array `D(aᵢ, bⱼ, ·)` (`infra_612_product_entry` over
+`A` and over `B`), identified by the move. Theorem 6.6 testing at `μ'` closes. -/
+theorem infra_612_tied_base_change_level_joints
+    (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ)
+    {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
+    (hrec : μ ∈ recursionClosedLevels P σ) (hσμ : Order.succ σ ≤ μ)
+    {A : P.scheme.Object μ hμ}
+    (p q : TupleOver K oneVertexShape P.scheme hμ A)
+    (hνp : p.ν = μ) (hνq : q.ν = μ) (hpσ : #p.idx ≤ σ) (hqσ : #q.idx ≤ σ)
+    {μ' : Cardinal.{u}} (hμ' : μ' ∈ P.eligible)
+    (hrec' : μ' ∈ recursionClosedLevels P σ) (hσμ' : Order.succ σ ≤ μ') (hμμ' : μ ≤ μ')
+    (B : P.scheme.Object μ' hμ')
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ' B))
+    (hf : P.scheme.permitted (X := A) (Y := B) f)
+    (joint : TupleOver K oneVertexShape P.scheme hμ A) (e : p.idx ⊕ q.idx ≃ joint.idx)
+    (pB qB jB jB' : TupleOver K oneVertexShape P.scheme hμ' B)
+    (eP : p.idx ≃ pB.idx) (eQ : q.idx ≃ qB.idx) (eJ : joint.idx ≃ jB.idx)
+    (e' : pB.idx ⊕ qB.idx ≃ jB'.idx)
+    (hprod : IsProductTied p q joint e)
+    (hP : IsTiedFreeMixed f p pB eP) (hQ : IsTiedFreeMixed f q qB eQ)
+    (hJ : IsTiedFreeMixed f joint jB eJ)
+    (hprodB : IsProductTied pB qB jB' e')
+    (hjν : joint.ν = μ) (hjB : jB.ν = μ') (hjB' : jB'.ν = μ') :
+    SameGaloisType jB jB' (eJ.symm.trans e.symm)
+      (e'.symm.trans (Equiv.sumCongr eP.symm eQ.symm)) := by
+  classical
+  have hσlt : σ < μ := (Order.lt_succ σ).trans_le hσμ
+  have hσlt' : σ < μ' := (Order.lt_succ σ).trans_le hσμ'
+  have hpμ : #p.idx < μ := hpσ.trans_lt hσlt
+  have hqμ : #q.idx < μ := hqσ.trans_lt hσlt
+  have hpqσ : #(p.idx ⊕ q.idx) ≤ σ := by
+    rw [Cardinal.mk_sum, Cardinal.lift_id, Cardinal.lift_id]
+    exact Cardinal.add_le_of_le hσ hpσ hqσ
+  have hpqμ : #(p.idx ⊕ q.idx) < μ := hpqσ.trans_lt hσlt
+  have hjσ : #joint.idx ≤ σ := (Cardinal.mk_congr e).symm.trans_le hpqσ
+  have hjBσ : #jB.idx ≤ σ := (Cardinal.mk_congr (eJ.symm.trans e.symm)).trans_le hpqσ
+  have hpqBμ' : #(pB.idx ⊕ qB.idx) < μ' :=
+    (Cardinal.mk_congr (Equiv.sumCongr eP eQ)).symm.trans_lt (hpqμ.trans_le hμμ')
+  obtain ⟨x, ex, hS, y, ey, hT, hJ0⟩ := hprod
+  obtain ⟨xB, exB, hSB, yB, eyB, hTB, hJB0⟩ := hprodB
+  have hJ' : SameGaloisType joint (x.join y) e.symm (Equiv.sumCongr ex ey).symm := by
+    have h := infra_612_sameGalois_trans_equiv hJ0 (Equiv.sumCongr ex ey).symm
+    rw [Equiv.trans_assoc, Equiv.self_trans_symm, Equiv.trans_refl] at h
+    exact h
+  have hJB' : SameGaloisType jB' (xB.join yB) e'.symm (Equiv.sumCongr exB eyB).symm := by
+    have h := infra_612_sameGalois_trans_equiv hJB0 (Equiv.sumCongr exB eyB).symm
+    rw [Equiv.trans_assoc, Equiv.self_trans_symm, Equiv.trans_refl] at h
+    exact h
+  by_contra hneq
+  obtain ⟨β, Y, hβ, hnot⟩ :=
+    infra_73_differing_test P σ hσ hμ' hrec' hσμ' jB jB' (eJ.symm.trans e.symm)
+      (e'.symm.trans (Equiv.sumCongr eP.symm eQ.symm)) hjB hjB' hjBσ
+      (hjBσ.trans_lt hσlt') hneq
+  apply hnot
+  have hβμ : #β < μ := by
+    have hg : P.g σ < μ :=
+      (hμ.1.closed P.g (Set.mem_insert_of_mem _ rfl)).below σ hσ hσlt
+    exact hβ.trans_lt (add_lt_of_lt (P.aleph0_le hμ) hg (P.ls_lt hμ))
+  have hpβμ : #(p.idx ⊕ β) < μ := by
+    rw [Cardinal.mk_sum, Cardinal.lift_id, Cardinal.lift_id]
+    exact Cardinal.add_lt_of_lt (P.aleph0_le hμ) hpμ hβμ
+  have hqβμ : #(q.idx ⊕ β) < μ := by
+    rw [Cardinal.mk_sum, Cardinal.lift_id, Cardinal.lift_id]
+    exact Cardinal.add_lt_of_lt (P.aleph0_le hμ) hqμ hβμ
+  have hallμ : #((p.idx ⊕ q.idx) ⊕ β) < μ := by
+    rw [Cardinal.mk_sum, Cardinal.lift_id, Cardinal.lift_id]
+    exact Cardinal.add_lt_of_lt (P.aleph0_le hμ) hpqμ hβμ
+  have hpβle : #(p.idx ⊕ β) ≤ #((p.idx ⊕ q.idx) ⊕ β) :=
+    Cardinal.mk_le_of_injective (f := Sum.map Sum.inl id)
+      (Sum.map_injective.mpr ⟨Sum.inl_injective, Function.injective_id⟩)
+  have hqβle : #(q.idx ⊕ β) ≤ #((p.idx ⊕ q.idx) ⊕ β) :=
+    Cardinal.mk_le_of_injective (f := Sum.map Sum.inr id)
+      (Sum.map_injective.mpr ⟨Sum.inr_injective, Function.injective_id⟩)
+  have hpBβ : #(pB.idx ⊕ β) = #(p.idx ⊕ β) :=
+    (Cardinal.mk_congr (Equiv.sumCongr eP (Equiv.refl β))).symm
+  have hqBβ : #(qB.idx ⊕ β) = #(q.idx ⊕ β) :=
+    (Cardinal.mk_congr (Equiv.sumCongr eQ (Equiv.refl β))).symm
+  have hpBμ' : #pB.idx < μ' := (Cardinal.mk_congr eP).symm.trans_lt (hpμ.trans_le hμμ')
+  -- the three sequences in `A`
+  obtain ⟨a, haτ, haτμ, halong⟩ :=
+    infra_78_exists_seq_ge P σ hσ hμ hrec hσμ p hνp hpσ hallμ
+  obtain ⟨b, hbτ, hbτμ, hblong⟩ :=
+    infra_78_exists_seq_ge P σ hσ hμ hrec hσμ q hνq hqσ hallμ
+  obtain ⟨Kq, hKτ, -, hKlong⟩ :=
+    infra_78_exists_seq_ge P σ hσ hμ hrec hσμ joint hjν hjσ hβμ
+  -- move the test list `Y` into `A` over all three sequences at once
+  let xs : ((a.κIndex × p.idx) ⊕ (b.κIndex × q.idx)) ⊕ (Kq.κIndex × joint.idx) →
+      Occurrence K oneVertexShape (P.scheme.asSystem hμ A) :=
+    Sum.elim (Sum.elim (fun ij => a.family ij.1 ij.2) (fun ij => b.family ij.1 ij.2))
+      (fun ij => Kq.family ij.1 ij.2)
+  have hxs : #(((a.κIndex × p.idx) ⊕ (b.κIndex × q.idx)) ⊕ (Kq.κIndex × joint.idx)) < μ := by
+    rw [Cardinal.mk_sum, Cardinal.mk_sum, Cardinal.lift_id, Cardinal.lift_id,
+      Cardinal.lift_id, Cardinal.lift_id]
+    exact Cardinal.add_lt_of_lt (P.aleph0_le hμ)
+      (Cardinal.add_lt_of_lt (P.aleph0_le hμ) a.concat_bounded b.concat_bounded)
+      Kq.concat_bounded
+  obtain ⟨Y0, hY0⟩ := infra_78_move_mixed f hf hμμ' xs Y hxs hβμ
+  have hKmove : infra_78_isMoveMixed f Kq Y Y0 := fun k => by
+    have h := infra_73_scheme_comp hY0 (fun t : joint.idx ⊕ β => match t with
+      | Sum.inl l => Sum.inl (Sum.inr (k, l))
+      | Sum.inr c => Sum.inr c)
+    exact infra_73_diagramEq_of_eq h (by rintro (l | c) <;> rfl) (by rintro (l | c) <;> rfl)
+  -- left side: `jB` is the free lift of `p ⊗ q`
+  have LJ := hJ Kq Y Y0 hKlong hKτ hβμ hKmove
+  have L1 := infra_612_dEq_transport LJ (Equiv.sumCongr e (Equiv.refl β))
+    (xs' := alignJoint e.symm (typeJoint (p := joint) Y0))
+    (ys' := alignJoint (eJ.symm.trans e.symm) (typeJoint (p := jB) Y))
+    (by rintro (s | c) <;> rfl) (by rintro (s | c) <;> rfl)
+  have DJ := infra_612_dEq_of_sameGalois hJ' Y0 hpqμ hβμ
+  -- the pushed sequences in `B`
+  let aB := infra_612_pushSeq f hf hμμ' p pB eP hP a halong haτμ
+  let bB := infra_612_pushSeq f hf hμμ' q qB eQ hQ b hblong hbτμ
+  obtain ⟨CA, hCA, hEA⟩ := infra_612_product_entry p q x ex hS y ey hT a b Y0 hpμ hpβμ hqβμ
+    (hpβle.trans hbτ) hblong
+  obtain ⟨CB, hCB, hEB⟩ := infra_612_product_entry pB qB xB exB hSB yB eyB hTB aB bB Y hpBμ'
+    (hpBβ ▸ hpβμ.trans_le hμμ') (hqBβ ▸ hqβμ.trans_le hμμ')
+    (hpBβ ▸ hpβle.trans hbτ) hblong
+  set E : Cardinal.{u} := #((p.idx ⊕ q.idx) ⊕ β) + aleph0 with hEdef
+  have hEinf : aleph0 ≤ E := le_add_self
+  have hEb : E < #b.κIndex := (add_le_add hbτ le_rfl).trans_lt hblong
+  have hEa : E < #a.κIndex := (add_le_add haτ le_rfl).trans_lt halong
+  obtain ⟨j, hjA, hjB⟩ := infra_78_exists_outside_two CA CB hEinf
+    (hCA.trans (add_le_add hpβle le_rfl)) (hCB.trans (by rw [hpBβ]; exact add_le_add hpβle le_rfl))
+    hEb
+  obtain ⟨i, hiA, hiB⟩ := infra_78_exists_outside_two
+    {i | ¬ P.scheme.DiagramEq (X := p.host) (Y := A)
+      (typeJoint (p := p) (Sum.elim (b.family j) Y0))
+      (seqJoint (a.family i) (Sum.elim (b.family j) Y0))}
+    {i | ¬ P.scheme.DiagramEq (X := pB.host) (Y := B)
+      (typeJoint (p := pB) (Sum.elim (bB.family j) Y))
+      (seqJoint (aB.family i) (Sum.elim (bB.family j) Y))} hEinf
+    ((a.few_exceptions _ (hqβle.trans haτ)).trans (add_le_add hqβle le_rfl))
+    ((aB.few_exceptions _ (hqBβ ▸ hqβle.trans haτ)).trans
+      (by rw [hqBβ]; exact add_le_add hqβle le_rfl))
+    hEa
+  have EA := hEA j hjA i (not_not.1 hiA)
+  have EB := hEB j hjB i (not_not.1 hiB)
+  -- the move identifies the two array entries
+  let π : (p.idx ⊕ q.idx) ⊕ β ≃ (pB.idx ⊕ qB.idx) ⊕ β :=
+    Equiv.sumCongr (Equiv.sumCongr eP eQ) (Equiv.refl β)
+  have Mv : P.scheme.DiagramEq (X := A) (Y := B)
+      (fun t => seqJoint (a.family i) (Sum.elim (b.family j) Y0) (Equiv.sumAssoc _ _ _ t))
+      (fun t => seqJoint (aB.family i) (Sum.elim (bB.family j) Y)
+        (Equiv.sumAssoc _ _ _ (π t))) := by
+    have h := infra_73_scheme_comp hY0 (fun t : (p.idx ⊕ q.idx) ⊕ β => match t with
+      | Sum.inl (Sum.inl k) => Sum.inl (Sum.inl (Sum.inl (i, k)))
+      | Sum.inl (Sum.inr l) => Sum.inl (Sum.inl (Sum.inr (j, l)))
+      | Sum.inr c => Sum.inr c)
+    refine infra_73_diagramEq_of_eq h (by rintro ((k | l) | c) <;> rfl) ?_
+    rintro ((k | l) | c)
+    · exact congrArg (fun k' => (⟨(a.family i k').1, f.onVertex (a.family i k').1
+        (a.family i k').2⟩ : Occurrence K oneVertexShape (P.scheme.asSystem hμ' B)))
+        (eP.symm_apply_apply k).symm
+    · exact congrArg (fun l' => (⟨(b.family j l').1, f.onVertex (b.family j l').1
+        (b.family j l').2⟩ : Occurrence K oneVertexShape (P.scheme.asSystem hμ' B)))
+        (eQ.symm_apply_apply l).symm
+    · rfl
+  have EB' := infra_612_dEq_transport EB π
+    (xs' := fun t => alignJoint (Equiv.sumCongr exB eyB).symm
+      (typeJoint (p := xB.join yB) Y) (π t))
+    (ys' := fun t => seqJoint (aB.family i) (Sum.elim (bB.family j) Y)
+      (Equiv.sumAssoc _ _ _ (π t)))
+    (fun _ => rfl) (fun _ => rfl)
+  have DJB := infra_612_dEq_of_sameGalois hJB' Y hpqBμ' (hβμ.trans_le hμμ')
+  have DJB' := infra_612_dEq_transport (P.scheme.diagram_symm _ _ _ _ DJB) π
+    (xs' := fun t => alignJoint (Equiv.sumCongr exB eyB).symm
+      (typeJoint (p := xB.join yB) Y) (π t))
+    (ys' := alignJoint (e'.symm.trans (Equiv.sumCongr eP.symm eQ.symm)) (typeJoint (p := jB') Y))
+    (fun _ => rfl) (by rintro ((k | l) | c) <;> rfl)
+  exact P.scheme.diagram_trans _ _ _ _ _ _ (P.scheme.diagram_symm _ _ _ _ L1)
+    (P.scheme.diagram_trans _ _ _ _ _ _ DJ
+      (P.scheme.diagram_trans _ _ _ _ _ _ EA
+        (P.scheme.diagram_trans _ _ _ _ _ _ Mv
+          (P.scheme.diagram_trans _ _ _ _ _ _ (P.scheme.diagram_symm _ _ _ _ EB') DJB'))))
 
 /-- **Proposition 6.12** (Products of bounded types). For bounded types `p(x)`, `q(y)` over
 `A`, realize `p` in an extension `B ≥ A` and then realize `q^B` (the free lift) in a further
