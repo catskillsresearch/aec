@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-18 11:00",
+  "updated": "2026-11-18 11:01",
   "sorryCount": 44,
   "legend": {
     "open": "No unfinished required proof-deps — try next",
@@ -2222,7 +2222,7 @@
       "file": "AEC/Section7/MixedDescent.lean",
       "status": "blocked",
       "blocker": "infra_78_matrix_recursion",
-      "detail": "Blocked (full claim kept; split cycle 42 into infra_78_bookkeeping_stage_local (DONE), infra_78_matrix_successor_step (DONE cycle 43), infra_78_matrix_limit_step (open), infra_78_matrix_recursion (blocked on the limit step; carries the CompLaw/ContAtLimits outputs and the interleaving caveat)). Transfinite construction of continuous pairs X_i <= Y_i (i <= rho^+) at level kappa (Infra78Matrix plus SameLevelChain unions) with invariant (5) tp(b/X_i) = free lift of tp(b/X_0) (tied), failing stages extended by infra_78_nonfree_extension_tied + infra_78_same_level_type_amalgam (transitivity for (5)), Def 7.7 continuity at limits (finite marks: infra_78_finite_continuity), bookkeeping from infra_78_bookkeeping_closure. REQUIRED OUTPUT (tracked obligations, cycle 39): besides an Infra78Matrix, this node must produce (i) the composition law stepX (le_refl) = id, stepX (h1.trans h2) = stepX h1 >> stepX h2 and the same for stepY, and (ii) continuity at limits: for limit i every element of X_i and of Y_i is stepX/stepY of an element of some earlier stage (Def 7.7 continuous pairs). These are consumed by infra_78_bookkeeping_req1_high_cof, infra_78_bookkeeping_req2_high_cof and infra_78_bookkeeping_assembly. CAVEAT (cycle 41): infra_78_bookkeeping_assembly is stated over a completed matrix, while the paper interleaves (the extension at stage i is chosen from a failing list in S_i). This node must either prove that R_i depends only on the matrix restricted to stages <= i (stage-local bookkeeping) or restructure the choice of failing lists; that step is part of this node's tracked claim."
+      "detail": "Blocked (full claim kept; split cycle 42 into infra_78_bookkeeping_stage_local (DONE), infra_78_matrix_successor_step (DONE cycle 43), infra_78_matrix_limit_step (open), infra_78_matrix_recursion (blocked on the limit step; carries the CompLaw/ContAtLimits outputs and the interleaving caveat)). Transfinite construction of continuous pairs X_i <= Y_i (i <= rho^+) at level kappa (Infra78Matrix plus SameLevelChain unions) with invariant (5) tp(b/X_i) = free lift of tp(b/X_0) (tied), failing stages extended by infra_78_nonfree_extension_tied + infra_78_same_level_type_amalgam (transitivity for (5)), Def 7.7 continuity at limits (finite marks: infra_78_finite_continuity), bookkeeping from infra_78_bookkeeping_closure. REQUIRED OUTPUT (tracked obligations, cycle 39): besides an Infra78Matrix, this node must produce (i) the composition law stepX (le_refl) = id, stepX (h1.trans h2) = stepX h1 >> stepX h2 and the same for stepY, and (ii) continuity at limits: for limit i every element of X_i and of Y_i is stepX/stepY of an element of some earlier stage (Def 7.7 continuous pairs). These are consumed by infra_78_bookkeeping_req1_high_cof, infra_78_bookkeeping_req2_high_cof and infra_78_bookkeeping_assembly. CAVEAT (cycle 41): infra_78_bookkeeping_assembly is stated over a completed matrix, while the paper interleaves (the extension at stage i is chosen from a failing list in S_i). This node must either prove that R_i depends only on the matrix restricted to stages <= i (stage-local bookkeeping) or restructure the choice of failing lists; that step is part of this node's tracked claim. IDENTITY LAW (cycle 45, tracked obligation): this node must also produce Infra78Matrix.IdLaw (stepX (le_refl i) = SystemArrow.refl, same for stepY), consumed by infra_78_limit_pair / infra_78_chain_union_kappa at limit stages. The limit stages use the paper's hypothesis rho^+ < kappa (Order.succ rho < kappa)."
     },
     {
       "id": "infra_78_isolated_stage",
@@ -2365,8 +2365,8 @@
       "section": 7,
       "file": "AEC/Section7/MixedDescent.lean",
       "status": "blocked",
-      "blocker": "infra_78_limit_pair",
-      "detail": "Blocked (full claim kept; split cycle 44 into infra_78_chain_union_kappa (DONE), infra_78_limit_pair (open), infra_78_limit_invariant5 (open)). Given a composable chain of pairs X_j <= Y_j (j < delta, delta a limit < rho^+, composition law incl. identity), produce union objects X_delta, Y_delta at level kappa, cocone arrows extending the composition law, a commuting pair arrow, continuity at delta (Infra78Matrix.ContAtLimits at delta), and invariant (5) at the limit (Def 7.7 for bounded marks; finite marks: infra_78_finite_continuity)."
+      "blocker": "infra_78_limit_invariant5",
+      "detail": "Blocked (full claim kept; split cycle 44 into infra_78_chain_union_kappa (DONE), infra_78_limit_pair (DONE cycle 45), infra_78_limit_invariant5 (open)). Given a composable chain of pairs X_j <= Y_j (j < delta, delta a limit < rho^+, composition law incl. identity), produce union objects X_delta, Y_delta at level kappa, cocone arrows extending the composition law, a commuting pair arrow, continuity at delta (Infra78Matrix.ContAtLimits at delta), and invariant (5) at the limit (Def 7.7 for bounded marks; finite marks: infra_78_finite_continuity)."
     },
     {
       "id": "infra_78_chain_union_kappa",
@@ -2382,9 +2382,9 @@
       "label": "Prop 7.8 limit step: union pair, cocone arrows, comm square, ContAtLimits at delta",
       "section": 7,
       "file": "AEC/Section7/LimitStep.lean",
-      "status": "open",
+      "status": "done",
       "blocker": null,
-      "detail": "Open (board-only). For a limit stage delta < rho^+ and stages j < delta with stepX/stepY obeying the identity and composition laws and the commuting squares: X_delta, Y_delta := infra_78_chain_union_kappa of the X- and Y-chains (index size #{j<delta} <= rho <= kappa), cocone arrows X_j -> X_delta, Y_j -> Y_delta extending the composition law, pair_delta : X_delta -> Y_delta from the universal property (legs of Y composed with pair_j), the commuting square at delta (uniqueness clause), and continuity at delta (ContAtLimits from the joint-cover clause)."
+      "detail": "DONE (grokbot cycle 45, sorry-free: AEC/Section7/LimitStep.lean, infra_78_limit_pair; generic form infra_78_limit_pair_gen). For a limit stage delta < rho^+ (Order.IsSuccLimit delta) and partial matrix data on Set.Iio delta (pairs X_j -> Y_j at level kappa, stepX/stepY with identity and composition laws, commuting squares), under the paper's hypothesis rho^+ < kappa (Order.succ rho < kappa; gives #(Iio delta) <= kappa): union objects X_delta, Y_delta at level kappa (infra_78_chain_union_kappa), permitted cocone arrows X_j -> X_delta, Y_j -> Y_delta compatible with stepX/stepY (so the extended chain keeps the composition law, with identity at delta), a permitted pair arrow X_delta -> Y_delta with commuting squares, and continuity at delta (every element of X_delta / Y_delta comes from an earlier stage, ContAtLimits at delta). Identity law Infra78Matrix.IdLaw is defined here as a tracked output of infra_78_matrix_construction."
     },
     {
       "id": "infra_78_limit_invariant5",
@@ -2402,7 +2402,7 @@
       "file": "AEC/Section7/MixedDescent.lean",
       "status": "blocked",
       "blocker": "infra_78_matrix_limit_step",
-      "detail": "Blocked on infra_78_matrix_limit_step (split cycle 44: infra_78_chain_union_kappa DONE, infra_78_limit_pair / infra_78_limit_invariant5 open; infra_78_matrix_successor_step DONE cycle 43; non-failing stages take the identity step). Transfinite recursion over (succ rho).ord.ToType with state (pair X_i <= Y_i, bookkeeping set R_i subset X_i + Y_i): successor stages close the image of R_i (plus seeds Ip, b) by infra_78_bookkeeping_stage_local and extend by infra_78_matrix_successor_step on a failing list chosen from the S-part of R_i (if any); limit stages take infra_78_matrix_limit_step and the union of earlier images. Outputs: an Infra78Matrix with Infra78Matrix.CompLaw and Infra78Matrix.ContAtLimits, invariant (5) at every stage, R forward-closed, continuous at limits and with requirement-1/2 supply at non-limit stages (so infra_78_bookkeeping_req1_high_cof / req2_high_cof apply to the completed (M, R)), and the failing-list property at every stage. This node carries the interleaving caveat: R_i is chosen inside the recursion from the current pair only."
+      "detail": "Blocked on infra_78_matrix_limit_step (split cycle 44: infra_78_chain_union_kappa DONE, infra_78_limit_pair DONE cycle 45, infra_78_limit_invariant5 open; infra_78_matrix_successor_step DONE cycle 43; non-failing stages take the identity step). Transfinite recursion over (succ rho).ord.ToType with state (pair X_i <= Y_i, bookkeeping set R_i subset X_i + Y_i): successor stages close the image of R_i (plus seeds Ip, b) by infra_78_bookkeeping_stage_local and extend by infra_78_matrix_successor_step on a failing list chosen from the S-part of R_i (if any); limit stages take infra_78_matrix_limit_step and the union of earlier images. Outputs: an Infra78Matrix with Infra78Matrix.CompLaw and Infra78Matrix.ContAtLimits, invariant (5) at every stage, R forward-closed, continuous at limits and with requirement-1/2 supply at non-limit stages (so infra_78_bookkeeping_req1_high_cof / req2_high_cof apply to the completed (M, R)), and the failing-list property at every stage. This node carries the interleaving caveat: R_i is chosen inside the recursion from the current pair only. Outputs also include Infra78Matrix.IdLaw (identity at each stage; at limits set stepX/stepY (le_refl delta) := refl); limit stages need rho^+ < kappa (paper's hypothesis)."
     }
   ],
   "edges": [
@@ -4624,6 +4624,6 @@
       "kind": "hard"
     }
   ],
-  "doneCount": 200,
+  "doneCount": 201,
   "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 43. Uncommitted in /tmp/aec-grok."
 }

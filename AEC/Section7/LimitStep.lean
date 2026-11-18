@@ -11,9 +11,11 @@ A directed family of objects at an eligible level `κ` (at most `κ` indices, id
 composition laws) has a union object at `κ` with commuting, jointly covering legs and the
 universal property. This is the chain-union existence needed by `infra_78_matrix_limit_step`;
 it comes from the chain axioms of `K` (`SingleModelData.exists_directed_union`, Lemma 2.1),
-with no new axioms. The remaining limit-step pieces are tracked on the board:
-`infra_78_limit_pair` (union pair, cocone arrows extending the composition law, commuting
-square, continuity at the limit) and `infra_78_limit_invariant5` (invariant (5) at limits,
+with no new axioms. `infra_78_limit_pair` (cycle 45) builds the union pair at a limit stage
+`δ < ρ⁺` (cocone arrows extending the composition law, commuting squares, continuity at `δ`)
+under the paper's hypothesis `ρ⁺ < κ`; `Infra78Matrix.IdLaw` is the identity law, a tracked
+output of `infra_78_matrix_construction`. Still tracked on the board:
+`infra_78_limit_invariant5` (invariant (5) at limits,
 the bounded-mark Def 7.7 continuity).
 -/
 
@@ -104,4 +106,103 @@ theorem infra_78_chain_union_kappa {P : SingleModelData K} {κ : Cardinal.{u}}
     rw [← hy]
     exact DFunLike.congr_fun (congrArg (fun e => e.onVertex PUnit.unit) (hff a)) y
 
+
+section LimitPair
+variable {P : SingleModelData K} {ρ κ : Cardinal.{u}} {hκ : κ ∈ P.eligible}
+
+/-- **Identity law of the matrix** (tracked obligation of `infra_78_matrix_construction`,
+cycle 45): `stepX (le_refl i)` and `stepY (le_refl i)` are identities. -/
+def Infra78Matrix.IdLaw (M : Infra78Matrix P ρ hκ) : Prop :=
+  (∀ i, M.stepX (le_refl i) = SystemArrow.refl _) ∧
+  (∀ i, M.stepY (le_refl i) = SystemArrow.refl _)
+
+/-- Union pair of a directed family of pairs at level `κ` (generic index). -/
+theorem infra_78_limit_pair_gen {ι : Type u} [Preorder ι] [Nonempty ι] [IsDirected ι (· ≤ ·)]
+    (hι : #ι ≤ κ) (X Y : ι → P.scheme.Object κ hκ)
+    (pair : ∀ j, SystemArrow K oneVertexShape (P.scheme.asSystem hκ (X j))
+      (P.scheme.asSystem hκ (Y j)))
+    (sX : ∀ {a b : ι}, a ≤ b →
+      SystemArrow K oneVertexShape (P.scheme.asSystem hκ (X a)) (P.scheme.asSystem hκ (X b)))
+    (sY : ∀ {a b : ι}, a ≤ b →
+      SystemArrow K oneVertexShape (P.scheme.asSystem hκ (Y a)) (P.scheme.asSystem hκ (Y b)))
+    (hXr : ∀ a, sX (le_refl a) = SystemArrow.refl _)
+    (hYr : ∀ a, sY (le_refl a) = SystemArrow.refl _)
+    (hXt : ∀ {a b c : ι} (h₁ : a ≤ b) (h₂ : b ≤ c),
+      sX (h₁.trans h₂) = SystemArrow.comp (sX h₁) (sX h₂))
+    (hYt : ∀ {a b c : ι} (h₁ : a ≤ b) (h₂ : b ≤ c),
+      sY (h₁.trans h₂) = SystemArrow.comp (sY h₁) (sY h₂))
+    (hcomm : ∀ {a b : ι} (h : a ≤ b),
+      SystemArrow.comp (pair a) (sY h) = SystemArrow.comp (sX h) (pair b)) :
+    ∃ (Xδ Yδ : P.scheme.Object κ hκ)
+      (lX : ∀ j, SystemArrow K oneVertexShape (P.scheme.asSystem hκ (X j))
+        (P.scheme.asSystem hκ Xδ))
+      (lY : ∀ j, SystemArrow K oneVertexShape (P.scheme.asSystem hκ (Y j))
+        (P.scheme.asSystem hκ Yδ))
+      (pδ : SystemArrow K oneVertexShape (P.scheme.asSystem hκ Xδ) (P.scheme.asSystem hκ Yδ)),
+      (∀ j, P.scheme.permitted (X := X j) (Y := Xδ) (lX j)) ∧
+      (∀ j, P.scheme.permitted (X := Y j) (Y := Yδ) (lY j)) ∧
+      P.scheme.permitted (X := Xδ) (Y := Yδ) pδ ∧
+      (∀ {a b : ι} (h : a ≤ b), SystemArrow.comp (sX h) (lX b) = lX a) ∧
+      (∀ {a b : ι} (h : a ≤ b), SystemArrow.comp (sY h) (lY b) = lY a) ∧
+      (∀ j, SystemArrow.comp (pair j) (lY j) = SystemArrow.comp (lX j) pδ) ∧
+      (∀ x : (Xδ.model).carrier, ∃ j y, (lX j).onVertex PUnit.unit y = x) ∧
+      (∀ x : (Yδ.model).carrier, ∃ j y, (lY j).onVertex PUnit.unit y = x) := by
+  obtain ⟨Xδ, lX, hlX, hcX, hcovX, hunivX, -⟩ := infra_78_chain_union_kappa hκ hι X sX hXr hXt
+  obtain ⟨Yδ, lY, hlY, hcY, hcovY, -, -⟩ := infra_78_chain_union_kappa hκ hι Y sY hYr hYt
+  obtain ⟨pδ, hpδ, hpδc⟩ := hunivX Yδ (fun j => SystemArrow.comp (pair j) (lY j)) (by
+    intro a b h
+    rw [← SystemArrow.comp_assoc, ← hcomm h, SystemArrow.comp_assoc, hcY h])
+  refine ⟨Xδ, Yδ, lX, lY, pδ, hlX, hlY, hpδ, hcX, hcY, fun j => (hpδc j).symm, ?_, ?_⟩
+  · intro x
+    obtain ⟨j, ⟨v, y⟩, hy⟩ := hcovX ⟨PUnit.unit, x⟩
+    exact ⟨j, y, by cases v; exact congrArg Sigma.snd hy⟩
+  · intro x
+    obtain ⟨j, ⟨v, y⟩, hy⟩ := hcovY ⟨PUnit.unit, x⟩
+    exact ⟨j, y, by cases v; exact congrArg Sigma.snd hy⟩
+
+/-- **Prop 7.8 matrix limit pair** (`infra_78_limit_pair`). At a limit stage `δ < ρ⁺` of a
+partial matrix (pairs `X_j → Y_j` for `j < δ` at level `κ`, with the identity and composition
+laws and commuting squares), under the paper's hypothesis `ρ⁺ < κ`, the unions
+`X_δ`, `Y_δ` at level `κ` exist (`infra_78_chain_union_kappa`) together with cocone arrows
+extending the composition law, a pair arrow `X_δ → Y_δ` with commuting squares, and continuity
+at `δ` (every element of `X_δ`, `Y_δ` comes from an earlier stage). -/
+theorem infra_78_limit_pair (hρκ : Order.succ ρ < κ) {δ : (Order.succ ρ).ord.ToType}
+    (hδ : Order.IsSuccLimit δ) (X Y : Set.Iio δ → P.scheme.Object κ hκ)
+    (pair : ∀ j, SystemArrow K oneVertexShape (P.scheme.asSystem hκ (X j))
+      (P.scheme.asSystem hκ (Y j)))
+    (sX : ∀ {a b : Set.Iio δ}, a ≤ b →
+      SystemArrow K oneVertexShape (P.scheme.asSystem hκ (X a)) (P.scheme.asSystem hκ (X b)))
+    (sY : ∀ {a b : Set.Iio δ}, a ≤ b →
+      SystemArrow K oneVertexShape (P.scheme.asSystem hκ (Y a)) (P.scheme.asSystem hκ (Y b)))
+    (hXr : ∀ a, sX (le_refl a) = SystemArrow.refl _)
+    (hYr : ∀ a, sY (le_refl a) = SystemArrow.refl _)
+    (hXt : ∀ {a b c : Set.Iio δ} (h₁ : a ≤ b) (h₂ : b ≤ c),
+      sX (h₁.trans h₂) = SystemArrow.comp (sX h₁) (sX h₂))
+    (hYt : ∀ {a b c : Set.Iio δ} (h₁ : a ≤ b) (h₂ : b ≤ c),
+      sY (h₁.trans h₂) = SystemArrow.comp (sY h₁) (sY h₂))
+    (hcomm : ∀ {a b : Set.Iio δ} (h : a ≤ b),
+      SystemArrow.comp (pair a) (sY h) = SystemArrow.comp (sX h) (pair b)) :
+    ∃ (Xδ Yδ : P.scheme.Object κ hκ)
+      (lX : ∀ j, SystemArrow K oneVertexShape (P.scheme.asSystem hκ (X j))
+        (P.scheme.asSystem hκ Xδ))
+      (lY : ∀ j, SystemArrow K oneVertexShape (P.scheme.asSystem hκ (Y j))
+        (P.scheme.asSystem hκ Yδ))
+      (pδ : SystemArrow K oneVertexShape (P.scheme.asSystem hκ Xδ) (P.scheme.asSystem hκ Yδ)),
+      (∀ j, P.scheme.permitted (X := X j) (Y := Xδ) (lX j)) ∧
+      (∀ j, P.scheme.permitted (X := Y j) (Y := Yδ) (lY j)) ∧
+      P.scheme.permitted (X := Xδ) (Y := Yδ) pδ ∧
+      (∀ {a b : Set.Iio δ} (h : a ≤ b), SystemArrow.comp (sX h) (lX b) = lX a) ∧
+      (∀ {a b : Set.Iio δ} (h : a ≤ b), SystemArrow.comp (sY h) (lY b) = lY a) ∧
+      (∀ j, SystemArrow.comp (pair j) (lY j) = SystemArrow.comp (lX j) pδ) ∧
+      (∀ x : (Xδ.model).carrier, ∃ j y, (lX j).onVertex PUnit.unit y = x) ∧
+      (∀ x : (Yδ.model).carrier, ∃ j y, (lY j).onVertex PUnit.unit y = x) := by
+  obtain ⟨j0, hj0⟩ := not_isMin_iff.1 hδ.not_isMin
+  have : Nonempty (Set.Iio δ) := ⟨⟨j0, hj0⟩⟩
+  have hι : #(Set.Iio δ) ≤ κ := by
+    refine (Cardinal.mk_le_of_injective Subtype.val_injective).trans ?_
+    rw [Cardinal.mk_ord_toType]
+    exact hρκ.le
+  exact infra_78_limit_pair_gen hι X Y pair sX sY hXr hYr hXt hYt hcomm
+
+end LimitPair
 end AEC
