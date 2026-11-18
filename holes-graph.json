@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-18 14:20",
+  "updated": "2026-11-18 14:24",
   "sorryCount": 42,
   "legend": {
     "open": "No unfinished required proof-deps — try next",
@@ -568,8 +568,8 @@
       "section": 7,
       "file": "AEC/Section7/Results.lean",
       "status": "blocked",
-      "blocker": null,
-      "detail": "RESTATED (grokbot_02) over ListWitnessingChain L: for an all-dominated-increment chain C linked to L and a finite x over the last stage M_delta realized at mu, if x has product over A (IsProduct with C.jointWith) with every finite injective selection of marks, then IsFreeFrom (C.into top) x (the actual tp(x/M_delta) is free from A). Open sorry; blocked on the Prop 7.8 path (relative isolation over SingleModelData)."
+      "blocker": "infra_711_induction",
+      "detail": "RESTATED cycle 73 to the tied notions (English Lemma 7.11 exactly): over SingleModelData P, a tail of levels; C : TiedListWitnessingChain L (Def 7.10 with tied tp(b_i/M_i) = tp(b_i/A)^fr), C.AllDominatedIncrement; x finite over M_delta with x.nu = mu (actual coupling); IsProductTied (x/A) (selection) (joint) refl for every finite injective selection of marks  ==>  IsTiedFree (A -> M_delta) tp(x/A) tp(x/M_delta). Old untied statement (IsFreeFrom/IsProduct over a WorkingScheme) removed: nothing used it. Split: infra_711_tied_chain (done), infra_711_limit (open), infra_711_successor (blocked on infra_75_product_free = Prop 7.5(3) tied, and infra_612_tied_base_change), infra_711_induction (blocked). Note: lemma_7_12 still uses the untied ListWitnessingChain and must be restated over TiedListWitnessingChain."
     },
     {
       "id": "lemma_7_12",
@@ -578,7 +578,7 @@
       "file": "AEC/Section7/Results.lean",
       "status": "blocked",
       "blocker": null,
-      "detail": "RESTATED (grokbot_02) over ListWitnessingChain L (AEC/Section7/ListChain.lean): (1) product-independent well-ordered L has a linked all-dominated-increment chain (stages M_j, j<=delta, M_0=A, continuity at limits, marks = list entries in a common ambient, tp(b_i/M_i) free from A); (2) lists with linked chains and the same marginals have the same whole type. Empty-chain vacuity removed (old API audit kept). Open sorry; blocked on lemma_7_11."
+      "detail": "RESTATED (grokbot_02) over ListWitnessingChain L (AEC/Section7/ListChain.lean): (1) product-independent well-ordered L has a linked all-dominated-increment chain (stages M_j, j<=delta, M_0=A, continuity at limits, marks = list entries in a common ambient, tp(b_i/M_i) free from A); (2) lists with linked chains and the same marginals have the same whole type. Empty-chain vacuity removed (old API audit kept). Open sorry; blocked on lemma_7_11. | cycle 73: still over the untied ListWitnessingChain (free field = vacuous IsFreeFrom); to be restated over TiedListWitnessingChain (AEC/Section7/TiedListChain.lean) like lemma_7_11."
     },
     {
       "id": "lemma_7_2",
@@ -2926,6 +2926,51 @@
       "status": "done",
       "blocker": null,
       "detail": "DONE cycle 71 (theorem infra_79_tail : infra_79_tail_statement P, statement unchanged). Witness: mu = sup_n infra_78_closedTower P kappa n. Verified, not assumed: no closure of either set under omega-sups is used; instead infra_78_closedTower_sup_mem proves directly that this one supremum is in infra_78_closedTail P AND in infra_615_closed P (the closedTower step contains 2^x, closureBound t g x and the profile recursion at x, i.e. dominates the infra_615_tower step, so the pad-recursion closure hrec already established in the closedTail proof is exactly the second clause of infra_615_closed). infra_78_closedTail_tail is now derived from the same lemma. Axioms: propext, Classical.choice, Quot.sound. Previous: OPEN cycle 70 (Lean def infra_79_tail_statement): for every kappa there is mu >= kappa in infra_78_closedTail P INTER infra_615_closed P. Paper: \"sufficiently closed\" = finitely many closure conditions at once. Planned proof: interleave infra_78_closedTower and infra_615_tower (omega steps), supremum is in both (working level, closure point, recursion closure, pad-recursion closure, limit of eligible levels)."
+    },
+    {
+      "id": "infra_711_tied_chain",
+      "label": "Def 7.10 tied list-linked witnessing chain",
+      "section": 7,
+      "file": "AEC/Section7/TiedListChain.lean",
+      "status": "done",
+      "blocker": null,
+      "detail": "DONE cycle 73 (definitions only, no sorry): TiedListWitnessingChain L over SingleModelData (fields as ListWitnessingChain, with free : IsTiedFree (A -> M_i) tp(b_i/A) tp(b_i/M_i), i.e. tp(b_i/M_i) = tp(b_i/A)^fr_{M_i} tied), AllDominatedIncrement, selectionOver, jointWith. Replaces the vacuous untied IsFreeFrom clause of ListWitnessingChain for Lemma 7.11."
+    },
+    {
+      "id": "infra_75_product_free",
+      "label": "Prop 7.5(3) tied: product with b over X + all-dominated Y gives tp(x/Y) free from X",
+      "section": 7,
+      "file": null,
+      "status": "blocked",
+      "blocker": "infra_612_tied_symmetry, infra_612_tied_finite (projection)",
+      "detail": "Blocked (cycle 73; the demoted clause 3 of Proposition 7.5, now tracked). Statement: at sufficiently closed mu, incl : X -> Y permitted, finite b in Y, AllDominated incl b; x over Y with x.nu = mu, bounded; IsProductTied (x restricted to X) (b hosted with x over X) (joint (x, b) over X) refl  ==>  IsTiedFree incl (x.restrict incl) x refl. English proof: symmetry of products and the definition give W >= X containing x with b free from X; type-identifying amalgamation; Lemma 7.2 for every bounded c in Y; symmetry and projection; testing theorem (infra_78_tiedFree_of_upTo)."
+    },
+    {
+      "id": "infra_711_successor",
+      "label": "Lemma 7.11 successor step",
+      "section": 7,
+      "file": null,
+      "status": "blocked",
+      "blocker": "infra_75_product_free, infra_612_tied_base_change",
+      "detail": "Blocked (cycle 73). For a TiedListWitnessingChain C with all-dominated increments and i < delta with successor stage j (i covby j): if every finite x over M_top (x.nu = mu) whose tied products with all finite selections of marks hold has tp(x/M_i) free from A (tied; IH applied to (x, b_i)), then tp(x/M_j) is free from A. English: (x, b_i) has product with earlier selections (finite product rules), IH gives (x, b_i)/M_i free from A, products lift freely (Prop 6.12(7), infra_612_tied_base_change) so x, b_i have product over M_i, Prop 7.5(3) (infra_75_product_free) gives x/M_j free from M_i, transitivity infra_78_tiedFree_trans."
+    },
+    {
+      "id": "infra_711_limit",
+      "label": "Lemma 7.11 limit step",
+      "section": 7,
+      "file": null,
+      "status": "open",
+      "blocker": null,
+      "detail": "Open (cycle 73; all dependencies done). For a TiedListWitnessingChain C and a limit stage j (no predecessor, not first): if tp(x/M_i) is free from A (tied) for every i < j, then tp(x/M_j) is free from A, for finite x over M_top with x.nu = mu. English: local character for finite x (proposition_6_13 tied, first clause, cf >= aleph0) gives i < j with x/M_j free from M_i, then IH + transitivity (infra_78_tiedFree_trans); or directly the second clause of proposition_6_13. Needs the segment (M_i)_{i<j} packaged as a SameLevelChain with union M_j (continuity field), via an order embedding of the stages below j into an ordinal."
+    },
+    {
+      "id": "infra_711_induction",
+      "label": "Lemma 7.11 induction assembly",
+      "section": 7,
+      "file": null,
+      "status": "blocked",
+      "blocker": "infra_711_successor, infra_711_limit",
+      "detail": "Blocked (cycle 73). Well-founded induction on WithTop L.delta (WellFoundedLT): first stage (M_0 = A, into bijective: freeness trivial), successor (infra_711_successor), limit (infra_711_limit), read off at the top stage. Gives lemma_7_11 exactly."
     }
   ],
   "edges": [
@@ -3252,7 +3297,8 @@
     {
       "from": "theorem_9_3",
       "to": "lemma_9_5",
-      "kind": "hard"
+      "kind": "soft",
+      "note": "Relabelled soft cycle 73: lemma_9_5 is proved sorry-free (#print axioms: propext, Classical.choice, Quot.sound); its Lean proof does not use theorem_9_3."
     },
     {
       "from": "lemma_9_5",
@@ -3317,7 +3363,8 @@
     {
       "from": "corollary_10_10",
       "to": "lemma_11_2",
-      "kind": "hard"
+      "kind": "soft",
+      "note": "Relabelled soft cycle 73: lemma_11_2 is proved sorry-free (#print axioms: propext, Classical.choice, Quot.sound); its Lean proof does not use corollary_10_10."
     },
     {
       "from": "lemma_11_2",
@@ -5865,8 +5912,83 @@
       "to": "infra_79_existence",
       "kind": "hard",
       "note": ""
+    },
+    {
+      "from": "infra_711_tied_chain",
+      "to": "lemma_7_11",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_711_induction",
+      "to": "lemma_7_11",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_711_successor",
+      "to": "infra_711_induction",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_711_limit",
+      "to": "infra_711_induction",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_75_product_free",
+      "to": "infra_711_successor",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_612_tied_base_change",
+      "to": "infra_711_successor",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_78_tiedFree_trans",
+      "to": "infra_711_successor",
+      "kind": "hard"
+    },
+    {
+      "from": "lemma_7_2",
+      "to": "infra_75_product_free",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_612_tied_symmetry",
+      "to": "infra_75_product_free",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_612_tied_finite",
+      "to": "infra_75_product_free",
+      "kind": "hard"
+    },
+    {
+      "from": "proposition_6_13",
+      "to": "infra_711_limit",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_78_tiedFree_trans",
+      "to": "infra_711_limit",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_711_tied_chain",
+      "to": "infra_711_limit",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_711_tied_chain",
+      "to": "infra_711_successor",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_7_10_list_chain",
+      "to": "infra_711_tied_chain",
+      "kind": "hard"
     }
   ],
-  "doneCount": 267,
+  "doneCount": 268,
   "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

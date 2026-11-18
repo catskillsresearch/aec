@@ -1,4 +1,4 @@
-# Nodes: (see holes-graph.json)  Hard edges: 528
+# Nodes: (see holes-graph.json)  Hard edges: 541
 # Convention: FROM --> TO means the English proof of TO requires FROM.
 # infra_78_mixed_level_isolation (Prop 7.8 rho^+ matrix argument; mixed tied free lift and mixed Lemma 7.6 done grokbot_02)
 # Retired: infra_610_qPres_empty_joint_on_I, infra_610_same_head_transfers_joint, infra_69_transfer_sequence, WorkingScheme.exists_approximationSequence.
@@ -7,7 +7,6 @@ claim_11_10 --> claim_11_11
 claim_11_11 --> claim_11_12
 claim_11_12 --> claim_11_13
 claim_11_13 --> theorem_11_9
-corollary_10_10 --> lemma_11_2
 corollary_14_4 --> theorem_14_5
 corollary_6_7 --> lemma_6_17
 corollary_6_7 --> lemma_7_2
@@ -255,7 +254,6 @@ theorem_6_6 --> proposition_6_15
 theorem_7_13 --> lemma_8_2
 theorem_7_9 --> lemma_7_11
 theorem_8_6 --> proposition_9_1
-theorem_9_3 --> lemma_9_5
 theorem_9_6 --> lemma_9_7
 theorem_9_8 --> lemma_10_1
 infra_9_cube_scheme --> theorem_9_3
@@ -531,3 +529,18 @@ infra_612_exists_level_copy --> infra_79_existence_of_parts
 infra_79_existence_of_parts --> infra_79_existence
 infra_79_retraction_pair --> infra_79_existence
 infra_79_tail --> infra_79_existence
+infra_711_tied_chain --> lemma_7_11
+infra_711_induction --> lemma_7_11
+infra_711_successor --> infra_711_induction
+infra_711_limit --> infra_711_induction
+infra_75_product_free --> infra_711_successor
+infra_612_tied_base_change --> infra_711_successor
+infra_78_tiedFree_trans --> infra_711_successor
+lemma_7_2 --> infra_75_product_free
+infra_612_tied_symmetry --> infra_75_product_free
+infra_612_tied_finite --> infra_75_product_free
+proposition_6_13 --> infra_711_limit
+infra_78_tiedFree_trans --> infra_711_limit
+infra_711_tied_chain --> infra_711_limit
+infra_711_tied_chain --> infra_711_successor
+infra_7_10_list_chain --> infra_711_tied_chain

@@ -360,7 +360,12 @@ Lean: imports `AEC.Section6.Results`.
 | `infra_79_existence_of_parts` | Thm 7.9 existence clause from tail + retraction pair | [`Theorem79Existence.lean`](AEC/Section7/Theorem79Existence.lean) (**done**, cycle 70; tail `infra_78_closedTail ∩ infra_615_closed`) |
 | `infra_79_retraction_pair` | Thm 7.9 level-`ν` pair `A' ≤ U'` closed under `ν` Cor 6.16 retractions | [`RetractionPair.lean`](AEC/Section7/RetractionPair.lean) (**done**, cycle 72; `ν` of the `λ` Cor 6.16 retractions, `ω`-chain of `infra_78_mixed_ls_pair` stages (`Classical.epsilon`), `infra_78_factor_arrow` chain arrows, `infra_78_theta_union` over `ULift ℕ`) |
 | `infra_79_tail` | Thm 7.9 tail: `infra_78_closedTail ∩ infra_615_closed` unbounded | [`Theorem79Existence.lean`](AEC/Section7/Theorem79Existence.lean) (**done**, cycle 71; witness `⨆ n, infra_78_closedTower P κ n` is in both sets by `infra_78_closedTower_sup_mem` (`ClosureLevel.lean`); no `ω`-sup closure assumed) |
-| `lemma_7_11` | Lemma 7.11 | `AEC/Section7/Results.lean:255` (restated over `ListWitnessingChain`) |
+| `lemma_7_11` | Lemma 7.11 | `AEC/Section7/Results.lean` (**blocked**; restated cycle 73 to the tied notions over [`TiedListWitnessingChain`](AEC/Section7/TiedListChain.lean): `IsProductTied` hypotheses, `IsTiedFree (A → M_δ)` conclusion; old untied form removed, unused) |
+| `infra_711_tied_chain` | Def 7.10 tied list-linked chain | [`TiedListChain.lean`](AEC/Section7/TiedListChain.lean) (**done**, cycle 73; `free` = tied `tp(bᵢ/Mᵢ) = tp(bᵢ/A)^fr`) |
+| `infra_711_limit` | Lemma 7.11 limit step | **open** (cycle 73; tied Prop 6.13 + `infra_78_tiedFree_trans` on the segment below `j` as a `SameLevelChain`) |
+| `infra_711_successor` | Lemma 7.11 successor step | **blocked** on `infra_75_product_free`, `infra_612_tied_base_change` |
+| `infra_75_product_free` | Prop 7.5(3) tied: product with `b` + all-dominated `Y` ⇒ `tp(x/Y)` free from `X` | **blocked** on `infra_612_tied_symmetry`, `infra_612_tied_finite` |
+| `infra_711_induction` | Lemma 7.11 induction assembly | **blocked** on `infra_711_successor`, `infra_711_limit` |
 | `lemma_7_12` | Lemma 7.12 | `AEC/Section7/Results.lean:273` (restated over list-linked `ListWitnessingChain`; old vacuity audit in `AEC/Audit/WitnessingChainVacuous.lean`) |
 | `theorem_7_13` | Theorem 7.13 | `AEC/Section7/Results.lean:296` (restated: uniqueness, product-independent free lift, continuity, primeness) |
 
@@ -385,7 +390,7 @@ Lean: imports S5/S6 Results. Unlocks boundary story for later geometry.
 | `proposition_9_1` | Proposition 9.1 | `AEC/Section9/Results.lean` (**restated, open**: explicit SchemeProjection) |
 | `corollary_9_2` | Corollary 9.2 | `AEC/Section9/Results.lean` (**restated, open**: explicit SchemeProjection) |
 | `theorem_9_3` |  Theorem 9.3 | `AEC/Section9/Results.lean` (**restated, open**: ∃ marked `CubeScheme` with proper increments; emptied-scheme proof retired) |
-| `lemma_9_5` | Lemma 9.5 | `AEC/Section9/Results.lean` (**done**: `hpres` along `J.incl`, `h.onFace`, `Kf.incl`, joined by `htrans`) |
+| `lemma_9_5` | Lemma 9.5 | `AEC/Section9/Results.lean` (**done**: `hpres` along `J.incl`, `h.onFace`, `Kf.incl`, joined by `htrans`; cycle 73: axioms clean, edge `theorem_9_3 --> lemma_9_5` relabelled soft) |
 | `theorem_9_6` | Theorem 9.6 | `AEC/Section9/Results.lean` (**restated, open**: marked `CubeScheme`, permitted top arrows into a common same-level object; degenerate proof retired; **blocked** on `theorem_9_3`, whose marked-increment scheme the English proof uses) |
 | `lemma_9_7` | Lemma 9.7 | `AEC/Section9/Results.lean` (**restated, open**: marked `CubeScheme`, boundary occurrences, scheme `DiagramEq`) |
 | `theorem_9_8` |  Theorem 9.8 | `AEC/Section9/Results.lean` (**restated, open**: marked `CubeScheme`, `IsStructIso` extension agreeing with `h` on proper faces) |
@@ -414,7 +419,7 @@ Lean: imports S5/S6 Results. Soft internal chain:
 
 | Decl | Title | Location |
 |------|-------|----------|
-| `lemma_11_2` | Lemma 11.2 | `AEC/Section11/Results.lean` (**done**; **statement change**: false 4th clause dropped, refuted by `AEC.Audit.lemma_11_2_inactive_vertex_false`) |
+| `lemma_11_2` | Lemma 11.2 | `AEC/Section11/Results.lean` (**done**; **statement change**: false 4th clause dropped, refuted by `AEC.Audit.lemma_11_2_inactive_vertex_false`; cycle 73: axioms clean, edge `corollary_10_10 --> lemma_11_2` relabelled soft) |
 | `proposition_11_6` | Proposition 11.6 | `AEC/Section11/Results.lean` (**restated, open**: pointed geometric systems `GeometricSystem.IsPointed D`; see board detail; **blocked** on `theorem_10_5` and `corollary_10_10`, used by the English proof) |
 | `proposition_11_7` |  Proposition 11.7 | `AEC/Section11/Results.lean` (**restated, open**: pointed geometric systems `GeometricSystem.IsPointed D`; see board detail) |
 | `claim_11_10` | Claim 11.10 | `AEC/Section11/Results.lean` (**restated, open**: pointed geometric systems `GeometricSystem.IsPointed D`; see board detail) |

@@ -10,6 +10,7 @@ public import AEC.Section7.ContinuityCondition
 public import AEC.Section7.ProductIndependent
 public import AEC.Section7.WitnessingChain
 public import AEC.Section7.ListChain
+public import AEC.Section7.TiedListChain
 public import AEC.Section7.GeneralLevel
 public import AEC.Section7.Theorem79
 public import AEC.Section7.Theorem79Existence
@@ -284,22 +285,28 @@ theorem theorem_7_9 {K : AbstractElementaryClass.{u}} (P : SingleModelData K) :
               ∀ i, h.onVertex (b i).1 (b i).2 = (b' i).2 := by
   exact infra_79_of_existence P (infra_79_existence P)
 
-/-- **Lemma 7.11.** Let `C` be an all-dominated-increment witnessing chain for the list `L`
-over `A`, and let `x` be a finite tuple over the last stage `M_δ`, realized in an actual coupling
-(`x.ν = μ`).  If `x` has product over `A` with every finite selection of the marks `bᵢ`, then
-`tp(x/M_δ)` is free from `A`. -/
-theorem lemma_7_11 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
-    (W : WorkingScheme K S) :
-    ∃ T, ∃ hT : Tail W.eligible T,
-      ∀ μ (hμ : μ ∈ T) (A : W.Object μ (Tail.mem hT hμ))
-        (L : TupleList W (Tail.mem hT hμ) A) [LinearOrder L.δ] [WellFoundedLT L.δ]
-        (C : ListWitnessingChain L),
+/-- **Lemma 7.11** (tied, restated cycle 73). Suppose `(M_i)_{i ≤ δ}` is an all-dominated-increment
+chain over `A` for finite tuples `(b_i)_{i < δ}` (`TiedListWitnessingChain`, Definition 7.10 with
+`tp(bᵢ/Mᵢ) = tp(bᵢ/A)^fr_{Mᵢ}` tied). If a finite tuple `x` in an actual coupling (`x.ν = μ`) has
+product over `A` (`IsProductTied`, Proposition 6.12's tied product) with every finite selection
+of the accumulated `b_i`, then `tp(x/M_δ)` is free from `A`
+(`IsTiedFree (A → M_δ) tp(x/A) tp(x/M_δ)`). The former statement used the vacuous untied
+`IsFreeFrom` / `IsProduct` over an arbitrary `WorkingScheme`; nothing used it, so it was removed.
+Proof split (board): `infra_711_successor`, `infra_711_limit`, `infra_711_induction`;
+the successor step needs Proposition 7.5(3) (`infra_75_product_free`) and products lifting
+freely (`infra_612_tied_base_change`). -/
+theorem lemma_7_11 {K : AbstractElementaryClass.{u}} (P : SingleModelData K) :
+    ∃ T, ∃ hT : Tail P.eligible T,
+      ∀ μ (hμ : μ ∈ T) (A : P.scheme.Object μ (Tail.mem hT hμ))
+        (L : TupleList P.scheme (Tail.mem hT hμ) A) [LinearOrder L.δ] [WellFoundedLT L.δ]
+        (C : TiedListWitnessingChain L),
         C.AllDominatedIncrement →
-        ∀ (x : TupleOver K S W (Tail.mem hT hμ) (C.stage ⊤)), Finite x.idx → x.ν = μ →
+        ∀ (x : TupleOver K oneVertexShape P.scheme (Tail.mem hT hμ) (C.stage ⊤)),
+          Finite x.idx → x.ν = μ →
           (∀ (n : ℕ) (ix : Fin n → L.δ), Function.Injective ix →
-            IsProduct (x.restrict (C.into ⊤) (C.into_arrow ⊤)) (C.selectionOver x n ix)
+            IsProductTied (x.restrict (C.into ⊤) (C.into_arrow ⊤)) (C.selectionOver x n ix)
               (C.jointWith x n ix) (Equiv.refl _)) →
-          IsFreeFrom (C.into ⊤) (C.into_arrow ⊤) x := by
+          IsTiedFree (C.into ⊤) (x.restrict (C.into ⊤) (C.into_arrow ⊤)) x (Equiv.refl _) := by
   sorry
 
 /-- **Lemma 7.12.** (1) A product-independent list `L` of finite tuples over `A`, well-ordered,
