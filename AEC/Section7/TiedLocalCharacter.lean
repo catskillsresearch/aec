@@ -607,5 +607,111 @@ theorem infra_78_tied_continuity
     (C.toUnion i hi) (C.toUnion_arrow i hi) p (hAll i hi) hF
   exact infra_78_tiedFree_congr_arrow _ _ p (infra_613_cocone_arrow C g hi) htrans
 
+/-- The testing arity `g(σ) + LS(K)` is below `c(σ)`. -/
+theorem infra_611_test_le_testCardinal (P : SingleModelData K) (σ : Cardinal.{u}) :
+    P.g σ + ls K ≤ testCardinal (max (ls K) ℵ₀) P.g σ := by
+  change P.g σ + ls K ≤ (2 : Cardinal.{u}) ^ (P.g σ + max (ls K) ℵ₀ + σ + aleph0)
+  refine le_trans ?_ (cantor _).le
+  calc P.g σ + ls K ≤ P.g σ + max (ls K) ℵ₀ := add_le_add le_rfl (le_max_left _ _)
+    _ ≤ P.g σ + max (ls K) ℵ₀ + σ := le_self_add
+    _ ≤ P.g σ + max (ls K) ℵ₀ + σ + aleph0 := le_self_add
+
+/-- **Average criterion, same level (`infra_611_tied`, English Lemma 6.11 for `ν = μ`).** At a
+recursion-closed level, let `f : A → B`, `q` over `B` with `|q| ≤ σ`, and `I = (d_i : i ∈ κ)` a
+sequence in `A` with `χ + ℵ₀ < κ < μ`, `g(σ) + LS(K) ≤ χ < μ`, such that for every query
+`Z ⊆ B` of size `≤ χ` all but `|Z| + ℵ₀` of the `f(d_i) ⌢ Z` have the diagram of `q ↾ Z`
+(computed in `B`). Then `q` is tied free from `A` (the free lift of `q ↾ A`).
+
+`I` is an approximation sequence for `q ↾ A` at size `χ` (queries of `A` pushed to `B`); a
+common move of a test query over `I` and any other sequence compares both with `q`, giving
+tied freeness up to the testing arity, and the testing reduction
+`infra_78_tiedFree_of_upTo` gives it at every bounded query size. -/
+theorem infra_611_tied
+    (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : ℵ₀ ≤ σ)
+    {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
+    (hrec : μ ∈ recursionClosedLevels P σ) (hσSucc : Order.succ σ ≤ μ)
+    {A B : P.scheme.Object μ hμ}
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ B))
+    (hf : P.scheme.permitted (X := A) (Y := B) f)
+    (q : TupleOver K oneVertexShape P.scheme hμ B)
+    (hqν : q.ν = μ) (hidx : #q.idx ≤ σ)
+    {κI : Type u} (I : κI → q.idx → Occurrence K oneVertexShape (P.scheme.asSystem hμ A))
+    (χ : Cardinal.{u}) (hχ : P.g σ + ls K ≤ χ) (hχμ : χ < μ)
+    (hκ : χ + ℵ₀ < #κI) (hκμ : #κI < μ)
+    (hmaj : ∀ {ι : Type u} (Z : ι → Occurrence K oneVertexShape (P.scheme.asSystem hμ B)),
+      #ι ≤ χ →
+      #{i : κI // ¬ P.scheme.DiagramEq (X := q.host) (Y := B)
+        (typeJoint (p := q) Z) (seqJoint (fun j => pushOcc f (I i j)) Z)} ≤ #ι + ℵ₀) :
+    IsTiedFree f (q.restrict f hf) q (Equiv.refl _) := by
+  classical
+  have hσlt : σ < μ := (Order.lt_succ σ).trans_le hσSucc
+  have hidxμ : #q.idx < μ := hidx.trans_lt hσlt
+  have hcb : #(κI × q.idx) < μ := by
+    rw [Cardinal.mk_prod, Cardinal.lift_id, Cardinal.lift_id]
+    exact Cardinal.mul_lt_of_lt (P.aleph0_le hμ) hκμ hidxμ
+  -- `I` is an approximation sequence for `q ↾ A` at size `χ`.
+  let seqI : ApproximationSequence (q.restrict f hf) :=
+    { τ := χ
+      κIndex := κI
+      family := I
+      concat_bounded := hcb
+      few_exceptions := fun {β} W hW => by
+        have hβμ : #β < μ := hW.trans_lt hχμ
+        have hsum : #(q.idx ⊕ β) < μ := by
+          rw [Cardinal.mk_sum, Cardinal.lift_id, Cardinal.lift_id]
+          exact Cardinal.add_lt_of_lt (P.aleph0_le hμ) hidxμ hβμ
+        let fW : β → Occurrence K oneVertexShape (P.scheme.asSystem hμ B) :=
+          fun b => pushOcc f (W b)
+        refine le_trans ?_ (hmaj fW hW)
+        refine Cardinal.mk_le_of_injective (f := fun j => ⟨j.1, fun hgood => j.2 ?_⟩)
+          (by
+            intro j₁ j₂ hj
+            apply Subtype.ext
+            have := congrArg Subtype.val hj
+            exact this)
+        have h2 := P.scheme.diagram_preserved A B f hf (seqJoint (I j.1) W) hsum hsum
+        have hpush : (fun t => (⟨(seqJoint (I j.1) W t).1,
+            f.onVertex (seqJoint (I j.1) W t).1 (seqJoint (I j.1) W t).2⟩ :
+              Occurrence K oneVertexShape (P.scheme.asSystem hμ B))) =
+            seqJoint (fun k => pushOcc f (I j.1 k)) fW := by
+          funext t
+          cases t <;> rfl
+        rw [hpush] at h2
+        have e1 := P.scheme.diagram_trans _ _ _ _ _ _ hgood
+          (P.scheme.diagram_symm _ _ _ _ h2)
+        exact infra_73_diagramEq_of_eq e1 (fun t => by cases t <;> rfl) (fun _ => rfl) }
+  have hlongI : seqI.τ + ℵ₀ < #seqI.κIndex := hκ
+  refine infra_78_tiedFree_of_upTo P σ hσ hμ hrec hσSucc f hf q hqν hidx ?_
+  intro seq ι Z Z0 hlong hιτ hιμ hι0 hmove
+  have hιχ : #ι ≤ χ := hι0.trans hχ
+  obtain ⟨Z1, hZ1a, hZ1b⟩ := infra_78_common_move_mixed f hf le_rfl seq seqI Z hιμ
+  have hcι : ℵ₀ ≤ #ι + ℵ₀ := le_add_self
+  obtain ⟨i, hi1, hi2⟩ := infra_78_exists_outside_two
+    {i | ¬ P.scheme.DiagramEq (X := q.host) (Y := A)
+      (typeJoint (p := q.restrict f hf) Z0) (seqJoint (seq.family i) Z0)}
+    {i | ¬ P.scheme.DiagramEq (X := q.host) (Y := A)
+      (typeJoint (p := q.restrict f hf) Z1) (seqJoint (seq.family i) Z1)}
+    hcι (seq.few_exceptions Z0 hιτ) (seq.few_exceptions Z1 hιτ)
+    ((add_le_add hιτ le_rfl).trans_lt hlong)
+  simp only [Set.mem_ofPred_eq, not_not] at hi1 hi2
+  have E1 := P.scheme.diagram_trans _ _ _ _ _ _
+    (P.scheme.diagram_trans _ _ _ _ _ _
+      (P.scheme.diagram_trans _ _ _ _ _ _ hi1 (hmove i))
+      (P.scheme.diagram_symm _ _ _ _ (hZ1a i)))
+    (P.scheme.diagram_symm _ _ _ _ hi2)
+  obtain ⟨j, hj1, hj2⟩ := infra_78_exists_outside_two
+    {j | ¬ P.scheme.DiagramEq (X := q.host) (Y := A)
+      (typeJoint (p := q.restrict f hf) Z1) (seqJoint (seqI.family j) Z1)}
+    {j | ¬ P.scheme.DiagramEq (X := q.host) (Y := B)
+      (typeJoint (p := q) Z) (seqJoint (fun k => pushOcc f (I j k)) Z)}
+    hcι (seqI.few_exceptions Z1 hιχ) (hmaj Z hιχ)
+    ((add_le_add hιχ le_rfl).trans_lt hκ)
+  simp only [Set.mem_ofPred_eq, not_not] at hj1 hj2
+  have E2 := P.scheme.diagram_trans _ _ _ _ _ _
+    (P.scheme.diagram_trans _ _ _ _ _ _ hj1 (hZ1b j)) (P.scheme.diagram_symm _ _ _ _ hj2)
+  have E := P.scheme.diagram_trans _ _ _ _ _ _ E1 E2
+  erw [infra_78_anchored_refl q Z]
+  exact E
+
 end
 end AEC

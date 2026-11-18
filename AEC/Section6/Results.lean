@@ -517,8 +517,12 @@ Same packaging as Theorem 6.10: `SingleModelData`, same-level host `q.ν = μ`. 
 the bridge through `infra_610_majority_eq_type` and `infra_610_majority_unique`, moved
 parameter queries, and `infra_610_same_galois`. Mixed levels `ν < μ` are deferred. 
 
-**Audit (grokbot_02): degenerate as formalized, NOT counted done.** its `IsFreeFrom` conclusion follows from the hypothesis `seq` alone (`Audit.isFreeFrom_of_approximationSequence`); honest form concludes `IsTiedFree f (q.restrict f hf) q (Equiv.refl _)`. -/
-theorem lemma_6_11 {K : AbstractElementaryClass.{u}}
+**Audit (grokbot_02): degenerate as formalized, NOT the paper statement.** Its `IsFreeFrom`
+conclusion follows from the hypothesis `seq` alone (`Audit.isFreeFrom_of_approximationSequence`),
+and its majority hypothesis evaluates an unrelated list `Z0` instead of `f(d_i) ⌢ Z` in `B`.
+The English `lemma_6_11` (full `ν ≤ μ`, tied conclusion) is in
+`AEC/Section6/AverageDescentTied.lean`; this wrapper is kept as `lemma_6_11_untied`. -/
+theorem lemma_6_11_untied {K : AbstractElementaryClass.{u}}
     (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ) :
     ∃ T, ∃ hT : Tail P.eligible T,
       ∀ μ (hμ : μ ∈ T) (A B : P.scheme.Object μ (Tail.mem hT hμ))

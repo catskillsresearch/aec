@@ -302,7 +302,9 @@ Waits on Section 5 working package. Lean: later Results import this module.
 | `infra_610_isFreeLift_same_galois` | Infra: IsFreeLift via amalgam | `AEC/Section6/StationaryFreeExtension.lean` (**done**: amalgam + majority transport) |
 | `stationary_free_extension_exists` | Infra: free-lift existence | `AEC/Section6/StationaryFreeExtension.lean` (**done**: amalgam `IsFreeLift`) |
 | `theorem_6_10` | Theorem 6.10 | `AEC/Section6/Results.lean` (**done** for `SingleModelData`) |
-| `lemma_6_11` | Lemma 6.11 | `AEC/Section6/Results.lean` (**degenerate, NOT done**: untied `IsFreeFrom` conclusion is vacuous, see `AEC/Audit/FreeFromVacuous.lean`; restate with `IsTiedFree`; blocked on `infra_78_tied_local_character`) |
+| `lemma_6_11` | Lemma 6.11 | `AEC/Section6/AverageDescentTied.lean` (**restated to the full English** `ν ≤ μ` with tied conclusion `IsTiedFreeMixed`; `ν = μ` proved by `infra_611_tied`; `ν < μ` is `sorry`, **blocked** on `infra_611_tied_mixed`. Old degenerate wrapper renamed `lemma_6_11_untied`) |
+| `infra_611_tied` | Lemma 6.11 same level (tied) | `AEC/Section7/TiedLocalCharacter.lean` (**done**; no `sorry`) |
+| `infra_611_tied_mixed` | Lemma 6.11 mixed `ν < μ` (tied) | `AEC/Section6/AverageDescentTied.lean` (**open**: mixed testing reduction needed) |
 | `proposition_6_12` | Proposition 6.12 | `AEC/Section6/Results.lean` (**degenerate, NOT done**: `IsProduct` uses untied `IsFreeLift`; restate with `IsTiedFree x.incl q y ey`) |
 | `proposition_6_13` | Proposition 6.13 | `AEC/Section6/LocalCharacterTied.lean` (**done**, honest tied restatement: local character `infra_78_tied_local` and continuity `infra_78_tied_continuity` with `IsTiedFree`; no `sorry`. Old untied wrapper renamed `proposition_6_13_untied` in `Section6/Results.lean`, degenerate) |
 | `infra_78_tiedFree_trans` | Transitivity of tied freeness | `AEC/Section7/TiedLocalCharacter.lean` (**done**; no `sorry`) |

@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-18 08:04",
-  "sorryCount": 43,
+  "updated": "2026-11-18 08:21",
+  "sorryCount": 44,
   "legend": {
     "open": "No unfinished required proof-deps — try next",
     "blocked": "Waiting on incomplete required proof-deps",
@@ -368,11 +368,10 @@
       "id": "lemma_6_11",
       "label": "Lem 6.11",
       "section": 6,
-      "file": "AEC/Section6/Results.lean",
+      "file": "AEC/Section6/AverageDescentTied.lean",
       "status": "blocked",
-      "blocker": "infra_78_tied_local_character",
-      "detail": "DEGENERATE CLOSURE, NOT DONE (grokbot_02 audit). Lean conclusion IsFreeFrom f hf q is implied by the hypothesis seq : ApproximationSequence (q.restrict f hf) alone (Audit.isFreeFrom_of_approximationSequence), so the majority hypothesis is unused in substance. Proposed honest restatement: conclude IsTiedFree f (q.restrict f hf) q (Equiv.refl _) (tied freeness: the majority answer on each moved query is q's own diagram), as in Section 7. Blocked on infra_78_tied_local_character. Previous note: Same-level SingleModelData: fresh Lem 6.9 code, majority bridge (eq_type + unique), move_query on parameter lists, infra_610_same_galois, then IsFreeLift of q.restrict. Mixed ν<μ deferred. No sorry.",
-      "degenerate": true
+      "blocker": "infra_611_tied_mixed",
+      "detail": "Restated to the full English (grokbot_02): lemma_6_11 in AEC/Section6/AverageDescentTied.lean (moved out of Section6/Results.lean: proof uses Section 7 tied infra, which imports Section6.Results; old degenerate wrapper renamed lemma_6_11_untied). Statement: tail of recursion-closed levels; nu <= mu both in the tail; f : A -> B (A at nu, B at mu); q over B, q.nu = mu, #q.idx <= sigma; chi with c(sigma) = testCardinal (max LS aleph0) g sigma <= chi < nu; I : kappa -> q.idx -> A with chi + aleph0 < kappa < nu; for every query Z of B with |Z| <= chi, at most |Z|+aleph0 indices i with diagram of f(d_i)^Z in B different from q|Z; conclusion IsTiedFreeMixed f (q|A) q refl (free lift, tied). Case nu = mu PROVED (infra_611_tied). Case nu < mu is sorry: open sub-tip infra_611_tied_mixed. Not done until that closes."
     },
     {
       "id": "lemma_6_14",
@@ -2027,6 +2026,24 @@
       "status": "done",
       "blocker": null,
       "detail": "Done (no sorry): infra_78_tiedFree_trans. X -g-> A -f-> B same level, q over B: IsTiedFree g ((q|f)|g) (q|f) refl and IsTiedFree f (q|f) q refl imply IsTiedFree (g;f) (q|g;f) q refl. The push g(x) of any long sequence x of q|X is an approximation sequence of q|A at sizes <= |Z| (first hypothesis); a move of Z along f over g(x) and one index outside both exception sets close it. Also infra_78_tiedFree_congr_arrow and infra_78_tied_continuity (Prop 6.13 second clause)."
+    },
+    {
+      "id": "infra_611_tied",
+      "label": "Lemma 6.11 same level (tied average criterion)",
+      "section": 6,
+      "file": "AEC/Section7/TiedLocalCharacter.lean",
+      "status": "done",
+      "blocker": null,
+      "detail": "Done (no sorry; axioms propext/choice/Quot.sound): infra_611_tied. Recursion-closed level mu >= sigma^+, same-level f : A -> B, q over B (q.nu = mu, #q.idx <= sigma), I : kappa -> q.idx -> A with g sigma + ls K <= chi < mu, chi + aleph0 < kappa < mu, majority q|Z on every query Z of B of size <= chi (diagram of f(d_i)^Z in B, <= |Z|+aleph0 exceptions) => IsTiedFree f (q|A) q refl. Proof: I is an approximation sequence of q|A at size chi (queries pushed by diagram_preserved); common move with any sequence gives IsTiedFreeUpTo at g sigma + ls K; testing reduction infra_78_tiedFree_of_upTo."
+    },
+    {
+      "id": "infra_611_tied_mixed",
+      "label": "Lemma 6.11 mixed levels nu < mu (tied)",
+      "section": 6,
+      "file": "AEC/Section6/AverageDescentTied.lean",
+      "status": "open",
+      "blocker": null,
+      "detail": "Open (sub-tip split off lemma_6_11; the sorry branch of lemma_6_11). Same hypotheses as lemma_6_11 with nu < mu: conclude IsTiedFreeMixed f (q|A) q refl. Route: I is an approximation sequence of q|A at chi (as in infra_611_tied, with mixed diagram_preserved); common mixed moves (infra_78_common_move_mixed) give tied freeness up to the testing arity; needs a mixed testing reduction (bounded-arity IsTiedFreeMixed => all queries below nu), e.g. via the mixed tied free lift infra_78_tied_free_lift_mixed plus Thm 6.6 testing over B at level mu."
     }
   ],
   "edges": [
@@ -3758,8 +3775,18 @@
       "from": "infra_78_tiedFree_trans",
       "to": "proposition_6_13",
       "kind": "hard"
+    },
+    {
+      "from": "infra_611_tied",
+      "to": "lemma_6_11",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_611_tied_mixed",
+      "to": "lemma_6_11",
+      "kind": "hard"
     }
   ],
-  "doneCount": 170,
+  "doneCount": 171,
   "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 43. Uncommitted in /tmp/aec-grok."
 }
