@@ -515,6 +515,17 @@ theorem infra_712u_marks_of_common (P : SingleModelData K)
   show Φ1 (σ.symm (σ q)) = Φ2 (σ q)
   exact (congrArg Φ1 (σ.symm_apply_apply q)).trans (hmk q.1 q.2)
 
+/-- **7.12(2) base of the common objects (proved, cycle 88).** The first stage of a witnessing
+chain is `A` itself (`first`), so it maps back onto `A` inverting `into`. -/
+theorem infra_712u_base {P : SingleModelData K} {μ : Cardinal.{u}} {hμ : μ ∈ P.eligible}
+    {A : P.scheme.Object μ hμ} {L : TupleList P.scheme hμ A} [LinearOrder L.δ]
+    (C : TiedListWitnessingChain L) (k : WithTop L.δ) (hk : ∀ j, k ≤ j) :
+    ∃ r : SystemArrow K oneVertexShape (P.scheme.asSystem hμ (C.stage k)) (P.scheme.asSystem hμ A),
+      (∀ x, r.onVertex PUnit.unit ((C.into k).onVertex PUnit.unit x) = x) ∧
+      (∀ y, (C.into k).onVertex PUnit.unit (r.onVertex PUnit.unit y) = y) := by
+  obtain ⟨ψ, h1, h2⟩ := infra_78_struct_inverse (C.into k) (fun v => C.first k hk v)
+  exact ⟨ψ, h2, h1⟩
+
 /-- **7.12(2), the common object (open tip `infra_712u_common`).** The transfinite recursion of
 common objects `N_j` (successor `infra_712u_chain_succ`, limits `infra_712u_factor_continuous`
 on both chains, base `M_0 = A`). -/

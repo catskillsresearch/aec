@@ -3258,7 +3258,16 @@
    "file": "AEC/Section7/Lemma712Uniqueness.lean",
    "status": "open",
    "blocker": null,
-   "detail": "Open (cycle 88; the one sorry under lemma_7_12). infra_712u_common_statement: exists N (level mu), g : M_top -> N, g' : M'_top -> N agreeing on A and with g(mark i) = g'(mark' (e i) (ei i a)). All step lemmas PROVED: infra_712u_chain_succ (successor), infra_712u_factor_continuous (limit, both chains' continuity), infra_712_trans_level. Remaining: the recursion assembly over WithTop L.delta (transport e to WithTop) with state (N_j, g_j, g'_j); the generic infra_78_coherent_chain_engine has non-dependent S, so either carry g_j as carrier functions with an 'is arrow' predicate in Arr, or write a dedicated WellFounded.fix with a sigma state; base M_0 = A via first + infra_78_struct_inverse."
+   "detail": "Open (cycle 88; the one sorry under lemma_7_12). infra_712u_common_statement: exists N (level mu), g : M_top -> N, g' : M'_top -> N agreeing on A and with g(mark i) = g'(mark' (e i) (ei i a)). All step lemmas PROVED: infra_712u_chain_succ (successor), infra_712u_factor_continuous (limit, both chains' continuity), infra_712_trans_level. Remaining: the recursion assembly over WithTop L.delta (transport e to WithTop) with state (N_j, g_j, g'_j); the generic infra_78_coherent_chain_engine has non-dependent S, so either carry g_j as carrier functions with an 'is arrow' predicate in Arr, or write a dedicated WellFounded.fix with a sigma state; base PROVED (infra_712u_base)."
+  },
+  {
+   "id": "infra_712u_base",
+   "label": "7.12(2) base of the common objects: first stage maps back onto A",
+   "section": 7,
+   "file": "AEC/Section7/Lemma712Uniqueness.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "PROVED cycle 88: infra_712u_base (C.first + infra_78_struct_inverse). Axioms clean."
   }
  ],
  "edges": [
@@ -6616,8 +6625,13 @@
    "to": "infra_712u_marks",
    "kind": "hard",
    "note": "infra_712u_marks_of_common"
+  },
+  {
+   "from": "infra_712u_base",
+   "to": "infra_712u_common",
+   "kind": "hard"
   }
  ],
- "doneCount": 300,
+ "doneCount": 301,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

@@ -593,3 +593,4 @@ Counts are standalone `sorry` lines in `AEC/` (`git grep -nE '^\s*sorry\s*$'`), 
 | `infra_712u_limit` | infra_712u_limit | done (cycle 88): AEC/Section7/Lemma712Uniqueness.lean |
 | `infra_712u_chain_succ` | infra_712u_chain_succ | done (cycle 88): AEC/Section7/Lemma712Uniqueness.lean |
 | `infra_712u_common` | infra_712u_common | open (cycle 88): AEC/Section7/Lemma712Uniqueness.lean, the only sorry under lemma_7_12 |
+| `infra_712u_base` | infra_712u_base | done (cycle 88): AEC/Section7/Lemma712Uniqueness.lean |
