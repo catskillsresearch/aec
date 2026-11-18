@@ -19,8 +19,8 @@ and bounded diagram homogeneity identify `A'` with `X` carrying the marginal of 
 (`identify`)."
 
 * `infra_79_descent` (proved, this file): the descent step.
-* `infra_79_lift_isolate`, `infra_79_retraction_pair`, `infra_79_identify`, `infra_79_tail`:
-  open (tracked in HOLES.md under `infra_79_existence`).
+* `infra_79_lift_isolate`, `infra_79_identify`, `infra_79_existence_of_parts` (proved, cycle 70);
+  `infra_79_tail` (proved, cycle 71); `infra_79_retraction_pair_statement` (open).
 -/
 
 universe u
@@ -321,12 +321,18 @@ def infra_79_retraction_pair_statement (P : SingleModelData K) : Prop :=
       (∀ i (x : ((P.scheme.asSystem hν U').obj PUnit.unit).carrier),
         ∃ y, toA.onVertex PUnit.unit y = (r i).onVertex PUnit.unit (toU.onVertex PUnit.unit x))
 
-/-- **Theorem 7.9 tail (open).** The closure tail of Proposition 7.8 and the closed levels of
+/-- **Theorem 7.9 tail (statement; proved below as `infra_79_tail`).** The closure tail of Proposition 7.8 and the closed levels of
 Section 6 (Corollary 6.16 / Lemma 6.17) meet unboundedly ("sufficiently closed" in the paper means
 all the finitely many closure conditions at once). Planned proof: interleave the two `ω`-towers
 (`infra_78_closedTower`, `infra_615_tower`); the supremum lies in both. -/
 def infra_79_tail_statement (P : SingleModelData K) : Prop :=
   ∀ κ : Cardinal.{u}, ∃ μ, κ ≤ μ ∧ μ ∈ infra_78_closedTail P ∧ μ ∈ infra_615_closed P
+
+/-- **Theorem 7.9 tail (proved, cycle 71).** The supremum of the Prop 7.8 closure tower above
+`κ` is in both tails (`infra_78_closedTower_sup_mem`). -/
+theorem infra_79_tail (P : SingleModelData K) : infra_79_tail_statement P := fun κ =>
+  ⟨_, (infra_78_closedTower_sup_mem P κ).1, (infra_78_closedTower_sup_mem P κ).2.1,
+    (infra_78_closedTower_sup_mem P κ).2.2⟩
 
 /-- **Existence clause of Theorem 7.9 from its open parts (proved).** On the tail
 `infra_78_closedTail P ∩ infra_615_closed P`: a level-`μ` copy `p'` of `p`

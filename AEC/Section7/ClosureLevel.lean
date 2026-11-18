@@ -95,10 +95,14 @@ def infra_78_closedTail (P : SingleModelData K) : Set Cardinal.{u} :=
   {μ | μ ∈ P.eligible ∧ (∀ σ, ℵ₀ ≤ σ → σ < μ → μ ∈ infra_73_tailSet P σ) ∧
     ∀ θ, θ < μ → ∃ ℓ, ℓ ∈ P.eligible ∧ θ < ℓ ∧ ℓ < μ}
 
-/-- **`infra_78_closedTail` is a tail** (unbounded in the eligible levels). -/
-theorem infra_78_closedTail_tail (P : SingleModelData K) :
-    Tail P.eligible (infra_78_closedTail P) := by
-  refine ⟨fun μ hμ => hμ.1, fun κ => ?_⟩
+/-- **The supremum of the closure tower lies in both closure tails (proved).** The tower step
+dominates the `infra_615_tower` step (it contains `2^x ⊔ closureBound t g x` and the profile
+recursion at `x`), so the same supremum is in `infra_78_closedTail P` and in
+`infra_615_closed P`: no closure of either set under `ω`-suprema is assumed. -/
+theorem infra_78_closedTower_sup_mem (P : SingleModelData K) (κ : Cardinal.{u}) :
+    κ ≤ (⨆ n, infra_78_closedTower P κ n) ∧
+      (⨆ n, infra_78_closedTower P κ n) ∈ infra_78_closedTail P ∧
+      (⨆ n, infra_78_closedTower P κ n) ∈ infra_615_closed P := by
   let b : Cardinal.{u} := max (ls K) ℵ₀
   let t := P.D.t
   let g := P.g
@@ -160,7 +164,7 @@ theorem infra_78_closedTail_tail (P : SingleModelData K) :
       exact infra_69_pad_recursion_mono _ _ _ hord
     exact hle'.trans_lt (((le_max_right _ _).trans (le_max_left _ _)).trans_lt
       ((hgt N).trans_le (hle (N + 1))))
-  refine ⟨μ, hμge, hel, ?_, ?_⟩
+  refine ⟨hμge, ⟨hel, ?_, ?_⟩, ⟨hel, hrec⟩⟩
   · intro σ hσ hσμ
     refine ⟨⟨hel, fun β₀ hβ => hrec σ hσ hσμ β₀ hβ⟩, ?_⟩
     obtain ⟨n, hn⟩ := hbelow σ hσμ
@@ -175,6 +179,12 @@ theorem infra_78_closedTail_tail (P : SingleModelData K) :
     obtain ⟨hs, hel'⟩ := infra_78_nextElig_spec P (tower n)
     refine ⟨infra_78_nextElig P (tower n), hel', hn.trans ((Order.lt_succ _).trans_le hs), ?_⟩
     exact (((le_max_right _ _).trans (le_max_right _ _)).trans_lt (hgt n)).trans_le (hle (n + 1))
+
+/-- **`infra_78_closedTail` is a tail** (unbounded in the eligible levels). -/
+theorem infra_78_closedTail_tail (P : SingleModelData K) :
+    Tail P.eligible (infra_78_closedTail P) :=
+  ⟨fun _ hμ => hμ.1, fun κ =>
+    ⟨_, (infra_78_closedTower_sup_mem P κ).1, (infra_78_closedTower_sup_mem P κ).2.1⟩⟩
 
 /-- **`infra_78_theta_shrink_closure_level`.** At every level `μ` of the closure tail
 `infra_78_closedTail P` and for every infinite `θ < μ` there are an eligible level `λ` and a
