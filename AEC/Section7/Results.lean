@@ -10,7 +10,7 @@ public import AEC.Section7.ContinuityCondition
 public import AEC.Section7.ProductIndependent
 public import AEC.Section7.WitnessingChain
 public import AEC.Section7.ListChain
-public import AEC.Section7.MixedLevel
+public import AEC.Section7.MixedDescent
 public import AEC.Section6.Results
 
 @[expose] public section
@@ -208,8 +208,8 @@ every `c ∈ U` with `|c| ≤ θ`. The closure requirements are uniform (do not 
 `WorkingScheme` with no working-package hypotheses. The tail `T` is chosen before `θ` (uniform
 closure). The general bounded-mark form (marks satisfying Definition 7.7) is not stated.
 
-Existence open: blocked on `infra_78_mixed_level_isolation` (mixed-level Lemma 7.6 /
-tied freeness across levels, Fodor `ρ⁺` matrix: `AEC/Section7/MixedLevel.lean` stubs).
+Existence open: blocked on `infra_78_mixed_level_isolation` (the `ρ⁺` matrix argument; mixed-level
+Lemma 7.6 is proved in `AEC/Section7/MixedDescent.lean`, Fodor in the same file).
 Finite-mark continuity (Def 7.7) is `infra_78_finite_continuity`. -/
 theorem proposition_7_8 {K : AbstractElementaryClass.{u}} (P : SingleModelData K) :
     ∃ T, ∃ hT : Tail P.eligible T,

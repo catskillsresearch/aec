@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-18 07:13",
+  "updated": "2026-11-18 07:22",
   "sorryCount": 43,
   "legend": {
     "open": "No unfinished required proof-deps — try next",
@@ -1841,7 +1841,7 @@
       "file": "AEC/Section7/Results.lean",
       "status": "blocked",
       "blocker": null,
-      "detail": "DEMOTED (grokbot_01 Phase 2.1) to sub-tip infra_78_tied_free_lift_mixed. Done toward it: infra_78_lemma_7_6_mixed proved modulo that lift (all other mixed infra sorry-free: move_mixed, same_level_realization, sequence_mixed, tied_majority_mixed, moves_agree_mixed, diagramEq_of_sameGalois, sameGalois_of_diagramEq, trans_via_mixed), infra_78_fodor proved, Infra78Matrix data. Remaining for Prop 7.8 after the lift: the rho^+ matrix construction at level kappa with level-lambda pairs inside R_i,S_i, type-identifying amalgamation at kappa, Fodor application on the stationary set, Def 7.7 continuity at matrix limits (only finite marks done: infra_78_finite_continuity)."
+      "detail": "Blocked (demoted grokbot_01). Done toward it: mixed tied free lift and mixed Lemma 7.6 (grokbot_02, sorry-free), Fodor, matrix data. Remaining for Prop 7.8: the rho^+ matrix construction at level kappa with level-lambda pairs inside R_i,S_i, type-identifying amalgamation at kappa, Fodor application on the stationary set, Def 7.7 continuity at matrix limits (only finite marks done: infra_78_finite_continuity)."
     },
     {
       "id": "infra_9_cube_scheme",
@@ -1883,7 +1883,7 @@
       "id": "infra_78_fodor",
       "label": "Pressing-down on rho^+ (Fodor)",
       "section": 7,
-      "file": "AEC/Section7/MixedLevel.lean",
+      "file": "AEC/Section7/MixedDescent.lean",
       "status": "done",
       "blocker": null,
       "detail": "Done (no sorry; axioms propext/choice/Quot.sound): infra_78_fodor via Mathlib exists_isStationary_preimage_singleton; infra_78_succ_isRegularCardinalOrder, infra_78_succ_cof_ne."
@@ -1892,7 +1892,7 @@
       "id": "infra_78_matrix",
       "label": "rho^+ matrix data (Prop 7.8)",
       "section": 7,
-      "file": "AEC/Section7/MixedLevel.lean",
+      "file": "AEC/Section7/MixedDescent.lean",
       "status": "done",
       "blocker": null,
       "detail": "Done (definition only): Infra78Matrix = increasing rho^+-chain of permitted pairs X_i <= Y_i at one level with commuting permitted steps. Continuity at limits not encoded."
@@ -1901,19 +1901,19 @@
       "id": "infra_78_tied_free_lift_mixed",
       "label": "Mixed-level tied free lift",
       "section": 7,
-      "file": "AEC/Section7/MixedLevel.lean",
-      "status": "open",
+      "file": "AEC/Section7/MixedTiedLift.lean",
+      "status": "done",
       "blocker": null,
-      "detail": "OPEN TIP (grokbot_01). Pointwise mixed analogue of infra_610_tied_free_lift (nu recursion-closed, succ sigma <= nu <= mu). Why blocked: the same-level proof (TiedFreeLift.lean + StationaryFreeExtension.lean ~900 lines) builds Infra610ChartSupport for B from same-level moves (infra_73_move_iso: a structural iso A ~ B), then Prop 4.9 placement in an enlargement of B's chart. Needed: a mixed chart support (majority prescriptions from level-nu approximation sequences of p, answered on moves into A via infra_78_move_mixed) and the placement hull at level mu. Sole sorry input of infra_78_lemma_7_6_mixed."
+      "detail": "DONE (grokbot_02; axioms propext/choice/Quot.sound). RESTATED before proving: (a) added hypothesis hrecmu (mu recursion-closed; available at the only use site, infra_78_tied_descent_mixed) for Thm 6.6 at mu between placements; (b) the restriction clause is the diagram form: for every parameter list Z from A with #Z < nu, typeJoint p Z and the aligned typeJoint of qB|A agree (DiagramEq). The cross-level Galois form SameGaloisType p (qB|A) needs an amalgam of a nu-host with a mu-host and is split off as open tip infra_78_cross_level_galois (not used downstream). Proof: port of the Sec 6.2 chart placement (Infra78ChartSupportMixed, majority_reindex/moved_majority/majority_qPres/chart_support/placement_mu_hull/tied_placement/tied_at _mixed) with every move done by the saturation move infra_78_move_mixed (infra_78_move_query_mixed, infra_78_common_move_mixed) instead of a structural iso A~B."
     },
     {
       "id": "infra_78_lemma_7_6_mixed",
       "label": "Mixed-level Lemma 7.6",
       "section": 7,
-      "file": "AEC/Section7/MixedLevel.lean",
-      "status": "blocked",
+      "file": "AEC/Section7/MixedDescent.lean",
+      "status": "done",
       "blocker": null,
-      "detail": "PROVED modulo infra_78_tied_free_lift_mixed (only sorryAx source). infra_78_lemma_7_6_mixed <- infra_78_tied_descent_mixed (port of infra_76_tied_descent) using sorry-free mixed infra: infra_78_move_mixed (saturation at nu + diagram_iso, replaces structural iso A~B), infra_78_same_level_realization (downward LS hull, Cor 6.7 style), infra_78_sequence_mixed (approximation sequences over A for tuples hosted at higher levels), infra_78_moves_agree_mixed, infra_78_tied_majority_mixed, infra_78_diagramEq_of_sameGalois (no level restriction), infra_78_sameGalois_of_diagramEq, infra_78_trans_via_mixed. All these: axioms propext/choice/Quot.sound."
+      "detail": "DONE (grokbot_02; axioms propext/choice/Quot.sound): infra_78_lemma_7_6_mixed <- infra_78_tied_descent_mixed, now fed by the proved infra_78_tied_free_lift_mixed (diagram-form restriction used directly in the Galois chain)."
     },
     {
       "id": "audit_7_12_vacuous",
@@ -1932,6 +1932,15 @@
       "status": "done",
       "blocker": null,
       "detail": "Done (definitions only, no sorry): TupleList.whole, ListWitnessingChain L, AllDominatedIncrement, selectionOver, jointWith."
+    },
+    {
+      "id": "infra_78_cross_level_galois",
+      "label": "Cross-level Galois identification (Thm 6.6, one host above base level)",
+      "section": 7,
+      "file": "AEC/Section7/MixedTiedLift.lean",
+      "status": "open",
+      "blocker": null,
+      "detail": "OPEN (grokbot_02 split from infra_78_tied_free_lift_mixed): p over A realized at closed nu, q over A realized at a level >= nu, diagrams agree on all parameter lists below nu => SameGaloisType p q. ClosedLevel.exists_tuple_amalgam needs both hosts of size nu; needs an amalgam of a nu-host with a bigger host over A (truth not yet verified). Not used downstream (mixed 7.6 uses the diagram form)."
     }
   ],
   "edges": [
