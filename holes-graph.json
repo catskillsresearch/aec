@@ -1952,7 +1952,7 @@
    "file": "AEC/Section7/MixedTiedLift.lean",
    "status": "open",
    "blocker": null,
-   "detail": "OPEN (grokbot_02 sub-tip of infra_78_cross_level_galois). ClosedLevel.exists_tuple_amalgam with card B1 >= mu (amalgam of size card B1). Known obstruction: exists_strong_embedding_over embeds B1 over A into E(J) along a countable tower of submodels of size < mu with LiftsTuple lifts (#alpha < mu), which cannot exhaust a larger B1; needs lifts of submodels of size >= mu or an amalgamation property over mu-sized models. Truth not verified; no consumer on the main path. | Cycle 93 audit: NO consumer left (infra_78_cross_level_galois re-proved without it). B1 is an arbitrary K-model of size >= mu (not necessarily categorical / an EM model E(J)); the statement is an amalgamation property over a mu-model with an arbitrary larger model, not derivable from the AEC axioms + closed-level tools available (no upward extension of B1 to a categorical size is available). When #B1 is categorical and >= D.t mu the left_large method applies (embedding into E(J) over a mu-sized sub-presentation). Neither proved nor refuted; a counterexample would need a full SingleModelData-style class. Recommend: keep as an off-path open tip or delete as unused (needs ruling)."
+   "detail": "OPEN (grokbot_02 sub-tip of infra_78_cross_level_galois). ClosedLevel.exists_tuple_amalgam with card B1 >= mu (amalgam of size card B1). Known obstruction: exists_strong_embedding_over embeds B1 over A into E(J) along a countable tower of submodels of size < mu with LiftsTuple lifts (#alpha < mu), which cannot exhaust a larger B1; needs lifts of submodels of size >= mu or an amalgamation property over mu-sized models. Truth not verified; no consumer on the main path. | Cycle 93 audit: NO consumer left (infra_78_cross_level_galois re-proved without it). B1 is an arbitrary K-model of size >= mu (not necessarily categorical / an EM model E(J)); the statement is an amalgamation property over a mu-model with an arbitrary larger model, not derivable from the AEC axioms + closed-level tools available (no upward extension of B1 to a categorical size is available). When #B1 is categorical and >= D.t mu the left_large method applies (embedding into E(J) over a mu-sized sub-presentation). Neither proved nor refuted; a counterexample would need a full SingleModelData-style class. Recommend: keep as an off-path open tip or delete as unused (needs ruling). | Cycle 93: special case proved (infra_78_tuple_amalgam_large_cat: #B1 categorical and >= D.t mu). Residual: arbitrary (non-EM) B1, or mu < #B1 < D.t mu."
   },
   {
    "id": "infra_78_stationary_combinatorics",
@@ -2799,7 +2799,7 @@
    "file": "AEC/Section6/GaloisCrossLevel.lean",
    "status": "open",
    "blocker": null,
-   "detail": "Open (residual of infra_612_galois_trans_cross_level, cycle 67). Same statement with t1.nu > mu and t3.nu > mu. The base-end method embeds a mu-sized amalgam over a sub-presentation E(I) into a presentation containing ONE large host; with two large hosts one needs an amalgam of t1.host and t3.host over mu-sized data (the obstruction of infra_78_tuple_amalgam_large), or extending an arbitrary strong embedding E(I3) -> E(L) (not an E.map) to E(J3). Truth not verified. Needed by infra_612_tied_independence (chain j1 ~ j1' ~ j2' ~ j2 with both ends off-level)."
+   "detail": "Open (residual of infra_612_galois_trans_cross_level, cycle 67). Same statement with t1.nu > mu and t3.nu > mu. The base-end method embeds a mu-sized amalgam over a sub-presentation E(I) into a presentation containing ONE large host; with two large hosts one needs an amalgam of t1.host and t3.host over mu-sized data (the obstruction of infra_78_tuple_amalgam_large), or extending an arbitrary strong embedding E(I3) -> E(L) (not an E.map) to E(J3). Truth not verified. Needed by infra_612_tied_independence (chain j1 ~ j1' ~ j2' ~ j2 with both ends off-level). | Cycle 93 analysis: irreducible to the one-large-host case. With both hosts charted as E(J1), E(J3), the mu-level amalgam P0 of E(I1), E(I3) over A embeds over E(I1) into an E(J') (E.map) but E(I3) -> P0 -> E(J') is an arbitrary strong embedding; closing needs a straightening/homogeneity property: every strong embedding of a mu-sized E(I) into E(K) (categorical size >= t(mu)) extends along E.map(I -> J) for large J. Also intrinsic to the statement of infra_612_tied_independence (SameGaloisType of two joints at arbitrary levels needs a common top for two large hosts): recommend auditing whether the English Prop 6.12(2) really allows both joints off-level."
   },
   {
    "id": "infra_612_galois_trans_mid_any",
@@ -3610,6 +3610,15 @@
    "status": "open",
    "blocker": null,
    "detail": "OPEN, hard (cycle 93 split of infra_713_realize). Infinite L.whole.idx of size < mu. Needs bounded-mark Prop 7.8 / Thm 7.9 (not formalized; proposition_7_8/theorem_7_9 are Finite p.idx). Their Def 7.7 input is proved for |b| < cf delta (infra_78_limit_invariant5) and is the paper hypothesis infra_78_def77_bounded_marks for |b| >= cf delta. Even the |b| < cf delta case needs a bounded-mark 7.8/7.9 formalization first."
+  },
+  {
+   "id": "infra_78_tuple_amalgam_large_cat",
+   "label": "Thm 6.6 clause 2, large host of categorical size >= t(mu)",
+   "section": 7,
+   "file": "AEC/Section7/MixedTiedLift.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "PROVED cycle 93 (axioms clean): infra_78_tuple_amalgam_large under Categorical K (#B1) and D.t mu <= #B1; chart B1 onto E(Below #B1), mu-sized sub-presentation, level-mu amalgam, exists_strong_embedding_over; the amalgam is B1 itself. Full claim stays open as infra_78_tuple_amalgam_large (residual: #B1 non-categorical, or mu < #B1 < D.t mu)."
   }
  ],
  "edges": [
@@ -7220,8 +7229,14 @@
    "to": "infra_713_realize_infinite",
    "kind": "soft",
    "note": "cycle 93"
+  },
+  {
+   "from": "infra_78_tuple_amalgam_large_cat",
+   "to": "infra_78_tuple_amalgam_large",
+   "kind": "soft",
+   "note": "cycle 93 special case"
   }
  ],
- "doneCount": 343,
+ "doneCount": 344,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

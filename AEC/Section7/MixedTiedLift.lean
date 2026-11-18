@@ -1042,6 +1042,115 @@ theorem infra_78_tuple_amalgam_large [CategoricalUnbounded K]
       (∀ x, g₀ (f₀ x) = g₁ (f₁ x)) ∧ ∀ i, g₀ (d₀ i) = g₁ (d₁ i) := by
   sorry
 
+/-- **`infra_78_tuple_amalgam_large` when `#B₁` is a categoricity cardinal `≥ t(μ)` (proved,
+cycle 93).** Chart `B₁` onto `E(Below #B₁)`; the image of `A` and of `d₁` lies in a
+sub-presentation `E(I)`, `#I = μ`; the level-`μ` amalgam of Theorem 4.11 identifies `d₀` with the
+restricted tuple, and it embeds over `E(I)` into `E(Below #B₁)` (`exists_strong_embedding_over`).
+The amalgam is `B₁` itself. -/
+theorem infra_78_tuple_amalgam_large_cat [CategoricalUnbounded K]
+    {E : OrderPresentation K} {D : StableDiagram K} {g : Cardinal.{u} → Cardinal.{u}}
+    {μ : Cardinal.{u}} (hL : ClosedLevel K E D g μ) {σ : Cardinal.{u}}
+    (hσinf : aleph0 ≤ σ) (hσ : σ < μ) {α : Type u} (hα : #α ≤ σ) (A B₀ B₁ : Model K.τ)
+    (f₀ : Language.Embedding K.τ A.carrier B₀.carrier)
+    (f₁ : Language.Embedding K.τ A.carrier B₁.carrier)
+    (d₀ : α → B₀.carrier) (d₁ : α → B₁.carrier)
+    (hA : K.Mem A) (hB₀ : K.Mem B₀) (hB₁ : K.Mem B₁) (hf₀ : K.Strong f₀) (hf₁ : K.Strong f₁)
+    (hcA : Model.card A = μ) (hc₀ : Model.card B₀ = μ)
+    (hcat : Categorical K (Model.card B₁)) (ht : D.t μ ≤ Model.card B₁)
+    (htest : ∀ {β : Type u} (_ : #β ≤ g σ + ls K) (ρ : Cardinal.{u}) (_ : aleph0 ≤ ρ)
+      (_ : ρ < μ) (p : β → A.carrier) (hjoint : #(α ⊕ β) ≤ ρ)
+      (h₀ : D.t ρ ≤ Model.card B₀) (h₁ : D.t ρ ≤ Model.card B₁),
+      D.same hjoint hB₀ hB₁ h₀ h₁
+        (Sum.elim d₀ (fun b => f₀ (p b))) (Sum.elim d₁ (fun b => f₁ (p b)))) :
+    ∃ (P : Model K.τ) (g₀ : Language.Embedding K.τ B₀.carrier P.carrier)
+      (g₁ : Language.Embedding K.τ B₁.carrier P.carrier),
+      K.Mem P ∧ K.Strong g₀ ∧ K.Strong g₁ ∧ Model.card P = Model.card B₁ ∧
+      (∀ x, g₀ (f₀ x) = g₁ (f₁ x)) ∧ ∀ i, g₀ (d₀ i) = g₁ (d₁ i) := by
+  classical
+  have hμinf : aleph0 ≤ μ := hL.inf
+  have hμκ : μ ≤ Model.card B₁ := hL.lt_t.le.trans ht
+  have hκinf : aleph0 ≤ Model.card B₁ := hμinf.trans hμκ
+  haveI : Nonempty (Below (Model.card B₁)) := below_nonempty hκinf
+  have hJ : #(Below (Model.card B₁)) = Model.card B₁ := mk_ord_toType _
+  have hEJ : K.Mem (E.obj (Below (Model.card B₁))) := orderPresentation_obj_mem E _
+  have hEJc : Model.card (E.obj (Below (Model.card B₁))) = Model.card B₁ :=
+    orderPresentation_obj_card E hJ (hL.ls_lt.le.trans hμκ) hκinf
+  obtain ⟨c⟩ := hcat.unique_model B₁ (E.obj (Below (Model.card B₁))) hB₁ hEJ rfl hEJc
+  have hc : K.Strong c.toEmbedding := strong_of_equiv K c hB₁
+  have hαμ : #α < μ := hα.trans_lt hσ
+  let S : Set (E.obj (Below (Model.card B₁))).carrier :=
+    Set.range (fun a => c (f₁ a)) ∪ Set.range (fun i => c (d₁ i))
+  have hS : #S ≤ μ := by
+    refine (mk_union_le _ _).trans ?_
+    refine (add_le_add mk_range_le mk_range_le).trans ?_
+    have h1 : #A.carrier = μ := hcA
+    rw [h1]
+    exact (add_le_add_right hαμ.le μ).trans (add_eq_self hμinf).le
+  have hJμ : μ ≤ #(Below (Model.card B₁)) := by rw [hJ]; exact hμκ
+  obtain ⟨I, hIμ, hIS⟩ := infra_612_small_support E hμinf hJμ S hS
+  have : Nonempty I := by
+    rw [← Cardinal.mk_ne_zero_iff, hIμ]
+    exact (aleph0_pos.trans_le hμinf).ne'
+  let ι : I ↪o Below (Model.card B₁) := OrderEmbedding.subtype (· ∈ I)
+  have hpre : ∀ x ∈ S, ∃ y, E.map ι y = x := fun x hx =>
+    ⟨_, infra_612_map_restrict E I x (hIS x hx)⟩
+  have hEI : K.Mem (E.obj I) := orderPresentation_obj_mem E _
+  have hcEI : Model.card (E.obj I) = μ := orderPresentation_obj_card E hIμ hL.ls_lt.le hμinf
+  have hιs : K.Strong (E.map ι) := E.map_strong ι
+  let f0 : Language.Embedding K.τ A.carrier (E.obj I).carrier :=
+    factorEmbedding (c.toEmbedding.comp f₁) (E.map ι) (fun a => hpre _ (Or.inl ⟨a, rfl⟩))
+  have hf0 : ∀ a, E.map ι (f0 a) = c (f₁ a) := fun a => factorEmbedding_apply _ _ _ a
+  have hf0s : K.Strong f0 := strong_factorEmbedding _ _ (K.strong_trans _ _ hf₁ hc) hιs _
+  let d0 : α → (E.obj I).carrier := fun i => Classical.choose (hpre _ (Or.inr ⟨i, rfl⟩))
+  have hd0 : ∀ i, E.map ι (d0 i) = c (d₁ i) := fun i =>
+    Classical.choose_spec (hpre _ (Or.inr ⟨i, rfl⟩))
+  let r : Language.Embedding K.τ (E.obj I).carrier B₁.carrier := c.symm.toEmbedding.comp (E.map ι)
+  have hr : K.Strong r := K.strong_trans _ _ hιs (strong_of_equiv K c.symm hEJ)
+  have htest' : ∀ {β : Type u} (_ : #β ≤ g σ + ls K) (ρ : Cardinal.{u}) (_ : aleph0 ≤ ρ)
+      (_ : ρ < μ) (p : β → A.carrier) (hjoint : #(α ⊕ β) ≤ ρ)
+      (h₀ : D.t ρ ≤ Model.card B₀) (h₁ : D.t ρ ≤ Model.card (E.obj I)),
+      D.same hjoint hB₀ hEI h₀ h₁
+        (Sum.elim d₀ (fun b => f₀ (p b))) (Sum.elim d0 (fun b => f0 (p b))) := by
+    intro β hβ ρ hρinf hρμ p hj h0 h1
+    have hH : D.t ρ ≤ Model.card B₁ := (hL.t_lt hρinf hρμ).le.trans hμκ
+    have hT := htest hβ ρ hρinf hρμ p hj h0 hH
+    have hR := D.of_strong hj hEI hB₁ h1 hH (Sum.elim d0 (fun b => f0 (p b)))
+      (Sum.elim d₁ (fun b => f₁ (p b))) r hρinf hr (by
+        rintro (i | b)
+        · change c.symm (E.map ι (d0 i)) = d₁ i
+          rw [hd0]; exact c.symm_apply_apply _
+        · change c.symm (E.map ι (f0 (p b))) = f₁ (p b)
+          rw [hf0]; exact c.symm_apply_apply _)
+    exact D.trans hj hB₀ hB₁ hEI h0 hH h1 _ _ _ hT (D.symm hj hEI hB₁ h1 hH _ _ hR)
+  obtain ⟨P₀, g₀, g₃, hP₀, hg₀, hg₃, hcP₀, hbase, hd⟩ :=
+    hL.exists_tuple_amalgam hσinf hσ hα A B₀ (E.obj I) f₀ f0 d₀ d0
+      hA hB₀ hEI hf₀ hf0s hcA hc₀ hcEI htest'
+  have hcatL : Categorical K (Model.card (E.obj (Below (Model.card B₁)))) := by
+    rw [hEJc]; exact hcat
+  have hLc : D.t μ ≤ Model.card (E.obj (Below (Model.card B₁))) := by rw [hEJc]; exact ht
+  have hz : LiftsTuple E D hP₀ g₃ μ ι (fun i => g₃ (d0 i)) (fun i => E.map ι (d0 i)) := by
+    intro β ρ hρ hρμ p hj hBc hJc
+    have hc0 : D.t ρ ≤ Model.card (E.obj I) := by
+      rw [hcEI]; exact (hL.t_lt hρ hρμ).le
+    have h1 := D.of_strong hj hEI hP₀ hc0 hBc (Sum.elim d0 p)
+      (Sum.elim (fun i => g₃ (d0 i)) (fun b => g₃ (p b))) g₃ hρ hg₃ (by rintro (_ | _) <;> rfl)
+    have h2 := D.of_strong hj hEI hEJ hc0 hJc
+      (Sum.elim d0 p) (Sum.elim (fun i => E.map ι (d0 i)) (fun b => E.map ι (p b)))
+      (E.map ι) hρ hιs (by rintro (_ | _) <;> rfl)
+    exact D.trans hj hP₀ hEI _ hBc hc0 hJc _ _ _ (D.symm hj hEI hP₀ hc0 hBc _ _ h1) h2
+  obtain ⟨F, hF, hFincl, hFd⟩ :=
+    exists_strong_embedding_over hL hIμ hg₃ hcP₀ ι hcatL hLc (fun i => g₃ (d0 i)) hαμ
+      (fun i => E.map ι (d0 i)) hz
+  refine ⟨B₁, c.symm.toEmbedding.comp (F.comp g₀), Language.Embedding.refl K.τ B₁.carrier, hB₁,
+    K.strong_trans _ _ (K.strong_trans _ _ hg₀ hF) (strong_of_equiv K c.symm hEJ),
+    strong_of_equiv K (Language.Equiv.refl K.τ B₁.carrier) hB₁, rfl, ?_, ?_⟩
+  · intro x
+    change c.symm (F (g₀ (f₀ x))) = f₁ x
+    rw [hbase, hFincl, hf0]; exact c.symm_apply_apply _
+  · intro i
+    change c.symm (F (g₀ (d₀ i))) = d₁ i
+    rw [hd, hFd, hd0]; exact c.symm_apply_apply _
+
 /-- `infra_612_test_of_diagram` with hosts of size at least `μ` (not exactly `μ`). -/
 theorem infra_78_test_of_diagram_ge
     {P : SingleModelData K}
