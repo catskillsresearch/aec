@@ -335,21 +335,21 @@ theorem infra_79_tail (P : SingleModelData K) : infra_79_tail_statement P := fun
   ⟨_, (infra_78_closedTower_sup_mem P κ).1, (infra_78_closedTower_sup_mem P κ).2.1,
     (infra_78_closedTower_sup_mem P κ).2.2⟩
 
-/-- **Existence clause of Theorem 7.9 from its open parts (proved).** On the tail
-`infra_78_closedTail P ∩ infra_615_closed P`: a level-`μ` copy `p'` of `p`
-(`infra_612_exists_level_copy`), a closed `λ > μ`, `infra_79_lift_isolate`, the retraction pair,
-`infra_79_descent` (all-dominated over `A' + b'`), `infra_79_identify` (`φ : X ≅ A'`), the renaming
-`infra_78_iso_rename_asTuple`, and cross-level Galois transitivity `p ~ p' ~ b'`. -/
-theorem infra_79_existence_of_parts (P : SingleModelData K)
-    (h : infra_79_tail_statement P ∧ infra_79_retraction_pair_statement P) :
-    infra_79_existence_statement P := by
+/-- **Existence clause of Theorem 7.9 at one level (proved; factored out of
+`infra_79_existence_of_parts`, cycle 85).** At every level of `infra_78_closedTail P ∩
+infra_615_closed P`. -/
+theorem infra_79_existence_at (P : SingleModelData K)
+    (h : infra_79_tail_statement P ∧ infra_79_retraction_pair_statement P) {μ : Cardinal.{u}}
+    (hμ : μ ∈ infra_78_closedTail P ∩ infra_615_closed P) (X : P.scheme.Object μ hμ.1.1)
+    (p : TupleOver K oneVertexShape P.scheme hμ.1.1 X) (hfin : Finite p.idx) :
+    ∃ (Y : P.scheme.Object μ hμ.1.1)
+      (f : SystemArrow K oneVertexShape (P.scheme.asSystem _ X) (P.scheme.asSystem _ Y))
+      (hf : P.scheme.permitted (X := X) (Y := Y) f)
+      (b : p.idx → Occurrence K oneVertexShape (P.scheme.asSystem _ Y)),
+      AllDominated f hf p.idx b ∧
+      SameGaloisType p (asTuple f hf b) (Equiv.refl p.idx) (Equiv.refl p.idx) := by
   classical
   obtain ⟨htail, hrp⟩ := h
-  have hT : Tail P.eligible (infra_78_closedTail P ∩ infra_615_closed P) :=
-    ⟨fun μ hμ => hμ.1.1, fun κ => by
-      obtain ⟨μ, hκμ, h1, h2⟩ := htail κ
-      exact ⟨μ, hκμ, h1, h2⟩⟩
-  refine ⟨_, hT, fun μ hμ X p hfin => ?_⟩
   have hlt : ℵ₀ < μ := P.aleph0_lt hμ.1.1
   have hidx0 : #p.idx ≤ ℵ₀ := (Cardinal.lt_aleph0_of_finite p.idx).le
   obtain ⟨host, incl, hincl, val, h12⟩ :=
@@ -381,5 +381,22 @@ theorem infra_79_existence_of_parts (P : SingleModelData K)
       hrec rfl rfl
     simp only [Equiv.refl_trans] at h
     exact h
+
+
+/-- **Existence clause of Theorem 7.9 from its open parts (proved).** On the tail
+`infra_78_closedTail P ∩ infra_615_closed P`: a level-`μ` copy `p'` of `p`
+(`infra_612_exists_level_copy`), a closed `λ > μ`, `infra_79_lift_isolate`, the retraction pair,
+`infra_79_descent` (all-dominated over `A' + b'`), `infra_79_identify` (`φ : X ≅ A'`), the renaming
+`infra_78_iso_rename_asTuple`, and cross-level Galois transitivity `p ~ p' ~ b'`. -/
+theorem infra_79_existence_of_parts (P : SingleModelData K)
+    (h : infra_79_tail_statement P ∧ infra_79_retraction_pair_statement P) :
+    infra_79_existence_statement P := by
+  classical
+  obtain ⟨htail, hrp⟩ := h
+  have hT : Tail P.eligible (infra_78_closedTail P ∩ infra_615_closed P) :=
+    ⟨fun μ hμ => hμ.1.1, fun κ => by
+      obtain ⟨μ, hκμ, h1, h2⟩ := htail κ
+      exact ⟨μ, hκμ, h1, h2⟩⟩
+  exact ⟨_, hT, fun μ hμ X p hfin => infra_79_existence_at P ⟨htail, hrp⟩ hμ X p hfin⟩
 
 end AEC

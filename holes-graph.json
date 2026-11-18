@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-18 15:39",
+ "updated": "2026-11-18 15:41",
  "sorryCount": 41,
  "legend": {
   "open": "No unfinished required proof-deps — try next",
@@ -3103,9 +3103,9 @@
    "label": "7.12(1) pre-chain construction",
    "section": 7,
    "file": "AEC/Section7/Lemma712Existence.lean",
-   "status": "open",
-   "blocker": null,
-   "detail": "infra_712_prechain_statement: at a 7.9 level (infra_78_closedTail ∩ infra_615_closed), every well-ordered TupleList of length <= mu has a TiedListPreChain (Def 7.10 chain without freeness) with all-dominated increments. Plan: chain of subobjects of L.host (top = L.host, listToTop = id, M_0 = A); successor via 7.9 existence over M_i + b_i and 7.9 primeness into L.host over the tuple; limits via SingleModelPackage.exists_directed_union; recursion by the WellFounded.fix pattern of ChainEngine (state Sigma M, arrow into L.host). Likely to split into successor / limit / recursion."
+   "status": "blocked",
+   "blocker": "infra_712_limit, infra_712_recursion",
+   "detail": "infra_712_prechain_statement (at a 7.9 level closedTail ∩ 615closed): every well-ordered TupleList of length <= mu has an all-dominated TiedListPreChain. Split cycle 85c: infra_712_prechain_of_parts (proved glue) from infra_712_recursion_statement (WellFounded.fix recursion along WithTop L.δ, stages mapped into L.host with marks sent to entries) and infra_712_limit_statement (directed union of a linear system of stages mapped into N, with covering and a compatible map into N); successor step infra_712_succ PROVED (Theorem 7.9 existence at the level, infra_79_existence_at, + same-level primeness)."
   },
   {
    "id": "infra_712_free_marks",
@@ -3133,6 +3133,33 @@
    "status": "open",
    "blocker": null,
    "detail": "infra_712_products_statement: in an all-dominated pre-chain of a ProductIndependentTied list with marks below i free, IsProductTied (markTuple i restricted to A) (truncated selection) (truncated joint) for every finite injective selection below i. Paper: read off product independence (finite sublist b_i + selection). Expected hard: ProductIndependentTied gives left-bracketed non-level IsFiniteProductTied of the sublist's entries; needs the binary split 'b_i vs the rest' (finite product associativity/permutation at the level, AEC/Section6/ProductTied finite perm/proj) and identification of the chain marks with L's entries in the ambient top (mark_spec)."
+  },
+  {
+   "id": "infra_712_succ",
+   "label": "7.12(1) successor step",
+   "section": 7,
+   "file": "AEC/Section7/Lemma712Existence.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "infra_712_succ PROVED cycle 85c: at a 7.9 level, X mapped into N by g, finite b' in N => all-dominated f : X -> Y with b realizing tp(b'/X), and h : Y -> N over X with h b = b'. Uses infra_79_existence_at (level-wise 7.9 existence, factored out of infra_79_existence_of_parts) and infra_79_primeness_same_level. Axioms: propext, Classical.choice, Quot.sound."
+  },
+  {
+   "id": "infra_712_limit",
+   "label": "7.12(1) limit step",
+   "section": 7,
+   "file": "AEC/Section7/Lemma712Existence.lean",
+   "status": "open",
+   "blocker": null,
+   "detail": "infra_712_limit_statement: a nonempty linearly ordered system (size <= mu) of level-mu stages with compatible maps into N has a union stage U with compatible maps, covering, and h : U -> N over the stages. Plan: SingleModelPackage.exists_directed_union on the DirectedSystem of the stage models (linear order is directed; identities from comp law + injectivity) and its universal property."
+  },
+  {
+   "id": "infra_712_recursion",
+   "label": "7.12(1) recursion assembly",
+   "section": 7,
+   "file": "AEC/Section7/Lemma712Existence.lean",
+   "status": "open",
+   "blocker": null,
+   "detail": "infra_712_recursion_statement: infra_712_limit_statement -> infra_712_prechain_statement. WellFounded.fix recursion along WithTop L.δ (ChainEngine pattern; state = stage with map into L.host), successor via infra_712_succ on b' = L.val i pushed, limits via the limit step; M_0 = A (first stage bijective, into = id); top = L.host, listToTop = id, toTop = the map of the top stage; marks = successor realizations pushed forward."
   }
  ],
  "edges": [
@@ -6417,8 +6444,28 @@
    "from": "infra_712_products",
    "to": "infra_712_free_step",
    "kind": "hard"
+  },
+  {
+   "from": "infra_712_limit",
+   "to": "infra_712_prechain",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_712_recursion",
+   "to": "infra_712_prechain",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_712_succ",
+   "to": "infra_712_recursion",
+   "kind": "hard"
+  },
+  {
+   "from": "theorem_7_9",
+   "to": "infra_712_succ",
+   "kind": "hard"
   }
  ],
- "doneCount": 283,
+ "doneCount": 284,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

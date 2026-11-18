@@ -3,6 +3,7 @@ module
 public import AEC.Section7.Lemma711Successor
 public import AEC.Section7.ClosureLevel
 public import AEC.Section7.SuccessorStep
+public import AEC.Section7.RetractionPair
 
 /-!
 # Lemma 7.12 (1): existence of a tied witnessing chain (split, cycle 85)
@@ -305,6 +306,68 @@ def infra_712_prechain_statement (P : SingleModelData K) : Prop :=
     ∀ (A : P.scheme.Object μ hμ) (L : TupleList P.scheme hμ A) [LinearOrder L.δ]
       [WellFoundedLT L.δ], #L.δ ≤ μ →
       ∃ C : TiedListPreChain L, C.AllDominatedIncrement
+
+/-- **7.12(1) successor step (proved, cycle 85c).** At a Theorem 7.9 level, for a stage `X`
+embedded into the ambient `N` by `g` and a finite tuple `b'` of `N`: an all-dominated
+extension `f : X → Y` with a realization `b` of `tp(b'/X)`, and `h : Y → N` over `X` with
+`h b = b'` (Theorem 7.9 existence, then its same-level primeness clause). -/
+theorem infra_712_succ (P : SingleModelData K) {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
+    (ht : μ ∈ infra_78_closedTail P) (hc : μ ∈ infra_615_closed P)
+    (X N : P.scheme.Object μ hμ)
+    (g : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ N))
+    (hg : P.scheme.permitted (X := X) (Y := N) g) (idx : Type u) [Finite idx]
+    (b' : idx → Occurrence K oneVertexShape (P.scheme.asSystem hμ N)) :
+    ∃ (Y : P.scheme.Object μ hμ)
+      (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ Y))
+      (hf : P.scheme.permitted (X := X) (Y := Y) f)
+      (b : idx → Occurrence K oneVertexShape (P.scheme.asSystem hμ Y))
+      (h : SystemArrow K oneVertexShape (P.scheme.asSystem hμ Y) (P.scheme.asSystem hμ N)),
+      AllDominated f hf idx b ∧ P.scheme.permitted (X := Y) (Y := N) h ∧
+        SystemArrow.comp f h = g ∧ ∀ k, h.onVertex (b k).1 (b k).2 = (b' k).2 := by
+  let p : TupleOver K oneVertexShape P.scheme hμ X := ⟨μ, hμ, N, g, hg, idx, b'⟩
+  have hfin : Finite p.idx := inferInstanceAs (Finite idx)
+  obtain ⟨Y, f, hf, b, hAll, hS⟩ :=
+    infra_79_existence_at P ⟨infra_79_tail P, infra_79_retraction_pair P⟩ (μ := μ) ⟨ht, hc⟩ X p hfin
+  obtain ⟨h, hh, hcomp, hb⟩ := infra_79_primeness_same_level hμ X p hfin Y f hf b hAll hS N g hg b'
+    (SameGaloisType.refl p)
+  exact ⟨Y, f, hf, b, h, hAll, hh, hcomp, hb⟩
+
+
+/-- **7.12(1) limit step (statement; open tip `infra_712_limit`).** A nonempty linearly ordered
+system of level-`μ` stages of size `≤ μ`, compatibly mapped into an ambient `N`, has a union
+stage: compatible maps into it, covering, and a map from it into `N` over the stages
+(`SingleModelPackage.exists_directed_union` with its universal property). -/
+def infra_712_limit_statement (P : SingleModelData K) : Prop :=
+  ∀ {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible) (N : P.scheme.Object μ hμ) (ι : Type u)
+    [LinearOrder ι] [Nonempty ι], #ι ≤ μ →
+    ∀ (M : ι → P.scheme.Object μ hμ)
+      (m : ∀ {i j : ι}, i ≤ j →
+        SystemArrow K oneVertexShape (P.scheme.asSystem hμ (M i)) (P.scheme.asSystem hμ (M j))),
+      (∀ {i j k : ι} (hij : i ≤ j) (hjk : j ≤ k) (v : oneVertexShape.Vertex),
+        ((m hjk).onVertex v).comp ((m hij).onVertex v) = (m (hij.trans hjk)).onVertex v) →
+      ∀ (g : ∀ i, SystemArrow K oneVertexShape (P.scheme.asSystem hμ (M i))
+          (P.scheme.asSystem hμ N)),
+        (∀ {i j : ι} (hij : i ≤ j) (v : oneVertexShape.Vertex),
+          ((g j).onVertex v).comp ((m hij).onVertex v) = (g i).onVertex v) →
+        ∃ (U : P.scheme.Object μ hμ)
+          (u : ∀ i, SystemArrow K oneVertexShape (P.scheme.asSystem hμ (M i))
+            (P.scheme.asSystem hμ U))
+          (h : SystemArrow K oneVertexShape (P.scheme.asSystem hμ U) (P.scheme.asSystem hμ N)),
+          (∀ {i j : ι} (hij : i ≤ j) (v : oneVertexShape.Vertex),
+            ((u j).onVertex v).comp ((m hij).onVertex v) = (u i).onVertex v) ∧
+          (∀ v (x : ((P.scheme.asSystem hμ U).obj v).carrier), ∃ i y, (u i).onVertex v y = x) ∧
+          ∀ i (v : oneVertexShape.Vertex), (h.onVertex v).comp ((u i).onVertex v) = (g i).onVertex v
+
+/-- **7.12(1) recursion (statement; open tip `infra_712_recursion`).** The pre-chain by
+well-founded recursion along `WithTop L.δ` (the `WellFounded.fix` pattern of `ChainEngine`),
+every stage carrying a map into the ambient `L.host` that sends the marks to the list's entries:
+successors by `infra_712_succ` (proved), limits by the limit step. -/
+def infra_712_recursion_statement (P : SingleModelData K) : Prop :=
+  infra_712_limit_statement P → infra_712_prechain_statement P
+
+/-- **The pre-chain from recursion and the limit step (proved glue).** -/
+theorem infra_712_prechain_of_parts (P : SingleModelData K) (hr : infra_712_recursion_statement P)
+    (hl : infra_712_limit_statement P) : infra_712_prechain_statement P := hr hl
 
 /-- **7.12(1), freeness of the marks (statement; open tip `infra_712_free_marks`).** At a Lemma
 7.11 level, in an all-dominated-increment pre-chain of a product-independent list, every actual
