@@ -1,4 +1,4 @@
-# Nodes: (see holes-graph.json)  Hard edges: 472
+# Nodes: (see holes-graph.json)  Hard edges: 487
 # Convention: FROM --> TO means the English proof of TO requires FROM.
 # infra_78_mixed_level_isolation (Prop 7.8 rho^+ matrix argument; mixed tied free lift and mixed Lemma 7.6 done grokbot_02)
 # Retired: infra_610_qPres_empty_joint_on_I, infra_610_same_head_transfers_joint, infra_69_transfer_sequence, WorkingScheme.exists_approximationSequence.
@@ -475,3 +475,18 @@ infra_78_tiedFreeMixed_trans --> infra_78_matrix_assembly_level
 infra_78_marginal_identify_level --> infra_78_matrix_assembly_level
 infra_78_iso_rename --> infra_78_matrix_assembly_level
 infra_78_matrix_assembly_level --> infra_78_mixed_level_isolation
+infra_78_assembly_levels --> infra_78_assembly_glue
+infra_78_seq_diagram_transfer --> infra_78_assembly_glue
+infra_78_seed_stage --> infra_78_assembly_glue
+infra_78_stage_transport --> infra_78_assembly_glue
+infra_78_theta_shrink_closure_level --> infra_78_assembly_levels
+infra_78_tied_free_lift_mixed --> infra_78_seed_stage
+infra_78_assembly_levels --> infra_78_matrix_assembly_level
+infra_78_seq_diagram_transfer --> infra_78_matrix_assembly_level
+infra_78_seed_stage --> infra_78_matrix_assembly_level
+infra_78_stage_transport --> infra_78_matrix_assembly_level
+infra_78_assembly_glue --> infra_78_matrix_assembly_level
+infra_78_isolation_over_A --> infra_78_assembly_glue
+infra_78_tiedFreeMixed_trans --> infra_78_assembly_glue
+infra_78_marginal_identify_level --> infra_78_assembly_glue
+infra_78_iso_rename --> infra_78_assembly_glue
