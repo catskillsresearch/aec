@@ -28,21 +28,21 @@ Section 13 is complete and was never on that chain.
 
 | Section | Holes | File |
 |--------:|------:|------|
-| 1 | 2 | `AEC/Section1/Results.lean` |
+| 1 | 2 | `AEC/Section1/Results.lean` (2) |
 | 2 | 0 | — |
 | 3 | 0 | — |
 | 4 | 0 | — |
-| 5 | 1 | `AEC/Section5/Results.lean` |
-| 6 | 7 | `AEC/Section6/Results.lean` |
-| 7 | 4 | `AEC/Section7/Results.lean` |
-| 8 | 5 | `AEC/Section8/Results.lean` |
-| 9 | 7 | `AEC/Section9/Results.lean` |
-| 10 | 9 | `AEC/Section10/Results.lean` |
-| 11 | 8 | `AEC/Section11/Results.lean` |
-| 12 | 4 | `AEC/Section12/Results.lean` |
+| 5 | 0 | — |
+| 6 | 1 | `AEC/Section6/ProductTied.lean` (1) |
+| 7 | 5 | `AEC/Section7/MixedTiedLift.lean` (1), `AEC/Section7/Results.lean` (4) |
+| 8 | 5 | `AEC/Section8/Results.lean` (5) |
+| 9 | 6 | `AEC/Section9/Results.lean` (6) |
+| 10 | 9 | `AEC/Section10/Results.lean` (9) |
+| 11 | 7 | `AEC/Section11/Results.lean` (7) |
+| 12 | 4 | `AEC/Section12/Results.lean` (4) |
 | 13 | 0 | — |
-| 14 | 4 | `AEC/Section14/Results.lean` |
-| **Total** | **55** | |
+| 14 | 4 | `AEC/Section14/Results.lean` (4) |
+| **Total** | **43** | |
 
 The table is the previous `Results.lean` rollup. The live count of declarations using
 `sorry` is **32** (48 at the start of the overnight run). `WorkingScheme.exists_approximationSequence`
@@ -334,7 +334,7 @@ Waits on Section 5 working package. Lean: later Results import this module.
 
 (`lemma_6_14` is proved, widened to χ-indexed queries plus a fixed `T★`, and is a hard dependency of `proposition_6_15`. `lemma_6_1` is done and stays in the table for its statement changes.)
 
-### L3 — Section 7 (8)
+### L3 — Section 7 (5 sorry)
 
 Lean: imports `AEC.Section6.Results`.
 
@@ -345,12 +345,17 @@ Lean: imports `AEC.Section6.Results`.
 | `proposition_7_5` | Proposition 7.5 | `AEC/Section7/Results.lean` (**done**: clauses 1–2) |
 | `lemma_7_6` | Lemma 7.6 | `AEC/Section7/Results.lean` (done: Path A push-only green; English arbitrary-fragment form `lemma_7_6_tied` in `TiedDescent.lean`) |
 | `proposition_7_8` | Proposition 7.8 | `AEC/Section7/Results.lean` (**done**, cycle 67, statement unchanged: `infra_78_closedTail` + `infra_78_marginal_general_level`; no `sorryAx`) |
-| `theorem_7_9` | Theorem 7.9 | `AEC/Section7/Results.lean` (**restated** for SingleModelData; open, all hard deps done after cycle 67) |
+| `theorem_7_9` | Theorem 7.9 | `AEC/Section7/Results.lean` (**blocked**, cycle 68: statement audited against the English and the embedding (primeness) clause restored, ambient at any level `ν ≥ μ`; = `infra_79_existence` (open) + `infra_79_primeness_same_level` (done) + `infra_79_primeness_mixed` (open) + `infra_79_assemble` (done); bounded-marginal generalization = `infra_78_def77_bounded_marks` (soft)) |
+| `infra_79_existence` | Thm 7.9 existence of an all-dominated realization | [`Theorem79.lean`](AEC/Section7/Theorem79.lean) (**open**; `infra_79_existence_statement`; paper route: 7.8 at a larger level, Cor 6.16 retractions, mixed LS closure, Lemma 6.17, Lemma 7.6 descent, anchor isomorphism) |
+| `infra_79_primeness_same_level` | Thm 7.9 embedding into a same-level ambient | [`Theorem79.lean`](AEC/Section7/Theorem79.lean) (**done**, cycle 68; `infra_612_galois_trans_mid_any` + `infra_75_embed`) |
+| `infra_79_primeness_mixed` | Thm 7.9 embedding into an ambient above the level of `X` | [`Theorem79.lean`](AEC/Section7/Theorem79.lean) (**open**; `infra_79_primeness_mixed_statement`) |
+| `infra_79_assemble` | Thm 7.9 from its parts | [`Theorem79.lean`](AEC/Section7/Theorem79.lean) (**done**, cycle 68) |
+| `infra_612_galois_trans_mid_any` | Galois transitivity, ends at `μ`, middle at any level | [`Theorem79.lean`](AEC/Section7/Theorem79.lean) (**done**, cycle 68) |
 | `lemma_7_11` | Lemma 7.11 | `AEC/Section7/Results.lean:255` (restated over `ListWitnessingChain`) |
 | `lemma_7_12` | Lemma 7.12 | `AEC/Section7/Results.lean:273` (restated over list-linked `ListWitnessingChain`; old vacuity audit in `AEC/Audit/WitnessingChainVacuous.lean`) |
 | `theorem_7_13` | Theorem 7.13 | `AEC/Section7/Results.lean:296` (restated: uniqueness, product-independent free lift, continuity, primeness) |
 
-### L4 — Section 8 (5)
+### L4 — Section 8 (5 sorry)
 
 Lean: imports `Section5.Results` and `Section6.Results`. Soft paper chain after S7.
 
@@ -362,7 +367,7 @@ Lean: imports `Section5.Results` and `Section6.Results`. Soft paper chain after 
 | `lemma_8_5` | Lemma 8.5 | `AEC/Section8/Results.lean:76` |
 | `theorem_8_6` |  Theorem 8.6 | `AEC/Section8/Results.lean` (**restated, open**: nonempty objects, doubled shape, marked-pair correspondence) |
 
-### L5 — Section 9 (7)
+### L5 — Section 9 (6 sorry)
 
 Lean: imports S5/S6 Results. Unlocks boundary story for later geometry.
 
@@ -376,7 +381,7 @@ Lean: imports S5/S6 Results. Unlocks boundary story for later geometry.
 | `lemma_9_7` | Lemma 9.7 | `AEC/Section9/Results.lean` (**restated, open**: marked `CubeScheme`, boundary occurrences, scheme `DiagramEq`) |
 | `theorem_9_8` |  Theorem 9.8 | `AEC/Section9/Results.lean` (**restated, open**: marked `CubeScheme`, `IsStructIso` extension agreeing with `h` on proper faces) |
 
-### L6 — Section 10 (9)
+### L6 — Section 10 (9 sorry)
 
 Lean: imports S5/S6 Results. Soft chain after S9; feeds Corollary 10.10 into S11.
 
@@ -392,7 +397,7 @@ Lean: imports S5/S6 Results. Soft chain after S9; feeds Corollary 10.10 into S11
 | `theorem_10_9` | Theorem 10.9 | `AEC/Section10/Results.lean` (open; **statement change**: hypothesis now `P(B) = f[P(A)]`; original refuted by `AEC.Audit.theorem_10_9_original_false`) |
 | `corollary_10_10` | Corollary 10.10 | `AEC/Section10/Results.lean` (open; **statement change**: hypothesis now `P(B) = f[P(A)]`; original refuted by `AEC.Audit.corollary_10_10_original_false`) |
 
-### L7 — Section 11 (8)
+### L7 — Section 11 (7 sorry)
 
 Lean: imports S5/S6 Results. Soft internal chain:
 `claim_11_10 → claim_11_11 → claim_11_12 → claim_11_13 → theorem_11_9`
@@ -409,7 +414,7 @@ Lean: imports S5/S6 Results. Soft internal chain:
 | `claim_11_13` | Claim 11.13 | `AEC/Section11/Results.lean` (**restated, open**: pointed geometric systems `GeometricSystem.IsPointed D`; see board detail) |
 | `theorem_11_9` |  Theorem 11.9 | `AEC/Section11/Results.lean` (**restated, open**: pointed geometric systems `GeometricSystem.IsPointed D`; see board detail) |
 
-### L8 — Section 12 (4)
+### L8 — Section 12 (4 sorry)
 
 Waits on geometric systems / exact boundary story (soft: fewer-axis lifting).
 
@@ -420,7 +425,7 @@ Waits on geometric systems / exact boundary story (soft: fewer-axis lifting).
 | `lemma_12_5` | Lemma 12.5 | `AEC/Section12/Results.lean` (**restated, open**; see board detail) |
 | `lemma_12_6` | Lemma 12.6 | `AEC/Section12/Results.lean` (**restated, open**; see board detail) |
 
-### L9 — Section 14 transfer (4)
+### L9 — Section 14 transfer (4 sorry)
 
 Chain: `lemma_14_2 → theorem_14_3 → corollary_14_4 → theorem_14_5`.
 
@@ -431,7 +436,7 @@ Chain: `lemma_14_2 → theorem_14_3 → corollary_14_4 → theorem_14_5`.
 | `corollary_14_4` | Corollary 14.4 | `AEC/Section14/Results.lean:107` (open; **restated** with `[CategoricalUnbounded K]`; unconditional refuted: `AEC.Audit.Pred.corollary_14_4_unconditional_false`) |
 | `theorem_14_5` | Theorem 14.5 | `AEC/Section14/Results.lean:112` |
 
-### L10 — Apex (2)
+### L10 — Apex (2 sorry)
 
 Uniform eventual categoricity and the qualitative form. Depend on the transfer
 layer (and thus the whole stack).
@@ -445,20 +450,22 @@ layer (and thus the whole stack).
 
 ## Layer size check
 
+Counts are standalone `sorry` lines in `AEC/` (`git grep -nE '^\s*sorry\s*$'`), by the section of the file; L1 = Section 5, L2 = Section 6, ..., L10 = Section 1 (apex). Synced cycle 68.
+
 | Layer | Count |
 |------:|------:|
 | L0 | 0 |
-| L1 | 1 |
-| L2 | 8 |
-| L3 | 9 |
+| L1 | 0 |
+| L2 | 1 |
+| L3 | 5 |
 | L4 | 5 |
-| L5 | 7 |
+| L5 | 6 |
 | L6 | 9 |
-| L7 | 8 |
+| L7 | 7 |
 | L8 | 4 |
 | L9 | 4 |
 | L10 | 2 |
-| **Total** | **56** |
+| **Total** | **43** |
 | `infra_9_cube_scheme` | infra_9_cube_scheme | `AEC/Section9/CubeScheme.lean` (done: cube shape, `CubeScheme`, `faces`, `IsMarked`) |
 | `infra_10_product_axioms` | infra_10_product_axioms | `AEC/Section10/ProductAxioms.lean` (done: `MinimalData.ProductAxioms`, `pointIndep`, `pointClosure`; audit `AEC/Audit/ProductAxiomsAudit.lean`) |
 | `infra_11_pointed_system` | infra_11_pointed_system | `AEC/Section11/PointedSystem.lean` (done: `IsPointed`, pointed arrows, `ReflectsPieces`, `GLCategoricalAt`) |

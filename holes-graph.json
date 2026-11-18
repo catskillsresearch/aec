@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-18 13:48",
+  "updated": "2026-11-18 13:54",
   "sorryCount": 43,
   "legend": {
     "open": "No unfinished required proof-deps — try next",
@@ -640,9 +640,9 @@
       "label": "Thm 7.9",
       "section": 7,
       "file": "AEC/Section7/Results.lean",
-      "status": "open",
-      "blocker": null,
-      "detail": "Open (cycle 67): every hard dep done (proposition_7_8 done cycle 67, lemma_6_17). RESTATED (grokbot_01 Phase 3.1), open with sorry: over SingleModelData (was bare WorkingScheme, underhypothesized). Omitted: bounded-mark generalization, primeness clause. Blocked on proposition_7_8.",
+      "status": "blocked",
+      "blocker": "infra_79_existence",
+      "detail": "Blocked (cycle 68 audit + split). Statement audit vs English ('At sufficiently closed eligible levels, every finite-tuple type p = tp(b/X) has an all-dominated realization: there is Y >= X all-dominated over X + b realizing p. More generally this holds for a bounded marginal satisfying Definition 7.7. An all-dominated realization embeds over X, b into any actual ambient containing a realization of that type, with the mixed-level conventions of Proposition 7.5.'): the Phase 3.1 Lean form omitted the embedding clause; RESTATED cycle 68 to existence AND (every all-dominated realization embeds over X, b into any ambient N at any eligible level nu >= mu containing a realization of p). The bounded-marginal generalization is a paper hypothesis (infra_78_def77_bounded_marks, soft), as for proposition_7_8. Full claim = infra_79_existence (open) + infra_79_primeness_same_level (done) + infra_79_primeness_mixed (open) + infra_79_assemble (done). Previous: Open (cycle 67): every hard dep done (proposition_7_8 done cycle 67, lemma_6_17). RESTATED (grokbot_01 Phase 3.1), open with sorry: over SingleModelData (was bare WorkingScheme, underhypothesized). Omitted: bounded-mark generalization, primeness clause. Blocked on proposition_7_8.",
       "restated": true
     },
     {
@@ -2800,6 +2800,51 @@
       "status": "open",
       "blocker": null,
       "detail": "Open (residual of infra_612_galois_trans_cross_level, cycle 67). Same statement with t1.nu > mu and t3.nu > mu. The base-end method embeds a mu-sized amalgam over a sub-presentation E(I) into a presentation containing ONE large host; with two large hosts one needs an amalgam of t1.host and t3.host over mu-sized data (the obstruction of infra_78_tuple_amalgam_large), or extending an arbitrary strong embedding E(I3) -> E(L) (not an E.map) to E(J3). Truth not verified. Needed by infra_612_tied_independence (chain j1 ~ j1' ~ j2' ~ j2 with both ends off-level)."
+    },
+    {
+      "id": "infra_612_galois_trans_mid_any",
+      "label": "Galois transitivity with ends at mu, middle host at any level",
+      "section": 6,
+      "file": "AEC/Section7/Theorem79.lean",
+      "status": "done",
+      "blocker": null,
+      "detail": "DONE cycle 68. infra_612_galois_trans_mid_any: t1, t3 hosted at mu, t2 at any eligible level; SameGaloisType t1 t2 e12 refl and SameGaloisType t2 t3 refl e32 give SameGaloisType t1 t3 (e12.trans e32.symm) refl. Tests through the middle host (to_sameD twice, D.trans; card t2.host >= mu > D.t rho), then infra_612_same_galois at mu (ClosedLevel from the closure point; no recursion closure needed). Axioms: propext, Classical.choice, Quot.sound."
+    },
+    {
+      "id": "infra_79_primeness_same_level",
+      "label": "Thm 7.9 embedding clause, ambient at the level of X",
+      "section": 7,
+      "file": "AEC/Section7/Theorem79.lean",
+      "status": "done",
+      "blocker": null,
+      "detail": "DONE cycle 68. Any all-dominated realization (Y, b) of a finite p (host any level) embeds over X, b -> b', into any same-level N realizing p: infra_612_galois_trans_mid_any (Yb ~ p ~ Nb') then infra_75_embed (Prop 7.5 (1)). Works at every eligible level. Axioms: propext, Classical.choice, Quot.sound."
+    },
+    {
+      "id": "infra_79_assemble",
+      "label": "Thm 7.9 assembly from its parts",
+      "section": 7,
+      "file": "AEC/Section7/Theorem79.lean",
+      "status": "done",
+      "blocker": null,
+      "detail": "DONE cycle 68. infra_79_assemble P : infra_79_existence_statement P AND infra_79_primeness_mixed_statement P -> theorem_7_9_statement P (case mu < nu: mixed; mu = nu: infra_79_primeness_same_level). theorem_7_9 is now `refine infra_79_assemble P ?_; sorry`."
+    },
+    {
+      "id": "infra_79_existence",
+      "label": "Thm 7.9 existence: all-dominated realization of a finite p",
+      "section": 7,
+      "file": "AEC/Section7/Theorem79.lean",
+      "status": "open",
+      "blocker": null,
+      "detail": "Open (cycle 68; Lean def infra_79_existence_statement). Exists a tail T such that for mu in T, X at mu and finite p over X (host any level) there are Y >= X at mu and b with AllDominated f hf p.idx b and SameGaloisType p (asTuple f hf b) refl refl. Paper proof (Theorem 7.9): lift X by a presentation arrow to a much larger level lambda and apply proposition_7_8 there with theta = nu (DONE); Corollary 6.16 retractions r_j : U -> A (j < nu) almost fixing A (DONE); mixed LS closure to a level-nu pair A' <= U' containing I_p, b with r_j[U'] in A' (closure under nu maps, countably many rounds); lemma_6_17 (tied, DONE) gives tp(b,d/A) = free lift of tp(b,d/A'); downward transfer (lemma_7_6_tied, DONE) gives isolation of tp(b,d/A') relative to b for every bounded d in U'; anchors + bounded diagram homogeneity give A' ~ X and transport (infra_78_anchor_iso / iso_rename pattern). Likely split: lift_isolate, retraction_pair, descent, identify. Tail must make Prop 7.8 (at lambda), lemma_6_17 (at nu and lambda) and the anchor isomorphism available."
+    },
+    {
+      "id": "infra_79_primeness_mixed",
+      "label": "Thm 7.9 embedding clause, ambient above the level of X",
+      "section": 7,
+      "file": "AEC/Section7/Theorem79.lean",
+      "status": "open",
+      "blocker": null,
+      "detail": "Open (cycle 68; Lean def infra_79_primeness_mixed_statement). Paper: Theorem 7.9 embedding 'with the mixed-level conventions of Proposition 7.5' (the target may be at a larger eligible level). Lean proposition_7_5 has only the same-level target. Planned route: take a level-mu strong sub-object N0 of the level-nu ambient N containing g(X) and b' (the sub-presentation construction of infra_612_exists_level_copy, exposing the arrow r : N0 -> N over X with r(b0') = b'), get Yb ~ N0b0' by tests through p and N (to_sameD chain + infra_612_same_galois at mu), apply infra_79_primeness_same_level into N0, and compose with r."
     }
   ],
   "edges": [
@@ -5553,8 +5598,86 @@
       "to": "infra_78_marginal_general_level",
       "kind": "hard",
       "note": ""
+    },
+    {
+      "from": "infra_612_galois_trans_mid_any",
+      "to": "infra_79_primeness_same_level",
+      "kind": "hard",
+      "note": ""
+    },
+    {
+      "from": "proposition_7_5",
+      "to": "infra_79_primeness_same_level",
+      "kind": "hard",
+      "note": ""
+    },
+    {
+      "from": "infra_79_primeness_same_level",
+      "to": "theorem_7_9",
+      "kind": "hard",
+      "note": ""
+    },
+    {
+      "from": "infra_79_assemble",
+      "to": "theorem_7_9",
+      "kind": "hard",
+      "note": ""
+    },
+    {
+      "from": "infra_79_existence",
+      "to": "theorem_7_9",
+      "kind": "hard",
+      "note": ""
+    },
+    {
+      "from": "infra_79_primeness_mixed",
+      "to": "theorem_7_9",
+      "kind": "hard",
+      "note": ""
+    },
+    {
+      "from": "infra_79_primeness_same_level",
+      "to": "infra_79_primeness_mixed",
+      "kind": "hard",
+      "note": ""
+    },
+    {
+      "from": "infra_612_exists_level_copy",
+      "to": "infra_79_primeness_mixed",
+      "kind": "hard",
+      "note": ""
+    },
+    {
+      "from": "proposition_7_8",
+      "to": "infra_79_existence",
+      "kind": "hard",
+      "note": ""
+    },
+    {
+      "from": "lemma_6_17",
+      "to": "infra_79_existence",
+      "kind": "hard",
+      "note": ""
+    },
+    {
+      "from": "corollary_6_16",
+      "to": "infra_79_existence",
+      "kind": "hard",
+      "note": ""
+    },
+    {
+      "from": "lemma_7_6",
+      "to": "infra_79_existence",
+      "kind": "hard",
+      "note": ""
+    },
+    {
+      "from": "infra_78_def77_bounded_marks",
+      "to": "theorem_7_9",
+      "kind": "soft",
+      "note": "paper generalization (bounded marginal satisfying Def 7.7)"
     }
   ],
-  "doneCount": 252,
+  "doneCount": 255,
   "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 43. Uncommitted in /tmp/aec-grok."
 }

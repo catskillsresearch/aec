@@ -11,6 +11,7 @@ public import AEC.Section7.ProductIndependent
 public import AEC.Section7.WitnessingChain
 public import AEC.Section7.ListChain
 public import AEC.Section7.GeneralLevel
+public import AEC.Section7.Theorem79
 public import AEC.Section7.MixedDescent
 public import AEC.Section6.Results
 
@@ -230,25 +231,50 @@ theorem proposition_7_8 {K : AbstractElementaryClass.{u}} (P : SingleModelData K
               (asTuple f hf (seqJoint b c)) (Equiv.refl (p.idx ⊕ cIdx)) := by
   exact ⟨infra_78_closedTail P, infra_78_closedTail_tail P, infra_78_marginal_general_level P⟩
 
-/-- **Theorem 7.9.** Every finite-tuple type at a sufficiently closed level has an
-all-dominated realization.
+/-- **Theorem 7.9.** At sufficiently closed eligible levels, every finite-tuple type
+`p = tp(b/X)` has an all-dominated realization: there is `Y ≥ X` all-dominated over `X + b`
+realizing `p`. An all-dominated realization embeds over `X, b` into any actual ambient
+containing a realization of that type, with the mixed-level conventions of Proposition 7.5
+(the ambient `N` may sit at a larger eligible level `ν ≥ μ`).
 
-**Statement (restated, grokbot_01 Phase 3.1):** over `SingleModelData` (the package on which
-Sections 6-7 are developed) instead of a bare `WorkingScheme`. The realization is required at the
-level of the base (`p.ν = μ` is not assumed: any bounded host). Omitted: the bounded-mark (Def 7.7)
-generalization and the primeness clause (embedding over `X, b` into an actual ambient). Blocked
-on `proposition_7_8`. -/
+**Statement (restated, grokbot_01 Phase 3.1; cycle 68 audit):** over `SingleModelData`
+(the package on which Sections 6-7 are developed) instead of a bare `WorkingScheme`; `p` may be
+hosted at any level. Cycle 68 restored the paper's embedding (primeness) clause, which the Phase
+3.1 form had omitted. The "more generally ... bounded marginal satisfying Definition 7.7" form is
+a paper hypothesis tracked by `infra_78_def77_bounded_marks` (as for `proposition_7_8`).
+Split (`AEC/Section7/Theorem79.lean`): `infra_79_existence_statement` (open),
+`infra_79_primeness_same_level` (proved), `infra_79_primeness_mixed_statement` (open),
+`infra_79_assemble` (proved). -/
 theorem theorem_7_9 {K : AbstractElementaryClass.{u}} (P : SingleModelData K) :
     ∃ T, ∃ hT : Tail P.eligible T,
       ∀ μ (hμ : μ ∈ T) (X : P.scheme.Object μ (Tail.mem hT hμ))
         (p : TupleOver K oneVertexShape P.scheme (Tail.mem hT hμ) X),
         Finite p.idx →
-        ∃ (Y : P.scheme.Object μ (Tail.mem hT hμ))
+        (∃ (Y : P.scheme.Object μ (Tail.mem hT hμ))
           (f : SystemArrow K oneVertexShape (P.scheme.asSystem _ X) (P.scheme.asSystem _ Y))
           (hf : P.scheme.permitted (X := X) (Y := Y) f)
           (b : p.idx → Occurrence K oneVertexShape (P.scheme.asSystem _ Y)),
           AllDominated f hf p.idx b ∧
-          SameGaloisType p (asTuple f hf b) (Equiv.refl p.idx) (Equiv.refl p.idx) := by
+          SameGaloisType p (asTuple f hf b) (Equiv.refl p.idx) (Equiv.refl p.idx)) ∧
+        ∀ (Y : P.scheme.Object μ (Tail.mem hT hμ))
+          (f : SystemArrow K oneVertexShape (P.scheme.asSystem _ X) (P.scheme.asSystem _ Y))
+          (hf : P.scheme.permitted (X := X) (Y := Y) f)
+          (b : p.idx → Occurrence K oneVertexShape (P.scheme.asSystem _ Y)),
+          AllDominated f hf p.idx b →
+          SameGaloisType p (asTuple f hf b) (Equiv.refl p.idx) (Equiv.refl p.idx) →
+          ∀ ν (hν : ν ∈ P.eligible) (N : P.scheme.Object ν hν)
+            (g : SystemArrow K oneVertexShape (P.scheme.asSystem _ X) (P.scheme.asSystem hν N))
+            (hg : P.scheme.permitted (X := X) (Y := N) g)
+            (b' : p.idx → Occurrence K oneVertexShape (P.scheme.asSystem hν N)),
+            μ ≤ ν →
+            SameGaloisType p (⟨ν, hν, N, g, hg, p.idx, b'⟩ :
+              TupleOver K oneVertexShape P.scheme (Tail.mem hT hμ) X)
+              (Equiv.refl p.idx) (Equiv.refl p.idx) →
+            ∃ h : SystemArrow K oneVertexShape (P.scheme.asSystem _ Y) (P.scheme.asSystem hν N),
+              P.scheme.permitted (X := Y) (Y := N) h ∧
+              SystemArrow.comp f h = g ∧
+              ∀ i, h.onVertex (b i).1 (b i).2 = (b' i).2 := by
+  refine infra_79_assemble P ?_
   sorry
 
 /-- **Lemma 7.11.** Let `C` be an all-dominated-increment witnessing chain for the list `L`
