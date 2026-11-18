@@ -125,5 +125,121 @@ theorem infra_712_finiteProduct_toLevel :
     · show eJ.symm (E ⟨Fin.last n, k⟩) = eJ.symm (e (Sum.inr k))
       rw [h2]
 
+/-- **Tied products are invariant under Galois-type changes of the factors and the joint, all at
+the level of `A` (proved).** Transitivity only through middles at the level
+(`infra_612_galois_trans_cross_level_of_base_end`), tied freeness via
+`infra_78_tiedFreeMixed_left_congr`. -/
+theorem infra_712_productTied_transfer (P : SingleModelData K) {μ : Cardinal.{u}}
+    (hμ : μ ∈ P.eligible) (h0 : μ ∈ recursionClosedLevels P ℵ₀) (h1 : Order.succ ℵ₀ ≤ μ)
+    {A : P.scheme.Object μ hμ} {p q J p' q' J' : TupleOver K oneVertexShape P.scheme hμ A}
+    {e : p.idx ⊕ q.idx ≃ J.idx} (e' : p'.idx ⊕ q'.idx ≃ J'.idx)
+    (ep : p'.idx ≃ p.idx) (eq : q'.idx ≃ q.idx) (g : J'.idx ≃ J.idx)
+    (hg : ∀ s, g (e' s) = e (Sum.map ep eq s))
+    (hP : SameGaloisType p' p ep (Equiv.refl _)) (hQ : SameGaloisType q' q eq (Equiv.refl _))
+    (hJ : SameGaloisType J' J g (Equiv.refl _))
+    (hp : p.ν = μ) (hp' : p'.ν = μ) (hq : q.ν = μ) (hq' : q'.ν = μ) (hj : J.ν = μ)
+    (hj' : J'.ν = μ) (hfp : Finite p'.idx) (hfq : Finite q.idx) (hfj : Finite J'.idx)
+    (h : IsProductTied p q J e) : IsProductTied p' q' J' e' := by
+  classical
+  have hlt : ℵ₀ < μ := (Order.lt_succ ℵ₀).trans_le h1
+  obtain ⟨x, ex, hSx, y, ey, hT, hJx⟩ := h
+  have hSx' : SameGaloisType p x (Equiv.refl _) ex.symm := by
+    have h := infra_612_sameGalois_trans_equiv hSx ex.symm
+    rwa [Equiv.self_trans_symm, Equiv.refl_trans] at h
+  have hX := infra_612_galois_trans_cross_level_of_base_end P ℵ₀ le_rfl hμ h0 h1 A p' p x ep
+    ex.symm (Cardinal.lt_aleph0_of_finite _).le hp (Or.inl hp') hP hSx'
+  refine ⟨x, ep.trans ex, by simpa using hX, y, eq.trans ey, ?_, ?_⟩
+  · refine infra_78_tiedFreeMixed_left_congr (q := q) (q' := q') (qB := y) x.incl ey eq hT
+      (fun {β} Z hβ => ?_)
+    have D := infra_72_diagramEq_of_sameGalois hQ Z hq' hq
+      ((Cardinal.lt_aleph0_of_finite _).trans hlt) hβ
+    refine infra_612_dEq_comp D (Sum.map eq id) ?_ ?_
+    · rintro (k | j)
+      · show _ = typeJoint (p := q') Z (Sum.inl (eq.symm (eq k)))
+        rw [Equiv.symm_apply_apply]
+      · rfl
+    · rintro (k | j) <;> rfl
+  · have hJx' := infra_612_sameGalois_trans_equiv hJx (e.symm.trans (Equiv.sumCongr ex ey)).symm
+    rw [Equiv.self_trans_symm] at hJx'
+    have R := infra_612_galois_trans_cross_level_of_base_end P ℵ₀ le_rfl hμ h0 h1 A J' J
+      (x.join y) g _ (Cardinal.lt_aleph0_of_finite _).le hj (Or.inl hj') hJ hJx'
+    have hE : g.trans ((Equiv.refl (x.idx ⊕ y.idx)).trans
+        (e.symm.trans (Equiv.sumCongr ex ey)).symm).symm =
+        e'.symm.trans (Equiv.sumCongr (ep.trans ex) (eq.trans ey)) := by
+      ext t
+      obtain ⟨s, rfl⟩ := e'.surjective t
+      rcases s with a | b <;> simp [hg]
+    rw [← hE]
+    exact R
+
+/-- The joint `bᵢ ⌢ (b_{ix 0}, …)` of a list entry and a selection, in the list's ambient. -/
+def TupleList.consJoint {P : SingleModelData K} {μ : Cardinal.{u}} {hμ : μ ∈ P.eligible}
+    {A : P.scheme.Object μ hμ} (L : TupleList P.scheme hμ A) (i : L.δ) (n : ℕ)
+    (ix : Fin n → L.δ) : TupleOver K oneVertexShape P.scheme hμ A where
+  ν := μ
+  hν := hμ
+  host := L.host
+  incl := L.incl
+  incl_arrow := L.incl_arrow
+  idx := L.indexAt i ⊕ Σ s : Fin n, L.indexAt (ix s)
+  val := fun
+    | Sum.inl k => L.val i k
+    | Sum.inr p => L.val (ix p.1) p.2
+
+/-- **7.12(1), products in the list (statement; open tip `infra_712_products_L`).** For a
+product-independent list, each entry `bᵢ` has the tied product over `A` with every finite
+injective selection of earlier entries, joint = the actual concatenation in the list's ambient.
+(Def 7.10 product independence regrouped as `bᵢ ⊗ (selection)`.) -/
+def infra_712_products_L_statement (P : SingleModelData K) : Prop :=
+  ∀ {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible), μ ∈ recursionClosedLevels P ℵ₀ →
+    Order.succ ℵ₀ ≤ μ →
+    μ ∈ recursionClosedLevels P (infra_75_wide P ℵ₀) → Order.succ (infra_75_wide P ℵ₀) ≤ μ →
+    ∀ (A : P.scheme.Object μ hμ) (L : TupleList P.scheme hμ A) [LinearOrder L.δ]
+      [WellFoundedLT L.δ], ProductIndependentTied L →
+      ∀ (i : L.δ) (n : ℕ) (ix : Fin n → L.δ), Function.Injective ix → (∀ s, ix s < i) →
+        IsProductTied (L.one i) (L.subConcat n ix) (L.consJoint i n ix) (Equiv.refl _)
+
+/-- **Products along the truncated chain from products in the list (proved glue, cycle 87).**
+Chain marks and list entries coincide in `C.top` (`mark_spec`, `mark_step`, `comm_A`), one
+amalgam each; then `infra_712_productTied_transfer`. -/
+theorem infra_712_products_of_L (P : SingleModelData K) (hL : infra_712_products_L_statement P) :
+    infra_712_products_statement P := by
+  intro μ hμ h0 h1 hw1 hw2 A L _ _ hind C hC i hfree n ix hinj
+  have hinj' : Function.Injective (fun s => (ix s).1) := fun a b h => hinj (Subtype.ext h)
+  have H := hL hμ h0 h1 hw1 hw2 A L hind i n (fun s => (ix s).1) hinj' (fun s => (ix s).2)
+  have hincl : ∀ v, (C.toTop.onVertex v).comp (((C.step (le_top : (i : WithTop L.δ) ≤ ⊤)).onVertex v).comp
+      ((C.into (i : WithTop L.δ)).onVertex v)) = (C.listToTop.onVertex v).comp (L.incl.onVertex v) := by
+    intro v
+    rw [C.into_step]
+    exact C.comm_A v
+  have hsel : ∀ (s : Fin n) (a : L.indexAt (ix s).1),
+      C.toTop.mapOcc ((C.step (le_top : (i : WithTop L.δ) ≤ ⊤)).mapOcc
+        (C.mark (ix s).1 (i : WithTop L.δ) (WithTop.coe_lt_coe.2 (ix s).2) a)) =
+      C.listToTop.mapOcc (L.val (ix s).1 a) := by
+    intro s a
+    rw [C.mark_step]
+    exact C.mark_spec _ a
+  refine infra_712_productTied_transfer P hμ h0 h1 (p := L.one i)
+    (q := L.subConcat n (fun s => (ix s).1)) (J := L.consJoint i n (fun s => (ix s).1))
+    (p' := TupleOver.restrict ((C.truncate i hfree).into ⊤) _ (C.markTuple i))
+    (q' := (C.truncate i hfree).selectionOver (C.markTuple i) n ix)
+    (J' := (C.truncate i hfree).jointWith (C.markTuple i) n ix)
+    (e := Equiv.refl _) (Equiv.refl _) (Equiv.refl _) (Equiv.refl _)
+    (Equiv.refl _) (by rintro (a | b) <;> rfl) ?_ ?_ ?_ rfl rfl rfl rfl rfl rfl
+    (L.finite_each i) ?_ ?_ H
+  · exact ⟨μ, hμ, C.top, C.toTop, C.listToTop, trivial, trivial, hincl,
+      fun k => C.mark_spec i k⟩
+  · exact ⟨μ, hμ, C.top, C.toTop, C.listToTop, trivial, trivial, hincl,
+      fun k => hsel k.1 k.2⟩
+  · refine ⟨μ, hμ, C.top, C.toTop, C.listToTop, trivial, trivial, hincl, ?_⟩
+    rintro (k | ⟨s, a⟩)
+    · exact C.mark_spec i k
+    · exact hsel s a
+  · have := fun s : Fin n => L.finite_each (ix s).1
+    exact inferInstanceAs (Finite (Σ s : Fin n, L.indexAt (ix s).1))
+  · have := fun s : Fin n => L.finite_each (ix s).1
+    have := L.finite_each i
+    exact inferInstanceAs (Finite (L.indexAt i ⊕ Σ s : Fin n, L.indexAt (ix s).1))
+
 end
 end AEC

@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-18 15:56",
+ "updated": "2026-11-18 16:02",
  "sorryCount": 41,
  "legend": {
   "open": "No unfinished required proof-deps — try next",
@@ -3130,9 +3130,9 @@
    "label": "7.12(1) products of b_i with earlier marks",
    "section": 7,
    "file": "AEC/Section7/Lemma712Existence.lean",
-   "status": "open",
-   "blocker": null,
-   "detail": "infra_712_products_statement. ANALYSIS (cycle 86): does NOT hit infra_612_galois_trans_cross_level_both_off. The non-level partial products of ProductIndependentTied convert to level products by level copies + one-amalgam pullback (infra_712_finiteProduct_toLevel, proved). Remaining (all at level mu, proved tools): (1) take sublist Fin.cons i ix (or snoc) of L, level-convert; (2) regroup (b_i, s_1..s_n) into b_i ⊗ (s_1⊗...⊗s_n) by n-fold level associativity (infra_612_tied_assoc_level_joints) / permutation (infra_612_tied_finite_perm_level), identifying the inner product with subConcat(ix) (ProductIndependentTied of ix, also level-converted; uniqueness via the same perm lemma with identity); (3) move the factors/joint to the truncated chain's tuples: chain marks and L entries coincide in C.top (mark_spec: toTop(mark) = listToTop(val)), a direct one-amalgam SameGaloisType (no transitivity); (4) infra_711_product_joint_transfer / galois_trans_cross_level_of_base_end (middle at mu) for the joint move. Medium; mostly the n-fold regrouping."
+   "status": "blocked",
+   "blocker": "infra_712_products_L",
+   "detail": "Reduced (cycle 87) to infra_712_products_L via infra_712_products_of_L (proved); transfer lemma infra_712_productTied_transfer proved."
   },
   {
    "id": "infra_712_succ",
@@ -3169,6 +3169,24 @@
    "status": "done",
    "blocker": null,
    "detail": "infra_712_finiteProduct_toLevel PROVED cycle 86: a plain IsFiniteProductTied of finite factors (partial products at any level) gives IsFiniteProductTiedLevel for any level copy of the joint, by replacing every partial product with its level-mu copy (infra_612_exists_level_copy_arrow, via infra_712_level_copy) and pulling Galois identifications back along the copy's host arrow inside the SAME amalgam (infra_712_sameGalois_pull, infra_712_productTied_pull_joint/_left). No cross-level transitivity; does not use infra_612_galois_trans_cross_level_both_off. Axioms clean."
+  },
+  {
+   "id": "infra_712_products_transfer",
+   "label": "Tied products transfer along level Galois identifications + chain-to-list glue",
+   "section": 7,
+   "file": "AEC/Section7/Lemma712Products.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Proved (cycle 87): infra_712_productTied_transfer (base_end transitivity, middles at mu; left_congr for tied freeness) and infra_712_products_of_L (chain marks = list entries in C.top)."
+  },
+  {
+   "id": "infra_712_products_L",
+   "label": "7.12(1) products in the list: b_i tied-product with finite earlier selections",
+   "section": 7,
+   "file": "AEC/Section7/Lemma712Products.lean",
+   "status": "open",
+   "blocker": null,
+   "detail": "Open (cycle 87). Statement infra_712_products_L_statement. Plan: ProductIndependentTied on snoc(ix,i) -> level product (infra_712_finiteProduct_toLevel) -> regroup last factor to the front (infra_612_tied_exists + tied_symm_level_joints, finite_perm_level with identity on ix) -> base_end transitivity at mu. Main friction: Fin.snoc at last/castSucc is propositional."
   }
  ],
  "edges": [
@@ -6483,8 +6501,14 @@
    "from": "infra_712_products_level",
    "to": "infra_712_products",
    "kind": "hard"
+  },
+  {
+   "from": "infra_712_products_L",
+   "to": "infra_712_products",
+   "kind": "hard",
+   "note": "products_of_L"
   }
  ],
- "doneCount": 288,
+ "doneCount": 289,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
