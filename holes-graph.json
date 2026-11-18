@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-18 12:12",
+  "updated": "2026-11-18 12:16",
   "sorryCount": 44,
   "legend": {
     "open": "No unfinished required proof-deps — try next",
@@ -2256,9 +2256,9 @@
       "label": "Prop 7.8: theta^+ shrink to level-lambda A <= U",
       "section": 7,
       "file": "AEC/Section7/MixedDescent.lean",
-      "status": "open",
-      "blocker": null,
-      "detail": "Open (unblocked grokbot cycle 56: infra_78_isolated_stage done). Increasing theta^+ chain A_alpha <= U_alpha of level-lambda subobjects inside R_i,S_i with unions A <= U at level lambda, and the majority free-extension identity tp(b,c/X_i) = free lift of tp(b,c/A) for |c| <= theta."
+      "status": "blocked",
+      "blocker": "infra_78_theta_chain",
+      "detail": "Blocked (split grokbot cycle 57; full claim stays here = theta_chain + theta_free_identity). Increasing theta^+ chain A_alpha <= U_alpha of level-lambda subobjects inside R_i,S_i with unions A <= U at level lambda (I_p in A, b in U), and the TIED majority free-extension identity: for every c in U with |c| <= theta, IsTiedFreeMixed iA (q.restrict iA) q (Equiv.refl _) for q = tp(b,c/X_i) (never the untied IsFreeLift/IsFreeFrom). Sub-tips: infra_78_theta_union (done), infra_78_theta_chain (open), infra_78_theta_free_identity (open)."
     },
     {
       "id": "infra_78_isolation_transfer",
@@ -2530,6 +2530,33 @@
       "status": "done",
       "blocker": null,
       "detail": "DONE (grokbot cycle 54, sorry-free, standard axioms; AEC/Section7/RecursionOutputs.lean). Seeds (paper: (5) is relative to X_0): base X_b = X_0 with the identity base map; seed stage infra_78_seedStage X_0 Y_0 p_0 id b_0 (infra_78_seedSet I_p b_0 y) (I_p on the X-side, b and one extra point y on the Y-side; |seeds| <= rho via infra_78_seedSet_card). (5) at the seed: infra_78_tiedFree_of_id (tied freeness along an identity arrow, from two good copies of a long approximation sequence) / infra_78_seedStage_inv5. (5) at every stage: infra_78_rc_inv5_all by induction (successor: infra_78_opMatrix_succ; limit: infra_78_limit_inv5_cocone = tied continuity on the engine's chosen covering cocone, with mark/base coherence infra_78_opMatrix_coherent), for marks shorter than every limit cofinality (finite marks: infra_78_finite_lt_stage_cof; bounded marks at small cofinality = infra_78_def77_bounded_marks, paper hypothesis). infra_78_recursion_outputs: IdLaw, CompLaw, ContAtLimits of infra_78_rcMatrix, (5) at every stage, b_k subset S_k, I_p (moved) subset R_k, and all bookkeeping outputs of infra_78_rnext_closure (sizes, forward closure, continuity, pair closure, S_k nonempty, requirement 1/2 at non-limit and cofinality > lambda stages). infra_78_rc_failing_list: the failing-list property at every successor pair beta < k for the S-part candidates. Interleaving: R_k depends only on the pair at stage k (infra_78_rcl)."
+    },
+    {
+      "id": "infra_78_theta_union",
+      "label": "Prop 7.8 theta-shrink: union of a directed family of level-lambda pairs into X_i -> Y_i",
+      "section": 7,
+      "file": "AEC/Section7/ThetaShrink.lean",
+      "status": "done",
+      "blocker": null,
+      "detail": "DONE (grokbot cycle 57, sorry-free, standard axioms; AEC/Section7/ThetaShrink.lean). infra_78_theta_union: a directed family (#iota <= lambda) of level-lambda pairs g_a : A_a -> V_a with compatible steps and compatible arrows iA_a : A_a -> X, iV_a : V_a -> Y (squares g_a;iV_a = iA_a;pr) has union pair gu : A -> U at level lambda (infra_78_chain_union_kappa), legs commuting with g, permitted arrows jA : A -> X, jU : U -> Y extending iA_a/iV_a, the square gu;jU = jA;pr (uniqueness clause), and covering of A and U by the legs. This is the paper's limit/final union step (\"the common upper bound clause gives A <= U\")."
+    },
+    {
+      "id": "infra_78_theta_chain",
+      "label": "Prop 7.8 theta-shrink: theta^+ recursion of pairs A_alpha <= U_alpha with approximation copies",
+      "section": 7,
+      "file": "AEC/Section7/ThetaShrink.lean",
+      "status": "open",
+      "blocker": null,
+      "detail": "Open (grokbot cycle 57). At the isolated stage i: recursion alpha < theta^+ of level-lambda pairs A_alpha <= U_alpha inside R_i,S_i (requirement 1, infra_78_bkReq1 / bookkeeping closure), I_p in A_0, b in U_0; at alpha+1 enumerate U_alpha and put the coordinates of requirement-2 approximation copies (over X_i) into A_{alpha+1}; unions at limits and at the end via infra_78_theta_union. Output: A <= U at level lambda with jA : A -> X_i, jU : U -> Y_i, and for every c in U with |c| <= theta and every test arity tau < lambda an ApproximationSequence for (b,c) over X_i whose family entries lie in range jA. Known issues: selecting lambda many copies (subsequence of a requirement-2 sequence, keeping tau + aleph0 < #kappaIndex), the sigma' recursion-closed hypothesis of requirement 2, restriction of a sequence for the enumerated tuple to the subtuple (b,c) (ApproximationSequence.subtuple_uniform)."
+    },
+    {
+      "id": "infra_78_theta_free_identity",
+      "label": "Prop 7.8 theta-shrink: tied majority free-extension identity tp(b,c/X_i) = tp(b,c/A)^fr",
+      "section": 7,
+      "file": "AEC/Section7/ThetaShrink.lean",
+      "status": "open",
+      "blocker": null,
+      "detail": "Open (grokbot cycle 57). Tied statement: for jA : A -> X_i permitted (A level lambda, X_i level kappa) and q over X_i with |q.idx| <= theta, if for every sufficient test arity tau < lambda there is an ApproximationSequence for q over X_i with all family entries in range jA, then IsTiedFreeMixed jA (q.restrict jA) q (Equiv.refl _) (majority characterization of the free extension, Lemma 6.10 mixed form; infra_78_isMoveMixed). Must use the tied IsTiedFreeMixed family, never the vacuous untied IsFreeLift / IsFreeFrom."
     }
   ],
   "edges": [
@@ -4944,8 +4971,28 @@
       "from": "infra_78_isolated_stage_core",
       "to": "infra_78_isolated_stage_padding",
       "kind": "hard"
+    },
+    {
+      "from": "infra_78_theta_union",
+      "to": "infra_78_theta_chain",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_78_bookkeeping_closure",
+      "to": "infra_78_theta_chain",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_78_theta_chain",
+      "to": "infra_78_theta_shrink",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_78_theta_free_identity",
+      "to": "infra_78_theta_shrink",
+      "kind": "hard"
     }
   ],
-  "doneCount": 219,
+  "doneCount": 220,
   "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 43. Uncommitted in /tmp/aec-grok."
 }
