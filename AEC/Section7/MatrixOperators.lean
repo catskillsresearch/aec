@@ -22,9 +22,14 @@ The extra stage data `Infra78MarkData` carries, as plain data on the fixed carri
   previous stage has invariant (5); `infra_78_opMatrix_coherent`: mark/base coherence along all
   chain steps.
 
-The concrete bookkeeping update `Rnext` and candidate-list selection `cand`
-(`infra_78_pair_bookkeeping_close` + failing lists from the `S`-part) are tracked as
-`infra_78_matrix_bookkeeping_ops`.
+Cycle 52 (`infra_78_cand_coverage`): the candidate lists `infra_78_candS` are all lists
+`cIdx → S_i` drawn from the stage's own `S`-part (as in the paper: "some list d of length at most
+λ from `S_i`", with no enumeration needed), `infra_78_Slists_card` counts them (`≤ ρ^λ = ρ`), and
+`infra_78_opMatrix_failing_list` is the failing-list/coverage property consumed by the stationary
+contradiction (`infra_78_isolated_stage`): at each stage with (5), either every `S`-list is
+isolated relative to `b`, or a failing `S`-list gets a nonfree extension at the next stage.
+The concrete bookkeeping update `Rnext` (`infra_78_pair_bookkeeping_close`) is tracked as
+`infra_78_rnext_closure`.
 -/
 
 universe u
@@ -326,4 +331,116 @@ theorem infra_78_opMatrix_coherent (i k : (Order.succ ρ).ord.ToType) (hik : i �
     exact key (fun e => e.b) (fun a => a.2) (fun _ _ => rfl) (fun y hy x hx => (IH y hy x hx).2)
 
 end Coherence
+
+section Candidates
+variable {P : SingleModelData K} {κ : Cardinal.{u}} {hκ : κ ∈ P.eligible} {uIdx : Type u}
+
+/-- The top bookkeeping set `S_i` of a stage: the `Y`-part of `R`. -/
+def infra_78_Spart (s : Infra78Stage P hκ (Infra78MarkData κ uIdx)) : Set κ.ord.ToType :=
+  Sum.inr ⁻¹' s.e.R
+
+open Classical in
+/-- **Candidate lists from the `S`-part (paper: "some list d of length at most λ from `S_i`").**
+Candidates are indexed by all lists `cIdx → |Y|`; a list inside `S_i` is its own candidate, and a
+list not inside `S_i` is replaced by a fixed list inside `S_i` (if any). The candidates are drawn
+from the stage's own `S_i` (not from its closure), as Fodor's argument needs `d_i ⊆ S_{j(i)}` by
+continuity. -/
+noncomputable def infra_78_candS {ι : Type u} (cIdx : Type u) (_β : ι)
+    (s : Infra78Stage P hκ (Infra78MarkData κ uIdx)) (l : cIdx → κ.ord.ToType) :
+    cIdx → κ.ord.ToType :=
+  if Set.range l ⊆ infra_78_Spart s then l
+  else if h : ∃ d0 : cIdx → κ.ord.ToType, Set.range d0 ⊆ infra_78_Spart s then Classical.choose h
+  else l
+
+theorem infra_78_candS_of_mem {ι cIdx : Type u} (β : ι)
+    (s : Infra78Stage P hκ (Infra78MarkData κ uIdx)) (l : cIdx → κ.ord.ToType)
+    (hl : Set.range l ⊆ infra_78_Spart s) : infra_78_candS cIdx β s l = l := by
+  unfold infra_78_candS; rw [if_pos hl]
+
+theorem infra_78_candS_mem {ι cIdx : Type u} (β : ι)
+    (s : Infra78Stage P hκ (Infra78MarkData κ uIdx))
+    (hS : ∃ d0 : cIdx → κ.ord.ToType, Set.range d0 ⊆ infra_78_Spart s) (l : cIdx → κ.ord.ToType) :
+    Set.range (infra_78_candS cIdx β s l) ⊆ infra_78_Spart s := by
+  unfold infra_78_candS
+  by_cases hl : Set.range l ⊆ infra_78_Spart s
+  · rw [if_pos hl]; exact hl
+  · rw [if_neg hl, dif_pos hS]; exact Classical.choose_spec hS
+
+/-- An `S`-list exists as soon as `S_i` is nonempty (e.g. it contains a coordinate of `b`). -/
+theorem infra_78_exists_Slist {cIdx : Type u} (s : Infra78Stage P hκ (Infra78MarkData κ uIdx))
+    {x : κ.ord.ToType} (hx : x ∈ infra_78_Spart s) :
+    ∃ d0 : cIdx → κ.ord.ToType, Set.range d0 ⊆ infra_78_Spart s :=
+  ⟨fun _ => x, by rintro _ ⟨_, rfl⟩; exact hx⟩
+
+/-- **Counting lists** (paper: "at most `ρ^λ = ρ` possible lists in `S_j`"): the lists
+`cIdx → S` with `|S| ≤ ρ`, `|cIdx| ≤ λ`, `ρ^λ = ρ` number at most `ρ` (the `hcount` input of
+`infra_78_stationary_fixed_list`). -/
+theorem infra_78_Slists_card {C : Type u} {cIdx : Type u} (S : Set C) {ρ ℓ : Cardinal.{u}}
+    (hρ0 : ρ ≠ 0) (hS : #S ≤ ρ) (hc : #cIdx ≤ ℓ) (hpow : ρ ^ ℓ = ρ) :
+    #{d : cIdx → C // Set.range d ⊆ S} ≤ ρ := by
+  have hinj : Function.Injective (fun d : {d : cIdx → C // Set.range d ⊆ S} =>
+      fun i => (⟨d.1 i, d.2 ⟨i, rfl⟩⟩ : S)) := by
+    intro d e h
+    apply Subtype.ext
+    funext i
+    exact congrArg Subtype.val (congrFun h i)
+  refine (Cardinal.mk_le_of_injective hinj).trans ?_
+  rw [Cardinal.mk_arrow, Cardinal.lift_id, Cardinal.lift_id]
+  calc #S ^ #cIdx ≤ ρ ^ #cIdx := Cardinal.power_le_power_right hS
+    _ ≤ ρ ^ ℓ := Cardinal.power_le_power_left hρ0 hc
+    _ = ρ := hpow
+
+end Candidates
+
+section FailingList
+variable (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : ℵ₀ ≤ σ)
+  {μ : Cardinal.{u}} (hμT : μ ∈ infra_73_tailSet P σ) {uIdx : Type u}
+
+/-- **Failing-list property / coverage at every stage** (Prop 7.8, "if some list d of length at
+most λ from `S_i` makes tp(b, d/X_i) nonisolated relative to b, apply Proposition 7.3"). In the
+recursion matrix built with the concrete successor operator and the `S`-part candidates, at every
+stage `β` with invariant (5) and some list inside `S_β`: either every list `d : cIdx → S_β` is
+isolated relative to `b`, or some list `d ⊆ S_β` is failing and gets a nonfree extension at the
+next stage `k` (`β ⋖ k`). -/
+theorem infra_78_opMatrix_failing_list {ρ : Cardinal.{u}} (hρκ : Order.succ ρ < μ) {cIdx : Type u}
+    (Xb : P.scheme.Object μ (Tail.mem (infra_73_tail P σ hσ) hμT))
+    (Rnext : Infra78Stage P (Tail.mem (infra_73_tail P σ hσ) hμT) (Infra78MarkData μ uIdx) →
+      Infra78Step μ → Set (μ.ord.ToType ⊕ μ.ord.ToType))
+    (hidx : #(uIdx ⊕ cIdx) ≤ σ)
+    (s0 : Infra78Stage P (Tail.mem (infra_73_tail P σ hσ) hμT) (Infra78MarkData μ uIdx))
+    (e0 : Infra78MarkData μ uIdx) {β k : (Order.succ ρ).ord.ToType} (hβ : β ⋖ k)
+    (h5 : infra_78_StageInv5 Xb (infra_78_pcObj s0
+      (infra_78_succOp Xb Rnext (infra_78_candS cIdx)) (infra_78_limMarkE e0) β))
+    (hS : ∃ d0 : cIdx → μ.ord.ToType, Set.range d0 ⊆ infra_78_Spart (infra_78_pcObj s0
+      (infra_78_succOp Xb Rnext (infra_78_candS cIdx)) (infra_78_limMarkE e0) β)) :
+    let c := infra_78_pcObj s0 (infra_78_succOp Xb Rnext (infra_78_candS cIdx)) (infra_78_limMarkE e0)
+    let m := infra_78_pcMap s0 (infra_78_succOp Xb Rnext (infra_78_candS cIdx)) (infra_78_limMarkE e0)
+    ∃ (hX : infra_78_IsArr (c β).X (c k).X (m β k).1),
+      (∀ d : cIdx → μ.ord.ToType, Set.range d ⊆ infra_78_Spart (c β) →
+        IsRelativelyIsolated (infra_78_markTuple (infra_78_toArr (c β).hp)
+          (Sum.elim (infra_78_stageMark (c β)) (fun x => ⟨PUnit.unit, d x⟩)))
+          (Equiv.refl (uIdx ⊕ cIdx))) ∨
+      ∃ d : cIdx → μ.ord.ToType, Set.range d ⊆ infra_78_Spart (c β) ∧
+        ¬ IsRelativelyIsolated (infra_78_markTuple (infra_78_toArr (c β).hp)
+          (Sum.elim (infra_78_stageMark (c β)) (fun x => ⟨PUnit.unit, d x⟩)))
+          (Equiv.refl (uIdx ⊕ cIdx)) ∧
+        ¬ IsTiedFree (infra_78_toArr hX)
+          ((infra_78_markTuple (infra_78_toArr (c k).hp)
+            (fun x => (⟨PUnit.unit, (m β k).2 (Sum.elim (c β).e.b d x)⟩ :
+              Occurrence K oneVertexShape (P.scheme.asSystem _ (c k).Y)))).restrict
+            (infra_78_toArr hX) trivial)
+          (infra_78_markTuple (infra_78_toArr (c k).hp)
+            (fun x => (⟨PUnit.unit, (m β k).2 (Sum.elim (c β).e.b d x)⟩ :
+              Occurrence K oneVertexShape (P.scheme.asSystem _ (c k).Y)))) (Equiv.refl _) := by
+  intro c m
+  obtain ⟨hX, -, -, -, -, -, -, hD⟩ := infra_78_opMatrix_succ P σ hσ hμT hρκ Xb Rnext
+    (infra_78_candS cIdx) hidx s0 (infra_78_limMarkE e0) hβ h5
+  refine ⟨hX, ?_⟩
+  rcases hD with hall | ⟨l, hl, hnf⟩
+  · refine Or.inl fun d hd => ?_
+    have := hall d
+    rwa [infra_78_candS_of_mem β _ d hd] at this
+  · exact Or.inr ⟨_, infra_78_candS_mem β _ hS l, hl, hnf⟩
+
+end FailingList
 end AEC
