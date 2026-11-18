@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-18 10:29",
+  "updated": "2026-11-18 10:33",
   "sorryCount": 44,
   "legend": {
     "open": "No unfinished required proof-deps — try next",
@@ -2222,7 +2222,7 @@
       "file": "AEC/Section7/MixedDescent.lean",
       "status": "blocked",
       "blocker": "infra_78_bookkeeping_closure",
-      "detail": "Blocked. Transfinite construction of continuous pairs X_i <= Y_i (i <= rho^+) at level kappa (Infra78Matrix plus SameLevelChain unions) with invariant (5) tp(b/X_i) = free lift of tp(b/X_0) (tied), failing stages extended by infra_78_nonfree_extension_tied + infra_78_same_level_type_amalgam (transitivity for (5)), Def 7.7 continuity at limits (finite marks: infra_78_finite_continuity), bookkeeping from infra_78_bookkeeping_closure."
+      "detail": "Blocked. Transfinite construction of continuous pairs X_i <= Y_i (i <= rho^+) at level kappa (Infra78Matrix plus SameLevelChain unions) with invariant (5) tp(b/X_i) = free lift of tp(b/X_0) (tied), failing stages extended by infra_78_nonfree_extension_tied + infra_78_same_level_type_amalgam (transitivity for (5)), Def 7.7 continuity at limits (finite marks: infra_78_finite_continuity), bookkeeping from infra_78_bookkeeping_closure. REQUIRED OUTPUT (tracked obligations, cycle 39): besides an Infra78Matrix, this node must produce (i) the composition law stepX (le_refl) = id, stepX (h1.trans h2) = stepX h1 >> stepX h2 and the same for stepY, and (ii) continuity at limits: for limit i every element of X_i and of Y_i is stepX/stepY of an element of some earlier stage (Def 7.7 continuous pairs). These are consumed by infra_78_bookkeeping_req1_high_cof, infra_78_bookkeeping_req2_high_cof and infra_78_bookkeeping_assembly."
     },
     {
       "id": "infra_78_isolated_stage",
@@ -2284,8 +2284,8 @@
       "section": 7,
       "file": "AEC/Section7/MixedDescent.lean",
       "status": "blocked",
-      "blocker": "infra_78_bookkeeping_sets_construction",
-      "detail": "Blocked (full claim kept, stated over an arbitrary continuous pair-chain). Split: infra_78_cardinal_closure (DONE), infra_78_bookkeeping_sets_construction (blocked; split cycle 38), infra_78_bookkeeping_req1_high_cof (blocked), infra_78_bookkeeping_req2_high_cof (blocked). Successor closures for lambda^+ steps (rho^lambda = rho lists, each adding <= rho points via infra_78_mixed_ls_pair and infra_78_code_copies_bounded), continuity at limits, and requirements 1-2 at stages of cofinality > lambda via infra_78_bounded_in_earlier_stage and infra_78_copies_persist_at_limits."
+      "blocker": "infra_78_bookkeeping_req1_high_cof",
+      "detail": "Blocked (full claim kept, stated over an arbitrary continuous pair-chain). Split: infra_78_cardinal_closure (DONE), infra_78_bookkeeping_sets_construction (DONE cycle 39 via infra_78_bookkeeping_sets_instantiate), infra_78_bookkeeping_req1_high_cof (open), infra_78_bookkeeping_req2_high_cof (open). Successor closures for lambda^+ steps (rho^lambda = rho lists, each adding <= rho points via infra_78_mixed_ls_pair and infra_78_code_copies_bounded), continuity at limits, and requirements 1-2 at stages of cofinality > lambda via infra_78_bounded_in_earlier_stage and infra_78_copies_persist_at_limits."
     },
     {
       "id": "infra_78_cardinal_closure",
@@ -2300,28 +2300,28 @@
       "id": "infra_78_bookkeeping_sets_construction",
       "label": "Prop 7.8: build R_i subset S_i along a given pair-chain",
       "section": 7,
-      "file": "AEC/Section7/MixedDescent.lean",
-      "status": "blocked",
-      "blocker": "infra_78_bookkeeping_sets_instantiate",
-      "detail": "Blocked (full claim kept). Split cycle 38: infra_78_bookkeeping_sets_abstract (DONE: generic successor-closure/limit-union construction, rho^+ instance infra_78_bookkeeping_sets_succ), infra_78_bookkeeping_sets_instantiate (open). Over an arbitrary continuous pair-chain (Infra78Matrix at level kappa plus continuity at limits: every element of X_i, Y_i at a limit i comes from an earlier stage), with lambda^+ <= rho = rho^lambda < kappa and seeds Ip subset X_0, b subset Y_0: increasing continuous R_i subset X_i, S_i subset Y_i (along stepX/stepY), R_i subset S_i (along pair), |R_i|, |S_i| <= rho, and R_{i+1}, S_{i+1} closed (infra_78_cardinal_closure) under the requests of infra_78_mixed_ls_pair and infra_78_code_copies_bounded for <= lambda lists from R_i, S_i."
+      "file": "AEC/Section7/Bookkeeping.lean",
+      "status": "done",
+      "blocker": null,
+      "detail": "Done (no sorry): discharged by infra_78_bookkeeping_sets_instantiate (cycle 39) over an arbitrary Infra78Matrix (more general than a continuous pair-chain; seeds arbitrary <= rho sets, e.g. Ip at X_0 and b at Y_0). Split cycle 38: infra_78_bookkeeping_sets_abstract (DONE), infra_78_bookkeeping_sets_instantiate (DONE). Requests closed at the same non-limit stage (stronger than R_{i+1} closed under requests from R_i)."
     },
     {
       "id": "infra_78_bookkeeping_req1_high_cof",
       "label": "Prop 7.8: closure requirement 1 at cf > lambda",
       "section": 7,
       "file": "AEC/Section7/MixedDescent.lean",
-      "status": "blocked",
-      "blocker": "infra_78_bookkeeping_sets_construction",
-      "detail": "Blocked. At a stage i with cf(i) > lambda, any <= lambda sets from R_i, S_i lie in an earlier stage (infra_78_bounded_in_earlier_stage), so the level-lambda pair A <= V requested there (inside R_{j+1}, S_{j+1}) pushes forward to a pair of subobjects of X_i <= Y_i inside R_i, S_i."
+      "status": "open",
+      "blocker": null,
+      "detail": "Open (board-only; unblocked cycle 39 by infra_78_bookkeeping_sets_instantiate). At a stage i with cf(i) > lambda, any <= lambda sets from R_i, S_i lie in an earlier stage (infra_78_bounded_in_earlier_stage), so the level-lambda pair A <= V requested there (inside R_{j+1}, S_{j+1}) pushes forward to a pair of subobjects of X_i <= Y_i inside R_i, S_i. Infra78Matrix has NO composition law; this node is stated over an Infra78Matrix PLUS the hypotheses stepX (h1.trans h2) = stepX h1 >> stepX h2 and the same for stepY (needed to move <= lambda points from scattered earlier stages to one stage j < i and then to i), which are obligations of infra_78_matrix_construction (tracked there), not hidden assumptions."
     },
     {
       "id": "infra_78_bookkeeping_req2_high_cof",
       "label": "Prop 7.8: closure requirement 2 at cf > lambda",
       "section": 7,
       "file": "AEC/Section7/MixedDescent.lean",
-      "status": "blocked",
-      "blocker": "infra_78_bookkeeping_sets_construction",
-      "detail": "Blocked. At a stage i with cf(i) > lambda, every <= lambda list d from S_i lies in an earlier S_j; local character makes tp(d/X_i) free from an earlier stage, and copies placed in an intervening successor base still compute it over X_i (infra_78_copies_persist_at_limits / infra_78_copies_persist_chain), with the |Z| + aleph0 exception estimate; the copies lie in R_i."
+      "status": "open",
+      "blocker": null,
+      "detail": "Open (board-only; unblocked cycle 39 by infra_78_bookkeeping_sets_instantiate). At a stage i with cf(i) > lambda, every <= lambda list d from S_i lies in an earlier S_j; local character makes tp(d/X_i) free from an earlier stage, and copies placed in an intervening successor base still compute it over X_i (infra_78_copies_persist_at_limits / infra_78_copies_persist_chain), with the |Z| + aleph0 exception estimate; the copies lie in R_i. Infra78Matrix has NO composition law; this node is stated over an Infra78Matrix PLUS the hypotheses stepX (h1.trans h2) = stepX h1 >> stepX h2 and the same for stepY (needed to move <= lambda points from scattered earlier stages to one stage j < i and then to i), which are obligations of infra_78_matrix_construction (tracked there), not hidden assumptions."
     },
     {
       "id": "infra_78_bookkeeping_sets_abstract",
@@ -2336,10 +2336,10 @@
       "id": "infra_78_bookkeeping_sets_instantiate",
       "label": "Prop 7.8: instantiate bookkeeping sets on the pair-chain",
       "section": 7,
-      "file": "AEC/Section7/MixedDescent.lean",
-      "status": "open",
+      "file": "AEC/Section7/Bookkeeping.lean",
+      "status": "done",
       "blocker": null,
-      "detail": "Open (board-only). Instantiate infra_78_bookkeeping_sets_succ on a continuous pair-chain (Infra78Matrix at kappa with functorial steps and continuity at limits): C i = carrier(X_i) + carrier(Y_i), step from stepX/stepY, F i = (pair images: R-part into S-part) + (images of the level-lambda pair from infra_78_mixed_ls_pair for each <= lambda request) + (coordinates of the infra_78_code_copies_bounded sequence for each <= lambda list), each <= rho points since lambda^+ <= rho; seeds Ip at X_0 and b at Y_0. Conclude R_i subset X_i, S_i subset Y_i, R_i subset S_i along pair (using the comm law at limits), sizes <= rho, continuity, successor closures."
+      "detail": "Done (no sorry; axioms propext/choice/Quot.sound). infra_78_bookkeeping_sets_instantiate (AEC/Section7/Bookkeeping.lean): for any M : Infra78Matrix P rho hkappa, lambda eligible with lambda <= kappa, aleph0 <= lambda < rho = rho^lambda, seeds of size <= rho: exists R i subset carrier(X_i) + carrier(Y_i) (left part = R_i, right part = S_i) with #R i <= rho, forward images along infra_78_bkStep (Sum.map stepX stepY) contained, R i = union of earlier images at limits, seeds at non-limit stages, pair closure (inl x in R i -> inr (pair x) in R i) at EVERY stage (well-founded induction; limits use only the comm law), and at non-limit stages: requirement-1 supply (every <= lambda s subset R i is covered by a level-lambda pair A <= V from infra_78_mixed_ls_pair whose images lie in R i) and requirement-2 supply (for kappa recursion-closed at sigma, succ sigma <= kappa, lambda < kappa, #(inr^-1 s) <= sigma: an ApproximationSequence of length lambda for the top points of s over X_i with all coordinates in R i). Request bound infra_78_bkRequests_card (each request adds <= rho points; lambda^+ <= rho) proved in the same file. Uses neither a composition law nor continuity of M."
     }
   ],
   "edges": [
@@ -4461,6 +4461,6 @@
       "kind": "hard"
     }
   ],
-  "doneCount": 191,
+  "doneCount": 193,
   "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 43. Uncommitted in /tmp/aec-grok."
 }
