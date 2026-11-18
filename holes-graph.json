@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-18 09:27",
+  "updated": "2026-11-18 09:33",
   "sorryCount": 45,
   "legend": {
     "open": "No unfinished required proof-deps — try next",
@@ -2069,7 +2069,7 @@
       "file": "AEC/Section6/ProductTied.lean",
       "status": "blocked",
       "blocker": "infra_612_tied_independence",
-      "detail": "Open. IsProductTied p q j1 e1 and IsProductTied q p j2 e2 give SameGaloisType j1 j2 e1.symm (e2.symm.trans sumComm)."
+      "detail": "Blocked (full clause 3). IsProductTied p q j1 e1 and IsProductTied q p j2 e2 give SameGaloisType j1 j2 e1.symm (e2.symm.trans sumComm), joints at ANY eligible levels. Joints-at-A's-level case DONE as infra_612_tied_symm_level_joints (realizations/free lifts at any levels). Remaining: off-level joints, same gap as infra_612_tied_independence (infra_612_galois_trans_cross_level)."
     },
     {
       "id": "infra_612_tied_assoc",
@@ -2133,6 +2133,15 @@
       "status": "open",
       "blocker": null,
       "detail": "Open (sub-tip of infra_612_tied_independence; no Lean declaration yet). Statement: mu recursion-closed, sigma^+ <= mu, t1 t2 t3 over A (level mu), #t1.idx <= sigma, t2.nu = mu, t1.nu and t3.nu ANY eligible levels; SameGaloisType t1 t2 e12 refl and SameGaloisType t2 t3 refl e32 imply SameGaloisType t1 t3 (e12.trans e32.symm) refl. SameGaloisType.trans_via proves it when all three are at mu (via infra_612_same_galois, D.same tests at hosts of size mu). Off-level ends need an amalgam of the two tops over the mu-host of t2, or Thm 6.6 with large hosts: same obstruction as infra_78_tuple_amalgam_large (soft link). Truth not verified."
+    },
+    {
+      "id": "infra_612_tied_symm_level_joints",
+      "label": "Prop 6.12 (3) symmetry, joints at A's level (tied)",
+      "section": 6,
+      "file": "AEC/Section6/ProductTied.lean",
+      "status": "done",
+      "blocker": null,
+      "detail": "Done (no sorry; axioms propext/choice/Quot.sound): infra_612_tied_symm_level_joints. Recursion-closed mu >= sigma^+, p q over A at mu of size <= sigma; IsProductTied p q j1 e1, IsProductTied q p j2 e2 with j1.nu = j2.nu = mu (x_k, y_k at any levels): SameGaloisType j1 j2 e1.symm (e2.symm.trans sumComm). English array proof: Thm 6.6 test Y; sequence a for p (query size |p|+|q|+|Y|, length kappa < mu, infra_612_exists_seq_small) and b for q with b.tau >= kappa (length lambda > kappa); tied freeness of y1 along b and of y2 along a; a column outside badCol and the kappa*e row-wise exceptions, then a row outside both row exceptions, give one entry D(a_i, b_j, Y) equal to both joints."
     }
   ],
   "edges": [
@@ -3949,8 +3958,13 @@
       "from": "infra_78_tuple_amalgam_large",
       "to": "infra_612_galois_trans_cross_level",
       "kind": "soft"
+    },
+    {
+      "from": "infra_612_tied_symm_level_joints",
+      "to": "infra_612_tied_symmetry",
+      "kind": "hard"
     }
   ],
-  "doneCount": 175,
+  "doneCount": 176,
   "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 43. Uncommitted in /tmp/aec-grok."
 }
