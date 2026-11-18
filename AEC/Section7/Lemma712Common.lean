@@ -435,6 +435,46 @@ theorem infra_712u_succ_R (h0 : μ ∈ recursionClosedLevels P ℵ₀) (h1 : Ord
       subst hj
       exact H3 a
 
+/-- **Trivial successor step, packed (proved, cycle 89).** If the entry at `β` is empty and
+both chains' steps `β → k` are onto, the state is kept: `N` unchanged, the new functions are the
+old ones after the inverse steps (`infra_78_struct_inverse`), and the transition is the
+identity. Successor op for `infra_712u_common_long` at the (all but `μ`) trivial indices. -/
+theorem infra_712u_trivial_R (β k : WithTop L.δ) (hβ : β ⋖ k) (s : infra_712u_State P μ hμ)
+    (hs : infra_712u_StateOK C C' e ei β s)
+    (hemp : ∀ j : L.δ, β = ↑j → IsEmpty (L.indexAt j))
+    (hsur : Function.Surjective ((C.step hβ.le).onVertex PUnit.unit))
+    (hsur' : Function.Surjective ((C'.step (e.withTopCongr.monotone hβ.le)).onVertex PUnit.unit)) :
+    ∃ R, infra_712u_SuccSpec C C' e ei β k s R ∧ R.1.1 = s.1 ∧ R.2 = id := by
+  obtain ⟨hG, hG', hA, hmk⟩ := hs
+  obtain ⟨ψ, -, hψ⟩ := infra_78_struct_inverse (C.step hβ.le) (fun v => by
+    obtain rfl : v = PUnit.unit := Subsingleton.elim _ _
+    exact ⟨((C.step hβ.le).onVertex PUnit.unit).injective, hsur⟩)
+  obtain ⟨ψ', -, hψ'⟩ := infra_78_struct_inverse (C'.step (e.withTopCongr.monotone hβ.le))
+    (fun v => by
+      obtain rfl : v = PUnit.unit := Subsingleton.elim _ _
+      exact ⟨((C'.step (e.withTopCongr.monotone hβ.le)).onVertex PUnit.unit).injective, hsur'⟩)
+  refine ⟨((s.1, fun x => s.2.1 (ψ.onVertex PUnit.unit x),
+      fun x => s.2.2 (ψ'.onVertex PUnit.unit x)), id),
+    ⟨⟨(infra_712u_IsArr.of_arrow ψ).comp hG, (infra_712u_IsArr.of_arrow ψ').comp hG',
+      fun x => ?_, fun m hmk' a => ?_⟩, infra_712u_IsArr.id _,
+      fun _ => ⟨fun x => congrArg s.2.1 (hψ x), fun x => congrArg s.2.2 (hψ' x)⟩⟩, rfl, rfl⟩
+  · have e1 := DFunLike.congr_fun (C.into_step hβ.le PUnit.unit) x
+    have e2 := DFunLike.congr_fun (C'.into_step (e.withTopCongr.monotone hβ.le) PUnit.unit) x
+    show s.2.1 (ψ.onVertex PUnit.unit ((C.into k).onVertex PUnit.unit x)) =
+      s.2.2 (ψ'.onVertex PUnit.unit ((C'.into (e.withTopCongr k)).onVertex PUnit.unit x))
+    rw [← e1, ← e2]
+    exact (congrArg s.2.1 (hψ _)).trans ((hA x).trans (congrArg s.2.2 (hψ' _)).symm)
+  · have hle : (m : WithTop L.δ) ≤ β := le_of_not_gt fun h => hβ.2 h hmk'
+    rcases hle.lt_or_eq with hlt | heq
+    · have m1 := congrArg Sigma.snd (C.mark_step m hlt hβ.le a)
+      have m2 := congrArg Sigma.snd (C'.mark_step (e m) (e.withTopCongr.strictMono hlt)
+        (e.withTopCongr.monotone hβ.le) (ei m a))
+      show s.2.1 (ψ.onVertex PUnit.unit (C.mark m k hmk' a).2) =
+        s.2.2 (ψ'.onVertex PUnit.unit (C'.mark (e m) _ _ (ei m a)).2)
+      rw [← m1, ← m2]
+      exact (congrArg s.2.1 (hψ _)).trans ((hmk m hlt a).trans (congrArg s.2.2 (hψ' _)).symm)
+    · exact ((hemp m heq.symm).false a).elim
+
 /-- The base state at a first stage. -/
 theorem infra_712u_base_R (k : WithTop L.δ) (hk : IsMin k) :
     ∃ s, infra_712u_StateOK C C' e ei k s := by

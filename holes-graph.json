@@ -3303,7 +3303,7 @@
    "file": "AEC/Section7/Lemma712Common.lean",
    "status": "open",
    "blocker": null,
-   "detail": "Open (cycle 89). Needed because lemma_7_12 (2) bounds the total length #(Sigma i, indexAt i) <= mu, not #delta. Proved inputs: infra_712u_packed_limit_cofinal (limits of cofinality <= mu), infra_712u_nontrivial_card (<= mu non-surjective steps per chain; <= mu nonempty entries). Remaining: (a) a trivial successor op (empty marks, both steps bijective: keep N, compose with the inverse steps); (b) at limits of cofinality > mu the nontrivial indices are bounded below k, so the system is eventually bijective and N_b with inverse maps serves as the limit; (c) re-run the infra_712u_good induction with these ops (track eventual bijectivity). Alternative: if the paper intends nonempty tuples, add #L.delta <= mu to clause (2) only with the user's agreement."
+   "detail": "Open (cycle 89). Needed because lemma_7_12 (2) bounds the total length #(Sigma i, indexAt i) <= mu, not #delta. Proved inputs: infra_712u_packed_limit_cofinal (limits of cofinality <= mu), infra_712u_nontrivial_card (<= mu non-surjective steps per chain; <= mu nonempty entries). Also proved: infra_712u_trivial_R (trivial successor op keeps N). Remaining: (b) at limits of cofinality > mu the nontrivial indices are bounded below k, so the system is eventually bijective and N_b with inverse maps serves as the limit; (c) re-run the infra_712u_good induction with these ops (track eventual bijectivity). Alternative: if the paper intends nonempty tuples, add #L.delta <= mu to clause (2) only with the user's agreement."
   },
   {
    "id": "infra_712u_packed_limit_cofinal",
@@ -3322,6 +3322,15 @@
    "status": "done",
    "blocker": null,
    "detail": "PROVED cycle 89: infra_712u_nontrivial_card: beta |-> an element of M_top first appearing at beta+1 is injective into mu.ord.ToType. Counting input for infra_712u_common_long. Axioms clean."
+  },
+  {
+   "id": "infra_712u_trivial_R",
+   "label": "7.12(2) trivial successor step (empty entry, onto steps): keep N",
+   "section": 7,
+   "file": "AEC/Section7/Lemma712Common.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "PROVED cycle 89: infra_712u_trivial_R: empty entry at beta and both chain steps onto => the state is kept (N unchanged, functions composed with the inverse steps via infra_78_struct_inverse, identity transition) and is valid at beta+1. Successor op for infra_712u_common_long. Axioms clean."
   }
  ],
  "edges": [
@@ -6714,8 +6723,13 @@
    "from": "infra_712u_nontrivial_card",
    "to": "infra_712u_common_long",
    "kind": "hard"
+  },
+  {
+   "from": "infra_712u_trivial_R",
+   "to": "infra_712u_common_long",
+   "kind": "hard"
   }
  ],
- "doneCount": 306,
+ "doneCount": 307,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
