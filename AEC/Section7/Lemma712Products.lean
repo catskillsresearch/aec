@@ -431,5 +431,36 @@ theorem lemma_7_12_existence (P : SingleModelData K) {μ : Cardinal.{u}} (hμ : 
     infra_712_existence_at P hμ A :=
   infra_712_existence_at_of_products P (infra_712_products P) hμ ht hc h0 h1 hw1 hw2 A
 
+/-- The 7.12(1) levels: Theorem 7.9 levels above `infra_75_wide P ℵ₀`. -/
+def infra_712_levels (P : SingleModelData K) : Set Cardinal.{u} :=
+  {μ | μ ∈ infra_78_closedTail P ∧ μ ∈ infra_615_closed P ∧ infra_75_wide P ℵ₀ < μ}
+
+/-- A Section 6.15 closed level is closed for the recursion at every smaller infinite size. -/
+theorem infra_712_recursionClosed_of_615 {P : SingleModelData K} {μ σ : Cardinal.{u}}
+    (hc : μ ∈ infra_615_closed P) (hσ : ℵ₀ ≤ σ) (hlt : σ < μ) :
+    μ ∈ recursionClosedLevels P σ :=
+  ⟨hc.1, fun β₀ hβ => hc.2 σ hσ hlt β₀ hβ⟩
+
+/-- **The 7.12(1) levels form a tail (proved, cycle 88).** -/
+theorem infra_712_levels_tail (P : SingleModelData K) : Tail P.eligible (infra_712_levels P) := by
+  refine ⟨fun μ hμ => hμ.2.1.1, fun κ => ?_⟩
+  obtain ⟨μ, hle, ht, hc⟩ := infra_79_tail P (max κ (Order.succ (infra_75_wide P ℵ₀)))
+  exact ⟨μ, (le_max_left _ _).trans hle, ht, hc,
+    (Order.lt_succ _).trans_le ((le_max_right _ _).trans hle)⟩
+
+/-- **Lemma 7.12 (1) on a tail (proved, cycle 88).** "At sufficiently closed eligible levels":
+on the tail `infra_712_levels P` every level satisfies the hypotheses of
+`lemma_7_12_existence`, so clause (1) of `lemma_7_12` holds there. -/
+theorem lemma_7_12_existence_tail (P : SingleModelData K) :
+    ∃ T, ∃ hT : Tail P.eligible T, ∀ μ (hμ : μ ∈ T) (A : P.scheme.Object μ (Tail.mem hT hμ)),
+      infra_712_existence_at P (Tail.mem hT hμ) A := by
+  refine ⟨infra_712_levels P, infra_712_levels_tail P, fun μ hμ A => ?_⟩
+  obtain ⟨ht, hc, hw⟩ := hμ
+  have hw0 : ℵ₀ ≤ infra_75_wide P ℵ₀ := le_self_add
+  have h0lt : ℵ₀ < μ := hw0.trans_lt hw
+  exact lemma_7_12_existence P _ ht hc (infra_712_recursionClosed_of_615 hc le_rfl h0lt)
+    (Order.succ_le_of_lt h0lt) (infra_712_recursionClosed_of_615 hc hw0 hw)
+    (Order.succ_le_of_lt hw) A
+
 end
 end AEC

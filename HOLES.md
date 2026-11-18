@@ -378,7 +378,7 @@ Lean: imports `AEC.Section6.Results`.
 | `infra_75_product_free` | Prop 7.5(3) tied: product with `b` + all-dominated `Y` ⇒ `tp(x/Y)` free from `X` | **blocked** on `infra_612_tied_symmetry`, `infra_612_tied_finite` |
 | `infra_711_induction` | Lemma 7.11 induction assembly | [`Lemma711Induction.lean`](AEC/Section7/Lemma711Induction.lean) (**done**, cycle 75; `lemma_7_11` from `infra_711_successor_statement`; first stage via `infra_711_tiedFree_of_bijective`, limit via tied 6.13) |
 | `lemma_7_12` | Lemma 7.12 | `AEC/Section7/Results.lean` (**blocked**; restated cycle 76 to the tied notions: `ProductIndependentTied`, `TiedListWitnessingChain`; old untied form removed, unused) |
-| `lemma_7_12_existence` | Lemma 7.12(1) | done (cycle 87): AEC/Section7/Lemma712Products.lean |
+| `lemma_7_12_existence` | Lemma 7.12(1) | done (cycle 87/88): lemma_7_12_existence + lemma_7_12_existence_tail (tail infra_712_levels) |
 | `infra_712_prechain` | 7.12(1) pre-chain construction | **done** (cycle 86; `infra_712_prechain_of_recursion P (infra_712_recursion P)`) |
 | `infra_712_succ` | 7.12(1) successor step | **done** (cycle 85c; `infra_712_succ` via level-wise `infra_79_existence_at` + `infra_79_primeness_same_level`; axioms clean) |
 | `infra_712_limit` | 7.12(1) limit step | **done** (cycle 85d; `infra_712_limit` via `infra_78_chain_union_kappa`; axioms clean) |

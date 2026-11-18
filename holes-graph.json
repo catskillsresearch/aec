@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-18 16:11",
+ "updated": "2026-11-18 16:12",
  "sorryCount": 41,
  "legend": {
   "open": "No unfinished required proof-deps — try next",
@@ -2988,7 +2988,7 @@
    "file": "AEC/Section7/Lemma712Products.lean",
    "status": "done",
    "blocker": null,
-   "detail": "PROVED cycle 87: theorem lemma_7_12_existence (Lemma712Products.lean): at mu in closedTail P, 615closed P, recursionClosedLevels P aleph0 with succ aleph0 <= mu, recursionClosedLevels P (wide P aleph0) with succ wide <= mu: infra_712_existence_at P hmu A, which is verbatim clause (1) of lemma_7_12 (well-ordered L, #L.delta <= mu, ProductIndependentTied L => exists TiedListWitnessingChain with all-dominated increments). Axioms: propext, Classical.choice, Quot.sound. Remaining for lemma_7_12: uniqueness (2) and choosing the tail (intersection of these level sets with the uniqueness tail)."
+   "detail": "PROVED cycle 87/88. lemma_7_12_existence: at mu in closedTail, 615closed, recursionClosedLevels P aleph0 (+succ), recursionClosedLevels P (wide P aleph0) (+succ) gives infra_712_existence_at (verbatim clause (1) of lemma_7_12). Cycle 88: lemma_7_12_existence_tail gives the paper form 'at sufficiently closed eligible levels': on the tail infra_712_levels P = closedTail ∩ 615closed ∩ {wide P aleph0 < mu} (infra_712_levels_tail, from infra_79_tail) every hypothesis holds (615closed gives recursionClosedLevels at every smaller infinite size: infra_712_recursionClosed_of_615). No weakening: lemma_7_12 is itself 'exists tail T'. Axioms clean."
   },
   {
    "id": "lemma_7_12_uniqueness",
