@@ -241,5 +241,195 @@ theorem infra_712_products_of_L (P : SingleModelData K) (hL : infra_712_products
     have := L.finite_each i
     exact inferInstanceAs (Finite (L.indexAt i ⊕ Σ s : Fin n, L.indexAt (ix s).1))
 
+/-- Two Galois identifications through a level-`μ` middle compose (finite first tuple). -/
+theorem infra_712_gtrans (h0 : μ ∈ recursionClosedLevels P ℵ₀) (h1 : Order.succ ℵ₀ ≤ μ)
+    {t1 t2 t3 : TupleOver K oneVertexShape P.scheme hμ A} {ι ι' : Type u}
+    (a : t1.idx ≃ ι) (b : t2.idx ≃ ι) (c : t2.idx ≃ ι') (d : t3.idx ≃ ι')
+    (h2 : t2.ν = μ) (hend : t1.ν = μ ∨ t3.ν = μ) (hf : Finite t1.idx)
+    (h12 : SameGaloisType t1 t2 a b) (h23 : SameGaloisType t2 t3 c d) :
+    SameGaloisType t1 t3 ((a.trans b.symm).trans (c.trans d.symm)) (Equiv.refl _) := by
+  have h12' := infra_612_sameGalois_trans_equiv h12 b.symm
+  rw [Equiv.self_trans_symm] at h12'
+  have h23' := infra_612_sameGalois_trans_equiv h23 d.symm
+  rw [Equiv.self_trans_symm] at h23'
+  have := infra_612_galois_trans_cross_level_of_base_end P ℵ₀ le_rfl hμ h0 h1 A t1 t2 t3
+    (a.trans b.symm) (c.trans d.symm).symm (Cardinal.lt_aleph0_of_finite _).le h2 hend h12'
+    h23'.swap_refl
+  rwa [Equiv.symm_symm] at this
+
+theorem infra_712_sg_congr_left {t1 t2 : TupleOver K oneVertexShape P.scheme hμ A} {ι : Type u}
+    {f f' : t1.idx ≃ ι} {g : t2.idx ≃ ι} (h : SameGaloisType t1 t2 f g)
+    (hf : ∀ x, f x = f' x) : SameGaloisType t1 t2 f' g := Equiv.ext hf ▸ h
+
+theorem infra_712_card_le_fin {α : Type u} [Finite α] (hμ : μ ∈ P.eligible) : #α ≤ μ :=
+  (Cardinal.lt_aleph0_of_finite _).le.trans (P.aleph0_le hμ)
+
+/-- **List products, last entry of an injective selection (proved, cycle 87).** -/
+theorem infra_712_products_L_snoc (h0 : μ ∈ recursionClosedLevels P ℵ₀)
+    (h1 : Order.succ ℵ₀ ≤ μ) (L : TupleList P.scheme hμ A) (hind : ProductIndependentTied L)
+    (n : ℕ) (ixs : Fin (n + 1) → L.δ) (hinj : Function.Injective ixs) :
+    IsProductTied (L.one (ixs (Fin.last n))) (L.subConcat n (fun s => ixs s.castSucc))
+      (L.consJoint (ixs (Fin.last n)) n (fun s => ixs s.castSucc)) (Equiv.refl _) := by
+  classical
+  have hfe := L.finite_each
+  have hfS : ∀ m (jx : Fin m → L.δ), Finite (Σ s, (L.one (jx s)).idx) := fun m jx =>
+    inferInstanceAs (Finite (Σ s, L.indexAt (jx s)))
+  obtain ⟨joint, E, hF, hS⟩ := hind (n + 1) ixs hinj
+  obtain ⟨left, El, hleft, e, hP, hc1, hc2⟩ := hF
+  have hfJ : Finite joint.idx := Finite.of_equiv _ E
+  have hfL : Finite left.idx := Finite.of_equiv _ El
+  obtain ⟨joint', eJ, rJ, hJν, hrJ, hRJ⟩ := infra_712_level_copy joint (infra_712_card_le_fin hμ)
+  obtain ⟨left', eL, rL, hLν, hrL, hRL⟩ := infra_712_level_copy left (infra_712_card_le_fin hμ)
+  have hfL' : Finite left'.idx := Finite.of_equiv _ eL.symm
+  have hfJ' : Finite joint'.idx := Finite.of_equiv _ eJ.symm
+  have hfb : Finite (L.one (ixs (Fin.last n))).idx := hfe _
+  have hP1 := infra_712_productTied_pull_left hrL hRL (infra_712_productTied_pull_joint hrJ hRJ hP)
+  obtain ⟨J2, e2, hP2⟩ := infra_612_tied_exists P ℵ₀ le_rfl hμ h0 h1
+    (L.one (ixs (Fin.last n))) left' rfl hLν (Cardinal.lt_aleph0_of_finite _).le
+  have hfJ2 : Finite J2.idx := Finite.of_equiv _ e2
+  obtain ⟨J2', eJ2, rJ2, hJ2ν, hrJ2, hRJ2⟩ := infra_712_level_copy J2 (infra_712_card_le_fin hμ)
+  have hfJ2' : Finite J2'.idx := Finite.of_equiv _ eJ2.symm
+  have hP2' := infra_712_productTied_pull_joint hrJ2 hRJ2 hP2
+  have hsym := infra_612_tied_symm_level_joints P ℵ₀ le_rfl hμ h0 h1 left'
+    (L.one (ixs (Fin.last n))) hLν rfl (Cardinal.lt_aleph0_of_finite _).le
+    (Cardinal.lt_aleph0_of_finite _).le joint' J2' _ _ hP1 hP2' hJν hJ2ν
+  -- the joint side
+  let c : (L.consJoint (ixs (Fin.last n)) n (fun s => ixs s.castSucc)).idx ≃
+      (L.subConcat (n + 1) ixs).idx :=
+    (Equiv.sumComm _ _).trans ((Equiv.sumCongr El (Equiv.refl _)).trans (e.trans E.symm))
+  have hcv : ∀ k, (L.subConcat (n + 1) ixs).val (c k) =
+      (L.consJoint (ixs (Fin.last n)) n (fun s => ixs s.castSucc)).val k := by
+    rintro (a | ⟨s, a⟩)
+    · have hc : c (Sum.inl a) = ⟨Fin.last n, a⟩ := by
+        show E.symm (e (Sum.inr a)) = _
+        exact E.symm_apply_eq.2 (hc2 a).symm
+      rw [hc]; rfl
+    · have hc : c (Sum.inr ⟨s, a⟩) = ⟨s.castSucc, a⟩ := by
+        show E.symm (e (Sum.inl (El ⟨s, a⟩))) = _
+        exact E.symm_apply_eq.2 (hc1 s a).symm
+      rw [hc]; rfl
+  have hJ0 : SameGaloisType (L.consJoint (ixs (Fin.last n)) n (fun s => ixs s.castSucc)) joint
+      (c.trans E) (Equiv.refl _) := by
+    obtain ⟨ρ, hρ, top, f1, f2, hf1, hf2, hcomm, hval⟩ := hS
+    refine ⟨ρ, hρ, top, f1, f2, hf1, hf2, hcomm, fun i => ?_⟩
+    rw [← hcv, show c ((c.trans E).symm i) = E.symm i from c.apply_symm_apply (E.symm i)]
+    exact hval i
+  have hJ1 := (infra_712_sameGalois_pull hrJ hRJ hJ0.symm).symm
+  have hJ := infra_712_gtrans h0 h1 _ _ _ _ hJν (Or.inl rfl) (
+    inferInstanceAs (Finite (L.indexAt (ixs (Fin.last n)) ⊕ Σ s : Fin n, L.indexAt (ixs s.castSucc))))
+    hJ1 hsym
+  -- the selection side
+  obtain ⟨joint0, E0, hF0, hS0⟩ := hind n (fun s => ixs s.castSucc)
+    (hinj.comp (Fin.castSucc_injective _))
+  have hfJ0 : Finite joint0.idx := Finite.of_equiv _ E0
+  obtain ⟨joint0', eJ0, r0, hJ0ν, hr0, hR0⟩ := infra_712_level_copy joint0 (infra_712_card_le_fin hμ)
+  have hQ1 := (infra_712_sameGalois_pull hr0 hR0 hS0.symm).symm
+  have hlev0 := infra_712_finiteProduct_toLevel n (fun s => L.one (ixs s.castSucc))
+    (fun s => hfe _) joint0 E0 hF0 joint0' eJ0 r0 hr0 hR0
+  have hlevL := infra_712_finiteProduct_toLevel n (fun s => L.one (ixs s.castSucc))
+    (fun s => hfe _) left El hleft left' eL rL hrL hRL
+  have hperm := infra_612_tied_finite_perm_level P ℵ₀ le_rfl hμ h0 h1 n
+    (fun s => L.one (ixs s.castSucc)) (fun s => ⟨rfl, (Cardinal.lt_aleph0_of_finite (L.indexAt (ixs s.castSucc))).le⟩) 1
+    joint0' left' _ _ hlev0 hlevL hJ0ν hLν
+  have hQ := infra_712_gtrans h0 h1 _ _ _ _ hJ0ν (Or.inl rfl)
+    (hfS n (fun s => ixs s.castSucc)) hQ1 hperm
+  have hQ' : SameGaloisType (L.subConcat n (fun s => ixs s.castSucc)) left' (El.trans eL.symm)
+      (Equiv.refl _) := by
+    refine infra_712_sg_congr_left hQ (fun x => ?_)
+    have h : E0.symm (eJ0 ((E0.trans (eJ0.trans (Equiv.refl _)).symm) x)) = x := by
+      show E0.symm (eJ0 (eJ0.symm (E0 x))) = x
+      rw [eJ0.apply_symm_apply]; exact E0.symm_apply_apply x
+    exact congrArg (El.trans eL.symm) h
+  have hJ' : SameGaloisType (L.consJoint (ixs (Fin.last n)) n (fun s => ixs s.castSucc)) J2'
+      ((Equiv.sumCongr (Equiv.refl _) (El.trans eL.symm)).trans (e2.trans eJ2.symm))
+      (Equiv.refl _) := by
+    refine infra_712_sg_congr_left hJ (fun k => ?_)
+    rcases k with a | y
+    · have hE : E (c (Sum.inl a)) = e (Sum.inr a) := E.apply_symm_apply _
+      have h1 : ((eL.sumCongr (Equiv.refl (L.one (ixs (Fin.last n))).idx)).trans
+          (e.trans eJ.symm)).symm (eJ.symm (e (Sum.inr a))) = Sum.inr a :=
+        Equiv.symm_apply_apply _ (Sum.inr a)
+      show (e2.trans eJ2.symm) ((Equiv.sumComm _ _).symm
+        (((eL.sumCongr (Equiv.refl (L.one (ixs (Fin.last n))).idx)).trans
+          (e.trans eJ.symm)).symm (eJ.symm (E (c (Sum.inl a)))))) = (e2.trans eJ2.symm) (Sum.inl a)
+      rw [hE, h1]
+      rfl
+    · have hE : E (c (Sum.inr y)) = e (Sum.inl (El y)) := E.apply_symm_apply _
+      have h1 : ((eL.sumCongr (Equiv.refl (L.one (ixs (Fin.last n))).idx)).trans
+          (e.trans eJ.symm)).symm (eJ.symm (e (Sum.inl (El y)))) = Sum.inl (eL.symm (El y)) := by
+        rw [Equiv.symm_apply_eq]
+        show _ = eJ.symm (e (Sum.inl (eL (eL.symm (El y)))))
+        rw [eL.apply_symm_apply]
+      show (e2.trans eJ2.symm) ((Equiv.sumComm _ _).symm
+        (((eL.sumCongr (Equiv.refl (L.one (ixs (Fin.last n))).idx)).trans
+          (e.trans eJ.symm)).symm (eJ.symm (E (c (Sum.inr y)))))) = (e2.trans eJ2.symm) _
+      rw [hE, h1]
+      rfl
+  exact infra_712_productTied_transfer P hμ h0 h1 (p := L.one (ixs (Fin.last n))) (q := left')
+    (J := J2') (e := e2.trans eJ2.symm) (p' := L.one (ixs (Fin.last n)))
+    (q' := L.subConcat n (fun s => ixs s.castSucc))
+    (J' := L.consJoint (ixs (Fin.last n)) n (fun s => ixs s.castSucc))
+    (Equiv.refl _) (Equiv.refl _) (El.trans eL.symm)
+    ((Equiv.sumCongr (Equiv.refl _) (El.trans eL.symm)).trans (e2.trans eJ2.symm))
+    (fun s => rfl) (SameGaloisType.refl _) hQ' hJ' rfl rfl hLν rfl hJ2ν rfl hfb hfL'
+    (inferInstanceAs (Finite (L.indexAt (ixs (Fin.last n)) ⊕ Σ s : Fin n, L.indexAt (ixs s.castSucc))))
+    hP2'
+
+/-- **7.12(1), products in the list (proved, cycle 87).** Apply `infra_712_products_L_snoc` to
+the injective selection `snoc ix i`. -/
+theorem infra_712_products_L (P : SingleModelData K) : infra_712_products_L_statement P := by
+  intro μ hμ h0 h1 _ _ A L _ _ hind i n ix hinj hlt
+  let ixs : Fin (n + 1) → L.δ := Fin.snoc (α := fun _ => L.δ) ix i
+  have hinj' : Function.Injective ixs := by
+    intro a b hab
+    induction a using Fin.lastCases with
+    | last =>
+      induction b using Fin.lastCases with
+      | last => rfl
+      | cast t =>
+        simp only [ixs, Fin.snoc_last, Fin.snoc_castSucc] at hab
+        exact absurd hab.symm (hlt t).ne
+    | cast s =>
+      induction b using Fin.lastCases with
+      | last =>
+        simp only [ixs, Fin.snoc_last, Fin.snoc_castSucc] at hab
+        exact absurd hab (hlt s).ne
+      | cast t =>
+        simp only [ixs, Fin.snoc_castSucc] at hab
+        rw [hinj hab]
+  have key := infra_712_products_L_snoc h0 h1 L hind n ixs hinj'
+  have e1 : ixs (Fin.last n) = i := Fin.snoc_last (α := fun _ => L.δ) _ _
+  have e2 : (fun s : Fin n => ixs s.castSucc) = ix :=
+    funext fun s => Fin.snoc_castSucc (α := fun _ => L.δ) _ _ _
+  rw [e1, e2] at key
+  exact key
+
+
+/-- **7.12(1), products along the chain (proved, cycle 87).** -/
+theorem infra_712_products (P : SingleModelData K) : infra_712_products_statement P :=
+  infra_712_products_of_L P (infra_712_products_L P)
+
+/-- **7.12(1), the free step (proved, cycle 87).** -/
+theorem infra_712_free_step (P : SingleModelData K) : infra_712_free_step_statement P :=
+  infra_712_free_step_of_products P (infra_712_products P)
+
+/-- **7.12(1), all marks free (proved, cycle 87).** -/
+theorem infra_712_free_marks (P : SingleModelData K) : infra_712_free_marks_statement P :=
+  infra_712_free_marks_of_step P (infra_712_free_step P)
+
+/-- **Lemma 7.12 (1) (proved, cycle 87).** At every level of `A` that is a Theorem 7.9 level
+(`infra_78_closedTail P ∩ infra_615_closed P`) and a Lemma 7.11 level (closed for the
+`ℵ₀`- and `infra_75_wide P ℵ₀`-recursions, above their successors): "If `L` is well-ordered
+[of length `≤ μ`] and product-independent over `A`, then `L` has a witnessing chain in which
+all increments are all-dominated" — exactly clause (1) of `lemma_7_12`
+(`infra_712_existence_at`). -/
+theorem lemma_7_12_existence (P : SingleModelData K) {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
+    (ht : μ ∈ infra_78_closedTail P) (hc : μ ∈ infra_615_closed P)
+    (h0 : μ ∈ recursionClosedLevels P ℵ₀) (h1 : Order.succ ℵ₀ ≤ μ)
+    (hw1 : μ ∈ recursionClosedLevels P (infra_75_wide P ℵ₀))
+    (hw2 : Order.succ (infra_75_wide P ℵ₀) ≤ μ) (A : P.scheme.Object μ hμ) :
+    infra_712_existence_at P hμ A :=
+  infra_712_existence_at_of_products P (infra_712_products P) hμ ht hc h0 h1 hw1 hw2 A
+
 end
 end AEC

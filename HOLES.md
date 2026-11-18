@@ -378,14 +378,14 @@ Lean: imports `AEC.Section6.Results`.
 | `infra_75_product_free` | Prop 7.5(3) tied: product with `b` + all-dominated `Y` ⇒ `tp(x/Y)` free from `X` | **blocked** on `infra_612_tied_symmetry`, `infra_612_tied_finite` |
 | `infra_711_induction` | Lemma 7.11 induction assembly | [`Lemma711Induction.lean`](AEC/Section7/Lemma711Induction.lean) (**done**, cycle 75; `lemma_7_11` from `infra_711_successor_statement`; first stage via `infra_711_tiedFree_of_bijective`, limit via tied 6.13) |
 | `lemma_7_12` | Lemma 7.12 | `AEC/Section7/Results.lean` (**blocked**; restated cycle 76 to the tied notions: `ProductIndependentTied`, `TiedListWitnessingChain`; old untied form removed, unused) |
-| `lemma_7_12_existence` | Lemma 7.12(1) | [`Lemma712Existence.lean`](AEC/Section7/Lemma712Existence.lean) (**blocked** on `infra_712_products` only, via `infra_712_free_marks`; glue `infra_712_existence_at_of_products` proved cycle 86) |
+| `lemma_7_12_existence` | Lemma 7.12(1) | done (cycle 87): AEC/Section7/Lemma712Products.lean |
 | `infra_712_prechain` | 7.12(1) pre-chain construction | **done** (cycle 86; `infra_712_prechain_of_recursion P (infra_712_recursion P)`) |
 | `infra_712_succ` | 7.12(1) successor step | **done** (cycle 85c; `infra_712_succ` via level-wise `infra_79_existence_at` + `infra_79_primeness_same_level`; axioms clean) |
 | `infra_712_limit` | 7.12(1) limit step | **done** (cycle 85d; `infra_712_limit` via `infra_78_chain_union_kappa`; axioms clean) |
 | `infra_712_recursion` | 7.12(1) recursion assembly | [`Lemma712Recursion.lean`](AEC/Section7/Lemma712Recursion.lean) (**done**, cycle 86; strong subsets of `L.host` via the chain engine; factor arrows strong by coherence; axioms clean) |
-| `infra_712_free_marks` | 7.12(1) all marks free | **blocked** on `infra_712_free_step` (glue `infra_712_free_marks_of_step` proved, cycle 85) |
-| `infra_712_free_step` | 7.12(1) one freeness step | **blocked** on `infra_712_products` (glue `infra_712_free_step_of_products` proved cycle 85b: `TiedListPreChain.truncate`, `free_pull`, level-wise `infra_711_at_level`; axioms clean) |
-| `infra_712_products` | 7.12(1) products of `bᵢ` with earlier marks | blocked on infra_712_products_L (glue infra_712_products_of_L proved) |
+| `infra_712_free_marks` | 7.12(1) all marks free | done (cycle 87): AEC/Section7/Lemma712Products.lean |
+| `infra_712_free_step` | 7.12(1) one freeness step | done (cycle 87): AEC/Section7/Lemma712Products.lean |
+| `infra_712_products` | 7.12(1) products of `bᵢ` with earlier marks | done (cycle 87): AEC/Section7/Lemma712Products.lean |
 | `infra_712_products_level` | 7.12: plain finite tied products → level | [`Lemma712Products.lean`](AEC/Section7/Lemma712Products.lean) (**done**, cycle 86; level copies + one-amalgam pullback; axioms clean) |
 | `lemma_7_12_uniqueness` | Lemma 7.12(2) | **open** (cycle 76; all dependencies done; successor amalgam via 7.9 primeness, not a large amalgam) |
 | `lemma_7_12_bounded` | Lemma 7.12(2), bounded individual tuples | **blocked** on `lemma_7_12_uniqueness`; HARD edge `lemma_7_12_bounded --> lemma_7_12` (cycle 78) |
@@ -584,4 +584,4 @@ Counts are standalone `sorry` lines in `AEC/` (`git grep -nE '^\s*sorry\s*$'`), 
 | `infra_78_tied_local_bounded` | infra_78_tied_local_bounded | `AEC/Section7/TiedLocalCharacter.lean` (**done**: `infra_78_tied_local_bounded`, `IsTiedFreeUpTo`) |
 | `infra_78_tied_testing_reduction` | infra_78_tied_testing_reduction | `AEC/Section7/TiedLocalCharacter.lean` (**done**: `infra_78_tiedFree_of_upTo` — tied-free up to arity `g(σ)+LS(K)` ⇒ full `IsTiedFree`, via the tied free lift + Thm 6.6 testing; no `sorry`) |
 | `infra_712_products_transfer` | infra_712_products_transfer | done (cycle 87): Lemma712Products.lean |
-| `infra_712_products_L` | infra_712_products_L | open: list-level products (statement infra_712_products_L_statement) |
+| `infra_712_products_L` | infra_712_products_L | done (cycle 87): AEC/Section7/Lemma712Products.lean |

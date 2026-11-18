@@ -331,7 +331,9 @@ tuples is tracked separately (`lemma_7_12_bounded`). The former statement over t
 `ListWitnessingChain` / `ProductIndependent` was unused and has been removed. Clause (1) at a
 level is `infra_712_existence_at`, assembled by `infra_712_existence_at_of_parts`
 (`AEC/Section7/Lemma712Existence.lean`, cycle 85) from `infra_712_prechain_statement` and
-`infra_712_free_marks_statement` (both open). -/
+`infra_712_free_marks_statement`; both are proved (`infra_712_prechain_of_recursion`,
+`infra_712_free_marks`), and `lemma_7_12_existence` (`AEC/Section7/Lemma712Products.lean`,
+cycle 87) proves clause (1) at every level in the 7.9 tail that is also a 7.11 level. -/
 theorem lemma_7_12 {K : AbstractElementaryClass.{u}} (P : SingleModelData K) :
     ∃ T, ∃ hT : Tail P.eligible T,
       ∀ μ (hμ : μ ∈ T) (A : P.scheme.Object μ (Tail.mem hT hμ)),

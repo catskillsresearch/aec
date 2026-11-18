@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-18 16:02",
+ "updated": "2026-11-18 16:09",
  "sorryCount": 41,
  "legend": {
   "open": "No unfinished required proof-deps — try next",
@@ -577,7 +577,7 @@
    "section": 7,
    "file": "AEC/Section7/Results.lean",
    "status": "blocked",
-   "blocker": "lemma_7_12_existence, lemma_7_12_uniqueness",
+   "blocker": "lemma_7_12_uniqueness",
    "detail": "RESTATED cycle 76 to the tied notions (English Lemma 7.12): over SingleModelData P, a tail of levels; (1) L well-ordered, #L.delta <= mu (Def 7.10 size convention), ProductIndependentTied L (tied finite products of finite sublists, IsFiniteProductTied)  ==>  exists C : TiedListWitnessingChain L with C.AllDominatedIncrement (top/listToTop/mark_spec = the whole configuration retained in an extension of the given ambient); (2) L, L' of total length <= mu with tied witnessing chains and the same successive marginal types over A (order iso e, per-entry equivs ei)  ==>  SameGaloisType L.whole L'.whole (one amalgam identifies the entire lists). Old untied statement removed (unused). Split: lemma_7_12_existence (clause 1), lemma_7_12_uniqueness (clause 2); the paper's extension of (2) to bounded individual tuples is lemma_7_12_bounded. Remaining untied consumer: theorem_7_13 still uses ProductIndependent / ListWitnessingChain-era notions."
   },
   {
@@ -2985,10 +2985,10 @@
    "id": "lemma_7_12_existence",
    "label": "Lemma 7.12(1): product-independent lists have all-dominated-increment tied chains",
    "section": 7,
-   "file": "AEC/Section7/Lemma712Existence.lean",
-   "status": "blocked",
-   "blocker": "infra_712_free_marks",
-   "detail": "Clause (1) of lemma_7_12 at a level = infra_712_existence_at. Glue infra_712_existence_at_of_products (cycle 86) proves it from infra_712_products_statement alone: pre-chain (done) + free marks (WellFoundedLT induction + 7.11 on the truncated chain). Remaining: infra_712_products."
+   "file": "AEC/Section7/Lemma712Products.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "PROVED cycle 87: theorem lemma_7_12_existence (Lemma712Products.lean): at mu in closedTail P, 615closed P, recursionClosedLevels P aleph0 with succ aleph0 <= mu, recursionClosedLevels P (wide P aleph0) with succ wide <= mu: infra_712_existence_at P hmu A, which is verbatim clause (1) of lemma_7_12 (well-ordered L, #L.delta <= mu, ProductIndependentTied L => exists TiedListWitnessingChain with all-dominated increments). Axioms: propext, Classical.choice, Quot.sound. Remaining for lemma_7_12: uniqueness (2) and choosing the tail (intersection of these level sets with the uniqueness tail)."
   },
   {
    "id": "lemma_7_12_uniqueness",
@@ -3112,27 +3112,27 @@
    "label": "7.12(1) freeness of marks",
    "section": 7,
    "file": "AEC/Section7/Lemma712Existence.lean",
-   "status": "blocked",
-   "blocker": "infra_712_free_step",
-   "detail": "infra_712_free_marks_statement: at a 7.11 level, in an all-dominated pre-chain of a ProductIndependentTied list, every C.FreeAt i. Glue infra_712_free_marks_of_step (proved, WellFoundedLT.induction) from infra_712_free_step."
+   "status": "done",
+   "blocker": null,
+   "detail": "PROVED cycle 87: infra_712_free_marks := infra_712_free_marks_of_step P (infra_712_free_step P)."
   },
   {
    "id": "infra_712_free_step",
    "label": "7.12(1) one freeness step",
    "section": 7,
    "file": "AEC/Section7/Lemma712Existence.lean",
-   "status": "blocked",
-   "blocker": "infra_712_products",
-   "detail": "infra_712_free_step_statement: marks below i free => b_i free over M_i from A. Glue infra_712_free_step_of_products PROVED (cycle 85b): TupleList.below i, TiedListPreChain.truncate (sorry-free Def 7.10 chain of L.below i, top stage M_i, freeness via free_pull = host_target/host_source' along step i<=top), truncate_allDominated, and infra_711_at_level (level-wise Lemma 7.11, factored out of infra_711_induction) applied to x = markTuple i. Remaining: infra_712_products."
+   "status": "done",
+   "blocker": null,
+   "detail": "PROVED cycle 87: infra_712_free_step := infra_712_free_step_of_products P (infra_712_products P)."
   },
   {
    "id": "infra_712_products",
    "label": "7.12(1) products of b_i with earlier marks",
    "section": 7,
    "file": "AEC/Section7/Lemma712Existence.lean",
-   "status": "blocked",
-   "blocker": "infra_712_products_L",
-   "detail": "Reduced (cycle 87) to infra_712_products_L via infra_712_products_of_L (proved); transfer lemma infra_712_productTied_transfer proved."
+   "status": "done",
+   "blocker": null,
+   "detail": "PROVED cycle 87: infra_712_products := infra_712_products_of_L P (infra_712_products_L P). Axioms clean."
   },
   {
    "id": "infra_712_succ",
@@ -3184,9 +3184,9 @@
    "label": "7.12(1) products in the list: b_i tied-product with finite earlier selections",
    "section": 7,
    "file": "AEC/Section7/Lemma712Products.lean",
-   "status": "open",
+   "status": "done",
    "blocker": null,
-   "detail": "Open (cycle 87). Statement infra_712_products_L_statement. Plan: ProductIndependentTied on snoc(ix,i) -> level product (infra_712_finiteProduct_toLevel) -> regroup last factor to the front (infra_612_tied_exists + tied_symm_level_joints, finite_perm_level with identity on ix) -> base_end transitivity at mu. Main friction: Fin.snoc at last/castSucc is propositional."
+   "detail": "PROVED cycle 87: infra_712_products_L via infra_712_products_L_snoc (ProductIndependentTied on snoc ix i; level copies of left/joint; tied_exists + tied_symm_level_joints for b_i first; finite_perm_level with pi=1 to identify left' with the selection; infra_712_gtrans middles at mu; infra_712_productTied_transfer). Axioms clean."
   }
  ],
  "edges": [
@@ -6509,6 +6509,6 @@
    "note": "products_of_L"
   }
  ],
- "doneCount": 289,
+ "doneCount": 294,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
