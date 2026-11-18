@@ -513,6 +513,56 @@ theorem infra_713_lift_det_permitted (P : SingleModelData K) {μ : Cardinal.{u}}
   rw [hk]
   exact hv i
 
+/-- **Tied freeness of a bounded PI list from its finite subtuples (proved, cycle 92; toward
+`infra_713_continuity`).** If every finite subtuple of `b` over `B` is a tied free lift of the
+corresponding subtuple of `L.whole`, then `b` is a tied free lift of `L.whole`: compare with a
+tied free lift `q` (`infra_610_tied_free_lift`); finite projections agree by
+`infra_73_tied_unique`, so `q ≡ b` by 7.13(1b) determinacy, and tied freeness transfers. -/
+theorem infra_713_tiedFree_of_finite (P : SingleModelData K) {μ : Cardinal.{u}}
+    (hμ : μ ∈ P.eligible) (hl : μ ∈ infra_712_levels P)
+    (X : P.scheme.Object μ hμ) (L : TupleList P.scheme hμ X) [LinearOrder L.δ] [L.FiniteEach]
+    [WellFoundedLT L.δ] (hPI : ProductIndependentTied L) (hS : #(Σ i, L.indexAt i) < μ)
+    (B : P.scheme.Object μ hμ)
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ B))
+    (hf : P.scheme.permitted (X := X) (Y := B) f)
+    (b : TupleOver K oneVertexShape P.scheme hμ B) (eb : L.whole.idx ≃ b.idx) (hbν : b.ν = μ)
+    (hfin : ∀ (ι : Type u) [Finite ι] (ρ : ι → L.whole.idx), Function.Injective ρ →
+      IsTiedFree f (L.whole.reindex ρ) (b.reindex (fun j => eb (ρ j))) (Equiv.refl ι)) :
+    IsTiedFree f L.whole b eb := by
+  classical
+  have hl' := hl
+  obtain ⟨ht, hc, hw⟩ := hl
+  have hw0 : ℵ₀ ≤ infra_75_wide P ℵ₀ := le_self_add
+  have h0lt : ℵ₀ < μ := hw0.trans_lt hw
+  set σ : Cardinal.{u} := max ℵ₀ #(Σ i, L.indexAt i) with hσdef
+  have hσ : ℵ₀ ≤ σ := le_max_left _ _
+  have hσlt : σ < μ := max_lt h0lt hS
+  have hrec : μ ∈ recursionClosedLevels P σ := infra_712_recursionClosed_of_615 hc hσ hσlt
+  have hσμ : Order.succ σ ≤ μ := Order.succ_le_of_lt hσlt
+  have hwhole : #L.whole.idx ≤ σ := le_max_right _ _
+  obtain ⟨q, eq, hqν, -, hq⟩ := infra_610_tied_free_lift P σ hσ hμ hrec hσμ f hf L.whole rfl hwhole
+  have hSG := infra_713_lift_det_permitted P hμ hl' X L hPI hS B f hf q eq hq hqν b
+    (eq.symm.trans eb) hbν (fun ι _ ix hix => by
+      have hρ : Function.Injective (fun j => eq.symm (ix j)) := eq.symm.injective.comp hix
+      have h1 := infra_713_tiedFree_reindex P σ hσ hμ hrec hσμ f hf L.whole rfl hwhole q eq hqν hq
+        (fun j => eq.symm (ix j)) hρ
+      have hfun : (fun j => eq (eq.symm (ix j))) = ix := funext fun j => eq.apply_symm_apply _
+      rw [hfun] at h1
+      have h2 := hfin ι (fun j => eq.symm (ix j)) hρ
+      have hισ : #(L.whole.reindex (fun j => eq.symm (ix j))).idx ≤ σ :=
+        (Cardinal.lt_aleph0_of_finite ι).le.trans hσ
+      exact infra_73_tied_unique P σ hσ hμ hrec hσμ f hf _ rfl hισ (q.reindex ix)
+        (b.reindex (fun s => (eq.symm.trans eb) (ix s))) (Equiv.refl ι) (Equiv.refl ι) hqν hbν
+        h1 h2)
+  have hM : IsTiedFreeMixed f L.whole q eq := hq
+  have hlt : #L.whole.idx < μ := hS
+  have H := infra_79_tiedFreeMixed_right_congr (q := L.whole) (qB := q) (qB' := b) f eq
+    (eq.symm.trans eb) hM hSG hlt (le_of_eq hqν.symm) (le_of_eq hbν.symm)
+  have hE : eq.trans (eq.symm.trans eb) = eb := by
+    ext t
+    simp
+  exact hE ▸ H
+
 /-- **Theorem 7.13 (1b), product independence (proved, cycle 92; was tip `infra_713_lift_pi`).** -/
 theorem infra_713_lift_pi (P : SingleModelData K) : infra_713_lift_pi_statement P :=
   fun hμ hl X L _ _ _ hPI hS B f hf q eq hq hqν n ix hinj =>

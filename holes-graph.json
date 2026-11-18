@@ -3411,7 +3411,7 @@
    "file": "AEC/Section7/Theorem713.lean",
    "status": "open",
    "blocker": null,
-   "detail": "Open (cycle 91). infra_713_continuity_statement: SatisfiesContinuityTied L.whole (tied Def 7.7, every sufficiently closed level mu' >= mu, IsTiedFreeMixed base). Plan: infra_78_tied_continuity on finite subtuples at mu' + (1b)/(1a) at the union. The mu' > mu part needs cross-level (mixed) tied machinery; if so, split it off as its own tip rather than weakening."
+   "detail": "Open (cycle 91). infra_713_continuity_statement: SatisfiesContinuityTied L.whole (tied Def 7.7, every sufficiently closed level mu' >= mu, IsTiedFreeMixed base). Plan: infra_78_tied_continuity on finite subtuples at mu' + (1b)/(1a) at the union. The mu' > mu part needs cross-level (mixed) tied machinery; if so, split it off as its own tip rather than weakening. | Cycle 92: infra_713_tiedFree_of_finite done (finite-subtuple criterion at a level). Remaining: (a) same-level case mu'=mu: list over X0 from b|X0 is PI (infra_713_lift_pi_permitted along g), finite subtuples tied free over the union by infra_78_finite_continuity, then infra_713_tiedFree_of_finite; note SatisfiesContinuityTied does not require g permitted (lift_pi needs it) -- review whether Def 7.7-tied should carry permitted g like the English extension; (b) mu' > mu: mixed-level, likely needs cross-level tied machinery (split off as own tip if so)."
   },
   {
    "id": "infra_713_realize",
@@ -3493,6 +3493,15 @@
    "status": "done",
    "blocker": null,
    "detail": "PROVED cycle 92 (axioms clean): PI list over X, injective selection ix; qs s tied free lifts of L.one (ix s), qJ tied free lift of L.subConcat n ix along permitted f (all at mu) ==> IsFiniteProductTied n qs qJ. Used for lift_det: q' with the same finite projection types as q has tied free projections (infra_79_tiedFreeMixed_right_congr), hence is PI over B."
+  },
+  {
+   "id": "infra_713_tiedFree_of_finite",
+   "label": "Tied freeness of a bounded PI list from its finite subtuples",
+   "section": 7,
+   "file": "AEC/Section7/Theorem713.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "PROVED cycle 92 (axioms clean): level mu in infra_712_levels, L PI bounded over X, f : X -> B permitted, b over B at mu; every finite injective subtuple of b a tied free lift of the corresponding subtuple of L.whole ==> IsTiedFree f L.whole b eb. Via infra_610_tied_free_lift, infra_73_tied_unique on finite projections, infra_713_lift_det_permitted, infra_79_tiedFreeMixed_right_congr. Intended use in infra_713_continuity: finite continuity (infra_78_finite_continuity) on finite subtuples + this at the union (same-level case)."
   }
  ],
  "edges": [
@@ -7012,8 +7021,14 @@
    "to": "infra_713_lift_det",
    "kind": "hard",
    "note": ""
+  },
+  {
+   "from": "infra_713_tiedFree_of_finite",
+   "to": "infra_713_continuity",
+   "kind": "hard",
+   "note": ""
   }
  ],
- "doneCount": 329,
+ "doneCount": 330,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

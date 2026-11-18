@@ -403,6 +403,7 @@ Lean: imports `AEC.Section6.Results`.
 | `infra_713_finite_base_change` | finite level tied product under tied free base change | **done** (cycle 92, `Theorem713Products.lean`) |
 | `infra_713_pi_core` | finite products from tied free factor/selection lifts | **done** (cycle 92, `Theorem713.lean`) |
 | `infra_713_lift_det` | Thm 7.13 (1b-ii), determined by finite data | **done** (cycle 92, `infra_713_lift_det_permitted`) |
+| `infra_713_tiedFree_of_finite` | tied freeness of a bounded PI list from its finite subtuples | **done** (cycle 92, `Theorem713.lean`; toward `infra_713_continuity`) |
 | `infra_713_continuity` | Thm 7.13 (2), tied Def 7.7 | **open** (cycle 91) |
 | `infra_713_realize` | Thm 7.13 (3) | **open**, hard (bounded-mark 7.8/7.9) |
 
