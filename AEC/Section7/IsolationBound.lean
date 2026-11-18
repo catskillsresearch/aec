@@ -16,9 +16,8 @@ not mention the tuple values (`infra_73_ext_isFreeLift`); English “≠ free li
 tied clause. `infra_73_alt2` builds alt 2 from a family-competitor (stand-in for the
 English RetWell / free-block transport).
 
-Uniform shrink (`isolation ⇒ IsTiedFree`) is demoted with `same_head`, matching Lemma
-7.2’s over-`B` isolation. Helpers `infra_73_copy_tail_swap` and `infra_73_moves_agree`
-remain for a later upgrade.
+Uniform shrink is `infra_73_uniform_of_isolated`: relative isolation rules out the
+untied branch, so some isolating fragment has size at most `h(σ)`.
 -/
 
 namespace AEC
@@ -512,6 +511,7 @@ theorem infra_73_alt2
       (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ B))
       (hf : P.scheme.permitted (X := A) (Y := B) f)
       (qB : TupleOver K oneVertexShape P.scheme hμ B) (eB : q.idx ≃ qB.idx),
+      qB.ν = μ ∧
       SameGaloisType q (qB.restrict f hf) eB (Equiv.refl qB.idx) ∧
       IsFreeLift (q.marginal e) (qB.marginal (eB.symm.trans e)) f hf (Equiv.refl uIdx) ∧
       ¬ IsTiedFree f q qB eB := by
@@ -673,7 +673,7 @@ theorem infra_73_alt2
     infra_73_ext_isFreeLift σ hσ hμ hrec hσSucc f hf (q.marginal e)
       (qB.marginal (eB.symm.trans e)) (Equiv.refl uIdx)
       (by simpa [TupleOver.marginal] using hqν) rfl hidxu hidxuμ hMargS
-  refine ⟨B, f, hf, qB, eB, hExt, hMargFree, ?_⟩
+  refine ⟨B, f, hf, qB, eB, rfl, hExt, hMargFree, ?_⟩
   intro hTied
   obtain ⟨β, Zt, hβ, hdiff⟩ :=
     infra_73_differing_test P σ hσ hμ hrec hσSucc q q' e e' hqν hq'ν hidx hidxμ hneq
@@ -887,6 +887,251 @@ theorem infra_73_moves_agree
     (P.scheme.diagram_symm A q.host _ _ h0)
     (P.scheme.diagram_trans A A q.host _ _ _ hJoint h1)
 
+/-! ## Move a query over an isolating fragment
+
+Saturation of one list `W ++ concat(seq) ++ Z`. `diagram_iso` pulls the query half back
+into `A`, fixing `W` and the approximation concat. Each copy is then one `seqJoint`
+(`diagramEq_precomp`); the fragment is not glued on afterwards.
+-/
+
+set_option maxHeartbeats 800000 in
+theorem infra_73_move_over_fragment
+    {P : SingleModelData K} {μ : Cardinal.{u}} {hμ : μ ∈ P.eligible}
+    {A B : P.scheme.Object μ hμ}
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ B))
+    (hf : P.scheme.permitted (X := A) (Y := B) f)
+    {q : TupleOver K oneVertexShape P.scheme hμ A}
+    (seq : ApproximationSequence q)
+    {wι ι : Type u}
+    (W : wι → Occurrence K oneVertexShape (P.scheme.asSystem hμ A))
+    (Z : ι → Occurrence K oneVertexShape (P.scheme.asSystem hμ B))
+    (hW : #wι < μ) (hι : #ι < μ) :
+    ∃ Z' : ι → Occurrence K oneVertexShape (P.scheme.asSystem hμ A),
+      ∀ i : seq.κIndex,
+        P.scheme.DiagramEq (X := A) (Y := B)
+          (seqJoint (seq.family i) (Sum.elim W Z'))
+          (seqJoint
+            (fun j =>
+              ⟨(seq.family i j).1, f.onVertex (seq.family i j).1 (seq.family i j).2⟩)
+            (Sum.elim (pushParams f W) Z)) := by
+  classical
+  let α : Type u := wι ⊕ (seq.κIndex × q.idx)
+  let xs : α → Occurrence K oneVertexShape (P.scheme.asSystem hμ A) :=
+    Sum.elim W (fun ij => seq.family ij.1 ij.2)
+  let base : α → Occurrence K oneVertexShape (P.scheme.asSystem hμ B) :=
+    fun a => ⟨(xs a).1, f.onVertex (xs a).1 (xs a).2⟩
+  let ext : α ⊕ ι → Occurrence K oneVertexShape (P.scheme.asSystem hμ B) :=
+    Sum.elim base Z
+  have hα : #α < μ := by
+    rw [mk_sum, lift_id, lift_id]
+    exact add_lt_of_lt (P.aleph0_le hμ) hW seq.concat_bounded
+  have hEqPush : P.scheme.DiagramEq (X := A) (Y := B) xs base :=
+    P.scheme.diagram_preserved A B f hf xs hα hα
+  obtain ⟨Zext, g, zs, -, hzs, hzsEq⟩ :=
+    (SingleModelData.isSaturated (P := P)).saturated
+      A B xs base ext hα hι (fun _ => rfl) hEqPush
+  have hPushG : P.scheme.DiagramEq (X := A) (Y := Zext) xs
+      (fun a => ⟨(xs a).1, g.onVertex (xs a).1 (xs a).2⟩) :=
+    P.scheme.diagram_preserved A Zext g trivial xs hα hα
+  have hxsZs : (fun a => ⟨(xs a).1, g.onVertex (xs a).1 (xs a).2⟩) =
+      fun a => zs (Sum.inl a) := funext fun a => (hzs a).symm
+  have hEqZsInl : P.scheme.DiagramEq (X := A) (Y := Zext) xs (fun a => zs (Sum.inl a)) := by
+    rw [← hxsZs]
+    exact hPushG
+  obtain ⟨φ, hφiso, hφ⟩ :=
+    (P.scheme.diagram_iso A Zext xs (fun a => zs (Sum.inl a)) hα).mp hEqZsInl
+  have hφbij : Bijective (φ.onVertex PUnit.unit) := hφiso PUnit.unit
+  let eφ : A.model.carrier ≃ Zext.model.carrier := Equiv.ofBijective _ hφbij
+  let Z' : ι → Occurrence K oneVertexShape (P.scheme.asSystem hμ A) :=
+    fun j => A.occ (eφ.symm (Zext.val (zs (Sum.inr j))))
+  let jointA : α ⊕ ι → Occurrence K oneVertexShape (P.scheme.asSystem hμ A) :=
+    Sum.elim xs Z'
+  have hφjoint : ∀ t, zs t =
+      ⟨(jointA t).1, φ.onVertex (jointA t).1 (jointA t).2⟩ := by
+    intro t
+    cases t with
+    | inl a =>
+      exact hφ a
+    | inr j =>
+      have happly : φ.onVertex PUnit.unit (eφ.symm (Zext.val (zs (Sum.inr j)))) =
+          Zext.val (zs (Sum.inr j)) := eφ.apply_symm_apply _
+      refine Eq.trans (SMObject.occ_val Zext (zs (Sum.inr j))).symm ?_
+      refine Eq.trans (congrArg Zext.occ happly.symm) ?_
+      simp only [jointA, Z', SMObject.occ, oneVertexOcc, SMObject.val, oneVertexVal]
+      rfl
+  have hPushφ : P.scheme.DiagramEq (X := A) (Y := Zext) jointA zs := by
+    have hcard : #(α ⊕ ι) < μ := by
+      rw [mk_sum, lift_id, lift_id]
+      exact add_lt_of_lt (P.aleph0_le hμ) hα hι
+    have h := P.scheme.diagram_preserved A Zext φ trivial jointA hcard hcard
+    have heq : (fun t => ⟨(jointA t).1, φ.onVertex (jointA t).1 (jointA t).2⟩) = zs :=
+      funext fun t => (hφjoint t).symm
+    rwa [heq] at h
+  have hJointExt : P.scheme.DiagramEq (X := A) (Y := B) jointA ext :=
+    P.scheme.diagram_trans A Zext B jointA zs ext hPushφ hzsEq
+  refine ⟨Z', fun i => ?_⟩
+  let ρ : q.idx ⊕ (wι ⊕ ι) → α ⊕ ι := fun t =>
+    match t with
+    | Sum.inl j => Sum.inl (Sum.inr (i, j))
+    | Sum.inr (Sum.inl w) => Sum.inl (Sum.inl w)
+    | Sum.inr (Sum.inr k) => Sum.inr k
+  have hρ : Injective ρ := by
+    intro x y hxy
+    cases x with
+    | inl j =>
+      cases y with
+      | inl j' =>
+        simp only [ρ] at hxy
+        exact congrArg Sum.inl (Prod.ext_iff.mp (Sum.inr.inj (Sum.inl.inj hxy))).2
+      | inr y' =>
+        cases y' with
+        | inl w => simp [ρ] at hxy
+        | inr k => simp [ρ] at hxy
+    | inr x' =>
+      cases x' with
+      | inl w =>
+        cases y with
+        | inl j => simp [ρ] at hxy
+        | inr y' =>
+          cases y' with
+          | inl w' =>
+            simp only [ρ] at hxy
+            exact congrArg (Sum.inr ∘ Sum.inl) (Sum.inl.inj (Sum.inl.inj hxy))
+          | inr k => simp [ρ] at hxy
+      | inr k =>
+        cases y with
+        | inl j => simp [ρ] at hxy
+        | inr y' =>
+          cases y' with
+          | inl w => simp [ρ] at hxy
+          | inr k' =>
+            simp only [ρ] at hxy
+            exact congrArg (Sum.inr ∘ Sum.inr) (Sum.inr.inj hxy)
+  have hpre :=
+    WorkingScheme.diagramEq_precomp (W := P.scheme) A B jointA ext ρ hρ hJointExt
+  have hLρ : (fun t => jointA (ρ t)) =
+      seqJoint (seq.family i) (Sum.elim W Z') := by
+    funext t
+    cases t with
+    | inl _ => rfl
+    | inr t' =>
+      cases t' <;> rfl
+  have hRρ : (fun t => ext (ρ t)) =
+      seqJoint
+        (fun j => ⟨(seq.family i j).1, f.onVertex (seq.family i j).1 (seq.family i j).2⟩)
+        (Sum.elim (pushParams f W) Z) := by
+    funext t
+    cases t with
+    | inl _ => rfl
+    | inr t' =>
+      cases t' with
+      | inl _ =>
+        apply Sigma.ext
+        · exact Subsingleton.elim _ _
+        · rfl
+      | inr _ => rfl
+  rw [← hLρ, ← hRρ]
+  exact hpre
+
+/-! ## Tied answer on one sequence-move
+
+Majority and the sequence-move give `typeJoint Z₀ ~ seqJoint (push copy) Z` as one list.
+The isolating fragment is carried in the same joint (`move_over_fragment`). Free
+evaluation of the marginal is the extension diagram on that fragment; saturation realizes
+the missing `c`-coordinates of a competitor over it. Isolation identifies the competitor
+with `q`, and the resulting joint is the anchored answer on `Z`.
+-/
+
+set_option maxHeartbeats 1600000 in
+theorem infra_73_tied_answer
+    (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : ℵ₀ ≤ σ)
+    {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
+    (hrec : μ ∈ recursionClosedLevels P σ) (hσSucc : Order.succ σ ≤ μ)
+    {A B : P.scheme.Object μ hμ}
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ B))
+    (hf : P.scheme.permitted (X := A) (Y := B) f)
+    (q : TupleOver K oneVertexShape P.scheme hμ A)
+    (qB : TupleOver K oneVertexShape P.scheme hμ B)
+    (eB : q.idx ≃ qB.idx)
+    {uIdx cIdx : Type u} (e : q.idx ≃ uIdx ⊕ cIdx)
+    (hqν : q.ν = μ) (hBν : qB.ν = μ)
+    (hidx : #q.idx ≤ σ) (hidxμ : #q.idx < μ)
+    (hIso : IsRelativelyIsolated q e)
+    (hExt : SameGaloisType q (qB.restrict f hf) eB (Equiv.refl qB.idx))
+    (hMargFree : IsFreeLift (q.marginal e) (qB.marginal (eB.symm.trans e)) f hf
+      (Equiv.refl uIdx))
+    (seq : ApproximationSequence q) {ι : Type u}
+    (Z : ι → Occurrence K oneVertexShape (P.scheme.asSystem hμ B))
+    (Z0 : ι → Occurrence K oneVertexShape (P.scheme.asSystem hμ A))
+    (hlong : seq.τ + ℵ₀ < #(seq.κIndex))
+    (hιτ : #ι ≤ seq.τ) (hιμ : #ι < μ)
+    (hmove : infra_73_isMove f seq Z Z0) :
+    P.scheme.DiagramEq (X := q.host) (Y := qB.host)
+      (typeJoint (p := q) Z0)
+      (infra_612_anchored eB qB.incl qB.val Z) := by
+  -- Stub: statement as written is underhypothesized (`hMargFree` follows from `hExt`
+  -- via `infra_73_ext_isFreeLift`; English Lem 7.2.2 needs tied free evaluation of the
+  -- u-marginal on the actual move `Z`, not untied `IsFreeLift`). See plan tied_tip_fix.
+  sorry
+
+theorem infra_73_tied_of_isolated
+    (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : ℵ₀ ≤ σ)
+    {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
+    (hrec : μ ∈ recursionClosedLevels P σ) (hσSucc : Order.succ σ ≤ μ)
+    {A B : P.scheme.Object μ hμ}
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ B))
+    (hf : P.scheme.permitted (X := A) (Y := B) f)
+    (q : TupleOver K oneVertexShape P.scheme hμ A)
+    (qB : TupleOver K oneVertexShape P.scheme hμ B)
+    (eB : q.idx ≃ qB.idx)
+    {uIdx cIdx : Type u} (e : q.idx ≃ uIdx ⊕ cIdx)
+    (hqν : q.ν = μ) (hBν : qB.ν = μ)
+    (hidx : #q.idx ≤ σ) (hidxμ : #q.idx < μ)
+    (hIso : IsRelativelyIsolated q e)
+    (hExt : SameGaloisType q (qB.restrict f hf) eB (Equiv.refl qB.idx))
+    (hMargFree : IsFreeLift (q.marginal e) (qB.marginal (eB.symm.trans e)) f hf
+      (Equiv.refl uIdx)) :
+    IsTiedFree f q qB eB := by
+  intro seq ι Z Z0 hlong hιτ hιμ hmove
+  exact infra_73_tied_answer P σ hσ hμ hrec hσSucc f hf q qB eB e hqν hBν hidx hidxμ
+    hIso hExt hMargFree seq Z Z0 hlong hιτ hιμ hmove
+
+/-- Relative isolation at a tail level yields an isolating fragment of size at most `h(σ)`.
+The dichotomy's untied branch would be an extension with free marginal and `¬ IsTiedFree`;
+`infra_73_tied_of_isolated` forbids that branch. -/
+theorem infra_73_uniform_of_isolated
+    (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : ℵ₀ ≤ σ)
+    {μ : Cardinal.{u}} (hμT : μ ∈ infra_73_tailSet P σ)
+    {A : P.scheme.Object μ (Tail.mem (infra_73_tail P σ hσ) hμT)}
+    (q : TupleOver K oneVertexShape P.scheme (Tail.mem (infra_73_tail P σ hσ) hμT) A)
+    {uIdx cIdx : Type u} (e : q.idx ≃ uIdx ⊕ cIdx)
+    (hqν : q.ν = μ) (hidx : #q.idx ≤ σ) (hidxμ : #q.idx < μ)
+    (hIso : IsRelativelyIsolated q e) :
+    ∃ (ι : Type u)
+      (Z : ι → Occurrence K oneVertexShape
+        (P.scheme.asSystem (Tail.mem (infra_73_tail P σ hσ) hμT) A)),
+      #ι ≤ infra_73_h P σ ∧ IsIsolatingFragment q e Z := by
+  have hμel : μ ∈ P.eligible := Tail.mem (infra_73_tail P σ hσ) hμT
+  have hrec : μ ∈ recursionClosedLevels P σ := infra_73_tail_rec hμT
+  have hσSucc : Order.succ σ ≤ μ := infra_73_tail_succ hμT
+  obtain ⟨seq, hτ, hκ, hτge, hlong⟩ :=
+    infra_73_sequence P σ hσ hμel hμT q hqν hidx
+  have hτμ : seq.τ < μ := by
+    rw [hτ]
+    exact (Order.lt_succ _).trans (infra_73_h_lt hμel hμT)
+  have hfamμ : #(seq.κIndex × q.idx) < μ :=
+    (infra_73_family_card seq hσ hidx hκ).trans_lt (infra_73_h_lt hμel hμT)
+  by_cases hFam : IsIsolatingFragment q e (infra_73_family seq)
+  · exact ⟨seq.κIndex × q.idx, infra_73_family seq,
+      infra_73_family_card seq hσ hidx hκ, hFam⟩
+  · obtain ⟨q', e', hq'ν, _, hDE, hneq⟩ :=
+      infra_73_competitor q e (infra_73_family seq) hfamμ hFam
+    obtain ⟨B, f, hf, qB, eB, hBν, hExt, hFree, hUntied⟩ :=
+      infra_73_alt2 P σ hσ hμel hrec hσSucc q e hqν hidx hidxμ seq hτge hlong hτμ
+        hfamμ q' e' hq'ν hDE hneq
+    exact False.elim (hUntied (infra_73_tied_of_isolated P σ hσ hμel hrec hσSucc f hf q qB eB
+      e hqν hBν hidx hidxμ hIso hExt hFree))
+
 /-! ## Packaging -/
 
 set_option maxHeartbeats 1600000 in
@@ -928,7 +1173,7 @@ theorem infra_73_lemma
       infra_73_family_card seq hσ hidx hκ, hIso⟩
   · obtain ⟨q', e', hq'ν, _, hDE, hneq⟩ :=
       infra_73_competitor q e (infra_73_family seq) hfamμ hIso
-    obtain ⟨B, f, hf, qB, eB, hExt, hFree, hUntied⟩ :=
+    obtain ⟨B, f, hf, qB, eB, _, hExt, hFree, hUntied⟩ :=
       infra_73_alt2 P σ hσ hμel hrec hσSucc q e hqν hidx hidxμ seq hτge hlong hτμ
         hfamμ q' e' hq'ν hDE hneq
     exact Or.inr ⟨B, f, hf, qB, eB, hExt, hFree, hUntied⟩
