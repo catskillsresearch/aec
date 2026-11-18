@@ -322,10 +322,10 @@ Lean: imports `AEC.Section6.Results`.
 | `proposition_7_3` | Proposition 7.3 | `AEC/Section7/Results.lean` (done: Path A dichotomy green; English uniform shrink `proposition_7_3_uniform` in `BlockRestriction.lean` = `proposition_7_3_uniform_of_block` + `infra_73_block_restriction`) |
 | `proposition_7_5` | Proposition 7.5 | `AEC/Section7/Results.lean` (**done**: clauses 1–2) |
 | `lemma_7_6` | Lemma 7.6 | `AEC/Section7/Results.lean` (done: Path A push-only green; English arbitrary-fragment form `lemma_7_6_tied` in `TiedDescent.lean`) |
-| `proposition_7_8` | Proposition 7.8 | `AEC/Section7/Results.lean` (**blocked** on `infra_78_mixed_level_isolation`; `infra_78_finite_continuity`, `proposition_7_3_uniform`, `lemma_7_6_tied` done; existence sorry) |
-| `theorem_7_9` | Theorem 7.9 | `AEC/Section7/Results.lean:134` |
+| `proposition_7_8` | Proposition 7.8 | `AEC/Section7/Results.lean` (**restated** for SingleModelData; open, blocked on infra_78_mixed_level_isolation) |
+| `theorem_7_9` | Theorem 7.9 | `AEC/Section7/Results.lean` (**restated** for SingleModelData; open) |
 | `lemma_7_11` | Lemma 7.11 | `AEC/Section7/Results.lean:151` |
-| `lemma_7_12` | Lemma 7.12 | `AEC/Section7/Results.lean:163` |
+| `lemma_7_12` | Lemma 7.12 | `AEC/Section7/Results.lean` (**degenerate as formalized**: AEC.Audit.lemma_7_12_statement_vacuous; needs list-linked chain API) |
 | `theorem_7_13` | Theorem 7.13 | `AEC/Section7/Results.lean:176` |
 
 ### L4 — Section 8 (5)
@@ -338,7 +338,7 @@ Lean: imports `Section5.Results` and `Section6.Results`. Soft paper chain after 
 | `lemma_8_3` | Lemma 8.3 | `AEC/Section8/Results.lean:48` |
 | `lemma_8_4` | Lemma 8.4 | `AEC/Section8/Results.lean:65` |
 | `lemma_8_5` | Lemma 8.5 | `AEC/Section8/Results.lean:76` |
-| `theorem_8_6` |  Theorem 8.6 | `AEC/Section8/Results.lean` (**degenerate, NOT done (needs restatement)**: object-free `WorkingScheme.emptied` satisfies `IsWorkingPackage` vacuously; English NOT captured) |
+| `theorem_8_6` |  Theorem 8.6 | `AEC/Section8/Results.lean` (**restated, open**: nonempty objects, doubled shape, marked-pair correspondence) |
 
 ### L5 — Section 9 (7)
 
@@ -346,13 +346,13 @@ Lean: imports S5/S6 Results. Unlocks boundary story for later geometry.
 
 | Decl | Title | Location |
 |------|-------|----------|
-| `proposition_9_1` | Proposition 9.1 | `AEC/Section9/Results.lean` (**degenerate, NOT done (needs restatement)**: statement parenthesized `#α < μ → (DE ↔ DE)`; proved on `T := C.eligible`; English content NOT captured) |
-| `corollary_9_2` | Corollary 9.2 | `AEC/Section9/Results.lean` (**degenerate, NOT done (needs restatement)**: `X' := Z`, `g := f`; English content NOT captured) |
-| `theorem_9_3` |  Theorem 9.3 | `AEC/Section9/Results.lean` (**degenerate, NOT done (needs restatement)**; **statement change** `+[CategoricalUnbounded K]` (unconditional form refuted by `AEC.Audit.theorem_9_3_unconditional_false`); proof via `WorkingScheme.emptied`, English NOT captured) |
+| `proposition_9_1` | Proposition 9.1 | `AEC/Section9/Results.lean` (**restated, open**: explicit SchemeProjection) |
+| `corollary_9_2` | Corollary 9.2 | `AEC/Section9/Results.lean` (**restated, open**: explicit SchemeProjection) |
+| `theorem_9_3` |  Theorem 9.3 | `AEC/Section9/Results.lean` (**restated, open**: ∃ marked `CubeScheme` with proper increments; emptied-scheme proof retired) |
 | `lemma_9_5` | Lemma 9.5 | `AEC/Section9/Results.lean` (**done**: `hpres` along `J.incl`, `h.onFace`, `Kf.incl`, joined by `htrans`) |
-| `theorem_9_6` | Theorem 9.6 | `AEC/Section9/Results.lean` (**degenerate, NOT done (needs restatement)**: `Star := K_f`; top arrows omitted from the statement; English content NOT captured) |
-| `lemma_9_7` | Lemma 9.7 | `AEC/Section9/Results.lean:182` (open, **false as formalized**: `AEC.Audit.lemma_9_7_false`) |
-| `theorem_9_8` |  Theorem 9.8 | `AEC/Section9/Results.lean` (open, **false as stated** for arbitrary face families (`AEC.Audit.theorem_9_8_arbitrary_false`); needs scheme-object hypotheses) |
+| `theorem_9_6` | Theorem 9.6 | `AEC/Section9/Results.lean` (**restated, open**: marked `CubeScheme`, permitted top arrows into a common same-level object; degenerate proof retired) |
+| `lemma_9_7` | Lemma 9.7 | `AEC/Section9/Results.lean` (**restated, open**: marked `CubeScheme`, boundary occurrences, scheme `DiagramEq`) |
+| `theorem_9_8` |  Theorem 9.8 | `AEC/Section9/Results.lean` (**restated, open**: marked `CubeScheme`, `IsStructIso` extension agreeing with `h` on proper faces) |
 
 ### L6 — Section 10 (9)
 
@@ -360,13 +360,13 @@ Lean: imports S5/S6 Results. Soft chain after S9; feeds Corollary 10.10 into S11
 
 | Decl | Title | Location |
 |------|-------|----------|
-| `lemma_10_1` | Lemma 10.1 | `AEC/Section10/Results.lean` (**degenerate/weaker, NOT done (needs restatement)**: injectivity of `g`; free-lift content NOT captured) |
+| `lemma_10_1` | Lemma 10.1 | `AEC/Section10/Results.lean` (**restated, open**: honest hypotheses incl. `MinimalData.ProductAxioms`; see board detail) |
 | `proposition_10_2` | Proposition 10.2 | `AEC/Section10/Results.lean` (open; **statement change**: now assumes `[CategoricalUnbounded K]`; unconditional form refuted by `AEC.Audit.proposition_10_2_unconditional_false`) |
-| `lemma_10_4` | Lemma 10.4 | `AEC/Section10/Results.lean` (open, **false as stated** (`AEC.Audit.lemma_10_4_false`, `noPairs`)) |
-| `theorem_10_5` | Theorem 10.5 | `AEC/Section10/Results.lean` (open, **false as stated** (`AEC.Audit.theorem_10_5_false`, `noPairs`)) |
-| `proposition_10_6` |  Proposition 10.6 | `AEC/Section10/Results.lean` (**degenerate, NOT done (needs restatement)** via `WorkingScheme.emptied`; English NOT captured) |
-| `proposition_10_7` | Proposition 10.7 | `AEC/Section10/Results.lean` (open, **false as stated** (abstract `productCopies` may accept `[a,a]`): `AEC.Audit.proposition_10_7_false`) |
-| `lemma_10_8` | Lemma 10.8 | `AEC/Section10/Results.lean` (open, **defective statement**: conclusion ignores `c`, `β`; refuted at the base pointed model by `AEC.Audit.lemma_10_8_statement_defect`; needs restating from the paper) |
+| `lemma_10_4` | Lemma 10.4 | `AEC/Section10/Results.lean` (**restated, open**: honest hypotheses incl. `MinimalData.ProductAxioms`; see board detail) |
+| `theorem_10_5` | Theorem 10.5 | `AEC/Section10/Results.lean` (**restated, open**: honest hypotheses incl. `MinimalData.ProductAxioms`; see board detail) |
+| `proposition_10_6` |  Proposition 10.6 | `AEC/Section10/Results.lean` (**restated, open**: honest hypotheses incl. `MinimalData.ProductAxioms`; see board detail) |
+| `proposition_10_7` | Proposition 10.7 | `AEC/Section10/Results.lean` (**restated, open**: honest hypotheses incl. `MinimalData.ProductAxioms`; see board detail) |
+| `lemma_10_8` | Lemma 10.8 | `AEC/Section10/Results.lean` (**restated, open**: honest hypotheses incl. `MinimalData.ProductAxioms`; see board detail) |
 | `theorem_10_9` | Theorem 10.9 | `AEC/Section10/Results.lean` (open; **statement change**: hypothesis now `P(B) = f[P(A)]`; original refuted by `AEC.Audit.theorem_10_9_original_false`) |
 | `corollary_10_10` | Corollary 10.10 | `AEC/Section10/Results.lean` (open; **statement change**: hypothesis now `P(B) = f[P(A)]`; original refuted by `AEC.Audit.corollary_10_10_original_false`) |
 
@@ -379,13 +379,13 @@ Lean: imports S5/S6 Results. Soft internal chain:
 | Decl | Title | Location |
 |------|-------|----------|
 | `lemma_11_2` | Lemma 11.2 | `AEC/Section11/Results.lean` (**done**; **statement change**: false 4th clause dropped, refuted by `AEC.Audit.lemma_11_2_inactive_vertex_false`) |
-| `proposition_11_6` | Proposition 11.6 | `AEC/Section11/Results.lean` (**degenerate, NOT done (needs restatement)**; **statement change** `+[CategoricalUnbounded K]`, unconditional form refuted by `AEC.Audit.proposition_11_6_unconditional_false`; English NOT captured) |
-| `proposition_11_7` |  Proposition 11.7 | `AEC/Section11/Results.lean` (**degenerate, NOT done (needs restatement)** via `WorkingScheme.emptied`; English NOT captured) |
-| `claim_11_10` | Claim 11.10 | `AEC/Section11/Results.lean` (open, **false as stated** for arbitrary systems: `AEC.Audit.claim_11_10_arbitrary_false`) |
+| `proposition_11_6` | Proposition 11.6 | `AEC/Section11/Results.lean` (**restated, open**: pointed geometric systems `GeometricSystem.IsPointed D`; see board detail) |
+| `proposition_11_7` |  Proposition 11.7 | `AEC/Section11/Results.lean` (**restated, open**: pointed geometric systems `GeometricSystem.IsPointed D`; see board detail) |
+| `claim_11_10` | Claim 11.10 | `AEC/Section11/Results.lean` (**restated, open**: pointed geometric systems `GeometricSystem.IsPointed D`; see board detail) |
 | `claim_11_11` | Claim 11.11 | `AEC/Section11/Results.lean:306` |
-| `claim_11_12` | Claim 11.12 | `AEC/Section11/Results.lean` (**degenerate, NOT done (needs restatement)**: `U` = `Y` re-pieced by the image of `X`; English NOT captured) |
-| `claim_11_13` | Claim 11.13 | `AEC/Section11/Results.lean:392` (open, **false as formalized**: `AEC.Audit.claim_11_13_false`) |
-| `theorem_11_9` |  Theorem 11.9 | `AEC/Section11/Results.lean` (open, **false as stated** for arbitrary geometric systems (`AEC.Audit.theorem_11_9_arbitrary_false`)) |
+| `claim_11_12` | Claim 11.12 | `AEC/Section11/Results.lean` (**restated, open**: pointed geometric systems `GeometricSystem.IsPointed D`; see board detail) |
+| `claim_11_13` | Claim 11.13 | `AEC/Section11/Results.lean` (**restated, open**: pointed geometric systems `GeometricSystem.IsPointed D`; see board detail) |
+| `theorem_11_9` |  Theorem 11.9 | `AEC/Section11/Results.lean` (**restated, open**: pointed geometric systems `GeometricSystem.IsPointed D`; see board detail) |
 
 ### L8 — Section 12 (4)
 
@@ -393,10 +393,10 @@ Waits on geometric systems / exact boundary story (soft: fewer-axis lifting).
 
 | Decl | Title | Location |
 |------|-------|----------|
-| `theorem_12_2` |  Theorem 12.2 | `AEC/Section12/Results.lean` (open, **false as stated** for arbitrary geometric systems (`AEC.Audit.theorem_12_2_arbitrary_false`)) |
-| `lemma_12_3` | Lemma 12.3 | `AEC/Section12/Results.lean:43` (open, **false as formalized**: tops not tied to faces; `AEC.Audit.lemma_12_3_false`) |
-| `lemma_12_5` | Lemma 12.5 | `AEC/Section12/Results.lean:84` (open; **restated**: `ι` inside the hypothesis; original false: `AEC.Audit.lemma_12_5_original_false`) |
-| `lemma_12_6` | Lemma 12.6 | `AEC/Section12/Results.lean:107` (open, **false as formalized**: strip `V` missing; `AEC.Audit.lemma_12_6_false`) |
+| `theorem_12_2` |  Theorem 12.2 | `AEC/Section12/Results.lean` (**restated, open**; see board detail) |
+| `lemma_12_3` | Lemma 12.3 | `AEC/Section12/Results.lean` (**restated, open**; see board detail) |
+| `lemma_12_5` | Lemma 12.5 | `AEC/Section12/Results.lean` (**restated, open**; see board detail) |
+| `lemma_12_6` | Lemma 12.6 | `AEC/Section12/Results.lean` (**restated, open**; see board detail) |
 
 ### L9 — Section 14 transfer (4)
 
@@ -404,8 +404,8 @@ Chain: `lemma_14_2 → theorem_14_3 → corollary_14_4 → theorem_14_5`.
 
 | Decl | Title | Location |
 |------|-------|----------|
-| `lemma_14_2` | Lemma 14.2 | `AEC/Section14/Results.lean:85` |
-| `theorem_14_3` |  Theorem 14.3 | `AEC/Section14/Results.lean` (open, **false as stated** (`AEC.Audit.theorem_14_3_arbitrary_false`; `A` unlinked)) |
+| `lemma_14_2` | Lemma 14.2 | `AEC/Section14/Results.lean` (**restated, open**: pointed systems linked to the assignment; see board detail) |
+| `theorem_14_3` |  Theorem 14.3 | `AEC/Section14/Results.lean` (**restated, open**: pointed systems linked to the assignment; see board detail) |
 | `corollary_14_4` | Corollary 14.4 | `AEC/Section14/Results.lean:107` (open; **restated** with `[CategoricalUnbounded K]`; unconditional refuted: `AEC.Audit.Pred.corollary_14_4_unconditional_false`) |
 | `theorem_14_5` | Theorem 14.5 | `AEC/Section14/Results.lean:112` |
 
@@ -437,3 +437,9 @@ layer (and thus the whole stack).
 | L9 | 4 |
 | L10 | 2 |
 | **Total** | **56** |
+| `infra_9_cube_scheme` | infra_9_cube_scheme | `AEC/Section9/CubeScheme.lean` (done: cube shape, `CubeScheme`, `faces`, `IsMarked`) |
+| `infra_10_product_axioms` | infra_10_product_axioms | `AEC/Section10/ProductAxioms.lean` (done: `MinimalData.ProductAxioms`, `pointIndep`, `pointClosure`; audit `AEC/Audit/ProductAxiomsAudit.lean`) |
+| `infra_11_pointed_system` | infra_11_pointed_system | `AEC/Section11/PointedSystem.lean` (done: `IsPointed`, pointed arrows, `ReflectsPieces`, `GLCategoricalAt`) |
+| `infra_78_tied_free_lift_mixed` | infra_78_tied_free_lift_mixed | `AEC/Section7/MixedLevel.lean` (**OPEN TIP**) |
+| `infra_78_lemma_7_6_mixed` | infra_78_lemma_7_6_mixed | `AEC/Section7/MixedLevel.lean` (**proved modulo** infra_78_tied_free_lift_mixed) |
+| `infra_78_mixed_level_isolation` | infra_78_mixed_level_isolation | `AEC/Section7/MixedLevel.lean` (**demoted** to infra_78_tied_free_lift_mixed) |

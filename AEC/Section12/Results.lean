@@ -3,6 +3,8 @@ module
 public import AEC.Section12.PrescribedBoundaryIso
 public import AEC.Section2.OrderPresentation
 public import AEC.Section4.NaturalDiagram
+public import AEC.Section11.PointedSystem
+public import AEC.Section1.UnboundedCategoricity
 
 @[expose] public section
 
@@ -15,105 +17,142 @@ set_option linter.unusedVariables false
 
 open FirstOrder Cardinal
 
-/-- **Theorem 12.2** (Exact geometric boundary lifting). At all sufficiently closed uniform
-levels, a prescribed boundary isomorphism extends to an isomorphism of the tops, and that
-isomorphism is an isomorphism of the systems. 
+/-- A prescribed boundary isomorphism of pointed systems preserves the copies of `M₀`. -/
+def PrescribedBoundaryIso.IsPointed {K : AbstractElementaryClass.{u}} {D : MinimalData K}
+    {n : ℕ} {L : Set (Finset (Fin n))} {X Y : GeometricSystem K n L}
+    (PX : X.IsPointed D) (PY : Y.IsPointed D) (h : PrescribedBoundaryIso K X Y) : Prop :=
+  ∀ (s : Finset (Fin n)) (hs : s ≠ Finset.univ) (a : D.M0.carrier),
+    h.onFace s hs (PX.copy s a) = PY.copy s a
 
-**False as stated (kept open, needs hypotheses):** fails for arbitrary geometric systems on `0`
-axes (`AEC.Audit.theorem_12_2_arbitrary_false`). -/
-theorem theorem_12_2 (K : AbstractElementaryClass.{u}) {n : ℕ}
-    {L : Set (Finset (Fin n))} (X Y : GeometricSystem K n L)
-    (h : PrescribedBoundaryIso K X Y) :
-    ∃ e : (X.vertex Finset.univ).carrier ≃[K.τ] (Y.vertex Finset.univ).carrier,
-      K.Strong e.toEmbedding ∧
-      ∀ (s : Finset (Fin n)) (hs : s ≠ Finset.univ) (x : (X.vertex s).carrier),
-        e (X.le (Finset.subset_univ s) x) =
-          Y.le (Finset.subset_univ s) ((h.onFace s hs) x) := by
+/-- Exact geometric boundary lifting (the conclusion of Theorem 12.2) for pointed systems of one
+shape at level `μ`: every pointed prescribed boundary isomorphism extends to a pointed
+isomorphism of all vertices commuting with the inclusions. -/
+def ExactBoundaryLiftingAt {K : AbstractElementaryClass.{u}} (D : MinimalData K) (n : ℕ)
+    (L : Set (Finset (Fin n))) (μ : Cardinal.{u}) : Prop :=
+  ∀ (X Y : GeometricSystem K n L) (PX : X.IsPointed D) (PY : Y.IsPointed D),
+    X.UniformAt μ → Y.UniformAt μ →
+    ∀ h : PrescribedBoundaryIso K X Y, h.IsPointed PX PY →
+      ∃ e : ∀ t, (X.vertex t).carrier ≃[K.τ] (Y.vertex t).carrier,
+        (∀ t, K.Strong (e t).toEmbedding) ∧
+        (∀ t a, e t (PX.copy t a) = PY.copy t a) ∧
+        (∀ (s : Finset (Fin n)) (hs : s ≠ Finset.univ) (x : (X.vertex s).carrier),
+          e s x = h.onFace s hs x) ∧
+        ∀ (s t : Finset (Fin n)) (hst : s ⊆ t) (x : (X.vertex s).carrier),
+          e t (X.le hst x) = Y.le hst (e s x)
+
+/-- **Theorem 12.2** (Exact geometric boundary lifting). For every finite allowed shape, at all
+sufficiently closed uniform levels, every prescribed boundary isomorphism between two systems of
+that shape extends to a pointed isomorphism of their tops; the top isomorphism with its
+prescribed restrictions is an isomorphism of the systems.
+
+**Statement (restated, honest form, open):** systems are pointed geometric systems of the
+minimal type `D` (standing hypotheses added), the boundary isomorphism is pointed, levels range
+over an unbounded class `T` of uniform levels, and the conclusion is `ExactBoundaryLiftingAt`
+(a pointed system isomorphism agreeing with `h`). The former statement for arbitrary systems was
+false (`AEC.Audit.theorem_12_2_arbitrary_false`). -/
+theorem theorem_12_2 (K : AbstractElementaryClass.{u}) [CategoricalUnbounded K]
+    (D : MinimalData K) (hD : D.ProductAxioms) {n : ℕ}
+    {L : Set (Finset (Fin n))} (hL : Admissible n L) :
+    ∃ T : Set Cardinal.{u}, (∀ κ, ∃ μ, κ ≤ μ ∧ μ ∈ T) ∧
+      ∀ μ ∈ T, ExactBoundaryLiftingAt D n L μ := by
   sorry
 
-/-- **Lemma 12.3** (Joint boundary comparisons). Assuming exact boundary lifting in fewer
-axes, a prescribed boundary isomorphism preserves the bounded diagrams, computed in the top
-models, of occurrence-tagged boundary lists.
+/-- **Lemma 12.3** (Joint boundary comparisons). Assume exact geometric boundary lifting for all
+allowed shapes on fewer than `n` axes. At a sufficiently closed uniform level, a prescribed
+boundary isomorphism between two `n`-axis systems preserves the bounded `K`-diagram of every
+occurrence-tagged boundary list, computed in the top models.
 
-**False as formalized (kept open, needs hypotheses):** a `PrescribedBoundaryIso` only matches the
-faces; nothing ties the top vertex to the free amalgam of its faces, so two faces may be disjoint
-in `X` and identified in `Y` (`AEC.Audit.lemma_12_3_false`, two axes, AEC of all sets,
-equality-pattern diagram). Needs the paper's hypothesis that both tops are generated freely
-(independently) over the boundary. -/
-theorem lemma_12_3 (K : AbstractElementaryClass.{u}) {n : ℕ}
-    {L : Set (Finset (Fin n))} (X Y : GeometricSystem K n L)
-    (h : PrescribedBoundaryIso K X Y) (D : StableDiagram K) {α : Type u}
-    (xs : α → (X.vertex Finset.univ).carrier)
-    (hfrom : ∀ i, ∃ (s : Finset (Fin n)) (hs : s ≠ Finset.univ) (x : (X.vertex s).carrier),
-      xs i = X.le (Finset.subset_univ s) x)
-    (hpres : ∀ {M N : Model K.τ} {β : Type u}
-        (f : Language.Embedding K.τ M.carrier N.carrier) (zs : β → M.carrier)
-        (σ : Cardinal.{u}) (hσ : #β ≤ σ) (hM : K.Mem M) (hN : K.Mem N)
-        (hMcard : D.t σ ≤ Model.card M) (hNcard : D.t σ ≤ Model.card N),
-        K.Strong f → D.same hσ hM hN hMcard hNcard zs (fun i => f (zs i)))
-    (htrans : ∀ {M N P : Model K.τ} {β : Type u}
-        (as : β → M.carrier) (bs : β → N.carrier) (cs : β → P.carrier)
-        (σ : Cardinal.{u}) (hσ : #β ≤ σ)
-        (hM : K.Mem M) (hN : K.Mem N) (hP : K.Mem P)
-        (hMcard : D.t σ ≤ Model.card M) (hNcard : D.t σ ≤ Model.card N)
-        (hPcard : D.t σ ≤ Model.card P),
-        D.same hσ hM hN hMcard hNcard as bs →
-        D.same hσ hN hP hNcard hPcard bs cs →
-        D.same hσ hM hP hMcard hPcard as cs) :
-    ∃ ys : α → (Y.vertex Finset.univ).carrier,
-      (∀ i, ∃ (s : Finset (Fin n)) (hs : s ≠ Finset.univ) (x : (X.vertex s).carrier),
-        xs i = X.le (Finset.subset_univ s) x ∧
-        ys i = Y.le (Finset.subset_univ s) ((h.onFace s hs) x)) ∧
-      ∀ (σ : Cardinal.{u}) (hσ : #α ≤ σ)
-        (hX : D.t σ ≤ Model.card (X.vertex Finset.univ))
-        (hY : D.t σ ≤ Model.card (Y.vertex Finset.univ)),
-        (∀ i, ∃ (s : Finset (Fin n)) (hs : s ≠ Finset.univ) (x : (X.vertex s).carrier),
-          xs i = X.le (Finset.subset_univ s) x ∧
-          D.t σ ≤ Model.card (X.vertex s) ∧ D.t σ ≤ Model.card (Y.vertex s)) →
-        D.same hσ (X.inK Finset.univ) (Y.inK Finset.univ) hX hY xs ys := by
+**Statement (restated, honest form, open):** systems are pointed for `D`, `h` is pointed, the
+level is in an unbounded class `T`, and the inductive hypothesis (exact lifting on fewer axes,
+`ExactBoundaryLiftingAt`) is explicit. The former statement about arbitrary systems was false
+(`AEC.Audit.lemma_12_3_false`: faces disjoint in one top, identified in the other). -/
+theorem lemma_12_3 (K : AbstractElementaryClass.{u}) [CategoricalUnbounded K]
+    (D : MinimalData K) (hD : D.ProductAxioms) (SD : StableDiagram K) {n : ℕ}
+    {L : Set (Finset (Fin n))} (hL : Admissible n L) :
+    ∃ T : Set Cardinal.{u}, (∀ κ, ∃ μ, κ ≤ μ ∧ μ ∈ T) ∧
+      ∀ μ ∈ T, (∀ m < n, ∀ L' : Set (Finset (Fin m)), Admissible m L' →
+          ExactBoundaryLiftingAt D m L' μ) →
+      ∀ (X Y : GeometricSystem K n L) (PX : X.IsPointed D) (PY : Y.IsPointed D),
+        X.UniformAt μ → Y.UniformAt μ →
+        ∀ h : PrescribedBoundaryIso K X Y, h.IsPointed PX PY →
+        ∀ {α : Type u} (occ : α → Σ s : {s : Finset (Fin n) // s ≠ Finset.univ},
+            (X.vertex s.1).carrier),
+          #α < μ →
+          ∀ (σ : Cardinal.{u}) (hσ : #α ≤ σ)
+            (hX : SD.t σ ≤ Model.card (X.vertex Finset.univ))
+            (hY : SD.t σ ≤ Model.card (Y.vertex Finset.univ)),
+            SD.same hσ (X.inK Finset.univ) (Y.inK Finset.univ) hX hY
+              (fun i => X.le (Finset.subset_univ _) (occ i).2)
+              (fun i => Y.le (Finset.subset_univ _) (h.onFace (occ i).1.1 (occ i).1.2 (occ i).2)) := by
   sorry
 
 /-- **Lemma 12.5** (Testing on rationally tiled parameter orders). There is a monotone bound
-`g(σ, τ)` such that two placements of tuples of length at most `σ`, in the presence of a
-fixed tuple of length at most `τ`, agree over the tiled parameter layout once they agree on
-queries of size at most that bound.
+`g(σ, τ)` such that two placements of tuples of length at most `σ` in order enlargements of `J`,
+with a fixed tuple `c` of length at most `τ`, have the same comparison over the parameter layout
+together with `c` once they agree on every parameter query of size at most `g(σ, τ)`.
 
-**Statement fix:** the query index type `ι` is now quantified inside the hypothesis. With `ι`
-fixed outside, a query type larger than `g σ τ` makes the hypothesis vacuous and the lemma
-false (`AEC.Audit.lemma_12_5_original_false`). -/
+**Statement (restated, honest form, open):** the candidates `t`, `s` now live in an order
+enlargement `incl : I ↪o Istar` (as in the English; with candidates inside `E(I)` the query could
+contain the candidates themselves), queries and `c` come from `E(I)`, and the conclusion is the
+whole comparison over the layout: agreement on *every* bounded query (the former conclusion only
+compared `(t, c)` with `(s, c)`). The query type is quantified inside the hypothesis (the
+original form was false, `AEC.Audit.lemma_12_5_original_false`).
+**Caveat:** the layout is all of `E(I)` for an arbitrary order `I`, which generalizes the
+English rationally tiled layouts `J₀ + Σ Hᵢ × ℚ`; if this is too strong it must be specialized to
+tiled orders. `StableDiagram` has no restriction / arity-monotonicity clauses, which the proof
+will need (Proposition 4.2 natural-diagram calculus). -/
 theorem lemma_12_5 (K : AbstractElementaryClass.{u}) (E : OrderPresentation K)
     (D : StableDiagram K) :
     ∃ g : Cardinal.{u} → Cardinal.{u} → Cardinal.{u},
       (∀ σ τ σ' τ', σ ≤ σ' → τ ≤ τ' → g σ τ ≤ g σ' τ') ∧
-      ∀ {I : Type u} [LinearOrder I] [Nonempty I] {α β : Type u}
+      ∀ {I Istar : Type u} [LinearOrder I] [Nonempty I] [LinearOrder Istar] [Nonempty Istar]
+        (incl : I ↪o Istar) {α β : Type u}
         (σ τ : Cardinal.{u}) (hσ : #α ≤ σ) (hτ : #β ≤ τ)
-        (hsum : #(α ⊕ β) ≤ σ + τ)
-        (t s : α → SupportTerm E.lab E.arity I) (c : β → SupportTerm E.lab E.arity I),
+        (t s : α → SupportTerm E.lab E.arity Istar) (c : β → SupportTerm E.lab E.arity I),
         (∀ (ι : Type u) (q : ι → SupportTerm E.lab E.arity I) (hq : #ι ≤ g σ τ)
             (hquery : #((α ⊕ β) ⊕ ι) ≤ σ + τ + g σ τ),
           SameNaturalDiagram K E D (σ + τ + g σ τ) hquery
-            (Sum.elim (Sum.elim t c) q) (Sum.elim (Sum.elim s c) q)) →
-        SameNaturalDiagram K E D (σ + τ) hsum (Sum.elim t c) (Sum.elim s c) := by
+            (Sum.elim (Sum.elim t (fun b => SupportTerm.along incl (c b)))
+              (fun i => SupportTerm.along incl (q i)))
+            (Sum.elim (Sum.elim s (fun b => SupportTerm.along incl (c b)))
+              (fun i => SupportTerm.along incl (q i)))) →
+        ∀ (κ : Cardinal.{u}) (ι : Type u) (q : ι → SupportTerm E.lab E.arity I)
+          (hquery : #((α ⊕ β) ⊕ ι) ≤ σ + τ + κ),
+          SameNaturalDiagram K E D (σ + τ + κ) hquery
+            (Sum.elim (Sum.elim t (fun b => SupportTerm.along incl (c b)))
+              (fun i => SupportTerm.along incl (q i)))
+            (Sum.elim (Sum.elim s (fun b => SupportTerm.along incl (c b)))
+              (fun i => SupportTerm.along incl (q i))) := by
   sorry
 
-/-- **Lemma 12.6** (Realization using an unoccupied strip). A placed comparison whose
-parameters avoid a convex strip `V` is realized by a tuple of `E(J)` that retains the
-specified old entries.
+/-- **Lemma 12.6** (Realization using an unoccupied strip). Let `E(J)` be a pointed presentation
+of cardinality `μ` at a sufficiently closed uniform level, `V ⊆ J` a convex substrip of
+cardinality `μ`, and `B ⊆ E(J)` a parameter layout represented by positions in `J \ V`. If a
+bounded tuple `z*` of `E(J*)`, `J ⊆ J*`, has a placed comparison over `B`, a tuple `z` of `E(J)`
+has the same comparison over every bounded list from `B`, retaining specified old entries whose
+representations avoid `V`.
 
-**False as formalized (kept open, needs the strip hypothesis):** the paper's unoccupied convex
-strip `V ⊆ J` is not in the statement, so `J` may be a single point and two distinct new terms
-over `Jstar` cannot be realized over `J` (`AEC.Audit.lemma_12_6_false`, using the
-equality-pattern presentation and diagram on the AEC of all sets). -/
+**Statement (restated, honest form, open):** the unoccupied convex strip `V` (`OrdConnected`,
+`#V = #J = μ`, `μ` in an unbounded class `T` of levels) is restored; the conclusion is the
+comparison over every bounded list `q` of terms with positions in `J \ V` (the layout `B`); old
+entries must have representations avoiding `V`. The former statement had no strip (false:
+`AEC.Audit.lemma_12_6_false`, `J` a point). The pointedness of `E` is not represented. -/
 theorem lemma_12_6 (K : AbstractElementaryClass.{u}) (E : OrderPresentation K)
-    (D : StableDiagram K) {J Jstar : Type u} [LinearOrder J] [LinearOrder Jstar]
-    [Nonempty J] [Nonempty Jstar] (incl : J ↪o Jstar) {α : Type u}
-    (σ : Cardinal.{u}) (hσ : #α ≤ σ)
-    (zStar : α → SupportTerm E.lab E.arity Jstar) (old : Set α)
-    (hold : ∀ i ∈ old, ∃ t : SupportTerm E.lab E.arity J,
-      zStar i = SupportTerm.along incl t) :
-    ∃ z : α → SupportTerm E.lab E.arity J,
-      SameNaturalDiagram K E D σ hσ z zStar ∧
-      ∀ i ∈ old, zStar i = SupportTerm.along incl (z i) := by
+    (D : StableDiagram K) :
+    ∃ T : Set Cardinal.{u}, (∀ κ, ∃ μ, κ ≤ μ ∧ μ ∈ T) ∧
+      ∀ μ ∈ T, ∀ {J Jstar : Type u} [LinearOrder J] [LinearOrder Jstar]
+        [Nonempty J] [Nonempty Jstar] (incl : J ↪o Jstar) (V : Set J),
+        #J = μ → V.OrdConnected → #V = μ →
+        ∀ {α : Type u} (σ : Cardinal.{u}), #α ≤ σ → σ < μ →
+        ∀ (zStar : α → SupportTerm E.lab E.arity Jstar) (old : Set α),
+          (∀ i ∈ old, ∃ t : SupportTerm E.lab E.arity J, (∀ a, t.pos a ∉ V) ∧
+            zStar i = SupportTerm.along incl t) →
+          ∃ z : α → SupportTerm E.lab E.arity J,
+            (∀ i ∈ old, zStar i = SupportTerm.along incl (z i)) ∧
+            ∀ {ι : Type u} (q : ι → SupportTerm E.lab E.arity J), (∀ k a, (q k).pos a ∉ V) →
+              ∀ (κ : Cardinal.{u}) (hq : #(α ⊕ ι) ≤ κ), κ < μ →
+                SameNaturalDiagram K E D κ hq
+                  (Sum.elim z q) (Sum.elim zStar (fun k => SupportTerm.along incl (q k))) := by
   sorry
 
 end

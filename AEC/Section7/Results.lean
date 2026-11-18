@@ -9,6 +9,7 @@ public import AEC.Section7.AllDominated
 public import AEC.Section7.ContinuityCondition
 public import AEC.Section7.ProductIndependent
 public import AEC.Section7.WitnessingChain
+public import AEC.Section7.MixedLevel
 public import AEC.Section6.Results
 
 @[expose] public section
@@ -195,41 +196,53 @@ theorem lemma_7_6 {K : AbstractElementaryClass.{u}} (P : SingleModelData K)
         IsRelativelyIsolated qA eA :=
   infra_76_lemma P σ hσ
 
-/-- **Proposition 7.8.** A finite-tuple type at a sufficiently closed level has a same-level
-extension in which every tuple of length at most `θ` is isolated relative to the mark.
+/-- **Proposition 7.8.** Let `λ` be a sufficiently closed eligible level, `X` an object there and
+`p = tp(b/X)` a finite-tuple type. For every infinite `θ < λ` there is a same-level extension
+`X ≤ U` containing a realization of `p` such that `tp(b, c/X)` is isolated relative to `b` for
+every `c ∈ U` with `|c| ≤ θ`. The closure requirements are uniform (do not depend on `θ`).
 
-Blocked for Path A existence on `infra_78_mixed_level_isolation`: the same-level inputs
-(`proposition_7_3_uniform`, `lemma_7_6_tied`) are green, but English needs Lemma 7.6 for
-mixed levels `ν < μ` and a Fodor / `ρ^λ` bookkeeping matrix. Finite-mark continuity (Def 7.7) is packaged separately as
-`infra_78_finite_continuity` in `FiniteIsolation.lean` via Proposition 6.13. -/
-theorem proposition_7_8 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
-    (W : WorkingScheme K S) :
-    ∃ T, ∃ hT : Tail W.eligible T,
-      ∀ μ (hμ : μ ∈ T) (X : W.Object μ (Tail.mem hT hμ))
-        (p : TupleOver K S W (Tail.mem hT hμ) X) (θ : Cardinal.{u}),
+**Statement (restated, grokbot_01 Phase 1.1):** over the single-model scheme `P.scheme` of
+`SingleModelData` (the package on which Sections 6-7 are developed: `theorem_6_10`,
+`proposition_6_13`, `proposition_7_3_uniform`, `lemma_7_6_tied`), instead of a bare
+`WorkingScheme` with no working-package hypotheses. The tail `T` is chosen before `θ` (uniform
+closure). The general bounded-mark form (marks satisfying Definition 7.7) is not stated.
+
+Existence open: blocked on `infra_78_mixed_level_isolation` (mixed-level Lemma 7.6 /
+tied freeness across levels, Fodor `ρ⁺` matrix: `AEC/Section7/MixedLevel.lean` stubs).
+Finite-mark continuity (Def 7.7) is `infra_78_finite_continuity`. -/
+theorem proposition_7_8 {K : AbstractElementaryClass.{u}} (P : SingleModelData K) :
+    ∃ T, ∃ hT : Tail P.eligible T,
+      ∀ μ (hμ : μ ∈ T) (X : P.scheme.Object μ (Tail.mem hT hμ))
+        (p : TupleOver K oneVertexShape P.scheme (Tail.mem hT hμ) X) (θ : Cardinal.{u}),
         Finite p.idx → aleph0 ≤ θ → θ < μ →
-        ∃ (U : W.Object μ (Tail.mem hT hμ))
-          (f : SystemArrow K S (W.asSystem _ X) (W.asSystem _ U))
-          (hf : W.permitted (X := X) (Y := U) f)
-          (b : p.idx → Occurrence K S (W.asSystem _ U)) (e : p.idx ≃ p.idx),
+        ∃ (U : P.scheme.Object μ (Tail.mem hT hμ))
+          (f : SystemArrow K oneVertexShape (P.scheme.asSystem _ X) (P.scheme.asSystem _ U))
+          (hf : P.scheme.permitted (X := X) (Y := U) f)
+          (b : p.idx → Occurrence K oneVertexShape (P.scheme.asSystem _ U)) (e : p.idx ≃ p.idx),
           SameGaloisType p (asTuple f hf b) e (Equiv.refl p.idx) ∧
-          ∀ {cIdx : Type u} (c : cIdx → Occurrence K S (W.asSystem _ U)), #cIdx ≤ θ →
+          ∀ {cIdx : Type u} (c : cIdx → Occurrence K oneVertexShape (P.scheme.asSystem _ U)),
+            #cIdx ≤ θ →
             IsRelativelyIsolated (uIdx := p.idx) (cIdx := cIdx)
               (asTuple f hf (seqJoint b c)) (Equiv.refl (p.idx ⊕ cIdx)) := by
   sorry
 
 /-- **Theorem 7.9.** Every finite-tuple type at a sufficiently closed level has an
-all-dominated realization. -/
-theorem theorem_7_9 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
-    (W : WorkingScheme K S) :
-    ∃ T, ∃ hT : Tail W.eligible T,
-      ∀ μ (hμ : μ ∈ T) (X : W.Object μ (Tail.mem hT hμ))
-        (p : TupleOver K S W (Tail.mem hT hμ) X),
+all-dominated realization.
+
+**Statement (restated, grokbot_01 Phase 3.1):** over `SingleModelData` (the package on which
+Sections 6-7 are developed) instead of a bare `WorkingScheme`. The realization is required at the
+level of the base (`p.ν = μ` is not assumed: any bounded host). Omitted: the bounded-mark (Def 7.7)
+generalization and the primeness clause (embedding over `X, b` into an actual ambient). Blocked
+on `proposition_7_8`. -/
+theorem theorem_7_9 {K : AbstractElementaryClass.{u}} (P : SingleModelData K) :
+    ∃ T, ∃ hT : Tail P.eligible T,
+      ∀ μ (hμ : μ ∈ T) (X : P.scheme.Object μ (Tail.mem hT hμ))
+        (p : TupleOver K oneVertexShape P.scheme (Tail.mem hT hμ) X),
         Finite p.idx →
-        ∃ (Y : W.Object μ (Tail.mem hT hμ))
-          (f : SystemArrow K S (W.asSystem _ X) (W.asSystem _ Y))
-          (hf : W.permitted (X := X) (Y := Y) f)
-          (b : p.idx → Occurrence K S (W.asSystem _ Y)),
+        ∃ (Y : P.scheme.Object μ (Tail.mem hT hμ))
+          (f : SystemArrow K oneVertexShape (P.scheme.asSystem _ X) (P.scheme.asSystem _ Y))
+          (hf : P.scheme.permitted (X := X) (Y := Y) f)
+          (b : p.idx → Occurrence K oneVertexShape (P.scheme.asSystem _ Y)),
           AllDominated f hf p.idx b ∧
           SameGaloisType p (asTuple f hf b) (Equiv.refl p.idx) (Equiv.refl p.idx) := by
   sorry

@@ -69,6 +69,27 @@ MODEL_CARDS: tuple[ModelCard, ...] = (
             "note": "accessed 2026",
         },
     ),
+    ModelCard(
+        label="Grok Bot",
+        cite_key="GrokBot26",
+        tool_note=(
+            "autonomous Lean 4 proof and statement-audit runs on its own computer "
+            "(November 2026): closing Section 7 tied-freeness tips, honest restatements "
+            "of false or vacuous statements with sorry-free counterexamples in "
+            "`AEC/Audit/`, and holes-board synchronization."
+        ),
+        bib_entry_type="misc",
+        bib_fields={
+            "author": "{SpaceXAI}",
+            "title": "Grok Bot",
+            "howpublished": "AI assistant",
+            "year": "2026",
+            "note": (
+                "Used November 2026 for the Lean 4 formalization at "
+                "\\url{https://github.com/catskillsresearch/aec}"
+            ),
+        },
+    ),
 )
 
 ACKNOWLEDGMENTS_MARKDOWN = r"""## Acknowledgments

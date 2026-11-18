@@ -145,6 +145,7 @@ public import AEC.Section7.TiedFreeLift
 public import AEC.Section7.AltTwoTied
 public import AEC.Section7.BlockRestriction
 public import AEC.Section7.TiedDescent
+public import AEC.Section7.MixedLevel
 public import AEC.Section7.DescentIsolation
 public import AEC.Section7.Primness
 public import AEC.Section7.FiniteIsolation
@@ -154,6 +155,8 @@ public import AEC.Section8.MarkedPair
 public import AEC.Section8.Results
 public import AEC.Section8.StationaryPrescription
 public import AEC.Section9.BoundaryMap
+public import AEC.Section9.CubeScheme
+public import AEC.Section9.Projection
 public import AEC.Section9.FaceFamily
 public import AEC.Section9.Results
 public import AEC.Section10.Forces
@@ -161,6 +164,7 @@ public import AEC.Section10.GeomClosure
 public import AEC.Section10.MinimalData
 public import AEC.Section10.PointSet
 public import AEC.Section10.PointedModel
+public import AEC.Section10.ProductAxioms
 public import AEC.Section10.Results
 public import AEC.Section11.AdmissibleFamily
 public import AEC.Section11.GeometricSystem
@@ -180,8 +184,11 @@ public import AEC.Section5.EmptiedScheme
 public import AEC.Audit.AllSets
 public import AEC.Audit.AllSetsMinimal
 public import AEC.Audit.NoPairs
+public import AEC.Audit.ProductAxiomsAudit
+public import AEC.Audit.WitnessingChainVacuous
 public import AEC.Audit.EqPattern
 public import AEC.Audit.BoundaryGlue
 public import AEC.Audit.FaceGlue
 public import AEC.Audit.PredSets
 public import AEC.Section11.Repiece
+public import AEC.Section11.PointedSystem

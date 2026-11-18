@@ -1,6 +1,6 @@
 # Nodes: (see holes-graph.json)  Hard edges: 255
 # Convention: FROM --> TO means the English proof of TO requires FROM.
-# Open tip: infra_78_mixed_level_isolation (mixed-level Lemma 7.6; proposition_7_8 blocked on it). Statement audit: AEC/Audit (tinyAEC, emptyAEC counterexamples), AEC/Section5/EmptiedScheme.lean (IsWorkingPackage vacuous for object-free schemes). sorryCount 32. Degenerate closures (not done): theorem_8_6, proposition_9_1, corollary_9_2, theorem_9_3, theorem_9_6, lemma_10_1, proposition_10_6, proposition_11_6, proposition_11_7, claim_11_12.
+# infra_78_tied_free_lift_mixed (mixed-level tied free lift; sole sorry input of infra_78_lemma_7_6_mixed, then Prop 7.8 matrix argument)
 # Retired: infra_610_qPres_empty_joint_on_I, infra_610_same_head_transfers_joint, infra_69_transfer_sequence, WorkingScheme.exists_approximationSequence.
 
 claim_11_10 --> claim_11_11
@@ -258,3 +258,33 @@ theorem_8_6 --> proposition_9_1
 theorem_9_3 --> lemma_9_5
 theorem_9_6 --> lemma_9_7
 theorem_9_8 --> lemma_10_1
+infra_9_cube_scheme --> theorem_9_3
+infra_9_cube_scheme --> theorem_9_6
+infra_9_cube_scheme --> lemma_9_7
+infra_9_cube_scheme --> theorem_9_8
+infra_10_product_axioms --> lemma_10_4
+infra_10_product_axioms --> theorem_10_5
+infra_10_product_axioms --> proposition_10_7
+infra_10_product_axioms --> lemma_10_8
+infra_10_product_axioms --> theorem_10_9
+infra_10_product_axioms --> corollary_10_10
+infra_10_product_axioms --> proposition_10_6
+infra_10_product_axioms --> lemma_10_1
+infra_10_product_axioms --> infra_11_pointed_system
+infra_11_pointed_system --> proposition_11_6
+infra_11_pointed_system --> proposition_11_7
+infra_11_pointed_system --> theorem_11_9
+infra_11_pointed_system --> claim_11_10
+infra_11_pointed_system --> claim_11_12
+infra_11_pointed_system --> claim_11_13
+infra_11_pointed_system --> theorem_12_2
+infra_11_pointed_system --> lemma_12_3
+infra_11_pointed_system --> theorem_14_3
+infra_11_pointed_system --> lemma_14_2
+infra_9_projection --> proposition_9_1
+infra_9_projection --> corollary_9_2
+infra_78_fodor --> infra_78_mixed_level_isolation
+infra_78_matrix --> infra_78_mixed_level_isolation
+infra_78_tied_free_lift_mixed --> infra_78_mixed_level_isolation
+infra_78_lemma_7_6_mixed --> infra_78_mixed_level_isolation
+infra_78_tied_free_lift_mixed --> infra_78_lemma_7_6_mixed

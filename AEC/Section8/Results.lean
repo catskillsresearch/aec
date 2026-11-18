@@ -76,21 +76,51 @@ theorem lemma_8_5 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
           ∀ i, Nonempty (MarkedArrow K S W P (M i) U) := by
   sorry
 
-/-- **Theorem 8.6** (The marked-increment working package). From a working scheme with a
-stationary finite prescription and an eligible subclass, a further unbounded subclass carries
-a working scheme for the marked increment.
+/-- The shape of the marked increment `C^b`: two copies of `S` (the base `X` and the extension
+`Y` of a marked pair), with the specified maps of each copy and the inclusion `X_v → Y_v`. -/
+def SystemShape.doubled (S : SystemShape.{u}) : SystemShape.{u} where
+  Vertex := S.Vertex ⊕ S.Vertex
+  vertexFinite := by have := S.vertexFinite; infer_instance
+  specified
+    | Sum.inl i, Sum.inl j => S.specified i j
+    | Sum.inr i, Sum.inr j => S.specified i j
+    | Sum.inl i, Sum.inr j => i = j
+    | Sum.inr _, Sum.inl _ => False
 
-**Degenerate proof (statement defect, English content NOT captured):** `IsWorkingPackage`
-quantifies over objects only, so the object-free scheme `WorkingScheme.emptied` satisfies it
-vacuously (`AEC/Section5/EmptiedScheme.lean`). The proof uses that scheme; it says nothing
-about the paper's construction. -/
+/-- **Theorem 8.6** (The marked-increment working package). Let `C` be a working scheme with
+componentwise arrows and a stationary finite prescription. Assume the eligible-subclass
+hypothesis. On an unbounded further class of sufficiently closed eligible levels, `C^b` is again
+a working scheme, with componentwise arrows, fixed template and mixed arrows between these levels;
+the output class retains the eligible-subclass hypothesis.
+
+**Statement (restated, honest form, open):** the input `W` is a working package with objects at
+every eligible level; the output `W'` lives on the doubled shape (`SystemShape.doubled`), is a
+working package on an eligible subclass of `R`, has objects at every eligible level, every object
+is (vertexwise isomorphic to) a marked pair `(X, Y, b)` of Definition 8.1 at its level, and every
+marked pair at an eligible level of `W'` is isomorphic to an object. The former statement had
+no nonemptiness and was proved by the object-free `WorkingScheme.emptied` (degenerate). The
+correspondence of permitted arrows with `MarkedArrow`s is not yet stated. -/
 theorem theorem_8_6 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
-    (W : WorkingScheme K S) (P : StationaryPrescription K S W)
+    (W : WorkingScheme K S) (hW : IsWorkingPackage W)
+    (hne : ∀ μ (hμ : μ ∈ W.eligible), Nonempty (W.Object μ hμ))
+    (P : StationaryPrescription K S W)
     (R : Set Cardinal.{u}) (hR : EligibleSubclass W.eligible R) :
-    ∃ S' : SystemShape.{u}, ∃ W' : WorkingScheme K S',
-      IsWorkingPackage W' ∧ EligibleSubclass R W'.eligible :=
-  ⟨S, WorkingScheme.emptied W.template R hR.2.1,
-    WorkingScheme.emptied_isWorkingPackage _ _ _, ⟨subset_rfl, hR.2.1, hR.2.2⟩⟩
+    ∃ W' : WorkingScheme K S.doubled,
+      IsWorkingPackage W' ∧ EligibleSubclass R W'.eligible ∧
+      (∀ μ (hμ : μ ∈ W'.eligible), Nonempty (W'.Object μ hμ)) ∧
+      (∀ μ (hμ : μ ∈ W'.eligible) (X' : W'.Object μ hμ),
+        ∃ M : MarkedPair K S W P, M.μ = μ ∧
+          (∀ v, Nonempty (((W'.asSystem hμ X').obj (Sum.inl v)).carrier ≃[K.τ]
+            ((W.asSystem M.hμ M.X).obj v).carrier)) ∧
+          (∀ v, Nonempty (((W'.asSystem hμ X').obj (Sum.inr v)).carrier ≃[K.τ]
+            ((W.asSystem M.hμ M.Y).obj v).carrier))) ∧
+      (∀ M : MarkedPair K S W P, ∀ hμ' : M.μ ∈ W'.eligible,
+        ∃ X' : W'.Object M.μ hμ',
+          (∀ v, Nonempty (((W'.asSystem hμ' X').obj (Sum.inl v)).carrier ≃[K.τ]
+            ((W.asSystem M.hμ M.X).obj v).carrier)) ∧
+          (∀ v, Nonempty (((W'.asSystem hμ' X').obj (Sum.inr v)).carrier ≃[K.τ]
+            ((W.asSystem M.hμ M.Y).obj v).carrier))) := by
+  sorry
 
 end
 end AEC
