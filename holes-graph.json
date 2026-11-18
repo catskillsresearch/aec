@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-18 10:56",
+  "updated": "2026-11-18 11:00",
   "sorryCount": 44,
   "legend": {
     "open": "No unfinished required proof-deps — try next",
@@ -2364,9 +2364,36 @@
       "label": "Prop 7.8: matrix limit step (unions, CompLaw, ContAtLimits, (5) at limits)",
       "section": 7,
       "file": "AEC/Section7/MixedDescent.lean",
+      "status": "blocked",
+      "blocker": "infra_78_limit_pair",
+      "detail": "Blocked (full claim kept; split cycle 44 into infra_78_chain_union_kappa (DONE), infra_78_limit_pair (open), infra_78_limit_invariant5 (open)). Given a composable chain of pairs X_j <= Y_j (j < delta, delta a limit < rho^+, composition law incl. identity), produce union objects X_delta, Y_delta at level kappa, cocone arrows extending the composition law, a commuting pair arrow, continuity at delta (Infra78Matrix.ContAtLimits at delta), and invariant (5) at the limit (Def 7.7 for bounded marks; finite marks: infra_78_finite_continuity)."
+    },
+    {
+      "id": "infra_78_chain_union_kappa",
+      "label": "Prop 7.8 limit step: chain unions of objects at level kappa",
+      "section": 7,
+      "file": "AEC/Section7/LimitStep.lean",
+      "status": "done",
+      "blocker": null,
+      "detail": "DONE (grokbot cycle 44, sorry-free: AEC/Section7/LimitStep.lean, infra_78_chain_union_kappa). A directed family of objects at an eligible level kappa indexed by at most kappa indices, with arrows obeying the identity and composition laws, has a union object at kappa with permitted legs commuting with the arrows, jointly covering the union, and the universal property (existence of a permitted induced arrow into any object at any level, and uniqueness). From the chain axioms of K via SingleModelData.exists_directed_union (Lemma 2.1); no new axioms."
+    },
+    {
+      "id": "infra_78_limit_pair",
+      "label": "Prop 7.8 limit step: union pair, cocone arrows, comm square, ContAtLimits at delta",
+      "section": 7,
+      "file": "AEC/Section7/LimitStep.lean",
       "status": "open",
       "blocker": null,
-      "detail": "Open (board-only). Given a composable chain of pairs X_j <= Y_j (j < delta, delta a limit < rho^+, composition law), produce union objects X_delta, Y_delta at level kappa (working-scheme unions of size kappa since rho^+ < kappa; no union-existence lemma exists yet in the repo, so this may split off a chain-union lemma), cocone arrows extending the composition law, a commuting pair arrow, continuity at delta (Infra78Matrix.ContAtLimits at delta), and invariant (5) at the limit (Def 7.7; only finite marks are done: infra_78_finite_continuity; the bounded-mark case stays part of this node)."
+      "detail": "Open (board-only). For a limit stage delta < rho^+ and stages j < delta with stepX/stepY obeying the identity and composition laws and the commuting squares: X_delta, Y_delta := infra_78_chain_union_kappa of the X- and Y-chains (index size #{j<delta} <= rho <= kappa), cocone arrows X_j -> X_delta, Y_j -> Y_delta extending the composition law, pair_delta : X_delta -> Y_delta from the universal property (legs of Y composed with pair_j), the commuting square at delta (uniqueness clause), and continuity at delta (ContAtLimits from the joint-cover clause)."
+    },
+    {
+      "id": "infra_78_limit_invariant5",
+      "label": "Prop 7.8 limit step: invariant (5) at limits (bounded-mark Def 7.7)",
+      "section": 7,
+      "file": "AEC/Section7/LimitStep.lean",
+      "status": "open",
+      "blocker": null,
+      "detail": "Open (board-only). At a limit stage delta with X_delta the chain union (infra_78_chain_union_kappa): if tp(b/X_j) is the tied free lift of tp(b/X_0) along X_0 -> X_j for every j < delta, then tp(b/X_delta) is the tied free lift of tp(b/X_0) along X_0 -> X_delta (Def 7.7 continuity for marks b of size <= lambda; finite marks: infra_78_finite_continuity). Tools: tied local character (infra_78_tied_local), infra_78_tiedFree_trans, the host-transfer lemmas of SuccessorStep.lean."
     },
     {
       "id": "infra_78_matrix_recursion",
@@ -2375,7 +2402,7 @@
       "file": "AEC/Section7/MixedDescent.lean",
       "status": "blocked",
       "blocker": "infra_78_matrix_limit_step",
-      "detail": "Blocked on infra_78_matrix_limit_step (infra_78_matrix_successor_step DONE cycle 43; non-failing stages take the identity step). Transfinite recursion over (succ rho).ord.ToType with state (pair X_i <= Y_i, bookkeeping set R_i subset X_i + Y_i): successor stages close the image of R_i (plus seeds Ip, b) by infra_78_bookkeeping_stage_local and extend by infra_78_matrix_successor_step on a failing list chosen from the S-part of R_i (if any); limit stages take infra_78_matrix_limit_step and the union of earlier images. Outputs: an Infra78Matrix with Infra78Matrix.CompLaw and Infra78Matrix.ContAtLimits, invariant (5) at every stage, R forward-closed, continuous at limits and with requirement-1/2 supply at non-limit stages (so infra_78_bookkeeping_req1_high_cof / req2_high_cof apply to the completed (M, R)), and the failing-list property at every stage. This node carries the interleaving caveat: R_i is chosen inside the recursion from the current pair only."
+      "detail": "Blocked on infra_78_matrix_limit_step (split cycle 44: infra_78_chain_union_kappa DONE, infra_78_limit_pair / infra_78_limit_invariant5 open; infra_78_matrix_successor_step DONE cycle 43; non-failing stages take the identity step). Transfinite recursion over (succ rho).ord.ToType with state (pair X_i <= Y_i, bookkeeping set R_i subset X_i + Y_i): successor stages close the image of R_i (plus seeds Ip, b) by infra_78_bookkeeping_stage_local and extend by infra_78_matrix_successor_step on a failing list chosen from the S-part of R_i (if any); limit stages take infra_78_matrix_limit_step and the union of earlier images. Outputs: an Infra78Matrix with Infra78Matrix.CompLaw and Infra78Matrix.ContAtLimits, invariant (5) at every stage, R forward-closed, continuous at limits and with requirement-1/2 supply at non-limit stages (so infra_78_bookkeeping_req1_high_cof / req2_high_cof apply to the completed (M, R)), and the failing-list property at every stage. This node carries the interleaving caveat: R_i is chosen inside the recursion from the current pair only."
     }
   ],
   "edges": [
@@ -4560,8 +4587,43 @@
       "from": "infra_78_matrix_recursion",
       "to": "infra_78_matrix_construction",
       "kind": "hard"
+    },
+    {
+      "from": "infra_78_chain_union_kappa",
+      "to": "infra_78_limit_pair",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_78_matrix",
+      "to": "infra_78_limit_pair",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_78_chain_union_kappa",
+      "to": "infra_78_limit_invariant5",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_78_finite_continuity",
+      "to": "infra_78_limit_invariant5",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_78_limit_pair",
+      "to": "infra_78_matrix_limit_step",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_78_limit_invariant5",
+      "to": "infra_78_matrix_limit_step",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_78_tied_local_character",
+      "to": "infra_78_limit_invariant5",
+      "kind": "hard"
     }
   ],
-  "doneCount": 199,
+  "doneCount": 200,
   "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 43. Uncommitted in /tmp/aec-grok."
 }
