@@ -1839,7 +1839,7 @@
       "label": "Infra 7.8 mixed-level isolation",
       "section": 7,
       "file": "AEC/Section7/Results.lean",
-      "status": "blocked",
+      "status": "open",
       "blocker": null,
       "detail": "Blocked (demoted grokbot_01). Done toward it: mixed tied free lift and mixed Lemma 7.6 (grokbot_02, sorry-free), Fodor, matrix data. Remaining for Prop 7.8: the rho^+ matrix construction at level kappa with level-lambda pairs inside R_i,S_i, type-identifying amalgamation at kappa, Fodor application on the stationary set, Def 7.7 continuity at matrix limits (only finite marks done: infra_78_finite_continuity)."
     },
