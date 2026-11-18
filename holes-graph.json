@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-18 15:34",
+ "updated": "2026-11-18 15:39",
  "sorryCount": 41,
  "legend": {
   "open": "No unfinished required proof-deps — try next",
@@ -3121,9 +3121,18 @@
    "label": "7.12(1) one freeness step",
    "section": 7,
    "file": "AEC/Section7/Lemma712Existence.lean",
+   "status": "blocked",
+   "blocker": "infra_712_products",
+   "detail": "infra_712_free_step_statement: marks below i free => b_i free over M_i from A. Glue infra_712_free_step_of_products PROVED (cycle 85b): TupleList.below i, TiedListPreChain.truncate (sorry-free Def 7.10 chain of L.below i, top stage M_i, freeness via free_pull = host_target/host_source' along step i<=top), truncate_allDominated, and infra_711_at_level (level-wise Lemma 7.11, factored out of infra_711_induction) applied to x = markTuple i. Remaining: infra_712_products."
+  },
+  {
+   "id": "infra_712_products",
+   "label": "7.12(1) products of b_i with earlier marks",
+   "section": 7,
+   "file": "AEC/Section7/Lemma712Existence.lean",
    "status": "open",
    "blocker": null,
-   "detail": "infra_712_free_step_statement: marks below i free => b_i free over M_i from A. Plan: truncate the pre-chain at i (TupleList below i, stages lifted, top via step i<=top), giving a TiedListWitnessingChain of L below i whose stage top is M_i; apply Lemma 7.11 (infra_711_induction at the explicit 7.11 level hyps) to x = b_i; the product hypotheses (b_i with finite selections below i, binary IsProductTied over A) must be derived from ProductIndependentTied (non-level IsFiniteProductTied of finite sublists) — expected to be the hard part; split truncation / products / glue next."
+   "detail": "infra_712_products_statement: in an all-dominated pre-chain of a ProductIndependentTied list with marks below i free, IsProductTied (markTuple i restricted to A) (truncated selection) (truncated joint) for every finite injective selection below i. Paper: read off product independence (finite sublist b_i + selection). Expected hard: ProductIndependentTied gives left-bracketed non-level IsFiniteProductTied of the sublist's entries; needs the binary split 'b_i vs the rest' (finite product associativity/permutation at the level, AEC/Section6/ProductTied finite perm/proj) and identification of the chain marks with L's entries in the ambient top (mark_spec)."
   }
  ],
  "edges": [
@@ -6401,6 +6410,11 @@
   },
   {
    "from": "lemma_7_11",
+   "to": "infra_712_free_step",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_712_products",
    "to": "infra_712_free_step",
    "kind": "hard"
   }

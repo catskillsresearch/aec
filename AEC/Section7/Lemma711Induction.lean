@@ -224,6 +224,39 @@ def infra_711_successor_statement (P : SingleModelData K) : Prop :=
       [WellFoundedLT L.δ] (C : TiedListWitnessingChain L), C.AllDominatedIncrement →
       ∀ i j : WithTop L.δ, i ⋖ j → C.Claim i → C.Claim j
 
+/-- **Lemma 7.11 at one level, from its successor step** (cycle 85; factored out of
+`infra_711_induction`). Explicit level hypotheses: recursion-closed at `ℵ₀` and at
+`infra_75_wide P ℵ₀`, above both successors. -/
+theorem infra_711_at_level (P : SingleModelData K) (hsucc : infra_711_successor_statement P)
+    {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible) (h0 : μ ∈ recursionClosedLevels P ℵ₀)
+    (h1 : Order.succ ℵ₀ ≤ μ) (hw1 : μ ∈ recursionClosedLevels P (infra_75_wide P ℵ₀))
+    (hw2 : Order.succ (infra_75_wide P ℵ₀) ≤ μ) (A : P.scheme.Object μ hμ)
+    (L : TupleList P.scheme hμ A) [LinearOrder L.δ] [WellFoundedLT L.δ]
+    (C : TiedListWitnessingChain L) (hinc : C.AllDominatedIncrement)
+    (x : TupleOver K oneVertexShape P.scheme hμ (C.stage ⊤)) (hfin : Finite x.idx) (hxν : x.ν = μ)
+    (hprod : ∀ (n : ℕ) (ix : Fin n → L.δ), Function.Injective ix →
+      IsProductTied (x.restrict (C.into ⊤) (C.into_arrow ⊤)) (C.selectionOver x n ix)
+        (C.jointWith x n ix) (Equiv.refl _)) :
+    IsTiedFree (C.into ⊤) (x.restrict (C.into ⊤) (C.into_arrow ⊤)) x (Equiv.refl _) := by
+  classical
+  have hall := C.claim_all h0 h1
+    (fun i j h => hsucc hμ h0 h1 hw1 hw2 A L C hinc i j h) ⊤
+  have hfree := hall x hfin hxν (fun n ix hinj _ => hprod n ix hinj)
+  have hid : ∀ v y, (C.step (le_top : (⊤ : WithTop L.δ) ≤ ⊤)).onVertex v y = y := by
+    intro v y
+    have hc := C.step_comp (le_top : (⊤ : WithTop L.δ) ≤ ⊤) (le_top : (⊤ : WithTop L.δ) ≤ ⊤) v
+    have hy := congrArg (fun e => e y) hc
+    exact (C.step (le_top : (⊤ : WithTop L.δ) ≤ ⊤)).onVertex v |>.injective hy
+  have hx : x.restrict (C.step (le_top : (⊤ : WithTop L.δ) ≤ ⊤)) (C.step_arrow _) = x := by
+    cases x with
+    | mk ν hν host incl incl_arrow idx val =>
+      have : SystemArrow.comp (C.step (le_top : (⊤ : WithTop L.δ) ≤ ⊤)) incl = incl := by
+        apply SystemArrow.ext; intro v
+        ext y
+        exact congrArg (fun z => incl.onVertex v z) (hid v y)
+      simp only [TupleOver.restrict, this]
+  exact infra_711_tiedFree_transport hx rfl _ _ hfree
+
 /-- **Lemma 7.11 from its successor step** (`infra_711_induction`). The conclusion is
 literally the statement of `lemma_7_11`. -/
 theorem infra_711_induction (P : SingleModelData K) (hsucc : infra_711_successor_statement P) :
@@ -251,23 +284,7 @@ theorem infra_711_induction (P : SingleModelData K) (hsucc : infra_711_successor
   refine ⟨T, hT, fun μ hμ A L _ _ C hinc x hfin hxν hprod => ?_⟩
   have h0 : μ ∈ recursionClosedLevels P ℵ₀ := infra_76_rec_mono hw hμ.1
   have h1 : Order.succ ℵ₀ ≤ μ := (Order.succ_le_succ hw).trans hμ.2
-  have hall := C.claim_all h0 h1
-    (fun i j h => hsucc (Tail.mem hT hμ) h0 h1 hμ.1 hμ.2 A L C hinc i j h) ⊤
-  have hfree := hall x hfin hxν (fun n ix hinj _ => hprod n ix hinj)
-  have hid : ∀ v y, (C.step (le_top : (⊤ : WithTop L.δ) ≤ ⊤)).onVertex v y = y := by
-    intro v y
-    have hc := C.step_comp (le_top : (⊤ : WithTop L.δ) ≤ ⊤) (le_top : (⊤ : WithTop L.δ) ≤ ⊤) v
-    have hy := congrArg (fun e => e y) hc
-    exact (C.step (le_top : (⊤ : WithTop L.δ) ≤ ⊤)).onVertex v |>.injective hy
-  have hx : x.restrict (C.step (le_top : (⊤ : WithTop L.δ) ≤ ⊤)) (C.step_arrow _) = x := by
-    cases x with
-    | mk ν hν host incl incl_arrow idx val =>
-      have : SystemArrow.comp (C.step (le_top : (⊤ : WithTop L.δ) ≤ ⊤)) incl = incl := by
-        apply SystemArrow.ext; intro v
-        ext y
-        exact congrArg (fun z => incl.onVertex v z) (hid v y)
-      simp only [TupleOver.restrict, this]
-  exact infra_711_tiedFree_transport hx rfl _ _ hfree
+  exact infra_711_at_level P hsucc (Tail.mem hT hμ) h0 h1 hμ.1 hμ.2 A L C hinc x hfin hxν hprod
 
 end
 end AEC

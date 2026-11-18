@@ -2,6 +2,7 @@ module
 
 public import AEC.Section7.Lemma711Successor
 public import AEC.Section7.ClosureLevel
+public import AEC.Section7.SuccessorStep
 
 /-!
 # Lemma 7.12 (1): existence of a tied witnessing chain (split, cycle 85)
@@ -15,6 +16,12 @@ Accordingly `TiedListPreChain L` is `TiedListWitnessingChain L` without the `fre
 construction is `infra_712_prechain_statement` (open) and the freeness is
 `infra_712_free_marks_statement` (open). `infra_712_existence_at_of_parts` (proved) assembles
 clause (1) of `lemma_7_12` at every level satisfying both sets of level hypotheses.
+
+Freeness: `infra_712_free_marks_of_step` (well-founded induction) and
+`infra_712_free_step_of_products` (Lemma 7.11 at the level, `infra_711_at_level`, applied to the
+truncated chain `TiedListPreChain.truncate` of `TupleList.below i`, whose top stage is `Mᵢ`, with
+`x = bᵢ`) reduce it to `infra_712_products_statement` (open). `TiedListPreChain.free_pull` moves a
+mark's freeness from the top stage down to any later stage.
 -/
 
 @[expose] public section
@@ -108,6 +115,178 @@ theorem toChain_allDominated (C : TiedListPreChain L) (hfree : ∀ i, C.FreeAt i
 
 end TiedListPreChain
 
+section Truncation
+variable {P : SingleModelData K} {μ : Cardinal.{u}} {hμ : μ ∈ P.eligible}
+  {A : P.scheme.Object μ hμ}
+
+/-- The entries of a list strictly below `i`. -/
+def TupleList.below (L : TupleList P.scheme hμ A) [LinearOrder L.δ] (i : L.δ) :
+    TupleList P.scheme hμ A where
+  δ := {k : L.δ // k < i}
+  host := L.host
+  incl := L.incl
+  incl_arrow := L.incl_arrow
+  indexAt k := L.indexAt k.1
+  val k := L.val k.1
+  finite_each k := L.finite_each k.1
+
+instance TupleList.below_linearOrder (L : TupleList P.scheme hμ A) [LinearOrder L.δ] (i : L.δ) :
+    LinearOrder (L.below i).δ := inferInstanceAs (LinearOrder {k : L.δ // k < i})
+
+instance TupleList.below_wellFoundedLT (L : TupleList P.scheme hμ A) [LinearOrder L.δ]
+    [WellFoundedLT L.δ] (i : L.δ) : WellFoundedLT (L.below i).δ :=
+  inferInstanceAs (WellFoundedLT {k : L.δ // k < i})
+
+namespace TupleList
+variable (L : TupleList P.scheme hμ A) [LinearOrder L.δ] (i : L.δ)
+
+/-- Stages of the truncated chain inside the original one: `⊤ ↦ i`. -/
+def belowLift : WithTop (L.below i).δ → WithTop L.δ
+  | ⊤ => (i : WithTop L.δ)
+  | (k : (L.below i).δ) => ((k.1 : L.δ) : WithTop L.δ)
+
+variable {L i}
+
+theorem belowLift_le (b : WithTop (L.below i).δ) : L.belowLift i b ≤ i := by
+  cases b with
+  | top => exact le_rfl
+  | coe k => exact WithTop.coe_le_coe.2 k.2.le
+
+theorem belowLift_lt_iff {a b : WithTop (L.below i).δ} :
+    L.belowLift i a < L.belowLift i b ↔ a < b := by
+  cases a with
+  | top => cases b with
+    | top => simp [belowLift]
+    | coe l => exact ⟨fun h => absurd h (not_lt.2 (WithTop.coe_le_coe.2 l.2.le)),
+        fun h => absurd h (not_lt.2 le_top)⟩
+  | coe k => cases b with
+    | top => exact ⟨fun _ => WithTop.coe_lt_top _, fun _ => WithTop.coe_lt_coe.2 k.2⟩
+    | coe l => exact ⟨fun h => WithTop.coe_lt_coe.2 (show k < l from (WithTop.coe_lt_coe.1 h : k.1 < l.1)),
+        fun h => WithTop.coe_lt_coe.2 (show k.1 < l.1 from (WithTop.coe_lt_coe.1 h : k < l))⟩
+
+theorem belowLift_le_iff {a b : WithTop (L.below i).δ} :
+    L.belowLift i a ≤ L.belowLift i b ↔ a ≤ b := by
+  rw [← not_lt, ← not_lt, belowLift_lt_iff]
+
+theorem belowLift_surj {c : WithTop L.δ} (b : WithTop (L.below i).δ) (h : c ≤ L.belowLift i b) :
+    ∃ a, L.belowLift i a = c := by
+  have hc := h.trans (belowLift_le b)
+  cases c with
+  | top => exact absurd hc (not_le.2 (WithTop.coe_lt_top i))
+  | coe c =>
+    rcases (WithTop.coe_le_coe.1 hc).lt_or_eq with hlt | heq
+    · exact ⟨WithTop.some (show (L.below i).δ from ⟨c, hlt⟩), rfl⟩
+    · exact ⟨⊤, by rw [heq]; rfl⟩
+
+theorem belowLift_covBy {a b : WithTop (L.below i).δ} :
+    L.belowLift i a ⋖ L.belowLift i b ↔ a ⋖ b := by
+  constructor
+  · rintro ⟨hlt, hno⟩
+    exact ⟨belowLift_lt_iff.1 hlt, fun z h1 h2 =>
+      hno (belowLift_lt_iff.2 h1) (belowLift_lt_iff.2 h2)⟩
+  · rintro ⟨hlt, hno⟩
+    refine ⟨belowLift_lt_iff.2 hlt, fun c h1 h2 => ?_⟩
+    obtain ⟨z, rfl⟩ := belowLift_surj b h2.le
+    exact hno (belowLift_lt_iff.1 h1) (belowLift_lt_iff.1 h2)
+
+end TupleList
+
+namespace TiedListPreChain
+variable {L : TupleList P.scheme hμ A} [LinearOrder L.δ]
+
+theorem free_pull (C : TiedListPreChain L) (k : L.δ) (hk : C.FreeAt k) (j : WithTop L.δ)
+    (hj : (k : WithTop L.δ) < j) :
+    IsTiedFree (C.into (k : WithTop L.δ))
+      ((asTuple (C.step hj.le) (C.step_arrow _) (C.mark k j hj)).restrict
+        (C.into (k : WithTop L.δ)) (C.into_arrow _))
+      (asTuple (C.step hj.le) (C.step_arrow _) (C.mark k j hj)) (Equiv.refl _) := by
+  have hfin : #(L.indexAt k) < μ :=
+    haveI := L.finite_each k
+    (Cardinal.lt_aleph0_of_finite _).trans_le (P.aleph0_le hμ)
+  have hjt : j ≤ ⊤ := le_top
+  set rj := asTuple (C.step hj.le) (C.step_arrow _) (C.mark k j hj) with hrj
+  set rt := asTuple (C.step (le_top : (k : WithTop L.δ) ≤ ⊤)) (C.step_arrow _)
+    (C.mark k ⊤ (WithTop.coe_lt_top k)) with hrt
+  have hR : infra_78_HostRel rj rt (C.step hjt) (Equiv.refl _) := by
+    refine ⟨fun v x => ?_, fun a => ?_⟩
+    · show (C.step hjt).onVertex v ((C.step hj.le).onVertex v x) =
+        (C.step (le_top : (k : WithTop L.δ) ≤ ⊤)).onVertex v x
+      rw [← C.step_comp hj.le hjt v]; rfl
+    · show C.mark k ⊤ (WithTop.coe_lt_top k) a = (C.step hjt).mapOcc (C.mark k j hj a)
+      exact (C.mark_step k hj hjt a).symm
+  have hRp : infra_78_HostRel (rj.restrict (C.into (k : WithTop L.δ)) (C.into_arrow _))
+      (rt.restrict (C.into (k : WithTop L.δ)) (C.into_arrow _)) (C.step hjt) (Equiv.refl _) := by
+    refine ⟨fun v x => ?_, hR.2⟩
+    show (C.step hjt).onVertex v ((C.step hj.le).onVertex v ((C.into _).onVertex v x)) =
+        (C.step (le_top : (k : WithTop L.δ) ≤ ⊤)).onVertex v ((C.into _).onVertex v x)
+    rw [← C.step_comp hj.le hjt v]; rfl
+  have H1 : IsTiedFree (C.into (k : WithTop L.δ))
+      (rt.restrict (C.into (k : WithTop L.δ)) (C.into_arrow _)) rj (Equiv.refl _) :=
+    (infra_78_tiedFree_host_target (C.into (k : WithTop L.δ))
+      (rt.restrict (C.into (k : WithTop L.δ)) (C.into_arrow _)) (C.step_arrow hjt) hR rfl rfl
+      hfin (Equiv.refl _) (Equiv.refl _) (fun _ => rfl)).2 (by unfold FreeAt at hk; exact hk)
+  exact infra_78_tiedFree_host_source' (C.into (k : WithTop L.δ)) (C.step_arrow hjt) hRp rfl rfl
+    hfin rj (Equiv.refl _) (Equiv.refl _) (fun _ => rfl) H1
+
+
+/-- **The chain truncated at `i`** (a tied witnessing chain of `L.below i` with top stage `Mᵢ`),
+given that the marks below `i` are free. -/
+def truncate (C : TiedListPreChain L) (i : L.δ) (hfree : ∀ k, k < i → C.FreeAt k) :
+    TiedListWitnessingChain (L.below i) where
+  stage j := C.stage (L.belowLift i j)
+  into j := C.into (L.belowLift i j)
+  into_arrow j := C.into_arrow _
+  step h := C.step (TupleList.belowLift_le_iff.2 h)
+  step_arrow h := C.step_arrow _
+  step_comp hij hjk v := C.step_comp _ _ v
+  into_step h v := C.into_step _ v
+  first j hj v := C.first _ (fun c => by
+    cases c with
+    | top => exact le_top
+    | coe c =>
+      by_cases hc : c < i
+      · exact TupleList.belowLift_le_iff.2 (hj (WithTop.some (show (L.below i).δ from ⟨c, hc⟩)))
+      · exact (TupleList.belowLift_le j).trans (WithTop.coe_le_coe.2 (not_lt.1 hc))) v
+  continuous j hno hex v x := by
+    obtain ⟨c, hc, y, hy⟩ := C.continuous (L.belowLift i j)
+      (fun c hcov => by
+        obtain ⟨a, rfl⟩ := TupleList.belowLift_surj j hcov.le
+        exact hno a (TupleList.belowLift_covBy.1 hcov))
+      (by obtain ⟨a, ha⟩ := hex; exact ⟨_, TupleList.belowLift_lt_iff.2 ha⟩) v x
+    obtain ⟨a, rfl⟩ := TupleList.belowLift_surj j hc.le
+    exact ⟨a, TupleList.belowLift_lt_iff.1 hc, y, hy⟩
+  top := C.top
+  toTop := SystemArrow.comp (C.step (le_top : (i : WithTop L.δ) ≤ ⊤)) C.toTop
+  toTop_arrow := P.scheme.comp _ _ (C.step_arrow _) C.toTop_arrow
+  listToTop := C.listToTop
+  listToTop_arrow := C.listToTop_arrow
+  comm_A v := by
+    show ((C.toTop.onVertex v).comp ((C.step (le_top : (i : WithTop L.δ) ≤ ⊤)).onVertex v)).comp
+        ((C.into (i : WithTop L.δ)).onVertex v) = (C.listToTop.onVertex v).comp (L.incl.onVertex v)
+    exact (congrArg (fun g => (C.toTop.onVertex v).comp g)
+      (C.into_step (le_top : (i : WithTop L.δ) ≤ ⊤) v)).trans (C.comm_A v)
+  mark k j h a := C.mark k.1 (L.belowLift i j)
+    (TupleList.belowLift_lt_iff.2 h) a
+  mark_step k j l hj hjk a := C.mark_step k.1 _ _ a
+  mark_spec k a := by
+    exact (congrArg C.toTop.mapOcc (C.mark_step k.1 (WithTop.coe_lt_coe.2 k.2)
+      (le_top : (i : WithTop L.δ) ≤ ⊤) a)).trans (C.mark_spec k.1 a)
+  free k := C.free_pull k.1 (hfree k.1 k.2) i (WithTop.coe_lt_coe.2 k.2)
+
+theorem truncate_allDominated (C : TiedListPreChain L) (hC : C.AllDominatedIncrement) (i : L.δ)
+    (hfree : ∀ k, k < i → C.FreeAt k) : (C.truncate i hfree).AllDominatedIncrement :=
+  fun k j h => hC k.1 (L.belowLift i j) (TupleList.belowLift_covBy.2 h)
+
+/-- The tuple `bᵢ` over `Mᵢ`, hosted in the top stage. -/
+def markTuple (C : TiedListPreChain L) (i : L.δ) :
+    TupleOver K oneVertexShape P.scheme hμ (C.stage (i : WithTop L.δ)) :=
+  asTuple (C.step (le_top : (i : WithTop L.δ) ≤ ⊤)) (C.step_arrow _)
+    (C.mark i ⊤ (WithTop.coe_lt_top i))
+
+end TiedListPreChain
+
+end Truncation
+
 /-- Clause (1) of Lemma 7.12 over a fixed `A` at level `μ`. -/
 def infra_712_existence_at (P : SingleModelData K) {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
     (A : P.scheme.Object μ hμ) : Prop :=
@@ -139,6 +318,26 @@ def infra_712_free_marks_statement (P : SingleModelData K) : Prop :=
       [WellFoundedLT L.δ], ProductIndependentTied L →
       ∀ C : TiedListPreChain L, C.AllDominatedIncrement → ∀ i, C.FreeAt i
 
+/-- **7.12(1), products below `i` (statement; open tip `infra_712_products`).** In an
+all-dominated pre-chain of a product-independent list whose marks below `i` are free, `bᵢ` (over
+`Mᵢ`, the top of the truncated chain) has tied products over `A` with every finite selection of
+earlier marks — the hypothesis of Lemma 7.11 for the truncated chain. Paper: these products are
+read off product independence of `L` (the finite sublists `bᵢ` + selection). -/
+def infra_712_products_statement (P : SingleModelData K) : Prop :=
+  ∀ {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible), μ ∈ recursionClosedLevels P ℵ₀ →
+    Order.succ ℵ₀ ≤ μ →
+    μ ∈ recursionClosedLevels P (infra_75_wide P ℵ₀) → Order.succ (infra_75_wide P ℵ₀) ≤ μ →
+    ∀ (A : P.scheme.Object μ hμ) (L : TupleList P.scheme hμ A) [LinearOrder L.δ]
+      [WellFoundedLT L.δ], ProductIndependentTied L →
+      ∀ C : TiedListPreChain L, C.AllDominatedIncrement →
+        ∀ (i : L.δ) (hfree : ∀ k, k < i → C.FreeAt k) (n : ℕ) (ix : Fin n → (L.below i).δ),
+          Function.Injective ix →
+          IsProductTied
+            ((C.markTuple i).restrict ((C.truncate i hfree).into ⊤)
+              ((C.truncate i hfree).into_arrow ⊤))
+            ((C.truncate i hfree).selectionOver (C.markTuple i) n ix)
+            ((C.truncate i hfree).jointWith (C.markTuple i) n ix) (Equiv.refl _)
+
 /-- **7.12(1), one freeness step (statement; open tip `infra_712_free_step`).** If the marks
 below `i` are free, so is `bᵢ` (paper: Lemma 7.11 for the chain truncated at `i`, with
 `x = bᵢ` over `Mᵢ`; its product hypotheses come from product independence of `L`). -/
@@ -150,6 +349,15 @@ def infra_712_free_step_statement (P : SingleModelData K) : Prop :=
       [WellFoundedLT L.δ], ProductIndependentTied L →
       ∀ C : TiedListPreChain L, C.AllDominatedIncrement →
         ∀ i, (∀ k, k < i → C.FreeAt k) → C.FreeAt i
+
+/-- **One freeness step from the products (proved glue, cycle 85).** Lemma 7.11 at the level
+(`infra_711_at_level`) for the truncated chain `C.truncate i` and `x = bᵢ`. -/
+theorem infra_712_free_step_of_products (P : SingleModelData K)
+    (h : infra_712_products_statement P) : infra_712_free_step_statement P := by
+  intro μ hμ h0 h1 hw1 hw2 A L _ _ hind C hC i hfree
+  exact infra_711_at_level P (infra_711_successor P) hμ h0 h1 hw1 hw2 A (L.below i)
+    (C.truncate i hfree) (C.truncate_allDominated hC i hfree) (C.markTuple i) (L.finite_each i) rfl
+    (h hμ h0 h1 hw1 hw2 A L hind C hC i hfree)
 
 /-- **Freeness of all marks by well-founded induction (proved glue).** -/
 theorem infra_712_free_marks_of_step (P : SingleModelData K)
