@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-18 12:03",
+  "updated": "2026-11-18 12:12",
   "sorryCount": 44,
   "legend": {
     "open": "No unfinished required proof-deps — try next",
@@ -1843,8 +1843,8 @@
       "section": 7,
       "file": "AEC/Section7/MixedDescent.lean",
       "status": "blocked",
-      "blocker": "infra_78_isolated_stage",
-      "detail": "Blocked (full claim kept: everything Prop 7.8 needs beyond the done infra). Split into tracked sub-tips: infra_78_fixed_list_eventually_free (DONE), infra_78_nonfree_extension_tied (DONE), infra_78_same_level_type_amalgam (DONE), infra_78_bookkeeping_closure (DONE cycle 41 via infra_78_bookkeeping_assembly), infra_78_matrix_construction (blocked; split cycle 42: infra_78_bookkeeping_stage_local DONE, infra_78_matrix_successor_step open, infra_78_matrix_limit_step open, infra_78_matrix_recursion blocked), infra_78_isolated_stage (blocked), infra_78_theta_shrink (blocked), infra_78_isolation_transfer (blocked). Previously done toward it: mixed tied free lift, mixed Lemma 7.6, Fodor, matrix data, stationary combinatorics, tied local character. Open. Done toward it: mixed tied free lift and mixed Lemma 7.6 (sorry-free), Fodor, matrix data, stationary combinatorics (infra_78_stationary_combinatorics: high-cofinality stages stationary, small sets appear early, one fixed failing list on a stationary set). Tied local character now done (infra_78_tied_local_character: infra_78_tied_local, base mono, restrict); untied IsFreeFrom is vacuous (audit_free_from_vacuous). Remaining for Prop 7.8: the rho^+ matrix construction at level kappa with level-lambda pairs inside R_i,S_i (bookkeeping closures), type-identifying amalgamation at kappa, the local-character contradiction for the fixed list, the theta^+ shrink to A<=U with the majority free-extension identity, Def 7.7 continuity at matrix limits (only finite marks done: infra_78_finite_continuity)."
+      "blocker": "infra_78_theta_shrink",
+      "detail": "Blocked (full claim kept: everything Prop 7.8 needs beyond the done infra). Split into tracked sub-tips: infra_78_fixed_list_eventually_free (DONE), infra_78_nonfree_extension_tied (DONE), infra_78_same_level_type_amalgam (DONE), infra_78_bookkeeping_closure (DONE cycle 41 via infra_78_bookkeeping_assembly), infra_78_matrix_construction (blocked; split cycle 42: infra_78_bookkeeping_stage_local DONE, infra_78_matrix_successor_step open, infra_78_matrix_limit_step open, infra_78_matrix_recursion blocked), infra_78_isolated_stage (DONE cycle 56), infra_78_theta_shrink (open), infra_78_isolation_transfer (blocked). Previously done toward it: mixed tied free lift, mixed Lemma 7.6, Fodor, matrix data, stationary combinatorics, tied local character. Open. Done toward it: mixed tied free lift and mixed Lemma 7.6 (sorry-free), Fodor, matrix data, stationary combinatorics (infra_78_stationary_combinatorics: high-cofinality stages stationary, small sets appear early, one fixed failing list on a stationary set). Tied local character now done (infra_78_tied_local_character: infra_78_tied_local, base mono, restrict); untied IsFreeFrom is vacuous (audit_free_from_vacuous). Remaining for Prop 7.8: the rho^+ matrix construction at level kappa with level-lambda pairs inside R_i,S_i (bookkeeping closures), type-identifying amalgamation at kappa, the local-character contradiction for the fixed list, the theta^+ shrink to A<=U with the majority free-extension identity, Def 7.7 continuity at matrix limits (only finite marks done: infra_78_finite_continuity)."
     },
     {
       "id": "infra_9_cube_scheme",
@@ -2229,9 +2229,9 @@
       "label": "Prop 7.8: a stage where every list is isolated",
       "section": 7,
       "file": "AEC/Section7/IsolatedStage.lean",
-      "status": "blocked",
-      "blocker": "infra_78_isolated_stage_padding",
-      "detail": "Blocked (split grokbot cycle 55; full claim kept: some stage i with cf(i) > lambda at which EVERY list of length <= theta from S_i is relatively isolated over b). = infra_78_isolated_stage_core (DONE: lists indexed by the fixed cIdx, |cIdx| <= lambda) + infra_78_isolated_stage_padding (open: shorter lists, incl. the empty list, at the same stage). Close only when both are done."
+      "status": "done",
+      "blocker": null,
+      "detail": "DONE (grokbot cycle 56, sorry-free, standard axioms; AEC/Section7/IsolatedStage.lean). infra_78_isolated_stage: in infra_78_rcMatrix with S-part candidates indexed by cIdx (theta = |cIdx| <= lambda), under the hypotheses of infra_78_isolated_stage_core plus a padding point p_0(x) in S_0 (from any closed seed, infra_78_padSeed_of_closed), there is a stage i with lambda < cf(i) such that for EVERY J with |J| <= theta (incl. empty) and every c : J -> S_i, (b_i, c) is relatively isolated over b_i (paper: every list of length <= theta from S_i is isolated). Full claim = infra_78_isolated_stage_core (cycle 55) + infra_78_isolated_stage_padding (cycle 56), both done."
     },
     {
       "id": "infra_78_isolated_stage_core",
@@ -2247,18 +2247,18 @@
       "label": "Prop 7.8: shorter lists at the isolated stage (padding / subtuple projection)",
       "section": 7,
       "file": "AEC/Section7/IsolatedStage.lean",
-      "status": "open",
+      "status": "done",
       "blocker": null,
-      "detail": "Open (split from infra_78_isolated_stage, grokbot cycle 55). At the stage i given by infra_78_isolated_stage_core, every list c : J -> S_i with |J| <= theta (theta <= |cIdx|), including J empty, gives IsRelativelyIsolated (b_i, c). Caveat: relative isolation does not pass to subtuples for free. Plan: for J nonempty pad c to d = c o pi (pi : cIdx ->> J, section s); a competitor q' on uIdx+J extends to uIdx+cIdx by the same repetition, needs DiagramEq stable under precomposition with a (non-injective) reindexing for P.scheme (not a WorkingScheme field: only diagram_reindex along equivalences and diagram_restrict on sum summands) and SameGaloisType restriction along the injection id+s. J empty: the tuple is its own uIdx-marginal (isolation with empty fragment). Alternatively choose cIdx to contain a copy of every J and argue directly."
+      "detail": "DONE (grokbot cycle 56, sorry-free, standard axioms; AEC/Section7/IsolatedStage.lean). infra_78_isolated_of_pad (generic WorkingScheme): if the padded tuple (u, d), d = c on J and the image of a base point w on Kp (cIdx = J + Kp, infra_78_padTuple), is relatively isolated over u with fragment Z, then (u, c) is, with fragment Z + |Kp| copies of w; a competitor is padded with the same w, the diagram hypothesis moves along the INJECTIVE coordinate map infra_78_padMap (WorkingScheme.diagramEq_precomp = diagram_reindex + forward diagram_restrict; no non-injective reindexing, no converse, no same_head/glue), and SameGaloisType restricts to the J-coordinates. Padding point: infra_78_rc_padPoint (p_k(x_k) in S_k at every stage, by forward closure and the squares, from p_0(x) in S_0), seeded by infra_78_padSeed_of_closed (any closed seed, e.g. infra_78_seedStage_closed: requirement 1 for the empty set + pair closure). J empty is covered by the same argument (all coordinates padding)."
     },
     {
       "id": "infra_78_theta_shrink",
       "label": "Prop 7.8: theta^+ shrink to level-lambda A <= U",
       "section": 7,
       "file": "AEC/Section7/MixedDescent.lean",
-      "status": "blocked",
-      "blocker": "infra_78_isolated_stage",
-      "detail": "Blocked. Increasing theta^+ chain A_alpha <= U_alpha of level-lambda subobjects inside R_i,S_i with unions A <= U at level lambda, and the majority free-extension identity tp(b,c/X_i) = free lift of tp(b,c/A) for |c| <= theta."
+      "status": "open",
+      "blocker": null,
+      "detail": "Open (unblocked grokbot cycle 56: infra_78_isolated_stage done). Increasing theta^+ chain A_alpha <= U_alpha of level-lambda subobjects inside R_i,S_i with unions A <= U at level lambda, and the majority free-extension identity tp(b,c/X_i) = free lift of tp(b,c/A) for |c| <= theta."
     },
     {
       "id": "infra_78_isolation_transfer",
@@ -4946,6 +4946,6 @@
       "kind": "hard"
     }
   ],
-  "doneCount": 217,
+  "doneCount": 219,
   "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 43. Uncommitted in /tmp/aec-grok."
 }

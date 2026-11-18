@@ -11,6 +11,13 @@ Paper (Prop 7.8 proof): suppose every stage `i` with `cf(i) > λ` has a failing 
 By continuity `d_i ⊆ S_{j(i)}` for some `j(i) < i`; Fodor and `ρ^λ = ρ` fix `j` and the list
 `d` on a stationary set; local character in the union of the whole `ρ⁺`-chain makes `(b, d)`
 free from some stage on, contradicting the nonfree extensions at the stationary set.
+
+Cycle 55: `infra_78_isolated_stage_core` (lists indexed by the fixed `cIdx`). Cycle 56:
+`infra_78_isolated_stage` for every list of length `≤ θ = |cIdx|` (incl. the empty list) at the
+same stage: pad with a point `p_i(x_i) ∈ S_i` (`infra_78_rc_padPoint`, seeded by
+`infra_78_padSeed_of_closed`) and project back (`infra_78_isolated_of_pad`: the competitor is
+padded with the same base point, which joins the fragment; only injective reindexing of
+diagrams, via `WorkingScheme.diagramEq_precomp`).
 -/
 
 universe u
@@ -221,6 +228,34 @@ theorem infra_78_rc_pullback (hℓ : ℵ₀ ≤ ℓ) {i : (Order.succ ρ).ord.To
   choose d' hd'S hd'eq using H
   exact ⟨j, hj, d', by rintro _ ⟨x, rfl⟩; exact hd'S x, hd'eq⟩
 
+include hρκ in
+/-- **A padding point at every stage**: if the seed set contains `p_0(x)` on the `Y`-side for some
+`x ∈ X_0`, then every `S_k` contains `p_k(x_k)` for some `x_k ∈ X_k` (forward closure and the
+commuting squares). -/
+theorem infra_78_rc_padPoint (h0 : ∃ x, (Sum.inr (s0.p x) : κ.ord.ToType ⊕ κ.ord.ToType) ∈ s0.e.R)
+    (k : (Order.succ ρ).ord.ToType) :
+    ∃ x, (infra_78_rcObj Xb hℓel cand s0 e0 k).p x ∈
+      infra_78_Spart (infra_78_rcObj Xb hℓel cand s0 e0 k) := by
+  have hsop := infra_78_succOp_stageArr Xb (infra_78_rcl ρ hℓel) cand
+  obtain ⟨hA, -, -⟩ := infra_78_pairChain_laws hρκ s0 (infra_78_succOp Xb (infra_78_rcl ρ hℓel) cand)
+    (infra_78_limMarkE e0) hsop
+  obtain ⟨i0, -, hi0⟩ := (wellFounded_lt (α := (Order.succ ρ).ord.ToType)).has_min Set.univ
+    ⟨k, trivial⟩
+  have hmin : IsMin i0 := fun b _ => not_lt.1 (hi0 b trivial)
+  have hi0k : i0 ≤ k := not_lt.1 (hi0 k trivial)
+  have h : infra_78_rcObj Xb hℓel cand s0 e0 i0 = s0 := infra_78_pairMatrix_min s0 _ _ hmin
+  obtain ⟨x, hx⟩ := h0
+  have hx' : (Sum.inr ((infra_78_rcObj Xb hℓel cand s0 e0 i0).p x) : κ.ord.ToType ⊕ κ.ord.ToType) ∈
+      (infra_78_rcObj Xb hℓel cand s0 e0 i0).e.R := by rw [h]; exact hx
+  have hf := infra_78_rc_forward hρκ Xb hℓel cand s0 e0 i0 k hi0k ⟨_, hx', rfl⟩
+  have hsq := congrFun (hA i0 k hi0k).2.2 x
+  refine ⟨(infra_78_rcMap Xb hℓel cand s0 e0 i0 k).1 x, ?_⟩
+  show (Sum.inr ((infra_78_rcObj Xb hℓel cand s0 e0 k).p _) : κ.ord.ToType ⊕ κ.ord.ToType) ∈
+    (infra_78_rcObj Xb hℓel cand s0 e0 k).e.R
+  have e : (infra_78_rcObj Xb hℓel cand s0 e0 k).p ((infra_78_rcMap Xb hℓel cand s0 e0 i0 k).1 x) =
+      (infra_78_rcMap Xb hℓel cand s0 e0 i0 k).2 ((infra_78_rcObj Xb hℓel cand s0 e0 i0).p x) := hsq
+  rw [e]; exact hf
+
 end RcPullback
 
 section Core
@@ -390,4 +425,228 @@ theorem infra_78_isolated_stage_core (hidx : #(uIdx ⊕ cIdx) ≤ σ)
   exact hnf hfree
 
 end Core
+
+section Padding
+variable {S : SystemShape.{u}} {W : WorkingScheme K S}
+  {μ : Cardinal.{u}} {hμ : μ ∈ W.eligible} {base : W.Object μ hμ}
+
+/-- Padding a tuple `(u, c)` (coordinates `uIdx ⊕ J`) to `(u, d)` with coordinates `uIdx ⊕ cIdx`,
+`cIdx ≃ J ⊕ Kp`: the `J`-part is `c`, the `Kp`-part is the image of a fixed base point `w`. -/
+def infra_78_padTuple (q : TupleOver K S W hμ base) {uIdx J cIdx Kp : Type u}
+    (e : q.idx ≃ uIdx ⊕ J) (eK : cIdx ≃ J ⊕ Kp) (w : Occurrence K S (W.asSystem hμ base)) :
+    TupleOver K S W hμ base where
+  ν := q.ν
+  hν := q.hν
+  host := q.host
+  incl := q.incl
+  incl_arrow := q.incl_arrow
+  idx := uIdx ⊕ cIdx
+  val := Sum.elim (fun u => q.val (e.symm (Sum.inl u)))
+    (fun k => Sum.elim (fun j => q.val (e.symm (Sum.inr j)))
+      (fun _ => (⟨w.1, q.incl.onVertex w.1 w.2⟩ : Occurrence K S (W.asSystem q.hν q.host))) (eK k))
+
+/-- The coordinate map of the padding: `(uIdx ⊕ cIdx) ⊕ ι → (uIdx ⊕ J) ⊕ (ι ⊕ Kp)`; padding
+coordinates go to the extra fragment coordinates. Injective. -/
+def infra_78_padMap {uIdx J cIdx Kp ι : Type u} (eK : cIdx ≃ J ⊕ Kp) :
+    (uIdx ⊕ cIdx) ⊕ ι → (uIdx ⊕ J) ⊕ (ι ⊕ Kp)
+  | Sum.inl (Sum.inl u) => Sum.inl (Sum.inl u)
+  | Sum.inl (Sum.inr k) => Sum.elim (fun j => Sum.inl (Sum.inr j)) (fun kk => Sum.inr (Sum.inr kk)) (eK k)
+  | Sum.inr z => Sum.inr (Sum.inl z)
+
+theorem infra_78_padMap_injective {uIdx J cIdx Kp ι : Type u} (eK : cIdx ≃ J ⊕ Kp) :
+    Function.Injective (infra_78_padMap (uIdx := uIdx) (ι := ι) eK) := by
+  let g : (uIdx ⊕ J) ⊕ (ι ⊕ Kp) → (uIdx ⊕ cIdx) ⊕ ι
+    | Sum.inl (Sum.inl u) => Sum.inl (Sum.inl u)
+    | Sum.inl (Sum.inr j) => Sum.inl (Sum.inr (eK.symm (Sum.inl j)))
+    | Sum.inr (Sum.inl z) => Sum.inr z
+    | Sum.inr (Sum.inr kk) => Sum.inl (Sum.inr (eK.symm (Sum.inr kk)))
+  refine Function.LeftInverse.injective (g := g) ?_
+  intro a
+  rcases a with (u | k) | z
+  · rfl
+  · show g (Sum.elim _ _ (eK k)) = _
+    rcases hk : eK k with j | kk
+    · show Sum.inl (Sum.inr (eK.symm (Sum.inl j))) = _
+      rw [← hk, Equiv.symm_apply_apply]
+    · show Sum.inl (Sum.inr (eK.symm (Sum.inr kk))) = _
+      rw [← hk, Equiv.symm_apply_apply]
+  · rfl
+
+/-- **Isolation of a shorter list from isolation of its padding** (no non-injective diagram
+reindexing). If the padded tuple `(u, d)` is relatively isolated over `u` (fragment `Z`), then
+`(u, c)` is, with fragment `Z` plus `|Kp|` copies of the padding point `w`: a competitor `(u', c')`
+pads to `(u', d')` with the same point; the diagram hypothesis transfers along the injective
+coordinate map `infra_78_padMap` (`WorkingScheme.diagramEq_precomp`: `diagram_reindex` +
+forward `diagram_restrict`), and the Galois-type conclusion restricts to the `J`-coordinates. -/
+theorem infra_78_isolated_of_pad (q : TupleOver K S W hμ base) {uIdx J cIdx Kp : Type u}
+    (e : q.idx ≃ uIdx ⊕ J) (eK : cIdx ≃ J ⊕ Kp) (w : Occurrence K S (W.asSystem hμ base))
+    (hμ0 : ℵ₀ ≤ μ) (hKp : #Kp < μ)
+    (h : IsRelativelyIsolated (infra_78_padTuple q e eK w) (Equiv.refl (uIdx ⊕ cIdx))) :
+    IsRelativelyIsolated q e := by
+  obtain ⟨ι, Z, hι, H⟩ := h
+  refine ⟨ι ⊕ Kp, Sum.elim Z (fun _ => w), ?_, ?_⟩
+  · rw [Cardinal.mk_sum, Cardinal.lift_id, Cardinal.lift_id]
+    exact Cardinal.add_lt_of_lt hμ0 hι hKp
+  intro q' e' hν' hmarg hdiag
+  have hp := WorkingScheme.diagramEq_precomp q.host q'.host _ _ (infra_78_padMap (ι := ι) eK)
+    (infra_78_padMap_injective eK) hdiag
+  have e1 : alignJoint (Equiv.refl (uIdx ⊕ cIdx)) (typeJoint (p := infra_78_padTuple q e eK w) Z) =
+      fun t => alignJoint e (typeJoint (p := q) (Sum.elim Z fun _ => w)) (infra_78_padMap eK t) := by
+    funext t
+    rcases t with (u | k) | z
+    · rfl
+    · show _ = alignJoint e (typeJoint (p := q) (Sum.elim Z fun _ => w)) (Sum.elim _ _ (eK k))
+      show Sum.elim _ _ (eK k) = _
+      rcases eK k with j | kk <;> rfl
+    · rfl
+  have e2 : alignJoint (Equiv.refl (uIdx ⊕ cIdx)) (typeJoint (p := infra_78_padTuple q' e' eK w) Z) =
+      fun t => alignJoint e' (typeJoint (p := q') (Sum.elim Z fun _ => w)) (infra_78_padMap eK t) := by
+    funext t
+    rcases t with (u | k) | z
+    · rfl
+    · show _ = alignJoint e' (typeJoint (p := q') (Sum.elim Z fun _ => w)) (Sum.elim _ _ (eK k))
+      show Sum.elim _ _ (eK k) = _
+      rcases eK k with j | kk <;> rfl
+    · rfl
+  have hd : W.DiagramEq (X := (infra_78_padTuple q e eK w).host)
+      (Y := (infra_78_padTuple q' e' eK w).host)
+      (alignJoint (Equiv.refl (uIdx ⊕ cIdx)) (typeJoint (p := infra_78_padTuple q e eK w) Z))
+      (alignJoint (Equiv.refl (uIdx ⊕ cIdx)) (typeJoint (p := infra_78_padTuple q' e' eK w) Z)) := by
+    rw [e1, e2]; exact hp
+  have h1 := H (infra_78_padTuple q' e' eK w) (Equiv.refl _) hν' hmarg hd
+  obtain ⟨ρ, hρ, top, f1, f2, hf1, hf2, hinc, hval⟩ := h1
+  refine ⟨ρ, hρ, top, f1, f2, hf1, hf2, hinc, fun i => ?_⟩
+  rcases i with u | j
+  · exact hval (Sum.inl u)
+  · obtain ⟨k, hk⟩ : ∃ k, eK k = Sum.inl j := ⟨_, eK.apply_symm_apply _⟩
+    have h1 : (infra_78_padTuple q e eK w).val (Sum.inr k) = q.val (e.symm (Sum.inr j)) := by
+      show Sum.elim _ _ (eK k) = _
+      rw [hk]; rfl
+    have h2 : (infra_78_padTuple q' e' eK w).val (Sum.inr k) = q'.val (e'.symm (Sum.inr j)) := by
+      show Sum.elim _ _ (eK k) = _
+      rw [hk]; rfl
+    have := hval (Sum.inr k)
+    change (⟨((infra_78_padTuple q e eK w).val (Sum.inr k)).1,
+        f1.onVertex ((infra_78_padTuple q e eK w).val (Sum.inr k)).1
+          ((infra_78_padTuple q e eK w).val (Sum.inr k)).2⟩ : Occurrence K S (W.asSystem hρ top)) =
+      ⟨((infra_78_padTuple q' e' eK w).val (Sum.inr k)).1,
+        f2.onVertex ((infra_78_padTuple q' e' eK w).val (Sum.inr k)).1
+          ((infra_78_padTuple q' e' eK w).val (Sum.inr k)).2⟩ at this
+    rw [h1, h2] at this
+    exact this
+
+end Padding
+
+section PadSeed
+variable {P : SingleModelData K} {κ : Cardinal.{u}} {hκ : κ ∈ P.eligible} {uIdx : Type u}
+
+/-- A closed seed set (`infra_78_PairClosed`, as produced by `infra_78_seedStage_closed`) contains
+a padding point `p_0(x)`: requirement 1 for the empty set gives a level-`λ` subobject inside the
+`X`-part, and pair closure moves one of its points to the `Y`-side. -/
+theorem infra_78_padSeed_of_closed (ρ : Cardinal.{u}) {ℓ : Cardinal.{u}} (hℓel : ℓ ∈ P.eligible)
+    (s0 : Infra78Stage P hκ (Infra78MarkData κ uIdx))
+    (hseed : infra_78_PairClosed ρ hℓel (infra_78_toArr s0.hp) trivial s0.e.R) :
+    ∃ x, (Sum.inr (s0.p x) : κ.ord.ToType ⊕ κ.ord.ToType) ∈ s0.e.R := by
+  obtain ⟨A, V, iA, iV, g, -, -, -, -, -, -, hA, -⟩ :=
+    hseed.2.2.1 ∅ (Set.empty_subset _) (by simp)
+  have hne : Nonempty ℓ.ord.ToType :=
+    Cardinal.nonempty_ord_toType (aleph0_pos.trans_le (P.aleph0_le hℓel)).ne'
+  let a : A.model.carrier := hne.some
+  have hx : (Sum.inl (iA.onVertex PUnit.unit a) : κ.ord.ToType ⊕ κ.ord.ToType) ∈ s0.e.R :=
+    hA ⟨_, ⟨a, rfl⟩, rfl⟩
+  have h := hseed.2.1 _ hx
+  exact ⟨_, (infra_78_toArr_apply s0.hp _) ▸ h⟩
+
+end PadSeed
+
+section Full
+variable (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : ℵ₀ ≤ σ)
+  {μ : Cardinal.{u}} (hμT : μ ∈ infra_73_tailSet P σ) {uIdx cIdx : Type u}
+  {ρ : Cardinal.{u}} (hρκ : Order.succ ρ < μ)
+  (Xb : P.scheme.Object μ (Tail.mem (infra_73_tail P σ hσ) hμT)) {ℓ : Cardinal.{u}}
+  (hℓel : ℓ ∈ P.eligible)
+
+include hρκ in
+/-- **`infra_78_isolated_stage`** (Prop 7.8 proof: "some stage `i` with `cf(i) > λ` at which every
+list of length `≤ θ` from `S_i` is isolated relative to `b`"), with `θ = |cIdx| ≤ λ`. In the
+recursion matrix with `S`-part candidates indexed by `cIdx`, under the hypotheses of
+`infra_78_isolated_stage_core` and a padding point in the seed set (`p_0(x) ∈ S_0`, supplied by
+any closed seed via `infra_78_padSeed_of_closed`), there is a stage `i` with `λ < cf(i)` such that
+for EVERY index type `J` with `|J| ≤ θ` (including `J = ∅`) and every `c : J → S_i`, the tuple
+`(b_i, c)` is relatively isolated over `b_i`. Shorter lists are padded with a point `p_i(x_i) ∈ S_i`
+and projected back (`infra_78_isolated_of_pad`, injective reindexing only). -/
+theorem infra_78_isolated_stage (hidx : #(uIdx ⊕ cIdx) ≤ σ)
+    (hcof : ∀ δ : (Order.succ ρ).ord.ToType, Order.IsSuccLimit δ →
+      #uIdx < (Ordinal.ToType.toOrd δ).1.cof)
+    (hℓρ : ℓ < ρ) (hpow : ρ ^ ℓ = ρ) (hc : #cIdx ≤ ℓ)
+    (s0 : Infra78Stage P (Tail.mem (infra_73_tail P σ hσ) hμT) (Infra78MarkData μ uIdx))
+    (e0 : Infra78MarkData μ uIdx) (h5seed : infra_78_StageInv5 Xb s0)
+    (hS0 : ∃ y, (Sum.inr y : μ.ord.ToType ⊕ μ.ord.ToType) ∈ s0.e.R) (h0 : #s0.e.R ≤ ρ)
+    (hpad : ∃ x, (Sum.inr (s0.p x) : μ.ord.ToType ⊕ μ.ord.ToType) ∈ s0.e.R) :
+    ∃ i : (Order.succ ρ).ord.ToType, ℓ < Order.cof (Set.Iio i) ∧
+      ∀ (J : Type u), #J ≤ #cIdx → ∀ c : J → μ.ord.ToType,
+        Set.range c ⊆ infra_78_Spart (infra_78_rcObj Xb hℓel (infra_78_candS cIdx) s0 e0 i) →
+        IsRelativelyIsolated (infra_78_markTuple
+          (infra_78_toArr (infra_78_rcObj Xb hℓel (infra_78_candS cIdx) s0 e0 i).hp)
+          (Sum.elim (infra_78_stageMark (infra_78_rcObj Xb hℓel (infra_78_candS cIdx) s0 e0 i))
+            (fun x => ⟨PUnit.unit, c x⟩)))
+          (Equiv.refl (uIdx ⊕ J)) := by
+  classical
+  obtain ⟨i, hi, hiso⟩ := infra_78_isolated_stage_core P σ hσ hμT hρκ Xb hℓel hidx hcof hℓρ hpow hc
+    s0 e0 h5seed hS0 h0
+  refine ⟨i, hi, fun J hJ c hcS => ?_⟩
+  obtain ⟨sJ⟩ := (Cardinal.le_def J cIdx).1 hJ
+  obtain ⟨x0, hx0⟩ := infra_78_rc_padPoint hρκ Xb hℓel (infra_78_candS cIdx) s0 e0 hpad i
+  let eK : cIdx ≃ J ⊕ ↥(Set.range sJ)ᶜ :=
+    (Equiv.Set.sumCompl (Set.range sJ)).symm.trans
+      (Equiv.sumCongr (Equiv.ofInjective sJ sJ.injective).symm (Equiv.refl _))
+  let d : cIdx → μ.ord.ToType := fun k =>
+    Sum.elim c (fun _ => (infra_78_rcObj Xb hℓel (infra_78_candS cIdx) s0 e0 i).p x0) (eK k)
+  have hd : Set.range d ⊆ infra_78_Spart (infra_78_rcObj Xb hℓel (infra_78_candS cIdx) s0 e0 i) := by
+    rintro _ ⟨k, rfl⟩
+    show Sum.elim c _ (eK k) ∈ _
+    rcases eK k with j | kk
+    · exact hcS ⟨j, rfl⟩
+    · exact hx0
+  have h := hiso d hd
+  have hV : (infra_78_padTuple (infra_78_markTuple
+      (infra_78_toArr (infra_78_rcObj Xb hℓel (infra_78_candS cIdx) s0 e0 i).hp)
+      (Sum.elim (infra_78_stageMark (infra_78_rcObj Xb hℓel (infra_78_candS cIdx) s0 e0 i))
+        (fun x => ⟨PUnit.unit, c x⟩))) (Equiv.refl (uIdx ⊕ J)) eK ⟨PUnit.unit, x0⟩).val =
+      Sum.elim (infra_78_stageMark (infra_78_rcObj Xb hℓel (infra_78_candS cIdx) s0 e0 i))
+          (fun x => ⟨PUnit.unit, d x⟩) := by
+    funext t
+    rcases t with u | k
+    · rfl
+    · show Sum.elim _ _ (eK k) = (⟨PUnit.unit, Sum.elim c
+          (fun _ => (infra_78_rcObj Xb hℓel (infra_78_candS cIdx) s0 e0 i).p x0) (eK k)⟩ :
+          Occurrence K oneVertexShape (P.scheme.asSystem (Tail.mem (infra_73_tail P σ hσ) hμT)
+            (infra_78_rcObj Xb hℓel (infra_78_candS cIdx) s0 e0 i).Y))
+      rcases eK k with j | kk
+      · rfl
+      · exact congrArg (fun y => (⟨PUnit.unit, y⟩ : Occurrence K oneVertexShape
+          (P.scheme.asSystem (Tail.mem (infra_73_tail P σ hσ) hμT)
+            (infra_78_rcObj Xb hℓel (infra_78_candS cIdx) s0 e0 i).Y)))
+          (infra_78_toArr_apply (infra_78_rcObj Xb hℓel (infra_78_candS cIdx) s0 e0 i).hp x0)
+  have h' : IsRelativelyIsolated (infra_78_markTuple
+      (infra_78_toArr (infra_78_rcObj Xb hℓel (infra_78_candS cIdx) s0 e0 i).hp)
+      (infra_78_padTuple (infra_78_markTuple
+        (infra_78_toArr (infra_78_rcObj Xb hℓel (infra_78_candS cIdx) s0 e0 i).hp)
+        (Sum.elim (infra_78_stageMark (infra_78_rcObj Xb hℓel (infra_78_candS cIdx) s0 e0 i))
+          (fun x => ⟨PUnit.unit, c x⟩))) (Equiv.refl (uIdx ⊕ J)) eK ⟨PUnit.unit, x0⟩).val)
+      (Equiv.refl (uIdx ⊕ cIdx)) := by
+    rw [hV]; exact h
+  have hμ0 : ℵ₀ ≤ μ := P.aleph0_le (Tail.mem (infra_73_tail P σ hσ) hμT)
+  have hKp : #(↥(Set.range sJ)ᶜ) < μ :=
+    (Cardinal.mk_subtype_le _).trans_lt (hc.trans_lt (hℓρ.trans
+      ((Order.lt_succ_of_not_isMax (not_isMax ρ)).trans hρκ)))
+  exact infra_78_isolated_of_pad (infra_78_markTuple
+      (infra_78_toArr (infra_78_rcObj Xb hℓel (infra_78_candS cIdx) s0 e0 i).hp)
+      (Sum.elim (infra_78_stageMark (infra_78_rcObj Xb hℓel (infra_78_candS cIdx) s0 e0 i))
+        (fun x => ⟨PUnit.unit, c x⟩))) (Equiv.refl _) eK
+    (⟨PUnit.unit, x0⟩ : Occurrence K oneVertexShape (P.scheme.asSystem
+      (Tail.mem (infra_73_tail P σ hσ) hμT) (infra_78_rcObj Xb hℓel (infra_78_candS cIdx) s0 e0 i).X))
+    hμ0 hKp h'
+
+end Full
 end AEC
