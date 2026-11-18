@@ -140,6 +140,74 @@ theorem lemma_7_12_of_marks (P : SingleModelData K) (hm : infra_712u_marks_state
     have h1 := infra_712_trans_level P _ h0 _ _ _ rfl rfl rfl hA' hM
     exact infra_712_trans_level P _ h0 _ _ _ rfl rfl rfl h1 C'.marksWhole_sameGalois
 
+/-- **Restriction of tied freeness, general base tuple (proved, cycle 88).** If `q` over `B` is
+tied free along `X → A → B` from `p`, its restriction to `A` is tied free along `X → A` from `p`
+(the proof of `infra_78_tiedFree_restrict`, any base tuple and coordinate map). -/
+theorem infra_712u_tiedFree_restrict
+    {P : SingleModelData K} {μ : Cardinal.{u}} {hμ : μ ∈ P.eligible}
+    {X A B : P.scheme.Object μ hμ}
+    (g : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ A))
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ B))
+    (hf : P.scheme.permitted (X := A) (Y := B) f)
+    (p : TupleOver K oneVertexShape P.scheme hμ X)
+    (q : TupleOver K oneVertexShape P.scheme hμ B) (eB : p.idx ≃ q.idx)
+    (h : IsTiedFree (SystemArrow.comp g f) p q eB) :
+    IsTiedFree g p (q.restrict f hf) eB := by
+  intro seq ι Z Z0 hκ hι hιμ hmove
+  have hidx : #p.idx < μ := infra_78_idx_lt_of_seq (q := p) seq hκ
+  have hsum : #(p.idx ⊕ ι) < μ := by
+    rw [Cardinal.mk_sum, Cardinal.lift_id, Cardinal.lift_id]
+    exact Cardinal.add_lt_of_lt (P.aleph0_le hμ) hidx hιμ
+  let fZ : ι → Occurrence K oneVertexShape (P.scheme.asSystem hμ B) := fun b => pushOcc f (Z b)
+  have hmove' : infra_73_isMove (SystemArrow.comp g f) seq fZ Z0 := by
+    intro i
+    have h1 := hmove i
+    let ys := seqJoint
+      (fun j => (⟨(seq.family i j).1, g.onVertex (seq.family i j).1 (seq.family i j).2⟩ :
+        Occurrence K oneVertexShape (P.scheme.asSystem hμ A))) Z
+    have h2 := P.scheme.diagram_preserved A B f hf ys hsum hsum
+    have hpush : (fun t => (⟨(ys t).1, f.onVertex (ys t).1 (ys t).2⟩ :
+        Occurrence K oneVertexShape (P.scheme.asSystem hμ B))) =
+        seqJoint (fun j => (⟨(seq.family i j).1,
+          (SystemArrow.comp g f).onVertex (seq.family i j).1 (seq.family i j).2⟩ :
+            Occurrence K oneVertexShape (P.scheme.asSystem hμ B))) fZ := by
+      funext t
+      cases t <;> rfl
+    rw [hpush] at h2
+    exact P.scheme.diagram_trans _ _ _ _ _ _ h1 h2
+  exact h seq fZ Z0 hκ hι hιμ hmove'
+
+theorem infra_712u_sg_congr_right {P : SingleModelData K} {μ : Cardinal.{u}}
+    {hμ : μ ∈ P.eligible} {A : P.scheme.Object μ hμ}
+    {t1 t2 : TupleOver K oneVertexShape P.scheme hμ A} {ι : Type u}
+    {f : t1.idx ≃ ι} {g g' : t2.idx ≃ ι} (h : SameGaloisType t1 t2 f g)
+    (hg : ∀ x, g x = g' x) : SameGaloisType t1 t2 f g' := Equiv.ext hg ▸ h
+
+/-- **7.12(2) successor comparison (proved, cycle 88).** A finite `q` over `M`, tied free
+along `a : A → M` from its marginal, and a tied free extension `r` of the same marginal over
+`N ⊇ M` (along `a ≫ g`) have the same type over `M`: `r ↾ M` is tied free over `M`
+(`infra_712u_tiedFree_restrict`), and tied free extensions are unique
+(`infra_73_tied_unique`). With `infra_78_same_level_type_amalgam` this is the amalgamation
+step "identify `bᵢ` with `c`" of the English proof. -/
+theorem infra_712u_step (P : SingleModelData K) {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
+    (h0 : μ ∈ recursionClosedLevels P ℵ₀) (h1 : Order.succ ℵ₀ ≤ μ)
+    {A M N : P.scheme.Object μ hμ}
+    (a : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ M))
+    (ha : P.scheme.permitted (X := A) (Y := M) a)
+    (g : SystemArrow K oneVertexShape (P.scheme.asSystem hμ M) (P.scheme.asSystem hμ N))
+    (hg : P.scheme.permitted (X := M) (Y := N) g)
+    (q : TupleOver K oneVertexShape P.scheme hμ M) (hqν : q.ν = μ) (hfin : Finite q.idx)
+    (hq : IsTiedFree a (q.restrict a ha) q (Equiv.refl _))
+    (r : TupleOver K oneVertexShape P.scheme hμ N) (hrν : r.ν = μ) (er : q.idx ≃ r.idx)
+    (hr : IsTiedFree (SystemArrow.comp a g) (q.restrict a ha) r er) :
+    SameGaloisType q (r.restrict g hg) er (Equiv.refl _) := by
+  have hrM := infra_712u_tiedFree_restrict a g hg (q.restrict a ha) r er hr
+  have H := infra_73_tied_unique P ℵ₀ le_rfl hμ h0 h1 a ha (q.restrict a ha) hqν
+    (Cardinal.lt_aleph0_of_finite q.idx).le q (r.restrict g hg) (Equiv.refl _) er hqν hrν hq hrM
+  have H2 := infra_612_sameGalois_trans_equiv H er
+  exact infra_712u_sg_congr_right (infra_712_sg_congr_left H2 (fun _ => rfl))
+    (fun x => er.apply_symm_apply x)
+
 /-- **7.12(2), the marks (open tip `infra_712u_marks`).** -/
 theorem infra_712u_marks (P : SingleModelData K) : infra_712u_marks_statement P := by
   sorry
