@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-18 09:56",
-  "sorryCount": 45,
+  "updated": "2026-11-18 10:02",
+  "sorryCount": 44,
   "legend": {
     "open": "No unfinished required proof-deps — try next",
     "blocked": "Waiting on incomplete required proof-deps",
@@ -369,9 +369,9 @@
       "label": "Lem 6.11",
       "section": 6,
       "file": "AEC/Section6/AverageDescentTied.lean",
-      "status": "blocked",
-      "blocker": "infra_611_tied_mixed",
-      "detail": "Restated to the full English (grokbot_02): lemma_6_11 in AEC/Section6/AverageDescentTied.lean (moved out of Section6/Results.lean: proof uses Section 7 tied infra, which imports Section6.Results; old degenerate wrapper renamed lemma_6_11_untied). Statement: tail of recursion-closed levels; nu <= mu both in the tail; f : A -> B (A at nu, B at mu); q over B, q.nu = mu, #q.idx <= sigma; chi with c(sigma) = testCardinal (max LS aleph0) g sigma <= chi < nu; I : kappa -> q.idx -> A with chi + aleph0 < kappa < nu; for every query Z of B with |Z| <= chi, at most |Z|+aleph0 indices i with diagram of f(d_i)^Z in B different from q|Z; conclusion IsTiedFreeMixed f (q|A) q refl (free lift, tied). Case nu = mu PROVED (infra_611_tied). Case nu < mu is sorry: open sub-tip infra_611_tied_mixed. Not done until that closes."
+      "status": "done",
+      "blocker": null,
+      "detail": "Restated to the full English (grokbot_02): lemma_6_11 in AEC/Section6/AverageDescentTied.lean (moved out of Section6/Results.lean: proof uses Section 7 tied infra, which imports Section6.Results; old degenerate wrapper renamed lemma_6_11_untied). Statement: tail of recursion-closed levels; nu <= mu both in the tail; f : A -> B (A at nu, B at mu); q over B, q.nu = mu, #q.idx <= sigma; chi with c(sigma) = testCardinal (max LS aleph0) g sigma <= chi < nu; I : kappa -> q.idx -> A with chi + aleph0 < kappa < nu; for every query Z of B with |Z| <= chi, at most |Z|+aleph0 indices i with diagram of f(d_i)^Z in B different from q|Z; conclusion IsTiedFreeMixed f (q|A) q refl (free lift, tied). Case nu = mu PROVED (infra_611_tied). Case nu < mu PROVED (infra_611_tied_mixed). Done: no sorry; axioms propext/choice/Quot.sound."
     },
     {
       "id": "lemma_6_14",
@@ -2040,9 +2040,9 @@
       "label": "Lemma 6.11 mixed levels nu < mu (tied)",
       "section": 6,
       "file": "AEC/Section6/AverageDescentTied.lean",
-      "status": "open",
+      "status": "done",
       "blocker": null,
-      "detail": "Open (sub-tip split off lemma_6_11; the sorry branch of lemma_6_11). Same hypotheses as lemma_6_11 with nu < mu: conclude IsTiedFreeMixed f (q|A) q refl. Route: I is an approximation sequence of q|A at chi (as in infra_611_tied, with mixed diagram_preserved); common mixed moves (infra_78_common_move_mixed) give tied freeness up to the testing arity; needs a mixed testing reduction (bounded-arity IsTiedFreeMixed => all queries below nu), e.g. via the mixed tied free lift infra_78_tied_free_lift_mixed plus Thm 6.6 testing over B at level mu."
+      "detail": "Done (no sorry; axioms propext/choice/Quot.sound): infra_611_tied_mixed in AEC/Section6/AverageDescentTied.lean; closes the nu < mu branch of lemma_6_11. Hypotheses exactly lemma_6_11's (recursion-closed sigma^+ <= nu <= mu, A at nu, B at mu, q.nu = mu, #q.idx <= sigma, g(sigma)+LS <= chi < nu, chi+aleph0 < kappa < nu, majority with <= |Z|+aleph0 exceptions on queries |Z| <= chi); conclusion IsTiedFreeMixed f (q|A) q refl. Proof: I is an approximation sequence of q|A at chi; common mixed moves give tied freeness on queries <= chi. Testing reduction: p' = level-nu realization of q|A (infra_78_same_level_realization), qB = mixed tied free lift of p' (infra_78_tied_free_lift_mixed; hypotheses checked: nu, mu recursion-closed, sigma^+ <= nu <= mu, p'.nu = nu; only its IsTiedFreeMixed clause is used, not the narrowed restriction clause or the open cross-level Galois identification), sequences of q|A transported to p' (infra_611_seqTransport), SameGaloisType qB q by Thm 6.6 at mu (tests <= g(sigma)+LS <= chi moved over I), then every bounded query answered through qB."
     },
     {
       "id": "infra_612_tied_exists",
@@ -4021,6 +4021,6 @@
       "kind": "hard"
     }
   ],
-  "doneCount": 180,
+  "doneCount": 182,
   "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 43. Uncommitted in /tmp/aec-grok."
 }
