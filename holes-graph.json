@@ -6815,25 +6815,25 @@
   {
    "from": "infra_712b_free_pull",
    "to": "lemma_7_12_bounded",
-   "kind": "",
+   "kind": "hard",
    "note": ""
   },
   {
    "from": "infra_712b_chain_succ",
    "to": "lemma_7_12_bounded",
-   "kind": "",
+   "kind": "hard",
    "note": ""
   },
   {
    "from": "infra_713_unique_short",
    "to": "theorem_7_13",
-   "kind": "",
+   "kind": "hard",
    "note": ""
   },
   {
    "from": "infra_713_unique_long",
    "to": "theorem_7_13",
-   "kind": "",
+   "kind": "hard",
    "note": ""
   }
  ],
