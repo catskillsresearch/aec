@@ -421,14 +421,107 @@ theorem infra_713_lift_pi_permitted (P : SingleModelData K) {μ : Cardinal.{u}}
   show t = E0.symm (eJ0 (eJ0.symm (E0 t)))
   exact ((congrArg E0.symm (eJ0.apply_symm_apply (E0 t))).trans (E0.symm_apply_apply t)).symm
 
+/-- **Theorem 7.13 (1b), determinacy, for a permitted base arrow (proved, cycle 92).** English:
+"Applying witnessed uniqueness at the receiving base". The coordinates of `q` and of `q'` form
+lists over `B` indexed like `L`; the first is PI by `infra_713_lift_pi_permitted`, the second by
+`infra_713_pi_core` (its finite projections have the types of those of `q`, hence are tied free
+lifts too, `infra_79_tiedFreeMixed_right_congr`); 7.13(1a) at `B` (`infra_713_unique`) gives
+equal whole types. -/
+theorem infra_713_lift_det_permitted (P : SingleModelData K) {μ : Cardinal.{u}}
+    (hμ : μ ∈ P.eligible) (hl : μ ∈ infra_712_levels P)
+    (X : P.scheme.Object μ hμ) (L : TupleList P.scheme hμ X) [LinearOrder L.δ] [L.FiniteEach]
+    [WellFoundedLT L.δ] (hPI : ProductIndependentTied L) (hS : #(Σ i, L.indexAt i) < μ)
+    (B : P.scheme.Object μ hμ)
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ B))
+    (hf : P.scheme.permitted (X := X) (Y := B) f)
+    (q : TupleOver K oneVertexShape P.scheme hμ B) (eq : L.whole.idx ≃ q.idx)
+    (hq : IsTiedFree f L.whole q eq) (hqν : q.ν = μ)
+    (q' : TupleOver K oneVertexShape P.scheme hμ B) (eq' : q.idx ≃ q'.idx) (hq'ν : q'.ν = μ)
+    (hfin : ∀ (ι : Type u) [Finite ι] (ix : ι → q.idx), Function.Injective ix →
+      SameGaloisType (q.reindex ix) (q'.reindex (fun s => eq' (ix s)))
+        (Equiv.refl _) (Equiv.refl _)) :
+    SameGaloisType q q' eq' (Equiv.refl _) := by
+  classical
+  have hpi := infra_713_lift_pi_permitted P hμ hl X L hPI hS B f hf q eq hq hqν
+  obtain ⟨ht, hc, hw⟩ := hl
+  have hw0 : ℵ₀ ≤ infra_75_wide P ℵ₀ := le_self_add
+  have h0lt : ℵ₀ < μ := hw0.trans_lt hw
+  set σ : Cardinal.{u} := max ℵ₀ #(Σ i, L.indexAt i) with hσdef
+  have hσ : ℵ₀ ≤ σ := le_max_left _ _
+  have hσlt : σ < μ := max_lt h0lt hS
+  have hrec : μ ∈ recursionClosedLevels P σ := infra_712_recursionClosed_of_615 hc hσ hσlt
+  have hσμ : Order.succ σ ≤ μ := Order.succ_le_of_lt hσlt
+  have hwhole : #L.whole.idx ≤ σ := le_max_right _ _
+  -- tied free projections of `q'`
+  have hT' : ∀ {ι : Type u} [Finite ι] (ρ : ι → L.whole.idx), Function.Injective ρ →
+      IsTiedFree f (L.whole.reindex ρ) (q'.reindex (fun j => eq' (eq (ρ j)))) (Equiv.refl ι) := by
+    intro ι _ ρ hρ
+    have h1 := infra_713_tiedFree_reindex P σ hσ hμ hrec hσμ f hf L.whole rfl hwhole q eq hqν hq
+      ρ hρ
+    have h2 := hfin ι (fun j => eq (ρ j)) (eq.injective.comp hρ)
+    have hlt : #(L.whole.reindex ρ).idx < μ := (Cardinal.lt_aleph0_of_finite ι).trans h0lt
+    have hM : IsTiedFreeMixed f (L.whole.reindex ρ) (q.reindex (fun j => eq (ρ j)))
+        (Equiv.refl ι) := h1
+    have H := infra_79_tiedFreeMixed_right_congr (q := L.whole.reindex ρ)
+      (qB := q.reindex (fun j => eq (ρ j))) (qB' := q'.reindex (fun j => eq' (eq (ρ j)))) f
+      (Equiv.refl ι) (Equiv.refl ι) hM h2 hlt (le_of_eq hqν.symm) (le_of_eq hq'ν.symm)
+    exact H
+  have hinjJ : ∀ (n : ℕ) (ix : Fin n → L.δ), Function.Injective ix → Function.Injective
+      (fun p : Σ s : Fin n, L.indexAt (ix s) => (⟨ix p.1, p.2⟩ : Σ i, L.indexAt i)) := by
+    intro n ix hinj
+    rintro ⟨s, a⟩ ⟨t, b⟩ h
+    simp only [Sigma.mk.inj_iff] at h
+    obtain ⟨h1, h2⟩ := h
+    obtain rfl := hinj h1
+    simp only [heq_eq_eq] at h2
+    subst h2; rfl
+  obtain ⟨ν1, hν1, host1, incl1, hincl1, idx1, val1⟩ := q
+  obtain ⟨ν2, hν2, host2, incl2, hincl2, idx2, val2⟩ := q'
+  dsimp only at hqν hq'ν
+  subst ν1 ν2
+  let LB : TupleList P.scheme hμ B :=
+    { δ := L.δ, host := host1, incl := incl1, incl_arrow := hincl1, indexAt := L.indexAt,
+      val := fun i a => val1 (eq ⟨i, a⟩) }
+  let LB' : TupleList P.scheme hμ B :=
+    { δ := L.δ, host := host2, incl := incl2, incl_arrow := hincl2, indexAt := L.indexAt,
+      val := fun i a => val2 (eq' (eq ⟨i, a⟩)) }
+  letI : LinearOrder LB.δ := inferInstanceAs (LinearOrder L.δ)
+  haveI : WellFoundedLT LB.δ := inferInstanceAs (WellFoundedLT L.δ)
+  haveI : LB.FiniteEach := ⟨fun i => L.finite_each i⟩
+  haveI : LB'.FiniteEach := ⟨fun i => L.finite_each i⟩
+  have hPIB : ProductIndependentTied LB := fun n ix hinj => hpi n ix hinj
+  have hPIB' : ProductIndependentTied LB' := by
+    intro n ix hinj
+    haveI : ∀ s, Finite (L.indexAt (ix s)) := fun s => L.finite_each _
+    exact ⟨LB'.subConcat n ix, _,
+      infra_713_pi_core P hμ ⟨ht, hc, hw⟩ X L hPI hS B f hf n ix hinj (fun s => LB'.one (ix s))
+        (fun s => Equiv.refl _) (fun s => rfl)
+        (fun s => haveI := L.finite_each (ix s)
+          hT' (fun a : L.indexAt (ix s) => (⟨ix s, a⟩ : Σ i, L.indexAt i)) sigma_mk_injective)
+        (LB'.subConcat n ix) (Equiv.refl _) rfl (hT' _ (hinjJ n ix hinj)),
+      infra_712_sg_congr_left (SameGaloisType.refl _) (fun t => rfl)⟩
+  have hm : ∀ i, SameGaloisType (LB.one i) (LB'.one ((Equiv.refl L.δ) i)) (Equiv.refl _)
+      (Equiv.refl _) := fun i => haveI := L.finite_each i
+    hfin (L.indexAt i) (fun a => eq ⟨i, a⟩) (eq.injective.comp sigma_mk_injective)
+  have H := infra_713_unique P hμ ⟨ht, hc, hw⟩ B LB LB' (Equiv.refl _) (fun i => Equiv.refl _)
+    hS.le hPIB hPIB' hm
+  have H' := infra_712_sg_congr_left H (f' := Equiv.refl _) (fun t => rfl)
+  obtain ⟨ρ, hρ, top, f1, f2, h1, h2, hcomm, hv⟩ := H'
+  refine ⟨ρ, hρ, top, f1, f2, h1, h2, hcomm, fun k => ?_⟩
+  obtain ⟨i, rfl⟩ : ∃ i, k = eq' (eq i) := ⟨eq.symm (eq'.symm k), by simp⟩
+  have hk : eq'.symm (eq' (eq i)) = eq i := eq'.symm_apply_apply _
+  rw [hk]
+  exact hv i
+
 /-- **Theorem 7.13 (1b), product independence (proved, cycle 92; was tip `infra_713_lift_pi`).** -/
 theorem infra_713_lift_pi (P : SingleModelData K) : infra_713_lift_pi_statement P :=
   fun hμ hl X L _ _ _ hPI hS B f hf q eq hq hqν n ix hinj =>
     infra_713_lift_pi_permitted P hμ hl X L hPI hS B f hf q eq hq hqν n ix hinj
 
-/-- **Theorem 7.13 (1b), determinacy (open tip `infra_713_lift_det`).** -/
-theorem infra_713_lift_det (P : SingleModelData K) : infra_713_lift_det_statement P := by
-  sorry
+/-- **Theorem 7.13 (1b), determinacy (proved, cycle 92; was tip `infra_713_lift_det`).** -/
+theorem infra_713_lift_det (P : SingleModelData K) : infra_713_lift_det_statement P :=
+  fun hμ hl X L _ _ _ hPI hS B f hf q eq hq hqν q' eq' hq'ν hfin =>
+    infra_713_lift_det_permitted P hμ hl X L hPI hS B f hf q eq hq hqν q' eq' hq'ν hfin
 
 /-- **Theorem 7.13 (1b) (proved glue, cycle 91).** -/
 theorem infra_713_lift (P : SingleModelData K) : infra_713_lift_statement P :=

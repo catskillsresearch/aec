@@ -1,6 +1,6 @@
 {
  "updated": "2026-11-18 17:35 grokbot_01",
- "sorryCount": 42,
+ "sorryCount": 41,
  "legend": {
   "open": "No unfinished required proof-deps — try next",
   "blocked": "Waiting on incomplete required proof-deps",
@@ -3400,9 +3400,9 @@
    "label": "Thm 7.13 (1b) level-wise",
    "section": 7,
    "file": "AEC/Section7/Theorem713.lean",
-   "status": "blocked",
+   "status": "done",
    "blocker": null,
-   "detail": "Cycle 91: SPLIT: infra_713_lift := infra_713_lift_of_parts (infra_713_lift_pi) (infra_713_lift_det) (glue proved). Open (cycle 91). infra_713_lift_statement (Theorem713.lean): at a 7.12 level, a tied free lift q of L.whole along X -> B is product-independent (finite sublists = IsFiniteProductTied of lifted marginals) and determined by its finite-subtuple types. Plan: Prop 6.12 tied finite projections of free lifts + (1a) (infra_713_unique) at base B."
+   "detail": "Cycle 91: SPLIT: infra_713_lift := infra_713_lift_of_parts (infra_713_lift_pi) (infra_713_lift_det) (glue proved). Open (cycle 91). infra_713_lift_statement (Theorem713.lean): at a 7.12 level, a tied free lift q of L.whole along X -> B is product-independent (finite sublists = IsFiniteProductTied of lifted marginals) and determined by its finite-subtuple types. Plan: Prop 6.12 tied finite projections of free lifts + (1a) (infra_713_unique) at base B. | DONE cycle 92: glue of infra_713_lift_pi and infra_713_lift_det, both proved; axioms clean."
   },
   {
    "id": "infra_713_continuity",
@@ -3436,9 +3436,9 @@
    "label": "Thm 7.13 (1b-ii): tied free lift determined by finite data",
    "section": 7,
    "file": "AEC/Section7/Theorem713.lean",
-   "status": "open",
+   "status": "done",
    "blocker": null,
-   "detail": "Open (cycle 91). infra_713_lift_det_statement. Plan: level-mu copies (infra_612_exists_level_copy) of q, q' as TupleLists over B with L's index structure; PI of both (from lift_pi plus invariance of IsFiniteProductTied under SameGaloisType of factors/joint -- needed lemma); then infra_713_unique at base B (B is at a 7.12 level)."
+   "detail": "PROVED cycle 92 (axioms clean) via infra_713_lift_det_permitted: coordinates of q and q' as lists LB, LB' over B indexed like L; LB PI by infra_713_lift_pi_permitted, LB' PI by infra_713_pi_core (finite projections of q' have the types of q's, hence tied free lifts too, infra_79_tiedFreeMixed_right_congr); infra_713_unique at B gives SameGaloisType q q'. Same-level only; no cross-level transitivity used."
   },
   {
    "id": "infra_713_tiedFree_reindex",
@@ -7014,6 +7014,6 @@
    "note": ""
   }
  ],
- "doneCount": 327,
+ "doneCount": 329,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
