@@ -1,6 +1,6 @@
 module
 
-public import AEC.Section7.Lemma712Common
+public import AEC.Section7.TiedFreeProject
 
 @[expose] public section
 

@@ -395,7 +395,8 @@ Lean: imports `AEC.Section6.Results`.
 | `infra_713_unique_short` | Thm 7.13 (1a), `|δ| ≤ μ` | **done** (cycle 90, `Theorem713.lean`) |
 | `infra_713_unique_long` | Thm 7.13 (1a), `|δ| > μ` | **done** (cycle 91, `infra_713_unique`) |
 | `infra_713_lift` | Thm 7.13 (1b) | split (cycle 91): glue proved |
-| `infra_713_lift_pi` | Thm 7.13 (1b-i), tied free lift is PI | **open** (needs tied-lift projection + finite base change) |
+| `infra_713_lift_pi` | Thm 7.13 (1b-i), tied free lift is PI | **open** (projection done; needs finite base change) |
+| `infra_713_tiedFree_reindex` | finite projections of tied free lifts | **done** (cycle 92, `TiedFreeProject.lean`) |
 | `infra_713_lift_det` | Thm 7.13 (1b-ii), determined by finite data | **open** (after `infra_713_lift_pi`) |
 | `infra_713_continuity` | Thm 7.13 (2), tied Def 7.7 | **open** (cycle 91) |
 | `infra_713_realize` | Thm 7.13 (3) | **open**, hard (bounded-mark 7.8/7.9) |

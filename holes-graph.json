@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-18 17:31 grokbot_01",
+ "updated": "2026-11-18 17:35 grokbot_01",
  "sorryCount": 43,
  "legend": {
   "open": "No unfinished required proof-deps — try next",
@@ -3429,7 +3429,7 @@
    "file": "AEC/Section7/Theorem713.lean",
    "status": "open",
    "blocker": null,
-   "detail": "Open (cycle 91). infra_713_lift_pi_statement (Theorem713.lean). Needs (a) finite projections of a tied free lift are tied free lifts of the projections (no Lean lemma yet: an approximation sequence of p.reindex rho is not one of p) and (b) finite iteration of tied base change (infra_612_tied_base_change_level_joints, level joints) through IsFiniteProductTied, as in infra_712_products; then PI of L gives the product data."
+   "detail": "Open (cycle 91). infra_713_lift_pi_statement (Theorem713.lean). (a) DONE cycle 92: infra_713_tiedFree_reindex. Remaining (b) finite iteration of tied base change (infra_612_tied_base_change_level_joints, level joints) through IsFiniteProductTied, as in infra_712_products; then PI of L gives the product data."
   },
   {
    "id": "infra_713_lift_det",
@@ -3439,6 +3439,15 @@
    "status": "open",
    "blocker": null,
    "detail": "Open (cycle 91). infra_713_lift_det_statement. Plan: level-mu copies (infra_612_exists_level_copy) of q, q' as TupleLists over B with L's index structure; PI of both (from lift_pi plus invariance of IsFiniteProductTied under SameGaloisType of factors/joint -- needed lemma); then infra_713_unique at base B (B is at a 7.12 level)."
+  },
+  {
+   "id": "infra_713_tiedFree_reindex",
+   "label": "Finite projections of tied free lifts are tied free lifts",
+   "section": 7,
+   "file": "AEC/Section7/TiedFreeProject.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "PROVED cycle 92 (axioms clean): IsTiedFree f p qB eB, rho injective ==> IsTiedFree f (p.reindex rho) (qB.reindex (eB o rho)) refl, at recursion-closed mu >= sigma^+, #p.idx <= sigma. Proof: tied free lift r of p o rho (infra_610_tied_free_lift); differing test + infra_73_tied_move on the FULL p, restricted sequence (ApproximationSequence.project via subtuple_uniform), injective jointReindex precomposition; then r's answers transfer by SameGaloisType."
   }
  ],
  "edges": [
@@ -6922,8 +6931,14 @@
    "to": "infra_713_lift_det",
    "kind": "hard",
    "note": ""
+  },
+  {
+   "from": "infra_713_tiedFree_reindex",
+   "to": "infra_713_lift_pi",
+   "kind": "hard",
+   "note": ""
   }
  ],
- "doneCount": 320,
+ "doneCount": 321,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
