@@ -587,8 +587,9 @@ Counts are standalone `sorry` lines in `AEC/` (`git grep -nE '^\s*sorry\s*$'`), 
 | `infra_712_products_L` | infra_712_products_L | done (cycle 87): AEC/Section7/Lemma712Products.lean |
 | `infra_712_trans_level` | infra_712_trans_level | done (cycle 88): AEC/Section7/Lemma712Uniqueness.lean |
 | `infra_712u_reduce` | infra_712u_reduce | done (cycle 88): AEC/Section7/Lemma712Uniqueness.lean |
-| `infra_712u_marks` | infra_712u_marks | open (cycle 88): AEC/Section7/Lemma712Uniqueness.lean, the only sorry under lemma_7_12 |
+| `infra_712u_marks` | infra_712u_marks | blocked on infra_712u_common (glue infra_712u_marks_of_common proved) |
 | `infra_712u_step` | infra_712u_step | done (cycle 88): AEC/Section7/Lemma712Uniqueness.lean |
 | `infra_712u_succ` | infra_712u_succ | done (cycle 88): AEC/Section7/Lemma712Uniqueness.lean |
 | `infra_712u_limit` | infra_712u_limit | done (cycle 88): AEC/Section7/Lemma712Uniqueness.lean |
 | `infra_712u_chain_succ` | infra_712u_chain_succ | done (cycle 88): AEC/Section7/Lemma712Uniqueness.lean |
+| `infra_712u_common` | infra_712u_common | open (cycle 88): AEC/Section7/Lemma712Uniqueness.lean, the only sorry under lemma_7_12 |

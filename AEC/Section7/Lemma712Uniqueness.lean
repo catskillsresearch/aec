@@ -478,9 +478,52 @@ theorem infra_712u_chain_succ (P : SingleModelData K) {μ : Cardinal.{u}} (hμ :
 
 end ChainSide
 
-/-- **7.12(2), the marks (open tip `infra_712u_marks`).** -/
-theorem infra_712u_marks (P : SingleModelData K) : infra_712u_marks_statement P := by
+/-- **7.12(2), the common object (statement; open tip `infra_712u_common`).** Two witnessing
+chains with the same successive marginals have a common level-`μ` object receiving both last
+stages compatibly over `A` and identifying corresponding marks (English: the final `N_δ`). -/
+def infra_712u_common_statement (P : SingleModelData K) : Prop :=
+  ∀ {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible), μ ∈ infra_712_levels P →
+    ∀ (A : P.scheme.Object μ hμ) (L L' : TupleList P.scheme hμ A) [LinearOrder L.δ]
+      [WellFoundedLT L.δ] [LinearOrder L'.δ] [WellFoundedLT L'.δ]
+      (e : L.δ ≃o L'.δ) (ei : ∀ i, L.indexAt i ≃ L'.indexAt (e i)),
+      #(Σ i, L.indexAt i) ≤ μ → #(Σ i, L'.indexAt i) ≤ μ →
+      ∀ (C : TiedListWitnessingChain L) (C' : TiedListWitnessingChain L'),
+      (∀ i, SameGaloisType (L.one i) (L'.one (e i)) (ei i) (Equiv.refl _)) →
+      ∃ (N : P.scheme.Object μ hμ)
+        (g : SystemArrow K oneVertexShape (P.scheme.asSystem hμ (C.stage ⊤))
+          (P.scheme.asSystem hμ N))
+        (g' : SystemArrow K oneVertexShape (P.scheme.asSystem hμ (C'.stage ⊤))
+          (P.scheme.asSystem hμ N)),
+        (∀ v, (g.onVertex v).comp ((C.into ⊤).onVertex v) =
+          (g'.onVertex v).comp ((C'.into ⊤).onVertex v)) ∧
+        ∀ (i : L.δ) (a : L.indexAt i),
+          g.mapOcc (C.mark i ⊤ (WithTop.coe_lt_top i) a) =
+            g'.mapOcc (C'.mark (e i) ⊤ (WithTop.coe_lt_top (e i)) (ei i a))
+
+/-- **7.12(2) marks from the common object (proved glue, cycle 88).** -/
+theorem infra_712u_marks_of_common (P : SingleModelData K)
+    (hc : infra_712u_common_statement P) : infra_712u_marks_statement P := by
+  intro μ hμ hl A L L' _ _ _ _ e ei hs hs' C C' hm
+  obtain ⟨N, g, g', hA, hmk⟩ := hc hμ hl A L L' e ei hs hs' C C' hm
+  let σ := Equiv.sigmaCongr e.toEquiv ei
+  let Φ1 : (Σ i, L.indexAt i) → Occurrence K oneVertexShape (P.scheme.asSystem hμ N) :=
+    fun q => g.mapOcc (C.mark q.1 ⊤ (WithTop.coe_lt_top q.1) q.2)
+  let Φ2 : (Σ i, L'.indexAt i) → Occurrence K oneVertexShape (P.scheme.asSystem hμ N) :=
+    fun q => g'.mapOcc (C'.mark q.1 ⊤ (WithTop.coe_lt_top q.1) q.2)
+  refine ⟨μ, hμ, N, g, g', trivial, trivial, hA, fun p => ?_⟩
+  obtain ⟨q, rfl⟩ := σ.surjective p
+  show Φ1 (σ.symm (σ q)) = Φ2 (σ q)
+  exact (congrArg Φ1 (σ.symm_apply_apply q)).trans (hmk q.1 q.2)
+
+/-- **7.12(2), the common object (open tip `infra_712u_common`).** The transfinite recursion of
+common objects `N_j` (successor `infra_712u_chain_succ`, limits `infra_712u_factor_continuous`
+on both chains, base `M_0 = A`). -/
+theorem infra_712u_common (P : SingleModelData K) : infra_712u_common_statement P := by
   sorry
+
+/-- **7.12(2), the marks (glue, cycle 88).** -/
+theorem infra_712u_marks (P : SingleModelData K) : infra_712u_marks_statement P :=
+  infra_712u_marks_of_common P (infra_712u_common P)
 
 end
 end AEC
