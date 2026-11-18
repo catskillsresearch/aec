@@ -16,6 +16,7 @@ public import AEC.Section7.Lemma711Successor
 public import AEC.Section7.Lemma712Existence
 public import AEC.Section7.Lemma712Recursion
 public import AEC.Section7.Lemma712Products
+public import AEC.Section7.Lemma712Uniqueness
 public import AEC.Section7.ProductFreeLevel
 public import AEC.Section7.GeneralLevel
 public import AEC.Section7.Theorem79
@@ -333,7 +334,10 @@ level is `infra_712_existence_at`, assembled by `infra_712_existence_at_of_parts
 (`AEC/Section7/Lemma712Existence.lean`, cycle 85) from `infra_712_prechain_statement` and
 `infra_712_free_marks_statement`; both are proved (`infra_712_prechain_of_recursion`,
 `infra_712_free_marks`), and `lemma_7_12_existence` (`AEC/Section7/Lemma712Products.lean`,
-cycle 87) proves clause (1) at every level in the 7.9 tail that is also a 7.11 level. -/
+cycle 87) proves clause (1) at every level in the 7.9 tail that is also a 7.11 level. Cycle 88:
+the whole lemma is assembled by `lemma_7_12_of_marks` (`Lemma712Uniqueness.lean`) on the tail
+`infra_712_levels P` from the single open tip `infra_712u_marks` (two witnessing chains' marks
+have the same type). -/
 theorem lemma_7_12 {K : AbstractElementaryClass.{u}} (P : SingleModelData K) :
     ∃ T, ∃ hT : Tail P.eligible T,
       ∀ μ (hμ : μ ∈ T) (A : P.scheme.Object μ (Tail.mem hT hμ)),
@@ -347,8 +351,8 @@ theorem lemma_7_12 {K : AbstractElementaryClass.{u}} (P : SingleModelData K) :
           Nonempty (TiedListWitnessingChain L) → Nonempty (TiedListWitnessingChain L') →
           (∀ i, SameGaloisType (L.one i) (L'.one (e i)) (ei i) (Equiv.refl _)) →
           SameGaloisType L.whole L'.whole
-            (Equiv.sigmaCongr e.toEquiv ei) (Equiv.refl _)) := by
-  sorry
+            (Equiv.sigmaCongr e.toEquiv ei) (Equiv.refl _)) :=
+  lemma_7_12_of_marks P (infra_712u_marks P)
 
 /-- **Theorem 7.13.** Let `L` be a bounded product-independent list of finite tuples over `X`.
 (1) Its whole type is determined by its product data on finite sublists (equivalently, given

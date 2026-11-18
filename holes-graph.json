@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-18 16:12",
+ "updated": "2026-11-18 16:17",
  "sorryCount": 41,
  "legend": {
   "open": "No unfinished required proof-deps — try next",
@@ -577,7 +577,7 @@
    "section": 7,
    "file": "AEC/Section7/Results.lean",
    "status": "blocked",
-   "blocker": "lemma_7_12_uniqueness",
+   "blocker": "infra_712u_marks",
    "detail": "RESTATED cycle 76 to the tied notions (English Lemma 7.12): over SingleModelData P, a tail of levels; (1) L well-ordered, #L.delta <= mu (Def 7.10 size convention), ProductIndependentTied L (tied finite products of finite sublists, IsFiniteProductTied)  ==>  exists C : TiedListWitnessingChain L with C.AllDominatedIncrement (top/listToTop/mark_spec = the whole configuration retained in an extension of the given ambient); (2) L, L' of total length <= mu with tied witnessing chains and the same successive marginal types over A (order iso e, per-entry equivs ei)  ==>  SameGaloisType L.whole L'.whole (one amalgam identifies the entire lists). Old untied statement removed (unused). Split: lemma_7_12_existence (clause 1), lemma_7_12_uniqueness (clause 2); the paper's extension of (2) to bounded individual tuples is lemma_7_12_bounded. Remaining untied consumer: theorem_7_13 still uses ProductIndependent / ListWitnessingChain-era notions."
   },
   {
@@ -2994,10 +2994,10 @@
    "id": "lemma_7_12_uniqueness",
    "label": "Lemma 7.12(2): lists with tied chains and equal marginals have one whole amalgam",
    "section": 7,
-   "file": "AEC/Section7/Results.lean",
-   "status": "open",
-   "blocker": null,
-   "detail": "Open (cycle 76; plan updated cycle 87). Exactly clause (2) of lemma_7_12 (total length <= mu); hypotheses are plain TiedListWitnessingChains (no all-dominated increments), matching the English ('two lists supplied with witnessing chains'), so the 7.9 primeness route of 7.12(1) is NOT available. English proof (text.md l.238-242): common N_i with coherent arrows from M_i^0, M_i^1 agreeing on A and identifying processed marks; successor: tied free lift over N_i of the common marginal (infra_610_tied_free_lift, needs N_i at level mu) realized by c; restriction to each image of M_i^r is tp(b_i^r/M_i^r) (tied free restriction + infra_610 majority uniqueness); then type-identifying amalgamation of M_{i+1}^r with the realization over M_i^r identifying b_i^r with c - this is literally the SameGaloisType witness (top at any level rho), so NO large amalgam (infra_78_tuple_amalgam_large) is needed provided each new common object is pulled back to level mu by a level copy of its mu-sized generated part (infra_712_level_copy / infra_612_exists_level_copy_arrow on the tuple enumerating the images; arrows M_i^r -> copy by factoring through the copy's host arrow, as in Infra712Rec.StrongSub). Limits: coherent unions at mu (infra_78_chain_union_kappa, as in infra_712_limit). Plan for splitting: (a) infra_712u_step (one successor amalgamation at mu, two chains), (b) infra_712u_limit, (c) recursion via infra_78_coherent_chain_engine, (d) final: the top common object identifies L.whole with L'.whole via mark_spec of both chains (one amalgam, SameGaloisType). Substantial (two interleaved recursions)."
+   "file": "AEC/Section7/Lemma712Uniqueness.lean",
+   "status": "blocked",
+   "blocker": "infra_712u_marks",
+   "detail": "Blocked (cycle 88) only on infra_712u_marks: lemma_7_12_of_marks (proved) derives clause (2), verbatim, from it via C.marksWhole_sameGalois and infra_712_trans_level. No large amalgam needed."
   },
   {
    "id": "lemma_7_12_bounded",
@@ -3187,6 +3187,33 @@
    "status": "done",
    "blocker": null,
    "detail": "PROVED cycle 87: infra_712_products_L via infra_712_products_L_snoc (ProductIndependentTied on snoc ix i; level copies of left/joint; tied_exists + tied_symm_level_joints for b_i first; finite_perm_level with pi=1 to identify left' with the selection; infra_712_gtrans middles at mu; infra_712_productTied_transfer). Axioms clean."
+  },
+  {
+   "id": "infra_712_trans_level",
+   "label": "Galois transitivity, all hosts at the level, any index size",
+   "section": 7,
+   "file": "AEC/Section7/Lemma712Uniqueness.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "PROVED cycle 88: two level-mu type-identifying amalgams (infra_78_same_level_type_amalgam) amalgamated over the middle host by Thm 4.11(1) ClosedLevel.amalgamation (closed level from infra_610_closed_level). Axioms clean."
+  },
+  {
+   "id": "infra_712u_reduce",
+   "label": "7.12 assembled from the marks statement",
+   "section": 7,
+   "file": "AEC/Section7/Lemma712Uniqueness.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "PROVED cycle 88: lemma_7_12_of_marks gives the full lemma_7_12 statement (verbatim) on the tail infra_712_levels P: clause (1) by lemma_7_12_existence; clause (2) via C.marksWhole ~ L.whole (C.top) and infra_712_trans_level twice. lemma_7_12 := lemma_7_12_of_marks P (infra_712u_marks P)."
+  },
+  {
+   "id": "infra_712u_marks",
+   "label": "7.12(2): two witnessing chains' marks have the same type",
+   "section": 7,
+   "file": "AEC/Section7/Lemma712Uniqueness.lean",
+   "status": "open",
+   "blocker": null,
+   "detail": "Open (cycle 88; the one sorry under lemma_7_12). infra_712u_marks_statement: at mu in infra_712_levels P, chains C, C' of L, L' (order iso e, per-entry equivs ei, same marginals over A) => SameGaloisType C.marksWhole C'.marksWhole. Plan (text.md l.238-242): recursion on j <= top of common N_j (level mu) with arrows M_j -> N_j, M'_j -> N_j agreeing on A and on marks < j. Successor: tied free lift c of p_j over N_j (infra_610_tied_free_lift), restrictions to both images are free over M_j / M'_j (host_target/host_source'), equal to tp(b_j/M_j) by free-lift uniqueness (infra_610_majority_unique), then infra_78_same_level_type_amalgam for M_{j+1} with (N_j, c) over M_j, then again for M'_{j+1} (types preserved by arrows); limits: infra_78_chain_union_kappa + continuity of both chains; base: M_0 = A (first). infra_712_trans_level makes all compositions level-safe (no large amalgam)."
   }
  ],
  "edges": [
@@ -6507,8 +6534,19 @@
    "to": "infra_712_products",
    "kind": "hard",
    "note": "products_of_L"
+  },
+  {
+   "from": "infra_712u_marks",
+   "to": "lemma_7_12_uniqueness",
+   "kind": "hard",
+   "note": "lemma_7_12_of_marks"
+  },
+  {
+   "from": "infra_712_trans_level",
+   "to": "infra_712u_reduce",
+   "kind": "hard"
   }
  ],
- "doneCount": 294,
+ "doneCount": 296,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

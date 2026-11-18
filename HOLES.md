@@ -387,7 +387,7 @@ Lean: imports `AEC.Section6.Results`.
 | `infra_712_free_step` | 7.12(1) one freeness step | done (cycle 87): AEC/Section7/Lemma712Products.lean |
 | `infra_712_products` | 7.12(1) products of `bᵢ` with earlier marks | done (cycle 87): AEC/Section7/Lemma712Products.lean |
 | `infra_712_products_level` | 7.12: plain finite tied products → level | [`Lemma712Products.lean`](AEC/Section7/Lemma712Products.lean) (**done**, cycle 86; level copies + one-amalgam pullback; axioms clean) |
-| `lemma_7_12_uniqueness` | Lemma 7.12(2) | open: plan updated cycle 87 (no large amalgam needed; level copies + SameGaloisType witnesses) |
+| `lemma_7_12_uniqueness` | Lemma 7.12(2) | blocked on infra_712u_marks (glue lemma_7_12_of_marks proved) |
 | `lemma_7_12_bounded` | Lemma 7.12(2), bounded individual tuples | **blocked** on `lemma_7_12_uniqueness`; HARD edge `lemma_7_12_bounded --> lemma_7_12` (cycle 78) |
 | `theorem_7_13` | Theorem 7.13 | `AEC/Section7/Results.lean:296` (restated: uniqueness, product-independent free lift, continuity, primeness) |
 
@@ -585,3 +585,6 @@ Counts are standalone `sorry` lines in `AEC/` (`git grep -nE '^\s*sorry\s*$'`), 
 | `infra_78_tied_testing_reduction` | infra_78_tied_testing_reduction | `AEC/Section7/TiedLocalCharacter.lean` (**done**: `infra_78_tiedFree_of_upTo` — tied-free up to arity `g(σ)+LS(K)` ⇒ full `IsTiedFree`, via the tied free lift + Thm 6.6 testing; no `sorry`) |
 | `infra_712_products_transfer` | infra_712_products_transfer | done (cycle 87): Lemma712Products.lean |
 | `infra_712_products_L` | infra_712_products_L | done (cycle 87): AEC/Section7/Lemma712Products.lean |
+| `infra_712_trans_level` | infra_712_trans_level | done (cycle 88): AEC/Section7/Lemma712Uniqueness.lean |
+| `infra_712u_reduce` | infra_712u_reduce | done (cycle 88): AEC/Section7/Lemma712Uniqueness.lean |
+| `infra_712u_marks` | infra_712u_marks | open (cycle 88): AEC/Section7/Lemma712Uniqueness.lean, the only sorry under lemma_7_12 |
