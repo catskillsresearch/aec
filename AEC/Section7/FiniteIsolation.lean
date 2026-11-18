@@ -48,7 +48,9 @@ theorem infra_78_finite_lt_cof
 /-- **Definition 7.7 for finite marks** (Prop 6.13 packaging). On a recursion-closed level,
 a finite tuple over the union of a `SameLevelChain` is free from some stage, and if every
 stage restriction is free from a fixed base through the zero stage, the union is free from
-that base. -/
+that base. 
+
+**Audit (grokbot_02): degenerate as formalized, NOT counted done.** both clauses conclude the vacuous untied `IsFreeFrom` (`AEC/Audit/FreeFromVacuous.lean`); honest form uses `IsTiedFree`. -/
 theorem infra_78_finite_continuity (P : SingleModelData K) (σ : Cardinal.{u})
     (hσ : ℵ₀ ≤ σ) :
     ∃ T, ∃ hT : Tail P.eligible T,

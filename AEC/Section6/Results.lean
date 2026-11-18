@@ -515,7 +515,9 @@ every short query `Z ⊆ B` is free from `A`.
 Same packaging as Theorem 6.10: `SingleModelData`, same-level host `q.ν = μ`. The proof is
 `infra_611_isFreeFrom` (`AverageDescent.lean`): a fresh Lemma 6.9 code for `q.restrict`,
 the bridge through `infra_610_majority_eq_type` and `infra_610_majority_unique`, moved
-parameter queries, and `infra_610_same_galois`. Mixed levels `ν < μ` are deferred. -/
+parameter queries, and `infra_610_same_galois`. Mixed levels `ν < μ` are deferred. 
+
+**Audit (grokbot_02): degenerate as formalized, NOT counted done.** its `IsFreeFrom` conclusion follows from the hypothesis `seq` alone (`Audit.isFreeFrom_of_approximationSequence`); honest form concludes `IsTiedFree f (q.restrict f hf) q (Equiv.refl _)`. -/
 theorem lemma_6_11 {K : AbstractElementaryClass.{u}}
     (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ) :
     ∃ T, ∃ hT : Tail P.eligible T,
@@ -553,7 +555,9 @@ values of the code on a single parameter list.
 Symmetry, finite products, base change `(p ⊗ q)^B = p_B ⊗ q^B`, and mixed levels are
 deferred. So is stationarity for an untied `IsFreeLift`: its majority witness need not be
 the type joint (`same_head` stays demoted), so a bare `IsProduct` does not by itself fix
-the cross-diagram. -/
+the cross-diagram. 
+
+**Audit (grokbot_02): degenerate as formalized, NOT counted done.** `IsProduct` uses the untied `IsFreeLift`, whose majority clause never mentions `q`'s values (`AEC/Audit/FreeFromVacuous.lean`), so clause 1 only asserts some joint realization; honest form uses `IsTiedFree x.incl q y ey` inside `IsProduct`. -/
 theorem proposition_6_12 {K : AbstractElementaryClass.{u}}
     (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ) :
     ∃ T, ∃ hT : Tail P.eligible T,
@@ -608,7 +612,9 @@ fixed base `X ≤ A_0`, the union type is free from `X`.
 Same packaging as Theorem 6.10. The chain is `SameLevelChain` (joint cover, not
 `HasChainUnions`). The proof is `infra_613_local` (trap a Lemma 6.9 code in one stage, then
 `infra_611_isFreeFrom`) and `infra_613_continuity` (`infra_613_freeFrom_trans` along the
-cocone). Mixed levels and Section 7 `SatisfiesContinuity` stay deferred. -/
+cocone). Mixed levels and Section 7 `SatisfiesContinuity` stay deferred. 
+
+**Audit (grokbot_02): degenerate as formalized, NOT counted done.** both clauses conclude the vacuous untied `IsFreeFrom` (`AEC/Audit/FreeFromVacuous.lean`); honest form uses `IsTiedFree` (restriction, refl). -/
 theorem proposition_6_13 {K : AbstractElementaryClass.{u}}
     (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ) :
     ∃ T, ∃ hT : Tail P.eligible T,
@@ -744,7 +750,9 @@ arrows `rᵢ : U → A` almost-fix `A` and send `U'` into `A'`, then for every s
 large type joints. Mixed diagrams at arities below `ν` are included. Proof:
 `infra_617_from_retractions` (`DescentRetraction.lean`): factor restrictions, SameGaloisType
 from the square, ApproximationSequence from a short restr subsequence, mixed move-query, and
-almost-identity exceptions. -/
+almost-identity exceptions. 
+
+**Audit (grokbot_02): degenerate as formalized, NOT counted done.** the untied `IsFreeLift` conclusion carries only the Galois-type square, not the majority/free-lift content (`AEC/Audit/FreeFromVacuous.lean`); honest form concludes `IsTiedFreeMixed toA (asTuple incl' hincl' d) (asTuple incl hincl (toU ∘ d)) (Equiv.refl _)`. -/
 theorem lemma_6_17 {K : AbstractElementaryClass.{u}} (P : SingleModelData K) :
     ∃ T, ∃ hT : Tail P.eligible T,
       ∀ μ (hμ : μ ∈ T) ν (hν : ν ∈ T)

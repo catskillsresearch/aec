@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-18 07:35",
+  "updated": "2026-11-18 07:36",
   "sorryCount": 43,
   "legend": {
     "open": "No unfinished required proof-deps — try next",
@@ -12,7 +12,7 @@
     "Edge B→A means the English proof of A requires B (or a required Lean infra subgoal).",
     "Blue = done. Green = open. Grey = blocked. No separate failed status unless a counterexample refutes the program.",
     "lemma_6_14 is independent of Prop 6.13 (that paper-number edge stays removed). Widened to χ-indexed queries plus a fixed T★, it is a hard dependency of proposition_6_15 and still feeds lemma_12_6.",
-    "grokbot_02: audit_free_from_vacuous (AEC/Audit/FreeFromVacuous.lean) shows untied IsFreeFrom is vacuous; lemma_6_11 and proposition_6_13 demoted to blocked (degenerate=true) with tied restatements proposed; new open tip infra_78_tied_local_character. Edge reconciliation: 4 edges present in holes-edges.txt but missing from holes-graph.json added (infra_7_10_list_chain -> 7.11/7.12/7.13, infra_78_tuple_amalgam_large -> infra_78_cross_level_galois). Needs review (not yet demoted): done nodes with a hard edge from lemma_6_11/proposition_6_13 whose Lean conclusions use untied IsFreeLift/IsFreeFrom: proposition_6_12, lemma_6_17, infra_78_finite_continuity."
+    "grokbot_02: audit_free_from_vacuous (AEC/Audit/FreeFromVacuous.lean) shows untied IsFreeFrom is vacuous; lemma_6_11 and proposition_6_13 demoted to blocked (degenerate=true) with tied restatements proposed; new open tip infra_78_tied_local_character. Edge reconciliation: 4 edges present in holes-edges.txt but missing from holes-graph.json added (infra_7_10_list_chain -> 7.11/7.12/7.13, infra_78_tuple_amalgam_large -> infra_78_cross_level_galois). Follow-up audit (grokbot_02, Lars decision): proposition_6_12, lemma_6_17, infra_78_finite_continuity also demoted to blocked/degenerate with tied restatements proposed."
   ],
   "nodes": [
     {
@@ -387,9 +387,10 @@
       "label": "Lem 6.17",
       "section": 6,
       "file": "AEC/Section6/Results.lean",
-      "status": "done",
+      "status": "blocked",
       "blocker": null,
-      "detail": "Done for SingleModelData mixed ν≤μ. DescentRetraction.lean: restr via factorEmbedding; SameGaloisType from the commuting square; ApproximationSequence from a short restr subsequence; infra_617_move_query (mixed IsSaturated); almost-id exception bounds; IsFreeLift with typeJoint majority. Does not call corollary_6_16. Next tip: lemma_7_2."
+      "detail": "DEGENERATE CLOSURE, NOT DONE (grokbot_02 audit). Conclusion is the untied IsFreeLift, which carries only the Galois-type square (from the commuting square of arrows) and a majority clause independent of the tuple (audit_free_from_vacuous); the English content (the large type over A is the free lift of tp(d/A'), majority values = actual joints) is lost. Proposed honest restatement: conclude IsTiedFreeMixed toA (asTuple incl' hincl' d) (asTuple incl hincl (toU o d)) (Equiv.refl _). Lean proof stays sorry-free but does not count. Previous note: Done for SingleModelData mixed ν≤μ. DescentRetraction.lean: restr via factorEmbedding; SameGaloisType from the commuting square; ApproximationSequence from a short restr subsequence; infra_617_move_query (mixed IsSaturated); almost-id exception bounds; IsFreeLift with typeJoint majority. Does not call corollary_6_16. Next tip: lemma_7_2.",
+      "degenerate": true
     },
     {
       "id": "lemma_6_4",
@@ -495,9 +496,10 @@
       "label": "Prop 6.12",
       "section": 6,
       "file": "AEC/Section6/Results.lean",
-      "status": "done",
+      "status": "blocked",
       "blocker": null,
-      "detail": "Done for same-level SingleModelData. Existence via stationary_free_extension_exists (realize p by itself, freely lift q). Independence (infra_612_product_unique): two products along one realization of p have the same Galois type when both free lifts of q are majority values of one code on a common parameter list. Deferred: symmetry, IsFiniteProduct, base change (p⊗q)^B = p_B ⊗ q^B, mixed levels, and stationarity for an untied IsFreeLift."
+      "detail": "DEGENERATE CLOSURE, NOT DONE (grokbot_02 audit). IsProduct uses the untied IsFreeLift, whose majority clause never mentions q's values or the query (audit_free_from_vacuous), so clause 1 only asserts some joint realization of p and q, not a product. Clause 2 (anchored uniqueness) has real hypotheses but is about this weak IsProduct. Proposed honest restatement: inside IsProduct replace IsFreeLift q y x.incl x.incl_arrow ey by IsTiedFree x.incl q y ey; reprove existence (tied free lift, infra_610_tied_free_lift) and uniqueness. Lean proof stays sorry-free but does not count. Previous note: Done for same-level SingleModelData. Existence via stationary_free_extension_exists (realize p by itself, freely lift q). Independence (infra_612_product_unique): two products along one realization of p have the same Galois type when both free lifts of q are majority values of one code on a common parameter list. Deferred: symmetry, IsFiniteProduct, base change (p⊗q)^B = p_B ⊗ q^B, mixed levels, and stationarity for an untied IsFreeLift.",
+      "degenerate": true
     },
     {
       "id": "infra_613_freeFrom_trans",
@@ -1807,8 +1809,10 @@
       "label": "Infra 7.8 finite continuity",
       "section": 7,
       "file": "AEC/Section7/FiniteIsolation.lean",
-      "status": "done",
-      "detail": "Done: Def 7.7 for Finite marks on SameLevelChain via Prop 6.13 / infra_613_*. Not sufficient for Prop 7.8 existence."
+      "status": "blocked",
+      "detail": "DEGENERATE CLOSURE, NOT DONE (grokbot_02 audit). Both clauses conclude the vacuous untied IsFreeFrom (audit_free_from_vacuous; packaging of the degenerate proposition_6_13). Proposed honest restatement: IsTiedFree (restriction, refl) in both clauses, for finite marks. Lean proof stays sorry-free but does not count. Previous note: Done: Def 7.7 for Finite marks on SameLevelChain via Prop 6.13 / infra_613_*. Not sufficient for Prop 7.8 existence.",
+      "degenerate": true,
+      "blocker": "infra_78_tied_local_character"
     },
     {
       "id": "infra_610_tied_free_lift",
@@ -3676,8 +3680,13 @@
       "from": "infra_78_tied_local_character",
       "to": "lemma_6_11",
       "kind": "hard"
+    },
+    {
+      "from": "infra_78_tied_local_character",
+      "to": "infra_78_finite_continuity",
+      "kind": "hard"
     }
   ],
-  "doneCount": 165,
+  "doneCount": 162,
   "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 43. Uncommitted in /tmp/aec-grok."
 }
