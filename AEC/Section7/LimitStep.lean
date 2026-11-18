@@ -14,9 +14,10 @@ it comes from the chain axioms of `K` (`SingleModelData.exists_directed_union`, 
 with no new axioms. `infra_78_limit_pair` (cycle 45) builds the union pair at a limit stage
 `δ < ρ⁺` (cocone arrows extending the composition law, commuting squares, continuity at `δ`)
 under the paper's hypothesis `ρ⁺ < κ`; `Infra78Matrix.IdLaw` is the identity law, a tracked
-output of `infra_78_matrix_construction`. Still tracked on the board:
-`infra_78_limit_invariant5` (invariant (5) at limits,
-the bounded-mark Def 7.7 continuity).
+output of `infra_78_matrix_construction`. `infra_78_limit_invariant5` (cycle 46) is
+invariant (5) at limits for marks shorter than the cofinality, in particular finite marks
+(`infra_78_tied_continuity`, English Prop 6.13). For bounded marks at small cofinality the paper
+assumes Def 7.7 as a hypothesis on the mark; that case is tracked separately on the board.
 -/
 
 universe u
@@ -205,4 +206,65 @@ theorem infra_78_limit_pair (hρκ : Order.succ ρ < κ) {δ : (Order.succ ρ).o
   exact infra_78_limit_pair_gen hι X Y pair sX sY hXr hYr hXt hYt hcomm
 
 end LimitPair
+section Invariant5
+
+/-- **Invariant (5) at limits for marks shorter than the cofinality** (`infra_78_limit_invariant5`,
+the form of Def 7.7 that Prop 7.8 uses for a finite mark). At a level `μ` of the Prop 7.3 tail,
+let `C` be a same-level chain with union `X_δ`, `p = tp(b/X_δ)` a mark with `|b| ≤ σ` and
+`|b| < cf δ` (e.g. `b` finite), and `g : X → X₀` the base. If (5) holds at every stage
+(`tp(b/X_i)` is the tied free lift of `tp(b/X)` along `X → X_i`), it holds over the union.
+Proof: `infra_78_tied_continuity` (local character + transitivity, English Prop 6.13). -/
+theorem infra_78_limit_invariant5 (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : ℵ₀ ≤ σ)
+    {μ : Cardinal.{u}} (hμT : μ ∈ infra_73_tailSet P σ)
+    (C : SameLevelChain P (Tail.mem (infra_73_tail P σ hσ) hμT))
+    (p : TupleOver K oneVertexShape P.scheme (Tail.mem (infra_73_tail P σ hσ) hμT) C.unionObj)
+    (hνμ : p.ν = μ) (hidx : #p.idx ≤ σ) (hcof : #p.idx < C.δ.cof)
+    (X : P.scheme.Object μ (Tail.mem (infra_73_tail P σ hσ) hμT))
+    (g : SystemArrow K oneVertexShape
+      (P.scheme.asSystem _ X) (P.scheme.asSystem _ (C.obj 0 C.hlim.1)))
+    (hg : P.scheme.permitted (X := X) (Y := C.obj 0 C.hlim.1) g)
+    (hAll : ∀ (i : Ordinal.{u}) (hi : i < C.δ),
+      IsTiedFree
+        (SystemArrow.comp g (C.le C.hlim.1 hi (bot_le : (0 : Ordinal.{u}) ≤ i)))
+        ((p.restrict (C.toUnion i hi) (C.toUnion_arrow i hi)).restrict
+          (SystemArrow.comp g (C.le C.hlim.1 hi (bot_le : (0 : Ordinal.{u}) ≤ i)))
+          (P.scheme.comp g (C.le C.hlim.1 hi (bot_le : (0 : Ordinal.{u}) ≤ i)) hg
+            (C.le_arrow C.hlim.1 hi (bot_le : (0 : Ordinal.{u}) ≤ i))))
+        (p.restrict (C.toUnion i hi) (C.toUnion_arrow i hi)) (Equiv.refl _)) :
+    IsTiedFree (SystemArrow.comp g (C.toUnion 0 C.hlim.1))
+      (p.restrict (SystemArrow.comp g (C.toUnion 0 C.hlim.1))
+        (P.scheme.comp g (C.toUnion 0 C.hlim.1) hg (C.toUnion_arrow 0 C.hlim.1)))
+      p (Equiv.refl _) :=
+  infra_78_tied_continuity P σ hσ _ hμT.1
+    ((Order.succ_le_succ (le_max_left σ (infra_73_h P σ))).trans hμT.2) C p hνμ hidx hcof
+    X g hg hAll
+
+/-- Finite marks (the case of the Lean `proposition_7_8`): `|b| < ℵ₀ ≤ cf δ`. -/
+theorem infra_78_limit_invariant5_finite (P : SingleModelData K) (σ : Cardinal.{u})
+    (hσ : ℵ₀ ≤ σ) {μ : Cardinal.{u}} (hμT : μ ∈ infra_73_tailSet P σ)
+    (C : SameLevelChain P (Tail.mem (infra_73_tail P σ hσ) hμT))
+    (p : TupleOver K oneVertexShape P.scheme (Tail.mem (infra_73_tail P σ hσ) hμT) C.unionObj)
+    (hνμ : p.ν = μ) (hFin : Finite p.idx)
+    (X : P.scheme.Object μ (Tail.mem (infra_73_tail P σ hσ) hμT))
+    (g : SystemArrow K oneVertexShape
+      (P.scheme.asSystem _ X) (P.scheme.asSystem _ (C.obj 0 C.hlim.1)))
+    (hg : P.scheme.permitted (X := X) (Y := C.obj 0 C.hlim.1) g)
+    (hAll : ∀ (i : Ordinal.{u}) (hi : i < C.δ),
+      IsTiedFree
+        (SystemArrow.comp g (C.le C.hlim.1 hi (bot_le : (0 : Ordinal.{u}) ≤ i)))
+        ((p.restrict (C.toUnion i hi) (C.toUnion_arrow i hi)).restrict
+          (SystemArrow.comp g (C.le C.hlim.1 hi (bot_le : (0 : Ordinal.{u}) ≤ i)))
+          (P.scheme.comp g (C.le C.hlim.1 hi (bot_le : (0 : Ordinal.{u}) ≤ i)) hg
+            (C.le_arrow C.hlim.1 hi (bot_le : (0 : Ordinal.{u}) ≤ i))))
+        (p.restrict (C.toUnion i hi) (C.toUnion_arrow i hi)) (Equiv.refl _)) :
+    IsTiedFree (SystemArrow.comp g (C.toUnion 0 C.hlim.1))
+      (p.restrict (SystemArrow.comp g (C.toUnion 0 C.hlim.1))
+        (P.scheme.comp g (C.toUnion 0 C.hlim.1) hg (C.toUnion_arrow 0 C.hlim.1)))
+      p (Equiv.refl _) := by
+  have hlt : #p.idx < ℵ₀ := mk_lt_aleph0_iff.2 hFin
+  exact infra_78_limit_invariant5 P σ hσ hμT C p hνμ (hlt.le.trans hσ)
+    (hlt.trans_le (SameLevelChain.cof_aleph0 C)) X g hg hAll
+
+end Invariant5
+
 end AEC

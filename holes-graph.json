@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-18 11:01",
+  "updated": "2026-11-18 11:04",
   "sorryCount": 44,
   "legend": {
     "open": "No unfinished required proof-deps — try next",
@@ -2364,9 +2364,9 @@
       "label": "Prop 7.8: matrix limit step (unions, CompLaw, ContAtLimits, (5) at limits)",
       "section": 7,
       "file": "AEC/Section7/MixedDescent.lean",
-      "status": "blocked",
-      "blocker": "infra_78_limit_invariant5",
-      "detail": "Blocked (full claim kept; split cycle 44 into infra_78_chain_union_kappa (DONE), infra_78_limit_pair (DONE cycle 45), infra_78_limit_invariant5 (open)). Given a composable chain of pairs X_j <= Y_j (j < delta, delta a limit < rho^+, composition law incl. identity), produce union objects X_delta, Y_delta at level kappa, cocone arrows extending the composition law, a commuting pair arrow, continuity at delta (Infra78Matrix.ContAtLimits at delta), and invariant (5) at the limit (Def 7.7 for bounded marks; finite marks: infra_78_finite_continuity)."
+      "status": "open",
+      "blocker": null,
+      "detail": "Open (all sub-tips done: infra_78_chain_union_kappa, infra_78_limit_pair (cycle 45), infra_78_limit_invariant5 (cycle 46)). Claim (full, unchanged except the mark condition made explicit per the paper): for a limit delta < rho^+ and a partial matrix below delta (identity + composition laws, commuting squares, invariant (5) at every stage, rho^+ < kappa), produce X_delta, Y_delta at level kappa, cocone arrows extending the composition/identity laws, a commuting pair arrow, continuity at delta, and invariant (5) at delta for the mark b when |b| < cf delta (all finite marks, as in the Lean proposition_7_8). Remaining work is assembly: package the X-chain on Set.Iio delta as a SameLevelChain with union X_delta (ordinal reindexing), and move (5) between the hosts Y_i and Y_delta along the Y-legs with the host-relation lemmas of SuccessorStep.lean (infra_78_tiedFree_host_source/_target). Bounded marks at small cofinality: per the paper this is the Def 7.7 hypothesis on the mark, tracked as infra_78_def77_bounded_marks (not needed for the finite-mark Lean proposition_7_8)."
     },
     {
       "id": "infra_78_chain_union_kappa",
@@ -2391,9 +2391,19 @@
       "label": "Prop 7.8 limit step: invariant (5) at limits (bounded-mark Def 7.7)",
       "section": 7,
       "file": "AEC/Section7/LimitStep.lean",
+      "status": "done",
+      "blocker": null,
+      "detail": "DONE (grokbot cycle 46, sorry-free: AEC/Section7/LimitStep.lean, infra_78_limit_invariant5 and infra_78_limit_invariant5_finite). At a level mu of the Prop 7.3 tail, for a SameLevelChain C with union X_delta, a mark p = tp(b/X_delta) with |b| <= sigma and |b| < cf delta (in particular every finite mark, any cofinality), and base g : X -> X_0: if tp(b/X_i) is the tied free lift of tp(b/X) along X -> X_i for every i < delta, the same holds over the union. Proof: infra_78_tied_continuity (English Prop 6.13: local character + transitivity), exactly the paper's argument after Def 7.7 ('Every finite-tuple marginal has this property ... including when the chain has small cofinality'). Bounded marks with cf delta <= |b|: the paper ASSUMES Def 7.7 for such a mark (hypothesis of the general Prop 7.8), tracked separately as infra_78_def77_bounded_marks; the Lean proposition_7_8 is the finite-mark statement."
+    },
+    {
+      "id": "infra_78_def77_bounded_marks",
+      "label": "Def 7.7 for bounded marks at small cofinality (paper hypothesis of the general Prop 7.8)",
+      "section": 7,
+      "file": null,
       "status": "open",
       "blocker": null,
-      "detail": "Open (board-only). At a limit stage delta with X_delta the chain union (infra_78_chain_union_kappa): if tp(b/X_j) is the tied free lift of tp(b/X_0) along X_0 -> X_j for every j < delta, then tp(b/X_delta) is the tied free lift of tp(b/X_0) along X_0 -> X_delta (Def 7.7 continuity for marks b of size <= lambda; finite marks: infra_78_finite_continuity). Tools: tied local character (infra_78_tied_local), infra_78_tiedFree_trans, the host-transfer lemmas of SuccessorStep.lean."
+      "hypothesis_only": true,
+      "detail": "Open (board-only; PAPER HYPOTHESIS, not a theorem of the paper). Prop 7.8's 'more general' form assumes the bounded mark b satisfies Definition 7.7 (continuity of the marked marginal over chain unions). Proved instances: |b| < cf delta, in particular all finite marks (infra_78_limit_invariant5, via Prop 6.13). For |b| >= cf delta the paper gives no proof ('This will let us identify exactly where the proof for a finite mark must be supplemented for a long independent list'). Not on the path of the Lean proposition_7_8 (Finite p.idx). To be formalized as an explicit hypothesis if the bounded-mark generalization of Prop 7.8 / Theorem 7.9 is ever stated; do not try to prove it unconditionally."
     },
     {
       "id": "infra_78_matrix_recursion",
@@ -2402,7 +2412,7 @@
       "file": "AEC/Section7/MixedDescent.lean",
       "status": "blocked",
       "blocker": "infra_78_matrix_limit_step",
-      "detail": "Blocked on infra_78_matrix_limit_step (split cycle 44: infra_78_chain_union_kappa DONE, infra_78_limit_pair DONE cycle 45, infra_78_limit_invariant5 open; infra_78_matrix_successor_step DONE cycle 43; non-failing stages take the identity step). Transfinite recursion over (succ rho).ord.ToType with state (pair X_i <= Y_i, bookkeeping set R_i subset X_i + Y_i): successor stages close the image of R_i (plus seeds Ip, b) by infra_78_bookkeeping_stage_local and extend by infra_78_matrix_successor_step on a failing list chosen from the S-part of R_i (if any); limit stages take infra_78_matrix_limit_step and the union of earlier images. Outputs: an Infra78Matrix with Infra78Matrix.CompLaw and Infra78Matrix.ContAtLimits, invariant (5) at every stage, R forward-closed, continuous at limits and with requirement-1/2 supply at non-limit stages (so infra_78_bookkeeping_req1_high_cof / req2_high_cof apply to the completed (M, R)), and the failing-list property at every stage. This node carries the interleaving caveat: R_i is chosen inside the recursion from the current pair only. Outputs also include Infra78Matrix.IdLaw (identity at each stage; at limits set stepX/stepY (le_refl delta) := refl); limit stages need rho^+ < kappa (paper's hypothesis)."
+      "detail": "Blocked on infra_78_matrix_limit_step (split cycle 44: infra_78_chain_union_kappa DONE, infra_78_limit_pair DONE cycle 45, infra_78_limit_invariant5 DONE cycle 46, limit step itself open (assembly); infra_78_matrix_successor_step DONE cycle 43; non-failing stages take the identity step). Transfinite recursion over (succ rho).ord.ToType with state (pair X_i <= Y_i, bookkeeping set R_i subset X_i + Y_i): successor stages close the image of R_i (plus seeds Ip, b) by infra_78_bookkeeping_stage_local and extend by infra_78_matrix_successor_step on a failing list chosen from the S-part of R_i (if any); limit stages take infra_78_matrix_limit_step and the union of earlier images. Outputs: an Infra78Matrix with Infra78Matrix.CompLaw and Infra78Matrix.ContAtLimits, invariant (5) at every stage, R forward-closed, continuous at limits and with requirement-1/2 supply at non-limit stages (so infra_78_bookkeeping_req1_high_cof / req2_high_cof apply to the completed (M, R)), and the failing-list property at every stage. This node carries the interleaving caveat: R_i is chosen inside the recursion from the current pair only. Outputs also include Infra78Matrix.IdLaw (identity at each stage; at limits set stepX/stepY (le_refl delta) := refl); limit stages need rho^+ < kappa (paper's hypothesis)."
     }
   ],
   "edges": [
@@ -4622,8 +4632,13 @@
       "from": "infra_78_tied_local_character",
       "to": "infra_78_limit_invariant5",
       "kind": "hard"
+    },
+    {
+      "from": "infra_78_def77_bounded_marks",
+      "to": "proposition_7_8",
+      "kind": "soft"
     }
   ],
-  "doneCount": 201,
+  "doneCount": 202,
   "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 43. Uncommitted in /tmp/aec-grok."
 }
