@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-18 16:22",
+ "updated": "2026-11-18 16:24",
  "sorryCount": 41,
  "legend": {
   "open": "No unfinished required proof-deps — try next",
@@ -3232,6 +3232,15 @@
    "status": "done",
    "blocker": null,
    "detail": "PROVED cycle 88: infra_712u_succ: old stages M, M' into N compatibly over A, next marks q over M, q' over M' tied free from marginals of the same type => level-mu N1 with N -> N1, q.host -> N1, q'.host -> N1 commuting over the old stages and identifying the marks. Common tied free lift (infra_610_tied_free_lift), infra_712u_step twice (base change of the marginal by infra_712u_tiedFree_base_sameGalois), two infra_78_same_level_type_amalgam merged over the lift's host by Thm 4.11(1). Axioms clean."
+  },
+  {
+   "id": "infra_712u_limit",
+   "label": "7.12(2) limit: arrows out of a continuous stage factor through the directed union",
+   "section": 7,
+   "file": "AEC/Section7/Lemma712Uniqueness.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "PROVED cycle 88: infra_712u_factor_continuous: a stage M covered by a directed family X a -> M receives the factorization of any compatible family X a -> Z (directed union U via infra_78_chain_union_kappa maps bijectively onto M; inverse by infra_78_struct_inverse). This gives M_k -> N_k at limits of the common-object recursion. Axioms clean."
   }
  ],
  "edges": [
@@ -6573,8 +6582,13 @@
    "from": "infra_712u_succ",
    "to": "infra_712u_marks",
    "kind": "hard"
+  },
+  {
+   "from": "infra_712u_limit",
+   "to": "infra_712u_marks",
+   "kind": "hard"
   }
  ],
- "doneCount": 298,
+ "doneCount": 299,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

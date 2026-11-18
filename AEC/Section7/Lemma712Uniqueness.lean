@@ -336,6 +336,51 @@ theorem infra_712u_succ (P : SingleModelData K) {μ : Cardinal.{u}} (hμ : μ �
       _ = Φ2 ((e.trans er).symm (er x)) := (E2 _).symm
       _ = Φ2 (e.symm x) := congrArg Φ2 i2
 
+/-- **Arrows out of a continuous stage (proved, cycle 88).** If `M` is covered by a directed
+family `X a → M` (continuity of a chain at a limit), a compatible family `X a → Z` factors
+through `M`: the directed union `U` (`infra_78_chain_union_kappa`) maps bijectively onto `M`,
+so its universal arrow composes with the inverse (`infra_78_struct_inverse`). -/
+theorem infra_712u_factor_continuous {P : SingleModelData K} {μ : Cardinal.{u}}
+    (hμ : μ ∈ P.eligible) {ι : Type u} [Preorder ι] [Nonempty ι] [IsDirected ι (· ≤ ·)]
+    (hι : #ι ≤ μ) (X : ι → P.scheme.Object μ hμ)
+    (st : ∀ {a b : ι}, a ≤ b →
+      SystemArrow K oneVertexShape (P.scheme.asSystem hμ (X a)) (P.scheme.asSystem hμ (X b)))
+    (hrefl : ∀ a, st (le_refl a) = SystemArrow.refl _)
+    (htrans : ∀ {a b c : ι} (h₁ : a ≤ b) (h₂ : b ≤ c),
+      st (h₁.trans h₂) = SystemArrow.comp (st h₁) (st h₂))
+    (M : P.scheme.Object μ hμ)
+    (s : ∀ a, SystemArrow K oneVertexShape (P.scheme.asSystem hμ (X a)) (P.scheme.asSystem hμ M))
+    (hs : ∀ {a b : ι} (h : a ≤ b), SystemArrow.comp (st h) (s b) = s a)
+    (hcov : ∀ x : ((P.scheme.asSystem hμ M).obj PUnit.unit).carrier,
+      ∃ a y, (s a).onVertex PUnit.unit y = x)
+    {Z : P.scheme.Object μ hμ}
+    (g : ∀ a, SystemArrow K oneVertexShape (P.scheme.asSystem hμ (X a)) (P.scheme.asSystem hμ Z))
+    (hg : ∀ {a b : ι} (h : a ≤ b), SystemArrow.comp (st h) (g b) = g a) :
+    ∃ f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ M) (P.scheme.asSystem hμ Z),
+      ∀ a (y : ((P.scheme.asSystem hμ (X a)).obj PUnit.unit).carrier),
+        f.onVertex PUnit.unit ((s a).onVertex PUnit.unit y) = (g a).onVertex PUnit.unit y := by
+  classical
+  obtain ⟨U, leg, -, hleg, -, huniv, -⟩ := infra_78_chain_union_kappa hμ hι X st hrefl htrans
+  obtain ⟨u, -, hu⟩ := huniv M s (fun h => hs h)
+  obtain ⟨w, -, hw⟩ := huniv Z g (fun h => hg h)
+  have hbij : P.scheme.IsStructIso (X := U) (Y := M) u := by
+    intro v
+    have hv : v = PUnit.unit := Subsingleton.elim _ _
+    subst hv
+    refine ⟨(u.onVertex PUnit.unit).injective, fun x => ?_⟩
+    obtain ⟨a, y, rfl⟩ := hcov x
+    refine ⟨(leg a).onVertex PUnit.unit y, ?_⟩
+    rw [← hu a]
+    rfl
+  obtain ⟨ψ, hφψ, hψφ⟩ := infra_78_struct_inverse u hbij
+  refine ⟨SystemArrow.comp ψ w, fun a y => ?_⟩
+  show w.onVertex PUnit.unit (ψ.onVertex PUnit.unit ((s a).onVertex PUnit.unit y)) = _
+  rw [← hu a, ← hw a]
+  show w.onVertex PUnit.unit (ψ.onVertex PUnit.unit (u.onVertex PUnit.unit
+    ((leg a).onVertex PUnit.unit y))) = _
+  rw [hψφ]
+  rfl
+
 /-- **7.12(2), the marks (open tip `infra_712u_marks`).** -/
 theorem infra_712u_marks (P : SingleModelData K) : infra_712u_marks_statement P := by
   sorry
