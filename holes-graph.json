@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-18 08:39",
+  "updated": "2026-11-18 08:57",
   "sorryCount": 45,
   "legend": {
     "open": "No unfinished required proof-deps — try next",
@@ -2060,7 +2060,7 @@
       "file": "AEC/Section6/ProductTied.lean",
       "status": "open",
       "blocker": null,
-      "detail": "Open. Any two IsProductTied p q j1 e1, IsProductTied p q j2 e2 give SameGaloisType j1 j2 e1.symm e2.symm (realizations at any eligible levels). Same-level route: Thm 6.6 testing over A; for a test list Y in A, a move Z0 of (x_k, Y) along x_k.incl over a long sequence of q works for both k (x1 ~ x2 over A, infra_72_diagramEq_of_sameGalois), and tied freeness gives both joints the type of q on Z0. Mixed levels need mixed testing."
+      "detail": "Open (cross-level part). Any two IsProductTied p q j1 e1, IsProductTied p q j2 e2 give SameGaloisType j1 j2 e1.symm e2.symm, with realizations x_k, free lifts y_k and joints j_k at ANY eligible levels. Single-level case (x_k.nu = y_k.nu = j_k.nu = mu) DONE as infra_612_tied_indep_same_level. Remaining: hosts above mu; needs a cross-level Galois comparison (infra_72_diagramEq_of_sameGalois and Thm 6.6 testing infra_73_differing_test are stated for hosts at mu), e.g. via downward realization at mu (same_level_realization) plus transfer of tied freeness, or infra_78_cross_level_galois."
     },
     {
       "id": "infra_612_tied_symmetry",
@@ -2097,6 +2097,15 @@
       "status": "blocked",
       "blocker": "infra_612_tied_independence",
       "detail": "Open. For f : A -> B (mu <= mu' in the tail), tied free lifts pB, qB, jB of p, q, joint = p⊗q, and IsProductTied pB qB jB' e': SameGaloisType jB jB'."
+    },
+    {
+      "id": "infra_612_tied_indep_same_level",
+      "label": "Prop 6.12 (2) independence, single level (tied)",
+      "section": 6,
+      "file": "AEC/Section6/ProductTied.lean",
+      "status": "done",
+      "blocker": null,
+      "detail": "Done (no sorry; axioms propext/choice/Quot.sound): infra_612_tied_indep_same_level. Recursion-closed mu >= sigma^+, p q over A (nu = mu, size <= sigma); two tied products (x_k, ex_k, y_k, ey_k, joint j_k) with x_k.nu = y_k.nu = j_k.nu = mu: SameGaloisType j1 j2 e1.symm e2.symm. Proof: Thm 6.6 test list Y; long sequence of q; a mixed move Z0 of (x1,Y) along x1 is also a move of (x2,Y) along x2 (infra_72_diagramEq_of_sameGalois through p on seq_i ^ Y); tied freeness gives both (y_k, x_k, Y) the type of q on Z0; transport to the joints."
     }
   ],
   "edges": [
@@ -3888,8 +3897,13 @@
       "from": "infra_612_tied_independence",
       "to": "infra_612_tied_base_change",
       "kind": "hard"
+    },
+    {
+      "from": "infra_612_tied_indep_same_level",
+      "to": "infra_612_tied_independence",
+      "kind": "hard"
     }
   ],
-  "doneCount": 172,
+  "doneCount": 173,
   "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 43. Uncommitted in /tmp/aec-grok."
 }

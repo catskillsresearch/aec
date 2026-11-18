@@ -18,7 +18,9 @@ the untied `IsFreeLift` is vacuous, `AEC/Audit/FreeFromVacuous.lean`). It lives 
 * `IsFiniteProductTied n b joint E`: the iterated product, with an explicit identification `E`
   of the coordinates `Σ i, (b i).idx` with those of `joint`.
 
-Status: existence is proved (`infra_612_tied_exists`). Independence of choices, symmetry,
+Status: existence is proved (`infra_612_tied_exists`); independence is proved when all
+realizations, free lifts and joints sit at the level of `A` (`infra_612_tied_indep_same_level`).
+Independence across levels, symmetry,
 associativity, permutation invariance, projections, and base change are the open sub-tips
 `infra_612_tied_independence`, `infra_612_tied_symmetry`, `infra_612_tied_assoc`,
 `infra_612_tied_finite`, `infra_612_tied_base_change`.
@@ -103,6 +105,163 @@ theorem infra_612_tied_exists
       ∃ e : p.idx ⊕ q.idx ≃ joint.idx, IsProductTied p q joint e :=
   infra_612_tied_exists_aux P σ hσ hμ hrec hσμ hνp p.hν p.host p.incl p.incl_arrow
     p.idx p.val q hνq hqσ
+
+/-- Reindexing both sides of a Galois identification along one equivalence. -/
+theorem infra_612_sameGalois_trans_equiv {P : SingleModelData K} {μ : Cardinal.{u}}
+    {hμ : μ ∈ P.eligible} {A : P.scheme.Object μ hμ}
+    {t1 t2 : TupleOver K oneVertexShape P.scheme hμ A} {ι ι' : Type u}
+    {e1 : t1.idx ≃ ι} {e2 : t2.idx ≃ ι} (h : SameGaloisType t1 t2 e1 e2) (g : ι ≃ ι') :
+    SameGaloisType t1 t2 (e1.trans g) (e2.trans g) := by
+  rcases h with ⟨ρ, hρ, top, f1, f2, hf1, hf2, hc, hv⟩
+  exact ⟨ρ, hρ, top, f1, f2, hf1, hf2, hc, fun i => hv (g.symm i)⟩
+
+/-- Transport a diagram equality along a reindexing with pointwise identification. -/
+theorem infra_612_dEq_transport {P : SingleModelData K} {μ ν : Cardinal.{u}}
+    {hμ : μ ∈ P.eligible} {hν : ν ∈ P.eligible}
+    {X : P.scheme.Object μ hμ} {Y : P.scheme.Object ν hν} {α β : Type u}
+    {xs : α → Occurrence K oneVertexShape (P.scheme.asSystem hμ X)}
+    {ys : α → Occurrence K oneVertexShape (P.scheme.asSystem hν Y)}
+    (h : P.scheme.DiagramEq (X := X) (Y := Y) xs ys) (π : β ≃ α)
+    {xs' : β → Occurrence K oneVertexShape (P.scheme.asSystem hμ X)}
+    {ys' : β → Occurrence K oneVertexShape (P.scheme.asSystem hν Y)}
+    (hx : ∀ b, xs' b = xs (π b)) (hy : ∀ b, ys' b = ys (π b)) :
+    P.scheme.DiagramEq (X := X) (Y := Y) xs' ys' := by
+  have h2 := (P.scheme.diagram_reindex X Y π.symm xs ys).mp h
+  exact infra_73_diagramEq_of_eq h2 (fun b => (hx b).symm) (fun b => (hy b).symm)
+
+/-- `a ⊕ (b ⊕ c) ≃ b ⊕ (a ⊕ c)`. -/
+def infra_612_swap3 (a b c : Type u) : a ⊕ (b ⊕ c) ≃ b ⊕ (a ⊕ c) where
+  toFun
+    | Sum.inl x => Sum.inr (Sum.inl x)
+    | Sum.inr (Sum.inl y) => Sum.inl y
+    | Sum.inr (Sum.inr z) => Sum.inr (Sum.inr z)
+  invFun
+    | Sum.inl y => Sum.inr (Sum.inl y)
+    | Sum.inr (Sum.inl x) => Sum.inl x
+    | Sum.inr (Sum.inr z) => Sum.inr (Sum.inr z)
+  left_inv := by rintro (x | y | z) <;> rfl
+  right_inv := by rintro (y | x | z) <;> rfl
+
+/-- `(a ⊕ b) ⊕ c ≃ b ⊕ (a ⊕ c)`. -/
+def infra_612_swap3' (a b c : Type u) : (a ⊕ b) ⊕ c ≃ b ⊕ (a ⊕ c) where
+  toFun
+    | Sum.inl (Sum.inl x) => Sum.inr (Sum.inl x)
+    | Sum.inl (Sum.inr y) => Sum.inl y
+    | Sum.inr z => Sum.inr (Sum.inr z)
+  invFun
+    | Sum.inl y => Sum.inl (Sum.inr y)
+    | Sum.inr (Sum.inl x) => Sum.inl (Sum.inl x)
+    | Sum.inr (Sum.inr z) => Sum.inr z
+  left_inv := by rintro ((x | y) | z) <;> rfl
+  right_inv := by rintro (y | x | z) <;> rfl
+
+set_option maxHeartbeats 1600000 in
+/-- **Independence of `p ⊗ q`, single level (proved).** Two tied products of `p` and `q`
+whose realizations, free lifts and joints all sit at the level `μ` of `A` have one Galois type.
+
+For a test list `Y` in `A`, take a long sequence for `q` and a move `Z₀` of `(x₁, Y)` along
+`x₁`; since `x₁` and `x₂` both realize `p`, `Z₀` is also a move of `(x₂, Y)` along `x₂`
+(`infra_72_diagramEq_of_sameGalois` on the parameter list `seq_i ⌢ Y`). Tied freeness gives
+both `(y_k, x_k, Y)` the type of `q` on `Z₀`; Theorem 6.6 (`infra_73_differing_test`) closes. -/
+theorem infra_612_tied_indep_same_level
+    (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ)
+    {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
+    (hrec : μ ∈ recursionClosedLevels P σ) (hσμ : Order.succ σ ≤ μ)
+    {A : P.scheme.Object μ hμ}
+    (p q : TupleOver K oneVertexShape P.scheme hμ A)
+    (hνp : p.ν = μ) (hνq : q.ν = μ) (hpσ : #p.idx ≤ σ) (hqσ : #q.idx ≤ σ)
+    (j₁ j₂ : TupleOver K oneVertexShape P.scheme hμ A)
+    (e₁ : p.idx ⊕ q.idx ≃ j₁.idx) (e₂ : p.idx ⊕ q.idx ≃ j₂.idx)
+    (x₁ x₂ : TupleOver K oneVertexShape P.scheme hμ A)
+    (ex₁ : p.idx ≃ x₁.idx) (ex₂ : p.idx ≃ x₂.idx)
+    (hS₁ : SameGaloisType p x₁ ex₁ (Equiv.refl x₁.idx))
+    (hS₂ : SameGaloisType p x₂ ex₂ (Equiv.refl x₂.idx))
+    (y₁ : TupleOver K oneVertexShape P.scheme x₁.hν x₁.host)
+    (y₂ : TupleOver K oneVertexShape P.scheme x₂.hν x₂.host)
+    (ey₁ : q.idx ≃ y₁.idx) (ey₂ : q.idx ≃ y₂.idx)
+    (hT₁ : IsTiedFreeMixed x₁.incl q y₁ ey₁) (hT₂ : IsTiedFreeMixed x₂.incl q y₂ ey₂)
+    (hJ₁ : SameGaloisType j₁ (x₁.join y₁)
+      (e₁.symm.trans (Equiv.sumCongr ex₁ ey₁)) (Equiv.refl (x₁.idx ⊕ y₁.idx)))
+    (hJ₂ : SameGaloisType j₂ (x₂.join y₂)
+      (e₂.symm.trans (Equiv.sumCongr ex₂ ey₂)) (Equiv.refl (x₂.idx ⊕ y₂.idx)))
+    (hx₁ : x₁.ν = μ) (hx₂ : x₂.ν = μ) (hy₁ : y₁.ν = μ) (hy₂ : y₂.ν = μ)
+    (hj₁ : j₁.ν = μ) (hj₂ : j₂.ν = μ) :
+    SameGaloisType j₁ j₂ e₁.symm e₂.symm := by
+  classical
+  have hσlt : σ < μ := (Order.lt_succ σ).trans_le hσμ
+  have hpμ : #p.idx < μ := hpσ.trans_lt hσlt
+  have hqμ : #q.idx < μ := hqσ.trans_lt hσlt
+  have hpqσ : #(p.idx ⊕ q.idx) ≤ σ := by
+    rw [Cardinal.mk_sum, Cardinal.lift_id, Cardinal.lift_id]
+    exact Cardinal.add_le_of_le hσ hpσ hqσ
+  have hj₁σ : #j₁.idx ≤ σ := (Cardinal.mk_congr e₁).symm.trans_le hpqσ
+  -- the realizations, reindexed by `p`
+  have hS'₁ : SameGaloisType p x₁ (Equiv.refl p.idx) ex₁.symm := by
+    have h := infra_612_sameGalois_trans_equiv hS₁ ex₁.symm
+    rwa [Equiv.self_trans_symm, Equiv.refl_trans] at h
+  have hS'₂ : SameGaloisType p x₂ (Equiv.refl p.idx) ex₂.symm := by
+    have h := infra_612_sameGalois_trans_equiv hS₂ ex₂.symm
+    rwa [Equiv.self_trans_symm, Equiv.refl_trans] at h
+  have hJ'₁ : SameGaloisType j₁ (x₁.join y₁) e₁.symm (Equiv.sumCongr ex₁ ey₁).symm := by
+    have h := infra_612_sameGalois_trans_equiv hJ₁ (Equiv.sumCongr ex₁ ey₁).symm
+    rw [Equiv.trans_assoc, Equiv.self_trans_symm, Equiv.trans_refl] at h
+    exact h
+  have hJ'₂ : SameGaloisType j₂ (x₂.join y₂) e₂.symm (Equiv.sumCongr ex₂ ey₂).symm := by
+    have h := infra_612_sameGalois_trans_equiv hJ₂ (Equiv.sumCongr ex₂ ey₂).symm
+    rw [Equiv.trans_assoc, Equiv.self_trans_symm, Equiv.trans_refl] at h
+    exact h
+  by_contra hneq
+  obtain ⟨β, Y, hβ, hnot⟩ :=
+    infra_73_differing_test P σ hσ hμ hrec hσμ j₁ j₂ e₁.symm e₂.symm hj₁ hj₂ hj₁σ
+      (hj₁σ.trans_lt hσlt) hneq
+  apply hnot
+  have hβμ : #β < μ := by
+    have hg : P.g σ < μ :=
+      (hμ.1.closed P.g (Set.mem_insert_of_mem _ rfl)).below σ hσ hσlt
+    exact hβ.trans_lt (add_lt_of_lt (P.aleph0_le hμ) hg (P.ls_lt hμ))
+  have hpβμ : #(p.idx ⊕ β) < μ := by
+    rw [Cardinal.mk_sum, Cardinal.lift_id, Cardinal.lift_id]
+    exact Cardinal.add_lt_of_lt (P.aleph0_le hμ) hpμ hβμ
+  have hqβμ : #(q.idx ⊕ β) < μ := by
+    rw [Cardinal.mk_sum, Cardinal.lift_id, Cardinal.lift_id]
+    exact Cardinal.add_lt_of_lt (P.aleph0_le hμ) hqμ hβμ
+  obtain ⟨seq, hτlo, -, hlong⟩ :=
+    infra_78_exists_seq_ge P σ hσ hμ hrec hσμ q hνq hqσ hpβμ
+  let W₁ : p.idx ⊕ β → Occurrence K oneVertexShape (P.scheme.asSystem x₁.hν x₁.host) :=
+    fun t => typeJoint (p := x₁) Y (Equiv.sumCongr ex₁ (Equiv.refl β) t)
+  let W₂ : p.idx ⊕ β → Occurrence K oneVertexShape (P.scheme.asSystem x₂.hν x₂.host) :=
+    fun t => typeJoint (p := x₂) Y (Equiv.sumCongr ex₂ (Equiv.refl β) t)
+  obtain ⟨Z0, hZ0⟩ := infra_78_move_query_mixed x₁.incl x₁.incl_arrow hx₁.ge seq W₁ hpβμ
+  -- `Z₀` is also a move of `W₂` along `x₂`
+  have hmove₂ : infra_78_isMoveMixed x₂.incl seq W₂ Z0 := by
+    intro i
+    let Z' : q.idx ⊕ β → Occurrence K oneVertexShape (P.scheme.asSystem hμ A) :=
+      Sum.elim (seq.family i) Y
+    have D₁ := infra_72_diagramEq_of_sameGalois (P := P) hS'₁ Z' hνp hx₁ hpμ hqβμ
+    have D₂ := infra_72_diagramEq_of_sameGalois (P := P) hS'₂ Z' hνp hx₂ hpμ hqβμ
+    have M := P.scheme.diagram_trans _ _ _ _ _ _ (P.scheme.diagram_symm _ _ _ _ D₁) D₂
+    have M' := infra_612_dEq_transport M (infra_612_swap3 q.idx p.idx β)
+      (xs' := seqJoint (fun j => (⟨(seq.family i j).1,
+        x₁.incl.onVertex (seq.family i j).1 (seq.family i j).2⟩ :
+          Occurrence K oneVertexShape (P.scheme.asSystem x₁.hν x₁.host))) W₁)
+      (ys' := seqJoint (fun j => (⟨(seq.family i j).1,
+        x₂.incl.onVertex (seq.family i j).1 (seq.family i j).2⟩ :
+          Occurrence K oneVertexShape (P.scheme.asSystem x₂.hν x₂.host))) W₂)
+      (by rintro (j | k | b) <;> rfl) (by rintro (j | k | b) <;> rfl)
+    exact P.scheme.diagram_trans _ _ _ _ _ _ (hZ0 i) M'
+  have hιτ : #(p.idx ⊕ β) ≤ seq.τ := hτlo
+  have T₁ := hT₁ seq W₁ Z0 hlong hιτ hpβμ hZ0
+  have T₂ := hT₂ seq W₂ Z0 hlong hιτ hpβμ hmove₂
+  have N := P.scheme.diagram_trans _ _ _ _ _ _ (P.scheme.diagram_symm _ _ _ _ T₁) T₂
+  have G := infra_612_dEq_transport N (infra_612_swap3' p.idx q.idx β)
+    (xs' := alignJoint (Equiv.sumCongr ex₁ ey₁).symm (typeJoint (p := x₁.join y₁) Y))
+    (ys' := alignJoint (Equiv.sumCongr ex₂ ey₂).symm (typeJoint (p := x₂.join y₂) Y))
+    (by rintro ((k | j) | b) <;> rfl) (by rintro ((k | j) | b) <;> rfl)
+  have hpqμ : #(p.idx ⊕ q.idx) < μ := hpqσ.trans_lt hσlt
+  have DJ₁ := infra_72_diagramEq_of_sameGalois (P := P) hJ'₁ Y hj₁ hy₁ hpqμ hβμ
+  have DJ₂ := infra_72_diagramEq_of_sameGalois (P := P) hJ'₂ Y hj₂ hy₂ hpqμ hβμ
+  exact P.scheme.diagram_trans _ _ _ _ _ _ DJ₁
+    (P.scheme.diagram_trans _ _ _ _ _ _ G (P.scheme.diagram_symm _ _ _ _ DJ₂))
 
 /-- **Proposition 6.12** (Products of bounded types). For bounded types `p(x)`, `q(y)` over
 `A`, realize `p` in an extension `B ≥ A` and then realize `q^B` (the free lift) in a further
