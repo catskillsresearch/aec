@@ -22,6 +22,10 @@ composition law `Infra78Matrix.CompLaw` as an explicit hypothesis; requirement 2
 `Infra78Matrix.ContAtLimits` (local character on the stage chain `infra_78_stageChain`). Both are
 tracked obligations of `infra_78_matrix_construction`, not hidden assumptions. The combined
 statement is `infra_78_bookkeeping_assembly`.
+
+Stage-local form (`infra_78_pair_bookkeeping_close`): for a single pair `X → Y` and any `T` of
+size `≤ ρ`, a closed `T' ⊇ T` of size `≤ ρ`; it depends only on the current pair, so the
+bookkeeping can be interleaved with the matrix recursion (`infra_78_matrix_recursion`).
 -/
 
 universe u
@@ -732,5 +736,149 @@ theorem infra_78_bookkeeping_assembly (hM : M.CompLaw) (hC : M.ContAtLimits)
         hsupp2' i hcof s hs hsl hσs
 
 end
+
+section PairLocal
+variable {P : SingleModelData K} {κ : Cardinal.{u}} {hκ : κ ∈ P.eligible}
+  {X Y : P.scheme.Object κ hκ}
+  (f : SystemArrow K oneVertexShape (P.scheme.asSystem hκ X) (P.scheme.asSystem hκ Y))
+  (hf : P.scheme.permitted (X := X) (Y := Y) f)
+
+/-- The tuple of top points of `s ⊆ |X| ⊕ |Y|` over `X` (realized in `Y` along `f`). -/
+def infra_78_pairTuple (s : Set (X.model.carrier ⊕ Y.model.carrier)) :
+    TupleOver K oneVertexShape P.scheme hκ X :=
+  ⟨κ, hκ, Y, f, hf, (Sum.inr ⁻¹' s : Set _), fun k => Y.occ k.1⟩
+
+/-- Pair-local closure requirement 1 request. -/
+def infra_78_pairLsReq {ℓ : Cardinal.{u}} (hℓel : ℓ ∈ P.eligible)
+    (s T : Set (X.model.carrier ⊕ Y.model.carrier)) : Prop :=
+  ∃ (A V : P.scheme.Object ℓ hℓel)
+    (iA : SystemArrow K oneVertexShape (P.scheme.asSystem hℓel A) (P.scheme.asSystem hκ X))
+    (iV : SystemArrow K oneVertexShape (P.scheme.asSystem hℓel V) (P.scheme.asSystem hκ Y))
+    (g : SystemArrow K oneVertexShape (P.scheme.asSystem hℓel A) (P.scheme.asSystem hℓel V)),
+    P.scheme.permitted (X := A) (Y := X) iA ∧
+    P.scheme.permitted (X := V) (Y := Y) iV ∧
+    P.scheme.permitted (X := A) (Y := V) g ∧
+    (∀ v, (iV.onVertex v).comp (g.onVertex v) = (f.onVertex v).comp (iA.onVertex v)) ∧
+    Sum.inl ⁻¹' s ⊆ Set.range (iA.onVertex PUnit.unit) ∧
+    Sum.inr ⁻¹' s ⊆ Set.range (iV.onVertex PUnit.unit) ∧
+    T = Sum.inl '' Set.range (iA.onVertex PUnit.unit) ∪
+      Sum.inr '' Set.range (iV.onVertex PUnit.unit)
+
+/-- Pair-local closure requirement 2 request. -/
+def infra_78_pairCopyReq (ℓ : Cardinal.{u}) (s T : Set (X.model.carrier ⊕ Y.model.carrier)) :
+    Prop :=
+  ∃ seq : ApproximationSequence (infra_78_pairTuple f hf s), seq.τ = ℓ ∧
+    ℓ + ℵ₀ < #seq.κIndex ∧
+    T = Set.range (fun ab : seq.κIndex × (infra_78_pairTuple f hf s).idx =>
+      (Sum.inl (X.val (seq.family ab.1 ab.2)) : X.model.carrier ⊕ Y.model.carrier))
+
+/-- Pair-local requests of a small parameter set. -/
+noncomputable def infra_78_pairRequests (ρ : Cardinal.{u}) {ℓ : Cardinal.{u}}
+    (hℓel : ℓ ∈ P.eligible) (s : Set (X.model.carrier ⊕ Y.model.carrier)) :
+    Set (X.model.carrier ⊕ Y.model.carrier) :=
+  (Sum.inr '' (f.onVertex PUnit.unit '' (Sum.inl ⁻¹' s))) ∪
+    infra_78_pick ρ (infra_78_pairLsReq f hℓel s) ∪ infra_78_pick ρ (infra_78_pairCopyReq f hf ℓ s)
+
+/-- **Stage-local bookkeeping closure (Prop 7.8 interleaving).** For a single permitted pair
+`f : X → Y` at level `κ` and any `T ⊆ |X| ⊕ |Y|` of size `≤ ρ`, there is `T' ⊇ T` of size
+`≤ ρ` closed under the pair (`R ⊆ S`) and under the requests of closure requirements 1 and 2
+for every `≤ λ` subset. The output depends only on the current pair, so the bookkeeping can be
+interleaved with the matrix recursion. -/
+theorem infra_78_pair_bookkeeping_close {ρ ℓ : Cardinal.{u}} (hℓel : ℓ ∈ P.eligible)
+    (hℓκ : ℓ ≤ κ) (hℓρ : ℓ < ρ) (hpow : ρ ^ ℓ = ρ)
+    (T : Set (X.model.carrier ⊕ Y.model.carrier)) (hT : #T ≤ ρ) :
+    ∃ T' : Set (X.model.carrier ⊕ Y.model.carrier), T ⊆ T' ∧ #T' ≤ ρ ∧
+      (∀ x, (Sum.inl x : X.model.carrier ⊕ Y.model.carrier) ∈ T' →
+        (Sum.inr (f.onVertex PUnit.unit x) : X.model.carrier ⊕ Y.model.carrier) ∈ T') ∧
+      (∀ s ⊆ T', #s ≤ ℓ →
+        ∃ (A V : P.scheme.Object ℓ hℓel)
+          (iA : SystemArrow K oneVertexShape (P.scheme.asSystem hℓel A) (P.scheme.asSystem hκ X))
+          (iV : SystemArrow K oneVertexShape (P.scheme.asSystem hℓel V) (P.scheme.asSystem hκ Y))
+          (g : SystemArrow K oneVertexShape (P.scheme.asSystem hℓel A)
+            (P.scheme.asSystem hℓel V)),
+          P.scheme.permitted (X := A) (Y := X) iA ∧
+          P.scheme.permitted (X := V) (Y := Y) iV ∧
+          P.scheme.permitted (X := A) (Y := V) g ∧
+          (∀ v, (iV.onVertex v).comp (g.onVertex v) = (f.onVertex v).comp (iA.onVertex v)) ∧
+          Sum.inl ⁻¹' s ⊆ Set.range (iA.onVertex PUnit.unit) ∧
+          Sum.inr ⁻¹' s ⊆ Set.range (iV.onVertex PUnit.unit) ∧
+          Sum.inl '' Set.range (iA.onVertex PUnit.unit) ⊆ T' ∧
+          Sum.inr '' Set.range (iV.onVertex PUnit.unit) ⊆ T') ∧
+      (∀ σ : Cardinal.{u}, ℵ₀ ≤ σ → κ ∈ recursionClosedLevels P σ → Order.succ σ ≤ κ → ℓ < κ →
+        ∀ s ⊆ T', #s ≤ ℓ → #(Sum.inr ⁻¹' s : Set Y.model.carrier) ≤ σ →
+        ∃ seq : ApproximationSequence (infra_78_pairTuple f hf s), seq.τ = ℓ ∧
+          ℓ + ℵ₀ < #seq.κIndex ∧
+          ∀ a b, (Sum.inl (X.val (seq.family a b)) : X.model.carrier ⊕ Y.model.carrier) ∈ T') := by
+  have hℓ : ℵ₀ ≤ ℓ := P.aleph0_le hℓel
+  have hρ : ℵ₀ ≤ ρ := hℓ.trans hℓρ.le
+  have hF : ∀ s : Set (X.model.carrier ⊕ Y.model.carrier), #s ≤ ℓ →
+      #(infra_78_pairRequests f hf ρ hℓel s) ≤ ρ := by
+    intro s hs
+    have h1 : #(Sum.inr '' (f.onVertex PUnit.unit '' (Sum.inl ⁻¹' s)) :
+        Set (X.model.carrier ⊕ Y.model.carrier)) ≤ ρ :=
+      Cardinal.mk_image_le.trans (Cardinal.mk_image_le.trans
+        ((Cardinal.mk_preimage_of_injective _ _ Sum.inl_injective).trans (hs.trans hℓρ.le)))
+    refine (mk_union_le _ _).trans ?_
+    refine (add_le_add ((mk_union_le _ _).trans (add_le_add h1 (infra_78_pick_card _ _)))
+      (infra_78_pick_card _ _)).trans ?_
+    rw [add_eq_self hρ, add_eq_self hρ]
+  obtain ⟨T', hTT', hcard, hcl⟩ :=
+    infra_78_cardinal_closure T hℓ hℓρ hpow (infra_78_pairRequests f hf ρ hℓel) hF hT
+  refine ⟨T', hTT', hcard, ?_, ?_, ?_⟩
+  · intro x hx
+    have hs : ({Sum.inl x} : Set (X.model.carrier ⊕ Y.model.carrier)) ⊆ T' :=
+      Set.singleton_subset_iff.2 hx
+    have hsl : #({Sum.inl x} : Set (X.model.carrier ⊕ Y.model.carrier)) ≤ ℓ := by
+      rw [Cardinal.mk_singleton]; exact one_le_aleph0.trans hℓ
+    apply hcl _ hs hsl
+    left; left
+    exact ⟨_, ⟨x, Set.mem_singleton _, rfl⟩, rfl⟩
+  · intro s hs hsl
+    have hS : #(Sum.inl ⁻¹' s : Set X.model.carrier) ≤ ℓ :=
+      (Cardinal.mk_preimage_of_injective _ _ Sum.inl_injective).trans hsl
+    have hT2 : #(Sum.inr ⁻¹' s : Set Y.model.carrier) ≤ ℓ :=
+      (Cardinal.mk_preimage_of_injective _ _ Sum.inr_injective).trans hsl
+    have hex : ∃ T : Set (X.model.carrier ⊕ Y.model.carrier), #T ≤ ρ ∧
+        infra_78_pairLsReq f hℓel s T := by
+      obtain ⟨A, V, iA, iV, g, h1, h2, h3, h4, h5, h6⟩ :=
+        infra_78_mixed_ls_pair hℓel hκ hℓκ f _ _ hS hT2
+      refine ⟨_, ?_, A, V, iA, iV, g, h1, h2, h3, h4, h5, h6, rfl⟩
+      refine (mk_union_le _ _).trans ?_
+      have eA : #(Set.range (iA.onVertex PUnit.unit)) ≤ ℓ :=
+        Cardinal.mk_range_le.trans (le_of_eq A.card)
+      have eV : #(Set.range (iV.onVertex PUnit.unit)) ≤ ℓ :=
+        Cardinal.mk_range_le.trans (le_of_eq V.card)
+      refine (add_le_add (Cardinal.mk_image_le.trans eA) (Cardinal.mk_image_le.trans eV)).trans ?_
+      rw [add_eq_self hℓ]; exact hℓρ.le
+    obtain ⟨A, V, iA, iV, g, h1, h2, h3, h4, h5, h6, hTe⟩ := infra_78_pick_spec hex
+    have hsub : infra_78_pick ρ (infra_78_pairLsReq f hℓel s) ⊆ T' := fun z hz =>
+      hcl s hs hsl (Or.inl (Or.inr hz))
+    rw [hTe] at hsub
+    exact ⟨A, V, iA, iV, g, h1, h2, h3, h4, h5, h6,
+      fun z hz => hsub (Or.inl hz), fun z hz => hsub (Or.inr hz)⟩
+  · intro σ hσ hrec hσSucc hℓκ' s hs hsl hσs
+    have hidxℓ : #(infra_78_pairTuple f hf s).idx ≤ ℓ :=
+      (Cardinal.mk_preimage_of_injective _ _ Sum.inr_injective).trans hsl
+    have hex : ∃ T : Set (X.model.carrier ⊕ Y.model.carrier), #T ≤ ρ ∧
+        infra_78_pairCopyReq f hf ℓ s T := by
+      obtain ⟨seq, hτ, hκI, hprod⟩ := infra_78_code_copies_bounded P σ hσ hκ hrec hσSucc
+        (infra_78_pairTuple f hf s) rfl hσs hℓ hℓκ' hidxℓ
+      refine ⟨_, Cardinal.mk_range_le.trans (hprod.trans (Order.succ_le_of_lt hℓρ)), seq, hτ,
+        ?_, rfl⟩
+      rw [hκI, Cardinal.add_eq_left hℓ hℓ]
+      exact Order.lt_succ_of_not_isMax (not_isMax ℓ)
+    obtain ⟨seq, hτ, hlen, hTe⟩ := infra_78_pick_spec hex
+    have hsub : infra_78_pick ρ (infra_78_pairCopyReq f hf ℓ s) ⊆ T' := fun z hz =>
+      hcl s hs hsl (Or.inr hz)
+    rw [hTe] at hsub
+    exact ⟨seq, hτ, hlen, fun a b => hsub ⟨(a, b), rfl⟩⟩
+
+end PairLocal
+
+/-- The matrix tuple at stage `i` is the pair-local tuple of the stage pair. -/
+theorem infra_78_bkTuple_eq_pairTuple {P : SingleModelData K} {ρ κ : Cardinal.{u}}
+    {hκ : κ ∈ P.eligible} (M : Infra78Matrix P ρ hκ) (i : (Order.succ ρ).ord.ToType)
+    (s : Set (infra_78_bkCarrier M i)) :
+    infra_78_bkTuple M i s = infra_78_pairTuple (M.pair i) (M.pair_permitted i) s := rfl
 
 end AEC

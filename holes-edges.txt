@@ -1,4 +1,4 @@
-# Nodes: (see holes-graph.json)  Hard edges: 377
+# Nodes: (see holes-graph.json)  Hard edges: 390
 # Convention: FROM --> TO means the English proof of TO requires FROM.
 # infra_78_mixed_level_isolation (Prop 7.8 rho^+ matrix argument; mixed tied free lift and mixed Lemma 7.6 done grokbot_02)
 # Retired: infra_610_qPres_empty_joint_on_I, infra_610_same_head_transfers_joint, infra_69_transfer_sequence, WorkingScheme.exists_approximationSequence.
@@ -380,3 +380,16 @@ infra_78_bookkeeping_sets_abstract --> infra_78_bookkeeping_sets_instantiate
 infra_78_mixed_ls_pair --> infra_78_bookkeeping_sets_instantiate
 infra_78_code_copies_bounded --> infra_78_bookkeeping_sets_instantiate
 infra_78_matrix --> infra_78_bookkeeping_sets_instantiate
+infra_78_cardinal_closure --> infra_78_bookkeeping_stage_local
+infra_78_mixed_ls_pair --> infra_78_bookkeeping_stage_local
+infra_78_code_copies_bounded --> infra_78_bookkeeping_stage_local
+infra_78_nonfree_extension_tied --> infra_78_matrix_successor_step
+infra_78_same_level_type_amalgam --> infra_78_matrix_successor_step
+infra_78_finite_continuity --> infra_78_matrix_limit_step
+infra_78_matrix --> infra_78_matrix_limit_step
+infra_78_bookkeeping_stage_local --> infra_78_matrix_recursion
+infra_78_matrix_successor_step --> infra_78_matrix_recursion
+infra_78_matrix_limit_step --> infra_78_matrix_recursion
+infra_78_bookkeeping_closure --> infra_78_matrix_recursion
+infra_78_matrix --> infra_78_matrix_recursion
+infra_78_matrix_recursion --> infra_78_matrix_construction
