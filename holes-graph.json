@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-18 07:26",
+  "updated": "2026-11-18 07:31",
   "sorryCount": 43,
   "legend": {
     "open": "No unfinished required proof-deps — try next",
@@ -1838,10 +1838,10 @@
       "id": "infra_78_mixed_level_isolation",
       "label": "Infra 7.8 mixed-level isolation",
       "section": 7,
-      "file": "AEC/Section7/Results.lean",
+      "file": "AEC/Section7/MixedDescent.lean",
       "status": "open",
       "blocker": null,
-      "detail": "Blocked (demoted grokbot_01). Done toward it: mixed tied free lift and mixed Lemma 7.6 (grokbot_02, sorry-free), Fodor, matrix data. Remaining for Prop 7.8: the rho^+ matrix construction at level kappa with level-lambda pairs inside R_i,S_i, type-identifying amalgamation at kappa, Fodor application on the stationary set, Def 7.7 continuity at matrix limits (only finite marks done: infra_78_finite_continuity)."
+      "detail": "Open. Done toward it: mixed tied free lift and mixed Lemma 7.6 (sorry-free), Fodor, matrix data, stationary combinatorics (infra_78_stationary_combinatorics: high-cofinality stages stationary, small sets appear early, one fixed failing list on a stationary set). Remaining for Prop 7.8: the rho^+ matrix construction at level kappa with level-lambda pairs inside R_i,S_i (bookkeeping closures), type-identifying amalgamation at kappa, the local-character contradiction for the fixed list, the theta^+ shrink to A<=U with the majority free-extension identity, Def 7.7 continuity at matrix limits (only finite marks done: infra_78_finite_continuity)."
     },
     {
       "id": "infra_9_cube_scheme",
@@ -1950,6 +1950,15 @@
       "status": "open",
       "blocker": null,
       "detail": "OPEN (grokbot_02 sub-tip of infra_78_cross_level_galois). ClosedLevel.exists_tuple_amalgam with card B1 >= mu (amalgam of size card B1). Known obstruction: exists_strong_embedding_over embeds B1 over A into E(J) along a countable tower of submodels of size < mu with LiftsTuple lifts (#alpha < mu), which cannot exhaust a larger B1; needs lifts of submodels of size >= mu or an amalgamation property over mu-sized models. Truth not verified; no consumer on the main path."
+    },
+    {
+      "id": "infra_78_stationary_combinatorics",
+      "label": "Prop 7.8 stationary combinatorics",
+      "section": 7,
+      "file": "AEC/Section7/MixedDescent.lean",
+      "status": "done",
+      "blocker": null,
+      "detail": "Done (no sorry; axioms propext/choice/Quot.sound): the set-theoretic part of Prop 7.8's 'Suppose not' paragraph. infra_78_stationary_high_cof (stages i<rho^+ with cf(i)>lambda are stationary, lambda<rho infinite), infra_78_bounded_in_earlier_stage (a <=lambda subset of a continuous chain at a stage of cofinality >lambda lies in an earlier stage), infra_78_stationary_fixed_list (Fodor + partition into <=rho pieces: one fixed list on a stationary set)."
     }
   ],
   "edges": [
@@ -3601,8 +3610,13 @@
       "from": "infra_78_tied_free_lift_mixed",
       "to": "infra_78_lemma_7_6_mixed",
       "kind": "hard"
+    },
+    {
+      "from": "infra_78_stationary_combinatorics",
+      "to": "infra_78_mixed_level_isolation",
+      "kind": "hard"
     }
   ],
-  "doneCount": 162,
+  "doneCount": 166,
   "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 43. Uncommitted in /tmp/aec-grok."
 }

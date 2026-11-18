@@ -255,6 +255,105 @@ theorem infra_78_fodor (ρ : Cardinal.{u}) (hρ : ℵ₀ ≤ ρ)
   haveI := infra_78_succ_isRegularCardinalOrder ρ hρ
   exists_isStationary_preimage_singleton (infra_78_succ_cof_ne ρ hρ) hs hg
 
+/-- **High-cofinality stages are stationary (Prop 7.8 proof, proved).** For infinite `λ < ρ`,
+the stages `i < ρ⁺` with `cf(i) > λ` form a stationary subset of `ρ⁺`: in any club take the
+`λ⁺`-th point of its normal enumeration, whose cofinality is `λ⁺`. -/
+theorem infra_78_stationary_high_cof (ρ l : Cardinal.{u}) (hl : ℵ₀ ≤ l) (hlρ : l < ρ) :
+    IsStationary {x : (Order.succ ρ).ord.ToType | l < Order.cof (Set.Iio x)} := by
+  have hρ : ℵ₀ ≤ ρ := hl.trans hlρ.le
+  haveI := infra_78_succ_isRegularCardinalOrder ρ hρ
+  intro C hC
+  have he := hC.isNormal_enum
+  set e := Subtype.val ∘ Order.enum C hC.isCofinal with he_def
+  have hlt : (Order.succ l).ord < Ordinal.type (α := (Order.succ ρ).ord.ToType) (· < ·) := by
+    rw [Ordinal.type_toType, Cardinal.ord_lt_ord]
+    exact Order.succ_lt_succ_iff.2 hlρ
+  set y : (Order.succ ρ).ord.ToType := Ordinal.enum (α := (Order.succ ρ).ord.ToType) (· < ·)
+    ⟨(Order.succ l).ord, hlt⟩ with hy_def
+  have hcy : Order.cof (Set.Iio y) = Order.succ l := by
+    rw [Order.cof_Iio, hy_def, Ordinal.typein_enum, (Cardinal.isRegular_succ hl).cof_ord]
+  have hone : (1 : Cardinal) < Order.succ l :=
+    (Order.lt_succ_of_not_isMax (not_isMax l)).trans_le' (one_le_aleph0.trans hl)
+  have hyl : Order.IsSuccLimit y := by
+    refine ⟨fun hmin => ?_, fun b hb => ?_⟩
+    · have : IsEmpty (Set.Iio y) := ⟨fun z => hmin.not_lt z.2⟩
+      have h0 := Order.cof_le_cardinalMk (α := Set.Iio y)
+      rw [Cardinal.mk_eq_zero, hcy] at h0
+      exact absurd h0 (not_le.2 (hone.trans_le' zero_le_one))
+    · have : Nonempty (Set.Iio y) := ⟨⟨b, hb.lt⟩⟩
+      have h1 : Order.cof (Set.Iio y) ≤ 1 :=
+        Order.cof_le_one_iff.2 ⟨⟨b, hb.lt⟩, fun z => hb.le_of_lt z.2⟩
+      rw [hcy] at h1
+      exact absurd h1 (not_le.2 hone)
+  refine ⟨e y, ?_, (Order.enum C hC.isCofinal y).2⟩
+  show l < Order.cof (Set.Iio (e y))
+  let f : Set.Iio y → Set.Iio (e y) := fun z => ⟨e z, he.strictMono z.2⟩
+  have hf : StrictMono f := fun _ _ h => he.strictMono h
+  have hf' : IsCofinal (Set.range f) := by
+    intro t
+    obtain ⟨a, ha, hta⟩ := (he.lt_iff_exists_lt hyl).1 t.2
+    exact ⟨f ⟨a, ha⟩, ⟨_, rfl⟩, hta.le⟩
+  have := Order.lift_cof_congr_of_strictMono hf hf'
+  simp only [Cardinal.lift_id] at this
+  rw [← this, hcy]
+  exact Order.lt_succ_of_not_isMax (not_isMax l)
+
+/-- **Small sets of a continuous chain appear early (Prop 7.8 proof, proved).** If `S` is an
+increasing chain of sets which is continuous at `i` (`S i ⊆ ⋃_{j<i} S j`) and `d ⊆ S i` has size
+at most `λ < cf(i)`, then `d ⊆ S j` for some `j < i`. -/
+theorem infra_78_bounded_in_earlier_stage {α : Type u} [LinearOrder α] [WellFoundedLT α]
+    {E : Type u} (S : α → Set E) (hS : Monotone S) {i : α} (hi : S i ⊆ ⋃ j ∈ Set.Iio i, S j)
+    {d : Set E} (hd : d ⊆ S i) {l : Cardinal.{u}} (hdl : #d ≤ l)
+    (hcof : l < Order.cof (Set.Iio i)) :
+    ∃ j < i, d ⊆ S j := by
+  have H : ∀ e : d, ∃ j : Set.Iio i, e.1 ∈ S j := by
+    intro e
+    have := hi (hd e.2)
+    simp only [Set.mem_iUnion, Set.mem_Iio] at this
+    obtain ⟨j, hj, he⟩ := this
+    exact ⟨⟨j, hj⟩, he⟩
+  choose g hg using H
+  have hnc : ¬ IsCofinal (Set.range g) := fun hc =>
+    (Order.cof_le hc).not_gt ((Cardinal.mk_range_le.trans hdl).trans_lt hcof)
+  rw [IsCofinal] at hnc
+  push Not at hnc
+  obtain ⟨j, hj⟩ := hnc
+  refine ⟨j.1, j.2, fun e he => hS ?_ (hg ⟨e, he⟩)⟩
+  exact (le_of_lt (hj _ ⟨⟨e, he⟩, rfl⟩) : (g ⟨e, he⟩ : α) ≤ j.1)
+
+/-- **One fixed failing list on a stationary set (Prop 7.8 proof, proved).** Suppose at every
+stage `i` of a stationary `T ⊆ ρ⁺` a list `d i` is chosen which already lies in an earlier stage
+`j < i` (`inS j (d i)`), and each stage has at most `ρ` lists. Then Fodor's pressing-down lemma
+fixes the stage and a partition into `ρ < ρ⁺` pieces fixes the list: one `d₀` (lying in one
+stage `j`) equals `d i` stationarily often. -/
+theorem infra_78_stationary_fixed_list (ρ : Cardinal.{u}) (hρ : ℵ₀ ≤ ρ) {L : Type u}
+    (inS : (Order.succ ρ).ord.ToType → L → Prop)
+    (hcount : ∀ j, #{x : L // inS j x} ≤ ρ)
+    {T : Set (Order.succ ρ).ord.ToType} (hT : IsStationary T)
+    (d : (Order.succ ρ).ord.ToType → L) (hd : ∀ i ∈ T, ∃ j < i, inS j (d i)) :
+    ∃ j d₀, inS j d₀ ∧ IsStationary (T ∩ {i | d i = d₀}) := by
+  have hcof : Order.cof (Order.succ ρ).ord.ToType = Order.succ ρ := by
+    rw [Ordinal.cof_toType, (Cardinal.isRegular_succ hρ).cof_ord]
+  have hne := infra_78_succ_cof_ne ρ hρ
+  let g : (Order.succ ρ).ord.ToType → (Order.succ ρ).ord.ToType := fun i =>
+    if h : i ∈ T then Classical.choose (hd i h) else i
+  have hgT : ∀ i (hi : i ∈ T), g i = Classical.choose (hd i hi) := fun i hi => by
+    simp only [g, hi, ↓reduceDIte]
+  have hg : ∀ i ∈ T, g i < i := fun i hi => by
+    rw [hgT i hi]; exact (Classical.choose_spec (hd i hi)).1
+  obtain ⟨j, hj⟩ := infra_78_fodor ρ hρ hT hg
+  have hsub : T ∩ g ⁻¹' {j} ⊆ ⋃ x : {x : L // inS j x}, T ∩ {i | d i = x.1} := by
+    rintro i ⟨hiT, hij⟩
+    have hij' : g i = j := hij
+    have : inS j (d i) := by
+      have := (Classical.choose_spec (hd i hiT)).2
+      rwa [← hgT i hiT, hij'] at this
+    exact Set.mem_iUnion.2 ⟨⟨d i, this⟩, hiT, rfl⟩
+  obtain ⟨x, hx⟩ := (isStationary_iUnion_iff hne (by
+    simp only [Cardinal.lift_id]; rw [hcof]
+    exact (hcount j).trans_lt (Order.lt_succ_of_not_isMax (not_isMax ρ)))).1 (hj.mono hsub)
+  exact ⟨j, x.1, x.2, hx⟩
+
 /-- **The `ρ⁺` matrix (data of Proposition 7.8's proof).** An increasing `ρ⁺`-chain of
 pairs `X_i ≤ Y_i` at one level `κ`, with permitted inclusions commuting with the pair arrows (continuity at limits, Def 7.7, is not
 encoded here). -/
