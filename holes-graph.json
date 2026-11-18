@@ -496,8 +496,8 @@
    "section": 6,
    "file": "AEC/Section6/ProductTied.lean",
    "status": "blocked",
-   "blocker": "infra_612_tied_independence",
-   "detail": "Restated to the full English (grokbot_02): proposition_6_12 in AEC/Section6/ProductTied.lean (moved out of Section6/Results.lean: uses Section 7 tied infra; old degenerate wrapper renamed proposition_6_12_untied). IsProductTied p q joint e: x realizes p (SameGaloisType, host at any eligible level), y is a tied free lift (IsTiedFreeMixed x.incl q y ey), joint = tp(x.join y / A). IsFiniteProductTied: iterated, with explicit coordinate map E. Clauses: (1) existence PROVED (infra_612_tied_exists); (2) independence of all choices; (3) symmetry (sumComm); (4) associativity (sumAssoc; finite association by induction); (5) permutation invariance of finite products (sigmaCongrLeft); (6) commuting with coordinate projections (reindex along s : Fin m ↪ Fin n); (7) base change (p⊗q)^B = p_B ⊗ q^B for A -> B at mu' >= mu in the tail. Across eligible levels via arbitrary host levels. Clauses 2-7 are sorry: sub-tips infra_612_tied_independence, infra_612_tied_symmetry, infra_612_tied_assoc, infra_612_tied_finite, infra_612_tied_base_change."
+   "blocker": "infra_612_tied_symmetry",
+   "detail": "Restated to the full English (grokbot_02): proposition_6_12 in AEC/Section6/ProductTied.lean (moved out of Section6/Results.lean: uses Section 7 tied infra; old degenerate wrapper renamed proposition_6_12_untied). IsProductTied p q joint e: x realizes p (SameGaloisType, host at any eligible level), y is a tied free lift (IsTiedFreeMixed x.incl q y ey), joint = tp(x.join y / A). IsFiniteProductTied: iterated, with explicit coordinate map E. Clauses: (1) existence PROVED (infra_612_tied_exists); (2) independence of all choices; (3) symmetry (sumComm); (4) associativity (sumAssoc; finite association by induction); (5) permutation invariance of finite products (sigmaCongrLeft); (6) commuting with coordinate projections (reindex along s : Fin m ↪ Fin n); (7) base change (p⊗q)^B = p_B ⊗ q^B for A -> B at mu' >= mu in the tail. Across eligible levels via arbitrary host levels. Clauses 2-7 are sorry: sub-tips infra_612_tied_independence, infra_612_tied_symmetry, infra_612_tied_assoc, infra_612_tied_finite, infra_612_tied_base_change. | Cycle 93: clause 2 restated to the English actual-mu-type (copy) form and proved; clauses 3-7 remain (one sorry)."
   },
   {
    "id": "infra_613_freeFrom_trans",
@@ -2058,27 +2058,27 @@
    "label": "Prop 6.12 (2) independence of choices (tied)",
    "section": 6,
    "file": "AEC/Section6/ProductTied.lean",
-   "status": "blocked",
-   "blocker": "infra_612_galois_trans_cross_level",
-   "detail": "Blocked (full clause 2). Any two IsProductTied p q j1 e1, IsProductTied p q j2 e2 give SameGaloisType j1 j2 e1.symm e2.symm, with realizations, free lifts and joints at ANY eligible levels. Proved parts: infra_612_tied_indep_same_level (all at mu), infra_612_tied_indep_level_joints (joints at mu, x_k/y_k at any levels), infra_612_tied_indep_copies (joints at any levels: their mu-level copies j'_k from infra_78_same_level_realization have one Galois type). Remaining: j1 ~ j'1 ~ j'2 ~ j2 needs infra_612_galois_trans_cross_level (twice)."
+   "status": "done",
+   "blocker": null,
+   "detail": "Blocked (full clause 2). Any two IsProductTied p q j1 e1, IsProductTied p q j2 e2 give SameGaloisType j1 j2 e1.symm e2.symm, with realizations, free lifts and joints at ANY eligible levels. Proved parts: infra_612_tied_indep_same_level (all at mu), infra_612_tied_indep_level_joints (joints at mu, x_k/y_k at any levels), infra_612_tied_indep_copies (joints at any levels: their mu-level copies j'_k from infra_78_same_level_realization have one Galois type). Remaining: j1 ~ j'1 ~ j'2 ~ j2 needs infra_612_galois_trans_cross_level (twice). | DONE cycle 93 (audit): the English (Prop 6.12: 'The joint type of (x, y) over A, denoted p ⊗ q, is independent of all choices'; Cor 6.7: 'Types of tuples of length less than ν over A obtained in a larger object are actual ν-types') compares ACTUAL mu-types. The old Lean clause 2 (SameGaloisType j1 j2 with a common top for two off-level hosts) was stronger than the English. Clause 2 of proposition_6_12 restated to the copy form (any mu-level copies of the two joints have the same Galois type) and proved by infra_612_tied_indep_copies. Copies exist (infra_78_same_level_realization), so the form is not vacuous."
   },
   {
    "id": "infra_612_tied_symmetry",
    "label": "Prop 6.12 (3) symmetry p⊗q = q⊗p (tied)",
    "section": 6,
    "file": "AEC/Section6/ProductTied.lean",
-   "status": "blocked",
-   "blocker": "infra_612_tied_independence",
-   "detail": "Blocked (full clause 3). IsProductTied p q j1 e1 and IsProductTied q p j2 e2 give SameGaloisType j1 j2 e1.symm (e2.symm.trans sumComm), joints at ANY eligible levels. Joints-at-A's-level case DONE as infra_612_tied_symm_level_joints (realizations/free lifts at any levels). Remaining: off-level joints, same gap as infra_612_tied_independence (infra_612_galois_trans_cross_level)."
+   "status": "open",
+   "blocker": null,
+   "detail": "Blocked (full clause 3). IsProductTied p q j1 e1 and IsProductTied q p j2 e2 give SameGaloisType j1 j2 e1.symm (e2.symm.trans sumComm), joints at ANY eligible levels. Joints-at-A's-level case DONE as infra_612_tied_symm_level_joints (realizations/free lifts at any levels). Remaining: off-level joints, same gap as infra_612_tied_independence (infra_612_galois_trans_cross_level). | Cycle 93: unblocked from infra_612_tied_independence. Same audit applies: the Lean clause compares off-level joints by a single common top, stronger than the English actual-mu-type reading (Cor 6.7); next step is the copy-form restatement, proved from the *_level_joints case plus copies (needs a core/diagram argument as in infra_612_tied_indep_copies, not cross-level transitivity)."
   },
   {
    "id": "infra_612_tied_assoc",
    "label": "Prop 6.12 (4) associativity (tied)",
    "section": 6,
    "file": "AEC/Section6/ProductTied.lean",
-   "status": "blocked",
-   "blocker": "infra_612_tied_independence",
-   "detail": "Blocked (full clause 4). (p⊗q)⊗r = p⊗(q⊗r) for tied products with intermediate products and joints at ANY eligible levels. Case pq, qr, j1, j2 at mu DONE as infra_612_tied_assoc_level_joints (realizations/free lifts at any levels). Remaining: off-level products, same gap as infra_612_tied_independence (infra_612_galois_trans_cross_level)."
+   "status": "open",
+   "blocker": null,
+   "detail": "Blocked (full clause 4). (p⊗q)⊗r = p⊗(q⊗r) for tied products with intermediate products and joints at ANY eligible levels. Case pq, qr, j1, j2 at mu DONE as infra_612_tied_assoc_level_joints (realizations/free lifts at any levels). Remaining: off-level products, same gap as infra_612_tied_independence (infra_612_galois_trans_cross_level). | Cycle 93: unblocked from infra_612_tied_independence. Same audit applies: the Lean clause compares off-level joints by a single common top, stronger than the English actual-mu-type reading (Cor 6.7); next step is the copy-form restatement, proved from the *_level_joints case plus copies (needs a core/diagram argument as in infra_612_tied_indep_copies, not cross-level transitivity)."
   },
   {
    "id": "infra_612_tied_finite",
@@ -2112,9 +2112,9 @@
    "label": "Prop 6.12 (7) base change (p⊗q)^B = p_B⊗q^B (tied)",
    "section": 6,
    "file": "AEC/Section6/ProductTied.lean",
-   "status": "blocked",
-   "blocker": "infra_612_tied_independence",
-   "detail": "Blocked (full clause 7). Base change (p ⊗ q)^B = p_B ⊗ q^B for f : A -> B, mu <= mu' in the tail, joints at ANY eligible levels. Case joint.nu = mu, jB.nu = jB'.nu = mu' DONE as infra_612_tied_base_change_level_joints (realizations/free lifts at any levels). Remaining: off-level joints, same gap as infra_612_tied_independence (infra_612_galois_trans_cross_level)."
+   "status": "open",
+   "blocker": null,
+   "detail": "Blocked (full clause 7). Base change (p ⊗ q)^B = p_B ⊗ q^B for f : A -> B, mu <= mu' in the tail, joints at ANY eligible levels. Case joint.nu = mu, jB.nu = jB'.nu = mu' DONE as infra_612_tied_base_change_level_joints (realizations/free lifts at any levels). Remaining: off-level joints, same gap as infra_612_tied_independence (infra_612_galois_trans_cross_level). | Cycle 93: unblocked from infra_612_tied_independence. Same audit applies: the Lean clause compares off-level joints by a single common top, stronger than the English actual-mu-type reading (Cor 6.7); next step is the copy-form restatement, proved from the *_level_joints case plus copies (needs a core/diagram argument as in infra_612_tied_indep_copies, not cross-level transitivity)."
   },
   {
    "id": "infra_612_tied_indep_same_level",
@@ -2799,7 +2799,7 @@
    "file": "AEC/Section6/GaloisCrossLevel.lean",
    "status": "open",
    "blocker": null,
-   "detail": "Open (residual of infra_612_galois_trans_cross_level, cycle 67). Same statement with t1.nu > mu and t3.nu > mu. The base-end method embeds a mu-sized amalgam over a sub-presentation E(I) into a presentation containing ONE large host; with two large hosts one needs an amalgam of t1.host and t3.host over mu-sized data (the obstruction of infra_78_tuple_amalgam_large), or extending an arbitrary strong embedding E(I3) -> E(L) (not an E.map) to E(J3). Truth not verified. Needed by infra_612_tied_independence (chain j1 ~ j1' ~ j2' ~ j2 with both ends off-level). | Cycle 93 analysis: irreducible to the one-large-host case. With both hosts charted as E(J1), E(J3), the mu-level amalgam P0 of E(I1), E(I3) over A embeds over E(I1) into an E(J') (E.map) but E(I3) -> P0 -> E(J') is an arbitrary strong embedding; closing needs a straightening/homogeneity property: every strong embedding of a mu-sized E(I) into E(K) (categorical size >= t(mu)) extends along E.map(I -> J) for large J. Also intrinsic to the statement of infra_612_tied_independence (SameGaloisType of two joints at arbitrary levels needs a common top for two large hosts): recommend auditing whether the English Prop 6.12(2) really allows both joints off-level."
+   "detail": "Open (residual of infra_612_galois_trans_cross_level, cycle 67). Same statement with t1.nu > mu and t3.nu > mu. The base-end method embeds a mu-sized amalgam over a sub-presentation E(I) into a presentation containing ONE large host; with two large hosts one needs an amalgam of t1.host and t3.host over mu-sized data (the obstruction of infra_78_tuple_amalgam_large), or extending an arbitrary strong embedding E(I3) -> E(L) (not an E.map) to E(J3). Truth not verified. Needed by infra_612_tied_independence (chain j1 ~ j1' ~ j2' ~ j2 with both ends off-level). | Cycle 93 analysis: irreducible to the one-large-host case. With both hosts charted as E(J1), E(J3), the mu-level amalgam P0 of E(I1), E(I3) over A embeds over E(I1) into an E(J') (E.map) but E(I3) -> P0 -> E(J') is an arbitrary strong embedding; closing needs a straightening/homogeneity property: every strong embedding of a mu-sized E(I) into E(K) (categorical size >= t(mu)) extends along E.map(I -> J) for large J. Also intrinsic to the statement of infra_612_tied_independence (SameGaloisType of two joints at arbitrary levels needs a common top for two large hosts): recommend auditing whether the English Prop 6.12(2) really allows both joints off-level. | Cycle 93 audit: no faithful paper consumer remains (infra_612_tied_independence now uses the copy form). Kept as an open off-path tip feeding the infra statement infra_612_galois_trans_cross_level."
   },
   {
    "id": "infra_612_galois_trans_mid_any",
@@ -5433,11 +5433,6 @@
    "kind": "hard"
   },
   {
-   "from": "infra_612_galois_trans_cross_level",
-   "to": "infra_612_tied_independence",
-   "kind": "hard"
-  },
-  {
    "from": "infra_78_tuple_amalgam_large",
    "to": "infra_612_galois_trans_cross_level",
    "kind": "soft"
@@ -7256,8 +7251,14 @@
    "to": "infra_78_tuple_amalgam_large",
    "kind": "soft",
    "note": "cycle 93 special case"
+  },
+  {
+   "from": "infra_612_tied_indep_copies",
+   "to": "infra_612_tied_independence",
+   "kind": "hard",
+   "note": "cycle 93 faithful copy form"
   }
  ],
- "doneCount": 345,
+ "doneCount": 346,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

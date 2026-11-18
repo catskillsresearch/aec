@@ -1869,7 +1869,11 @@ theorem infra_612_tied_finite_proj_level
 extension; the joint type `p ⊗ q` of `(x, y)` over `A` (`IsProductTied`):
 
 1. exists;
-2. is independent of all choices (any two products are the same Galois type);
+2. is independent of all choices: any two products have the same actual `μ`-type, i.e. any
+   `μ`-level copies of them have the same Galois type (English: "The joint type of (x, y) over
+   A, denoted p ⊗ q, is independent of all choices", with Cor 6.7: "Types of tuples of length
+   less than ν over A obtained in a larger object are actual ν-types"; proved,
+   `infra_612_tied_indep_copies`, cycle 93 audit);
 3. is symmetric, with the coordinate swap: `p ⊗ q = q ⊗ p`;
 4. associates: `(p ⊗ q) ⊗ r = p ⊗ (q ⊗ r)` (with `Equiv.sumAssoc`); iterated finite products
    then associate by induction;
@@ -1882,8 +1886,8 @@ of the tail at or above that of `A` (all arities are bounded at the level of `A`
 Packaging as Theorem 6.10: a tail of recursion-closed levels `μ ≥ σ⁺`, factors of size `≤ σ`
 realized at the level of `A`.
 
-**Status:** clause 1 proved (`infra_612_tied_exists`); clauses 2–7 are `sorry`, tracked as
-`infra_612_tied_independence`, `infra_612_tied_symmetry`, `infra_612_tied_assoc`,
+**Status:** clauses 1 and 2 proved (`infra_612_tied_exists`, `infra_612_tied_indep_copies`);
+clauses 3–7 are `sorry`, tracked as `infra_612_tied_symmetry`, `infra_612_tied_assoc`,
 `infra_612_tied_finite` (5 and 6), `infra_612_tied_base_change`. -/
 theorem proposition_6_12 {K : AbstractElementaryClass.{u}}
     (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ) :
@@ -1893,10 +1897,15 @@ theorem proposition_6_12 {K : AbstractElementaryClass.{u}}
       ∀ (p q : TO), p.ν = μ → q.ν = μ → #p.idx ≤ σ → #q.idx ≤ σ →
         -- 1. existence
         (∃ (joint : TO) (e : p.idx ⊕ q.idx ≃ joint.idx), IsProductTied p q joint e) ∧
-        -- 2. independence of choices
+        -- 2. independence of choices: the actual `μ`-types of any two products agree
+        -- (Cor 6.7: a type over `A` obtained in a larger object is its actual `μ`-type, read
+        -- on any `μ`-level copy; cycle 93 audit)
         (∀ (j₁ j₂ : TO) (e₁ : p.idx ⊕ q.idx ≃ j₁.idx) (e₂ : p.idx ⊕ q.idx ≃ j₂.idx),
           IsProductTied p q j₁ e₁ → IsProductTied p q j₂ e₂ →
-          SameGaloisType j₁ j₂ e₁.symm e₂.symm) ∧
+          ∀ (j'₁ j'₂ : TO) (r₁ : j'₁.idx ≃ j₁.idx) (r₂ : j'₂.idx ≃ j₂.idx),
+            SameGaloisType j₁ j'₁ (Equiv.refl j₁.idx) r₁ →
+            SameGaloisType j₂ j'₂ (Equiv.refl j₂.idx) r₂ → j'₁.ν = μ → j'₂.ν = μ →
+            SameGaloisType j'₁ j'₂ (r₁.trans e₁.symm) (r₂.trans e₂.symm)) ∧
         -- 3. symmetry
         (∀ (j₁ j₂ : TO) (e₁ : p.idx ⊕ q.idx ≃ j₁.idx) (e₂ : q.idx ⊕ p.idx ≃ j₂.idx),
           IsProductTied p q j₁ e₁ → IsProductTied q p j₂ e₂ →
@@ -1947,8 +1956,11 @@ theorem proposition_6_12 {K : AbstractElementaryClass.{u}}
       (infra_69_recursion_tail P hσ).2 (max κ (Order.succ σ))
     exact ⟨μ, (le_max_left _ _).trans hle, ⟨⟨hμ, hrec⟩, (le_max_right _ _).trans hle⟩⟩
   refine ⟨T, hT, fun μ hμ A p q hνp hνq hpσ hqσ =>
-    ⟨infra_612_tied_exists P σ hσ (Tail.mem hT hμ) hμ.1 hμ.2 p q hνp hνq hqσ, ?_⟩⟩
-  -- clauses 2–7: open sub-tips (see the module docstring)
+    ⟨infra_612_tied_exists P σ hσ (Tail.mem hT hμ) hμ.1 hμ.2 p q hνp hνq hqσ,
+      fun j₁ j₂ e₁ e₂ h₁ h₂ j'₁ j'₂ r₁ r₂ hR₁ hR₂ hj₁ hj₂ =>
+        infra_612_tied_indep_copies P σ hσ (Tail.mem hT hμ) hμ.1 hμ.2 p q hνq hpσ hqσ
+          j₁ j₂ e₁ e₂ h₁ h₂ j'₁ j'₂ r₁ r₂ hR₁ hR₂ hj₁ hj₂, ?_⟩⟩
+  -- clauses 3–7: open sub-tips (see the module docstring)
   sorry
 
 /-- **Copies persist over a later base (Prop 7.8 closure requirement 2 at limits; proved).**
