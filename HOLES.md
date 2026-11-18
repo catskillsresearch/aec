@@ -307,7 +307,10 @@ Waits on Section 5 working package. Lean: later Results import this module.
 | `infra_611_tied_mixed` | Lemma 6.11 mixed `ν < μ` (tied) | `AEC/Section6/AverageDescentTied.lean` (**open**: mixed testing reduction needed) |
 | `proposition_6_12` | Proposition 6.12 | `AEC/Section6/ProductTied.lean` (**restated to the full English** with tied products `IsProductTied`/`IsFiniteProductTied`: existence, independence, symmetry, associativity, permutation invariance, projections, base change, across levels; (1) existence proved (`infra_612_tied_exists`); (2)–(7) `sorry`, **blocked** on sub-tips. Old degenerate wrapper renamed `proposition_6_12_untied`) |
 | `infra_612_tied_exists` | Prop 6.12 (1) existence | `AEC/Section6/ProductTied.lean` (**done**; no `sorry`) |
-| `infra_612_tied_independence` | Prop 6.12 (2) independence | `AEC/Section6/ProductTied.lean` (**open**: cross-level hosts; single level done) |
+| `infra_612_tied_independence` | Prop 6.12 (2) independence | `AEC/Section6/ProductTied.lean` (**blocked** on `infra_612_galois_trans_cross_level`; joints at A's level and mu-level copies done) |
+| `infra_612_tied_indep_level_joints` | Prop 6.12 (2), joints at A's level, x/y any level | `AEC/Section6/ProductTied.lean` (**done**; no `sorry`) |
+| `infra_612_tied_indep_copies` | Prop 6.12 (2), mu-level copies of joints at any level | `AEC/Section6/ProductTied.lean` (**done**; no `sorry`) |
+| `infra_612_galois_trans_cross_level` | Galois transitivity via a mu-level middle, ends above mu | `AEC/Section6/ProductTied.lean` (**open**; no declaration yet) |
 | `infra_612_tied_indep_same_level` | Prop 6.12 (2) independence, single level | `AEC/Section6/ProductTied.lean` (**done**; no `sorry`) |
 | `infra_612_tied_symmetry` | Prop 6.12 (3) symmetry | `AEC/Section6/ProductTied.lean` (**blocked** on independence) |
 | `infra_612_tied_assoc` | Prop 6.12 (4) associativity | `AEC/Section6/ProductTied.lean` (**blocked** on independence) |

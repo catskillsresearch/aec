@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-18 08:57",
+  "updated": "2026-11-18 09:27",
   "sorryCount": 45,
   "legend": {
     "open": "No unfinished required proof-deps — try next",
@@ -2058,9 +2058,9 @@
       "label": "Prop 6.12 (2) independence of choices (tied)",
       "section": 6,
       "file": "AEC/Section6/ProductTied.lean",
-      "status": "open",
-      "blocker": null,
-      "detail": "Open (cross-level part). Any two IsProductTied p q j1 e1, IsProductTied p q j2 e2 give SameGaloisType j1 j2 e1.symm e2.symm, with realizations x_k, free lifts y_k and joints j_k at ANY eligible levels. Single-level case (x_k.nu = y_k.nu = j_k.nu = mu) DONE as infra_612_tied_indep_same_level. Remaining: hosts above mu; needs a cross-level Galois comparison (infra_72_diagramEq_of_sameGalois and Thm 6.6 testing infra_73_differing_test are stated for hosts at mu), e.g. via downward realization at mu (same_level_realization) plus transfer of tied freeness, or infra_78_cross_level_galois."
+      "status": "blocked",
+      "blocker": "infra_612_galois_trans_cross_level",
+      "detail": "Blocked (full clause 2). Any two IsProductTied p q j1 e1, IsProductTied p q j2 e2 give SameGaloisType j1 j2 e1.symm e2.symm, with realizations, free lifts and joints at ANY eligible levels. Proved parts: infra_612_tied_indep_same_level (all at mu), infra_612_tied_indep_level_joints (joints at mu, x_k/y_k at any levels), infra_612_tied_indep_copies (joints at any levels: their mu-level copies j'_k from infra_78_same_level_realization have one Galois type). Remaining: j1 ~ j'1 ~ j'2 ~ j2 needs infra_612_galois_trans_cross_level (twice)."
     },
     {
       "id": "infra_612_tied_symmetry",
@@ -2106,6 +2106,33 @@
       "status": "done",
       "blocker": null,
       "detail": "Done (no sorry; axioms propext/choice/Quot.sound): infra_612_tied_indep_same_level. Recursion-closed mu >= sigma^+, p q over A (nu = mu, size <= sigma); two tied products (x_k, ex_k, y_k, ey_k, joint j_k) with x_k.nu = y_k.nu = j_k.nu = mu: SameGaloisType j1 j2 e1.symm e2.symm. Proof: Thm 6.6 test list Y; long sequence of q; a mixed move Z0 of (x1,Y) along x1 is also a move of (x2,Y) along x2 (infra_72_diagramEq_of_sameGalois through p on seq_i ^ Y); tied freeness gives both (y_k, x_k, Y) the type of q on Z0; transport to the joints."
+    },
+    {
+      "id": "infra_612_tied_indep_level_joints",
+      "label": "Prop 6.12 (2) independence, joints at A's level (tied)",
+      "section": 6,
+      "file": "AEC/Section6/ProductTied.lean",
+      "status": "done",
+      "blocker": null,
+      "detail": "Done (no sorry; axioms propext/choice/Quot.sound): infra_612_tied_indep_level_joints, via infra_612_tied_indep_core (diagram-form joint hypothesis). Two IsProductTied p q j_k e_k with j_k.nu = mu; realizations x_k and tied free lifts y_k at ANY eligible levels: SameGaloisType j1 j2 e1.symm e2.symm. Cross-level comparisons by infra_612_dEq_of_sameGalois (wraps infra_78_diagramEq_of_sameGalois; mu <= t.nu by infra_612_le_nu); moves by infra_78_move_query_mixed."
+    },
+    {
+      "id": "infra_612_tied_indep_copies",
+      "label": "Prop 6.12 (2) independence for mu-level copies of joints (tied)",
+      "section": 6,
+      "file": "AEC/Section6/ProductTied.lean",
+      "status": "done",
+      "blocker": null,
+      "detail": "Done (no sorry; axioms propext/choice/Quot.sound): infra_612_tied_indep_copies. Joints j_k at ANY levels, j'_k at mu with SameGaloisType j_k j'_k refl r_k: SameGaloisType j'1 j'2 (r1.trans e1.symm) (r2.trans e2.symm). Copies exist by infra_78_same_level_realization."
+    },
+    {
+      "id": "infra_612_galois_trans_cross_level",
+      "label": "Galois-type transitivity through a mu-level middle (ends above mu)",
+      "section": 6,
+      "file": "AEC/Section6/ProductTied.lean",
+      "status": "open",
+      "blocker": null,
+      "detail": "Open (sub-tip of infra_612_tied_independence; no Lean declaration yet). Statement: mu recursion-closed, sigma^+ <= mu, t1 t2 t3 over A (level mu), #t1.idx <= sigma, t2.nu = mu, t1.nu and t3.nu ANY eligible levels; SameGaloisType t1 t2 e12 refl and SameGaloisType t2 t3 refl e32 imply SameGaloisType t1 t3 (e12.trans e32.symm) refl. SameGaloisType.trans_via proves it when all three are at mu (via infra_612_same_galois, D.same tests at hosts of size mu). Off-level ends need an amalgam of the two tops over the mu-host of t2, or Thm 6.6 with large hosts: same obstruction as infra_78_tuple_amalgam_large (soft link). Truth not verified."
     }
   ],
   "edges": [
@@ -3902,8 +3929,28 @@
       "from": "infra_612_tied_indep_same_level",
       "to": "infra_612_tied_independence",
       "kind": "hard"
+    },
+    {
+      "from": "infra_612_tied_indep_level_joints",
+      "to": "infra_612_tied_independence",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_612_tied_indep_copies",
+      "to": "infra_612_tied_independence",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_612_galois_trans_cross_level",
+      "to": "infra_612_tied_independence",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_78_tuple_amalgam_large",
+      "to": "infra_612_galois_trans_cross_level",
+      "kind": "soft"
     }
   ],
-  "doneCount": 173,
+  "doneCount": 175,
   "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 43. Uncommitted in /tmp/aec-grok."
 }
