@@ -34,8 +34,8 @@ theorem infra_78_marginal_general_level (P : SingleModelData K) :
       ∃ (U : P.scheme.Object μ (Tail.mem (infra_78_closedTail_tail P) hμ))
         (f : SystemArrow K oneVertexShape (P.scheme.asSystem _ X) (P.scheme.asSystem _ U))
         (hf : P.scheme.permitted (X := X) (Y := U) f)
-        (b : p.idx → Occurrence K oneVertexShape (P.scheme.asSystem _ U)) (e : p.idx ≃ p.idx),
-        SameGaloisType p (asTuple f hf b) e (Equiv.refl p.idx) ∧
+        (b : p.idx → Occurrence K oneVertexShape (P.scheme.asSystem _ U)),
+        SameGaloisType p (asTuple f hf b) (Equiv.refl p.idx) (Equiv.refl p.idx) ∧
         ∀ {cIdx : Type u} (c : cIdx → Occurrence K oneVertexShape (P.scheme.asSystem _ U)),
           #cIdx ≤ θ →
           IsRelativelyIsolated (uIdx := p.idx) (cIdx := cIdx)
@@ -48,12 +48,12 @@ theorem infra_78_marginal_general_level (P : SingleModelData K) :
     infra_612_exists_level_copy p (hidx0.trans (P.aleph0_le hel))
   let p' : TupleOver K oneVertexShape P.scheme (Tail.mem (infra_78_closedTail_tail P) hμ) X :=
     ⟨μ, Tail.mem (infra_78_closedTail_tail P) hμ, host, incl, hincl, p.idx, val⟩
-  obtain ⟨U, f, hf, b, e, hgal, hiso⟩ :=
+  obtain ⟨U, f, hf, b, hgal, hiso⟩ :=
     infra_78_matrix_assembly_level P μ hμ X p' θ hfin rfl hθ hθμ
-  refine ⟨U, f, hf, b, e, ?_, hiso⟩
+  refine ⟨U, f, hf, b, ?_, hiso⟩
   have hrec : μ ∈ recursionClosedLevels P ℵ₀ := (hμ.2.1 ℵ₀ le_rfl hlt).1
   have h := infra_612_galois_trans_cross_level_right_base (t1 := p) (t2 := p')
-    (t3 := asTuple f hf b) (e12 := Equiv.refl p.idx) (e32 := e.symm) h12
+    (t3 := asTuple f hf b) (e12 := Equiv.refl p.idx) (e32 := (Equiv.refl p.idx).symm) h12
     (SameGaloisType.swap_refl hgal) ℵ₀ le_rfl hlt hidx0 hrec rfl rfl
   simp only [Equiv.refl_trans] at h
   exact h

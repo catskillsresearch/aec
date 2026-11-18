@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-18 13:57",
+  "updated": "2026-11-18 14:10",
   "sorryCount": 43,
   "legend": {
     "open": "No unfinished required proof-deps — try next",
@@ -642,7 +642,7 @@
       "file": "AEC/Section7/Results.lean",
       "status": "blocked",
       "blocker": "infra_79_existence",
-      "detail": "Cycle 69: infra_79_primeness_mixed DONE, so theorem_7_9 = infra_79_of_existence applied to infra_79_existence_statement (the only open part; one sorry). Blocked (cycle 68 audit + split). Statement audit vs English ('At sufficiently closed eligible levels, every finite-tuple type p = tp(b/X) has an all-dominated realization: there is Y >= X all-dominated over X + b realizing p. More generally this holds for a bounded marginal satisfying Definition 7.7. An all-dominated realization embeds over X, b into any actual ambient containing a realization of that type, with the mixed-level conventions of Proposition 7.5.'): the Phase 3.1 Lean form omitted the embedding clause; RESTATED cycle 68 to existence AND (every all-dominated realization embeds over X, b into any ambient N at any eligible level nu >= mu containing a realization of p). The bounded-marginal generalization is a paper hypothesis (infra_78_def77_bounded_marks, soft), as for proposition_7_8. Full claim = infra_79_existence (open) + infra_79_primeness_same_level (done) + infra_79_primeness_mixed (open) + infra_79_assemble (done). Previous: Open (cycle 67): every hard dep done (proposition_7_8 done cycle 67, lemma_6_17). RESTATED (grokbot_01 Phase 3.1), open with sorry: over SingleModelData (was bare WorkingScheme, underhypothesized). Omitted: bounded-mark generalization, primeness clause. Blocked on proposition_7_8.",
+      "detail": "Cycle 70: existence clause split; theorem_7_9 = infra_79_of_existence (infra_79_existence_of_parts P ?_) with the one sorry standing for infra_79_tail AND infra_79_retraction_pair. Cycle 69: infra_79_primeness_mixed DONE, so theorem_7_9 = infra_79_of_existence applied to infra_79_existence_statement (the only open part; one sorry). Blocked (cycle 68 audit + split). Statement audit vs English ('At sufficiently closed eligible levels, every finite-tuple type p = tp(b/X) has an all-dominated realization: there is Y >= X all-dominated over X + b realizing p. More generally this holds for a bounded marginal satisfying Definition 7.7. An all-dominated realization embeds over X, b into any actual ambient containing a realization of that type, with the mixed-level conventions of Proposition 7.5.'): the Phase 3.1 Lean form omitted the embedding clause; RESTATED cycle 68 to existence AND (every all-dominated realization embeds over X, b into any ambient N at any eligible level nu >= mu containing a realization of p). The bounded-marginal generalization is a paper hypothesis (infra_78_def77_bounded_marks, soft), as for proposition_7_8. Full claim = infra_79_existence (open) + infra_79_primeness_same_level (done) + infra_79_primeness_mixed (open) + infra_79_assemble (done). Previous: Open (cycle 67): every hard dep done (proposition_7_8 done cycle 67, lemma_6_17). RESTATED (grokbot_01 Phase 3.1), open with sorry: over SingleModelData (was bare WorkingScheme, underhypothesized). Omitted: bounded-mark generalization, primeness clause. Blocked on proposition_7_8.",
       "restated": true
     },
     {
@@ -2833,9 +2833,9 @@
       "label": "Thm 7.9 existence: all-dominated realization of a finite p",
       "section": 7,
       "file": "AEC/Section7/Theorem79.lean",
-      "status": "open",
-      "blocker": null,
-      "detail": "Open (cycle 68; Lean def infra_79_existence_statement). Exists a tail T such that for mu in T, X at mu and finite p over X (host any level) there are Y >= X at mu and b with AllDominated f hf p.idx b and SameGaloisType p (asTuple f hf b) refl refl. Paper proof (Theorem 7.9): lift X by a presentation arrow to a much larger level lambda and apply proposition_7_8 there with theta = nu (DONE); Corollary 6.16 retractions r_j : U -> A (j < nu) almost fixing A (DONE); mixed LS closure to a level-nu pair A' <= U' containing I_p, b with r_j[U'] in A' (closure under nu maps, countably many rounds); lemma_6_17 (tied, DONE) gives tp(b,d/A) = free lift of tp(b,d/A'); downward transfer (lemma_7_6_tied, DONE) gives isolation of tp(b,d/A') relative to b for every bounded d in U'; anchors + bounded diagram homogeneity give A' ~ X and transport (infra_78_anchor_iso / iso_rename pattern). Likely split: lift_isolate, retraction_pair, descent, identify. Tail must make Prop 7.8 (at lambda), lemma_6_17 (at nu and lambda) and the anchor isomorphism available."
+      "status": "blocked",
+      "blocker": "infra_79_retraction_pair",
+      "detail": "Blocked (cycle 70 split). = infra_79_existence_of_parts (done) applied to infra_79_tail (open) and infra_79_retraction_pair (open); the other paper steps infra_79_lift_isolate, infra_79_descent, infra_79_identify are DONE (all with only propext, Classical.choice, Quot.sound). Statement unchanged (Lean def infra_79_existence_statement): exists a tail T such that for mu in T, X at mu and finite p over X (host any level) there are Y >= X at mu and b with AllDominated f hf p.idx b and SameGaloisType p (asTuple f hf b) refl refl. Previous: Open (cycle 68; Lean def infra_79_existence_statement). Exists a tail T such that for mu in T, X at mu and finite p over X (host any level) there are Y >= X at mu and b with AllDominated f hf p.idx b and SameGaloisType p (asTuple f hf b) refl refl. Paper proof (Theorem 7.9): lift X by a presentation arrow to a much larger level lambda and apply proposition_7_8 there with theta = nu (DONE); Corollary 6.16 retractions r_j : U -> A (j < nu) almost fixing A (DONE); mixed LS closure to a level-nu pair A' <= U' containing I_p, b with r_j[U'] in A' (closure under nu maps, countably many rounds); lemma_6_17 (tied, DONE) gives tp(b,d/A) = free lift of tp(b,d/A'); downward transfer (lemma_7_6_tied, DONE) gives isolation of tp(b,d/A') relative to b for every bounded d in U'; anchors + bounded diagram homogeneity give A' ~ X and transport (infra_78_anchor_iso / iso_rename pattern). Likely split: lift_isolate, retraction_pair, descent, identify. Tail must make Prop 7.8 (at lambda), lemma_6_17 (at nu and lambda) and the anchor isomorphism available."
     },
     {
       "id": "infra_79_primeness_mixed",
@@ -2863,6 +2863,69 @@
       "status": "done",
       "blocker": null,
       "detail": "DONE cycle 69. t1, t2 at any eligible levels, t3 at mu: SameGaloisType t1 t2 e12 refl and SameGaloisType t2 t3 refl e32 give SameGaloisType t1 t3 (e12.trans e32.symm) refl (tests through t2.host, then infra_612_same_galois_left_large; no recursion closure needed). Axioms: propext, Classical.choice, Quot.sound."
+    },
+    {
+      "id": "infra_79_lift_isolate",
+      "label": "Thm 7.9 lift X to a closed level lambda > nu and isolate (Prop 7.8, theta = nu)",
+      "section": 7,
+      "file": "AEC/Section7/Theorem79Existence.lean",
+      "status": "done",
+      "blocker": null,
+      "detail": "DONE cycle 70. For nu in infra_78_closedTail, X at nu, finite p with p.nu = nu, and closed lambda > nu: presentation arrow iota : X -> B at lambda, mixed tied free lift of p (infra_78_tied_free_lift_mixed, reindexed to p.idx), Prop 7.8 at lambda with theta = nu (infra_78_marginal_general_level). Output in the form of infra_78_marginal_identify_level: bounded diagrams of the restricted upper mark equal those of p, IsTiedFreeMixed iota (q|X) q refl, and every tp(b,c/B), |c| <= nu, isolated relative to b. Axioms: propext, Classical.choice, Quot.sound."
+    },
+    {
+      "id": "infra_79_tiedFreeMixed_right_congr",
+      "label": "Mixed tied freeness transported along a Galois type of the upper tuple",
+      "section": 7,
+      "file": "AEC/Section7/Theorem79Existence.lean",
+      "status": "done",
+      "blocker": null,
+      "detail": "DONE cycle 70. IsTiedFreeMixed f q qB eB and SameGaloisType qB qB' e' refl give IsTiedFreeMixed f q qB' (eB.trans e') (bounded diagrams via infra_78_diagramEq_of_sameGalois). Axioms: propext, Classical.choice, Quot.sound."
+    },
+    {
+      "id": "infra_79_descent",
+      "label": "Thm 7.9 descent: isolation over A descends to A' (Lemma 6.17 + mixed Lemma 7.6)",
+      "section": 7,
+      "file": "AEC/Section7/Theorem79Existence.lean",
+      "status": "done",
+      "blocker": null,
+      "detail": "DONE cycle 70. Level-lambda pair A <= U, level-nu pair A' <= U' (nu <= lambda, both in infra_615_closed and infra_78_closedTail), commuting square, nu arrows r_i : U -> A almost fixing A with r_i[U'] in A'. If every tp(b,c/A), |c| < nu, is isolated relative to b, then U' is all-dominated over A' + b' (AllDominated, statement exactly Def of all-dominated). Proof: infra_617_tied_from_retractions (tied Lemma 6.17) + infra_617_same_galois + infra_78_tied_descent_mixed with fragment parameter max(aleph0,|b,c|) < nu (infra_79_closedTail_sigma2). Axioms: propext, Classical.choice, Quot.sound."
+    },
+    {
+      "id": "infra_79_identify",
+      "label": "Thm 7.9 identify A' with X carrying the marginal of b to p",
+      "section": 7,
+      "file": "AEC/Section7/Theorem79Existence.lean",
+      "status": "done",
+      "blocker": null,
+      "detail": "DONE cycle 70. From the infra_79_lift_isolate output and a level-nu pair A' <= U' over B <= U with A' containing iota[X] and b' over the upper mark: phi : X ~= A' (IsStructIso) with SameGaloisType p (asTuple (phi;incl') b') refl refl. Lemma 6.9 sequence for p (infra_78_tied_at_mixed), transferred to the restricted mark (infra_78_seq_diagram_transfer), then infra_78_marginal_identify_level. Axioms: propext, Classical.choice, Quot.sound."
+    },
+    {
+      "id": "infra_79_existence_of_parts",
+      "label": "Thm 7.9 existence clause from its parts",
+      "section": 7,
+      "file": "AEC/Section7/Theorem79Existence.lean",
+      "status": "done",
+      "blocker": null,
+      "detail": "DONE cycle 70. infra_79_existence_of_parts P : infra_79_tail_statement P AND infra_79_retraction_pair_statement P -> infra_79_existence_statement P, on the tail infra_78_closedTail P INTER infra_615_closed P: level-mu copy p' of p (infra_612_exists_level_copy), closed lambda > mu, lift_isolate, retraction pair, descent, identify, renaming along phi (infra_78_iso_rename_asTuple), and p ~ p' ~ b' (infra_612_galois_trans_cross_level_right_base). theorem_7_9 is now `refine infra_79_of_existence P (infra_79_existence_of_parts P ?_); sorry`. Axioms: propext, Classical.choice, Quot.sound."
+    },
+    {
+      "id": "infra_79_retraction_pair",
+      "label": "Thm 7.9 retraction-closed level-nu pair A' <= U' inside B <= U",
+      "section": 7,
+      "file": "AEC/Section7/Theorem79Existence.lean",
+      "status": "open",
+      "blocker": null,
+      "detail": "OPEN cycle 70 (Lean def infra_79_retraction_pair_statement). For nu <= lambda (lambda in infra_615_closed), X at nu, pair f : B -> U at lambda, iota : X -> B, finite mark bU in U: level-nu A', U' with toA, toU, incl' (commuting square), b' over bU, iota[X] in toA[A'], and nu arrows r_i : U -> B almost fixing B (finitely many exceptions per point) with r_i[toU U'] in toA[A']. Paper: Corollary 6.16 retractions, closure of a level-nu pair under them. Planned proof: corollary_6_16_family at lambda (index of size lambda; restrict to nu indices), omega-chain of infra_78_mixed_ls_pair hulls closed under the nu retractions (sizes nu * nu = nu), union by infra_78_theta_union, factor arrows by infra_78_factor_arrow."
+    },
+    {
+      "id": "infra_79_tail",
+      "label": "Thm 7.9 tail: closedTail of 7.8 meets the Section 6 closed levels unboundedly",
+      "section": 7,
+      "file": "AEC/Section7/Theorem79Existence.lean",
+      "status": "open",
+      "blocker": null,
+      "detail": "OPEN cycle 70 (Lean def infra_79_tail_statement): for every kappa there is mu >= kappa in infra_78_closedTail P INTER infra_615_closed P. Paper: \"sufficiently closed\" = finitely many closure conditions at once. Planned proof: interleave infra_78_closedTower and infra_615_tower (omega steps), supremum is in both (working level, closure point, recursion closure, pad-recursion closure, limit of eligible levels)."
     }
   ],
   "edges": [
@@ -5666,30 +5729,6 @@
       "note": ""
     },
     {
-      "from": "proposition_7_8",
-      "to": "infra_79_existence",
-      "kind": "hard",
-      "note": ""
-    },
-    {
-      "from": "lemma_6_17",
-      "to": "infra_79_existence",
-      "kind": "hard",
-      "note": ""
-    },
-    {
-      "from": "corollary_6_16",
-      "to": "infra_79_existence",
-      "kind": "hard",
-      "note": ""
-    },
-    {
-      "from": "lemma_7_6",
-      "to": "infra_79_existence",
-      "kind": "hard",
-      "note": ""
-    },
-    {
       "from": "infra_78_def77_bounded_marks",
       "to": "theorem_7_9",
       "kind": "soft",
@@ -5712,8 +5751,122 @@
       "to": "infra_612_galois_trans_last_base",
       "kind": "hard",
       "note": ""
+    },
+    {
+      "from": "proposition_7_8",
+      "to": "infra_79_lift_isolate",
+      "kind": "hard",
+      "note": ""
+    },
+    {
+      "from": "infra_78_tied_free_lift_mixed",
+      "to": "infra_79_lift_isolate",
+      "kind": "hard",
+      "note": ""
+    },
+    {
+      "from": "infra_78_presentation_arrow",
+      "to": "infra_79_lift_isolate",
+      "kind": "hard",
+      "note": ""
+    },
+    {
+      "from": "infra_79_tiedFreeMixed_right_congr",
+      "to": "infra_79_lift_isolate",
+      "kind": "hard",
+      "note": ""
+    },
+    {
+      "from": "lemma_6_17",
+      "to": "infra_79_descent",
+      "kind": "hard",
+      "note": ""
+    },
+    {
+      "from": "infra_78_lemma_7_6_mixed",
+      "to": "infra_79_descent",
+      "kind": "hard",
+      "note": ""
+    },
+    {
+      "from": "lemma_7_6",
+      "to": "infra_79_descent",
+      "kind": "hard",
+      "note": ""
+    },
+    {
+      "from": "corollary_6_16",
+      "to": "infra_79_retraction_pair",
+      "kind": "hard",
+      "note": ""
+    },
+    {
+      "from": "infra_78_mixed_ls_pair",
+      "to": "infra_79_retraction_pair",
+      "kind": "hard",
+      "note": ""
+    },
+    {
+      "from": "infra_78_theta_union",
+      "to": "infra_79_retraction_pair",
+      "kind": "hard",
+      "note": ""
+    },
+    {
+      "from": "infra_78_marginal_identify_level",
+      "to": "infra_79_identify",
+      "kind": "hard",
+      "note": ""
+    },
+    {
+      "from": "infra_79_lift_isolate",
+      "to": "infra_79_existence_of_parts",
+      "kind": "hard",
+      "note": ""
+    },
+    {
+      "from": "infra_79_descent",
+      "to": "infra_79_existence_of_parts",
+      "kind": "hard",
+      "note": ""
+    },
+    {
+      "from": "infra_79_identify",
+      "to": "infra_79_existence_of_parts",
+      "kind": "hard",
+      "note": ""
+    },
+    {
+      "from": "infra_78_iso_rename",
+      "to": "infra_79_existence_of_parts",
+      "kind": "hard",
+      "note": ""
+    },
+    {
+      "from": "infra_612_exists_level_copy",
+      "to": "infra_79_existence_of_parts",
+      "kind": "hard",
+      "note": ""
+    },
+    {
+      "from": "infra_79_existence_of_parts",
+      "to": "infra_79_existence",
+      "kind": "hard",
+      "note": ""
+    },
+    {
+      "from": "infra_79_retraction_pair",
+      "to": "infra_79_existence",
+      "kind": "hard",
+      "note": ""
+    },
+    {
+      "from": "infra_79_tail",
+      "to": "infra_79_existence",
+      "kind": "hard",
+      "note": ""
     }
   ],
-  "doneCount": 258,
+  "doneCount": 263,
   "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 43. Uncommitted in /tmp/aec-grok."
 }

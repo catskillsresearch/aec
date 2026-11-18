@@ -1,4 +1,4 @@
-# Nodes: (see holes-graph.json)  Hard edges: 513
+# Nodes: (see holes-graph.json)  Hard edges: 528
 # Convention: FROM --> TO means the English proof of TO requires FROM.
 # infra_78_mixed_level_isolation (Prop 7.8 rho^+ matrix argument; mixed tied free lift and mixed Lemma 7.6 done grokbot_02)
 # Retired: infra_610_qPres_empty_joint_on_I, infra_610_same_head_transfers_joint, infra_69_transfer_sequence, WorkingScheme.exists_approximationSequence.
@@ -509,10 +509,25 @@ infra_79_existence --> theorem_7_9
 infra_79_primeness_mixed --> theorem_7_9
 infra_79_primeness_same_level --> infra_79_primeness_mixed
 infra_612_exists_level_copy --> infra_79_primeness_mixed
-proposition_7_8 --> infra_79_existence
-lemma_6_17 --> infra_79_existence
-corollary_6_16 --> infra_79_existence
-lemma_7_6 --> infra_79_existence
 infra_612_exists_level_copy_arrow --> infra_79_primeness_mixed
 infra_612_galois_trans_last_base --> infra_79_primeness_mixed
 infra_612_same_galois_left_large --> infra_612_galois_trans_last_base
+proposition_7_8 --> infra_79_lift_isolate
+infra_78_tied_free_lift_mixed --> infra_79_lift_isolate
+infra_78_presentation_arrow --> infra_79_lift_isolate
+infra_79_tiedFreeMixed_right_congr --> infra_79_lift_isolate
+lemma_6_17 --> infra_79_descent
+infra_78_lemma_7_6_mixed --> infra_79_descent
+lemma_7_6 --> infra_79_descent
+corollary_6_16 --> infra_79_retraction_pair
+infra_78_mixed_ls_pair --> infra_79_retraction_pair
+infra_78_theta_union --> infra_79_retraction_pair
+infra_78_marginal_identify_level --> infra_79_identify
+infra_79_lift_isolate --> infra_79_existence_of_parts
+infra_79_descent --> infra_79_existence_of_parts
+infra_79_identify --> infra_79_existence_of_parts
+infra_78_iso_rename --> infra_79_existence_of_parts
+infra_612_exists_level_copy --> infra_79_existence_of_parts
+infra_79_existence_of_parts --> infra_79_existence
+infra_79_retraction_pair --> infra_79_existence
+infra_79_tail --> infra_79_existence

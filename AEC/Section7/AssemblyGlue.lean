@@ -138,7 +138,7 @@ theorem infra_78_matrix_assembly_level (P : SingleModelData K) :
   obtain ⟨φ, hφ, -, hGal⟩ := infra_78_marginal_identify_level P θ hθ hel (hμ := hκel) hrecμθ
     hθμ hlκ (A := A) (U := U) p hpν hidxθ ι trivial q hlκ (Equiv.refl _) hseedDE hTq seqq
     htest hlong jA hanch gu jU hsq' bU hbU
-  refine ⟨U, SystemArrow.comp φ gu, trivial, bU, Equiv.refl _, hGal, ?_⟩
+  refine ⟨U, SystemArrow.comp φ gu, trivial, bU, hGal, ?_⟩
   intro cIdx c hc
   exact infra_78_iso_rename_asTuple φ hφ gu bU c (hisoU cIdx hc c)
 

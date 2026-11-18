@@ -171,6 +171,7 @@ public import AEC.Section7.AssemblyGlue
 public import AEC.Section6.GaloisCrossLevel
 public import AEC.Section7.GeneralLevel
 public import AEC.Section7.Theorem79
+public import AEC.Section7.Theorem79Existence
 public import AEC.Section6.LocalCharacterTied
 public import AEC.Section6.AverageDescentTied
 public import AEC.Section6.DescentRetractionTied

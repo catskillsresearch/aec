@@ -12,6 +12,7 @@ public import AEC.Section7.WitnessingChain
 public import AEC.Section7.ListChain
 public import AEC.Section7.GeneralLevel
 public import AEC.Section7.Theorem79
+public import AEC.Section7.Theorem79Existence
 public import AEC.Section7.MixedDescent
 public import AEC.Section6.Results
 
@@ -229,7 +230,9 @@ theorem proposition_7_8 {K : AbstractElementaryClass.{u}} (P : SingleModelData K
             #cIdx ≤ θ →
             IsRelativelyIsolated (uIdx := p.idx) (cIdx := cIdx)
               (asTuple f hf (seqJoint b c)) (Equiv.refl (p.idx ⊕ cIdx)) := by
-  exact ⟨infra_78_closedTail P, infra_78_closedTail_tail P, infra_78_marginal_general_level P⟩
+  refine ⟨infra_78_closedTail P, infra_78_closedTail_tail P, fun μ hμ X p θ hfin hθ hθμ => ?_⟩
+  obtain ⟨U, f, hf, b, hgal, hiso⟩ := infra_78_marginal_general_level P μ hμ X p θ hfin hθ hθμ
+  exact ⟨U, f, hf, b, Equiv.refl _, hgal, hiso⟩
 
 /-- **Theorem 7.9.** At sufficiently closed eligible levels, every finite-tuple type
 `p = tp(b/X)` has an all-dominated realization: there is `Y ≥ X` all-dominated over `X + b`
@@ -244,7 +247,10 @@ hosted at any level. Cycle 68 restored the paper's embedding (primeness) clause,
 a paper hypothesis tracked by `infra_78_def77_bounded_marks` (as for `proposition_7_8`).
 Split (`AEC/Section7/Theorem79.lean`): `infra_79_existence_statement` (open),
 `infra_79_primeness_same_level` (proved), `infra_79_primeness_mixed` (proved, cycle 69),
-`infra_79_assemble` (proved). -/
+`infra_79_assemble` (proved). The existence clause is split further
+(`AEC/Section7/Theorem79Existence.lean`, cycle 70): `infra_79_lift_isolate`,
+`infra_79_descent`, `infra_79_identify` and the assembly `infra_79_existence_of_parts` (proved);
+`infra_79_retraction_pair_statement` and `infra_79_tail_statement` (open, the remaining `sorry`). -/
 theorem theorem_7_9 {K : AbstractElementaryClass.{u}} (P : SingleModelData K) :
     ∃ T, ∃ hT : Tail P.eligible T,
       ∀ μ (hμ : μ ∈ T) (X : P.scheme.Object μ (Tail.mem hT hμ))
@@ -274,7 +280,7 @@ theorem theorem_7_9 {K : AbstractElementaryClass.{u}} (P : SingleModelData K) :
               P.scheme.permitted (X := Y) (Y := N) h ∧
               SystemArrow.comp f h = g ∧
               ∀ i, h.onVertex (b i).1 (b i).2 = (b' i).2 := by
-  refine infra_79_of_existence P ?_
+  refine infra_79_of_existence P (infra_79_existence_of_parts P ?_)
   sorry
 
 /-- **Lemma 7.11.** Let `C` be an all-dominated-increment witnessing chain for the list `L`

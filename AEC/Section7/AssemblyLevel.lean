@@ -41,8 +41,8 @@ def infra_78_matrix_assembly_level_statement (P : SingleModelData K) : Prop :=
     ∃ (U : P.scheme.Object μ (Tail.mem (infra_78_closedTail_tail P) hμ))
       (f : SystemArrow K oneVertexShape (P.scheme.asSystem _ X) (P.scheme.asSystem _ U))
       (hf : P.scheme.permitted (X := X) (Y := U) f)
-      (b : p.idx → Occurrence K oneVertexShape (P.scheme.asSystem _ U)) (e : p.idx ≃ p.idx),
-      SameGaloisType p (asTuple f hf b) e (Equiv.refl p.idx) ∧
+      (b : p.idx → Occurrence K oneVertexShape (P.scheme.asSystem _ U)),
+      SameGaloisType p (asTuple f hf b) (Equiv.refl p.idx) (Equiv.refl p.idx) ∧
       ∀ {cIdx : Type u} (c : cIdx → Occurrence K oneVertexShape (P.scheme.asSystem _ U)),
         #cIdx ≤ θ →
         IsRelativelyIsolated (uIdx := p.idx) (cIdx := cIdx)
