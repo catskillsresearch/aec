@@ -362,10 +362,10 @@ Lean: imports `AEC.Section6.Results`.
 | `infra_79_tail` | Thm 7.9 tail: `infra_78_closedTail ∩ infra_615_closed` unbounded | [`Theorem79Existence.lean`](AEC/Section7/Theorem79Existence.lean) (**done**, cycle 71; witness `⨆ n, infra_78_closedTower P κ n` is in both sets by `infra_78_closedTower_sup_mem` (`ClosureLevel.lean`); no `ω`-sup closure assumed) |
 | `lemma_7_11` | Lemma 7.11 | `AEC/Section7/Results.lean` (**blocked**; restated cycle 73 to the tied notions over [`TiedListWitnessingChain`](AEC/Section7/TiedListChain.lean): `IsProductTied` hypotheses, `IsTiedFree (A → M_δ)` conclusion; old untied form removed, unused) |
 | `infra_711_tied_chain` | Def 7.10 tied list-linked chain | [`TiedListChain.lean`](AEC/Section7/TiedListChain.lean) (**done**, cycle 73; `free` = tied `tp(bᵢ/Mᵢ) = tp(bᵢ/A)^fr`) |
-| `infra_711_limit` | Lemma 7.11 limit step | **open** (cycle 73; tied Prop 6.13 + `infra_78_tiedFree_trans` on the segment below `j` as a `SameLevelChain`) |
+| `infra_711_limit` | Lemma 7.11 limit step | [`Lemma711Limit.lean`](AEC/Section7/Lemma711Limit.lean) (**done**, cycle 73b; stages below `j` as a `SameLevelChain` via `Ordinal.enum`, union `M_j`; second clause of the tied Prop 6.13) |
 | `infra_711_successor` | Lemma 7.11 successor step | **blocked** on `infra_75_product_free`, `infra_612_tied_base_change` |
 | `infra_75_product_free` | Prop 7.5(3) tied: product with `b` + all-dominated `Y` ⇒ `tp(x/Y)` free from `X` | **blocked** on `infra_612_tied_symmetry`, `infra_612_tied_finite` |
-| `infra_711_induction` | Lemma 7.11 induction assembly | **blocked** on `infra_711_successor`, `infra_711_limit` |
+| `infra_711_induction` | Lemma 7.11 induction assembly | **blocked** on `infra_711_successor` (`infra_711_limit` done) |
 | `lemma_7_12` | Lemma 7.12 | `AEC/Section7/Results.lean:273` (restated over list-linked `ListWitnessingChain`; old vacuity audit in `AEC/Audit/WitnessingChainVacuous.lean`) |
 | `theorem_7_13` | Theorem 7.13 | `AEC/Section7/Results.lean:296` (restated: uniqueness, product-independent free lift, continuity, primeness) |
 

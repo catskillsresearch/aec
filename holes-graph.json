@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-18 14:24",
+  "updated": "2026-11-18 14:28",
   "sorryCount": 42,
   "legend": {
     "open": "No unfinished required proof-deps — try next",
@@ -2958,10 +2958,10 @@
       "id": "infra_711_limit",
       "label": "Lemma 7.11 limit step",
       "section": 7,
-      "file": null,
-      "status": "open",
+      "file": "AEC/Section7/Lemma711Limit.lean",
+      "status": "done",
       "blocker": null,
-      "detail": "Open (cycle 73; all dependencies done). For a TiedListWitnessingChain C and a limit stage j (no predecessor, not first): if tp(x/M_i) is free from A (tied) for every i < j, then tp(x/M_j) is free from A, for finite x over M_top with x.nu = mu. English: local character for finite x (proposition_6_13 tied, first clause, cf >= aleph0) gives i < j with x/M_j free from M_i, then IH + transitivity (infra_78_tiedFree_trans); or directly the second clause of proposition_6_13. Needs the segment (M_i)_{i<j} packaged as a SameLevelChain with union M_j (continuity field), via an order embedding of the stages below j into an ordinal."
+      "detail": "DONE cycle 73b (theorem infra_711_limit : infra_711_limit_statement P). Statement: a tail of levels (the tied Prop 6.13 tail at sigma = aleph0); TiedListWitnessingChain C, a limit stage j (no i covby j, some i < j); finite p over M_j with p.nu = mu; IH: for all i < j, IsTiedFree (A -> M_i) tp(p/A) tp(p/M_i)  ==>  IsTiedFree (A -> M_j) tp(p/A) tp(p/M_j). Proof: the stages below j re-indexed by their order type (Ordinal.enum) form a SameLevelChain with union M_j (infra_711_belowChain; limit-ness from no predecessor, joint from the continuous field); then the second clause of proposition_6_13 (local character + transitivity) with X = A, arrows identified by into_step (infra_711_tiedFree_arrow_congr). Axioms: propext, Classical.choice, Quot.sound."
     },
     {
       "id": "infra_711_induction",
@@ -2969,7 +2969,7 @@
       "section": 7,
       "file": null,
       "status": "blocked",
-      "blocker": "infra_711_successor, infra_711_limit",
+      "blocker": "infra_711_successor",
       "detail": "Blocked (cycle 73). Well-founded induction on WithTop L.delta (WellFoundedLT): first stage (M_0 = A, into bijective: freeness trivial), successor (infra_711_successor), limit (infra_711_limit), read off at the top stage. Gives lemma_7_11 exactly."
     }
   ],
@@ -5989,6 +5989,6 @@
       "kind": "hard"
     }
   ],
-  "doneCount": 268,
+  "doneCount": 269,
   "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
