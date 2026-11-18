@@ -4,7 +4,7 @@ Inventory of Lean `sorry` holes in this repository, ordered **prove-first**: Lay
 are holes with no remaining unfinished prerequisites; later layers wait on earlier
 ones. Apex theorems 1.2 and 1.3 are **last**.
 
-**Count:** 43 `sorry`, 0 `admit`.
+**Count:** 42 `sorry`, 0 `admit`.
 Sections **2**, **3**, **4**, and **13** have no holes.
 
 **Dependency basis:** paper/logical order from `dependencies.mermaid`
@@ -34,7 +34,7 @@ Section 13 is complete and was never on that chain.
 | 4 | 0 | — |
 | 5 | 0 | — |
 | 6 | 1 | `AEC/Section6/ProductTied.lean` (1) |
-| 7 | 5 | `AEC/Section7/MixedTiedLift.lean` (1), `AEC/Section7/Results.lean` (4) |
+| 7 | 4 | `AEC/Section7/MixedTiedLift.lean` (1), `AEC/Section7/Results.lean` (3) |
 | 8 | 5 | `AEC/Section8/Results.lean` (5) |
 | 9 | 6 | `AEC/Section9/Results.lean` (6) |
 | 10 | 9 | `AEC/Section10/Results.lean` (9) |
@@ -42,7 +42,7 @@ Section 13 is complete and was never on that chain.
 | 12 | 4 | `AEC/Section12/Results.lean` (4) |
 | 13 | 0 | — |
 | 14 | 4 | `AEC/Section14/Results.lean` (4) |
-| **Total** | **43** | |
+| **Total** | **42** | |
 
 The table is the previous `Results.lean` rollup. The live count of declarations using
 `sorry` is **32** (48 at the start of the overnight run). `WorkingScheme.exists_approximationSequence`
@@ -334,7 +334,7 @@ Waits on Section 5 working package. Lean: later Results import this module.
 
 (`lemma_6_14` is proved, widened to χ-indexed queries plus a fixed `T★`, and is a hard dependency of `proposition_6_15`. `lemma_6_1` is done and stays in the table for its statement changes.)
 
-### L3 — Section 7 (5 sorry)
+### L3 — Section 7 (4 sorry)
 
 Lean: imports `AEC.Section6.Results`.
 
@@ -345,8 +345,8 @@ Lean: imports `AEC.Section6.Results`.
 | `proposition_7_5` | Proposition 7.5 | `AEC/Section7/Results.lean` (**done**: clauses 1–2) |
 | `lemma_7_6` | Lemma 7.6 | `AEC/Section7/Results.lean` (done: Path A push-only green; English arbitrary-fragment form `lemma_7_6_tied` in `TiedDescent.lean`) |
 | `proposition_7_8` | Proposition 7.8 | `AEC/Section7/Results.lean` (**done**, cycle 67, statement unchanged: `infra_78_closedTail` + `infra_78_marginal_general_level`; no `sorryAx`) |
-| `theorem_7_9` | Theorem 7.9 | `AEC/Section7/Results.lean` (**blocked** only on `infra_79_existence` after cycle 69, whose only open part after cycle 71 is `infra_79_retraction_pair`; cycle 68: statement audited against the English and the embedding (primeness) clause restored, ambient at any level `ν ≥ μ`; = `infra_79_existence` (open) + `infra_79_primeness_same_level` (done) + `infra_79_primeness_mixed` (done cycle 69) + `infra_79_assemble` (done); bounded-marginal generalization = `infra_78_def77_bounded_marks` (soft)) |
-| `infra_79_existence` | Thm 7.9 existence of an all-dominated realization | [`Theorem79.lean`](AEC/Section7/Theorem79.lean) (**blocked** only on `infra_79_retraction_pair` after cycle 71; cycle 70 split; `infra_79_existence_statement` unchanged = `infra_79_existence_of_parts` (done) on `infra_79_tail` (done cycle 71) and `infra_79_retraction_pair` (open); `infra_79_lift_isolate`, `infra_79_descent`, `infra_79_identify` done) |
+| `theorem_7_9` | Theorem 7.9 | `AEC/Section7/Results.lean` (**done**, cycle 72; statement = cycle-68 audited English form (existence + embedding clause, ambient at any level `ν ≥ μ`); `infra_79_of_existence (infra_79_existence P)`; axioms propext, Classical.choice, Quot.sound; bounded-marginal generalization = `infra_78_def77_bounded_marks` (soft), as for 7.8) |
+| `infra_79_existence` | Thm 7.9 existence of an all-dominated realization | [`RetractionPair.lean`](AEC/Section7/RetractionPair.lean) (**done**, cycle 72; `infra_79_existence_of_parts` on `infra_79_tail` + `infra_79_retraction_pair`; statement `infra_79_existence_statement` unchanged) |
 | `infra_79_primeness_same_level` | Thm 7.9 embedding into a same-level ambient | [`Theorem79.lean`](AEC/Section7/Theorem79.lean) (**done**, cycle 68; `infra_612_galois_trans_mid_any` + `infra_75_embed`) |
 | `infra_79_primeness_mixed` | Thm 7.9 embedding into an ambient above the level of `X` | [`Theorem79.lean`](AEC/Section7/Theorem79.lean) (**done**, cycle 69; level-`μ` copy `N0 → N`, `infra_612_galois_trans_last_base`, `infra_75_embed`) |
 | `infra_612_exists_level_copy_arrow` | level-`μ` copy of a tuple with its arrow into the original host | [`Theorem79.lean`](AEC/Section7/Theorem79.lean) (**done**, cycle 69) |
@@ -358,7 +358,7 @@ Lean: imports `AEC.Section6.Results`.
 | `infra_79_descent` | Thm 7.9 descent: isolation over `A` to all-dominated over `A' + b'` | [`Theorem79Existence.lean`](AEC/Section7/Theorem79Existence.lean) (**done**, cycle 70; tied Lemma 6.17 + mixed Lemma 7.6 `infra_78_tied_descent_mixed`) |
 | `infra_79_identify` | Thm 7.9 `φ : X ≅ A'` carrying the marginal of `b'` to `p` | [`Theorem79Existence.lean`](AEC/Section7/Theorem79Existence.lean) (**done**, cycle 70; `infra_78_tied_at_mixed` sequence + `infra_78_marginal_identify_level`) |
 | `infra_79_existence_of_parts` | Thm 7.9 existence clause from tail + retraction pair | [`Theorem79Existence.lean`](AEC/Section7/Theorem79Existence.lean) (**done**, cycle 70; tail `infra_78_closedTail ∩ infra_615_closed`) |
-| `infra_79_retraction_pair` | Thm 7.9 level-`ν` pair `A' ≤ U'` closed under `ν` Cor 6.16 retractions | [`Theorem79Existence.lean`](AEC/Section7/Theorem79Existence.lean) (**open**, cycle 70; `infra_79_retraction_pair_statement`; plan: `corollary_6_16_family`, `ω`-chain of `infra_78_mixed_ls_pair` hulls, `infra_78_theta_union`) |
+| `infra_79_retraction_pair` | Thm 7.9 level-`ν` pair `A' ≤ U'` closed under `ν` Cor 6.16 retractions | [`RetractionPair.lean`](AEC/Section7/RetractionPair.lean) (**done**, cycle 72; `ν` of the `λ` Cor 6.16 retractions, `ω`-chain of `infra_78_mixed_ls_pair` stages (`Classical.epsilon`), `infra_78_factor_arrow` chain arrows, `infra_78_theta_union` over `ULift ℕ`) |
 | `infra_79_tail` | Thm 7.9 tail: `infra_78_closedTail ∩ infra_615_closed` unbounded | [`Theorem79Existence.lean`](AEC/Section7/Theorem79Existence.lean) (**done**, cycle 71; witness `⨆ n, infra_78_closedTower P κ n` is in both sets by `infra_78_closedTower_sup_mem` (`ClosureLevel.lean`); no `ω`-sup closure assumed) |
 | `lemma_7_11` | Lemma 7.11 | `AEC/Section7/Results.lean:255` (restated over `ListWitnessingChain`) |
 | `lemma_7_12` | Lemma 7.12 | `AEC/Section7/Results.lean:273` (restated over list-linked `ListWitnessingChain`; old vacuity audit in `AEC/Audit/WitnessingChainVacuous.lean`) |
@@ -466,7 +466,7 @@ Counts are standalone `sorry` lines in `AEC/` (`git grep -nE '^\s*sorry\s*$'`), 
 | L0 | 0 |
 | L1 | 0 |
 | L2 | 1 |
-| L3 | 5 |
+| L3 | 4 |
 | L4 | 5 |
 | L5 | 6 |
 | L6 | 9 |
@@ -474,7 +474,7 @@ Counts are standalone `sorry` lines in `AEC/` (`git grep -nE '^\s*sorry\s*$'`), 
 | L8 | 4 |
 | L9 | 4 |
 | L10 | 2 |
-| **Total** | **43** |
+| **Total** | **42** |
 | `infra_9_cube_scheme` | infra_9_cube_scheme | `AEC/Section9/CubeScheme.lean` (done: cube shape, `CubeScheme`, `faces`, `IsMarked`) |
 | `infra_10_product_axioms` | infra_10_product_axioms | `AEC/Section10/ProductAxioms.lean` (done: `MinimalData.ProductAxioms`, `pointIndep`, `pointClosure`; audit `AEC/Audit/ProductAxiomsAudit.lean`) |
 | `infra_11_pointed_system` | infra_11_pointed_system | `AEC/Section11/PointedSystem.lean` (done: `IsPointed`, pointed arrows, `ReflectsPieces`, `GLCategoricalAt`) |

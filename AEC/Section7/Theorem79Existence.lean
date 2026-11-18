@@ -20,7 +20,8 @@ and bounded diagram homogeneity identify `A'` with `X` carrying the marginal of 
 
 * `infra_79_descent` (proved, this file): the descent step.
 * `infra_79_lift_isolate`, `infra_79_identify`, `infra_79_existence_of_parts` (proved, cycle 70);
-  `infra_79_tail` (proved, cycle 71); `infra_79_retraction_pair_statement` (open).
+  `infra_79_tail` (proved, cycle 71); `infra_79_retraction_pair_statement` (proved, cycle 72,
+  `RetractionPair.lean`).
 -/
 
 universe u
@@ -289,7 +290,7 @@ theorem infra_79_identify (P : SingleModelData K) {ν l : Cardinal.{u}}
     htest hlong toA hanch incl' toU hsq' b' hbU
   exact ⟨φ, hφ, hGal⟩
 
-/-- **Theorem 7.9, retraction pair (open).** Paper: "Corollary 6.16 gives `ν` approximate
+/-- **Theorem 7.9, retraction pair (statement; proved in `RetractionPair.lean`).** Paper: "Corollary 6.16 gives `ν` approximate
 retractions `r_i : U → B` (each `a ∈ B` fixed by all but finitely many); close a level-`ν` pair
 `A' ≤ U'` under them, containing the image of `X` and the mark." For a level-`λ` pair `B ≤ U`
 (`λ` closed, `ν ≤ λ` eligible), a map `ι : X → B` from a level-`ν` object and a finite mark `bU`

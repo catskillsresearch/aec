@@ -13,6 +13,7 @@ public import AEC.Section7.ListChain
 public import AEC.Section7.GeneralLevel
 public import AEC.Section7.Theorem79
 public import AEC.Section7.Theorem79Existence
+public import AEC.Section7.RetractionPair
 public import AEC.Section7.MixedDescent
 public import AEC.Section6.Results
 
@@ -250,8 +251,8 @@ Split (`AEC/Section7/Theorem79.lean`): `infra_79_existence_statement` (open),
 `infra_79_assemble` (proved). The existence clause is split further
 (`AEC/Section7/Theorem79Existence.lean`, cycle 70): `infra_79_lift_isolate`,
 `infra_79_descent`, `infra_79_identify` and the assembly `infra_79_existence_of_parts` (proved);
-`infra_79_tail` (proved, cycle 71); `infra_79_retraction_pair_statement` (open, the remaining
-`sorry`). -/
+`infra_79_tail` (proved, cycle 71); `infra_79_retraction_pair` (proved, cycle 72,
+`AEC/Section7/RetractionPair.lean`). Sorry-free since cycle 72. -/
 theorem theorem_7_9 {K : AbstractElementaryClass.{u}} (P : SingleModelData K) :
     ∃ T, ∃ hT : Tail P.eligible T,
       ∀ μ (hμ : μ ∈ T) (X : P.scheme.Object μ (Tail.mem hT hμ))
@@ -281,8 +282,7 @@ theorem theorem_7_9 {K : AbstractElementaryClass.{u}} (P : SingleModelData K) :
               P.scheme.permitted (X := Y) (Y := N) h ∧
               SystemArrow.comp f h = g ∧
               ∀ i, h.onVertex (b i).1 (b i).2 = (b' i).2 := by
-  refine infra_79_of_existence P (infra_79_existence_of_parts P ⟨infra_79_tail P, ?_⟩)
-  sorry
+  exact infra_79_of_existence P (infra_79_existence P)
 
 /-- **Lemma 7.11.** Let `C` be an all-dominated-increment witnessing chain for the list `L`
 over `A`, and let `x` be a finite tuple over the last stage `M_δ`, realized in an actual coupling
