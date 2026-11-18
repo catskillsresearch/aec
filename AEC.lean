@@ -149,6 +149,7 @@ public import AEC.Section7.MixedLevel
 public import AEC.Section7.MixedTiedLift
 public import AEC.Section7.MixedDescent
 public import AEC.Section7.TiedLocalCharacter
+public import AEC.Section6.LocalCharacterTied
 public import AEC.Section7.DescentIsolation
 public import AEC.Section7.Primness
 public import AEC.Section7.FiniteIsolation

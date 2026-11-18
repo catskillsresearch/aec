@@ -614,8 +614,11 @@ Same packaging as Theorem 6.10. The chain is `SameLevelChain` (joint cover, not
 `infra_611_isFreeFrom`) and `infra_613_continuity` (`infra_613_freeFrom_trans` along the
 cocone). Mixed levels and Section 7 `SatisfiesContinuity` stay deferred. 
 
-**Audit (grokbot_02): degenerate as formalized, NOT counted done.** both clauses conclude the vacuous untied `IsFreeFrom` (`AEC/Audit/FreeFromVacuous.lean`); honest form uses `IsTiedFree` (restriction, refl). -/
-theorem proposition_6_13 {K : AbstractElementaryClass.{u}}
+**Audit (grokbot_02): degenerate as formalized, NOT the paper statement.** Both clauses conclude
+the vacuous untied `IsFreeFrom` (`AEC/Audit/FreeFromVacuous.lean`). The honest English
+`proposition_6_13` (tied freeness) is in `AEC/Section6/LocalCharacterTied.lean`; this untied
+wrapper is kept only under the name `proposition_6_13_untied`. -/
+theorem proposition_6_13_untied {K : AbstractElementaryClass.{u}}
     (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ) :
     ∃ T, ∃ hT : Tail P.eligible T,
       ∀ μ (hμ : μ ∈ T) (C : SameLevelChain P (Tail.mem hT hμ))

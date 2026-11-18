@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-18 07:48",
+  "updated": "2026-11-18 07:52",
   "sorryCount": 43,
   "legend": {
     "open": "No unfinished required proof-deps — try next",
@@ -514,11 +514,10 @@
       "id": "proposition_6_13",
       "label": "Prop 6.13",
       "section": 6,
-      "file": "AEC/Section6/Results.lean",
-      "status": "blocked",
-      "blocker": "infra_78_tied_local_character",
-      "detail": "DEGENERATE CLOSURE, NOT DONE (grokbot_02 audit). Both clauses conclude untied IsFreeFrom, which holds for every small tuple (Audit.isFreeFrom_of_approximationSequence + Lemma 6.9 existence), so local character and continuity are degenerate as formalized. Proposed honest restatement: replace IsFreeFrom by IsTiedFree (restriction, refl) in both clauses. Blocked on infra_78_tied_local_character. Previous note: Done for same-level SingleModelData. SameLevelChain (joint cover, not HasChainUnions). Local character: infra_613_trap_in_stage then infra_611_isFreeFrom. Continuity: infra_613_freeFrom_trans along the cocone. Deferred: mixed levels, SatisfiesContinuity / §7. Next frontier is Cor 6.16.",
-      "degenerate": true
+      "file": "AEC/Section6/LocalCharacterTied.lean",
+      "status": "done",
+      "blocker": null,
+      "detail": "Done (honest tied restatement; no sorry; axioms propext/choice/Quot.sound): proposition_6_13 in AEC/Section6/LocalCharacterTied.lean (moved out of Section6/Results.lean because the proof uses the Section 7 tied infrastructure, which imports Section6.Results; the old untied wrapper is renamed proposition_6_13_untied and stays degenerate). Statement: tail of recursion-closed levels mu >= sigma^+; C : SameLevelChain at mu, p over the union with p.nu = mu, #p.idx <= sigma, #p.idx < cf delta (covers finite v): (1) exists i, IsTiedFree (toUnion i) (p|A_i) p refl; (2) for X -g-> A_0, if every p|A_i is IsTiedFree from X along g;le(0,i), then p is IsTiedFree from X along g;toUnion 0. 'Free' = Theorem 6.10 free lift (tied); untied IsFreeFrom is vacuous (audit_free_from_vacuous). Proof: infra_78_tied_local and infra_78_tied_continuity (infra_78_tiedFree_trans along the cocone)."
     },
     {
       "id": "infra_615_terminal",
@@ -2020,6 +2019,15 @@
       "status": "done",
       "blocker": null,
       "detail": "Done (no sorry; axioms propext/choice/Quot.sound): infra_78_tiedFree_of_upTo in AEC/Section7/TiedLocalCharacter.lean. Recursion-closed level mu (succ sigma <= mu), same-level f : A -> B, q over B with q.nu = mu, #q.idx <= sigma: IsTiedFreeUpTo f (q|A) q refl (g sigma + ls K) -> IsTiedFree f (q|A) q refl (full statement, every bounded query; English Thm 6.10 'at every bounded query size' with Thm 6.6 testing at arity g(sigma)+LS(K)). Proof: tied free lift qB of q|A (infra_610_tied_free_lift); tied moves (infra_73_tied_move) give q and qB the type of q|A on every test of size <= g sigma + ls K, so Thm 6.6 (infra_73_differing_test) gives SameGaloisType qB q over B; larger queries transfer by infra_72_diagramEq_of_sameGalois."
+    },
+    {
+      "id": "infra_78_tiedFree_trans",
+      "label": "Transitivity of tied freeness",
+      "section": 7,
+      "file": "AEC/Section7/TiedLocalCharacter.lean",
+      "status": "done",
+      "blocker": null,
+      "detail": "Done (no sorry): infra_78_tiedFree_trans. X -g-> A -f-> B same level, q over B: IsTiedFree g ((q|f)|g) (q|f) refl and IsTiedFree f (q|f) q refl imply IsTiedFree (g;f) (q|g;f) q refl. The push g(x) of any long sequence x of q|X is an approximation sequence of q|A at sizes <= |Z| (first hypothesis); a move of Z along f over g(x) and one index outside both exception sets close it. Also infra_78_tiedFree_congr_arrow and infra_78_tied_continuity (Prop 6.13 second clause)."
     }
   ],
   "edges": [
@@ -3746,8 +3754,13 @@
       "from": "infra_78_tied_testing_reduction",
       "to": "infra_78_tied_local_character",
       "kind": "hard"
+    },
+    {
+      "from": "infra_78_tiedFree_trans",
+      "to": "proposition_6_13",
+      "kind": "hard"
     }
   ],
-  "doneCount": 167,
+  "doneCount": 169,
   "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 43. Uncommitted in /tmp/aec-grok."
 }

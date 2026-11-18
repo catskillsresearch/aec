@@ -500,5 +500,112 @@ theorem infra_78_tied_local
   exact ⟨i, hi, infra_78_tiedFree_of_upTo P σ hσ hμ hrec hσSucc (C.toUnion i hi)
     (C.toUnion_arrow i hi) p hνμ hidx hup⟩
 
+/-- **Transitivity of tied freeness.** If `q ↾ A` is tied free from `X` along `g : X → A` and
+`q` is tied free from `A` along `f : A → B`, then `q` is tied free from `X` along `g ≫ f`.
+
+Given a sequence `x` for `q ↾ X` and a move `Z ↦ Z₀` along `g ≫ f`, the image `g(x)` is an
+approximation sequence for `q ↾ A` (first hypothesis, at query sizes `≤ |Z|`). A move `Z ↦ Z₁`
+along `f` over `g(x)` lets the second hypothesis answer `Z` by `q ↾ A` on `Z₁`; one index
+outside both exception sets identifies `q ↾ A` on `Z₁` with `q ↾ X` on `Z₀`. -/
+theorem infra_78_tiedFree_trans
+    {P : SingleModelData K} {μ : Cardinal.{u}} {hμ : μ ∈ P.eligible}
+    {X A B : P.scheme.Object μ hμ}
+    (g : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ A))
+    (hg : P.scheme.permitted (X := X) (Y := A) g)
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ B))
+    (hf : P.scheme.permitted (X := A) (Y := B) f)
+    (q : TupleOver K oneVertexShape P.scheme hμ B)
+    (hXA : IsTiedFree g ((q.restrict f hf).restrict g hg) (q.restrict f hf) (Equiv.refl _))
+    (hAB : IsTiedFree f (q.restrict f hf) q (Equiv.refl _)) :
+    IsTiedFree (SystemArrow.comp g f)
+      (q.restrict (SystemArrow.comp g f) (P.scheme.comp g f hg hf)) q (Equiv.refl _) := by
+  classical
+  intro seq ι Z Z0 hκ hι hιμ hmove
+  let b : ApproximationSequence (q.restrict f hf) :=
+    { τ := #ι
+      κIndex := seq.κIndex
+      family := fun j k => pushOcc g (seq.family j k)
+      concat_bounded := seq.concat_bounded
+      few_exceptions := fun {β} W hW => by
+        have hWτ : #β ≤ seq.τ := hW.trans hι
+        obtain ⟨W0, hW0⟩ := infra_610_move_query g hg seq W hWτ (hW.trans_lt hιμ)
+        have ht := hXA seq W W0 hκ hWτ (hW.trans_lt hιμ) hW0
+        refine le_trans ?_ (seq.few_exceptions W0 hWτ)
+        refine Cardinal.mk_le_of_injective (f := fun j => ⟨j.1, fun hgood => j.2 ?_⟩)
+          (by
+            intro j₁ j₂ hj
+            apply Subtype.ext
+            have := congrArg Subtype.val hj
+            exact this)
+        have e1 := P.scheme.diagram_symm _ _ _ _ ht
+        have e2 := P.scheme.diagram_trans _ _ _ _ _ _ e1 hgood
+        have e3 := P.scheme.diagram_trans _ _ _ _ _ _ e2 (hW0 j.1)
+        erw [infra_78_anchored_refl (q.restrict f hf) W] at e3
+        exact e3 }
+  have hκb : b.τ + ℵ₀ < #b.κIndex := (add_le_add hι le_rfl).trans_lt hκ
+  have hιb : #ι ≤ b.τ := le_rfl
+  obtain ⟨Z1, hZ1⟩ := infra_610_move_query f hf b Z hιb hιμ
+  have hq := hAB b Z Z1 hκb hιb hιμ hZ1
+  have hcι : ℵ₀ ≤ #ι + ℵ₀ := le_add_self
+  obtain ⟨k, hk1, hk2⟩ := infra_78_exists_outside_two
+    {k | ¬ P.scheme.DiagramEq (X := q.host) (Y := X)
+      (typeJoint (p := q.restrict (SystemArrow.comp g f) (P.scheme.comp g f hg hf)) Z0)
+      (seqJoint (seq.family k) Z0)}
+    {k | ¬ P.scheme.DiagramEq (X := q.host) (Y := A)
+      (typeJoint (p := q.restrict f hf) Z1) (seqJoint (b.family k) Z1)}
+    hcι (seq.few_exceptions Z0 hι) (b.few_exceptions Z1 hιb) hκb
+  simp only [Set.mem_ofPred_eq, not_not] at hk1 hk2
+  have a1 := P.scheme.diagram_trans _ _ _ _ _ _ hk1 (hmove k)
+  have a2 := P.scheme.diagram_trans _ _ _ _ _ _ a1 (P.scheme.diagram_symm _ _ _ _ (hZ1 k))
+  have a3 := P.scheme.diagram_trans _ _ _ _ _ _ a2 (P.scheme.diagram_symm _ _ _ _ hk2)
+  exact P.scheme.diagram_trans _ _ _ _ _ _ a3 hq
+
+/-- Tied freeness from the restriction is invariant under equal arrows. -/
+theorem infra_78_tiedFree_congr_arrow
+    {P : SingleModelData K} {μ : Cardinal.{u}} {hμ : μ ∈ P.eligible}
+    {A B : P.scheme.Object μ hμ}
+    {f f' : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ B)}
+    (hf : P.scheme.permitted (X := A) (Y := B) f)
+    (hf' : P.scheme.permitted (X := A) (Y := B) f')
+    (q : TupleOver K oneVertexShape P.scheme hμ B) (heq : f = f')
+    (h : IsTiedFree f (q.restrict f hf) q (Equiv.refl _)) :
+    IsTiedFree f' (q.restrict f' hf') q (Equiv.refl _) := by
+  subst heq
+  exact h
+
+/-- **Tied continuity (second clause of English Prop 6.13, tied form).** If every stage
+restriction of `p` is tied free from a fixed base `X → A₀`, then `p` is tied free from `X`
+along the cocone. Local character (`infra_78_tied_local`) gives a stage; transitivity
+(`infra_78_tiedFree_trans`) carries freeness from `X` to the union. -/
+theorem infra_78_tied_continuity
+    (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ)
+    {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
+    (hrec : μ ∈ recursionClosedLevels P σ) (hσSucc : Order.succ σ ≤ μ)
+    (C : SameLevelChain P hμ)
+    (p : TupleOver K oneVertexShape P.scheme hμ C.unionObj)
+    (hνμ : p.ν = μ) (hidx : #p.idx ≤ σ) (hcof : #p.idx < C.δ.cof)
+    (X : P.scheme.Object μ hμ)
+    (g : SystemArrow K oneVertexShape
+      (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ (C.obj 0 C.hlim.1)))
+    (hg : P.scheme.permitted (X := X) (Y := C.obj 0 C.hlim.1) g)
+    (hAll : ∀ (i : Ordinal.{u}) (hi : i < C.δ),
+      IsTiedFree
+        (SystemArrow.comp g (C.le C.hlim.1 hi (bot_le : (0 : Ordinal.{u}) ≤ i)))
+        ((p.restrict (C.toUnion i hi) (C.toUnion_arrow i hi)).restrict
+          (SystemArrow.comp g (C.le C.hlim.1 hi (bot_le : (0 : Ordinal.{u}) ≤ i)))
+          (P.scheme.comp g (C.le C.hlim.1 hi (bot_le : (0 : Ordinal.{u}) ≤ i)) hg
+            (C.le_arrow C.hlim.1 hi (bot_le : (0 : Ordinal.{u}) ≤ i))))
+        (p.restrict (C.toUnion i hi) (C.toUnion_arrow i hi)) (Equiv.refl _)) :
+    IsTiedFree (SystemArrow.comp g (C.toUnion 0 C.hlim.1))
+      (p.restrict (SystemArrow.comp g (C.toUnion 0 C.hlim.1))
+        (P.scheme.comp g (C.toUnion 0 C.hlim.1) hg (C.toUnion_arrow 0 C.hlim.1)))
+      p (Equiv.refl _) := by
+  obtain ⟨i, hi, hF⟩ := infra_78_tied_local P σ hσ hμ hrec hσSucc C p hνμ hidx hcof
+  have hzero : (0 : Ordinal.{u}) ≤ i := bot_le
+  have hgA := P.scheme.comp g (C.le C.hlim.1 hi hzero) hg (C.le_arrow C.hlim.1 hi hzero)
+  have htrans := infra_78_tiedFree_trans (SystemArrow.comp g (C.le C.hlim.1 hi hzero)) hgA
+    (C.toUnion i hi) (C.toUnion_arrow i hi) p (hAll i hi) hF
+  exact infra_78_tiedFree_congr_arrow _ _ p (infra_613_cocone_arrow C g hi) htrans
+
 end
 end AEC
