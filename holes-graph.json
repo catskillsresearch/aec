@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-18 12:16",
+  "updated": "2026-11-18 12:26",
   "sorryCount": 44,
   "legend": {
     "open": "No unfinished required proof-deps — try next",
@@ -2257,8 +2257,8 @@
       "section": 7,
       "file": "AEC/Section7/MixedDescent.lean",
       "status": "blocked",
-      "blocker": "infra_78_theta_chain",
-      "detail": "Blocked (split grokbot cycle 57; full claim stays here = theta_chain + theta_free_identity). Increasing theta^+ chain A_alpha <= U_alpha of level-lambda subobjects inside R_i,S_i with unions A <= U at level lambda (I_p in A, b in U), and the TIED majority free-extension identity: for every c in U with |c| <= theta, IsTiedFreeMixed iA (q.restrict iA) q (Equiv.refl _) for q = tp(b,c/X_i) (never the untied IsFreeLift/IsFreeFrom). Sub-tips: infra_78_theta_union (done), infra_78_theta_chain (open), infra_78_theta_free_identity (open)."
+      "blocker": "infra_78_theta_free_identity",
+      "detail": "Blocked (split grokbot cycle 57; full claim stays here = theta_chain + theta_free_identity). Increasing theta^+ chain A_alpha <= U_alpha of level-lambda subobjects inside R_i,S_i with unions A <= U at level lambda (I_p in A, b in U), and the TIED majority free-extension identity: for every c in U with |c| <= theta, IsTiedFreeMixed iA (q.restrict iA) q (Equiv.refl _) for q = tp(b,c/X_i) (never the untied IsFreeLift/IsFreeFrom). Sub-tips: infra_78_theta_union (done), infra_78_theta_chain (done cycle 57; infra_78_theta_chain_rc at the recursion matrix), infra_78_theta_free_identity (open). Assembly obligation (tracked here): the matrix level μ must be recursion-closed at some σ' ≥ λ with succ σ' ≤ μ (hypothesis of infra_78_theta_chain_rc), and the bkTuple-indexed sequences must be reindexed to the marked tuple (b, c)."
     },
     {
       "id": "infra_78_isolation_transfer",
@@ -2545,9 +2545,9 @@
       "label": "Prop 7.8 theta-shrink: theta^+ recursion of pairs A_alpha <= U_alpha with approximation copies",
       "section": 7,
       "file": "AEC/Section7/ThetaShrink.lean",
-      "status": "open",
+      "status": "done",
       "blocker": null,
-      "detail": "Open (grokbot cycle 57). At the isolated stage i: recursion alpha < theta^+ of level-lambda pairs A_alpha <= U_alpha inside R_i,S_i (requirement 1, infra_78_bkReq1 / bookkeeping closure), I_p in A_0, b in U_0; at alpha+1 enumerate U_alpha and put the coordinates of requirement-2 approximation copies (over X_i) into A_{alpha+1}; unions at limits and at the end via infra_78_theta_union. Output: A <= U at level lambda with jA : A -> X_i, jU : U -> Y_i, and for every c in U with |c| <= theta and every test arity tau < lambda an ApproximationSequence for (b,c) over X_i whose family entries lie in range jA. Known issues: selecting lambda many copies (subsequence of a requirement-2 sequence, keeping tau + aleph0 < #kappaIndex), the sigma' recursion-closed hypothesis of requirement 2, restriction of a sequence for the enumerated tuple to the subtuple (b,c) (ApproximationSequence.subtuple_uniform)."
+      "detail": "DONE (grokbot cycle 57, sorry-free, standard axioms; AEC/Section7/ThetaShrink.lean). infra_78_theta_chain: at stage i of a matrix M, for a bookkeeping set T ⊆ X_i ⊕ Y_i with closure requirement 1 (infra_78_bkReq1 for every s ⊆ T, |s| ≤ λ) and requirement 2 (for every s ⊆ T, |s| ≤ λ, an ApproximationSequence for the top points of s over X_i with τ = λ, λ+ℵ0 < #copies, copies in T), ℵ0 ≤ θ, θ⁺ ≤ λ and a seed s₀ ⊆ T, |s₀| ≤ λ (I_p, b): infra_78_ThetaChainOut — a level-λ pair gu : A → U with permitted jA : A → X_i, jU : U → Y_i, square gu;jU = jA;pair_i, s₀ inside the images, images inside T, and for every top list c ⊆ U with |c| ≤ θ an ApproximationSequence for c over X_i with τ = λ and EXACTLY λ copies (hence τ'+ℵ0 < #copies for every test arity τ' < λ, as λ > ℵ0), all copies inside range jA. Construction = paper: recursion D_α = s₀ ∪ ⋃_{β<α} F(D_β) over θ⁺ (infra_78_thetaD); F (infra_78_theta_step) takes a requirement-2 sequence for the whole top part of D (enumeration of U_α), cuts it to exactly λ copies (watch-point 1: infra_78_seq_sub, subfamily + subtuple restriction keeping the subtuple bound), and a requirement-1 pair containing D and the copies; pairs are linked by factorization arrows (infra_78_factor_arrow, coherence) and united by infra_78_theta_union; a list of ≤ θ points of U lies in some D_γ by regularity of θ⁺ (infra_78_succ_bounded), and its sequence is the restriction of the stage-γ sequence to the subtuple (watch-point 3: Set.inclusion, ApproximationSequence.subtuple_uniform). Watch-point 2 (σ'): infra_78_theta_chain_rc instantiates T = R_i of the recursion matrix at a stage of cofinality > λ from infra_78_rnext_closure, invoking requirement 2 at a recursion-closed σ' ≥ λ (μ ∈ recursionClosedLevels P σ', succ σ' ≤ μ, λ < μ); this is the paper's 'sufficiently closed' matrix level and is a tracked hypothesis to be discharged when theta_shrink is assembled (choice of μ via infra_69_recursion_tail)."
     },
     {
       "id": "infra_78_theta_free_identity",
@@ -2556,7 +2556,7 @@
       "file": "AEC/Section7/ThetaShrink.lean",
       "status": "open",
       "blocker": null,
-      "detail": "Open (grokbot cycle 57). Tied statement: for jA : A -> X_i permitted (A level lambda, X_i level kappa) and q over X_i with |q.idx| <= theta, if for every sufficient test arity tau < lambda there is an ApproximationSequence for q over X_i with all family entries in range jA, then IsTiedFreeMixed jA (q.restrict jA) q (Equiv.refl _) (majority characterization of the free extension, Lemma 6.10 mixed form; infra_78_isMoveMixed). Must use the tied IsTiedFreeMixed family, never the vacuous untied IsFreeLift / IsFreeFrom."
+      "detail": "Open (grokbot cycle 57). Tied statement: for jA : A -> X_i permitted (A level lambda, X_i level kappa) and q over X_i with |q.idx| <= theta, if there is an ApproximationSequence for q over X_i with tau = lambda and exactly lambda copies (as produced by infra_78_theta_chain: then tau'+aleph0 < #copies for every test arity tau' < lambda) with all family entries in range jA, then IsTiedFreeMixed jA (q.restrict jA) q (Equiv.refl _) (majority characterization of the free extension, Lemma 6.10 mixed form; infra_78_isMoveMixed). Must use the tied IsTiedFreeMixed family, never the vacuous untied IsFreeLift / IsFreeFrom."
     }
   ],
   "edges": [
@@ -4991,8 +4991,13 @@
       "from": "infra_78_theta_free_identity",
       "to": "infra_78_theta_shrink",
       "kind": "hard"
+    },
+    {
+      "from": "infra_78_rnext_closure",
+      "to": "infra_78_theta_chain",
+      "kind": "hard"
     }
   ],
-  "doneCount": 220,
+  "doneCount": 221,
   "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 43. Uncommitted in /tmp/aec-grok."
 }
