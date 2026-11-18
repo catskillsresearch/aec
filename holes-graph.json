@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-18 07:52",
+  "updated": "2026-11-18 08:04",
   "sorryCount": 43,
   "legend": {
     "open": "No unfinished required proof-deps — try next",
@@ -1808,10 +1808,9 @@
       "label": "Infra 7.8 finite continuity",
       "section": 7,
       "file": "AEC/Section7/FiniteIsolation.lean",
-      "status": "blocked",
-      "detail": "DEGENERATE CLOSURE, NOT DONE (grokbot_02 audit). Both clauses conclude the vacuous untied IsFreeFrom (audit_free_from_vacuous; packaging of the degenerate proposition_6_13). Proposed honest restatement: IsTiedFree (restriction, refl) in both clauses, for finite marks. Lean proof stays sorry-free but does not count. Previous note: Done: Def 7.7 for Finite marks on SameLevelChain via Prop 6.13 / infra_613_*. Not sufficient for Prop 7.8 existence.",
-      "degenerate": true,
-      "blocker": "infra_78_tied_local_character"
+      "status": "done",
+      "detail": "Done (honest tied restatement; no sorry; axioms propext/choice/Quot.sound): infra_78_finite_continuity in AEC/Section7/FiniteIsolation.lean. Def 7.7 for Finite marks on SameLevelChain at recursion-closed levels mu >= sigma^+: (1) exists stage i with IsTiedFree (toUnion i) (p|A_i) p refl; (2) if every p|A_i is IsTiedFree from X along g;le(0,i), then p is IsTiedFree from X along g;toUnion 0. Proof: infra_78_tied_local, infra_78_tied_continuity (|p| < aleph0 <= cf delta). Untied IsFreeFrom form was vacuous (audit_free_from_vacuous). Not sufficient for Prop 7.8 existence (general bounded marks).",
+      "blocker": null
     },
     {
       "id": "infra_610_tied_free_lift",
@@ -3761,6 +3760,6 @@
       "kind": "hard"
     }
   ],
-  "doneCount": 169,
+  "doneCount": 170,
   "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 43. Uncommitted in /tmp/aec-grok."
 }

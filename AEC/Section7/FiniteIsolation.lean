@@ -2,6 +2,7 @@ module
 
 public import AEC.Section6.Results
 public import AEC.Section7.ContinuityCondition
+public import AEC.Section7.TiedLocalCharacter
 
 @[expose] public section
 
@@ -13,7 +14,8 @@ Lemma 7.6’s demoted mixed / arbitrary-fragment descent, plus a Fodor / `ρ^λ`
 are out of scope for this tip.
 
 What ships here is Definition 7.7 for **finite** marks on a `SameLevelChain`: local character
-and continuity of freeness along the chain, via Proposition 6.13. Full `SatisfiesContinuity`
+and continuity of (tied) freeness along the chain, via the tied Proposition 6.13
+(`infra_78_tied_local`, `infra_78_tied_continuity`). Full `SatisfiesContinuity`
 on a bare `WorkingScheme` / `ContinuousChain` stays deferred.
 -/
 
@@ -45,12 +47,12 @@ theorem infra_78_finite_lt_cof
   have hlt : #idx < ℵ₀ := mk_lt_aleph0_iff.2 hFin
   exact hlt.trans_le (SameLevelChain.cof_aleph0 C)
 
-/-- **Definition 7.7 for finite marks** (Prop 6.13 packaging). On a recursion-closed level,
-a finite tuple over the union of a `SameLevelChain` is free from some stage, and if every
+/-- **Definition 7.7 for finite marks** (Prop 6.13 packaging, tied form). On a recursion-closed
+level, a finite tuple over the union of a `SameLevelChain` is free from some stage, and if every
 stage restriction is free from a fixed base through the zero stage, the union is free from
-that base. 
-
-**Audit (grokbot_02): degenerate as formalized, NOT counted done.** both clauses conclude the vacuous untied `IsFreeFrom` (`AEC/Audit/FreeFromVacuous.lean`); honest form uses `IsTiedFree`. -/
+that base. "Free" is tied freeness `IsTiedFree` of the tuple from its restriction (Theorem 6.10's
+free lift); the untied `IsFreeFrom` is vacuous (`AEC/Audit/FreeFromVacuous.lean`). Proof:
+`infra_78_tied_local` and `infra_78_tied_continuity`, with `|p| < ℵ₀ ≤ cf δ`. -/
 theorem infra_78_finite_continuity (P : SingleModelData K) (σ : Cardinal.{u})
     (hσ : ℵ₀ ≤ σ) :
     ∃ T, ∃ hT : Tail P.eligible T,
@@ -58,33 +60,34 @@ theorem infra_78_finite_continuity (P : SingleModelData K) (σ : Cardinal.{u})
         (p : TupleOver K oneVertexShape P.scheme (Tail.mem hT hμ) C.unionObj),
         p.ν = μ → Finite p.idx → #p.idx ≤ σ →
         (∃ (i : Ordinal.{u}) (hi : i < C.δ),
-          IsFreeFrom (C.toUnion i hi) (C.toUnion_arrow i hi) p) ∧
+          IsTiedFree (C.toUnion i hi)
+            (p.restrict (C.toUnion i hi) (C.toUnion_arrow i hi)) p (Equiv.refl _)) ∧
         (∀ (X : P.scheme.Object μ (Tail.mem hT hμ))
           (g : SystemArrow K oneVertexShape
             (P.scheme.asSystem _ X)
             (P.scheme.asSystem _ (C.obj 0 C.hlim.1)))
           (hg : P.scheme.permitted (X := X) (Y := C.obj 0 C.hlim.1) g),
           (∀ (i : Ordinal.{u}) (hi : i < C.δ),
-            IsFreeFrom
-              (SystemArrow.comp g
-                (C.le C.hlim.1 hi (bot_le : (0 : Ordinal.{u}) ≤ i)))
-              (P.scheme.comp g
-                (C.le C.hlim.1 hi (bot_le : (0 : Ordinal.{u}) ≤ i)) hg
-                (C.le_arrow C.hlim.1 hi (bot_le : (0 : Ordinal.{u}) ≤ i)))
-              (p.restrict (C.toUnion i hi) (C.toUnion_arrow i hi))) →
-          IsFreeFrom
-            (SystemArrow.comp g (C.toUnion 0 C.hlim.1))
-            (P.scheme.comp g (C.toUnion 0 C.hlim.1) hg (C.toUnion_arrow 0 C.hlim.1))
-            p) := by
+            IsTiedFree
+              (SystemArrow.comp g (C.le C.hlim.1 hi (bot_le : (0 : Ordinal.{u}) ≤ i)))
+              ((p.restrict (C.toUnion i hi) (C.toUnion_arrow i hi)).restrict
+                (SystemArrow.comp g (C.le C.hlim.1 hi (bot_le : (0 : Ordinal.{u}) ≤ i)))
+                (P.scheme.comp g (C.le C.hlim.1 hi (bot_le : (0 : Ordinal.{u}) ≤ i)) hg
+                  (C.le_arrow C.hlim.1 hi (bot_le : (0 : Ordinal.{u}) ≤ i))))
+              (p.restrict (C.toUnion i hi) (C.toUnion_arrow i hi)) (Equiv.refl _)) →
+          IsTiedFree (SystemArrow.comp g (C.toUnion 0 C.hlim.1))
+            (p.restrict (SystemArrow.comp g (C.toUnion 0 C.hlim.1))
+              (P.scheme.comp g (C.toUnion 0 C.hlim.1) hg (C.toUnion_arrow 0 C.hlim.1)))
+            p (Equiv.refl _)) := by
   refine ⟨infra_78_tailSet P σ, infra_78_tail P σ hσ, ?_⟩
   intro μ hμ C p hqν hFin hidx
   have hμel : μ ∈ P.eligible := hμ.1.1
   have hrec : μ ∈ recursionClosedLevels P σ := hμ.1
   have hσSucc : Order.succ σ ≤ μ := hμ.2
   have hcof : #p.idx < C.δ.cof := infra_78_finite_lt_cof C hFin
-  refine ⟨infra_613_local P σ hσ hμel hrec hσSucc C p hqν hidx hcof, ?_⟩
+  refine ⟨infra_78_tied_local P σ hσ hμel hrec hσSucc C p hqν hidx hcof, ?_⟩
   intro X g hg hAll
-  exact infra_613_continuity P σ hσ hμel hrec hσSucc C p hqν hidx hcof X g hg hAll
+  exact infra_78_tied_continuity P σ hσ hμel hrec hσSucc C p hqν hidx hcof X g hg hAll
 
 end
 end AEC
