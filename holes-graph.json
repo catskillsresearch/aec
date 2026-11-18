@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-18 11:08",
+  "updated": "2026-11-18 11:11",
   "sorryCount": 44,
   "legend": {
     "open": "No unfinished required proof-deps — try next",
@@ -2410,9 +2410,36 @@
       "label": "Prop 7.8: interleaved rho^+ recursion of pairs and bookkeeping sets",
       "section": 7,
       "file": "AEC/Section7/MixedDescent.lean",
+      "status": "blocked",
+      "blocker": "infra_78_recursion_plumbing",
+      "detail": "Blocked (full claim kept; split cycle 48 into infra_78_recursion_succ_stage (DONE), infra_78_recursion_plumbing (open), infra_78_recursion_outputs (blocked on plumbing)). Blocked on infra_78_matrix_limit_step (split cycle 44: infra_78_chain_union_kappa DONE, infra_78_limit_pair DONE cycle 45, infra_78_limit_invariant5 DONE cycle 46, limit step itself open (assembly); infra_78_matrix_successor_step DONE cycle 43; non-failing stages take the identity step). Transfinite recursion over (succ rho).ord.ToType with state (pair X_i <= Y_i, bookkeeping set R_i subset X_i + Y_i): successor stages close the image of R_i (plus seeds Ip, b) by infra_78_bookkeeping_stage_local and extend by infra_78_matrix_successor_step on a failing list chosen from the S-part of R_i (if any); limit stages take infra_78_matrix_limit_step and the union of earlier images. Outputs: an Infra78Matrix with Infra78Matrix.CompLaw and Infra78Matrix.ContAtLimits, invariant (5) at every stage, R forward-closed, continuous at limits and with requirement-1/2 supply at non-limit stages (so infra_78_bookkeeping_req1_high_cof / req2_high_cof apply to the completed (M, R)), and the failing-list property at every stage. This node carries the interleaving caveat: R_i is chosen inside the recursion from the current pair only. Outputs also include Infra78Matrix.IdLaw (identity at each stage; at limits set stepX/stepY (le_refl delta) := refl); limit stages need rho^+ < kappa (paper's hypothesis). Interface note (cycle 47): the successor step states (5) on q.marginal e (host Y_i, inclusion pair_i, values of b), which is the limit step's infra_78_markTuple (pair_i) b_i; non-failing successor stages take the identity step."
+    },
+    {
+      "id": "infra_78_recursion_succ_stage",
+      "label": "Prop 7.8 recursion: successor stage in pair form (identity or nonfree extension)",
+      "section": 7,
+      "file": "AEC/Section7/MatrixRecursion.lean",
+      "status": "done",
+      "blocker": null,
+      "detail": "DONE (grokbot cycle 48, sorry-free: AEC/Section7/MatrixRecursion.lean, infra_78_recursion_succ_stage). At a level mu of the Prop 7.3 tail: from a pair X -> Y, base g0 : X_0 -> X, mark b in Y with invariant (5) (IsTiedFree g0 on infra_78_markTuple pair b) and a family of candidate lists d_l in Y with |b| + |d_l| <= sigma, produce X', Y' at level mu, stepX, stepY, pair' with the commuting square stepX >> pair' = pair >> stepY, invariant (5) for the moved mark at X' along g0 >> stepX, and either every candidate is isolated relative to b (identity step) or some candidate d_l is failing and tp(b, d_l / X') is not tied free over X (nonfree extension). Pair-form restatement of infra_78_matrix_successor_step's construction (infra_78_nonfree_extension_tied + infra_78_same_level_type_amalgam + host transfer + infra_78_tiedFree_trans), with all objects at the fixed level so it can be iterated."
+    },
+    {
+      "id": "infra_78_recursion_plumbing",
+      "label": "Prop 7.8 recursion: transfinite plumbing over rho^+ (coherent partial matrices)",
+      "section": 7,
+      "file": "AEC/Section7/MatrixRecursion.lean",
       "status": "open",
       "blocker": null,
-      "detail": "Open (cycle 47: all sub-steps done: infra_78_bookkeeping_stage_local, infra_78_matrix_successor_step, infra_78_matrix_limit_step). Blocked on infra_78_matrix_limit_step (split cycle 44: infra_78_chain_union_kappa DONE, infra_78_limit_pair DONE cycle 45, infra_78_limit_invariant5 DONE cycle 46, limit step itself open (assembly); infra_78_matrix_successor_step DONE cycle 43; non-failing stages take the identity step). Transfinite recursion over (succ rho).ord.ToType with state (pair X_i <= Y_i, bookkeeping set R_i subset X_i + Y_i): successor stages close the image of R_i (plus seeds Ip, b) by infra_78_bookkeeping_stage_local and extend by infra_78_matrix_successor_step on a failing list chosen from the S-part of R_i (if any); limit stages take infra_78_matrix_limit_step and the union of earlier images. Outputs: an Infra78Matrix with Infra78Matrix.CompLaw and Infra78Matrix.ContAtLimits, invariant (5) at every stage, R forward-closed, continuous at limits and with requirement-1/2 supply at non-limit stages (so infra_78_bookkeeping_req1_high_cof / req2_high_cof apply to the completed (M, R)), and the failing-list property at every stage. This node carries the interleaving caveat: R_i is chosen inside the recursion from the current pair only. Outputs also include Infra78Matrix.IdLaw (identity at each stage; at limits set stepX/stepY (le_refl delta) := refl); limit stages need rho^+ < kappa (paper's hypothesis). Interface note (cycle 47): the successor step states (5) on q.marginal e (host Y_i, inclusion pair_i, values of b), which is the limit step's infra_78_markTuple (pair_i) b_i; non-failing successor stages take the identity step."
+      "detail": "Open (board-only). Transfinite recursion over (succ rho).ord.ToType building coherent partial matrices on Iic alpha: state = pairs X_j -> Y_j, steps with identity + composition laws and commuting squares, base arrows g_j : X_b -> X_j, the moved mark b_j, bookkeeping sets R_j subset X_j + Y_j (|R_j| <= rho). Successor: close the image of R_alpha (plus seeds I_p, b) with infra_78_pair_bookkeeping_close and apply infra_78_recursion_succ_stage with the candidate lists of length <= lambda from the S-part of R_alpha (interleaving: R_alpha depends only on the current pair). Limit: infra_78_matrix_limit_step (needs rho^+ < kappa, |b| < cf delta: finite mark) and the union of earlier images of R. Coherence: later partial matrices extend earlier ones (stage data unchanged), so the union of the recursion is a total Infra78Matrix with per-stage records. Main technical issue: dependent types of the steps under extension (casts along object equalities)."
+    },
+    {
+      "id": "infra_78_recursion_outputs",
+      "label": "Prop 7.8 recursion: verification of the required outputs",
+      "section": 7,
+      "file": "AEC/Section7/MatrixRecursion.lean",
+      "status": "blocked",
+      "blocker": "infra_78_recursion_plumbing",
+      "detail": "Blocked on infra_78_recursion_plumbing. From the per-stage records of the recursion: Infra78Matrix.CompLaw, Infra78Matrix.IdLaw, Infra78Matrix.ContAtLimits, invariant (5) at every stage, R forward-closed and continuous at limits with requirement-1/2 supply at non-limit stages (so infra_78_bookkeeping_req1_high_cof / req2_high_cof apply), the failing-list property at every stage (a failing list from S_i gets a nonfree extension at i+1), and the interleaving (R_i chosen from the pair at stage i only)."
     }
   ],
   "edges": [
@@ -4637,8 +4664,48 @@
       "from": "infra_78_def77_bounded_marks",
       "to": "proposition_7_8",
       "kind": "soft"
+    },
+    {
+      "from": "infra_78_nonfree_extension_tied",
+      "to": "infra_78_recursion_succ_stage",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_78_same_level_type_amalgam",
+      "to": "infra_78_recursion_succ_stage",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_78_recursion_succ_stage",
+      "to": "infra_78_recursion_plumbing",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_78_matrix_limit_step",
+      "to": "infra_78_recursion_plumbing",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_78_bookkeeping_stage_local",
+      "to": "infra_78_recursion_plumbing",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_78_recursion_plumbing",
+      "to": "infra_78_recursion_outputs",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_78_recursion_plumbing",
+      "to": "infra_78_matrix_recursion",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_78_recursion_outputs",
+      "to": "infra_78_matrix_recursion",
+      "kind": "hard"
     }
   ],
-  "doneCount": 203,
+  "doneCount": 204,
   "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 43. Uncommitted in /tmp/aec-grok."
 }
