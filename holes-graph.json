@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-18 12:49",
+  "updated": "2026-11-18 12:57",
   "sorryCount": 44,
   "legend": {
     "open": "No unfinished required proof-deps — try next",
@@ -2264,10 +2264,10 @@
       "id": "infra_78_isolation_transfer",
       "label": "Prop 7.8: Lemma 7.6 transfer and A ~ X transport",
       "section": 7,
-      "file": "AEC/Section7/MixedDescent.lean",
-      "status": "open",
-      "blocker": null,
-      "detail": "Open (unblocked grokbot cycle 59: infra_78_theta_shrink done). Mixed Lemma 7.6 (infra_78_lemma_7_6_mixed) gives isolation over A; bounded homogeneity gives A ~ X at level lambda; transport U and b to the required extension of the given X (the proposition_7_8 conclusion)."
+      "file": "AEC/Section7/IsolationTransfer.lean",
+      "status": "blocked",
+      "blocker": "infra_78_marginal_anchor, infra_78_iso_rename",
+      "detail": "Blocked (split grokbot cycle 61; full claim stays here = infra_78_isolation_over_A (done) + infra_78_anchor_iso (done) + infra_78_marginal_anchor (open) + infra_78_iso_rename (open)). Paper: Lemma 7.6 gives isolation over A; I_p still determines the marginal on b; bounded diagram homogeneity gives A ~ X carrying the anchors; transport of approximation evaluations carries tp(b/A) to p; renaming U along the isomorphism gives the asserted extension of the original X (the proposition_7_8 conclusion)."
     },
     {
       "id": "infra_78_mixed_ls_pair",
@@ -2583,7 +2583,43 @@
       "file": "AEC/Section7/ClosureLevel.lean",
       "status": "done",
       "blocker": null,
-      "detail": "DONE (grokbot cycle 60, sorry-free, standard axioms; AEC/Section7/ClosureLevel.lean). Paper check: Prop 7.8 says 'Let lambda be a sufficiently closed eligible level ... For every infinite theta < lambda ... The closure requirements at the output level are uniform functions of bounded arities; they do not require theta to have been fixed before the level was chosen.' The tail is existential and the closure is uniform over all bounded arities, so choosing a better-closed tail is faithful (no hypothesis added to proposition_7_8, conclusion unchanged; no audit finding). infra_78_closedTail P := eligible mu with mu in infra_73_tailSet P sigma for EVERY infinite sigma < mu, and mu a limit of eligible levels. infra_78_closedTail_tail: it is a Tail of P.eligible (omega-tower as infra_615_tail; recursion closure passes to the sup via monotonicity of the profile recursion in sigma/start/length: infra_615_pad_mono_arg, infra_69_pad_recursion_mono_start, infra_69_pad_recursion_mono -- checked; h bounded on [0,x] by a small supremum infra_78_hBound, no monotonicity of h assumed; next eligible level infra_78_nextElig inserted each step). infra_78_theta_shrink_closure_level: for mu in the tail and theta < mu there are eligible lambda and rho = 2^lambda with theta^+ <= lambda < mu, mu in infra_73_tailSet P lambda (so sigma := lambda), lambda < rho, rho^lambda = rho, rho^+ < mu: every level hypothesis of infra_78_theta_shrink. proposition_7_8's assembly should take T = infra_78_closedTail P."
+      "detail": "DONE (grokbot cycle 60, sorry-free, standard axioms; AEC/Section7/ClosureLevel.lean). Paper check: Prop 7.8 says 'Let lambda be a sufficiently closed eligible level ... For every infinite theta < lambda ... The closure requirements at the output level are uniform functions of bounded arities; they do not require theta to have been fixed before the level was chosen.' The tail is existential and the closure is uniform over all bounded arities, so choosing a better-closed tail is faithful (no hypothesis added to proposition_7_8, conclusion unchanged; no audit finding). infra_78_closedTail P := eligible mu with mu in infra_73_tailSet P sigma for EVERY infinite sigma < mu, and mu a limit of eligible levels. infra_78_closedTail_tail: it is a Tail of P.eligible (omega-tower as infra_615_tail; recursion closure passes to the sup via monotonicity of the profile recursion in sigma/start/length: infra_615_pad_mono_arg, infra_69_pad_recursion_mono_start, infra_69_pad_recursion_mono -- checked; h bounded on [0,x] by a small supremum infra_78_hBound, no monotonicity of h assumed; next eligible level infra_78_nextElig inserted each step). infra_78_theta_shrink_closure_level: for mu in the tail and theta < mu there are eligible lambda and rho = 2^lambda with theta^+ <= lambda < mu, mu in infra_73_tailSet P lambda (so sigma := lambda), lambda < rho, rho^lambda = rho, rho^+ < mu: every level hypothesis of infra_78_theta_shrink. proposition_7_8's assembly should take T = infra_78_closedTail P. CORRECTION (cycle 61): in the proposition_7_8 assembly the paper's lambda (the 7.8 level, where X lives) is the inner pair level ell of the matrix, and the matrix level (paper kappa) and rho are chosen AFTER theta ('Choose a much larger eligible level kappa and a cardinal rho such that lambda < rho = rho^lambda, rho^+ < kappa'), so lambda <= sigma is met by sigma := lambda with kappa chosen in the tail at sigma; the cycle-59 remark that a fixed tail forces lambda <= sigma to fail mis-identified the matrix level with the 7.8 level. infra_78_closedTail is still the right 7.8 tail: it supplies lambda in infra_73_tailSet P (infra_76_sigma2 sigma_d) for the Lemma 7.6 descent at every theta < lambda (infra_78_isolation_over_A)."
+    },
+    {
+      "id": "infra_78_isolation_over_A",
+      "label": "Prop 7.8: Lemma 7.6 at the shrink: tp(b,c/A) (in the level-lambda section U) isolated relative to b for every c in U, |c| <= theta",
+      "section": 7,
+      "file": "AEC/Section7/IsolationTransfer.lean",
+      "status": "done",
+      "blocker": null,
+      "detail": "DONE (grokbot cycle 61, sorry-free, standard axioms). infra_78_tiedFreeMixed_host_transfer (tied mixed freeness moves between hosts U -> Y_i linked by a permitted arrow over A; equivalence reindexing only; the sequence's test size is lowered to |iota| to keep it bounded at lambda), infra_78_isolation_over_shrink (generic: tied free q over A + q relatively isolated => the level-lambda tuple over A hosted in U relatively isolated, via infra_78_tied_descent_mixed), infra_78_isolation_over_A (matrix assembly: stage i from infra_78_isolated_stage, pair A <= U from infra_78_theta_shrink at that i, preimages bU of b in U, and for EVERY c : J -> U with |J| <= theta (repetitions allowed) IsRelativelyIsolated <lambda, U, gu, uIdx+J, (bU,c)> refl). Level hypotheses: matrix level mu closed at sigma >= lambda and at sigma_d >= theta; lambda in infra_73_tailSet P (infra_76_sigma2 sigma_d) -- all supplied when lambda and mu lie in infra_78_closedTail."
+    },
+    {
+      "id": "infra_78_anchor_iso",
+      "label": "Prop 7.8: bounded diagram homogeneity A ~ X carrying the anchors I_p",
+      "section": 7,
+      "file": "AEC/Section7/IsolationTransfer.lean",
+      "status": "done",
+      "blocker": null,
+      "detail": "DONE (grokbot cycle 61, sorry-free, standard axioms). infra_78_anchor_iso: two same-level objects X, A whose bounded anchor lists have the same image in a common object C (permitted arrows) are related by a structural isomorphism X -> A carrying one anchor list to the other (diagram_preserved + diagram_iso, the paper's 'bounded diagram homogeneity')."
+    },
+    {
+      "id": "infra_78_marginal_anchor",
+      "label": "Prop 7.8: I_p still determines the marginal; tp(b/A) carried to p by the anchor isomorphism",
+      "section": 7,
+      "file": "AEC/Section7/IsolationTransfer.lean",
+      "status": "open",
+      "blocker": null,
+      "detail": "Open (split grokbot cycle 61). Paper: 'I_p still determines the marginal on b: it did so at X_0, the matrix preserved its free lift [invariant (5)], and the same approximation answers hold on restriction to A. ... Transport of approximation evaluations carries tp(b/A) to p.' Needed: with I_p in the seed (hence in A), the anchor isomorphism phi : X ~ A of infra_78_anchor_iso (I_p to I_p), and invariant (5) at stage i, SameGaloisType of p (over X) and the tuple bU over X hosted in U along comp phi gu."
+    },
+    {
+      "id": "infra_78_iso_rename",
+      "label": "Prop 7.8: base change of relative isolation / Galois type along a structural isomorphism X ~ A (renaming U)",
+      "section": 7,
+      "file": "AEC/Section7/IsolationTransfer.lean",
+      "status": "open",
+      "blocker": null,
+      "detail": "Open (split grokbot cycle 61). For a structural isomorphism phi : X -> A at one level and a tuple t over A hosted in U, the tuple over X with inclusion comp phi t.incl is relatively isolated (resp. has the same Galois type) iff t is: transport parameters along phi^{-1}, compose inclusions. Gives the proposition_7_8 conclusion from infra_78_isolation_over_A + infra_78_marginal_anchor with f := comp phi gu : X -> U."
     }
   ],
   "edges": [
@@ -5053,8 +5089,48 @@
       "from": "infra_78_theta_shrink_closure_level",
       "to": "infra_78_mixed_level_isolation",
       "kind": "hard"
+    },
+    {
+      "from": "infra_78_theta_shrink",
+      "to": "infra_78_isolation_over_A",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_78_isolated_stage",
+      "to": "infra_78_isolation_over_A",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_78_lemma_7_6_mixed",
+      "to": "infra_78_isolation_over_A",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_78_isolation_over_A",
+      "to": "infra_78_isolation_transfer",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_78_anchor_iso",
+      "to": "infra_78_isolation_transfer",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_78_marginal_anchor",
+      "to": "infra_78_isolation_transfer",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_78_iso_rename",
+      "to": "infra_78_isolation_transfer",
+      "kind": "hard"
+    },
+    {
+      "from": "infra_78_anchor_iso",
+      "to": "infra_78_marginal_anchor",
+      "kind": "hard"
     }
   ],
-  "doneCount": 226,
+  "doneCount": 228,
   "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 43. Uncommitted in /tmp/aec-grok."
 }
