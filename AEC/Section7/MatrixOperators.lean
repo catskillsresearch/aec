@@ -28,8 +28,9 @@ Cycle 52 (`infra_78_cand_coverage`): the candidate lists `infra_78_candS` are al
 `infra_78_opMatrix_failing_list` is the failing-list/coverage property consumed by the stationary
 contradiction (`infra_78_isolated_stage`): at each stage with (5), either every `S`-list is
 isolated relative to `b`, or a failing `S`-list gets a nonfree extension at the next stage.
-The concrete bookkeeping update `Rnext` (`infra_78_pair_bookkeeping_close`) is tracked as
-`infra_78_rnext_closure`.
+The concrete bookkeeping update `Rnext` (`infra_78_pair_bookkeeping_close`, taken for the *new*
+pair, so `Rnext` sees the new stage's `X`, `Y`, `p`) is `infra_78_rcl` in
+`AEC.Section7.RnextClosure` (cycle 53, `infra_78_rnext_closure`).
 -/
 
 universe u
@@ -86,17 +87,19 @@ def infra_78_StageDich {cIdx L : Type u} (s t : Infra78Stage P hκ (Infra78MarkD
 base moved along the step, bookkeeping set given by `Rnext`, invariant (5) at the new stage, and
 the successor dichotomy for the candidate lists `d`. -/
 def infra_78_SuccSpec {cIdx L : Type u} (Xb : P.scheme.Object κ hκ)
-    (Rnext : Infra78Stage P hκ (Infra78MarkData κ uIdx) → Infra78Step κ →
+    (Rnext : Infra78Stage P hκ (Infra78MarkData κ uIdx) → P.scheme.Object κ hκ →
+      P.scheme.Object κ hκ → (κ.ord.ToType → κ.ord.ToType) → Infra78Step κ →
       Set (κ.ord.ToType ⊕ κ.ord.ToType))
     (d : L → cIdx → κ.ord.ToType) (s : Infra78Stage P hκ (Infra78MarkData κ uIdx))
     (out : Infra78Stage P hκ (Infra78MarkData κ uIdx) × Infra78Step κ) : Prop :=
   ∃ (hX : infra_78_IsArr s.X out.1.X out.2.1) (_ : infra_78_IsArr s.Y out.1.Y out.2.2),
     out.1.p ∘ out.2.1 = out.2.2 ∘ s.p ∧ out.1.e.g = out.2.1 ∘ s.e.g ∧
-    out.1.e.b = out.2.2 ∘ s.e.b ∧ out.1.e.R = Rnext s out.2 ∧
+    out.1.e.b = out.2.2 ∘ s.e.b ∧ out.1.e.R = Rnext s out.1.X out.1.Y out.1.p out.2 ∧
     infra_78_StageInv5 Xb out.1 ∧ infra_78_StageDich s out.1 (infra_78_toArr hX) out.2.2 d
 
 theorem infra_78_succSpec_stageArr {cIdx L : Type u} {Xb : P.scheme.Object κ hκ}
-    {Rnext : Infra78Stage P hκ (Infra78MarkData κ uIdx) → Infra78Step κ →
+    {Rnext : Infra78Stage P hκ (Infra78MarkData κ uIdx) → P.scheme.Object κ hκ →
+      P.scheme.Object κ hκ → (κ.ord.ToType → κ.ord.ToType) → Infra78Step κ →
       Set (κ.ord.ToType ⊕ κ.ord.ToType)}
     {d : L → cIdx → κ.ord.ToType} {s : Infra78Stage P hκ (Infra78MarkData κ uIdx)}
     {out : Infra78Stage P hκ (Infra78MarkData κ uIdx) × Infra78Step κ}
@@ -109,7 +112,8 @@ open Classical in
 `infra_78_SuccSpec` for the candidate lists `cand β s` (chosen), or the identity step if none
 exists (never used once invariant (5) is propagated). -/
 noncomputable def infra_78_succOp {ι cIdx L : Type u} (Xb : P.scheme.Object κ hκ)
-    (Rnext : Infra78Stage P hκ (Infra78MarkData κ uIdx) → Infra78Step κ →
+    (Rnext : Infra78Stage P hκ (Infra78MarkData κ uIdx) → P.scheme.Object κ hκ →
+      P.scheme.Object κ hκ → (κ.ord.ToType → κ.ord.ToType) → Infra78Step κ →
       Set (κ.ord.ToType ⊕ κ.ord.ToType))
     (cand : ι → Infra78Stage P hκ (Infra78MarkData κ uIdx) → L → cIdx → κ.ord.ToType)
     (β : ι) (s : Infra78Stage P hκ (Infra78MarkData κ uIdx)) :
@@ -118,7 +122,8 @@ noncomputable def infra_78_succOp {ι cIdx L : Type u} (Xb : P.scheme.Object κ 
   else (s, infra_78_stepId)
 
 theorem infra_78_succOp_spec {ι cIdx L : Type u} (Xb : P.scheme.Object κ hκ)
-    (Rnext : Infra78Stage P hκ (Infra78MarkData κ uIdx) → Infra78Step κ →
+    (Rnext : Infra78Stage P hκ (Infra78MarkData κ uIdx) → P.scheme.Object κ hκ →
+      P.scheme.Object κ hκ → (κ.ord.ToType → κ.ord.ToType) → Infra78Step κ →
       Set (κ.ord.ToType ⊕ κ.ord.ToType))
     (cand : ι → Infra78Stage P hκ (Infra78MarkData κ uIdx) → L → cIdx → κ.ord.ToType)
     (β : ι) (s : Infra78Stage P hκ (Infra78MarkData κ uIdx))
@@ -131,7 +136,8 @@ theorem infra_78_succOp_spec {ι cIdx L : Type u} (Xb : P.scheme.Object κ hκ)
 /-- The concrete successor operator always produces stage arrows (the `hsop` input of
 `infra_78_pairMatrix`). -/
 theorem infra_78_succOp_stageArr {ι cIdx L : Type u} (Xb : P.scheme.Object κ hκ)
-    (Rnext : Infra78Stage P hκ (Infra78MarkData κ uIdx) → Infra78Step κ →
+    (Rnext : Infra78Stage P hκ (Infra78MarkData κ uIdx) → P.scheme.Object κ hκ →
+      P.scheme.Object κ hκ → (κ.ord.ToType → κ.ord.ToType) → Infra78Step κ →
       Set (κ.ord.ToType ⊕ κ.ord.ToType))
     (cand : ι → Infra78Stage P hκ (Infra78MarkData κ uIdx) → L → cIdx → κ.ord.ToType)
     (β : ι) (s : Infra78Stage P hκ (Infra78MarkData κ uIdx)) :
@@ -171,6 +177,8 @@ invariant (5), for any candidate lists `d` with `|b| + |d_l| ≤ σ` and any boo
 theorem infra_78_succSpec_exists {cIdx L : Type u}
     (Xb : P.scheme.Object μ (Tail.mem (infra_73_tail P σ hσ) hμT))
     (Rnext : Infra78Stage P (Tail.mem (infra_73_tail P σ hσ) hμT) (Infra78MarkData μ uIdx) →
+      P.scheme.Object μ (Tail.mem (infra_73_tail P σ hσ) hμT) →
+      P.scheme.Object μ (Tail.mem (infra_73_tail P σ hσ) hμT) → (μ.ord.ToType → μ.ord.ToType) →
       Infra78Step μ → Set (μ.ord.ToType ⊕ μ.ord.ToType))
     (d : L → cIdx → μ.ord.ToType) (hidx : #(uIdx ⊕ cIdx) ≤ σ)
     (s : Infra78Stage P (Tail.mem (infra_73_tail P σ hσ) hμT) (Infra78MarkData μ uIdx))
@@ -182,7 +190,7 @@ theorem infra_78_succSpec_exists {cIdx L : Type u}
   let st : Infra78Step μ := (infra_78_plain stX, infra_78_plain stY)
   let t : Infra78Stage P (Tail.mem (infra_73_tail P σ hσ) hμT) (Infra78MarkData μ uIdx) :=
     ⟨X', Y', infra_78_plain pr', infra_78_isArr_plain pr',
-      ⟨infra_78_plain stX ∘ s.e.g, infra_78_plain stY ∘ s.e.b, Rnext s st⟩⟩
+      ⟨infra_78_plain stX ∘ s.e.g, infra_78_plain stY ∘ s.e.b, Rnext s X' Y' (infra_78_plain pr') st⟩⟩
   have hpr : infra_78_toArr t.hp = pr' := infra_78_toArr_plain pr'
   have hstX : infra_78_toArr (infra_78_isArr_plain stX) = stX := infra_78_toArr_plain stX
   refine ⟨(t, st), infra_78_isArr_plain stX, infra_78_isArr_plain stY, ?_, rfl, rfl, rfl, ?_, ?_⟩
@@ -215,6 +223,8 @@ theorem infra_78_succSpec_exists {cIdx L : Type u}
 theorem infra_78_succOp_spec_of_inv5 {ι cIdx L : Type u}
     (Xb : P.scheme.Object μ (Tail.mem (infra_73_tail P σ hσ) hμT))
     (Rnext : Infra78Stage P (Tail.mem (infra_73_tail P σ hσ) hμT) (Infra78MarkData μ uIdx) →
+      P.scheme.Object μ (Tail.mem (infra_73_tail P σ hσ) hμT) →
+      P.scheme.Object μ (Tail.mem (infra_73_tail P σ hσ) hμT) → (μ.ord.ToType → μ.ord.ToType) →
       Infra78Step μ → Set (μ.ord.ToType ⊕ μ.ord.ToType))
     (cand : ι → Infra78Stage P (Tail.mem (infra_73_tail P σ hσ) hμT) (Infra78MarkData μ uIdx) →
       L → cIdx → μ.ord.ToType) (hidx : #(uIdx ⊕ cIdx) ≤ σ) (β : ι)
@@ -230,6 +240,8 @@ if stage `β` has invariant (5) and `β ⋖ k`, then stage `k` is the specified 
 theorem infra_78_opMatrix_succ {ρ : Cardinal.{u}} (hρκ : Order.succ ρ < μ) {cIdx L : Type u}
     (Xb : P.scheme.Object μ (Tail.mem (infra_73_tail P σ hσ) hμT))
     (Rnext : Infra78Stage P (Tail.mem (infra_73_tail P σ hσ) hμT) (Infra78MarkData μ uIdx) →
+      P.scheme.Object μ (Tail.mem (infra_73_tail P σ hσ) hμT) →
+      P.scheme.Object μ (Tail.mem (infra_73_tail P σ hσ) hμT) → (μ.ord.ToType → μ.ord.ToType) →
       Infra78Step μ → Set (μ.ord.ToType ⊕ μ.ord.ToType))
     (cand : (Order.succ ρ).ord.ToType →
       Infra78Stage P (Tail.mem (infra_73_tail P σ hσ) hμT) (Infra78MarkData μ uIdx) →
@@ -256,7 +268,8 @@ end SuccExists
 section Coherence
 variable {P : SingleModelData K} {ρ κ : Cardinal.{u}} {hκ : κ ∈ P.eligible} {uIdx cIdx L : Type u}
 variable (hρκ : Order.succ ρ < κ) (Xb : P.scheme.Object κ hκ)
-  (Rnext : Infra78Stage P hκ (Infra78MarkData κ uIdx) → Infra78Step κ →
+  (Rnext : Infra78Stage P hκ (Infra78MarkData κ uIdx) → P.scheme.Object κ hκ →
+      P.scheme.Object κ hκ → (κ.ord.ToType → κ.ord.ToType) → Infra78Step κ →
     Set (κ.ord.ToType ⊕ κ.ord.ToType))
   (cand : (Order.succ ρ).ord.ToType → Infra78Stage P hκ (Infra78MarkData κ uIdx) →
     L → cIdx → κ.ord.ToType)
@@ -405,6 +418,8 @@ next stage `k` (`β ⋖ k`). -/
 theorem infra_78_opMatrix_failing_list {ρ : Cardinal.{u}} (hρκ : Order.succ ρ < μ) {cIdx : Type u}
     (Xb : P.scheme.Object μ (Tail.mem (infra_73_tail P σ hσ) hμT))
     (Rnext : Infra78Stage P (Tail.mem (infra_73_tail P σ hσ) hμT) (Infra78MarkData μ uIdx) →
+      P.scheme.Object μ (Tail.mem (infra_73_tail P σ hσ) hμT) →
+      P.scheme.Object μ (Tail.mem (infra_73_tail P σ hσ) hμT) → (μ.ord.ToType → μ.ord.ToType) →
       Infra78Step μ → Set (μ.ord.ToType ⊕ μ.ord.ToType))
     (hidx : #(uIdx ⊕ cIdx) ≤ σ)
     (s0 : Infra78Stage P (Tail.mem (infra_73_tail P σ hσ) hμT) (Infra78MarkData μ uIdx))

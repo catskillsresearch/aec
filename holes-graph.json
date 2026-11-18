@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-18 11:33",
+  "updated": "2026-11-18 11:43",
   "sorryCount": 44,
   "legend": {
     "open": "No unfinished required proof-deps — try next",
@@ -2428,9 +2428,9 @@
       "label": "Prop 7.8 recursion: transfinite plumbing over rho^+ (coherent partial matrices)",
       "section": 7,
       "file": "AEC/Section7/MatrixRecursion.lean",
-      "status": "blocked",
-      "blocker": "infra_78_engine_matrix_instantiate",
-      "detail": "Blocked (full claim kept; split grokbot cycle 49 into infra_78_coherent_chain_engine (DONE, AEC/Section7/ChainEngine.lean) and infra_78_engine_matrix_instantiate (blocked; split cycle 50: infra_78_pair_chain_matrix DONE, infra_78_matrix_operators open)). Open (board-only). Transfinite recursion over (succ rho).ord.ToType building coherent partial matrices on Iic alpha: state = pairs X_j -> Y_j, steps with identity + composition laws and commuting squares, base arrows g_j : X_b -> X_j, the moved mark b_j, bookkeeping sets R_j subset X_j + Y_j (|R_j| <= rho). Successor: close the image of R_alpha (plus seeds I_p, b) with infra_78_pair_bookkeeping_close and apply infra_78_recursion_succ_stage with the candidate lists of length <= lambda from the S-part of R_alpha (interleaving: R_alpha depends only on the current pair). Limit: infra_78_matrix_limit_step (needs rho^+ < kappa, |b| < cf delta: finite mark) and the union of earlier images of R. Coherence: later partial matrices extend earlier ones (stage data unchanged), so the union of the recursion is a total Infra78Matrix with per-stage records. Main technical issue: dependent types of the steps under extension (casts along object equalities)."
+      "status": "done",
+      "blocker": null,
+      "detail": "DONE (grokbot cycle 53): both parts done: infra_78_coherent_chain_engine (cycle 49) and infra_78_engine_matrix_instantiate (cycles 50-53). The transfinite recursion over (succ rho).ord.ToType is cast-free on the fixed carrier: infra_78_rcMatrix (total Infra78Matrix) with per-stage records infra_78_rcObj / infra_78_rcMap (pair, base g, mark b, bookkeeping R), successor = infra_78_recursion_succ_stage + closure for the new pair, limit = cocone (infra_78_limSpec_exists) + union of images of R. Remaining verification (invariant (5) at every stage, seed choice) is infra_78_recursion_outputs."
     },
     {
       "id": "infra_78_coherent_chain_engine",
@@ -2446,9 +2446,9 @@
       "label": "Prop 7.8 recursion: instantiate the chain engine for the rho^+ matrix",
       "section": 7,
       "file": "AEC/Section7/MatrixEngine.lean",
-      "status": "blocked",
-      "blocker": "infra_78_matrix_operators",
-      "detail": "Blocked (full claim kept; split grokbot cycle 50 into infra_78_pair_chain_matrix (DONE, AEC/Section7/MatrixEngine.lean) and infra_78_matrix_operators (blocked; split cycle 51: infra_78_matrix_mark_ops DONE, infra_78_matrix_bookkeeping_ops open)). Fixed-carrier premise verified, not assumed: P.scheme.Object kappa hk is definitionally SMObject K kappa (structures on kappa.ord.ToType), checked by rfl in infra_78_carrier_fixed; all successor/limit outputs are objects of P.scheme at level kappa. Open. Instantiate infra_78_coherent_chain_engine over iota = (succ rho).ord.ToType with S = (X_i, Y_i : SMObject at level kappa on the fixed carrier kappa.ord.ToType, raw pair function, mark data, bookkeeping set R_i) and M = raw carrier maps (stepX, stepY) with Arr = 'both are strong embeddings (SystemArrow onVertex) and the square with the pair commutes'; sop from infra_78_recursion_succ_stage (+ infra_78_bookkeeping_stage_local closing R and choosing the failing candidate list from its S-part), lop from infra_78_matrix_limit_step (rho^+ < kappa, finite mark) + union of earlier images of R. Then repackage as an Infra78Matrix (stepX/stepY recovered from raw maps by SystemArrow.ext; identity and composition laws from the engine) with per-stage records for infra_78_recursion_outputs. Full plumbing claim stays tracked on infra_78_recursion_plumbing."
+      "status": "done",
+      "blocker": null,
+      "detail": "DONE (grokbot cycle 53): both parts done: infra_78_pair_chain_matrix (cycle 50; fixed carrier by rfl, plain-map/arrow conversion, infra_78_pairMatrix with IdLaw/CompLaw/ContAtLimits) and infra_78_matrix_operators (cycles 51-53). Instance: infra_78_rcMatrix (AEC/Section7/RnextClosure.lean) = infra_78_pairMatrix with the concrete operators; per-stage records infra_78_rcObj / infra_78_rcMap."
     },
     {
       "id": "infra_78_pair_chain_matrix",
@@ -2464,9 +2464,9 @@
       "label": "Prop 7.8 recursion: concrete successor/limit operators for the pair-chain engine",
       "section": 7,
       "file": "AEC/Section7/MatrixOperators.lean",
-      "status": "blocked",
-      "blocker": "infra_78_matrix_bookkeeping_ops",
-      "detail": "Blocked (full claim kept; split grokbot cycle 51 into infra_78_matrix_mark_ops (DONE, AEC/Section7/MatrixOperators.lean) and infra_78_matrix_bookkeeping_ops (blocked; split cycle 52: infra_78_cand_coverage DONE, infra_78_rnext_closure open)). Open. Define the concrete operators for infra_78_pairMatrix: extra stage data e carries, as plain non-dependent data on the fixed carrier, the mark b (uIdx -> kappa.ord.ToType in Y), the base map g (X_b -> X carrier) and the bookkeeping set R (subset of carrier + carrier); sop beta s = the identity step or the nonfree extension of infra_78_recursion_succ_stage on a failing candidate list chosen from the S-part of R after closing it by infra_78_bookkeeping_stage_local (classical choice with identity fallback), moving b, g, R along the step; limE = union of the earlier images of R (mark/base moved along the cocone). Prove hsop (stage-arrow validity) and the mark/base coherence with the chain maps, so that infra_78_recursion_outputs can verify invariant (5) (successor: recursion_succ_stage; limit: infra_78_matrix_limit_step), bookkeeping supply and the failing-list property."
+      "status": "done",
+      "blocker": null,
+      "detail": "DONE (grokbot cycle 53): both parts done: infra_78_matrix_mark_ops (cycle 51; infra_78_succOp, hsop, (5) at successors, limit mark data, mark/base coherence) and infra_78_matrix_bookkeeping_ops (cycles 52-53; infra_78_candS, infra_78_rcl, infra_78_rnext_closure). Concrete operators: sop = infra_78_succOp Xb (infra_78_rcl rho hlel) (infra_78_candS cIdx), limE = infra_78_limMarkE e0, seed = infra_78_seedStage."
     },
     {
       "id": "infra_78_matrix_mark_ops",
@@ -2482,9 +2482,9 @@
       "label": "Prop 7.8 recursion: concrete bookkeeping update Rnext and candidate-list selection cand",
       "section": 7,
       "file": "AEC/Section7/MatrixOperators.lean",
-      "status": "blocked",
-      "blocker": "infra_78_rnext_closure",
-      "detail": "Blocked (full claim kept; split grokbot cycle 52 into infra_78_cand_coverage (DONE) and infra_78_rnext_closure (open)). Paper check (Section7/text.md, Prop 7.8 proof): the extension at a stage i with cf(i) > lambda is applied to SOME failing list of length <= lambda from S_i; the contradiction needs (a) the chosen d_i lies in S_i (so continuity + |d_i| <= lambda < cf(i) puts it in an earlier S_j, infra_78_bounded_in_earlier_stage), (b) at most rho^lambda = rho lists per S_j (infra_78_stationary_fixed_list hcount), and (c) if NO list from S_i fails, stage i is the indicated isolated stage. No rho-enumeration/cofinal scheduling of lists is used by the paper: coverage is 'all lists from S_i are candidates at stage i', which is what infra_78_candS gives. Open. Define Rnext s step = image along the step of T'(s), where T'(s) is the stage-local closure (infra_78_pair_bookkeeping_close, chosen) of R_s plus the seeds I_p and b, and cand beta s = the length <= lambda candidate lists from the S-part of T'(s) (failing ones if any; classical choice), to be plugged into infra_78_succOp / infra_78_limMarkE. Prove |R_i| <= rho at every stage (successor: closure bound; limit: union of < rho^+ sets of size <= rho, rho^+ regular... note: at limits below rho^+ the union has size <= rho since the index set has size <= rho), R forward-closed along the chain steps, R continuous at limits (by infra_78_limMarkE), and the requirement-1/2 supply at non-limit stages, so infra_78_recursion_outputs can apply infra_78_bookkeeping_req1_high_cof / req2_high_cof and the failing-list property."
+      "status": "done",
+      "blocker": null,
+      "detail": "DONE (grokbot cycle 53): both parts done: infra_78_cand_coverage (cycle 52; candidates = all lists from S_i, list count, failing-list/coverage property) and infra_78_rnext_closure (cycle 53; concrete Rnext = infra_78_rcl, closure for the new pair, all bookkeeping outputs incl. S_i nonempty). Paper check (Section7/text.md, Prop 7.8 proof): coverage 'all lists from S_i are candidates at stage i' (no enumeration)."
     },
     {
       "id": "infra_78_cand_coverage",
@@ -2500,18 +2500,18 @@
       "label": "Prop 7.8 recursion: concrete bookkeeping update Rnext (stage-local closure) and its properties",
       "section": 7,
       "file": "AEC/Section7/MatrixOperators.lean",
-      "status": "open",
+      "status": "done",
       "blocker": null,
-      "detail": "Open. Define Rnext s step = image along the step of T'(s), T'(s) = infra_78_pair_bookkeeping_close of R_s for the pair (toArr s.hp) (classical choice; fallback R_s if |R_s| > rho), with seeds I_p (in the X-part) and b and a point of Y_0 (in the S-part) placed in R_0 of the seed stage s0. Prove for the matrix built with infra_78_succOp Xb Rnext infra_78_candS and infra_78_limMarkE: |R_i| <= rho (successor: closure bound; limit: union over |Iio i| <= rho stages), R_i subset R_k pushed forward for i <= k, R continuous at limits (by infra_78_limMarkE), R_i X-part maps into S-part (pair closure), S_i nonempty, and the requirement-1/2 supply at successor stages in the form consumed by infra_78_bookkeeping_req1_high_cof / req2_high_cof."
+      "detail": "DONE (grokbot cycle 53, sorry-free, standard axioms; AEC/Section7/RnextClosure.lean). Design: requirement 2 at stage k concerns types over X_k, so the closure is taken for the NEW pair (paper: 'repeat these successor closures'); Rnext now sees the new stage's X, Y, p (signature generalized in MatrixOperators.lean). infra_78_PairClosed (size <= rho, pair closure, req1, req2 = conclusion of infra_78_pair_bookkeeping_close); infra_78_closeR (chosen closed superset, fallback T; _card, _subset, _spec); infra_78_rcl s X' Y' p' st = closeR X' Y' p' (image of R_s along st); infra_78_seedStage (R_0 = closeR seeds; _seeds, _card, _closed, _pair, _S_nonempty). Matrix with infra_78_succOp Xb infra_78_rcl cand / infra_78_limMarkE e0 (any cand): infra_78_rc_succ_cases, infra_78_rc_limit (continuity), infra_78_rc_card (|R_k| <= rho, limit via |Iio k| <= rho), infra_78_rc_forward (R_i pushed forward into R_k), infra_78_rc_pair (pair closure at all stages), infra_78_rc_S_nonempty (S_k nonempty from a Y-seed, forward from the least stage), infra_78_rc_supply (non-limit stages closed for their own pair, given (5) at all stages and a closed seed). infra_78_rnext_closure: sizes, forward closure and continuity in infra_78_bkStep form, pair closure, S_i nonempty, requirement 1 and 2 at every non-limit stage and every stage of cofinality > lambda (via infra_78_bookkeeping_req1_high_cof / req2_high_cof with pairMatrix CompLaw/ContAtLimits). Hypotheses (tracked): invariant (5) at every stage and the seed choice (|seeds| <= rho, seeds contain I_p, b and a Y-point) -> infra_78_recursion_outputs."
     },
     {
       "id": "infra_78_recursion_outputs",
       "label": "Prop 7.8 recursion: verification of the required outputs",
       "section": 7,
       "file": "AEC/Section7/MatrixRecursion.lean",
-      "status": "blocked",
-      "blocker": "infra_78_recursion_plumbing",
-      "detail": "Blocked on infra_78_recursion_plumbing. From the per-stage records of the recursion: Infra78Matrix.CompLaw, Infra78Matrix.IdLaw, Infra78Matrix.ContAtLimits, invariant (5) at every stage, R forward-closed and continuous at limits with requirement-1/2 supply at non-limit stages (so infra_78_bookkeeping_req1_high_cof / req2_high_cof apply), the failing-list property at every stage (a failing list from S_i gets a nonfree extension at i+1), and the interleaving (R_i chosen from the pair at stage i only). Cycle 52: the failing-list property is proved as infra_78_opMatrix_failing_list (given (5) at the stage); outputs must still supply (5) at every stage and S_i nonempty."
+      "status": "open",
+      "blocker": null,
+      "detail": "Open (unblocked grokbot cycle 53: infra_78_recursion_plumbing done). For the matrix infra_78_rcMatrix / infra_78_rcObj (AEC/Section7/RnextClosure.lean) built from a seed stage infra_78_seedStage (X_0 -> Y_0 with base g_0 and mark b_0; seeds with |seeds| <= rho containing I_p, b and a Y-point): prove invariant (5) at EVERY stage by induction (successor: infra_78_opMatrix_succ; limit: infra_78_matrix_limit_step / infra_78_limit_invariant5 with the mark/base coherence infra_78_opMatrix_coherent, rho^+ < kappa, finite mark |b| < cf delta), and at the seed stage. Then infra_78_rnext_closure gives the bookkeeping outputs (sizes, forward closure, continuity, pair closure, S_i nonempty, requirement 1/2 at non-limit and cofinality > lambda stages), infra_78_pairMatrix_idLaw / compLaw / contAtLimits the matrix laws, and infra_78_opMatrix_failing_list the failing-list property (needs (5) + S_beta nonempty, both then available). Interleaving: R_k depends only on the pair at stage k (infra_78_rcl)."
     }
   ],
   "edges": [
@@ -4901,8 +4901,13 @@
       "from": "infra_78_rnext_closure",
       "to": "infra_78_matrix_bookkeeping_ops",
       "kind": "hard"
+    },
+    {
+      "from": "infra_78_rnext_closure",
+      "to": "infra_78_recursion_outputs",
+      "kind": "hard"
     }
   ],
-  "doneCount": 208,
+  "doneCount": 213,
   "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 43. Uncommitted in /tmp/aec-grok."
 }
