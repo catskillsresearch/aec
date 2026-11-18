@@ -191,6 +191,7 @@ def infra_713_lift_statement (P : SingleModelData K) : Prop :=
       [WellFoundedLT L.δ], ProductIndependentTied L → #(Σ i, L.indexAt i) < μ →
         (∀ (B : P.scheme.Object μ hμ)
             (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ B))
+            (hf : P.scheme.permitted (X := X) (Y := B) f)
             (q : TupleOver K oneVertexShape P.scheme hμ B)
             (eq : L.whole.idx ≃ q.idx),
           IsTiedFree f L.whole q eq → q.ν = μ →
@@ -220,6 +221,7 @@ def infra_713_lift_pi_statement (P : SingleModelData K) : Prop :=
       [WellFoundedLT L.δ], ProductIndependentTied L → #(Σ i, L.indexAt i) < μ →
         ∀ (B : P.scheme.Object μ hμ)
             (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ B))
+            (hf : P.scheme.permitted (X := X) (Y := B) f)
             (q : TupleOver K oneVertexShape P.scheme hμ B)
             (eq : L.whole.idx ≃ q.idx),
           IsTiedFree f L.whole q eq → q.ν = μ →
@@ -241,6 +243,7 @@ def infra_713_lift_det_statement (P : SingleModelData K) : Prop :=
       [WellFoundedLT L.δ], ProductIndependentTied L → #(Σ i, L.indexAt i) < μ →
         ∀ (B : P.scheme.Object μ hμ)
             (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ B))
+            (hf : P.scheme.permitted (X := X) (Y := B) f)
             (q : TupleOver K oneVertexShape P.scheme hμ B)
             (eq : L.whole.idx ≃ q.idx),
           IsTiedFree f L.whole q eq → q.ν = μ →
@@ -254,8 +257,8 @@ def infra_713_lift_det_statement (P : SingleModelData K) : Prop :=
 /-- **Theorem 7.13 (1b) from its two halves (proved glue, cycle 91).** -/
 theorem infra_713_lift_of_parts (P : SingleModelData K) (h1 : infra_713_lift_pi_statement P)
     (h2 : infra_713_lift_det_statement P) : infra_713_lift_statement P :=
-  fun hμ hl X L _ _ _ hPI hS B f q eq hq hqν =>
-    ⟨h1 hμ hl X L hPI hS B f q eq hq hqν, h2 hμ hl X L hPI hS B f q eq hq hqν⟩
+  fun hμ hl X L _ _ _ hPI hS B f hf q eq hq hqν =>
+    ⟨h1 hμ hl X L hPI hS B f hf q eq hq hqν, h2 hμ hl X L hPI hS B f hf q eq hq hqν⟩
 
 /-- **Theorem 7.13 (2), level-wise (statement; open tip `infra_713_continuity`).** -/
 def infra_713_continuity_statement (P : SingleModelData K) : Prop :=
@@ -281,9 +284,91 @@ def infra_713_realize_statement (P : SingleModelData K) : Prop :=
             (∀ v, (g.onVertex v).comp (f.onVertex v) = (h.onVertex v).comp (L.incl.onVertex v)) ∧
             ∀ a, g.mapOcc (b a) = h.mapOcc (L.whole.val a))
 
-/-- **Theorem 7.13 (1b), product independence (open tip `infra_713_lift_pi`).** -/
-theorem infra_713_lift_pi (P : SingleModelData K) : infra_713_lift_pi_statement P := by
-  sorry
+/-- **Theorem 7.13 (1b), product independence, for a permitted base arrow (proved, cycle 92).**
+The level copy of the PI product of the selection (`infra_712_finiteProduct_toLevel`) is a level
+finite product with the selection's type; the projections of `q` are tied free lifts of the
+factors and of the selection (`infra_713_tiedFree_reindex`, transferred along the Galois
+identification by `infra_712u_tiedFree_base_sameGalois`), so `infra_713_finite_base_change`
+makes the projection of `q` the finite product of the factor projections. -/
+theorem infra_713_lift_pi_permitted (P : SingleModelData K) {μ : Cardinal.{u}}
+    (hμ : μ ∈ P.eligible) (hl : μ ∈ infra_712_levels P)
+    (X : P.scheme.Object μ hμ) (L : TupleList P.scheme hμ X) [LinearOrder L.δ] [L.FiniteEach]
+    (hPI : ProductIndependentTied L) (hS : #(Σ i, L.indexAt i) < μ)
+    (B : P.scheme.Object μ hμ)
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ B))
+    (hf : P.scheme.permitted (X := X) (Y := B) f)
+    (q : TupleOver K oneVertexShape P.scheme hμ B) (eq : L.whole.idx ≃ q.idx)
+    (hq : IsTiedFree f L.whole q eq) (hqν : q.ν = μ)
+    (n : ℕ) (ix : Fin n → L.δ) (hinj : Function.Injective ix) :
+    ∃ (joint : TupleOver K oneVertexShape P.scheme hμ B)
+      (E : (Σ s, ((q.reindex (fun a : L.indexAt (ix s) => eq ⟨ix s, a⟩))).idx) ≃ joint.idx),
+      IsFiniteProductTied n (fun s => q.reindex (fun a : L.indexAt (ix s) => eq ⟨ix s, a⟩))
+        joint E ∧
+      SameGaloisType
+        (q.reindex (fun p : Σ s : Fin n, L.indexAt (ix s) => eq ⟨ix p.1, p.2⟩)) joint E
+        (Equiv.refl _) := by
+  classical
+  obtain ⟨ht, hc, hw⟩ := hl
+  have hw0 : ℵ₀ ≤ infra_75_wide P ℵ₀ := le_self_add
+  have h0lt : ℵ₀ < μ := hw0.trans_lt hw
+  set σ : Cardinal.{u} := max ℵ₀ #(Σ i, L.indexAt i) with hσdef
+  have hσ : ℵ₀ ≤ σ := le_max_left _ _
+  have hσlt : σ < μ := max_lt h0lt hS
+  have hrec : μ ∈ recursionClosedLevels P σ := infra_712_recursionClosed_of_615 hc hσ hσlt
+  have hσμ : Order.succ σ ≤ μ := Order.succ_le_of_lt hσlt
+  have hwhole : #L.whole.idx ≤ σ := le_max_right _ _
+  have hfin : ∀ s, Finite (L.indexAt (ix s)) := fun s => L.finite_each _
+  have hb : ∀ s, (L.one (ix s)).ν = μ ∧ #(L.one (ix s)).idx ≤ σ := fun s =>
+    ⟨rfl, (Cardinal.lt_aleph0_of_finite (L.indexAt (ix s))).le.trans hσ⟩
+  -- tied free lifts of the factors and of the selection
+  have hTs : ∀ s, IsTiedFree f (L.one (ix s))
+      (q.reindex (fun a : L.indexAt (ix s) => eq ⟨ix s, a⟩)) (Equiv.refl _) := fun s =>
+    infra_713_tiedFree_reindex P σ hσ hμ hrec hσμ f hf L.whole rfl hwhole q eq hqν hq
+      (fun a : L.indexAt (ix s) => (⟨ix s, a⟩ : Σ i, L.indexAt i)) sigma_mk_injective
+  have hinjJ : Function.Injective
+      (fun p : Σ s : Fin n, L.indexAt (ix s) => (⟨ix p.1, p.2⟩ : Σ i, L.indexAt i)) := by
+    rintro ⟨s, a⟩ ⟨t, b⟩ h
+    simp only [Sigma.mk.inj_iff] at h
+    obtain ⟨h1, h2⟩ := h
+    obtain rfl := hinj h1
+    simp only [heq_eq_eq] at h2
+    subst h2; rfl
+  have hTJ : IsTiedFree f (L.subConcat n ix)
+      (q.reindex (fun p : Σ s : Fin n, L.indexAt (ix s) => eq ⟨ix p.1, p.2⟩)) (Equiv.refl _) :=
+    infra_713_tiedFree_reindex P σ hσ hμ hrec hσμ f hf L.whole rfl hwhole q eq hqν hq _ hinjJ
+  -- the level product over `X`
+  obtain ⟨joint0, E0, hF0, hS0⟩ := hPI n ix hinj
+  have hfS : Finite (Σ s : Fin n, L.indexAt (ix s)) := inferInstance
+  have hfJ0 : Finite joint0.idx := Finite.of_equiv (Σ s : Fin n, L.indexAt (ix s)) E0
+  obtain ⟨joint0', eJ0, r0, hJ0ν, hr0, hR0⟩ := infra_712_level_copy joint0 (infra_712_card_le_fin hμ)
+  have hQ1 := (infra_712_sameGalois_pull hr0 hR0 hS0.symm).symm
+  have hlev0 := infra_712_finiteProduct_toLevel n (fun s => L.one (ix s)) hfin joint0 E0 hF0
+    joint0' eJ0 r0 hr0 hR0
+  have hQ2 : SameGaloisType joint0' (L.subConcat n ix) (eJ0.trans E0.symm) (Equiv.refl _) := by
+    have h := infra_612_sameGalois_trans_equiv hQ1.symm E0.symm
+    exact infra_712u_sg_congr_right (infra_712_sg_congr_left h (fun t => rfl))
+      (fun t => E0.symm_apply_apply t)
+  have hsub : #(L.subConcat n ix).idx < μ :=
+    (Cardinal.lt_aleph0_of_finite (Σ s : Fin n, L.indexAt (ix s))).trans h0lt
+  have hTJ' : IsTiedFree f joint0'
+      (q.reindex (fun p : Σ s : Fin n, L.indexAt (ix s) => eq ⟨ix p.1, p.2⟩))
+      ((eJ0.trans E0.symm).trans (Equiv.refl _)) :=
+    infra_712u_tiedFree_base_sameGalois f (L.subConcat n ix) joint0' rfl hJ0ν hsub
+      (eJ0.trans E0.symm) hQ2 _ _ hTJ
+  have H := infra_713_finite_base_change P σ hσ hμ hrec hσμ f hf n (fun s => L.one (ix s)) hb
+    joint0' (E0.trans eJ0.symm) hJ0ν hlev0
+    (fun s => q.reindex (fun a : L.indexAt (ix s) => eq ⟨ix s, a⟩)) (fun s => Equiv.refl _)
+    (fun s => hqν) hTs
+    (q.reindex (fun p : Σ s : Fin n, L.indexAt (ix s) => eq ⟨ix p.1, p.2⟩)) _ hqν hTJ'
+  refine ⟨_, _, H.toPlain n _ _ _, ?_⟩
+  refine infra_712_sg_congr_left (SameGaloisType.refl _) (fun t => ?_)
+  show t = E0.symm (eJ0 (eJ0.symm (E0 t)))
+  exact ((congrArg E0.symm (eJ0.apply_symm_apply (E0 t))).trans (E0.symm_apply_apply t)).symm
+
+/-- **Theorem 7.13 (1b), product independence (proved, cycle 92; was tip `infra_713_lift_pi`).** -/
+theorem infra_713_lift_pi (P : SingleModelData K) : infra_713_lift_pi_statement P :=
+  fun hμ hl X L _ _ _ hPI hS B f hf q eq hq hqν n ix hinj =>
+    infra_713_lift_pi_permitted P hμ hl X L hPI hS B f hf q eq hq hqν n ix hinj
 
 /-- **Theorem 7.13 (1b), determinacy (open tip `infra_713_lift_det`).** -/
 theorem infra_713_lift_det (P : SingleModelData K) : infra_713_lift_det_statement P := by

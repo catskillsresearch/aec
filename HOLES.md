@@ -4,7 +4,7 @@ Inventory of Lean `sorry` holes in this repository, ordered **prove-first**: Lay
 are holes with no remaining unfinished prerequisites; later layers wait on earlier
 ones. Apex theorems 1.2 and 1.3 are **last**.
 
-**Count:** 43 `sorry`, 0 `admit`.
+**Count:** 42 `sorry`, 0 `admit`.
 Sections **2**, **3**, **4**, and **13** have no holes.
 
 **Dependency basis:** paper/logical order from `dependencies.mermaid`
@@ -34,7 +34,7 @@ Section 13 is complete and was never on that chain.
 | 4 | 0 | — |
 | 5 | 0 | — |
 | 6 | 1 | `AEC/Section6/ProductTied.lean` (1) |
-| 7 | 3 | `AEC/Section7/MixedTiedLift.lean` (1), `AEC/Section7/Results.lean` (2) |
+| 7 | 4 | `AEC/Section7/MixedTiedLift.lean` (1), `AEC/Section7/Theorem713.lean` (3) |
 | 8 | 5 | `AEC/Section8/Results.lean` (5) |
 | 9 | 6 | `AEC/Section9/Results.lean` (6) |
 | 10 | 9 | `AEC/Section10/Results.lean` (9) |
@@ -395,13 +395,13 @@ Lean: imports `AEC.Section6.Results`.
 | `infra_713_unique_short` | Thm 7.13 (1a), `|δ| ≤ μ` | **done** (cycle 90, `Theorem713.lean`) |
 | `infra_713_unique_long` | Thm 7.13 (1a), `|δ| > μ` | **done** (cycle 91, `infra_713_unique`) |
 | `infra_713_lift` | Thm 7.13 (1b) | split (cycle 91): glue proved |
-| `infra_713_lift_pi` | Thm 7.13 (1b-i), tied free lift is PI | **open** (projection done; needs finite base change) |
+| `infra_713_lift_pi` | Thm 7.13 (1b-i), tied free lift is PI | **done** (cycle 92, `infra_713_lift_pi_permitted`; (1b) now assumes `permitted f`, as the English extension `B ≥ X`) |
 | `infra_713_tiedFree_reindex` | finite projections of tied free lifts | **done** (cycle 92, `TiedFreeProject.lean`) |
 | `infra_713_productTied_congr_joint` | tied product: replace the joint by a same-Galois level joint | **done** (cycle 92, `Theorem713Products.lean`) |
 | `infra_713_tied_exists_level` | tied product exists with a level joint | **done** (cycle 92, `Theorem713Products.lean`) |
 | `infra_713_productTied_base_change` | binary tied product under tied free base change (level) | **done** (cycle 92, `Theorem713Products.lean`) |
 | `infra_713_finite_base_change` | finite level tied product under tied free base change | **done** (cycle 92, `Theorem713Products.lean`) |
-| `infra_713_lift_det` | Thm 7.13 (1b-ii), determined by finite data | **open** (after `infra_713_lift_pi`) |
+| `infra_713_lift_det` | Thm 7.13 (1b-ii), determined by finite data | **open** (`infra_713_lift_pi` done) |
 | `infra_713_continuity` | Thm 7.13 (2), tied Def 7.7 | **open** (cycle 91) |
 | `infra_713_realize` | Thm 7.13 (3) | **open**, hard (bounded-mark 7.8/7.9) |
 

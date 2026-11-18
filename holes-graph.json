@@ -1,6 +1,6 @@
 {
  "updated": "2026-11-18 17:35 grokbot_01",
- "sorryCount": 43,
+ "sorryCount": 42,
  "legend": {
   "open": "No unfinished required proof-deps — try next",
   "blocked": "Waiting on incomplete required proof-deps",
@@ -3427,9 +3427,9 @@
    "label": "Thm 7.13 (1b-i): tied free lift of a PI list is PI",
    "section": 7,
    "file": "AEC/Section7/Theorem713.lean",
-   "status": "open",
+   "status": "done",
    "blocker": null,
-   "detail": "Open (cycle 91). infra_713_lift_pi_statement (Theorem713.lean). (a) DONE cycle 92: infra_713_tiedFree_reindex. Remaining (b) finite iteration of tied base change (infra_612_tied_base_change_level_joints, level joints) through IsFiniteProductTied, as in infra_712_products; then PI of L gives the product data."
+   "detail": "PROVED cycle 92 (axioms clean) via infra_713_lift_pi_permitted: PI selection product -> level copy (infra_712_finiteProduct_toLevel); projections of q are tied free lifts of the factors and of the selection (infra_713_tiedFree_reindex, transferred by infra_712u_tiedFree_base_sameGalois); infra_713_finite_base_change. Statement fix: (1b) of theorem_7_13 and infra_713_lift/lift_pi/lift_det statements now assume P.scheme.permitted f (English: B >= X is an extension in the class; every other Section 7 lift statement already carries hf; IsTiedFree does not imply it)."
   },
   {
    "id": "infra_713_lift_det",
@@ -6999,6 +6999,6 @@
    "note": ""
   }
  ],
- "doneCount": 325,
+ "doneCount": 326,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

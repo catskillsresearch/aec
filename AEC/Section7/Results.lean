@@ -409,6 +409,7 @@ theorem infra_713_of_parts {K : AbstractElementaryClass.{u}} (P : SingleModelDat
         -- (1b) the tied free lift is product-independent and determined by its finite data
         (∀ (B : P.scheme.Object μ (Tail.mem hT hμ))
             (f : SystemArrow K oneVertexShape (P.scheme.asSystem _ X) (P.scheme.asSystem _ B))
+            (hf : P.scheme.permitted (X := X) (Y := B) f)
             (q : TupleOver K oneVertexShape P.scheme (Tail.mem hT hμ) B)
             (eq : L.whole.idx ≃ q.idx),
           IsTiedFree f L.whole q eq → q.ν = μ →
@@ -474,6 +475,7 @@ theorem theorem_7_13 {K : AbstractElementaryClass.{u}} (P : SingleModelData K) :
         -- (1b) the tied free lift is product-independent and determined by its finite data
         (∀ (B : P.scheme.Object μ (Tail.mem hT hμ))
             (f : SystemArrow K oneVertexShape (P.scheme.asSystem _ X) (P.scheme.asSystem _ B))
+            (hf : P.scheme.permitted (X := X) (Y := B) f)
             (q : TupleOver K oneVertexShape P.scheme (Tail.mem hT hμ) B)
             (eq : L.whole.idx ≃ q.idx),
           IsTiedFree f L.whole q eq → q.ν = μ →
