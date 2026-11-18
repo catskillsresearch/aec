@@ -1003,10 +1003,70 @@ theorem infra_713_continuity (P : SingleModelData K) : infra_713_continuity_stat
     exact infra_713_continuity_same_level P hμ hl X L hPI hS C g hg b e hbν hT hst
   · exact infra_713_continuity_up P hμ hl X L hPI hS μ' hμ' h C g hg b e hbν hT hst
 
-/-- **Theorem 7.13 (3) (open tip `infra_713_realize`; needs the general bounded-mark forms of
-Prop 7.8 / Thm 7.9, cf. `infra_78_def77_bounded_marks`).** -/
-theorem infra_713_realize (P : SingleModelData K) : infra_713_realize_statement P := by
+/-- **Theorem 7.13 (3) for a finite list (proved, cycle 93).** When the concatenated index of the
+list is finite, Theorem 7.9 at the level (`infra_79_existence_at`, `infra_79_primeness_same_level`)
+gives the all-dominated realization, and it embeds over `X, b` into `L.host` itself. -/
+theorem infra_713_realize_finite (P : SingleModelData K) {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
+    (hl : μ ∈ infra_712_levels P) (X : P.scheme.Object μ hμ) (L : TupleList P.scheme hμ X)
+    (hfin : Finite L.whole.idx) :
+    ∃ (Y : P.scheme.Object μ hμ)
+      (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ Y))
+      (b : L.whole.idx → Occurrence K oneVertexShape (P.scheme.asSystem hμ Y)),
+      AllDominated f trivial L.whole.idx b ∧
+      SameGaloisType L.whole (asTuple f trivial b) (Equiv.refl _) (Equiv.refl _) ∧
+      ∃ (N : P.scheme.Object μ hμ)
+        (h : SystemArrow K oneVertexShape (P.scheme.asSystem hμ L.host)
+          (P.scheme.asSystem hμ N))
+        (g : SystemArrow K oneVertexShape (P.scheme.asSystem hμ Y) (P.scheme.asSystem hμ N)),
+        (∀ v, (g.onVertex v).comp (f.onVertex v) = (h.onVertex v).comp (L.incl.onVertex v)) ∧
+        ∀ a, g.mapOcc (b a) = h.mapOcc (L.whole.val a) := by
+  obtain ⟨Y, f, hf, b, hAll, hS⟩ := infra_79_existence_at P
+    ⟨infra_79_tail P, infra_79_retraction_pair P⟩ (μ := μ) ⟨hl.1, hl.2.1⟩ X L.whole hfin
+  have hN : SameGaloisType L.whole (asTuple L.incl trivial L.whole.val)
+      (Equiv.refl _) (Equiv.refl _) := SameGaloisType.refl L.whole
+  obtain ⟨g, -, hcomp, hval⟩ := infra_79_primeness_same_level hμ X L.whole hfin Y f hf b hAll hS
+    L.host L.incl trivial L.whole.val hN
+  refine ⟨Y, f, b, hAll, hS, L.host, SystemArrow.refl _, g, ?_, ?_⟩
+  · intro v
+    ext x
+    exact congrArg (fun a => a.onVertex v x) hcomp
+  · intro a
+    have h1 := hval a
+    revert h1
+    generalize b a = o1
+    generalize L.whole.val a = o2
+    obtain ⟨⟨⟩, x1⟩ := o1
+    obtain ⟨⟨⟩, x2⟩ := o2
+    intro h1
+    exact congrArg (Sigma.mk PUnit.unit) h1
+
+/-- **Theorem 7.13 (3) for an infinite list (open tip `infra_713_realize_infinite`).** Needs the
+bounded-mark forms of Prop 7.8 / Thm 7.9 (not formalized; their Definition 7.7 input at small
+cofinality is the paper hypothesis `infra_78_def77_bounded_marks`). -/
+theorem infra_713_realize_infinite (P : SingleModelData K) {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
+    (hl : μ ∈ infra_712_levels P) (X : P.scheme.Object μ hμ) (L : TupleList P.scheme hμ X)
+    [LinearOrder L.δ] [L.FiniteEach] [WellFoundedLT L.δ] (hPI : ProductIndependentTied L)
+    (hS : #(Σ i, L.indexAt i) < μ) (hinf : ¬ Finite L.whole.idx) :
+    ∃ (Y : P.scheme.Object μ hμ)
+      (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ Y))
+      (b : L.whole.idx → Occurrence K oneVertexShape (P.scheme.asSystem hμ Y)),
+      AllDominated f trivial L.whole.idx b ∧
+      SameGaloisType L.whole (asTuple f trivial b) (Equiv.refl _) (Equiv.refl _) ∧
+      ∃ (N : P.scheme.Object μ hμ)
+        (h : SystemArrow K oneVertexShape (P.scheme.asSystem hμ L.host)
+          (P.scheme.asSystem hμ N))
+        (g : SystemArrow K oneVertexShape (P.scheme.asSystem hμ Y) (P.scheme.asSystem hμ N)),
+        (∀ v, (g.onVertex v).comp (f.onVertex v) = (h.onVertex v).comp (L.incl.onVertex v)) ∧
+        ∀ a, g.mapOcc (b a) = h.mapOcc (L.whole.val a) := by
   sorry
+
+/-- **Theorem 7.13 (3) (split, cycle 93):** the finite case is proved
+(`infra_713_realize_finite`); the infinite case is the open tip `infra_713_realize_infinite`. -/
+theorem infra_713_realize (P : SingleModelData K) : infra_713_realize_statement P := by
+  intro μ hμ hl X L _ _ _ hPI hS
+  by_cases hfin : Finite L.whole.idx
+  · exact infra_713_realize_finite P hμ hl X L hfin
+  · exact infra_713_realize_infinite P hμ hl X L hPI hS hfin
 
 end
 end AEC

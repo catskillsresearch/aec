@@ -3418,9 +3418,9 @@
    "label": "Thm 7.13 (3) level-wise",
    "section": 7,
    "file": "AEC/Section7/Theorem713.lean",
-   "status": "open",
-   "blocker": null,
-   "detail": "Open, not started (cycle 91) per instruction. infra_713_realize_statement: all-dominated Y over X + b realizing tp(b/X), mapped over X, b into an ambient containing L. Needs the general bounded-mark Prop 7.8 / Thm 7.9 (cf. infra_78_def77_bounded_marks, soft) -- hard."
+   "status": "blocked",
+   "blocker": "infra_713_realize_infinite",
+   "detail": "Open, not started (cycle 91) per instruction. infra_713_realize_statement: all-dominated Y over X + b realizing tp(b/X), mapped over X, b into an ambient containing L. Needs the general bounded-mark Prop 7.8 / Thm 7.9 (cf. infra_78_def77_bounded_marks, soft) -- hard. | Cycle 93 split: glue proved (case on Finite L.whole.idx); finite case done (infra_713_realize_finite), infinite case is the open tip infra_713_realize_infinite. Paper statement unchanged."
   },
   {
    "id": "infra_713_lift_pi",
@@ -3592,6 +3592,24 @@
    "status": "done",
    "blocker": null,
    "detail": "PROVED cycle 93 (axioms clean): mixed analogue of infra_712u_tiedFree_base_sameGalois via infra_711_tiedFree_base_equiv (already mixed)."
+  },
+  {
+   "id": "infra_713_realize_finite",
+   "label": "Thm 7.13 (3) for a finite list",
+   "section": 7,
+   "file": "AEC/Section7/Theorem713.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "PROVED cycle 93 (axioms clean): Finite L.whole.idx; infra_79_existence_at (levels infra_712_levels subset closedTail and 615_closed) + infra_79_primeness_same_level with N = L.host, h = id."
+  },
+  {
+   "id": "infra_713_realize_infinite",
+   "label": "Thm 7.13 (3) for an infinite list (bounded marks)",
+   "section": 7,
+   "file": "AEC/Section7/Theorem713.lean",
+   "status": "open",
+   "blocker": null,
+   "detail": "OPEN, hard (cycle 93 split of infra_713_realize). Infinite L.whole.idx of size < mu. Needs bounded-mark Prop 7.8 / Thm 7.9 (not formalized; proposition_7_8/theorem_7_9 are Finite p.idx). Their Def 7.7 input is proved for |b| < cf delta (infra_78_limit_invariant5) and is the paper hypothesis infra_78_def77_bounded_marks for |b| >= cf delta. Even the |b| < cf delta case needs a bounded-mark 7.8/7.9 formalization first."
   }
  ],
  "edges": [
@@ -7178,8 +7196,32 @@
    "to": "infra_78_cross_level_galois",
    "kind": "hard",
    "note": "cycle 93 direct proof"
+  },
+  {
+   "from": "infra_713_realize_finite",
+   "to": "infra_713_realize",
+   "kind": "hard",
+   "note": "cycle 93"
+  },
+  {
+   "from": "infra_713_realize_infinite",
+   "to": "infra_713_realize",
+   "kind": "hard",
+   "note": "cycle 93"
+  },
+  {
+   "from": "infra_79_existence",
+   "to": "infra_713_realize_finite",
+   "kind": "hard",
+   "note": "cycle 93"
+  },
+  {
+   "from": "infra_78_def77_bounded_marks",
+   "to": "infra_713_realize_infinite",
+   "kind": "soft",
+   "note": "cycle 93"
   }
  ],
- "doneCount": 342,
+ "doneCount": 343,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

@@ -412,7 +412,9 @@ Lean: imports `AEC.Section6.Results`.
 | `infra_713_productTied_base_change_mixed` / `infra_713_finite_base_change_mixed` / `infra_713_tiedFreeMixed_base_sameGalois` | mixed base change and source transfer | **done** (cycle 93) |
 | `infra_713_tied_move_mixed` | mixed tied move | **done** (cycle 93) |
 | `infra_713_tiedFree_reindex_mixed` | finite projections of mixed tied free lifts | **done** (cycle 93) |
-| `infra_713_realize` | Thm 7.13 (3) | **open**, hard (bounded-mark 7.8/7.9) |
+| `infra_713_realize` | Thm 7.13 (3) | split (cycle 93): glue proved, blocked on `infra_713_realize_infinite` |
+| `infra_713_realize_finite` | Thm 7.13 (3), finite list | **done** (cycle 93, via Thm 7.9 at the level) |
+| `infra_713_realize_infinite` | Thm 7.13 (3), infinite list | **open**, hard (bounded-mark 7.8/7.9; `infra_78_def77_bounded_marks` at `|b| ≥ cf δ`) |
 
 ### L4 — Section 8 (5 sorry)
 
