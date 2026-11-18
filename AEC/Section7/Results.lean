@@ -457,6 +457,8 @@ with the same marginal types has the same whole type.
 the tied finite product of the lifted marginals) and is the unique whole type over `B` with the
 lifted finite data (any `q'` over `B` whose finite subtuples have the types of those of `q` has
 the type of `q`).
+The base arrow `f : X → B` in (1b) is assumed `permitted` (a class embedding): the English takes
+`B ≥ X` in the class (ruling cycle 93; `IsTiedFree` alone does not imply it).
 (2) The marked marginal `tp(b/X)` satisfies Definition 7.7 (`SatisfiesContinuityTied`).
 (3) There is an all-dominated object `Y` over `X + b` realizing it, and `Y` embeds over these data
 into an actual ambient containing the given list. -/

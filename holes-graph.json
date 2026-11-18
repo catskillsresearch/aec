@@ -3409,9 +3409,9 @@
    "label": "Thm 7.13 (2) level-wise",
    "section": 7,
    "file": "AEC/Section7/Theorem713.lean",
-   "status": "open",
-   "blocker": null,
-   "detail": "Open (cycle 91). infra_713_continuity_statement: SatisfiesContinuityTied L.whole (tied Def 7.7, every sufficiently closed level mu' >= mu, IsTiedFreeMixed base). Plan: infra_78_tied_continuity on finite subtuples at mu' + (1b)/(1a) at the union. The mu' > mu part needs cross-level (mixed) tied machinery; if so, split it off as its own tip rather than weakening. | Cycle 92: infra_713_tiedFree_of_finite done (finite-subtuple criterion at a level). Remaining: (a) same-level case mu'=mu: list over X0 from b|X0 is PI (infra_713_lift_pi_permitted along g), finite subtuples tied free over the union by infra_78_finite_continuity, then infra_713_tiedFree_of_finite; note SatisfiesContinuityTied does not require g permitted (lift_pi needs it) -- review whether Def 7.7-tied should carry permitted g like the English extension; (b) mu' > mu: mixed-level, likely needs cross-level tied machinery (split off as own tip if so)."
+   "status": "blocked",
+   "blocker": "infra_713_continuity_up",
+   "detail": "Open (cycle 91). infra_713_continuity_statement: SatisfiesContinuityTied L.whole (tied Def 7.7, every sufficiently closed level mu' >= mu, IsTiedFreeMixed base). Plan: infra_78_tied_continuity on finite subtuples at mu' + (1b)/(1a) at the union. The mu' > mu part needs cross-level (mixed) tied machinery; if so, split it off as its own tip rather than weakening. | Cycle 92: infra_713_tiedFree_of_finite done (finite-subtuple criterion at a level). Remaining: (a) same-level case mu'=mu: list over X0 from b|X0 is PI (infra_713_lift_pi_permitted along g), finite subtuples tied free over the union by infra_78_finite_continuity, then infra_713_tiedFree_of_finite; note SatisfiesContinuityTied does not require g permitted (lift_pi needs it) -- review whether Def 7.7-tied should carry permitted g like the English extension; (b) mu' > mu: mixed-level, likely needs cross-level tied machinery (split off as own tip if so). | Cycle 93: glue proved (tail infra_712_levels P; mu'=mu by infra_713_continuity_same_level, mu'>mu by infra_713_continuity_up). Def 7.7-tied now requires the base arrow g : A -> X0 permitted (ruling cycle 93; English A <= X0 in the class). Chain maps X_i -> X_j, X_i -> union are permitted by SameLevelChain.le_arrow/toUnion_arrow (as in the English; nothing further added)."
   },
   {
    "id": "infra_713_realize",
@@ -3429,7 +3429,7 @@
    "file": "AEC/Section7/Theorem713.lean",
    "status": "done",
    "blocker": null,
-   "detail": "PROVED cycle 92 (axioms clean) via infra_713_lift_pi_permitted: PI selection product -> level copy (infra_712_finiteProduct_toLevel); projections of q are tied free lifts of the factors and of the selection (infra_713_tiedFree_reindex, transferred by infra_712u_tiedFree_base_sameGalois); infra_713_finite_base_change. Statement fix: (1b) of theorem_7_13 and infra_713_lift/lift_pi/lift_det statements now assume P.scheme.permitted f (English: B >= X is an extension in the class; every other Section 7 lift statement already carries hf; IsTiedFree does not imply it)."
+   "detail": "PROVED cycle 92 (axioms clean) via infra_713_lift_pi_permitted: PI selection product -> level copy (infra_712_finiteProduct_toLevel); projections of q are tied free lifts of the factors and of the selection (infra_713_tiedFree_reindex, transferred by infra_712u_tiedFree_base_sameGalois); infra_713_finite_base_change. Statement fix: (1b) of theorem_7_13 and infra_713_lift/lift_pi/lift_det statements now assume P.scheme.permitted f (English: B >= X is an extension in the class; every other Section 7 lift statement already carries hf; IsTiedFree does not imply it). Ruling cycle 93: keep permitted f in (1b) (English B >= X in the class); noted in theorem_7_13 docstring."
   },
   {
    "id": "infra_713_lift_det",
@@ -3502,6 +3502,33 @@
    "status": "done",
    "blocker": null,
    "detail": "PROVED cycle 92 (axioms clean): level mu in infra_712_levels, L PI bounded over X, f : X -> B permitted, b over B at mu; every finite injective subtuple of b a tied free lift of the corresponding subtuple of L.whole ==> IsTiedFree f L.whole b eb. Via infra_610_tied_free_lift, infra_73_tied_unique on finite projections, infra_713_lift_det_permitted, infra_79_tiedFreeMixed_right_congr. Intended use in infra_713_continuity: finite continuity (infra_78_finite_continuity) on finite subtuples + this at the union (same-level case)."
+  },
+  {
+   "id": "infra_713_finite_continuity_level",
+   "label": "Finite tied continuity from the bottom stage, level form",
+   "section": 7,
+   "file": "AEC/Section7/Theorem713.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "PROVED cycle 93 (axioms clean): level-wise form of infra_78_finite_continuity (explicit sigma, recursion-closed level, succ sigma <= mu instead of the existential tail) with base the first stage X0: finite p over the union, stage restrictions tied free from p|X0 ==> p tied free from X0. Via infra_78_tied_local, infra_78_tiedFree_trans, infra_713_tiedFree_restrict_restrict, infra_78_tiedFree_congr_arrow."
+  },
+  {
+   "id": "infra_713_continuity_same_level",
+   "label": "Thm 7.13 (2), same-level case mu' = mu",
+   "section": 7,
+   "file": "AEC/Section7/Theorem713.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "PROVED cycle 93 (axioms clean): coordinates of b|X0 form a PI list over X0 (infra_713_lift_pi_permitted along permitted g); finite subtuples of b tied free from X0 (infra_713_finite_continuity_level, stage hypotheses projected by infra_713_tiedFree_reindex); conclude by infra_713_tiedFree_of_finite and infra_712u_tiedFree_base_sameGalois."
+  },
+  {
+   "id": "infra_713_continuity_up",
+   "label": "Thm 7.13 (2), levels mu' > mu",
+   "section": 7,
+   "file": "AEC/Section7/Theorem713.lean",
+   "status": "open",
+   "blocker": null,
+   "detail": "Open (cycle 93). infra_713_continuity_up_statement: Def 7.7-tied body at mu' in infra_712_levels with mu < mu' (IsTiedFreeMixed base g : A -> X0 from level mu to mu'). Same-level proof needs: PI of the lifted list over X0 at mu' from a MIXED tied free lift (lift_pi is same-level), i.e. mixed-level versions of infra_713_tiedFree_reindex / finite_base_change / level copies -- likely cross-level tied machinery (cf. hard tips: cross-level Galois transitivity both-off case)."
   }
  ],
  "edges": [
@@ -7027,8 +7054,26 @@
    "to": "infra_713_continuity",
    "kind": "hard",
    "note": ""
+  },
+  {
+   "from": "infra_713_finite_continuity_level",
+   "to": "infra_713_continuity_same_level",
+   "kind": "hard",
+   "note": ""
+  },
+  {
+   "from": "infra_713_continuity_same_level",
+   "to": "infra_713_continuity",
+   "kind": "hard",
+   "note": ""
+  },
+  {
+   "from": "infra_713_continuity_up",
+   "to": "infra_713_continuity",
+   "kind": "hard",
+   "note": ""
   }
  ],
- "doneCount": 330,
+ "doneCount": 332,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

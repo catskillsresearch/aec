@@ -164,7 +164,9 @@ level, and a fixed realization `b` in a coupled extension satisfies
 Formalized: there is a tail `T` of eligible levels ("sufficiently closed") such that at every
 `μ' ∈ T` with `μ ≤ μ'` (a level to which `p`, at level `μ`, is freely lifted), for every
 continuous same-level chain at `μ'` (`SameLevelChain`, union an object at `μ'`), every base arrow
-`A → X₀` (mixed level `μ → μ'`), and every realization `b` over the union at `μ'`: if `tp(b/X₀)` is
+`A → X₀` (mixed level `μ → μ'`; a class embedding, `permitted`, as the English base inclusion
+`A ≤ X₀` is — ruling cycle 93; the chain maps `Xᵢ → Xⱼ` and `Xᵢ → ⋃` are class embeddings by
+`SameLevelChain.le_arrow` / `toUnion_arrow`, as in the English), and every realization `b` over the union at `μ'`: if `tp(b/X₀)` is
 the tied free lift of `p` (`IsTiedFreeMixed`; for `μ' = μ` the shape of `IsTiedFree`) and
 `tp(b/Xᵢ) = tp(b/X₀)^fr_{Xᵢ}` (tied) for every `i < δ`, then the same holds over the union. -/
 def SatisfiesContinuityTied {K : AbstractElementaryClass.{u}} {P : SingleModelData K}
@@ -174,6 +176,7 @@ def SatisfiesContinuityTied {K : AbstractElementaryClass.{u}} {P : SingleModelDa
   ∀ (C : SameLevelChain P (Tail.mem hT hμ'))
     (g : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A)
       (P.scheme.asSystem (Tail.mem hT hμ') (C.obj 0 C.hlim.1)))
+    (_hg : P.scheme.permitted (X := A) (Y := C.obj 0 C.hlim.1) g)
     (b : TupleOver K oneVertexShape P.scheme (Tail.mem hT hμ') C.unionObj) (e : p.idx ≃ b.idx),
     b.ν = μ' →
     IsTiedFreeMixed g p (b.restrict (C.toUnion 0 C.hlim.1) (C.toUnion_arrow 0 C.hlim.1)) e →
@@ -563,6 +566,137 @@ theorem infra_713_tiedFree_of_finite (P : SingleModelData K) {μ : Cardinal.{u}}
     simp
   exact hE ▸ H
 
+/-- Tied freeness from `q ↾ h` transfers to `(q ↾ f) ↾ g` when `g ≫ f = h`. -/
+theorem infra_713_tiedFree_restrict_restrict {P : SingleModelData K} {μ : Cardinal.{u}}
+    {hμ : μ ∈ P.eligible} {X Y Z W : P.scheme.Object μ hμ}
+    (g : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ Y))
+    (hg : P.scheme.permitted (X := X) (Y := Y) g)
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ Y) (P.scheme.asSystem hμ Z))
+    (hf : P.scheme.permitted (X := Y) (Y := Z) f)
+    (h : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ Z))
+    (hh : P.scheme.permitted (X := X) (Y := Z) h) (heq : SystemArrow.comp g f = h)
+    (q : TupleOver K oneVertexShape P.scheme hμ Z)
+    (a : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ W))
+    (r : TupleOver K oneVertexShape P.scheme hμ W) (e : q.idx ≃ r.idx)
+    (H : IsTiedFree a (q.restrict h hh) r e) :
+    IsTiedFree a ((q.restrict f hf).restrict g hg) r e := by
+  subst heq
+  exact H
+
+/-- **Finite tied continuity from the bottom stage, level form (proved, cycle 93).** Level-wise
+form of `infra_78_finite_continuity` (its tail is the existential `infra_78_tailSet`; here the
+level hypotheses are explicit) with base the first stage `X₀` itself: a finite `p` over the
+union whose stage restrictions are tied free from `p ↾ X₀` is tied free from `X₀`. -/
+theorem infra_713_finite_continuity_level (P : SingleModelData K) (σ : Cardinal.{u})
+    (hσ : ℵ₀ ≤ σ) {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
+    (hrec : μ ∈ recursionClosedLevels P σ) (hσSucc : Order.succ σ ≤ μ)
+    (C : SameLevelChain P hμ) (p : TupleOver K oneVertexShape P.scheme hμ C.unionObj)
+    (hνμ : p.ν = μ) (hfin : Finite p.idx) (hidx : #p.idx ≤ σ)
+    (hAll : ∀ (i : Ordinal.{u}) (hi : i < C.δ),
+      IsTiedFree (C.le C.hlim.1 hi (bot_le : (0 : Ordinal.{u}) ≤ i))
+        (p.restrict (C.toUnion 0 C.hlim.1) (C.toUnion_arrow 0 C.hlim.1))
+        (p.restrict (C.toUnion i hi) (C.toUnion_arrow i hi)) (Equiv.refl _)) :
+    IsTiedFree (C.toUnion 0 C.hlim.1)
+      (p.restrict (C.toUnion 0 C.hlim.1) (C.toUnion_arrow 0 C.hlim.1)) p (Equiv.refl _) := by
+  have hcof : #p.idx < C.δ.cof :=
+    (Cardinal.mk_lt_aleph0_iff.2 hfin).trans_le (SameLevelChain.cof_aleph0 C)
+  obtain ⟨i, hi, hF⟩ := infra_78_tied_local P σ hσ hμ hrec hσSucc C p hνμ hidx hcof
+  have hzero : (0 : Ordinal.{u}) ≤ i := bot_le
+  have hA : IsTiedFree (C.le C.hlim.1 hi hzero)
+      ((p.restrict (C.toUnion i hi) (C.toUnion_arrow i hi)).restrict (C.le C.hlim.1 hi hzero)
+        (C.le_arrow C.hlim.1 hi hzero))
+      (p.restrict (C.toUnion i hi) (C.toUnion_arrow i hi)) (Equiv.refl _) :=
+    infra_713_tiedFree_restrict_restrict (C.le C.hlim.1 hi hzero) (C.le_arrow C.hlim.1 hi hzero)
+      (C.toUnion i hi) (C.toUnion_arrow i hi) (C.toUnion 0 C.hlim.1) (C.toUnion_arrow 0 C.hlim.1)
+      (C.toUnion_comp C.hlim.1 hi hzero) p _ _ _ (hAll i hi)
+  have htrans := infra_78_tiedFree_trans (C.le C.hlim.1 hi hzero) (C.le_arrow C.hlim.1 hi hzero)
+    (C.toUnion i hi) (C.toUnion_arrow i hi) p hA hF
+  exact infra_78_tiedFree_congr_arrow _ _ p (C.toUnion_comp C.hlim.1 hi hzero) htrans
+
+/-- **Theorem 7.13 (2), same-level case (proved, cycle 93).** Definition 7.7-tied for `L.whole`
+at its own level: a continuous chain at `μ`, a permitted base arrow `g : A → X₀`, and `b` over the
+union with `tp(b/X₀)` the tied free lift of `L.whole` and `tp(b/Xᵢ)` tied free from `tp(b/X₀)`
+for all `i`; then `tp(b/⋃)` is tied free from `tp(b/X₀)`. Proof: the coordinates of `b ↾ X₀`
+form a PI list over `X₀` (`infra_713_lift_pi_permitted`); finite subtuples of `b` are tied free
+from `X₀` (`infra_713_finite_continuity_level`, stage hypotheses projected by
+`infra_713_tiedFree_reindex`); conclude by `infra_713_tiedFree_of_finite`. -/
+theorem infra_713_continuity_same_level (P : SingleModelData K) {μ : Cardinal.{u}}
+    (hμ : μ ∈ P.eligible) (hl : μ ∈ infra_712_levels P)
+    (A : P.scheme.Object μ hμ) (L : TupleList P.scheme hμ A) [LinearOrder L.δ] [L.FiniteEach]
+    [WellFoundedLT L.δ] (hPI : ProductIndependentTied L) (hS : #(Σ i, L.indexAt i) < μ)
+    (C : SameLevelChain P hμ)
+    (g : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A)
+      (P.scheme.asSystem hμ (C.obj 0 C.hlim.1)))
+    (hg : P.scheme.permitted (X := A) (Y := C.obj 0 C.hlim.1) g)
+    (b : TupleOver K oneVertexShape P.scheme hμ C.unionObj) (e : L.whole.idx ≃ b.idx)
+    (hbν : b.ν = μ)
+    (hT : IsTiedFree g L.whole (b.restrict (C.toUnion 0 C.hlim.1) (C.toUnion_arrow 0 C.hlim.1)) e)
+    (hst : ∀ (i : Ordinal.{u}) (hi : i < C.δ),
+      IsTiedFree (C.le C.hlim.1 hi (bot_le : (0 : Ordinal.{u}) ≤ i))
+        (b.restrict (C.toUnion 0 C.hlim.1) (C.toUnion_arrow 0 C.hlim.1))
+        (b.restrict (C.toUnion i hi) (C.toUnion_arrow i hi)) (Equiv.refl _)) :
+    IsTiedFree (C.toUnion 0 C.hlim.1)
+      (b.restrict (C.toUnion 0 C.hlim.1) (C.toUnion_arrow 0 C.hlim.1)) b (Equiv.refl _) := by
+  classical
+  have hl' := hl
+  have hpi := infra_713_lift_pi_permitted P hμ hl A L hPI hS (C.obj 0 C.hlim.1) g hg
+    (b.restrict (C.toUnion 0 C.hlim.1) (C.toUnion_arrow 0 C.hlim.1)) e hT hbν
+  obtain ⟨ht, hc, hw⟩ := hl
+  have hw0 : ℵ₀ ≤ infra_75_wide P ℵ₀ := le_self_add
+  have h0lt : ℵ₀ < μ := hw0.trans_lt hw
+  set σ : Cardinal.{u} := max ℵ₀ #(Σ i, L.indexAt i) with hσdef
+  have hσ : ℵ₀ ≤ σ := le_max_left _ _
+  have hσlt : σ < μ := max_lt h0lt hS
+  have hrec : μ ∈ recursionClosedLevels P σ := infra_712_recursionClosed_of_615 hc hσ hσlt
+  have hσμ : Order.succ σ ≤ μ := Order.succ_le_of_lt hσlt
+  have hbσ : #b.idx ≤ σ := (Cardinal.mk_congr e).symm.le.trans (le_max_right _ _)
+  obtain ⟨ν, hν, host, incl, hincl, bidx, bval⟩ := b
+  dsimp only at hbν
+  subst ν
+  let L0 : TupleList P.scheme hμ (C.obj 0 C.hlim.1) :=
+    { δ := L.δ, host := host, incl := SystemArrow.comp (C.toUnion 0 C.hlim.1) incl,
+      incl_arrow := P.scheme.comp _ _ (C.toUnion_arrow 0 C.hlim.1) hincl,
+      indexAt := L.indexAt, val := fun i a => bval (e ⟨i, a⟩) }
+  letI : LinearOrder L0.δ := inferInstanceAs (LinearOrder L.δ)
+  haveI : WellFoundedLT L0.δ := inferInstanceAs (WellFoundedLT L.δ)
+  haveI : L0.FiniteEach := ⟨fun i => L.finite_each i⟩
+  have hPI0 : ProductIndependentTied L0 := fun n ix hinj => hpi n ix hinj
+  let b' : TupleOver K oneVertexShape P.scheme hμ C.unionObj :=
+    ⟨μ, hν, host, incl, hincl, bidx, bval⟩
+  have hfin0 : ∀ (ι : Type u) [Finite ι] (ρ : ι → L0.whole.idx), Function.Injective ρ →
+      IsTiedFree (C.toUnion 0 C.hlim.1) (L0.whole.reindex ρ)
+        ((⟨μ, hν, host, incl, hincl, bidx, bval⟩ : TupleOver K oneVertexShape P.scheme hμ
+          C.unionObj).reindex (fun j => e (ρ j))) (Equiv.refl ι) := by
+    intro ι _ ρ hρ
+    have hρ' : Function.Injective (fun j => e (ρ j)) := e.injective.comp hρ
+    have hισ : #ι ≤ σ := (Cardinal.lt_aleph0_of_finite ι).le.trans hσ
+    have hst' : ∀ (i : Ordinal.{u}) (hi : i < C.δ),
+        IsTiedFree (C.le C.hlim.1 hi (bot_le : (0 : Ordinal.{u}) ≤ i))
+          ((b'.reindex (fun j => e (ρ j))).restrict (C.toUnion 0 C.hlim.1)
+            (C.toUnion_arrow 0 C.hlim.1))
+          ((b'.reindex (fun j => e (ρ j))).restrict (C.toUnion i hi) (C.toUnion_arrow i hi))
+          (Equiv.refl _) := fun i hi =>
+      infra_713_tiedFree_reindex P σ hσ hμ hrec hσμ _ (C.le_arrow C.hlim.1 hi bot_le)
+        (b'.restrict (C.toUnion 0 C.hlim.1) (C.toUnion_arrow 0 C.hlim.1)) rfl hbσ
+        (b'.restrict (C.toUnion i hi) (C.toUnion_arrow i hi)) (Equiv.refl _) rfl (hst i hi)
+        (fun j => e (ρ j)) hρ'
+    exact infra_713_finite_continuity_level P σ hσ hμ hrec hσμ C (b'.reindex (fun j => e (ρ j)))
+      rfl (inferInstanceAs (Finite ι)) hισ hst'
+  have H := infra_713_tiedFree_of_finite P hμ hl' (C.obj 0 C.hlim.1) L0 hPI0 hS C.unionObj
+    (C.toUnion 0 C.hlim.1) (C.toUnion_arrow 0 C.hlim.1) _ e rfl hfin0
+  have hSG : SameGaloisType
+      ((⟨μ, hν, host, incl, hincl, bidx, bval⟩ : TupleOver K oneVertexShape P.scheme hμ
+          C.unionObj).restrict (C.toUnion 0 C.hlim.1) (C.toUnion_arrow 0 C.hlim.1))
+      L0.whole e.symm (Equiv.refl _) := by
+    obtain ⟨ρ, hρ, top, f1, f2, h1, h2, hcomm, hv⟩ := SameGaloisType.refl L0.whole
+    exact ⟨ρ, hρ, top, f1, f2, h1, h2, hcomm, fun i => hv i⟩
+  have hsz : #L0.whole.idx < μ := hS
+  have H2 := infra_712u_tiedFree_base_sameGalois (C.toUnion 0 C.hlim.1) L0.whole
+    (b'.restrict (C.toUnion 0 C.hlim.1) (C.toUnion_arrow 0 C.hlim.1)) rfl rfl hsz
+    e.symm hSG b' e H
+  have hE : e.symm.trans e = Equiv.refl _ := Equiv.symm_trans_self e
+  exact hE ▸ H2
+
 /-- **Theorem 7.13 (1b), product independence (proved, cycle 92; was tip `infra_713_lift_pi`).** -/
 theorem infra_713_lift_pi (P : SingleModelData K) : infra_713_lift_pi_statement P :=
   fun hμ hl X L _ _ _ hPI hS B f hf q eq hq hqν n ix hinj =>
@@ -577,9 +711,44 @@ theorem infra_713_lift_det (P : SingleModelData K) : infra_713_lift_det_statemen
 theorem infra_713_lift (P : SingleModelData K) : infra_713_lift_statement P :=
   infra_713_lift_of_parts P (infra_713_lift_pi P) (infra_713_lift_det P)
 
-/-- **Theorem 7.13 (2) (open tip `infra_713_continuity`).** -/
-theorem infra_713_continuity (P : SingleModelData K) : infra_713_continuity_statement P := by
+/-- **Theorem 7.13 (2), higher levels (statement; open tip `infra_713_continuity_up`).** The
+part of Definition 7.7-tied at levels `μ' > μ` of the 7.12 tail: the base arrow `A → X₀` is
+mixed-level (`IsTiedFreeMixed`), so this needs cross-level tied machinery. Same body as
+`SatisfiesContinuityTied` with `T := infra_712_levels P` and `μ < μ'`. -/
+def infra_713_continuity_up_statement (P : SingleModelData K) : Prop :=
+  ∀ {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible), μ ∈ infra_712_levels P →
+    ∀ (X : P.scheme.Object μ hμ) (L : TupleList P.scheme hμ X) [LinearOrder L.δ] [L.FiniteEach]
+      [WellFoundedLT L.δ], ProductIndependentTied L → #(Σ i, L.indexAt i) < μ →
+    ∀ μ' (hμ' : μ' ∈ infra_712_levels P), μ < μ' →
+    ∀ (C : SameLevelChain P (Tail.mem (infra_712_levels_tail P) hμ'))
+      (g : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X)
+        (P.scheme.asSystem (Tail.mem (infra_712_levels_tail P) hμ') (C.obj 0 C.hlim.1)))
+      (_hg : P.scheme.permitted (X := X) (Y := C.obj 0 C.hlim.1) g)
+      (b : TupleOver K oneVertexShape P.scheme (Tail.mem (infra_712_levels_tail P) hμ')
+        C.unionObj) (e : L.whole.idx ≃ b.idx),
+      b.ν = μ' →
+      IsTiedFreeMixed g L.whole (b.restrict (C.toUnion 0 C.hlim.1) (C.toUnion_arrow 0 C.hlim.1)) e →
+      (∀ (i : Ordinal.{u}) (hi : i < C.δ),
+        IsTiedFree (C.le C.hlim.1 hi (bot_le : (0 : Ordinal.{u}) ≤ i))
+          (b.restrict (C.toUnion 0 C.hlim.1) (C.toUnion_arrow 0 C.hlim.1))
+          (b.restrict (C.toUnion i hi) (C.toUnion_arrow i hi)) (Equiv.refl _)) →
+      IsTiedFree (C.toUnion 0 C.hlim.1)
+        (b.restrict (C.toUnion 0 C.hlim.1) (C.toUnion_arrow 0 C.hlim.1)) b (Equiv.refl _)
+
+/-- **Theorem 7.13 (2), higher levels (open tip `infra_713_continuity_up`).** -/
+theorem infra_713_continuity_up (P : SingleModelData K) : infra_713_continuity_up_statement P := by
   sorry
+
+/-- **Theorem 7.13 (2) (proved glue, cycle 93; was tip `infra_713_continuity`).** Tail
+`infra_712_levels P`; the level `μ' = μ` is `infra_713_continuity_same_level`, the levels
+`μ' > μ` are `infra_713_continuity_up`. -/
+theorem infra_713_continuity (P : SingleModelData K) : infra_713_continuity_statement P := by
+  intro μ hμ hl X L _ _ _ hPI hS
+  refine ⟨infra_712_levels P, infra_712_levels_tail P, fun μ' hμ' hle C g hg b e hbν hT hst => ?_⟩
+  rcases eq_or_lt_of_le hle with h | h
+  · subst h
+    exact infra_713_continuity_same_level P hμ hl X L hPI hS C g hg b e hbν hT hst
+  · exact infra_713_continuity_up P hμ hl X L hPI hS μ' hμ' h C g hg b e hbν hT hst
 
 /-- **Theorem 7.13 (3) (open tip `infra_713_realize`; needs the general bounded-mark forms of
 Prop 7.8 / Thm 7.9, cf. `infra_78_def77_bounded_marks`).** -/

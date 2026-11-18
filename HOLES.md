@@ -404,7 +404,10 @@ Lean: imports `AEC.Section6.Results`.
 | `infra_713_pi_core` | finite products from tied free factor/selection lifts | **done** (cycle 92, `Theorem713.lean`) |
 | `infra_713_lift_det` | Thm 7.13 (1b-ii), determined by finite data | **done** (cycle 92, `infra_713_lift_det_permitted`) |
 | `infra_713_tiedFree_of_finite` | tied freeness of a bounded PI list from its finite subtuples | **done** (cycle 92, `Theorem713.lean`; toward `infra_713_continuity`) |
-| `infra_713_continuity` | Thm 7.13 (2), tied Def 7.7 | **open** (cycle 91) |
+| `infra_713_continuity` | Thm 7.13 (2), tied Def 7.7 | split (cycle 93): glue proved, blocked on `infra_713_continuity_up` |
+| `infra_713_finite_continuity_level` | level-wise finite tied continuity from `X₀` | **done** (cycle 93) |
+| `infra_713_continuity_same_level` | Thm 7.13 (2), level `μ' = μ` | **done** (cycle 93) |
+| `infra_713_continuity_up` | Thm 7.13 (2), levels `μ' > μ` (mixed base) | **open** (likely cross-level) |
 | `infra_713_realize` | Thm 7.13 (3) | **open**, hard (bounded-mark 7.8/7.9) |
 
 ### L4 — Section 8 (5 sorry)
