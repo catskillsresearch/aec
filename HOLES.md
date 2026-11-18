@@ -318,9 +318,9 @@ Waits on Section 5 working package. Lean: later Results import this module.
 | `infra_612_tied_indep_same_level` | Prop 6.12 (2) independence, single level | `AEC/Section6/ProductTied.lean` (**done**; no `sorry`) |
 | `infra_612_tied_symmetry` | Prop 6.12 (3) symmetry | `AEC/Section6/ProductTied.lean` (**done** cycle 93: restated to the actual-μ-type copy form, `infra_612_tied_symm_copies` via `infra_612_tied_symm_core`; at-level case is a corollary) |
 | `infra_612_tied_symm_level_joints` | Prop 6.12 (3) symmetry, joints at A's level | `AEC/Section6/ProductTied.lean` (**done**; no `sorry`) |
-| `infra_612_tied_assoc` | Prop 6.12 (4) associativity | `AEC/Section6/ProductTied.lean` (**blocked** on independence; products at A's level done) |
+| `infra_612_tied_assoc` | Prop 6.12 (4) associativity | `AEC/Section6/ProductTied.lean` (**done** cycle 93: restated to the actual-μ-type copy form, `infra_612_tied_assoc_copies` via `infra_612_isProductTied_copy`; at-level case is a corollary) |
 | `infra_612_tied_assoc_level_joints` | Prop 6.12 (4) associativity, products at A's level | `AEC/Section6/ProductTied.lean` (**done**; no `sorry`) |
-| `infra_612_tied_finite` | Prop 6.12 (5,6) finite products | `AEC/Section6/ProductTied.lean` (**blocked** on associativity; products at A's level done) |
+| `infra_612_tied_finite` | Prop 6.12 (5,6) finite products | `AEC/Section6/ProductTied.lean` (**open** cycle 93, unblocked; products at A's level done) |
 | `infra_612_tied_finite_perm_level` | Prop 6.12 (5) permutation invariance, products at A's level | `AEC/Section6/ProductTied.lean` (**done**; no `sorry`) |
 | `infra_612_tied_finite_proj_level` | Prop 6.12 (6) projections, products at A's level | `AEC/Section6/ProductTied.lean` (**done**; no `sorry`) |
 | `infra_612_tied_base_change` | Prop 6.12 (7) base change | `AEC/Section6/ProductTied.lean` (**blocked** on independence; joints at base levels done) |

@@ -486,6 +486,66 @@ theorem infra_612_tied_indep_copies
       (P.scheme.diagram_symm _ _ _ _ (infra_612_dEq_of_sameGalois hR'₂ Y hpqμ hβ))
       (infra_612_dEq_of_sameGalois hJ'₂ Y hpqμ hβ)
 
+/-- A tied product of `p` and `q` whose realization and free lift sit at the level `μ`
+(the witness of `infra_612_tied_exists_aux`, with the level recorded). -/
+theorem infra_612_tied_exists_witness_aux
+    (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ)
+    {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
+    (hrec : μ ∈ recursionClosedLevels P σ) (hσμ : Order.succ σ ≤ μ)
+    {A : P.scheme.Object μ hμ}
+    {ν : Cardinal.{u}} (hνμ : ν = μ) (hν : ν ∈ P.eligible)
+    (host : P.scheme.Object ν hν)
+    (incl : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hν host))
+    (hincl : P.scheme.permitted (X := A) (Y := host) incl)
+    (idx : Type u) (val : idx → Occurrence K oneVertexShape (P.scheme.asSystem hν host))
+    (q : TupleOver K oneVertexShape P.scheme hμ A)
+    (hνq : q.ν = μ) (hqσ : #q.idx ≤ σ) :
+    ∃ (y : TupleOver K oneVertexShape P.scheme hν host) (ey : q.idx ≃ y.idx),
+      y.ν = μ ∧ IsTiedFreeMixed incl q y ey ∧ IsProductTied (⟨ν, hν, host, incl, hincl, idx, val⟩ :
+          TupleOver K oneVertexShape P.scheme hμ A) q
+        ((⟨ν, hν, host, incl, hincl, idx, val⟩ : TupleOver K oneVertexShape P.scheme hμ A).join y)
+        (Equiv.sumCongr (Equiv.refl idx) ey) := by
+  subst hνμ
+  let x : TupleOver K oneVertexShape P.scheme hν A := ⟨ν, hν, host, incl, hincl, idx, val⟩
+  obtain ⟨y, ey, hyν, -, hT⟩ :=
+    infra_610_tied_free_lift P σ hσ hν hrec hσμ incl hincl q hνq hqσ
+  refine ⟨y, ey, hyν, hT, x, Equiv.refl _, SameGaloisType.refl x, y, ey, hT, ?_⟩
+  have h : (Equiv.sumCongr (Equiv.refl idx) ey).symm.trans
+      (Equiv.sumCongr (Equiv.refl idx) ey) = Equiv.refl (idx ⊕ y.idx) :=
+    Equiv.symm_trans_self _
+  exact h ▸ SameGaloisType.refl (x.join y)
+
+/-- **A level-`μ` copy of a tied product is a tied product (proved, cycle 93).** If `j` (any
+eligible level) is `p ⊗ q` and `j'` is a level-`μ` copy of `j`, then `j'` is `p ⊗ q`. -/
+theorem infra_612_isProductTied_copy
+    (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ)
+    {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
+    (hrec : μ ∈ recursionClosedLevels P σ) (hσμ : Order.succ σ ≤ μ)
+    {A : P.scheme.Object μ hμ}
+    (p q : TupleOver K oneVertexShape P.scheme hμ A)
+    (hνp : p.ν = μ) (hνq : q.ν = μ) (hpσ : #p.idx ≤ σ) (hqσ : #q.idx ≤ σ)
+    (j : TupleOver K oneVertexShape P.scheme hμ A) (e : p.idx ⊕ q.idx ≃ j.idx)
+    (h : IsProductTied p q j e)
+    (j' : TupleOver K oneVertexShape P.scheme hμ A) (r : j'.idx ≃ j.idx)
+    (hR : SameGaloisType j j' (Equiv.refl j.idx) r) (hj' : j'.ν = μ) :
+    IsProductTied p q j' (e.trans r.symm) := by
+  obtain ⟨y, ey, hyν, hT, h0⟩ := infra_612_tied_exists_witness_aux P σ hσ hμ hrec hσμ hνp p.hν
+    p.host p.incl p.incl_arrow p.idx p.val q hνq hqσ
+  have h01 := infra_612_tied_indep_copies P σ hσ hμ hrec hσμ p q hνq hpσ hqσ j (p.join y) e
+    (Equiv.sumCongr (Equiv.refl p.idx) ey) h h0 j' (p.join y) r (Equiv.refl _) hR
+    (SameGaloisType.refl _) hj' hyν
+  refine ⟨p, Equiv.refl _, SameGaloisType.refl p, y, ey, hT, ?_⟩
+  · have h2 := infra_612_sameGalois_trans_equiv h01 (Equiv.sumCongr (Equiv.refl p.idx) ey)
+    have heq2 : ((Equiv.refl (p.join y).idx).trans
+        (Equiv.sumCongr (Equiv.refl p.idx) ey).symm).trans
+        (Equiv.sumCongr (Equiv.refl p.idx) ey) = Equiv.refl (p.idx ⊕ y.idx) := by
+      ext t
+      exact Equiv.apply_symm_apply (Equiv.sumCongr (Equiv.refl p.idx) ey) t
+    have heq1 : (r.trans e.symm).trans (Equiv.sumCongr (Equiv.refl p.idx) ey) =
+        (e.trans r.symm).symm.trans (Equiv.sumCongr (Equiv.refl p.idx) ey) := rfl
+    erw [heq2, heq1] at h2
+    exact h2
+
 /-- `infra_78_exists_seq_ge` with the index length also below `μ`. -/
 theorem infra_612_exists_seq_small
     (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ)
@@ -1413,6 +1473,48 @@ theorem infra_612_tied_assoc_level_joints
   have S2 := P.scheme.diagram_trans _ _ _ _ _ _ T1 (P.scheme.diagram_trans _ _ _ _ _ _ T3 T4)
   exact P.scheme.diagram_trans _ _ _ _ _ _ S1 (P.scheme.diagram_symm _ _ _ _ S2)
 
+/-- **Associativity for the actual `μ`-types (proved, cycle 93 audit).** Prop 6.12: "Finite
+products associate". Factors `p, q, r` and the intermediate products `p ⊗ q`, `q ⊗ r` are types
+at the level `μ` of `A`; the triple products `j₁ = (p ⊗ q) ⊗ r`, `j₂ = p ⊗ (q ⊗ r)` may be
+realized at any eligible level and are compared on any level-`μ` copies (Cor 6.7: "Types of
+tuples of length less than ν over A obtained in a larger object are actual ν-types").
+Copies are products (`infra_612_isProductTied_copy`); `infra_612_tied_assoc_level_joints`. -/
+theorem infra_612_tied_assoc_copies
+    (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ)
+    {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
+    (hrec : μ ∈ recursionClosedLevels P σ) (hσμ : Order.succ σ ≤ μ)
+    {A : P.scheme.Object μ hμ}
+    (p q r : TupleOver K oneVertexShape P.scheme hμ A)
+    (hνp : p.ν = μ) (hνq : q.ν = μ) (hνr : r.ν = μ)
+    (hpσ : #p.idx ≤ σ) (hqσ : #q.idx ≤ σ) (hrσ : #r.idx ≤ σ)
+    (pq qr j₁ j₂ : TupleOver K oneVertexShape P.scheme hμ A)
+    (epq : p.idx ⊕ q.idx ≃ pq.idx) (eqr : q.idx ⊕ r.idx ≃ qr.idx)
+    (e₁ : pq.idx ⊕ r.idx ≃ j₁.idx) (e₂ : p.idx ⊕ qr.idx ≃ j₂.idx)
+    (hPQ : IsProductTied p q pq epq) (h₁ : IsProductTied pq r j₁ e₁)
+    (hQR : IsProductTied q r qr eqr) (h₂ : IsProductTied p qr j₂ e₂)
+    (hνpq : pq.ν = μ) (hνqr : qr.ν = μ)
+    (j'₁ j'₂ : TupleOver K oneVertexShape P.scheme hμ A)
+    (r₁ : j'₁.idx ≃ j₁.idx) (r₂ : j'₂.idx ≃ j₂.idx)
+    (hR₁ : SameGaloisType j₁ j'₁ (Equiv.refl j₁.idx) r₁)
+    (hR₂ : SameGaloisType j₂ j'₂ (Equiv.refl j₂.idx) r₂)
+    (hj₁ : j'₁.ν = μ) (hj₂ : j'₂.ν = μ) :
+    SameGaloisType j'₁ j'₂
+      ((r₁.trans e₁.symm).trans ((Equiv.sumCongr epq.symm (Equiv.refl _)).trans
+        (Equiv.sumAssoc _ _ _)))
+      ((r₂.trans e₂.symm).trans (Equiv.sumCongr (Equiv.refl _) eqr.symm)) := by
+  have hsum2 : ∀ {U V : Type u}, #U ≤ σ → #V ≤ σ → #(U ⊕ V) ≤ σ := fun hU hV => by
+    rw [Cardinal.mk_sum, Cardinal.lift_id, Cardinal.lift_id]
+    exact Cardinal.add_le_of_le hσ hU hV
+  have hpqσ : #pq.idx ≤ σ := (Cardinal.mk_congr epq).symm.trans_le (hsum2 hpσ hqσ)
+  have hqrσ : #qr.idx ≤ σ := (Cardinal.mk_congr eqr).symm.trans_le (hsum2 hqσ hrσ)
+  have h₁' := infra_612_isProductTied_copy P σ hσ hμ hrec hσμ pq r hνpq hνr hpqσ hrσ
+    j₁ e₁ h₁ j'₁ r₁ hR₁ hj₁
+  have h₂' := infra_612_isProductTied_copy P σ hσ hμ hrec hσμ p qr hνp hνqr hpσ hqrσ
+    j₂ e₂ h₂ j'₂ r₂ hR₂ hj₂
+  have h := infra_612_tied_assoc_level_joints P σ hσ hμ hrec hσμ p q r hνp hνq hνr hpσ hqσ hrσ
+    pq qr j'₁ j'₂ epq eqr _ _ hPQ h₁' hQR h₂' hνpq hνqr hj₁ hj₂
+  exact h
+
 theorem infra_612_card_sigma_fin {n : ℕ} (α : Fin n → Type u) {σ : Cardinal.{u}}
     (hσ : ℵ₀ ≤ σ) (h : ∀ i, #(α i) ≤ σ) : #(Σ i, α i) ≤ σ := by
   rw [Cardinal.mk_sigma]
@@ -1973,8 +2075,9 @@ extension; the joint type `p ⊗ q` of `(x, y)` over `A` (`IsProductTied`):
 3. is symmetric, with the coordinate swap: `p ⊗ q = q ⊗ p`, for the actual `μ`-types (any
    level-`μ` copies; English "Binary products are symmetric, with the indicated permutation of
    coordinates"; proved, `infra_612_tied_symm_copies`, cycle 93);
-4. associates: `(p ⊗ q) ⊗ r = p ⊗ (q ⊗ r)` (with `Equiv.sumAssoc`); iterated finite products
-   then associate by induction;
+4. associates: `(p ⊗ q) ⊗ r = p ⊗ (q ⊗ r)` (with `Equiv.sumAssoc`), for the actual `μ`-types
+   (intermediate products `μ`-types, triple products on level-`μ` copies; English "Finite
+   products associate"; proved, `infra_612_tied_assoc_copies`, cycle 93);
 5. finite products (`IsFiniteProductTied`) are permutation invariant;
 6. finite products commute with coordinate projections (sub-lists of factors);
 7. base change: for `A → B`, `(p ⊗ q)^B = p_B ⊗ q^B` (free lifts tied, `IsTiedFreeMixed`).
@@ -1984,8 +2087,8 @@ of the tail at or above that of `A` (all arities are bounded at the level of `A`
 Packaging as Theorem 6.10: a tail of recursion-closed levels `μ ≥ σ⁺`, factors of size `≤ σ`
 realized at the level of `A`.
 
-**Status:** clauses 1–3 proved (`infra_612_tied_exists`, `infra_612_tied_indep_copies`,
-`infra_612_tied_symm_copies`); clauses 4–7 are `sorry`, tracked as `infra_612_tied_symmetry`, `infra_612_tied_assoc`,
+**Status:** clauses 1–4 proved (`infra_612_tied_exists`, `infra_612_tied_indep_copies`,
+`infra_612_tied_symm_copies`, `infra_612_tied_assoc_copies`); clauses 5–7 are `sorry`, tracked as
 `infra_612_tied_finite` (5 and 6), `infra_612_tied_base_change`. -/
 theorem proposition_6_12 {K : AbstractElementaryClass.{u}}
     (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ) :
@@ -2012,16 +2115,22 @@ theorem proposition_6_12 {K : AbstractElementaryClass.{u}}
             SameGaloisType j₂ j'₂ (Equiv.refl j₂.idx) r₂ → j'₁.ν = μ → j'₂.ν = μ →
             SameGaloisType j'₁ j'₂ (r₁.trans e₁.symm)
               ((r₂.trans e₂.symm).trans (Equiv.sumComm _ _))) ∧
-        -- 4. associativity
+        -- 4. associativity, for the actual `μ`-types: factors and the intermediate products
+        -- `p ⊗ q`, `q ⊗ r` are `μ`-types; triple products compared on level-`μ` copies
+        -- (cycle 93 audit)
         (∀ (r : TO), r.ν = μ → #r.idx ≤ σ →
           ∀ (pq qr j₁ j₂ : TO) (epq : p.idx ⊕ q.idx ≃ pq.idx) (eqr : q.idx ⊕ r.idx ≃ qr.idx)
             (e₁ : pq.idx ⊕ r.idx ≃ j₁.idx) (e₂ : p.idx ⊕ qr.idx ≃ j₂.idx),
             IsProductTied p q pq epq → IsProductTied pq r j₁ e₁ →
             IsProductTied q r qr eqr → IsProductTied p qr j₂ e₂ →
-            SameGaloisType j₁ j₂
-              (e₁.symm.trans ((Equiv.sumCongr epq.symm (Equiv.refl _)).trans
+            pq.ν = μ → qr.ν = μ →
+            ∀ (j'₁ j'₂ : TO) (r₁ : j'₁.idx ≃ j₁.idx) (r₂ : j'₂.idx ≃ j₂.idx),
+            SameGaloisType j₁ j'₁ (Equiv.refl j₁.idx) r₁ →
+            SameGaloisType j₂ j'₂ (Equiv.refl j₂.idx) r₂ → j'₁.ν = μ → j'₂.ν = μ →
+            SameGaloisType j'₁ j'₂
+              ((r₁.trans e₁.symm).trans ((Equiv.sumCongr epq.symm (Equiv.refl _)).trans
                 (Equiv.sumAssoc _ _ _)))
-              (e₂.symm.trans (Equiv.sumCongr (Equiv.refl _) eqr.symm))) ∧
+              ((r₂.trans e₂.symm).trans (Equiv.sumCongr (Equiv.refl _) eqr.symm))) ∧
         -- 5. permutation invariance of finite products
         (∀ (n : ℕ) (b : Fin n → TO), (∀ i, (b i).ν = μ ∧ #(b i).idx ≤ σ) →
           ∀ (π : Equiv.Perm (Fin n)) (j₁ j₂ : TO)
@@ -2064,8 +2173,13 @@ theorem proposition_6_12 {K : AbstractElementaryClass.{u}}
           j₁ j₂ e₁ e₂ h₁ h₂ j'₁ j'₂ r₁ r₂ hR₁ hR₂ hj₁ hj₂,
       fun j₁ j₂ e₁ e₂ h₁ h₂ j'₁ j'₂ r₁ r₂ hR₁ hR₂ hj₁ hj₂ =>
         infra_612_tied_symm_copies P σ hσ (Tail.mem hT hμ) hμ.1 hμ.2 p q hνp hνq hpσ hqσ
-          j₁ j₂ e₁ e₂ h₁ h₂ j'₁ j'₂ r₁ r₂ hR₁ hR₂ hj₁ hj₂, ?_⟩⟩
-  -- clauses 4–7: open sub-tips (see the module docstring)
+          j₁ j₂ e₁ e₂ h₁ h₂ j'₁ j'₂ r₁ r₂ hR₁ hR₂ hj₁ hj₂,
+      fun r hνr hrσ pq qr j₁ j₂ epq eqr e₁ e₂ hPQ h₁ hQR h₂ hνpq hνqr j'₁ j'₂ r₁ r₂ hR₁ hR₂
+          hj₁ hj₂ =>
+        infra_612_tied_assoc_copies P σ hσ (Tail.mem hT hμ) hμ.1 hμ.2 p q r hνp hνq hνr hpσ hqσ
+          hrσ pq qr j₁ j₂ epq eqr e₁ e₂ hPQ h₁ hQR h₂ hνpq hνqr j'₁ j'₂ r₁ r₂ hR₁ hR₂ hj₁ hj₂,
+      ?_⟩⟩
+  -- clauses 5–7: open sub-tips (see the module docstring)
   sorry
 
 /-- **Copies persist over a later base (Prop 7.8 closure requirement 2 at limits; proved).**
