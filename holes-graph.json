@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-18 15:43",
+ "updated": "2026-11-18 15:51",
  "sorryCount": 41,
  "legend": {
   "open": "No unfinished required proof-deps — try next",
@@ -2987,8 +2987,8 @@
    "section": 7,
    "file": "AEC/Section7/Lemma712Existence.lean",
    "status": "blocked",
-   "blocker": "infra_712_prechain, infra_712_free_marks",
-   "detail": "Blocked (cycle 76). Exactly clause (1) of the restated lemma_7_12. English proof: maintain a common ambient containing L and the chain built so far; at stage i, finite domination (Lemma 7.11, via its products with previous marks = the original ones) makes the actual b_i free over M_i from A (the tied free field); Theorem 7.9 gives an all-dominated realization over M_i + b_i and its primeness clause embeds it into a compatible actual ambient over the tuple; limits: coherent unions (same-level chain closure). Needs lemma_7_11 (blocked on infra_711_successor)."
+   "blocker": "infra_712_free_marks",
+   "detail": "Clause (1) of lemma_7_12 at a level = infra_712_existence_at. Glue infra_712_existence_at_of_products (cycle 86) proves it from infra_712_products_statement alone: pre-chain (done) + free marks (WellFoundedLT induction + 7.11 on the truncated chain). Remaining: infra_712_products."
   },
   {
    "id": "lemma_7_12_uniqueness",
@@ -3103,9 +3103,9 @@
    "label": "7.12(1) pre-chain construction",
    "section": 7,
    "file": "AEC/Section7/Lemma712Existence.lean",
-   "status": "blocked",
-   "blocker": "infra_712_recursion",
-   "detail": "infra_712_prechain_statement (at a 7.9 level closedTail ∩ 615closed): every well-ordered TupleList of length <= mu has an all-dominated TiedListPreChain. Split cycle 85c: infra_712_prechain_of_parts (proved glue) from infra_712_recursion_statement (WellFounded.fix recursion along WithTop L.δ, stages mapped into L.host with marks sent to entries) and infra_712_limit_statement (directed union of a linear system of stages mapped into N, with covering and a compatible map into N); successor step infra_712_succ PROVED (Theorem 7.9 existence at the level, infra_79_existence_at, + same-level primeness)."
+   "status": "done",
+   "blocker": null,
+   "detail": "infra_712_prechain_statement PROVED cycle 86: infra_712_prechain_of_recursion P (infra_712_recursion P) (successor infra_712_succ, limit infra_712_limit, recursion infra_712_recursion). Axioms clean."
   },
   {
    "id": "infra_712_free_marks",
@@ -3156,10 +3156,10 @@
    "id": "infra_712_recursion",
    "label": "7.12(1) recursion assembly",
    "section": 7,
-   "file": "AEC/Section7/Lemma712Existence.lean",
-   "status": "open",
+   "file": "AEC/Section7/Lemma712Recursion.lean",
+   "status": "done",
    "blocker": null,
-   "detail": "infra_712_recursion_statement: infra_712_limit_statement -> infra_712_prechain_statement (limit now proved, so this is the whole construction). Engine fit (cycle 85d review): ChainEngine needs NON-dependent stage/map types. Suggested representation: stages as sets of the ambient N = L.host carrier (S := Set N-carrier, M := Unit, Arr s t _ := s ⊆ t ∧ both strong submodels of size mu), successor = image of Y under infra_712_succ's h (fed b' = L.val i), limit = union of images (infra_712_limit's covering + h); then convert each set to a P.scheme.Object (needs a 'strong subset of N -> Object' lemma via coherence: A ⊆ B ⊆ N strong in N => A strong in B) and read off TiedListPreChain fields (top = L.host, listToTop = id, toTop = image inclusion of the top stage, marks = L.val i pulled back into stage j > i). AllDominatedIncrement transfers along the iso Y ≅ image(h). Alternative: dependent WellFounded.fix with Sigma-typed stages (casts)."
+   "detail": "infra_712_recursion PROVED cycle 86 (AEC/Section7/Lemma712Recursion.lean): stages = StrongSub L.host (level-mu object + strong embedding into L.host; subset = range), built by infra_78_coherent_chain_engine (WellFounded.fix, maps Unit, Arr = subset); scheme arrows = factorEmbedding through the larger stage, strong by K.coherence (no new axiom/field); successors infra_712_succ, limits infra_712_limit (image of the union = union of images); marks = preimages of L.val; top = L.host, listToTop = id. Axioms: propext, Classical.choice, Quot.sound."
   }
  ],
  "edges": [
@@ -6471,6 +6471,6 @@
    "kind": "hard"
   }
  ],
- "doneCount": 285,
+ "doneCount": 287,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
