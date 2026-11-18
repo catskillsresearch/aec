@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-18 09:39",
+  "updated": "2026-11-18 09:45",
   "sorryCount": 45,
   "legend": {
     "open": "No unfinished required proof-deps — try next",
@@ -2078,7 +2078,7 @@
       "file": "AEC/Section6/ProductTied.lean",
       "status": "blocked",
       "blocker": "infra_612_tied_independence",
-      "detail": "Open. (p⊗q)⊗r = p⊗(q⊗r) with sumAssoc; finite association by induction."
+      "detail": "Blocked (full clause 4). (p⊗q)⊗r = p⊗(q⊗r) for tied products with intermediate products and joints at ANY eligible levels. Case pq, qr, j1, j2 at mu DONE as infra_612_tied_assoc_level_joints (realizations/free lifts at any levels). Remaining: off-level products, same gap as infra_612_tied_independence (infra_612_galois_trans_cross_level)."
     },
     {
       "id": "infra_612_tied_finite",
@@ -2151,6 +2151,15 @@
       "status": "done",
       "blocker": null,
       "detail": "Done (no sorry; axioms propext/choice/Quot.sound): infra_612_tied_base_change_level_joints. mu, mu' recursion-closed >= sigma^+, mu <= mu', f : A -> B permitted; IsProductTied p q joint e (joint.nu = mu); tied free lifts pB, qB, jB of p, q, joint along f; IsProductTied pB qB jB' e' with jB.nu = jB'.nu = mu': SameGaloisType jB jB' (eJ.symm.trans e.symm) (e'.symm.trans (sumCongr eP.symm eQ.symm)). English proof of formula (4): sequences a (p), b (q), K (p⊗q) in A; Thm 6.6 test Y in B moved into A over all three (infra_78_move_mixed); infra_612_pushSeq makes f(a), f(b) approximation sequences of pB, qB; infra_612_product_entry over A and over B puts both joints on the entry D(a_i, b_j, ·) for a common good (i, j) (infra_78_exists_outside_two twice)."
+    },
+    {
+      "id": "infra_612_tied_assoc_level_joints",
+      "label": "Prop 6.12 (4) associativity, products at A's level (tied)",
+      "section": 6,
+      "file": "AEC/Section6/ProductTied.lean",
+      "status": "done",
+      "blocker": null,
+      "detail": "Done (no sorry; axioms propext/choice/Quot.sound): infra_612_tied_assoc_level_joints. Recursion-closed mu >= sigma^+, p q r over A at mu of size <= sigma; IsProductTied p q pq, pq r j1, q r qr, p qr j2 with pq, qr, j1, j2 at mu (realizations/free lifts at any levels): SameGaloisType j1 j2 with the sumAssoc identification of clause 4. Proof (array form of the English chain-of-free-lifts argument): Thm 6.6 test Y; sequences a (p, short), K (pq), b, c, L (q, r, qr; longer than a); both sides equal one entry D(a_i, b_j, c_k, Y): (pq)⊗r read k, j, i and p⊗(qr) read i, k, j via infra_612_product_entry (four uses); good indices by infra_612_exists_outside_union / infra_78_exists_outside_two."
     }
   ],
   "edges": [
@@ -3977,8 +3986,13 @@
       "from": "infra_612_tied_base_change_level_joints",
       "to": "infra_612_tied_base_change",
       "kind": "hard"
+    },
+    {
+      "from": "infra_612_tied_assoc_level_joints",
+      "to": "infra_612_tied_assoc",
+      "kind": "hard"
     }
   ],
-  "doneCount": 177,
+  "doneCount": 178,
   "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 43. Uncommitted in /tmp/aec-grok."
 }
