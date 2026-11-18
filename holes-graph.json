@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-18 13:33",
-  "sorryCount": 44,
+  "updated": "2026-11-18 13:48",
+  "sorryCount": 43,
   "legend": {
     "open": "No unfinished required proof-deps — try next",
     "blocked": "Waiting on incomplete required proof-deps",
@@ -621,9 +621,9 @@
       "label": "Prop 7.8",
       "section": 7,
       "file": "AEC/Section7/Results.lean",
-      "status": "blocked",
-      "blocker": "infra_78_mixed_level_isolation",
-      "detail": "RESTATED (grokbot_01 Phase 1.1), open with sorry. Now over SingleModelData P (P.scheme, oneVertexShape: the package of theorem_6_10, proposition_6_13, proposition_7_3_uniform, lemma_7_6_tied) instead of a bare WorkingScheme; tail T chosen before theta (uniform closure). Bounded-mark (Def 7.7) generalization not stated. Blocked on infra_78_mixed_level_isolation (stubs in AEC/Section7/MixedLevel.lean). AUDIT NOTE (cycle 64, no statement change): paper 'Proposition 7.8. Let lambda be a sufficiently closed eligible level, let X be an object there, and let p = tp(b/X) be a finite-tuple type. For every infinite theta < lambda there is a same-level extension X <= U containing a realization of p such that tp(b, c/X) is isolated relative to b for every c in U with |c| <= theta.' Types are Theorem 6.6's tp(v/A; B) for arrows A -> B0, B1 (identification in an amalgam over A), with no restriction on the level of B; so the Lean p with any host level >= lambda matches the English as written. Its proof for hosts above lambda uses the cross-level identification the paper takes from Theorem 6.6, whose Lean form (infra_78_cross_level_galois / infra_612_galois_trans_cross_level, via infra_78_tuple_amalgam_large) is unverified. The case p.nu = lambda is infra_78_matrix_assembly_level. Cycle 66: the case p.nu = lambda is proved (infra_78_matrix_assembly_level, sorry-free); proposition_7_8 unchanged and still sorry.",
+      "status": "done",
+      "blocker": null,
+      "detail": "DONE cycle 67, statement unchanged: proof := <infra_78_closedTail P, infra_78_closedTail_tail P, infra_78_marginal_general_level P>. Axioms: propext, Classical.choice, Quot.sound (no sorryAx). RESTATED (grokbot_01 Phase 1.1), open with sorry. Now over SingleModelData P (P.scheme, oneVertexShape: the package of theorem_6_10, proposition_6_13, proposition_7_3_uniform, lemma_7_6_tied) instead of a bare WorkingScheme; tail T chosen before theta (uniform closure). Bounded-mark (Def 7.7) generalization not stated. Blocked on infra_78_mixed_level_isolation (stubs in AEC/Section7/MixedLevel.lean). AUDIT NOTE (cycle 64, no statement change): paper 'Proposition 7.8. Let lambda be a sufficiently closed eligible level, let X be an object there, and let p = tp(b/X) be a finite-tuple type. For every infinite theta < lambda there is a same-level extension X <= U containing a realization of p such that tp(b, c/X) is isolated relative to b for every c in U with |c| <= theta.' Types are Theorem 6.6's tp(v/A; B) for arrows A -> B0, B1 (identification in an amalgam over A), with no restriction on the level of B; so the Lean p with any host level >= lambda matches the English as written. Its proof for hosts above lambda uses the cross-level identification the paper takes from Theorem 6.6, whose Lean form (infra_78_cross_level_galois / infra_612_galois_trans_cross_level, via infra_78_tuple_amalgam_large) is unverified. The case p.nu = lambda is infra_78_matrix_assembly_level. Cycle 66: the case p.nu = lambda is proved (infra_78_matrix_assembly_level, sorry-free); proposition_7_8 unchanged and still sorry.",
       "restated": true
     },
     {
@@ -640,9 +640,9 @@
       "label": "Thm 7.9",
       "section": 7,
       "file": "AEC/Section7/Results.lean",
-      "status": "blocked",
+      "status": "open",
       "blocker": null,
-      "detail": "RESTATED (grokbot_01 Phase 3.1), open with sorry: over SingleModelData (was bare WorkingScheme, underhypothesized). Omitted: bounded-mark generalization, primeness clause. Blocked on proposition_7_8.",
+      "detail": "Open (cycle 67): every hard dep done (proposition_7_8 done cycle 67, lemma_6_17). RESTATED (grokbot_01 Phase 3.1), open with sorry: over SingleModelData (was bare WorkingScheme, underhypothesized). Omitted: bounded-mark generalization, primeness clause. Blocked on proposition_7_8.",
       "restated": true
     },
     {
@@ -1842,9 +1842,9 @@
       "label": "Infra 7.8 mixed-level isolation",
       "section": 7,
       "file": "AEC/Section7/MixedDescent.lean",
-      "status": "blocked",
-      "blocker": "infra_78_isolation_transfer",
-      "detail": "Blocked (full claim kept: everything Prop 7.8 needs beyond the done infra). Split into tracked sub-tips: infra_78_fixed_list_eventually_free (DONE), infra_78_nonfree_extension_tied (DONE), infra_78_same_level_type_amalgam (DONE), infra_78_bookkeeping_closure (DONE cycle 41 via infra_78_bookkeeping_assembly), infra_78_matrix_construction (blocked; split cycle 42: infra_78_bookkeeping_stage_local DONE, infra_78_matrix_successor_step open, infra_78_matrix_limit_step open, infra_78_matrix_recursion blocked), infra_78_isolated_stage (DONE cycle 56), infra_78_theta_shrink (open), infra_78_isolation_transfer (blocked). Previously done toward it: mixed tied free lift, mixed Lemma 7.6, Fodor, matrix data, stationary combinatorics, tied local character. Open. Done toward it: mixed tied free lift and mixed Lemma 7.6 (sorry-free), Fodor, matrix data, stationary combinatorics (infra_78_stationary_combinatorics: high-cofinality stages stationary, small sets appear early, one fixed failing list on a stationary set). Tied local character now done (infra_78_tied_local_character: infra_78_tied_local, base mono, restrict); untied IsFreeFrom is vacuous (audit_free_from_vacuous). Remaining for Prop 7.8: the rho^+ matrix construction at level kappa with level-lambda pairs inside R_i,S_i (bookkeeping closures), type-identifying amalgamation at kappa, the local-character contradiction for the fixed list, the theta^+ shrink to A<=U with the majority free-extension identity, Def 7.7 continuity at matrix limits (only finite marks done: infra_78_finite_continuity). Cycle 63: new sub-tip infra_78_matrix_assembly_level (open; the assembly for p realized at the level of X); the general host level waits on infra_78_marginal_general_level via infra_78_isolation_transfer. Cycle 64: infra_78_matrix_assembly_level split (assembly_levels, seq_diagram_transfer done; seed_stage, stage_transport open; assembly_glue blocked). Cycle 66: infra_78_matrix_assembly_level DONE (seed_stage, assembly_glue; AssemblyGlue.lean), so Prop 7.8's conclusion is proved for p realized at the level of X; still blocked on infra_78_isolation_transfer (marginal_general_level, hosts above lambda)."
+      "status": "done",
+      "blocker": null,
+      "detail": "DONE cycle 67: last hard dep infra_78_isolation_transfer done; every hard dep done; the full claim (everything Prop 7.8 needs beyond the done infra) is delivered by infra_78_marginal_general_level. Blocked (full claim kept: everything Prop 7.8 needs beyond the done infra). Split into tracked sub-tips: infra_78_fixed_list_eventually_free (DONE), infra_78_nonfree_extension_tied (DONE), infra_78_same_level_type_amalgam (DONE), infra_78_bookkeeping_closure (DONE cycle 41 via infra_78_bookkeeping_assembly), infra_78_matrix_construction (blocked; split cycle 42: infra_78_bookkeeping_stage_local DONE, infra_78_matrix_successor_step open, infra_78_matrix_limit_step open, infra_78_matrix_recursion blocked), infra_78_isolated_stage (DONE cycle 56), infra_78_theta_shrink (open), infra_78_isolation_transfer (blocked). Previously done toward it: mixed tied free lift, mixed Lemma 7.6, Fodor, matrix data, stationary combinatorics, tied local character. Open. Done toward it: mixed tied free lift and mixed Lemma 7.6 (sorry-free), Fodor, matrix data, stationary combinatorics (infra_78_stationary_combinatorics: high-cofinality stages stationary, small sets appear early, one fixed failing list on a stationary set). Tied local character now done (infra_78_tied_local_character: infra_78_tied_local, base mono, restrict); untied IsFreeFrom is vacuous (audit_free_from_vacuous). Remaining for Prop 7.8: the rho^+ matrix construction at level kappa with level-lambda pairs inside R_i,S_i (bookkeeping closures), type-identifying amalgamation at kappa, the local-character contradiction for the fixed list, the theta^+ shrink to A<=U with the majority free-extension identity, Def 7.7 continuity at matrix limits (only finite marks done: infra_78_finite_continuity). Cycle 63: new sub-tip infra_78_matrix_assembly_level (open; the assembly for p realized at the level of X); the general host level waits on infra_78_marginal_general_level via infra_78_isolation_transfer. Cycle 64: infra_78_matrix_assembly_level split (assembly_levels, seq_diagram_transfer done; seed_stage, stage_transport open; assembly_glue blocked). Cycle 66: infra_78_matrix_assembly_level DONE (seed_stage, assembly_glue; AssemblyGlue.lean), so Prop 7.8's conclusion is proved for p realized at the level of X; still blocked on infra_78_isolation_transfer (marginal_general_level, hosts above lambda)."
     },
     {
       "id": "infra_9_cube_scheme",
@@ -2147,10 +2147,10 @@
       "id": "infra_612_galois_trans_cross_level",
       "label": "Galois-type transitivity through a mu-level middle (ends above mu)",
       "section": 6,
-      "file": "AEC/Section6/ProductTied.lean",
-      "status": "open",
-      "blocker": null,
-      "detail": "Open (sub-tip of infra_612_tied_independence; no Lean declaration yet). Statement: mu recursion-closed, sigma^+ <= mu, t1 t2 t3 over A (level mu), #t1.idx <= sigma, t2.nu = mu, t1.nu and t3.nu ANY eligible levels; SameGaloisType t1 t2 e12 refl and SameGaloisType t2 t3 refl e32 imply SameGaloisType t1 t3 (e12.trans e32.symm) refl. SameGaloisType.trans_via proves it when all three are at mu (via infra_612_same_galois, D.same tests at hosts of size mu). Off-level ends need an amalgam of the two tops over the mu-host of t2, or Thm 6.6 with large hosts: same obstruction as infra_78_tuple_amalgam_large (soft link). Truth not verified."
+      "file": "AEC/Section6/GaloisCrossLevel.lean",
+      "status": "blocked",
+      "blocker": "infra_612_galois_trans_cross_level_both_off",
+      "detail": "Blocked (split cycle 67; full claim kept here). Lean: def infra_612_galois_trans_cross_level_statement (exact board statement: mu recursion-closed, sigma^+ <= mu, #t1.idx <= sigma, t2.nu = mu, t1.nu and t3.nu any eligible levels). = infra_612_galois_trans_cross_level_of_base_end (DONE: t1.nu = mu or t3.nu = mu) + infra_612_galois_trans_cross_level_both_off (open: both ends above mu). Previous detail: Open (sub-tip of infra_612_tied_independence; no Lean declaration yet). Statement: mu recursion-closed, sigma^+ <= mu, t1 t2 t3 over A (level mu), #t1.idx <= sigma, t2.nu = mu, t1.nu and t3.nu ANY eligible levels; SameGaloisType t1 t2 e12 refl and SameGaloisType t2 t3 refl e32 imply SameGaloisType t1 t3 (e12.trans e32.symm) refl. SameGaloisType.trans_via proves it when all three are at mu (via infra_612_same_galois, D.same tests at hosts of size mu). Off-level ends need an amalgam of the two tops over the mu-host of t2, or Thm 6.6 with large hosts: same obstruction as infra_78_tuple_amalgam_large (soft link). Truth not verified."
     },
     {
       "id": "infra_612_tied_symm_level_joints",
@@ -2265,9 +2265,9 @@
       "label": "Prop 7.8: Lemma 7.6 transfer and A ~ X transport",
       "section": 7,
       "file": "AEC/Section7/IsolationTransfer.lean",
-      "status": "blocked",
-      "blocker": "infra_78_marginal_anchor",
-      "detail": "Blocked (split grokbot cycle 61; full claim stays here = infra_78_isolation_over_A (done) + infra_78_anchor_iso (done) + infra_78_marginal_anchor (blocked, split cycle 63) + infra_78_iso_rename (done cycle 62)). Paper: Lemma 7.6 gives isolation over A; I_p still determines the marginal on b; bounded diagram homogeneity gives A ~ X carrying the anchors; transport of approximation evaluations carries tp(b/A) to p; renaming U along the isomorphism gives the asserted extension of the original X (the proposition_7_8 conclusion)."
+      "status": "done",
+      "blocker": null,
+      "detail": "DONE cycle 67: last part infra_78_marginal_anchor done; full claim = its parts, all done (conclusion delivered by infra_78_marginal_general_level). Blocked (split grokbot cycle 61; full claim stays here = infra_78_isolation_over_A (done) + infra_78_anchor_iso (done) + infra_78_marginal_anchor (blocked, split cycle 63) + infra_78_iso_rename (done cycle 62)). Paper: Lemma 7.6 gives isolation over A; I_p still determines the marginal on b; bounded diagram homogeneity gives A ~ X carrying the anchors; transport of approximation evaluations carries tp(b/A) to p; renaming U along the isomorphism gives the asserted extension of the original X (the proposition_7_8 conclusion)."
     },
     {
       "id": "infra_78_mixed_ls_pair",
@@ -2608,9 +2608,9 @@
       "label": "Prop 7.8: I_p still determines the marginal; tp(b/A) carried to p by the anchor isomorphism",
       "section": 7,
       "file": "AEC/Section7/MarginalAnchor.lean",
-      "status": "blocked",
-      "blocker": "infra_78_marginal_general_level",
-      "detail": "Blocked (split grokbot cycle 63; full claim stays here = infra_78_anchor_answers + infra_78_anchor_transport + infra_78_marginal_section + infra_78_tiedFreeMixed_trans + infra_78_marginal_identify_level (all done) + infra_78_marginal_general_level (blocked on infra_612_galois_trans_cross_level)). Paper: 'I_p still determines the marginal on b: it did so at X_0, the matrix preserved its free lift, and the same approximation answers hold on restriction to A. Bounded diagram homogeneity gives an isomorphism A ~ X carrying these anchors to themselves. Transport of approximation evaluations carries tp(b/A) to p.' Done for p realized at the level of X; open for p hosted above it (proposition_7_8 allows any host level)."
+      "status": "done",
+      "blocker": null,
+      "detail": "DONE cycle 67: last part infra_78_marginal_general_level done; full claim = its parts, all done. Blocked (split grokbot cycle 63; full claim stays here = infra_78_anchor_answers + infra_78_anchor_transport + infra_78_marginal_section + infra_78_tiedFreeMixed_trans + infra_78_marginal_identify_level (all done) + infra_78_marginal_general_level (blocked on infra_612_galois_trans_cross_level)). Paper: 'I_p still determines the marginal on b: it did so at X_0, the matrix preserved its free lift, and the same approximation answers hold on restriction to A. Bounded diagram homogeneity gives an isomorphism A ~ X carrying these anchors to themselves. Transport of approximation evaluations carries tp(b/A) to p.' Done for p realized at the level of X; open for p hosted above it (proposition_7_8 allows any host level)."
     },
     {
       "id": "infra_78_iso_rename",
@@ -2670,10 +2670,10 @@
       "id": "infra_78_marginal_general_level",
       "label": "Prop 7.8: marginal identification for p hosted above the level of X",
       "section": 7,
-      "file": "AEC/Section7/MarginalAnchor.lean",
-      "status": "blocked",
-      "blocker": "infra_612_galois_trans_cross_level",
-      "detail": "Blocked (split grokbot cycle 63). proposition_7_8 allows p over X with any host level p.nu >= lambda. Reduction: a level-lambda subobject of p.host containing X and b gives p' (p'.nu = lambda) with SameGaloisType p p' by a direct witness; infra_78_marginal_identify_level gives SameGaloisType p' (renamed mark in U); composing needs infra_612_galois_trans_cross_level (t2 = p' at lambda, t1 = p at any level, t3 at lambda), whose truth is unverified (same obstruction as infra_78_tuple_amalgam_large). Cycle 64 route check (requested): running the matrix with p's own host inside Y_0 does not avoid a cross-level identification: (i) the seed needs the free lift of p over X_0, and infra_78_tied_free_lift_mixed needs p.nu = lambda (its Galois clause for higher hosts is infra_78_cross_level_galois); (ii) the anchor isomorphism phi agrees with iota only on I_p, so p and the renamed mark in U are identified by testing (Theorem 6.6), never by a direct witness, and Lean Theorem 6.6 (infra_612_same_galois) needs both hosts at the base level; with p.host (or Y_i) above lambda and U at lambda this is infra_78_cross_level_galois. Alternative blocker: infra_78_cross_level_galois (same obstruction, infra_78_tuple_amalgam_large)."
+      "file": "AEC/Section7/GeneralLevel.lean",
+      "status": "done",
+      "blocker": null,
+      "detail": "DONE cycle 67 (theorem infra_78_marginal_general_level, GeneralLevel.lean): the proposition_7_8 conclusion on infra_78_closedTail for every finite p over X hosted at ANY level. Route: infra_612_exists_level_copy gives p' (same idx, host at lambda, SameGaloisType p p' by a direct witness); infra_78_matrix_assembly_level for p'; infra_612_galois_trans_cross_level_right_base composes p ~ p' ~ mark (first host any level, middle and last at lambda). Only the base-end case of galois_trans_cross_level is used. Axioms: propext, Classical.choice, Quot.sound. Previous detail: Blocked (split grokbot cycle 63). proposition_7_8 allows p over X with any host level p.nu >= lambda. Reduction: a level-lambda subobject of p.host containing X and b gives p' (p'.nu = lambda) with SameGaloisType p p' by a direct witness; infra_78_marginal_identify_level gives SameGaloisType p' (renamed mark in U); composing needs infra_612_galois_trans_cross_level (t2 = p' at lambda, t1 = p at any level, t3 at lambda), whose truth is unverified (same obstruction as infra_78_tuple_amalgam_large). Cycle 64 route check (requested): running the matrix with p's own host inside Y_0 does not avoid a cross-level identification: (i) the seed needs the free lift of p over X_0, and infra_78_tied_free_lift_mixed needs p.nu = lambda (its Galois clause for higher hosts is infra_78_cross_level_galois); (ii) the anchor isomorphism phi agrees with iota only on I_p, so p and the renamed mark in U are identified by testing (Theorem 6.6), never by a direct witness, and Lean Theorem 6.6 (infra_612_same_galois) needs both hosts at the base level; with p.host (or Y_i) above lambda and U at lambda this is infra_78_cross_level_galois. Alternative blocker: infra_78_cross_level_galois (same obstruction, infra_78_tuple_amalgam_large)."
     },
     {
       "id": "infra_78_matrix_assembly_level",
@@ -2764,6 +2764,42 @@
       "status": "done",
       "blocker": null,
       "detail": "DONE (grokbot cycle 66; AssemblyGlue.lean, theorem infra_78_matrix_assembly_level). Levels by infra_78_assembly_levels (rho = 2^lambda, kappa > rho^+, sigma = lambda, sigma_d = theta, cIdx = theta.ord.ToType); seed by infra_78_seed_stage at sigma = theta; isolated stage i and A <= U inside X_i <= Y_i containing iota0(I_p) carried to X_i and the stage mark by infra_78_isolation_over_A (s_0 = rcMap(i0,i).1 '' iota0(I_p) + b_i, of size < lambda); stage-i mark tied free over X along iota0 >> g_i by infra_78_stage_transport + infra_78_tiedFreeMixed_trans with invariant (5) at i; I_p as a sequence for the stage mark by infra_78_seq_diagram_transfer; phi : X ~ A with tp(bU/X) = p by infra_78_marginal_identify_level; isolation over X by infra_78_iso_rename_asTuple. Axioms: propext, Classical.choice, Quot.sound."
+    },
+    {
+      "id": "infra_612_same_galois_left_large",
+      "label": "Thm 6.6 testing criterion with the first host at any level",
+      "section": 6,
+      "file": "AEC/Section6/GaloisCrossLevel.lean",
+      "status": "done",
+      "blocker": null,
+      "detail": "DONE cycle 67. infra_612_same_galois_left_large: t1 over A (level mu) with host at ANY eligible level, t3 with host at mu, #t1.idx <= sigma < mu, ClosedLevel at mu; agreeing D-tests over A (as in infra_612_same_galois) give SameGaloisType t1 t3 e refl. Proof: chart t1.host onto E(lvlOrder nu1); the image of A and of the tuple (size mu) has its fixed term supports in I, #I = mu (infra_612_small_support, paramSupport); E(I) factors A and the tuple (infra_612_map_restrict, factorEmbedding); ClosedLevel.exists_tuple_amalgam at mu amalgamates E(I) and t3.host over A identifying the tuples; exists_strong_embedding_over embeds the amalgam over E(I) into E(lvlOrder rho'), rho' eligible >= nu1, D.t mu; top = ofModel E(lvlOrder rho'). No off-level amalgam (tuple_amalgam_large) used. Axioms: propext, Classical.choice, Quot.sound."
+    },
+    {
+      "id": "infra_612_exists_level_copy",
+      "label": "Level-mu copy of a tuple hosted at any level (direct witness)",
+      "section": 6,
+      "file": "AEC/Section6/GaloisCrossLevel.lean",
+      "status": "done",
+      "blocker": null,
+      "detail": "DONE cycle 67. infra_612_exists_level_copy: for t over A (level mu), host at any level, #t.idx <= mu, there are host at mu, incl, val : t.idx -> occurrences with SameGaloisType t <mu,host,incl,t.idx,val> refl refl, by a direct witness (top = t.host, the sub-presentation E(I) of the chart mapped back by the chart). Axioms: propext, Classical.choice, Quot.sound."
+    },
+    {
+      "id": "infra_612_galois_trans_cross_level_of_base_end",
+      "label": "Galois transitivity through a mu-level middle, one end at mu",
+      "section": 6,
+      "file": "AEC/Section6/GaloisCrossLevel.lean",
+      "status": "done",
+      "blocker": null,
+      "detail": "DONE cycle 67. infra_612_galois_trans_cross_level_of_base_end: the board statement of infra_612_galois_trans_cross_level (Lean def infra_612_galois_trans_cross_level_statement) under the extra hypothesis t1.nu = mu OR t3.nu = mu. Parts: infra_612_galois_trans_cross_level_right_base (t3 at mu; tests via to_sameD twice + D.trans, then infra_612_same_galois_left_large) and _left_base (reverse the chain; SameGaloisType.unswap_refl). Axioms: propext, Classical.choice, Quot.sound."
+    },
+    {
+      "id": "infra_612_galois_trans_cross_level_both_off",
+      "label": "Galois transitivity through a mu-level middle, BOTH ends above mu",
+      "section": 6,
+      "file": "AEC/Section6/GaloisCrossLevel.lean",
+      "status": "open",
+      "blocker": null,
+      "detail": "Open (residual of infra_612_galois_trans_cross_level, cycle 67). Same statement with t1.nu > mu and t3.nu > mu. The base-end method embeds a mu-sized amalgam over a sub-presentation E(I) into a presentation containing ONE large host; with two large hosts one needs an amalgam of t1.host and t3.host over mu-sized data (the obstruction of infra_78_tuple_amalgam_large), or extending an arbitrary strong embedding E(I3) -> E(L) (not an E.map) to E(J3). Truth not verified. Needed by infra_612_tied_independence (chain j1 ~ j1' ~ j2' ~ j2 with both ends off-level)."
     }
   ],
   "edges": [
@@ -5302,7 +5338,8 @@
     {
       "from": "infra_612_galois_trans_cross_level",
       "to": "infra_78_marginal_general_level",
-      "kind": "hard"
+      "kind": "soft",
+      "note": "cycle 67: only the base-end case (infra_612_galois_trans_cross_level_of_base_end) is used"
     },
     {
       "from": "infra_78_anchor_answers",
@@ -5474,8 +5511,50 @@
       "from": "infra_78_presentation_arrow",
       "to": "infra_78_seed_lift",
       "kind": "hard"
+    },
+    {
+      "from": "infra_612_same_galois_left_large",
+      "to": "infra_612_galois_trans_cross_level_of_base_end",
+      "kind": "hard",
+      "note": ""
+    },
+    {
+      "from": "infra_612_galois_trans_cross_level_of_base_end",
+      "to": "infra_612_galois_trans_cross_level",
+      "kind": "hard",
+      "note": ""
+    },
+    {
+      "from": "infra_612_galois_trans_cross_level_both_off",
+      "to": "infra_612_galois_trans_cross_level",
+      "kind": "hard",
+      "note": ""
+    },
+    {
+      "from": "infra_78_tuple_amalgam_large",
+      "to": "infra_612_galois_trans_cross_level_both_off",
+      "kind": "soft",
+      "note": "same obstruction"
+    },
+    {
+      "from": "infra_612_galois_trans_cross_level_of_base_end",
+      "to": "infra_78_marginal_general_level",
+      "kind": "hard",
+      "note": ""
+    },
+    {
+      "from": "infra_612_exists_level_copy",
+      "to": "infra_78_marginal_general_level",
+      "kind": "hard",
+      "note": ""
+    },
+    {
+      "from": "infra_78_matrix_assembly_level",
+      "to": "infra_78_marginal_general_level",
+      "kind": "hard",
+      "note": ""
     }
   ],
-  "doneCount": 244,
+  "doneCount": 252,
   "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 43. Uncommitted in /tmp/aec-grok."
 }

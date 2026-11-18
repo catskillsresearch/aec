@@ -168,6 +168,8 @@ public import AEC.Section7.AssemblyLevel
 public import AEC.Section7.StageTransport
 public import AEC.Section7.SeedStage
 public import AEC.Section7.AssemblyGlue
+public import AEC.Section6.GaloisCrossLevel
+public import AEC.Section7.GeneralLevel
 public import AEC.Section6.LocalCharacterTied
 public import AEC.Section6.AverageDescentTied
 public import AEC.Section6.DescentRetractionTied

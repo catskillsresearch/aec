@@ -1,4 +1,4 @@
-# Nodes: (see holes-graph.json)  Hard edges: 493
+# Nodes: (see holes-graph.json)  Hard edges: 498
 # Convention: FROM --> TO means the English proof of TO requires FROM.
 # infra_78_mixed_level_isolation (Prop 7.8 rho^+ matrix argument; mixed tied free lift and mixed Lemma 7.6 done grokbot_02)
 # Retired: infra_610_qPres_empty_joint_on_I, infra_610_same_head_transfers_joint, infra_69_transfer_sequence, WorkingScheme.exists_approximationSequence.
@@ -462,7 +462,6 @@ infra_78_anchor_iso --> infra_78_anchor_transport
 infra_78_anchor_transport --> infra_78_marginal_identify_level
 infra_78_marginal_section --> infra_78_marginal_identify_level
 infra_78_marginal_identify_level --> infra_78_marginal_general_level
-infra_612_galois_trans_cross_level --> infra_78_marginal_general_level
 infra_78_anchor_answers --> infra_78_marginal_anchor
 infra_78_anchor_transport --> infra_78_marginal_anchor
 infra_78_marginal_section --> infra_78_marginal_anchor
@@ -496,3 +495,9 @@ infra_78_isolation_over_A --> infra_78_assembly_glue
 infra_78_tiedFreeMixed_trans --> infra_78_assembly_glue
 infra_78_marginal_identify_level --> infra_78_assembly_glue
 infra_78_iso_rename --> infra_78_assembly_glue
+infra_612_same_galois_left_large --> infra_612_galois_trans_cross_level_of_base_end
+infra_612_galois_trans_cross_level_of_base_end --> infra_612_galois_trans_cross_level
+infra_612_galois_trans_cross_level_both_off --> infra_612_galois_trans_cross_level
+infra_612_galois_trans_cross_level_of_base_end --> infra_78_marginal_general_level
+infra_612_exists_level_copy --> infra_78_marginal_general_level
+infra_78_matrix_assembly_level --> infra_78_marginal_general_level

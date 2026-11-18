@@ -4,7 +4,7 @@ Inventory of Lean `sorry` holes in this repository, ordered **prove-first**: Lay
 are holes with no remaining unfinished prerequisites; later layers wait on earlier
 ones. Apex theorems 1.2 and 1.3 are **last**.
 
-**Count:** 44 `sorry`, 0 `admit`.
+**Count:** 43 `sorry`, 0 `admit`.
 Sections **2**, **3**, **4**, and **13** have no holes.
 
 **Dependency basis:** paper/logical order from `dependencies.mermaid`
@@ -34,7 +34,7 @@ Section 13 is complete and was never on that chain.
 | 4 | 0 | — |
 | 5 | 1 | `AEC/Section5/Results.lean` |
 | 6 | 7 | `AEC/Section6/Results.lean` |
-| 7 | 5 | `AEC/Section7/Results.lean` |
+| 7 | 4 | `AEC/Section7/Results.lean` |
 | 8 | 5 | `AEC/Section8/Results.lean` |
 | 9 | 7 | `AEC/Section9/Results.lean` |
 | 10 | 9 | `AEC/Section10/Results.lean` |
@@ -42,7 +42,7 @@ Section 13 is complete and was never on that chain.
 | 12 | 4 | `AEC/Section12/Results.lean` |
 | 13 | 0 | — |
 | 14 | 4 | `AEC/Section14/Results.lean` |
-| **Total** | **56** | |
+| **Total** | **55** | |
 
 The table is the previous `Results.lean` rollup. The live count of declarations using
 `sorry` is **32** (48 at the start of the overnight run). `WorkingScheme.exists_approximationSequence`
@@ -307,10 +307,14 @@ Waits on Section 5 working package. Lean: later Results import this module.
 | `infra_611_tied_mixed` | Lemma 6.11 mixed `ν < μ` (tied) | `AEC/Section6/AverageDescentTied.lean` (**done**; no `sorry`: level-`ν` realization of `q ↾ A`, its mixed tied free lift, Theorem 6.6 at `μ`) |
 | `proposition_6_12` | Proposition 6.12 | `AEC/Section6/ProductTied.lean` (**restated to the full English** with tied products `IsProductTied`/`IsFiniteProductTied`: existence, independence, symmetry, associativity, permutation invariance, projections, base change, across levels; (1) existence proved (`infra_612_tied_exists`); (2)–(7) `sorry`, **blocked** on sub-tips. Old degenerate wrapper renamed `proposition_6_12_untied`) |
 | `infra_612_tied_exists` | Prop 6.12 (1) existence | `AEC/Section6/ProductTied.lean` (**done**; no `sorry`) |
-| `infra_612_tied_independence` | Prop 6.12 (2) independence | `AEC/Section6/ProductTied.lean` (**blocked** on `infra_612_galois_trans_cross_level`; joints at A's level and mu-level copies done) |
+| `infra_612_tied_independence` | Prop 6.12 (2) independence | `AEC/Section6/ProductTied.lean` (**blocked** on `infra_612_galois_trans_cross_level` (its residual `infra_612_galois_trans_cross_level_both_off`); joints at A's level and mu-level copies done) |
 | `infra_612_tied_indep_level_joints` | Prop 6.12 (2), joints at A's level, x/y any level | `AEC/Section6/ProductTied.lean` (**done**; no `sorry`) |
 | `infra_612_tied_indep_copies` | Prop 6.12 (2), mu-level copies of joints at any level | `AEC/Section6/ProductTied.lean` (**done**; no `sorry`) |
-| `infra_612_galois_trans_cross_level` | Galois transitivity via a mu-level middle, ends above mu | `AEC/Section6/ProductTied.lean` (**open**; no declaration yet) |
+| `infra_612_galois_trans_cross_level` | Galois transitivity via a mu-level middle, ends above mu | [`GaloisCrossLevel.lean`](AEC/Section6/GaloisCrossLevel.lean) (**blocked**, split cycle 67; statement `infra_612_galois_trans_cross_level_statement` = `infra_612_galois_trans_cross_level_of_base_end` (done) + `infra_612_galois_trans_cross_level_both_off` (open)) |
+| `infra_612_same_galois_left_large` | Thm 6.6 testing criterion, first host at any level | [`GaloisCrossLevel.lean`](AEC/Section6/GaloisCrossLevel.lean) (**done**, cycle 67; sub-presentation `E(I)` of the chart, level-`μ` amalgam, `exists_strong_embedding_over`) |
+| `infra_612_exists_level_copy` | level-`μ` copy of a tuple hosted at any level (direct witness) | [`GaloisCrossLevel.lean`](AEC/Section6/GaloisCrossLevel.lean) (**done**, cycle 67) |
+| `infra_612_galois_trans_cross_level_of_base_end` | Galois transitivity via a mu-level middle, one end at mu | [`GaloisCrossLevel.lean`](AEC/Section6/GaloisCrossLevel.lean) (**done**, cycle 67; `_right_base`, `_left_base`) |
+| `infra_612_galois_trans_cross_level_both_off` | Galois transitivity via a mu-level middle, both ends above mu | board-only (**open**; same obstruction as `infra_78_tuple_amalgam_large`; needed by `infra_612_tied_independence`) |
 | `infra_612_tied_indep_same_level` | Prop 6.12 (2) independence, single level | `AEC/Section6/ProductTied.lean` (**done**; no `sorry`) |
 | `infra_612_tied_symmetry` | Prop 6.12 (3) symmetry | `AEC/Section6/ProductTied.lean` (**blocked** on independence; joints at A's level done) |
 | `infra_612_tied_symm_level_joints` | Prop 6.12 (3) symmetry, joints at A's level | `AEC/Section6/ProductTied.lean` (**done**; no `sorry`) |
@@ -340,8 +344,8 @@ Lean: imports `AEC.Section6.Results`.
 | `proposition_7_3` | Proposition 7.3 | `AEC/Section7/Results.lean` (done: Path A dichotomy green; English uniform shrink `proposition_7_3_uniform` in `BlockRestriction.lean` = `proposition_7_3_uniform_of_block` + `infra_73_block_restriction`) |
 | `proposition_7_5` | Proposition 7.5 | `AEC/Section7/Results.lean` (**done**: clauses 1–2) |
 | `lemma_7_6` | Lemma 7.6 | `AEC/Section7/Results.lean` (done: Path A push-only green; English arbitrary-fragment form `lemma_7_6_tied` in `TiedDescent.lean`) |
-| `proposition_7_8` | Proposition 7.8 | `AEC/Section7/Results.lean` (**restated** for SingleModelData; open, blocked on infra_78_mixed_level_isolation) |
-| `theorem_7_9` | Theorem 7.9 | `AEC/Section7/Results.lean` (**restated** for SingleModelData; open) |
+| `proposition_7_8` | Proposition 7.8 | `AEC/Section7/Results.lean` (**done**, cycle 67, statement unchanged: `infra_78_closedTail` + `infra_78_marginal_general_level`; no `sorryAx`) |
+| `theorem_7_9` | Theorem 7.9 | `AEC/Section7/Results.lean` (**restated** for SingleModelData; open, all hard deps done after cycle 67) |
 | `lemma_7_11` | Lemma 7.11 | `AEC/Section7/Results.lean:255` (restated over `ListWitnessingChain`) |
 | `lemma_7_12` | Lemma 7.12 | `AEC/Section7/Results.lean:273` (restated over list-linked `ListWitnessingChain`; old vacuity audit in `AEC/Audit/WitnessingChainVacuous.lean`) |
 | `theorem_7_13` | Theorem 7.13 | `AEC/Section7/Results.lean:296` (restated: uniqueness, product-independent free lift, continuity, primeness) |
@@ -462,7 +466,7 @@ layer (and thus the whole stack).
 | `infra_78_cross_level_galois` | infra_78_cross_level_galois | `AEC/Section7/MixedTiedLift.lean` (**proved modulo** infra_78_tuple_amalgam_large; unused downstream) |
 | `infra_78_tuple_amalgam_large` | infra_78_tuple_amalgam_large | `AEC/Section7/MixedTiedLift.lean` (**open**: Thm 6.6 clause 2 with a host of size ≥ μ) |
 | `infra_78_lemma_7_6_mixed` | infra_78_lemma_7_6_mixed | `AEC/Section7/MixedDescent.lean` (**done**, grokbot_02) |
-| `infra_78_mixed_level_isolation` | infra_78_mixed_level_isolation | `AEC/Section7/MixedDescent.lean` (**blocked**, full claim kept; split into the sub-tips below) |
+| `infra_78_mixed_level_isolation` | infra_78_mixed_level_isolation | `AEC/Section7/MixedDescent.lean` (**done**, cycle 67: all hard deps done; conclusion delivered by `infra_78_marginal_general_level`) |
 | `infra_78_fixed_list_eventually_free` | Prop 7.8 fixed list eventually free | `AEC/Section7/TiedLocalCharacter.lean` (**done**: past some stage `j`, `p ↾ X_k` is tied free from `X_i` for all `j ≤ i ≤ k`) |
 | `infra_78_nonfree_extension_tied` | Prop 7.8 tied nonfree extension | `AEC/Section7/BlockRestriction.lean` (**done**: not relatively isolated ⇒ same-level extension with tied-free marginal and non-tied-free joint; helper `infra_78_tied_dichotomy`) |
 | `infra_78_same_level_type_amalgam` | Prop 7.8 amalgamation at κ | `AEC/Section7/MixedLevel.lean` (**done**: same Galois type over level-κ `A` with hosts at κ ⇒ amalgam at level κ identifying the tuples) |
@@ -507,17 +511,17 @@ layer (and thus the whole stack).
 | `infra_78_theta_shrink_inj` | Prop 7.8 θ-shrink assembled at the recursion matrix: `A ≤ U` and tied free identity for every `c ⊆ U`, `|c| ≤ θ`, with `(b,c)` repetition-free | [`ThetaShrink.lean`](AEC/Section7/ThetaShrink.lean) (**done**, cycle 58) |
 | `infra_78_theta_shrink_repeats` | Prop 7.8 θ-shrink for `(b,c)` with repeated entries (list-indexed requirement 2: `infra_78_pairRepCopyReq`, `infra_78_bkListTuple`, `infra_78_bookkeeping_req2_list_high_cof`; injective reindexing only) | [`Bookkeeping.lean`](AEC/Section7/Bookkeeping.lean), [`RnextClosure.lean`](AEC/Section7/RnextClosure.lean), [`ThetaShrink.lean`](AEC/Section7/ThetaShrink.lean) (**done**, cycle 59) |
 | `infra_78_theta_shrink_closure_level` | Prop 7.8: a tail of levels `μ` in `infra_73_tailSet P σ` for every infinite `σ < μ`, limits of eligible levels (`infra_78_closedTail`, `infra_78_closedTail_tail`); for every `θ < μ` an eligible `λ`, `ρ = 2^λ` with `θ⁺ ≤ λ = σ`, `ρ^λ = ρ`, `ρ⁺ < μ` — the level hypotheses of `infra_78_theta_shrink`. Faithful: the paper's tail is existential and its closure uniform in the arity | [`ClosureLevel.lean`](AEC/Section7/ClosureLevel.lean) (**done**, cycle 60) |
-| `infra_78_isolation_transfer` | Prop 7.8 Lemma 7.6 transfer, `A ≃ X` | [`IsolationTransfer.lean`](AEC/Section7/IsolationTransfer.lean) (**blocked**, split cycle 61; = `infra_78_isolation_over_A` + `infra_78_anchor_iso` + `infra_78_marginal_anchor` + `infra_78_iso_rename` (**done** cycle 62); now blocked only on `infra_78_marginal_anchor` (split cycle 63)) |
+| `infra_78_isolation_transfer` | Prop 7.8 Lemma 7.6 transfer, `A ≃ X` | [`IsolationTransfer.lean`](AEC/Section7/IsolationTransfer.lean) (**done**, cycle 67; = `infra_78_isolation_over_A` + `infra_78_anchor_iso` + `infra_78_marginal_anchor` + `infra_78_iso_rename`, all done) |
 | `infra_78_isolation_over_A` | Prop 7.8: Lemma 7.6 at the shrink — `tp(b,c/A)` (in `U`) isolated over `b`, every `c ⊆ U`, `|c| ≤ θ` (host transfer + `infra_78_tied_descent_mixed`) | [`IsolationTransfer.lean`](AEC/Section7/IsolationTransfer.lean) (**done**, cycle 61) |
 | `infra_78_anchor_iso` | Prop 7.8: bounded diagram homogeneity `A ≃ X` carrying the anchors (`diagram_iso`) | [`IsolationTransfer.lean`](AEC/Section7/IsolationTransfer.lean) (**done**, cycle 61) |
-| `infra_78_marginal_anchor` | Prop 7.8: `I_p` still determines the marginal; `tp(b/A)` carried to `p` by the anchor isomorphism | [`MarginalAnchor.lean`](AEC/Section7/MarginalAnchor.lean) (**blocked**, split cycle 63; = `infra_78_anchor_answers` + `infra_78_anchor_transport` + `infra_78_marginal_section` + `infra_78_tiedFreeMixed_trans` + `infra_78_marginal_identify_level` (done) + `infra_78_marginal_general_level` (blocked)) |
+| `infra_78_marginal_anchor` | Prop 7.8: `I_p` still determines the marginal; `tp(b/A)` carried to `p` by the anchor isomorphism | [`MarginalAnchor.lean`](AEC/Section7/MarginalAnchor.lean) (**done**, cycle 67; = `anchor_answers` + `anchor_transport` + `marginal_section` + `tiedFreeMixed_trans` + `marginal_identify_level` + `marginal_general_level`, all done) |
 | `infra_78_anchor_answers` | Prop 7.8: same approximation answers for two base arrows agreeing on the anchors (tied mixed freeness) | [`MarginalAnchor.lean`](AEC/Section7/MarginalAnchor.lean) (**done**, cycle 63) |
 | `infra_78_anchor_transport` | Prop 7.8: `φ : X ≃ A` carrying `I_p`, with the same small-test answers | [`MarginalAnchor.lean`](AEC/Section7/MarginalAnchor.lean) (**done**, cycle 63) |
 | `infra_78_marginal_section` | Prop 7.8: the mark in `U` over `X` along `φ ≫ gu` has the type of `q ↾ (φ ≫ jA)` | [`MarginalAnchor.lean`](AEC/Section7/MarginalAnchor.lean) (**done**, cycle 63) |
 | `infra_78_tiedFreeMixed_trans` | Prop 7.8: mixed transitivity of tied freeness (seed free lift + invariant (5)) | [`MarginalAnchor.lean`](AEC/Section7/MarginalAnchor.lean) (**done**, cycle 63) |
 | `infra_78_marginal_identify_level` | Prop 7.8: `tp(b/A)` carried to `p` for `p` realized at the level of `X` (Theorem 6.6 at that level) | [`MarginalAnchor.lean`](AEC/Section7/MarginalAnchor.lean) (**done**, cycle 63) |
-| `infra_78_marginal_general_level` | Prop 7.8: marginal identification for `p` hosted above the level of `X` (needs `infra_612_galois_trans_cross_level`, or alternatively `infra_78_cross_level_galois`; cycle 64: no route avoids a cross-level identification) | board-only (**blocked**) |
-| `infra_78_matrix_assembly_level` | Prop 7.8 assembly (seed, levels `ρ, κ`, matrix, shrink, rename) for `p` realized at the level of `X` | [`AssemblyGlue.lean`](AEC/Section7/AssemblyGlue.lean) (**done**, cycle 66; statement `infra_78_matrix_assembly_level_statement` (unchanged) = `assembly_levels` + `seq_diagram_transfer` + `stage_transport` + `seed_stage` + `assembly_glue`, all done; `proposition_7_8` stays `sorry` (hosts above `λ`)) |
+| `infra_78_marginal_general_level` | Prop 7.8: marginal identification for `p` hosted above the level of `X` (needs `infra_612_galois_trans_cross_level`, or alternatively `infra_78_cross_level_galois`; cycle 64: no route avoids a cross-level identification) | [`GeneralLevel.lean`](AEC/Section7/GeneralLevel.lean) (**done**, cycle 67; level copy + `matrix_assembly_level` + `galois_trans_cross_level_right_base`) |
+| `infra_78_matrix_assembly_level` | Prop 7.8 assembly (seed, levels `ρ, κ`, matrix, shrink, rename) for `p` realized at the level of `X` | [`AssemblyGlue.lean`](AEC/Section7/AssemblyGlue.lean) (**done**, cycle 66; statement `infra_78_matrix_assembly_level_statement` (unchanged) = `assembly_levels` + `seq_diagram_transfer` + `stage_transport` + `seed_stage` + `assembly_glue`, all done; `proposition_7_8` done cycle 67 via `infra_78_marginal_general_level`) |
 | `infra_78_assembly_levels` | Prop 7.8: `ρ = 2^λ`, matrix level `κ > ρ⁺`, closures at `λ`, `θ`, `σ₂(θ)` | [`AssemblyLevel.lean`](AEC/Section7/AssemblyLevel.lean) (**done**, cycle 64) |
 | `infra_78_seq_diagram_transfer` | Prop 7.8: `I_p` is an approximation sequence for any tuple with the same small-test diagrams | [`AssemblyLevel.lean`](AEC/Section7/AssemblyLevel.lean) (**done**, cycle 64) |
 | `infra_78_presentation_arrow` | Prop 7.8: level-`κ` object `X_0` with an arrow `X → X_0` | [`SeedStage.lean`](AEC/Section7/SeedStage.lean) (**done**, cycle 66) |
