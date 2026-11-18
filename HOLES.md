@@ -4,7 +4,7 @@ Inventory of Lean `sorry` holes in this repository, ordered **prove-first**: Lay
 are holes with no remaining unfinished prerequisites; later layers wait on earlier
 ones. Apex theorems 1.2 and 1.3 are **last**.
 
-**Count:** 42 `sorry`, 0 `admit`.
+**Count:** 41 `sorry`, 0 `admit`.
 Sections **2**, **3**, **4**, and **13** have no holes.
 
 **Dependency basis:** paper/logical order from `dependencies.mermaid`
@@ -34,7 +34,7 @@ Section 13 is complete and was never on that chain.
 | 4 | 0 | — |
 | 5 | 0 | — |
 | 6 | 1 | `AEC/Section6/ProductTied.lean` (1) |
-| 7 | 4 | `AEC/Section7/MixedTiedLift.lean` (1), `AEC/Section7/Results.lean` (3) |
+| 7 | 3 | `AEC/Section7/MixedTiedLift.lean` (1), `AEC/Section7/Results.lean` (2) |
 | 8 | 5 | `AEC/Section8/Results.lean` (5) |
 | 9 | 6 | `AEC/Section9/Results.lean` (6) |
 | 10 | 9 | `AEC/Section10/Results.lean` (9) |
@@ -360,13 +360,13 @@ Lean: imports `AEC.Section6.Results`.
 | `infra_79_existence_of_parts` | Thm 7.9 existence clause from tail + retraction pair | [`Theorem79Existence.lean`](AEC/Section7/Theorem79Existence.lean) (**done**, cycle 70; tail `infra_78_closedTail ∩ infra_615_closed`) |
 | `infra_79_retraction_pair` | Thm 7.9 level-`ν` pair `A' ≤ U'` closed under `ν` Cor 6.16 retractions | [`RetractionPair.lean`](AEC/Section7/RetractionPair.lean) (**done**, cycle 72; `ν` of the `λ` Cor 6.16 retractions, `ω`-chain of `infra_78_mixed_ls_pair` stages (`Classical.epsilon`), `infra_78_factor_arrow` chain arrows, `infra_78_theta_union` over `ULift ℕ`) |
 | `infra_79_tail` | Thm 7.9 tail: `infra_78_closedTail ∩ infra_615_closed` unbounded | [`Theorem79Existence.lean`](AEC/Section7/Theorem79Existence.lean) (**done**, cycle 71; witness `⨆ n, infra_78_closedTower P κ n` is in both sets by `infra_78_closedTower_sup_mem` (`ClosureLevel.lean`); no `ω`-sup closure assumed) |
-| `lemma_7_11` | Lemma 7.11 | `AEC/Section7/Results.lean` (**blocked**; restated cycle 73 to the tied notions over [`TiedListWitnessingChain`](AEC/Section7/TiedListChain.lean): `IsProductTied` hypotheses, `IsTiedFree (A → M_δ)` conclusion; old untied form removed, unused) |
+| `lemma_7_11` | Lemma 7.11 | `AEC/Section7/Results.lean` (**done**, cycle 83; tied statement unchanged since cycle 73, matches the English; proof `infra_711_induction P (infra_711_successor P)`; `#print axioms`: propext, Classical.choice, Quot.sound) |
 | `infra_711_tied_chain` | Def 7.10 tied list-linked chain | [`TiedListChain.lean`](AEC/Section7/TiedListChain.lean) (**done**, cycle 73; `free` = tied `tp(bᵢ/Mᵢ) = tp(bᵢ/A)^fr`) |
 | `infra_711_limit` | Lemma 7.11 limit step | [`Lemma711Limit.lean`](AEC/Section7/Lemma711Limit.lean) (**done**, cycle 73b; stages below `j` as a `SameLevelChain` via `Ordinal.enum`, union `M_j`; second clause of the tied Prop 6.13) |
-| `infra_711_successor` | Lemma 7.11 successor step | [`Lemma711Successor.lean`](AEC/Section7/Lemma711Successor.lean) **blocked** (cycle 80 split: `infra_711_succ_assembly` **done** (`infra_711_successor_of_product`: level 7.5(3) + tied transitivity); `infra_711_succ_product` open: `x`, `bᵢ` have the tied product over `Mᵢ`) |
+| `infra_711_successor` | Lemma 7.11 successor step | [`Lemma711Successor.lean`](AEC/Section7/Lemma711Successor.lean) **done** (cycle 83; `infra_711_successor` = `infra_711_successor_of_product` ∘ `infra_711_succ_product`, axioms clean) |
 | `infra_711_succ_assembly` | 7.11 successor from the product over `Mᵢ` | **done** (cycle 80) |
-| `infra_711_succ_product` | 7.11 successor: tied product of `tp(x/Mᵢ)`, `tp(bᵢ/Mᵢ)` | **blocked** (cycle 81 split: glue `infra_711_succ_product_of_parts` **done**; `infra_711_succ_base_change` **done** (cycle 83); `infra_711_succ_pair` open) |
-| `infra_711_succ_pair` | 7.11: `(x, bᵢ)` has tied products with selections below `i` | **open** (`infra_711_succ_pair_statement`) |
+| `infra_711_succ_product` | 7.11 successor: tied product of `tp(x/Mᵢ)`, `tp(bᵢ/Mᵢ)` | **done** (cycle 83; `infra_711_succ_product` from pair + base change, axioms clean) |
+| `infra_711_succ_pair` | 7.11: `(x, bᵢ)` has tied products with selections below `i` | **done** (cycle 83; `infra_711_succ_pair`, axioms clean) |
 | `infra_711_succ_base_change` | 7.11: products lift freely to `Mᵢ` | **done** (cycle 83; `infra_711_succ_base_change`, axioms clean) |
 | `infra_711_succ_product_glue` | 7.11: product over `Mᵢ` from its parts | **done** (cycle 81) |
 | `infra_75_product_free_level` | Prop 7.5(3) tied, actual coupling, level joints | [`ProductFreeLevel.lean`](AEC/Section7/ProductFreeLevel.lean) (**done**, cycle 80: `infra_75_product_free_level`; levels also closed at `infra_75_wide P σ`) |
@@ -378,7 +378,7 @@ Lean: imports `AEC.Section6.Results`.
 | `infra_75_product_free` | Prop 7.5(3) tied: product with `b` + all-dominated `Y` ⇒ `tp(x/Y)` free from `X` | **blocked** on `infra_612_tied_symmetry`, `infra_612_tied_finite` |
 | `infra_711_induction` | Lemma 7.11 induction assembly | [`Lemma711Induction.lean`](AEC/Section7/Lemma711Induction.lean) (**done**, cycle 75; `lemma_7_11` from `infra_711_successor_statement`; first stage via `infra_711_tiedFree_of_bijective`, limit via tied 6.13) |
 | `lemma_7_12` | Lemma 7.12 | `AEC/Section7/Results.lean` (**blocked**; restated cycle 76 to the tied notions: `ProductIndependentTied`, `TiedListWitnessingChain`; old untied form removed, unused) |
-| `lemma_7_12_existence` | Lemma 7.12(1) | **blocked** on `lemma_7_11` |
+| `lemma_7_12_existence` | Lemma 7.12(1) | **open** (cycle 83: `lemma_7_11` done, all hard deps done) |
 | `lemma_7_12_uniqueness` | Lemma 7.12(2) | **open** (cycle 76; all dependencies done; successor amalgam via 7.9 primeness, not a large amalgam) |
 | `lemma_7_12_bounded` | Lemma 7.12(2), bounded individual tuples | **blocked** on `lemma_7_12_uniqueness`; HARD edge `lemma_7_12_bounded --> lemma_7_12` (cycle 78) |
 | `theorem_7_13` | Theorem 7.13 | `AEC/Section7/Results.lean:296` (restated: uniqueness, product-independent free lift, continuity, primeness) |

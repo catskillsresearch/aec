@@ -1,6 +1,7 @@
 module
 
 public import AEC.Section7.Lemma711Induction
+public import AEC.Section6.GaloisCrossLevel
 
 /-!
 # Lemma 7.11, successor step (tied)
@@ -11,8 +12,10 @@ products over `A`); `M_{i+1}` is all-dominated over `Mᵢ + bᵢ`, so Propositio
 `tp(x/M_{i+1})` free from `Mᵢ`; transitivity gives freeness from `A`.
 
 `infra_711_successor_of_product` proves the step from the product over `Mᵢ`
-(`infra_711_succ_product_statement`, open tip `infra_711_succ_product`), using the proved level
-form of 7.5(3) (`infra_75_product_free_level`) and tied transitivity (`infra_78_tiedFree_trans`).
+(`infra_711_succ_product_statement`), using the proved level form of 7.5(3)
+(`infra_75_product_free_level`) and tied transitivity (`infra_78_tiedFree_trans`). The product
+over `Mᵢ` is `infra_711_succ_product` (cycle 83): `infra_711_succ_pair` (level-joint symmetry and
+associativity) and `infra_711_succ_base_change` (level-joint 6.12 base change).
 -/
 
 @[expose] public section
@@ -26,7 +29,7 @@ open Cardinal
 
 variable {K : AbstractElementaryClass.{u}}
 
-/-- **Lemma 7.11 successor: the product over `Mᵢ` (statement; open tip
+/-- **Lemma 7.11 successor: the product over `Mᵢ` (statement; proved cycle 83 as
 `infra_711_succ_product`).** Under the induction claim at `i`, a finite `x` in the actual coupling
 with tied products with every finite selection of marks below `j = i + 1` has, over `Mᵢ`, the tied
 product of `tp(x/Mᵢ)` with `tp(bᵢ/Mᵢ)` (`bᵢ` read in `M_j`, hosted with `x`). -/
@@ -101,7 +104,7 @@ def infra_711_pairUp {P : SingleModelData K} {μ : Cardinal.{u}} {hμ : μ ∈ P
   idx := (C.jointWith x 1 (fun _ => i0)).idx
   val := (C.jointWith x 1 (fun _ => i0)).val
 
-/-- **7.11 successor, finite product rules (statement; open tip `infra_711_succ_pair`).**
+/-- **7.11 successor, finite product rules (statement; proved cycle 83 as `infra_711_succ_pair`).**
 `(x, bᵢ)` has the tied product with every finite selection of marks below `i` (from `x`'s
 products with the selections together with `bᵢ`, `tp(bᵢ/Mᵢ)` free from `A`, and the level-joint
 6.12 rules). -/
@@ -371,6 +374,252 @@ theorem infra_711_succ_base_change (P : SingleModelData K) :
           ⟨_, f2.onVertex _ ((pB.join y).val (Sum.inr w)).2⟩
         rw [hJv, ← hYv]
         exact hw
+
+/-- A tied product with a level-`μ` joint exists for a base-level first factor. -/
+theorem infra_711_product_exists_level (P : SingleModelData K) {μ : Cardinal.{u}}
+    (hμ : μ ∈ P.eligible) (h0 : μ ∈ recursionClosedLevels P ℵ₀) (h1 : Order.succ ℵ₀ ≤ μ)
+    {A : P.scheme.Object μ hμ} (p q : TupleOver K oneVertexShape P.scheme hμ A)
+    (hp : p.ν = μ) (hq : q.ν = μ) (hqσ : #q.idx ≤ ℵ₀) :
+    ∃ (jt : TupleOver K oneVertexShape P.scheme hμ A) (e : p.idx ⊕ q.idx ≃ jt.idx),
+      jt.ν = μ ∧ IsProductTied p q jt e := by
+  rcases p with ⟨ν, hν, H, incl, hi, idx, val⟩
+  simp only at hp
+  subst hp
+  obtain ⟨y, ey, hyν, _, hyT⟩ :=
+    infra_610_tied_free_lift P ℵ₀ le_rfl hμ h0 h1 (B := H) incl hi q hq hqσ
+  let p : TupleOver K oneVertexShape P.scheme hμ A := ⟨ν, hν, H, incl, hi, idx, val⟩
+  refine ⟨p.join y, Equiv.sumCongr (Equiv.refl _) ey, hyν, p, Equiv.refl _,
+    SameGaloisType.refl p, y, ey, hyT, ?_⟩
+  have hh : (Equiv.sumCongr (Equiv.refl p.idx) ey).symm.trans
+      (Equiv.sumCongr (Equiv.refl p.idx) ey) = Equiv.refl (p.idx ⊕ y.idx) :=
+    Equiv.symm_trans_self _
+  exact hh ▸ SameGaloisType.refl (p.join y)
+
+/-- Normalize a Galois identification so that the first side carries the identity. -/
+theorem infra_711_sameGalois_normalize {P : SingleModelData K} {μ : Cardinal.{u}}
+    {hμ : μ ∈ P.eligible} {A : P.scheme.Object μ hμ}
+    {t1 t2 : TupleOver K oneVertexShape P.scheme hμ A} {ι : Type u}
+    {e1 : t1.idx ≃ ι} {e2 : t2.idx ≃ ι} (h : SameGaloisType t1 t2 e1 e2) :
+    SameGaloisType t2 t1 (Equiv.refl _) (e1.trans e2.symm) := by
+  have h' := infra_612_sameGalois_trans_equiv (SameGaloisType.symm h) e2.symm
+  rw [Equiv.self_trans_symm] at h'
+  exact h'
+
+theorem infra_711_equiv_aux {X Y Z J : Type u} (e' : X ⊕ Y ≃ J) (φ : X ≃ Z) (s : X ⊕ Y) :
+    ((e'.symm.trans (Equiv.sumComm X Y)).trans
+      (Equiv.sumCongr (Equiv.refl Y) (φ.trans (Equiv.refl Z)))).symm
+      ((Equiv.sumCongr φ (Equiv.refl Y)).trans (Equiv.sumComm Z Y) s) = e' s := by
+  rcases s with s | s <;> simp
+
+theorem infra_711_equiv_aux2 {X Y Z J S : Type u} (e1 : (X ⊕ Y) ⊕ Z ≃ J) (c : Y ⊕ Z ≃ S)
+    (s : (X ⊕ Y) ⊕ Z) :
+    ((e1.symm.trans ((Equiv.sumCongr (Equiv.refl (X ⊕ Y)).symm (Equiv.refl Z)).trans
+        (Equiv.sumAssoc X Y Z))).trans
+      ((Equiv.refl (X ⊕ S)).symm.trans (Equiv.sumCongr (Equiv.refl X) c.symm)).symm).symm
+      (((Equiv.sumAssoc X Y Z).trans (Equiv.sumCongr (Equiv.refl X) c)) s) = e1 s := by
+  rcases s with (s | s) | s <;> simp
+
+/-- A product's joint may be replaced by any base-level tuple of the same Galois type. -/
+theorem infra_711_product_joint_transfer (P : SingleModelData K) {μ : Cardinal.{u}}
+    (hμ : μ ∈ P.eligible) (h0 : μ ∈ recursionClosedLevels P ℵ₀) (h1 : Order.succ ℵ₀ ≤ μ)
+    {A : P.scheme.Object μ hμ} {p q jt jt' : TupleOver K oneVertexShape P.scheme hμ A}
+    {e : p.idx ⊕ q.idx ≃ jt.idx} (h : IsProductTied p q jt e)
+    (e' : p.idx ⊕ q.idx ≃ jt'.idx) (g : jt'.idx ≃ jt.idx)
+    (hS : SameGaloisType jt' jt g (Equiv.refl jt.idx)) (hg : ∀ s, g (e' s) = e s)
+    (hj : jt.ν = μ) (hj' : jt'.ν = μ) (hidx : #jt'.idx ≤ ℵ₀) :
+    IsProductTied p q jt' e' := by
+  obtain ⟨x, ex, hSx, y, ey, hT, hJ⟩ := h
+  refine ⟨x, ex, hSx, y, ey, hT, ?_⟩
+  have hJ' := infra_612_sameGalois_trans_equiv hJ (e.symm.trans (Equiv.sumCongr ex ey)).symm
+  rw [Equiv.self_trans_symm] at hJ'
+  have R := infra_612_galois_trans_cross_level_of_base_end P ℵ₀ le_rfl hμ h0 h1 A jt' jt
+    (x.join y) g _ hidx hj (Or.inl hj') hS hJ'
+  have hE : g.trans ((Equiv.refl (x.idx ⊕ y.idx)).trans
+      (e.symm.trans (Equiv.sumCongr ex ey)).symm).symm =
+      e'.symm.trans (Equiv.sumCongr ex ey) := by
+    ext t
+    obtain ⟨s, rfl⟩ := e'.surjective t
+    simp [hg]
+  rw [← hE]
+  exact R
+
+/-- Reindexing `b_{i₀}` followed by a selection as the selection `Fin.cons i₀ ix`. -/
+def infra_711_consEquiv {δ : Type*} (I : δ → Type u) (i0 : δ) {n : ℕ} (ix : Fin n → δ) :
+    (Σ _s : Fin 1, I i0) ⊕ (Σ s : Fin n, I (ix s)) ≃
+      Σ s : Fin (n + 1), I ((Fin.cons i0 ix : Fin (n + 1) → δ) s) where
+  toFun
+    | Sum.inl p => ⟨0, p.2⟩
+    | Sum.inr p => ⟨p.1.succ, p.2⟩
+  invFun p := Fin.cases (motive := fun s => I ((Fin.cons i0 ix : Fin (n + 1) → δ) s) →
+      (Σ _s : Fin 1, I i0) ⊕ (Σ s : Fin n, I (ix s)))
+    (fun a => Sum.inl ⟨0, a⟩) (fun s a => Sum.inr ⟨s, a⟩) p.1 p.2
+  left_inv := by
+    rintro (⟨a, x⟩ | ⟨s, x⟩)
+    · obtain rfl : a = 0 := Subsingleton.elim a 0
+      rfl
+    · rfl
+  right_inv := by
+    rintro ⟨s, x⟩
+    induction s using Fin.cases with
+    | zero => rfl
+    | succ s => rfl
+
+theorem infra_711_succ_pair (P : SingleModelData K) : infra_711_succ_pair_statement P := by
+  intro μ hμ h0 h1 _ _ A L _ _ C _ i0 j h x hfin hxν hprod n ix hinj hlt
+  classical
+  have hσμ : ℵ₀ < μ := (Order.lt_succ ℵ₀).trans_le h1
+  have hfinI : ∀ i, Finite (L.indexAt i) := L.finite_each
+  rcases x with ⟨ν, hν, H, xi, hxi, idx, val⟩
+  simp only at hxν
+  subst hxν
+  have hfinx : Finite idx := hfin
+  set x : TupleOver K oneVertexShape P.scheme hμ (C.stage ⊤) := ⟨ν, hν, H, xi, hxi, idx, val⟩
+    with hxdef
+  let ix1 : Fin 1 → L.δ := fun _ => i0
+  let ixc : Fin (n + 1) → L.δ := Fin.cons i0 ix
+  have hlt0 : ∀ s, ix s < i0 := fun s => WithTop.coe_lt_coe.mp (hlt s)
+  have hinjc : Function.Injective ixc :=
+    Fin.cons_injective_iff.mpr ⟨fun ⟨s, hs⟩ => (hlt0 s).ne hs, hinj⟩
+  have hltj : ∀ s, ((ixc s : L.δ) : WithTop L.δ) < j := by
+    intro s
+    induction s using Fin.cases with
+    | zero => exact h.lt
+    | succ s => exact (hlt s).trans h.lt
+  have hPQ := hprod 1 ix1 (fun a b _ => Subsingleton.elim a b) (fun _ => h.lt)
+  have h₂ := hprod (n + 1) ixc hinjc hltj
+  let s0 := C.step (le_top : (i0 : WithTop L.δ) ≤ ⊤)
+  have hcnt : ∀ {m : ℕ} (ix' : Fin m → L.δ), #(Σ s : Fin m, L.indexAt (ix' s)) ≤ ℵ₀ :=
+    fun _ => Cardinal.mk_le_aleph0
+  have hxc : #idx ≤ ℵ₀ := Cardinal.mk_le_aleph0
+  have hperm := P.scheme.structural_iso H H (SystemArrow.refl _) (P.scheme.isStructIso_refl H)
+  have hcomm0 : ∀ v a, xi.onVertex v ((C.into ⊤).onVertex v a) =
+      xi.onVertex v (s0.onVertex v ((C.into i0).onVertex v a)) := by
+    intro v a
+    rw [← C.into_step (le_top : (i0 : WithTop L.δ) ≤ ⊤) v]
+    rfl
+  -- `tp(b_{i₀}/M_{i₀})` free from `A`, pushed into `x`'s host
+  let bT := asTuple s0 (C.step_arrow _) (C.mark i0 ⊤ (WithTop.coe_lt_top i0))
+  have hfree : IsTiedFree (C.into (i0 : WithTop L.δ)) (bT.restrict (C.into i0) (C.into_arrow _))
+      bT (Equiv.refl _) := C.free i0
+  have hIμ : #(L.indexAt i0) < ν := Cardinal.mk_le_aleph0.trans_lt hσμ
+  have hpush := infra_75_tiedFree_target_push (C.into (i0 : WithTop L.δ))
+    (bT.restrict (C.into i0) (C.into_arrow _)) hIμ bT (Equiv.refl _) rfl xi hxi hfree
+  let qB0 : TupleOver K oneVertexShape P.scheme hμ (C.stage (i0 : WithTop L.δ)) :=
+    ⟨ν, hμ, H, SystemArrow.comp s0 xi, P.scheme.comp s0 xi (C.step_arrow _) hxi,
+      L.indexAt i0, fun k => xi.mapOcc (C.mark i0 ⊤ (WithTop.coe_lt_top i0) k)⟩
+  have hpush' : IsTiedFreeMixed (C.into (i0 : WithTop L.δ))
+      (bT.restrict (C.into i0) (C.into_arrow _)) qB0 (Equiv.refl _) := hpush
+  let B0 := C.selectionOver x 1 ix1
+  let Bb := C.selectionOver x n ix
+  let S2 := C.selectionOver x (n + 1) ixc
+  let φ : B0.idx ≃ L.indexAt i0 :=
+    { toFun := fun p => p.2
+      invFun := fun k => ⟨0, k⟩
+      left_inv := by
+        rintro ⟨a, k⟩
+        obtain rfl : a = 0 := Subsingleton.elim a 0
+        rfl
+      right_inv := fun _ => rfl }
+  have hQ : IsTiedFreeMixed (C.into (i0 : WithTop L.δ)) B0 qB0 (φ.trans (Equiv.refl _)) := by
+    refine infra_711_tiedFree_base_equiv _ (bT.restrict (C.into i0) (C.into_arrow _)) B0 φ qB0
+      (Equiv.refl _) ?_ hpush'
+    intro ι Z hι
+    have hα : #(B0.idx ⊕ ι) < ν := by
+      rw [Cardinal.mk_sum, Cardinal.lift_id, Cardinal.lift_id]
+      exact Cardinal.add_lt_of_lt (P.aleph0_le hμ) ((hcnt ix1).trans_lt hσμ) hι
+    have d := P.scheme.diagram_preserved (C.stage ⊤) H xi hxi
+      (fun t => typeJoint (p := bT.restrict (C.into i0) (C.into_arrow _)) Z (Sum.map φ id t))
+      hα hα
+    refine P.scheme.diagram_symm _ _ _ _ (infra_73_diagramEq_of_eq d (fun t => rfl) ?_)
+    rintro (k | z)
+    · rfl
+    · show (⟨(Z z).1, xi.onVertex (Z z).1 (s0.onVertex (Z z).1
+          ((C.into i0).onVertex (Z z).1 (Z z).2))⟩ :
+          Occurrence K oneVertexShape (P.scheme.asSystem hμ H)) =
+        ⟨(Z z).1, xi.onVertex (Z z).1 ((C.into ⊤).onVertex (Z z).1 (Z z).2)⟩
+      rw [hcomm0]
+  -- `b̄` realized in `M_{i₀}`: `b̄ ⊗ b_{i₀}`
+  let xb : TupleOver K oneVertexShape P.scheme hμ A :=
+    ⟨ν, hμ, C.stage (i0 : WithTop L.δ), C.into i0, C.into_arrow _, Bb.idx,
+      fun p => C.mark (ix p.1) i0 (hlt p.1) p.2⟩
+  have hSxb : SameGaloisType Bb xb (Equiv.refl _) (Equiv.refl _) := by
+    refine ⟨ν, hμ, H, SystemArrow.refl _, SystemArrow.comp s0 xi, hperm,
+      P.scheme.comp s0 xi (C.step_arrow _) hxi, ?_, ?_⟩
+    · intro v; ext a; exact hcomm0 v a
+    · intro p
+      show xi.mapOcc (C.mark (ix p.1) ⊤ _ p.2) =
+        xi.mapOcc (s0.mapOcc (C.mark (ix p.1) i0 (hlt p.1) p.2))
+      exact congrArg xi.mapOcc (C.mark_step (ix p.1) (hlt p.1) le_top p.2).symm
+  let e₁ : Bb.idx ⊕ B0.idx ≃ (xb.join qB0).idx :=
+    Equiv.sumCongr (Equiv.refl _) (φ.trans (Equiv.refl _))
+  have hprodBB0 : IsProductTied Bb B0 (xb.join qB0) e₁ := by
+    refine ⟨xb, Equiv.refl _, hSxb, qB0, φ.trans (Equiv.refl _), hQ, ?_⟩
+    have hh : e₁.symm.trans e₁ = Equiv.refl _ := Equiv.symm_trans_self _
+    exact hh ▸ SameGaloisType.refl (xb.join qB0)
+  obtain ⟨J', e', hJ'ν, hJ'⟩ := infra_711_product_exists_level P hμ h0 h1 B0 Bb rfl rfl (hcnt ix)
+  have Sy := infra_612_tied_symm_level_joints P ℵ₀ le_rfl hμ h0 h1 Bb B0 rfl rfl (hcnt ix)
+    (hcnt ix1) (xb.join qB0) J' e₁ e' hprodBB0 hJ' rfl hJ'ν
+  have Sy' := infra_612_sameGalois_trans_equiv Sy e₁
+  rw [Equiv.symm_trans_self] at Sy'
+  -- the selection `S2` is `xb.join qB0` reindexed
+  let consE : B0.idx ⊕ Bb.idx ≃ S2.idx := infra_711_consEquiv L.indexAt i0 ix
+  let κ : S2.idx ≃ (xb.join qB0).idx :=
+    consE.symm.trans ((Equiv.sumCongr φ (Equiv.refl _)).trans (Equiv.sumComm _ _))
+  have D1 : SameGaloisType S2 (xb.join qB0) κ (Equiv.refl _) := by
+    refine ⟨ν, hμ, H, SystemArrow.refl _, SystemArrow.refl _, hperm, hperm, ?_, ?_⟩
+    · intro v; ext a; exact hcomm0 v a
+    · rintro (p | a)
+      · show xi.mapOcc (C.mark (ix p.1) ⊤ _ p.2) =
+          xi.mapOcc (s0.mapOcc (C.mark (ix p.1) i0 (hlt p.1) p.2))
+        exact congrArg xi.mapOcc (C.mark_step (ix p.1) (hlt p.1) le_top p.2).symm
+      · rfl
+  have T := infra_612_galois_trans_cross_level_of_base_end P ℵ₀ le_rfl hμ h0 h1 A S2
+    (xb.join qB0) J' κ _ (hcnt ixc) rfl (Or.inl rfl) D1 Sy'
+  have hQR : IsProductTied B0 Bb S2 consE :=
+    infra_711_product_joint_transfer P hμ h0 h1 hJ' consE _ T
+      (by
+        intro s
+        have hc : consE.symm (consE s) = s := Equiv.symm_apply_apply _ _
+        refine Eq.trans ?_ (infra_711_equiv_aux e' φ s)
+        exact congrArg (fun t => ((e'.symm.trans (Equiv.sumComm _ _)).trans e₁).symm
+          (((Equiv.sumCongr φ (Equiv.refl _)).trans (Equiv.sumComm _ _)) t)) hc) hJ'ν rfl (hcnt ixc)
+  -- `(x, b_{i₀}) ⊗ b̄` by associativity
+  let PQ := C.jointWith x 1 ix1
+  let J2 := C.jointWith x (n + 1) ixc
+  obtain ⟨J1, e1, hJ1ν, hJ1⟩ := infra_711_product_exists_level P hμ h0 h1 PQ Bb rfl rfl (hcnt ix)
+  have As := infra_612_tied_assoc_level_joints P ℵ₀ le_rfl hμ h0 h1
+    (x.restrict (C.into ⊤) (C.into_arrow ⊤)) B0 Bb rfl rfl rfl hxc (hcnt ix1) (hcnt ix)
+    PQ S2 J1 J2 (Equiv.refl _) consE e1 (Equiv.refl _) hPQ hJ1 hQR h₂ rfl rfl hJ1ν rfl
+  have As' := infra_711_sameGalois_normalize As
+  let Jg := C.jointWith (infra_711_pairUp C x i0) n ix
+  let m : Jg.idx ≃ J2.idx :=
+    (Equiv.sumAssoc _ _ _).trans (Equiv.sumCongr (Equiv.refl _) consE)
+  have D2 : SameGaloisType Jg J2 m (Equiv.refl _) := by
+    refine ⟨ν, hμ, H, SystemArrow.refl _, SystemArrow.refl _, hperm, hperm, fun v => rfl, ?_⟩
+    rintro (k | ⟨s, a⟩)
+    · rfl
+    · induction s using Fin.cases with
+      | zero => rfl
+      | succ s => rfl
+  have hJgc : #Jg.idx ≤ ℵ₀ :=
+    (Cardinal.mk_le_aleph0 : #((idx ⊕ (Σ _s : Fin 1, L.indexAt i0)) ⊕
+      (Σ s : Fin n, L.indexAt (ix s))) ≤ ℵ₀)
+  have T2 := infra_612_galois_trans_cross_level_of_base_end P ℵ₀ le_rfl hμ h0 h1 A Jg J2 J1 m _
+    hJgc
+    rfl (Or.inl rfl) D2 As'
+  have F : IsProductTied PQ Bb Jg (Equiv.refl _) :=
+    infra_711_product_joint_transfer (p := PQ) (q := Bb) (jt := J1) (jt' := Jg) P hμ h0 h1 hJ1
+      (Equiv.refl (PQ.idx ⊕ Bb.idx)) _ T2
+      (fun s => infra_711_equiv_aux2 e1 consE s) hJ1ν rfl hJgc
+  exact F
+
+/-- **The product over `Mᵢ` (proved, cycle 83).** -/
+theorem infra_711_succ_product (P : SingleModelData K) : infra_711_succ_product_statement P :=
+  infra_711_succ_product_of_parts P (infra_711_succ_pair P) (infra_711_succ_base_change P)
+
+/-- **Lemma 7.11 successor step (proved, cycle 83).** -/
+theorem infra_711_successor (P : SingleModelData K) : infra_711_successor_statement P :=
+  infra_711_successor_of_product P (infra_711_succ_product P)
 
 end
 end AEC

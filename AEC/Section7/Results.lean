@@ -299,7 +299,9 @@ Proof: `infra_711_induction` (cycle 75: induction on the stage; first stage and 
 proved; cycle 80: tail closed at `infra_75_wide P ℵ₀`) reduces it to
 `infra_711_successor_statement`, and `infra_711_successor_of_product` (cycle 80: level 7.5(3)
 `infra_75_product_free_level` + tied transitivity) reduces that to the product of `tp(x/Mᵢ)` and
-`tp(bᵢ/Mᵢ)` over `Mᵢ` (`infra_711_succ_product_statement`, open tip `infra_711_succ_product`). -/
+`tp(bᵢ/Mᵢ)` over `Mᵢ` (`infra_711_succ_product`, proved cycle 83 from `infra_711_succ_pair`
+(level-joint symmetry and associativity, with `b̄ ⊗ bᵢ` read off the chain's freeness) and
+`infra_711_succ_base_change` (level-joint 6.12 base change)). -/
 theorem lemma_7_11 {K : AbstractElementaryClass.{u}} (P : SingleModelData K) :
     ∃ T, ∃ hT : Tail P.eligible T,
       ∀ μ (hμ : μ ∈ T) (A : P.scheme.Object μ (Tail.mem hT hμ))
@@ -312,8 +314,7 @@ theorem lemma_7_11 {K : AbstractElementaryClass.{u}} (P : SingleModelData K) :
             IsProductTied (x.restrict (C.into ⊤) (C.into_arrow ⊤)) (C.selectionOver x n ix)
               (C.jointWith x n ix) (Equiv.refl _)) →
           IsTiedFree (C.into ⊤) (x.restrict (C.into ⊤) (C.into_arrow ⊤)) x (Equiv.refl _) := by
-  refine infra_711_induction P (infra_711_successor_of_product P ?_)
-  sorry
+  exact infra_711_induction P (infra_711_successor P)
 
 /-- **Lemma 7.12** (tied, restated cycle 76). At sufficiently closed eligible levels:
 (1) every actual product-independent list (`ProductIndependentTied`: tied finite products,

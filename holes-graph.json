@@ -1,6 +1,6 @@
 {
- "updated": "2026-11-18 15:16",
- "sorryCount": 42,
+ "updated": "2026-11-18 15:27",
+ "sorryCount": 41,
  "legend": {
   "open": "No unfinished required proof-deps — try next",
   "blocked": "Waiting on incomplete required proof-deps",
@@ -567,9 +567,9 @@
    "label": "Lem 7.11",
    "section": 7,
    "file": "AEC/Section7/Results.lean",
-   "status": "blocked",
+   "status": "done",
    "blocker": "infra_711_successor",
-   "detail": "RESTATED cycle 73 to the tied notions (English Lemma 7.11 exactly): over SingleModelData P, a tail of levels; C : TiedListWitnessingChain L (Def 7.10 with tied tp(b_i/M_i) = tp(b_i/A)^fr), C.AllDominatedIncrement; x finite over M_delta with x.nu = mu (actual coupling); IsProductTied (x/A) (selection) (joint) refl for every finite injective selection of marks  ==>  IsTiedFree (A -> M_delta) tp(x/A) tp(x/M_delta). Old untied statement (IsFreeFrom/IsProduct over a WorkingScheme) removed: nothing used it. Split: infra_711_tied_chain (done), infra_711_limit (done), infra_711_induction (done, cycle 75: reduces lemma_7_11 to infra_711_successor_statement), infra_711_successor (blocked on infra_75_product_free_level, re-routed to level-joint products cycle 75). Note: lemma_7_12 still uses the untied ListWitnessingChain and must be restated over TiedListWitnessingChain."
+   "detail": "cycle 83: lemma_7_11 = infra_711_induction(infra_711_successor); statement unchanged (tied, matches English); #print axioms: propext, Classical.choice, Quot.sound"
   },
   {
    "id": "lemma_7_12",
@@ -2950,9 +2950,9 @@
    "label": "Lemma 7.11 successor step",
    "section": 7,
    "file": "AEC/Section7/Lemma711Induction.lean",
-   "status": "blocked",
+   "status": "done",
    "blocker": "infra_711_succ_product (open); assembly done",
-   "detail": "Split (cycle 80): = infra_711_succ_assembly (done, infra_711_successor_of_product) + infra_711_succ_product (open). Blocked (cycle 75, re-routed). Lean statement infra_711_successor_statement P (Lemma711Induction.lean): for mu recursion-closed at aleph0 with aleph0^+ <= mu, a TiedListWitnessingChain C with all-dominated increments, i covby j: C.Claim i -> C.Claim j (Claim k: every finite x over M_top with x.nu = mu whose tied products with finite injective selections of marks below k hold has tp(x/M_k) free from A). VERIFIED (cycle 75): every product in the English successor step is level-joint: x is in the actual coupling (x.nu = mu); selectionOver / jointWith are hosted at x.host (nu = mu); the marks and stages are at mu; tp(x/M_i), tp(b_i/M_i) are hosted at mu; base change is from A to M_i at the same level mu. So the needed 6.12 facts are: finite product rules ((x,b_i) has product with earlier selections: infra_612_tied_assoc_level_joints, infra_612_tied_symm_level_joints, infra_612_tied_finite_perm_level / proj_level, plus tp(S,b_i/A) = S (x) b_i from the chain free field and infra_612_tied_exists); products lift freely (infra_612_tied_base_change_level_joints with mu = mu); Prop 7.5(3) in the actual-coupling level form (infra_75_product_free_level); transitivity (infra_78_tiedFree_trans). Two technical adapters are also needed and are part of this tip: IsTiedFree <-> IsTiedFreeMixed at nu = mu, and tied freeness of a sub-tuple (projection of IsTiedFree along an injective reindexing). Previously blocked on the general infra_75_product_free and infra_612_tied_base_change; those edges were replaced. [cycle 79: will need 7.11 tail closed at infra_75_wide P ℵ₀ to apply the level 7.5(3).]"
+   "detail": "cycle 83: infra_711_successor = successor_of_product(succ_product); axioms clean"
   },
   {
    "id": "infra_711_limit",
@@ -2986,7 +2986,7 @@
    "label": "Lemma 7.12(1): product-independent lists have all-dominated-increment tied chains",
    "section": 7,
    "file": "AEC/Section7/Results.lean",
-   "status": "blocked",
+   "status": "open",
    "blocker": "lemma_7_11",
    "detail": "Blocked (cycle 76). Exactly clause (1) of the restated lemma_7_12. English proof: maintain a common ambient containing L and the chain built so far; at stage i, finite domination (Lemma 7.11, via its products with previous marks = the original ones) makes the actual b_i free over M_i from A (the tied free field); Theorem 7.9 gives an all-dominated realization over M_i + b_i and its primeness clause embeds it into a compatible actual ambient over the tuple; limits: coherent unions (same-level chain closure). Needs lemma_7_11 (blocked on infra_711_successor)."
   },
@@ -3067,18 +3067,18 @@
    "label": "7.11 successor: x and b_i have tied product over M_i",
    "section": "7",
    "file": "AEC/Section7/Lemma711Successor.lean",
-   "status": "blocked",
+   "status": "done",
    "blocker": "infra_711_succ_pair (open), infra_711_succ_base_change (open); glue infra_711_succ_product_of_parts done",
-   "detail": "cycle 81 split: glue done; succ_base_change done (cycle 83); succ_pair open"
+   "detail": "cycle 83: infra_711_succ_product = succ_product_of_parts(succ_pair, succ_base_change); axioms clean"
   },
   {
    "id": "infra_711_succ_pair",
    "label": "7.11 successor: (x, b_i) has tied products with selections below i",
    "section": "7",
    "file": "AEC/Section7/Lemma711Successor.lean",
-   "status": "open",
+   "status": "done",
    "blocker": "",
-   "detail": "Open (cycle 81). Statement infra_711_succ_pair_statement: prodBelow x j -> prodBelow (infra_711_pairUp C x i) i. English: x ⊗ (S, b_i) given; (S, b_i) = S ⊗ b_i since tp(b_i/M_i) is free from A and S ⊆ M_i; then assoc/symm of level-joint products give (x, b_i) ⊗ S."
+   "detail": "cycle 83: infra_711_succ_pair (Lemma711Successor.lean): b̄ ⊗ b_i read off the chain (b̄ realized in M_i, tp(b_i/M_i) free), level-joint symmetry gives b_i ⊗ b̄ = selection(cons i ix); level-joint associativity gives (x,b_i) ⊗ b̄; joints moved by base-end Galois transitivity; axioms clean"
   },
   {
    "id": "infra_711_succ_base_change",
@@ -6340,8 +6340,14 @@
    "from": "infra_610_tied_free_lift",
    "to": "infra_711_succ_base_change",
    "kind": "hard"
+  },
+  {
+   "from": "infra_612_galois_trans_cross_level_of_base_end",
+   "to": "infra_711_succ_pair",
+   "kind": "hard",
+   "note": "joint transfer (infra_711_product_joint_transfer)"
   }
  ],
- "doneCount": 279,
+ "doneCount": 283,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
