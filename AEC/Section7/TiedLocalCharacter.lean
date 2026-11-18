@@ -713,5 +713,39 @@ theorem infra_611_tied
   erw [infra_78_anchored_refl q Z]
   exact E
 
+/-- **Eventual freeness of a fixed list along a chain (Prop 7.8 proof, local-character
+step; proved).** For a same-level chain at a recursion-closed level and a tuple `p` over its
+union with `#p.idx < cf δ`, there is a stage `j` such that for all stages `j ≤ i ≤ k`, the
+restriction `p ↾ X_k` is tied free from `X_i`. In Prop 7.8 this is the contradiction for the
+fixed list `d` found by Fodor: the construction makes `tp(b, d / X_{i+1})` non-free over
+`X_i` stationarily often, while this lemma (local character `infra_78_tied_local`, then base
+monotonicity and restriction) makes it free at every stage past `j`. -/
+theorem infra_78_fixed_list_eventually_free
+    (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ)
+    {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
+    (hrec : μ ∈ recursionClosedLevels P σ) (hσSucc : Order.succ σ ≤ μ)
+    (C : SameLevelChain P hμ)
+    (p : TupleOver K oneVertexShape P.scheme hμ C.unionObj)
+    (hνμ : p.ν = μ) (hidx : #p.idx ≤ σ) (hcof : #p.idx < C.δ.cof) :
+    ∃ j : Ordinal.{u}, ∃ _hj : j < C.δ, ∀ (i k : Ordinal.{u}) (hi : i < C.δ) (hk : k < C.δ),
+      j ≤ i → ∀ hik : i ≤ k,
+      IsTiedFree (C.le hi hk hik)
+        ((p.restrict (C.toUnion k hk) (C.toUnion_arrow k hk)).restrict (C.le hi hk hik)
+          (C.le_arrow hi hk hik))
+        (p.restrict (C.toUnion k hk) (C.toUnion_arrow k hk)) (Equiv.refl _) := by
+  obtain ⟨j, hj, hF⟩ := infra_78_tied_local P σ hσ hμ hrec hσSucc C p hνμ hidx hcof
+  refine ⟨j, hj, fun i k hi hk hji hik => ?_⟩
+  have h1 := infra_78_tiedFree_congr_arrow (C.toUnion_arrow j hj)
+    (P.scheme.comp _ _ (C.le_arrow hj hi hji) (C.toUnion_arrow i hi)) p
+    (C.toUnion_comp hj hi hji).symm hF
+  have h2 := infra_78_tiedFree_base_mono P σ hσ hμ hrec hσSucc (C.le hj hi hji)
+    (C.le_arrow hj hi hji) (C.toUnion i hi) (C.toUnion_arrow i hi) p hνμ hidx h1
+  have h3 := infra_78_tiedFree_congr_arrow (C.toUnion_arrow i hi)
+    (P.scheme.comp _ _ (C.le_arrow hi hk hik) (C.toUnion_arrow k hk)) p
+    (C.toUnion_comp hi hk hik).symm h2
+  exact infra_78_tiedFree_restrict (C.le hi hk hik) (C.le_arrow hi hk hik) (C.toUnion k hk)
+    (C.toUnion_arrow k hk) p h3
+
+
 end
 end AEC
