@@ -3132,7 +3132,7 @@
    "file": "AEC/Section7/Lemma712Existence.lean",
    "status": "open",
    "blocker": null,
-   "detail": "infra_712_products_statement: in an all-dominated pre-chain of a ProductIndependentTied list with marks below i free, IsProductTied (markTuple i restricted to A) (truncated selection) (truncated joint) for every finite injective selection below i. Paper: read off product independence (finite sublist b_i + selection). Expected hard: ProductIndependentTied gives left-bracketed non-level IsFiniteProductTied of the sublist's entries; needs the binary split 'b_i vs the rest' (finite product associativity/permutation at the level, AEC/Section6/ProductTied finite perm/proj) and identification of the chain marks with L's entries in the ambient top (mark_spec)."
+   "detail": "infra_712_products_statement (see Lemma712Existence.lean). Plan (cycle 85d review): take the injective sublist Fin.snoc ix i (b_i LAST); unfolding IsFiniteProductTied (n+1) gives left (product of the selection) and IsProductTied left (L.one i) joint e; then (1) level-joint symmetry (as in infra_711_succ_pair) to put b_i first, (2) replace components/joint by the chain-hosted tuples using SameGaloisType: chain marks go to L.val under toTop / listToTop (mark_spec), so selectionOver/jointWith agree with subConcat in C.top; left ~ restriction of joint, joint ~ subConcat(snoc) (ProductIndependentTied), needing a Galois-type restriction-to-subtuple lemma; (3) infra_711_product_joint_transfer for the joint move. Medium difficulty (not cardinal-hard); main missing piece is the sub-tuple restriction of SameGaloisType."
   },
   {
    "id": "infra_712_succ",
@@ -3159,7 +3159,7 @@
    "file": "AEC/Section7/Lemma712Existence.lean",
    "status": "open",
    "blocker": null,
-   "detail": "infra_712_recursion_statement: infra_712_limit_statement -> infra_712_prechain_statement. WellFounded.fix recursion along WithTop L.δ (ChainEngine pattern; state = stage with map into L.host), successor via infra_712_succ on b' = L.val i pushed, limits via the limit step; M_0 = A (first stage bijective, into = id); top = L.host, listToTop = id, toTop = the map of the top stage; marks = successor realizations pushed forward."
+   "detail": "infra_712_recursion_statement: infra_712_limit_statement -> infra_712_prechain_statement (limit now proved, so this is the whole construction). Engine fit (cycle 85d review): ChainEngine needs NON-dependent stage/map types. Suggested representation: stages as sets of the ambient N = L.host carrier (S := Set N-carrier, M := Unit, Arr s t _ := s ⊆ t ∧ both strong submodels of size mu), successor = image of Y under infra_712_succ's h (fed b' = L.val i), limit = union of images (infra_712_limit's covering + h); then convert each set to a P.scheme.Object (needs a 'strong subset of N -> Object' lemma via coherence: A ⊆ B ⊆ N strong in N => A strong in B) and read off TiedListPreChain fields (top = L.host, listToTop = id, toTop = image inclusion of the top stage, marks = L.val i pulled back into stage j > i). AllDominatedIncrement transfers along the iso Y ≅ image(h). Alternative: dependent WellFounded.fix with Sigma-typed stages (casts)."
   }
  ],
  "edges": [
