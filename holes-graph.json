@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-18 17:18 grokbot_01",
+ "updated": "2026-11-18 17:21 grokbot_01",
  "sorryCount": 40,
  "legend": {
   "open": "No unfinished required proof-deps — try next",
@@ -633,7 +633,7 @@
    "file": "AEC/Section7/Results.lean",
    "status": "open",
    "blocker": null,
-   "detail": "RESTATED (grokbot_02): bounded product-independent L over X: (1a) whole type determined by marginals among product-independent lists, (1b) every actual free lift of L.whole is product-independent (finite sublists are IsFiniteProduct of lifted marginals), (2) SatisfiesContinuity L.whole, (3) all-dominated realization over X with a map over X+b into an ambient containing L. Open sorry; ready (cycle 89: lemma_7_12 proved)."
+   "detail": "RESTATED cycle 90 to the tied notions (per the cycle-76 7.12 precedent), matching the English: over SingleModelData P, a tail; L well-ordered, finite entries (TupleList.FiniteEach), ProductIndependentTied, bounded (#(Sigma i, idx) < mu). (1a) any product-independent L' of finite tuples with the same marginals has the same whole type; (1b) a tied free lift q of L.whole along X -> B (IsTiedFree) has every finite sublist the IsFiniteProductTied of the lifted marginals, and any q' over B with the same finite-subtuple types has q's type; (2) SatisfiesContinuityTied L.whole (new tied Definition 7.7 over SameLevelChain/IsTiedFree, Results.lean); (3) all-dominated Y over X + b realizing tp(b/X), mapped over X, b into an ambient containing L. Old untied statement (WorkingScheme, ProductIndependent, IsFreeLift, SatisfiesContinuity) removed (no consumers). Open sorry. Plan: (1a) from lemma_7_12 existence + uniqueness (transport the order along e); (1b) Prop 6.12 tied finite projections + (1a) at base B; (2) infra_78_tied_continuity on finite subtuples + (1b); (3) Theorem 7.9 general form (needs bounded marks: infra_78_def77_bounded_marks / Prop 7.8 general) -- clause (3) is the hard one."
   },
   {
    "id": "theorem_7_9",

@@ -391,7 +391,7 @@ Lean: imports `AEC.Section6.Results`.
 | `lemma_7_12_bounded` | Lemma 7.12(2), bounded individual tuples | **done** (cycle 90, sorry-free; `TupleList.FiniteEach` refactor) |
 | `infra_712b_free_pull` | 7.12(2) bounded: `free_pull_of_lt` | **done** (cycle 90) |
 | `infra_712b_chain_succ` | 7.12(2) bounded: successor step at arity `max(#idx, ℵ₀) < μ` | **done** (cycle 90) |
-| `theorem_7_13` | Theorem 7.13 | `AEC/Section7/Results.lean:296` (restated: uniqueness, product-independent free lift, continuity, primeness) |
+| `theorem_7_13` | Theorem 7.13 | `AEC/Section7/Results.lean:428` (restated cycle 90 to tied notions: uniqueness, tied free lift product-independent + determined, tied Def 7.7 continuity, all-dominated realization + embedding) |
 
 ### L4 — Section 8 (5 sorry)
 

@@ -389,49 +389,87 @@ theorem lemma_7_12_bounded {K : AbstractElementaryClass.{u}} (P : SingleModelDat
   have h1 := infra_712_trans_level P _ h0 _ _ _ rfl rfl rfl hA' hM
   exact infra_712_trans_level P _ h0 _ _ _ rfl rfl rfl h1 C'.marksWhole_sameGalois
 
-/-- **Theorem 7.13.** Let `L` be a bounded product-independent list of finite tuples over `X`.
-(1) Its whole type is determined by its product data on finite sublists (equivalently, given
-product independence, by its marginals), and every actual free lift of the whole type along
-`X → B` is again product-independent: each finite sublist of the lift is the finite product of
-the lifted marginals.  (2) The whole type satisfies the continuity condition.  (3) It is
-realized all-dominated in an extension `Y` of `X`, and `Y` embeds over `X + b` into an ambient
-containing the given list. -/
-theorem theorem_7_13 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
-    (W : WorkingScheme K S) :
-    ∃ T, ∃ hT : Tail W.eligible T,
-      ∀ μ (hμ : μ ∈ T) (X : W.Object μ (Tail.mem hT hμ))
-        (L : TupleList W (Tail.mem hT hμ) X),
-        ProductIndependent L → #(Σ i, L.indexAt i) < μ →
+/-- **Definition 7.7, tied form (cycle 90).** A bounded marginal `p` over `A` satisfies the
+continuity condition: for every continuous same-level chain `X₀ ≤ X₁ ≤ ⋯ (i < δ)` with union
+`X_δ` (`SameLevelChain`), every base arrow `A → X₀`, and every realization `b` over the union,
+if `tp(b/X₀)` is the tied free lift of `p` and `tp(b/Xᵢ) = tp(b/X₀)^fr_{Xᵢ}` for every `i < δ`
+(tied), then the same holds over the union. Tied freeness (`IsTiedFree`) replaces the untied
+`IsFreeLift` / `IsFreeFrom` of `SatisfiesContinuity`; the level is that of `A` (the theorem's
+"sufficiently closed eligible level"). -/
+def SatisfiesContinuityTied {K : AbstractElementaryClass.{u}} {P : SingleModelData K}
+    {μ : Cardinal.{u}} {hμ : μ ∈ P.eligible} {A : P.scheme.Object μ hμ}
+    (p : TupleOver K oneVertexShape P.scheme hμ A) : Prop :=
+  ∀ (C : SameLevelChain P hμ)
+    (g : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A)
+      (P.scheme.asSystem hμ (C.obj 0 C.hlim.1)))
+    (b : TupleOver K oneVertexShape P.scheme hμ C.unionObj) (e : p.idx ≃ b.idx),
+    b.ν = μ →
+    IsTiedFree g p (b.restrict (C.toUnion 0 C.hlim.1) (C.toUnion_arrow 0 C.hlim.1)) e →
+    (∀ (i : Ordinal.{u}) (hi : i < C.δ),
+      IsTiedFree (C.le C.hlim.1 hi (bot_le : (0 : Ordinal.{u}) ≤ i))
+        (b.restrict (C.toUnion 0 C.hlim.1) (C.toUnion_arrow 0 C.hlim.1))
+        (b.restrict (C.toUnion i hi) (C.toUnion_arrow i hi)) (Equiv.refl _)) →
+    IsTiedFree (C.toUnion 0 C.hlim.1)
+      (b.restrict (C.toUnion 0 C.hlim.1) (C.toUnion_arrow 0 C.hlim.1)) b (Equiv.refl _)
+
+/-- **Theorem 7.13 (restated cycle 90 to the tied notions, per the cycle-76 7.12 precedent).**
+At the levels of a tail, let `L = (bᵢ)_{i<δ}` be a *bounded* (`#(Σ i, idx bᵢ) < μ`)
+product-independent (`ProductIndependentTied`) well-ordered list of finite tuples
+(`TupleList.FiniteEach`) over `X`.
+(1a) Its whole type is determined by the product data on finite sublists: any other such list
+with the same marginal types has the same whole type.
+(1b) Its tied free lift `q` along `X → B` is product-independent (each finite sublist of `q` has
+the tied finite product of the lifted marginals) and is the unique whole type over `B` with the
+lifted finite data (any `q'` over `B` whose finite subtuples have the types of those of `q` has
+the type of `q`).
+(2) The marked marginal `tp(b/X)` satisfies Definition 7.7 (`SatisfiesContinuityTied`).
+(3) There is an all-dominated object `Y` over `X + b` realizing it, and `Y` embeds over these data
+into an actual ambient containing the given list. -/
+theorem theorem_7_13 {K : AbstractElementaryClass.{u}} (P : SingleModelData K) :
+    ∃ T, ∃ hT : Tail P.eligible T,
+      ∀ μ (hμ : μ ∈ T) (X : P.scheme.Object μ (Tail.mem hT hμ))
+        (L : TupleList P.scheme (Tail.mem hT hμ) X) [LinearOrder L.δ] [L.FiniteEach]
+        [WellFoundedLT L.δ],
+        ProductIndependentTied L → #(Σ i, L.indexAt i) < μ →
         -- (1a) uniqueness from finite product data
-        (∀ (L' : TupleList W (Tail.mem hT hμ) X) (e : L.δ ≃ L'.δ)
+        (∀ (L' : TupleList P.scheme (Tail.mem hT hμ) X) [L'.FiniteEach] (e : L.δ ≃ L'.δ)
             (ei : ∀ i, L.indexAt i ≃ L'.indexAt (e i)),
-          ProductIndependent L' →
+          ProductIndependentTied L' →
           (∀ i, SameGaloisType (L.one i) (L'.one (e i)) (ei i) (Equiv.refl _)) →
           SameGaloisType L.whole L'.whole (Equiv.sigmaCongr e ei) (Equiv.refl _)) ∧
-        -- (1b) free lifts stay product-independent
-        (∀ (B : W.Object μ (Tail.mem hT hμ))
-            (f : SystemArrow K S (W.asSystem _ X) (W.asSystem _ B))
-            (hf : W.permitted (X := X) (Y := B) f)
-            (q : TupleOver K S W (Tail.mem hT hμ) B) (eq : L.whole.idx ≃ q.idx),
-          IsFreeLift L.whole q f hf eq → q.ν = μ →
-          ∀ (n : ℕ) (ix : Fin n → L.δ), Function.Injective ix →
-            IsFiniteProduct n
-              (fun s => q.reindex (fun a : L.indexAt (ix s) => eq ⟨ix s, a⟩))
-              (q.reindex (fun p : Σ s : Fin n, L.indexAt (ix s) => eq ⟨ix p.1, p.2⟩))) ∧
-        -- (2) continuity
-        SatisfiesContinuity L.whole ∧
-        -- (3) all-dominated realization, prime over `X + b`
-        (∃ (Y : W.Object μ (Tail.mem hT hμ))
-          (f : SystemArrow K S (W.asSystem _ X) (W.asSystem _ Y))
-          (hf : W.permitted (X := X) (Y := Y) f)
-          (b : L.whole.idx → Occurrence K S (W.asSystem _ Y)),
-          AllDominated f hf L.whole.idx b ∧
-          SameGaloisType L.whole (asTuple f hf b) (Equiv.refl _) (Equiv.refl _) ∧
-          ∃ (N : W.Object μ (Tail.mem hT hμ))
-            (h : SystemArrow K S (W.asSystem _ L.host) (W.asSystem _ N))
-            (_ : W.permitted (X := L.host) (Y := N) h)
-            (g : SystemArrow K S (W.asSystem _ Y) (W.asSystem _ N))
-            (_ : W.permitted (X := Y) (Y := N) g),
+        -- (1b) the tied free lift is product-independent and determined by its finite data
+        (∀ (B : P.scheme.Object μ (Tail.mem hT hμ))
+            (f : SystemArrow K oneVertexShape (P.scheme.asSystem _ X) (P.scheme.asSystem _ B))
+            (q : TupleOver K oneVertexShape P.scheme (Tail.mem hT hμ) B)
+            (eq : L.whole.idx ≃ q.idx),
+          IsTiedFree f L.whole q eq → q.ν = μ →
+          (∀ (n : ℕ) (ix : Fin n → L.δ), Function.Injective ix →
+            ∃ (joint : TupleOver K oneVertexShape P.scheme (Tail.mem hT hμ) B)
+              (E : (Σ s, ((q.reindex (fun a : L.indexAt (ix s) => eq ⟨ix s, a⟩))).idx) ≃
+                joint.idx),
+              IsFiniteProductTied n (fun s => q.reindex (fun a : L.indexAt (ix s) => eq ⟨ix s, a⟩))
+                joint E ∧
+              SameGaloisType
+                (q.reindex (fun p : Σ s : Fin n, L.indexAt (ix s) => eq ⟨ix p.1, p.2⟩)) joint E
+                (Equiv.refl _)) ∧
+          ∀ (q' : TupleOver K oneVertexShape P.scheme (Tail.mem hT hμ) B) (eq' : q.idx ≃ q'.idx),
+            q'.ν = μ →
+            (∀ (ι : Type u) [Finite ι] (ix : ι → q.idx), Function.Injective ix →
+              SameGaloisType (q.reindex ix) (q'.reindex (fun s => eq' (ix s)))
+                (Equiv.refl _) (Equiv.refl _)) →
+            SameGaloisType q q' eq' (Equiv.refl _)) ∧
+        -- (2) continuity (Definition 7.7, tied)
+        SatisfiesContinuityTied L.whole ∧
+        -- (3) all-dominated realization, embedding into an ambient containing the list
+        (∃ (Y : P.scheme.Object μ (Tail.mem hT hμ))
+          (f : SystemArrow K oneVertexShape (P.scheme.asSystem _ X) (P.scheme.asSystem _ Y))
+          (b : L.whole.idx → Occurrence K oneVertexShape (P.scheme.asSystem _ Y)),
+          AllDominated f trivial L.whole.idx b ∧
+          SameGaloisType L.whole (asTuple f trivial b) (Equiv.refl _) (Equiv.refl _) ∧
+          ∃ (N : P.scheme.Object μ (Tail.mem hT hμ))
+            (h : SystemArrow K oneVertexShape (P.scheme.asSystem _ L.host)
+              (P.scheme.asSystem _ N))
+            (g : SystemArrow K oneVertexShape (P.scheme.asSystem _ Y) (P.scheme.asSystem _ N)),
             (∀ v, (g.onVertex v).comp (f.onVertex v) = (h.onVertex v).comp (L.incl.onVertex v)) ∧
             ∀ a, g.mapOcc (b a) = h.mapOcc (L.whole.val a)) := by
   sorry
