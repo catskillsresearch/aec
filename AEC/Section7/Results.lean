@@ -243,7 +243,7 @@ hosted at any level. Cycle 68 restored the paper's embedding (primeness) clause,
 3.1 form had omitted. The "more generally ... bounded marginal satisfying Definition 7.7" form is
 a paper hypothesis tracked by `infra_78_def77_bounded_marks` (as for `proposition_7_8`).
 Split (`AEC/Section7/Theorem79.lean`): `infra_79_existence_statement` (open),
-`infra_79_primeness_same_level` (proved), `infra_79_primeness_mixed_statement` (open),
+`infra_79_primeness_same_level` (proved), `infra_79_primeness_mixed` (proved, cycle 69),
 `infra_79_assemble` (proved). -/
 theorem theorem_7_9 {K : AbstractElementaryClass.{u}} (P : SingleModelData K) :
     ∃ T, ∃ hT : Tail P.eligible T,
@@ -274,7 +274,7 @@ theorem theorem_7_9 {K : AbstractElementaryClass.{u}} (P : SingleModelData K) :
               P.scheme.permitted (X := Y) (Y := N) h ∧
               SystemArrow.comp f h = g ∧
               ∀ i, h.onVertex (b i).1 (b i).2 = (b' i).2 := by
-  refine infra_79_assemble P ?_
+  refine infra_79_of_existence P ?_
   sorry
 
 /-- **Lemma 7.11.** Let `C` be an all-dominated-increment witnessing chain for the list `L`
