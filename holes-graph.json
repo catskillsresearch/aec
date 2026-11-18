@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-18 16:24",
+ "updated": "2026-11-18 16:26",
  "sorryCount": 41,
  "legend": {
   "open": "No unfinished required proof-deps — try next",
@@ -3213,7 +3213,7 @@
    "file": "AEC/Section7/Lemma712Uniqueness.lean",
    "status": "open",
    "blocker": null,
-   "detail": "Open (cycle 88; the one sorry under lemma_7_12). infra_712u_marks_statement: at mu in infra_712_levels P, chains C, C' of L, L' (order iso e, per-entry equivs ei, same marginals over A) => SameGaloisType C.marksWhole C'.marksWhole. Plan (text.md l.238-242): recursion on j <= top of common N_j (level mu) with arrows M_j -> N_j, M'_j -> N_j agreeing on A and on marks < j. Successor: tied free lift c of p_j over N_j (infra_610_tied_free_lift), restrictions to both images are free over M_j / M'_j (host_target/host_source'), equal to tp(b_j/M_j) by free-lift uniqueness (infra_610_majority_unique), then infra_78_same_level_type_amalgam for M_{j+1} with (N_j, c) over M_j, then again for M'_{j+1} (types preserved by arrows); limits: infra_78_chain_union_kappa + continuity of both chains; base: M_0 = A (first). infra_712_trans_level makes all compositions level-safe (no large amalgam). Cycle 88: successor comparison infra_712u_step PROVED; remaining = the transfinite recursion of common objects N_j (successor: tied free lift + infra_712u_step twice + infra_78_same_level_type_amalgam twice + Thm 4.11(1) to merge; limit: infra_78_chain_union_kappa with both chains continuous; base M_0 = A via first) and reading off the marks at top. Cycle 88c: the full successor step infra_712u_succ is PROVED; remaining = coherent transfinite recursion (chain engine) carrying N_j, arrows M_j -> N_j, M'_j -> N_j (successor: infra_712u_succ applied to q = mark tuple hosted in M_{j+1} via TiedListPreChain.free_pull-style HostRel, marginals identified through C.top/C'.top and the hypothesis; limit: infra_78_chain_union_kappa + continuity of both chains), then read off SameGaloisType of the marks at top."
+   "detail": "Open (cycle 88; the one sorry under lemma_7_12). infra_712u_marks_statement: at mu in infra_712_levels P, chains C, C' of L, L' (order iso e, per-entry equivs ei, same marginals over A) => SameGaloisType C.marksWhole C'.marksWhole. Plan (text.md l.238-242): recursion on j <= top of common N_j (level mu) with arrows M_j -> N_j, M'_j -> N_j agreeing on A and on marks < j. Successor: tied free lift c of p_j over N_j (infra_610_tied_free_lift), restrictions to both images are free over M_j / M'_j (host_target/host_source'), equal to tp(b_j/M_j) by free-lift uniqueness (infra_610_majority_unique), then infra_78_same_level_type_amalgam for M_{j+1} with (N_j, c) over M_j, then again for M'_{j+1} (types preserved by arrows); limits: infra_78_chain_union_kappa + continuity of both chains; base: M_0 = A (first). infra_712_trans_level makes all compositions level-safe (no large amalgam). Cycle 88: successor comparison infra_712u_step PROVED; remaining = the transfinite recursion of common objects N_j (successor: tied free lift + infra_712u_step twice + infra_78_same_level_type_amalgam twice + Thm 4.11(1) to merge; limit: infra_78_chain_union_kappa with both chains continuous; base M_0 = A via first) and reading off the marks at top. Cycle 88c: the full successor step infra_712u_succ is PROVED; remaining = coherent transfinite recursion (chain engine) carrying N_j, arrows M_j -> N_j, M'_j -> N_j (successor: infra_712u_succ applied to q = mark tuple hosted in M_{j+1} via TiedListPreChain.free_pull-style HostRel, marginals identified through C.top/C'.top and the hypothesis; limit: infra_78_chain_union_kappa + continuity of both chains), then read off SameGaloisType of the marks at top. Cycle 88f: chain-form successor infra_712u_chain_succ and limit factorization infra_712u_factor_continuous PROVED. Remaining is only the recursion assembly: build (N_j, g_j : M_j -> N_j, g'_j : M'_{e j} -> N_j, coherent N-steps) by infra_78_coherent_chain_engine over WithTop L.delta (transport e to WithTop), successor = infra_712u_chain_succ, limit = chain_union_kappa of the N's + infra_712u_factor_continuous for both chains (continuity field), base = A (first: into bijective, inverse by infra_78_struct_inverse); finally marks at top identified in N_top => SameGaloisType C.marksWhole C'.marksWhole."
   },
   {
    "id": "infra_712u_step",
@@ -3241,6 +3241,15 @@
    "status": "done",
    "blocker": null,
    "detail": "PROVED cycle 88: infra_712u_factor_continuous: a stage M covered by a directed family X a -> M receives the factorization of any compatible family X a -> Z (directed union U via infra_78_chain_union_kappa maps bijectively onto M; inverse by infra_78_struct_inverse). This gives M_k -> N_k at limits of the common-object recursion. Axioms clean."
+  },
+  {
+   "id": "infra_712u_chain_succ",
+   "label": "7.12(2) successor step in chain form (both witnessing chains)",
+   "section": 7,
+   "file": "AEC/Section7/Lemma712Uniqueness.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "PROVED cycle 88: infra_712u_chain_succ: compatible arrows M_j -> N, M'_{e j} -> N over A extend to N1 receiving M_{j1}, M'_{j1'} over the old stages and identifying b_j with b'_{e j} (via ei j). Helpers: TiedListWitnessingChain.toPre / free_at (freeness at any later stage), marginal_sameGalois (mark marginal = list entry type via C.top), marginals compared by infra_712_trans_level. Axioms clean."
   }
  ],
  "edges": [
@@ -6587,8 +6596,13 @@
    "from": "infra_712u_limit",
    "to": "infra_712u_marks",
    "kind": "hard"
+  },
+  {
+   "from": "infra_712u_chain_succ",
+   "to": "infra_712u_marks",
+   "kind": "hard"
   }
  ],
- "doneCount": 299,
+ "doneCount": 300,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

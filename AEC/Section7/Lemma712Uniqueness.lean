@@ -381,6 +381,103 @@ theorem infra_712u_factor_continuous {P : SingleModelData K} {μ : Cardinal.{u}}
   rw [hψφ]
   rfl
 
+section ChainSide
+variable {P : SingleModelData K} {μ : Cardinal.{u}} {hμ : μ ∈ P.eligible}
+  {A : P.scheme.Object μ hμ} {L : TupleList P.scheme hμ A} [LinearOrder L.δ]
+
+/-- A witnessing chain forgets to a pre-chain. -/
+def TiedListWitnessingChain.toPre (C : TiedListWitnessingChain L) : TiedListPreChain L :=
+  { C with }
+
+theorem TiedListWitnessingChain.toPre_free (C : TiedListWitnessingChain L) (k : L.δ) :
+    C.toPre.FreeAt k := C.free k
+
+/-- **A chain mark's freeness at any later stage (proved, cycle 88).** -/
+theorem TiedListWitnessingChain.free_at (C : TiedListWitnessingChain L) (k : L.δ)
+    (j : WithTop L.δ) (hj : (k : WithTop L.δ) < j) :
+    IsTiedFree (C.into (k : WithTop L.δ))
+      ((asTuple (C.step hj.le) (C.step_arrow _) (C.mark k j hj)).restrict
+        (C.into (k : WithTop L.δ)) (C.into_arrow _))
+      (asTuple (C.step hj.le) (C.step_arrow _) (C.mark k j hj)) (Equiv.refl _) :=
+  C.toPre.free_pull k (C.toPre_free k) j hj
+
+/-- **A chain mark's marginal over `A` is the list entry's type (proved, cycle 88).** One
+amalgam: `C.top`. -/
+theorem TiedListWitnessingChain.marginal_sameGalois (C : TiedListWitnessingChain L) (k : L.δ)
+    (j : WithTop L.δ) (hj : (k : WithTop L.δ) < j) :
+    SameGaloisType ((asTuple (C.step hj.le) (C.step_arrow _) (C.mark k j hj)).restrict
+        (C.into (k : WithTop L.δ)) (C.into_arrow _)) (L.one k) (Equiv.refl _) (Equiv.refl _) := by
+  refine ⟨μ, hμ, C.top, SystemArrow.comp (C.step (le_top : j ≤ ⊤)) C.toTop, C.listToTop,
+    P.scheme.comp _ _ (C.step_arrow _) C.toTop_arrow, C.listToTop_arrow, fun v => ?_, fun a => ?_⟩
+  · refine DFunLike.ext _ _ fun x => ?_
+    have e1 := DFunLike.congr_fun (C.step_comp hj.le (le_top : j ≤ ⊤) v)
+      ((C.into (k : WithTop L.δ)).onVertex v x)
+    have e2 := DFunLike.congr_fun (C.into_step (le_top : (k : WithTop L.δ) ≤ ⊤) v) x
+    have e3 := DFunLike.congr_fun (C.comm_A v) x
+    exact (congrArg (C.toTop.onVertex v) e1).trans
+      ((congrArg (C.toTop.onVertex v) e2).trans e3)
+  · have h1 := C.mark_step k hj (le_top : j ≤ ⊤) a
+    have h2 := C.mark_spec k a
+    exact (congrArg C.toTop.mapOcc h1).trans h2
+
+/-- **7.12(2) successor of the common objects, chain form (proved, cycle 88).** For two
+witnessing chains with the same successive marginals over `A`, stages `M_j`, `M'_{e j}` mapped
+compatibly over `A` into a common `N` extend to a common `N₁` receiving the next stages `M_{j₁}`,
+`M'_{j₁'}` and identifying the marks `b_j`, `b'_{e j}` (`infra_712u_succ`). -/
+theorem infra_712u_chain_succ (P : SingleModelData K) {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
+    (h0 : μ ∈ recursionClosedLevels P ℵ₀) (h1 : Order.succ ℵ₀ ≤ μ)
+    {A : P.scheme.Object μ hμ} {L L' : TupleList P.scheme hμ A} [LinearOrder L.δ]
+    [LinearOrder L'.δ] (C : TiedListWitnessingChain L) (C' : TiedListWitnessingChain L')
+    (e : L.δ ≃o L'.δ) (ei : ∀ i, L.indexAt i ≃ L'.indexAt (e i))
+    (hm : ∀ i, SameGaloisType (L.one i) (L'.one (e i)) (ei i) (Equiv.refl _))
+    (j : L.δ) (j₁ : WithTop L.δ) (hj : (j : WithTop L.δ) < j₁)
+    (j₁' : WithTop L'.δ) (hj' : ((e j : L'.δ) : WithTop L'.δ) < j₁')
+    {N : P.scheme.Object μ hμ}
+    (g : SystemArrow K oneVertexShape (P.scheme.asSystem hμ (C.stage j))
+      (P.scheme.asSystem hμ N))
+    (g' : SystemArrow K oneVertexShape (P.scheme.asSystem hμ (C'.stage (e j)))
+      (P.scheme.asSystem hμ N))
+    (hcomm : SystemArrow.comp (C.into j) g = SystemArrow.comp (C'.into (e j)) g') :
+    ∃ (N₁ : P.scheme.Object μ hμ)
+      (h : SystemArrow K oneVertexShape (P.scheme.asSystem hμ N) (P.scheme.asSystem hμ N₁))
+      (k : SystemArrow K oneVertexShape (P.scheme.asSystem hμ (C.stage j₁))
+        (P.scheme.asSystem hμ N₁))
+      (k' : SystemArrow K oneVertexShape (P.scheme.asSystem hμ (C'.stage j₁'))
+        (P.scheme.asSystem hμ N₁)),
+      (∀ v, (k.onVertex v).comp ((C.step hj.le).onVertex v) = (h.onVertex v).comp (g.onVertex v)) ∧
+      (∀ v, (k'.onVertex v).comp ((C'.step hj'.le).onVertex v) =
+        (h.onVertex v).comp (g'.onVertex v)) ∧
+      ∀ a : L.indexAt j, (⟨(C.mark j j₁ hj a).1, k.onVertex _ (C.mark j j₁ hj a).2⟩ :
+          Occurrence K oneVertexShape (P.scheme.asSystem hμ N₁)) =
+        ⟨(C'.mark (e j) j₁' hj' (ei j a)).1, k'.onVertex _ (C'.mark (e j) j₁' hj' (ei j a)).2⟩ := by
+  have := L.finite_each j
+  let q := asTuple (C.step hj.le) (C.step_arrow _) (C.mark j j₁ hj)
+  let q' := asTuple (C'.step hj'.le) (C'.step_arrow _) (C'.mark (e j) j₁' hj')
+  let qr := q.restrict (C.into (j : WithTop L.δ)) (C.into_arrow _)
+  let q'r := q'.restrict (C'.into ((e j : L'.δ) : WithTop L'.δ)) (C'.into_arrow _)
+  have M1 : SameGaloisType qr (L.one j) (Equiv.refl _) (Equiv.refl _) :=
+    C.marginal_sameGalois j j₁ hj
+  have M2 : SameGaloisType q'r (L'.one (e j)) (Equiv.refl _) (Equiv.refl _) :=
+    C'.marginal_sameGalois (e j) j₁' hj'
+  have H23 : SameGaloisType (L'.one (e j)) (L.one j) (Equiv.refl _) (ei j) := (hm j).symm
+  have T1 : SameGaloisType q'r (L.one j) (Equiv.refl _) (ei j) :=
+    infra_712_trans_level P hμ h0 (t1 := q'r) (t2 := L'.one (e j)) (t3 := L.one j)
+      (Equiv.refl _) (Equiv.refl _) (ei j) rfl rfl rfl M2 H23
+  have H34 : SameGaloisType (L.one j) qr (ei j) (ei j) :=
+    infra_612_sameGalois_trans_equiv M1.symm (ei j)
+  have T2 : SameGaloisType q'r qr (Equiv.refl _) (ei j) :=
+    infra_712_trans_level P hμ h0 (t1 := q'r) (t2 := L.one j) (t3 := qr)
+      (Equiv.refl _) (ei j) (ei j) rfl rfl rfl T1 H34
+  have hS : SameGaloisType q'r qr (ei j).symm (Equiv.refl _) :=
+    infra_712u_sg_congr_right (infra_612_sameGalois_trans_equiv T2 (ei j).symm)
+      (fun x => (ei j).symm_apply_apply x)
+  obtain ⟨N₁, h, k, k', H1, H2, H3⟩ := infra_712u_succ P hμ h0 h1 (C.into (j : WithTop L.δ))
+    (C'.into ((e j : L'.δ) : WithTop L'.δ)) g g' hcomm q q' rfl rfl this
+    (C.free_at j j₁ hj) (C'.free_at (e j) j₁' hj') (ei j).symm hS
+  exact ⟨N₁, h, k, k', H1, H2, fun a => H3 a⟩
+
+end ChainSide
+
 /-- **7.12(2), the marks (open tip `infra_712u_marks`).** -/
 theorem infra_712u_marks (P : SingleModelData K) : infra_712u_marks_statement P := by
   sorry
