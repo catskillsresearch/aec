@@ -365,7 +365,10 @@ Lean: imports `AEC.Section6.Results`.
 | `infra_711_limit` | Lemma 7.11 limit step | [`Lemma711Limit.lean`](AEC/Section7/Lemma711Limit.lean) (**done**, cycle 73b; stages below `j` as a `SameLevelChain` via `Ordinal.enum`, union `M_j`; second clause of the tied Prop 6.13) |
 | `infra_711_successor` | Lemma 7.11 successor step | [`Lemma711Successor.lean`](AEC/Section7/Lemma711Successor.lean) **blocked** (cycle 80 split: `infra_711_succ_assembly` **done** (`infra_711_successor_of_product`: level 7.5(3) + tied transitivity); `infra_711_succ_product` open: `x`, `bᵢ` have the tied product over `Mᵢ`) |
 | `infra_711_succ_assembly` | 7.11 successor from the product over `Mᵢ` | **done** (cycle 80) |
-| `infra_711_succ_product` | 7.11 successor: tied product of `tp(x/Mᵢ)`, `tp(bᵢ/Mᵢ)` | **open** (statement `infra_711_succ_product_statement`) |
+| `infra_711_succ_product` | 7.11 successor: tied product of `tp(x/Mᵢ)`, `tp(bᵢ/Mᵢ)` | **blocked** (cycle 81 split: glue `infra_711_succ_product_of_parts` **done**; `infra_711_succ_pair` open; `infra_711_succ_base_change` open) |
+| `infra_711_succ_pair` | 7.11: `(x, bᵢ)` has tied products with selections below `i` | **open** (`infra_711_succ_pair_statement`) |
+| `infra_711_succ_base_change` | 7.11: products lift freely to `Mᵢ` | **open** (`infra_711_succ_base_change_statement`) |
+| `infra_711_succ_product_glue` | 7.11: product over `Mᵢ` from its parts | **done** (cycle 81) |
 | `infra_75_product_free_level` | Prop 7.5(3) tied, actual coupling, level joints | [`ProductFreeLevel.lean`](AEC/Section7/ProductFreeLevel.lean) (**done**, cycle 80: `infra_75_product_free_level`; levels also closed at `infra_75_wide P σ`) |
 | `infra_75_tests_reduction` | Prop 7.5(3) level: testing reduction | [`ProductFreeLevel.lean`](AEC/Section7/ProductFreeLevel.lean) (**done**, cycle 77; `infra_75_tiedFree_of_tests`, `infra_75_product_free_level_of_eval`; bounded tests via `infra_73_differing_test`, no amalgam) |
 | `infra_75_free_eval_level` | Prop 7.5(3) level: free evaluation on bounded tests | **done** (cycle 80: glue of `infra_75_eval_product` + `infra_75_eval_project`) |

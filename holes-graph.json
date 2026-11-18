@@ -3067,9 +3067,36 @@
    "label": "7.11 successor: x and b_i have tied product over M_i",
    "section": "7",
    "file": "AEC/Section7/Lemma711Successor.lean",
+   "status": "blocked",
+   "blocker": "infra_711_succ_pair (open), infra_711_succ_base_change (open); glue infra_711_succ_product_of_parts done",
+   "detail": "Open (cycle 80). Statement infra_711_succ_product_statement: under Claim i, finite x with prodBelow x j has IsProductTied (tp(x/M_i)) (tp(b_i/M_i) hosted with x) (joint) over M_i. English: (x,b_i) has product with earlier selections (finite product rules: assoc/symm/perm/proj level joints, chain free field + tied_exists), so IH gives tp(x,b_i/M_i) free from A; tp(x/M_i) free (IH), tp(b_i/M_i) free (chain); products lift freely (infra_612_tied_base_change_level_joints). The sub-tuple adapter (tied freeness of a sub-tuple) belongs here if needed."
+  },
+  {
+   "id": "infra_711_succ_pair",
+   "label": "7.11 successor: (x, b_i) has tied products with selections below i",
+   "section": "7",
+   "file": "AEC/Section7/Lemma711Successor.lean",
    "status": "open",
    "blocker": "",
-   "detail": "Open (cycle 80). Statement infra_711_succ_product_statement: under Claim i, finite x with prodBelow x j has IsProductTied (tp(x/M_i)) (tp(b_i/M_i) hosted with x) (joint) over M_i. English: (x,b_i) has product with earlier selections (finite product rules: assoc/symm/perm/proj level joints, chain free field + tied_exists), so IH gives tp(x,b_i/M_i) free from A; tp(x/M_i) free (IH), tp(b_i/M_i) free (chain); products lift freely (infra_612_tied_base_change_level_joints). The sub-tuple adapter (tied freeness of a sub-tuple) belongs here if needed."
+   "detail": "Open (cycle 81). Statement infra_711_succ_pair_statement: prodBelow x j -> prodBelow (infra_711_pairUp C x i) i. English: x ⊗ (S, b_i) given; (S, b_i) = S ⊗ b_i since tp(b_i/M_i) is free from A and S ⊆ M_i; then assoc/symm of level-joint products give (x, b_i) ⊗ S."
+  },
+  {
+   "id": "infra_711_succ_base_change",
+   "label": "7.11 successor: products lift freely to M_i",
+   "section": "7",
+   "file": "AEC/Section7/Lemma711Successor.lean",
+   "status": "open",
+   "blocker": "",
+   "detail": "Open (cycle 81). Statement infra_711_succ_base_change_statement: with freeAt x i, freeAt (pairUp x b_i) i and the chain free field, x ⊗ b_i over A lifts to the tied product over M_i (infra_612_tied_base_change_level_joints with the product over M_i built explicitly as pB.join y, so no Galois transitivity needed). Needs reindexing transports (Fin 1 selection vs markOver) and host pushes (infra_75_tiedFree_base_congr / infra_75_tiedFree_target_push)."
+  },
+  {
+   "id": "infra_711_succ_product_glue",
+   "label": "7.11 successor product from pair + base change",
+   "section": "7",
+   "file": "AEC/Section7/Lemma711Successor.lean",
+   "status": "done",
+   "blocker": "",
+   "detail": "Proved (cycle 81): infra_711_succ_product_of_parts (IH applied to x and to (x, b_i)). Axioms clean."
   }
  ],
  "edges": [
@@ -6063,11 +6090,6 @@
    "kind": "hard"
   },
   {
-   "from": "infra_711_tied_chain",
-   "to": "infra_711_succ_product",
-   "kind": "hard"
-  },
-  {
    "from": "infra_7_10_list_chain",
    "to": "infra_711_tied_chain",
    "kind": "hard"
@@ -6100,36 +6122,6 @@
   {
    "from": "infra_75_product_free_level",
    "to": "infra_711_successor",
-   "kind": "hard"
-  },
-  {
-   "from": "infra_612_tied_base_change_level_joints",
-   "to": "infra_711_succ_product",
-   "kind": "hard"
-  },
-  {
-   "from": "infra_612_tied_assoc_level_joints",
-   "to": "infra_711_succ_product",
-   "kind": "hard"
-  },
-  {
-   "from": "infra_612_tied_symm_level_joints",
-   "to": "infra_711_succ_product",
-   "kind": "hard"
-  },
-  {
-   "from": "infra_612_tied_finite_proj_level",
-   "to": "infra_711_succ_product",
-   "kind": "hard"
-  },
-  {
-   "from": "infra_612_tied_finite_perm_level",
-   "to": "infra_711_succ_product",
-   "kind": "hard"
-  },
-  {
-   "from": "infra_612_tied_exists",
-   "to": "infra_711_succ_product",
    "kind": "hard"
   },
   {
@@ -6276,6 +6268,66 @@
   {
    "from": "infra_78_tiedFree_trans",
    "to": "infra_711_succ_assembly",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_711_tied_chain",
+   "to": "infra_711_succ_pair",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_711_tied_chain",
+   "to": "infra_711_succ_base_change",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_612_tied_base_change_level_joints",
+   "to": "infra_711_succ_base_change",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_612_tied_assoc_level_joints",
+   "to": "infra_711_succ_pair",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_612_tied_symm_level_joints",
+   "to": "infra_711_succ_pair",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_612_tied_finite_proj_level",
+   "to": "infra_711_succ_pair",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_612_tied_finite_perm_level",
+   "to": "infra_711_succ_pair",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_612_tied_exists",
+   "to": "infra_711_succ_pair",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_612_tied_exists",
+   "to": "infra_711_succ_base_change",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_711_succ_pair",
+   "to": "infra_711_succ_product",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_711_succ_base_change",
+   "to": "infra_711_succ_product",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_711_succ_product_glue",
+   "to": "infra_711_succ_product",
    "kind": "hard"
   }
  ],

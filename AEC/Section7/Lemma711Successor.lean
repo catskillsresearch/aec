@@ -81,5 +81,69 @@ theorem infra_711_successor_of_product (P : SingleModelData K)
   refine infra_711_tiedFree_transport rfl ?_ _ (C.into_arrow j) htr
   apply SystemArrow.ext; intro v; exact C.into_step _ v
 
+/-- The pair `(x, bᵢ)` as a tuple over `M_δ` hosted with `x`. -/
+def infra_711_pairUp {P : SingleModelData K} {μ : Cardinal.{u}} {hμ : μ ∈ P.eligible}
+    {A : P.scheme.Object μ hμ} {L : TupleList P.scheme hμ A} [LinearOrder L.δ]
+    (C : TiedListWitnessingChain L) (x : TupleOver K oneVertexShape P.scheme hμ (C.stage ⊤))
+    (i0 : L.δ) : TupleOver K oneVertexShape P.scheme hμ (C.stage ⊤) where
+  ν := x.ν
+  hν := x.hν
+  host := x.host
+  incl := x.incl
+  incl_arrow := x.incl_arrow
+  idx := x.idx ⊕ L.indexAt i0
+  val := Sum.elim x.val (fun a => x.incl.mapOcc (C.mark i0 ⊤ (WithTop.coe_lt_top i0) a))
+
+/-- **7.11 successor, finite product rules (statement; open tip `infra_711_succ_pair`).**
+`(x, bᵢ)` has the tied product with every finite selection of marks below `i` (from `x`'s
+products with the selections together with `bᵢ`, `tp(bᵢ/Mᵢ)` free from `A`, and the level-joint
+6.12 rules). -/
+def infra_711_succ_pair_statement (P : SingleModelData K) : Prop :=
+  ∀ {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible), μ ∈ recursionClosedLevels P ℵ₀ →
+    Order.succ ℵ₀ ≤ μ →
+    μ ∈ recursionClosedLevels P (infra_75_wide P ℵ₀) → Order.succ (infra_75_wide P ℵ₀) ≤ μ →
+    ∀ (A : P.scheme.Object μ hμ) (L : TupleList P.scheme hμ A) [LinearOrder L.δ]
+      [WellFoundedLT L.δ] (C : TiedListWitnessingChain L), C.AllDominatedIncrement →
+      ∀ (i0 : L.δ) (j : WithTop L.δ), (i0 : WithTop L.δ) ⋖ j →
+        ∀ x : TupleOver K oneVertexShape P.scheme hμ (C.stage ⊤), Finite x.idx → x.ν = μ →
+          C.prodBelow x j → C.prodBelow (infra_711_pairUp C x i0) (i0 : WithTop L.δ)
+
+/-- **7.11 successor, free base change (statement; open tip `infra_711_succ_base_change`).**
+With `tp(x/Mᵢ)` and `tp(x, bᵢ/Mᵢ)` free from `A` and `tp(bᵢ/Mᵢ)` free (the chain), the product
+`x ⊗ bᵢ` over `A` lifts to the product over `Mᵢ` (Proposition 6.12, products lift freely). -/
+def infra_711_succ_base_change_statement (P : SingleModelData K) : Prop :=
+  ∀ {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible), μ ∈ recursionClosedLevels P ℵ₀ →
+    Order.succ ℵ₀ ≤ μ →
+    μ ∈ recursionClosedLevels P (infra_75_wide P ℵ₀) → Order.succ (infra_75_wide P ℵ₀) ≤ μ →
+    ∀ (A : P.scheme.Object μ hμ) (L : TupleList P.scheme hμ A) [LinearOrder L.δ]
+      [WellFoundedLT L.δ] (C : TiedListWitnessingChain L), C.AllDominatedIncrement →
+      ∀ (i0 : L.δ) (j : WithTop L.δ) (h : (i0 : WithTop L.δ) ⋖ j),
+        ∀ x : TupleOver K oneVertexShape P.scheme hμ (C.stage ⊤), Finite x.idx → x.ν = μ →
+          C.prodBelow x j → C.freeAt x (i0 : WithTop L.δ) →
+          C.freeAt (infra_711_pairUp C x i0) (i0 : WithTop L.δ) →
+          IsProductTied
+            ((x.restrict (C.step (le_top : j ≤ ⊤)) (C.step_arrow _)).restrict
+              (C.step h.le) (C.step_arrow h.le))
+            (infra_75_markOver (C.step h.le) (C.step_arrow h.le)
+              (x.restrict (C.step (le_top : j ≤ ⊤)) (C.step_arrow _)) (C.mark i0 j h.lt))
+            (infra_75_jointOver (C.step h.le) (C.step_arrow h.le)
+              (x.restrict (C.step (le_top : j ≤ ⊤)) (C.step_arrow _)) (C.mark i0 j h.lt))
+            (Equiv.refl _)
+
+/-- **The product over `Mᵢ` from its two parts (proved glue).** The induction claim at `i` is
+applied to `x` and to `(x, bᵢ)`. -/
+theorem infra_711_succ_product_of_parts (P : SingleModelData K)
+    (h1 : infra_711_succ_pair_statement P) (h2 : infra_711_succ_base_change_statement P) :
+    infra_711_succ_product_statement P := by
+  intro μ hμ h0 h1' hw1 hw2 A L _ _ C hinc i0 j h hCi x hfin hxν hprod
+  have hfin' : Finite (infra_711_pairUp C x i0).idx := by
+    have : Finite x.idx := hfin
+    have : Finite (L.indexAt i0) := L.finite_each i0
+    change Finite (x.idx ⊕ L.indexAt i0)
+    infer_instance
+  exact h2 hμ h0 h1' hw1 hw2 A L C hinc i0 j h x hfin hxν hprod
+    (hCi x hfin hxν (C.prodBelow_mono h.le hprod))
+    (hCi _ hfin' hxν (h1 hμ h0 h1' hw1 hw2 A L C hinc i0 j h x hfin hxν hprod))
+
 end
 end AEC
