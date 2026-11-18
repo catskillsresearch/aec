@@ -735,9 +735,82 @@ def infra_713_continuity_up_statement (P : SingleModelData K) : Prop :=
       IsTiedFree (C.toUnion 0 C.hlim.1)
         (b.restrict (C.toUnion 0 C.hlim.1) (C.toUnion_arrow 0 C.hlim.1)) b (Equiv.refl _)
 
-/-- **Theorem 7.13 (2), higher levels (open tip `infra_713_continuity_up`).** -/
-theorem infra_713_continuity_up (P : SingleModelData K) : infra_713_continuity_up_statement P := by
+/-- **Theorem 7.13 (1b) across levels (statement; open tip `infra_713_lift_pi_mixed`).** A tied
+free lift (`IsTiedFreeMixed`) of a bounded PI list from level `μ` to a higher level `μ'` of the
+7.12 tail is product-independent (each finite selection has the tied finite product of the
+lifted factors). Same-level form: `infra_713_lift_pi_permitted`. -/
+def infra_713_lift_pi_mixed_statement (P : SingleModelData K) : Prop :=
+  ∀ {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible), μ ∈ infra_712_levels P →
+    ∀ (X : P.scheme.Object μ hμ) (L : TupleList P.scheme hμ X) [LinearOrder L.δ] [L.FiniteEach]
+      [WellFoundedLT L.δ], ProductIndependentTied L → #(Σ i, L.indexAt i) < μ →
+    ∀ {μ' : Cardinal.{u}} (hμ' : μ' ∈ P.eligible), μ' ∈ infra_712_levels P → μ < μ' →
+    ∀ (B : P.scheme.Object μ' hμ')
+      (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ' B))
+      (_hf : P.scheme.permitted (X := X) (Y := B) f)
+      (q : TupleOver K oneVertexShape P.scheme hμ' B) (eq : L.whole.idx ≃ q.idx),
+      IsTiedFreeMixed f L.whole q eq → q.ν = μ' →
+      ∀ (n : ℕ) (ix : Fin n → L.δ), Function.Injective ix →
+        ∃ (joint : TupleOver K oneVertexShape P.scheme hμ' B)
+          (E : (Σ s, ((q.reindex (fun a : L.indexAt (ix s) => eq ⟨ix s, a⟩))).idx) ≃ joint.idx),
+          IsFiniteProductTied n (fun s => q.reindex (fun a : L.indexAt (ix s) => eq ⟨ix s, a⟩))
+            joint E ∧
+          SameGaloisType
+            (q.reindex (fun p : Σ s : Fin n, L.indexAt (ix s) => eq ⟨ix p.1, p.2⟩)) joint E
+            (Equiv.refl _)
+
+/-- **Theorem 7.13 (1b) across levels (open tip `infra_713_lift_pi_mixed`).** -/
+theorem infra_713_lift_pi_mixed (P : SingleModelData K) : infra_713_lift_pi_mixed_statement P := by
   sorry
+
+/-- **7.13 (2) at higher levels from (1b) across levels (proved, cycle 93).** At `μ' > μ`, the
+coordinates of `b ↾ X₀` form a PI list `L₀` over `X₀` at `μ'` (`infra_713_lift_pi_mixed`), and
+`b ↾ X₀` is the tied free lift of `L₀` along the identity of `X₀` (`infra_78_tiedFree_of_id`);
+the same-level case at `μ'` (`infra_713_continuity_same_level`) concludes. -/
+theorem infra_713_continuity_up_of_pi_mixed (P : SingleModelData K)
+    (h : infra_713_lift_pi_mixed_statement P) : infra_713_continuity_up_statement P := by
+  classical
+  intro μ hμ hl X L _ _ _ hPI hS μ' hμ' hlt C g hg b e hbν hT hst
+  have hμ'e : μ' ∈ P.eligible := Tail.mem (infra_712_levels_tail P) hμ'
+  have hpi := h hμ hl X L hPI hS hμ'e hμ' hlt (C.obj 0 C.hlim.1) g hg
+    (b.restrict (C.toUnion 0 C.hlim.1) (C.toUnion_arrow 0 C.hlim.1)) e hT hbν
+  obtain ⟨ν, hν, host, incl, hincl, bidx, bval⟩ := b
+  dsimp only at hbν
+  subst ν
+  let L0 : TupleList P.scheme hμ'e (C.obj 0 C.hlim.1) :=
+    { δ := L.δ, host := host, incl := SystemArrow.comp (C.toUnion 0 C.hlim.1) incl,
+      incl_arrow := P.scheme.comp _ _ (C.toUnion_arrow 0 C.hlim.1) hincl,
+      indexAt := L.indexAt, val := fun i a => bval (e ⟨i, a⟩) }
+  letI : LinearOrder L0.δ := inferInstanceAs (LinearOrder L.δ)
+  haveI : WellFoundedLT L0.δ := inferInstanceAs (WellFoundedLT L.δ)
+  haveI : L0.FiniteEach := ⟨fun i => L.finite_each i⟩
+  have hPI0 : ProductIndependentTied L0 := fun n ix hinj => hpi n ix hinj
+  have hS0 : #(Σ i, L0.indexAt i) < μ' := hS.trans hlt
+  let b' : TupleOver K oneVertexShape P.scheme hμ'e C.unionObj :=
+    ⟨μ', hν, host, incl, hincl, bidx, bval⟩
+  let b0 := b'.restrict (C.toUnion 0 C.hlim.1) (C.toUnion_arrow 0 C.hlim.1)
+  have hperm : P.scheme.permitted (X := C.obj 0 C.hlim.1) (Y := C.obj 0 C.hlim.1)
+      (SystemArrow.refl (P.scheme.asSystem hμ'e (C.obj 0 C.hlim.1))) :=
+    P.scheme.structural_iso _ _ (SystemArrow.refl _) (P.scheme.isStructIso_refl _)
+  have hid := infra_78_tiedFree_of_id (SystemArrow.refl (P.scheme.asSystem hμ'e (C.obj 0 C.hlim.1)))
+    (fun x => rfl) hperm b0
+  have hSG : SameGaloisType L0.whole (b0.restrict _ hperm) e (Equiv.refl _) := by
+    obtain ⟨ρ, hρ, top, f1, f2, h1, h2, hcomm, hv⟩ := SameGaloisType.refl b0
+    refine ⟨ρ, hρ, top, f1, f2, h1, h2, fun v => ?_, fun i => ?_⟩
+    · ext x
+      exact DFunLike.congr_fun (hcomm v) x
+    · obtain ⟨k, rfl⟩ : ∃ k, i = e k := ⟨e.symm i, (e.apply_symm_apply i).symm⟩
+      have hk : e.symm (e k) = k := e.symm_apply_apply k
+      exact (congrArg (fun j => (⟨(L0.whole.val j).1, f1.onVertex _ (L0.whole.val j).2⟩ :
+        Occurrence K oneVertexShape (P.scheme.asSystem hρ top))) hk).trans (hv (e k))
+  have hsz : #(b0.restrict _ hperm).idx < μ' := (Cardinal.mk_congr e).symm.trans_lt hS0
+  have hT0 := infra_712u_tiedFree_base_sameGalois _ (b0.restrict _ hperm) L0.whole rfl rfl hsz
+    e hSG b0 (Equiv.refl _) hid
+  exact infra_713_continuity_same_level P hμ'e hμ' (C.obj 0 C.hlim.1) L0 hPI0 hS0 C
+    (SystemArrow.refl _) hperm b' e rfl hT0 hst
+
+/-- **Theorem 7.13 (2), higher levels (proved from `infra_713_lift_pi_mixed`, cycle 93).** -/
+theorem infra_713_continuity_up (P : SingleModelData K) : infra_713_continuity_up_statement P :=
+  infra_713_continuity_up_of_pi_mixed P (infra_713_lift_pi_mixed P)
 
 /-- **Theorem 7.13 (2) (proved glue, cycle 93; was tip `infra_713_continuity`).** Tail
 `infra_712_levels P`; the level `μ' = μ` is `infra_713_continuity_same_level`, the levels

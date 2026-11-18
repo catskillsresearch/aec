@@ -3526,9 +3526,27 @@
    "label": "Thm 7.13 (2), levels mu' > mu",
    "section": 7,
    "file": "AEC/Section7/Theorem713.lean",
+   "status": "blocked",
+   "blocker": "infra_713_lift_pi_mixed",
+   "detail": "Open (cycle 93). infra_713_continuity_up_statement: Def 7.7-tied body at mu' in infra_712_levels with mu < mu' (IsTiedFreeMixed base g : A -> X0 from level mu to mu'). Same-level proof needs: PI of the lifted list over X0 at mu' from a MIXED tied free lift (lift_pi is same-level), i.e. mixed-level versions of infra_713_tiedFree_reindex / finite_base_change / level copies -- likely cross-level tied machinery (cf. hard tips: cross-level Galois transitivity both-off case). | Cycle 93: proved from infra_713_lift_pi_mixed (infra_713_continuity_up_of_pi_mixed): the coordinates of b|X0 form a PI list over X0 at mu', b|X0 is its tied free lift along the identity (infra_78_tiedFree_of_id), then the same-level case at mu'."
+  },
+  {
+   "id": "infra_713_continuity_up_of_pi_mixed",
+   "label": "7.13(2) at mu' > mu from (1b) across levels",
+   "section": 7,
+   "file": "AEC/Section7/Theorem713.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "PROVED cycle 93 (axioms clean): infra_713_lift_pi_mixed_statement P -> infra_713_continuity_up_statement P via identity base at X0 and infra_713_continuity_same_level at mu'."
+  },
+  {
+   "id": "infra_713_lift_pi_mixed",
+   "label": "Thm 7.13 (1b) across levels: mixed tied free lift of a PI list is PI",
+   "section": 7,
+   "file": "AEC/Section7/Theorem713.lean",
    "status": "open",
    "blocker": null,
-   "detail": "Open (cycle 93). infra_713_continuity_up_statement: Def 7.7-tied body at mu' in infra_712_levels with mu < mu' (IsTiedFreeMixed base g : A -> X0 from level mu to mu'). Same-level proof needs: PI of the lifted list over X0 at mu' from a MIXED tied free lift (lift_pi is same-level), i.e. mixed-level versions of infra_713_tiedFree_reindex / finite_base_change / level copies -- likely cross-level tied machinery (cf. hard tips: cross-level Galois transitivity both-off case)."
+   "detail": "Open (cycle 93). infra_713_lift_pi_mixed_statement: IsTiedFreeMixed f L.whole q eq, f : X (level mu) -> B (level mu' > mu, both in infra_712_levels), permitted; q is PI over B. Same-level route (infra_713_lift_pi_permitted) needs mixed versions of: infra_713_tiedFree_reindex (finite projection of a mixed tied free lift; same-level proof uses infra_73_differing_test/infra_73_tied_move), infra_712u_tiedFree_base_sameGalois (source-side transfer, mixed), and infra_713_finite_base_change (binary step infra_612_tied_base_change_level_joints is already mixed-capable, mu <= mu'; congr_joint/exists_level stay at mu'). Assess whether the projection lemma needs cross-level Galois transitivity (both-off hard case) before starting."
   }
  ],
  "edges": [
@@ -7072,8 +7090,20 @@
    "to": "infra_713_continuity",
    "kind": "hard",
    "note": ""
+  },
+  {
+   "from": "infra_713_lift_pi_mixed",
+   "to": "infra_713_continuity_up_of_pi_mixed",
+   "kind": "hard",
+   "note": ""
+  },
+  {
+   "from": "infra_713_continuity_up_of_pi_mixed",
+   "to": "infra_713_continuity_up",
+   "kind": "hard",
+   "note": ""
   }
  ],
- "doneCount": 332,
+ "doneCount": 333,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

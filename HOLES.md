@@ -407,7 +407,8 @@ Lean: imports `AEC.Section6.Results`.
 | `infra_713_continuity` | Thm 7.13 (2), tied Def 7.7 | split (cycle 93): glue proved, blocked on `infra_713_continuity_up` |
 | `infra_713_finite_continuity_level` | level-wise finite tied continuity from `X₀` | **done** (cycle 93) |
 | `infra_713_continuity_same_level` | Thm 7.13 (2), level `μ' = μ` | **done** (cycle 93) |
-| `infra_713_continuity_up` | Thm 7.13 (2), levels `μ' > μ` (mixed base) | **open** (likely cross-level) |
+| `infra_713_continuity_up` | Thm 7.13 (2), levels `μ' > μ` (mixed base) | blocked on `infra_713_lift_pi_mixed` (reduction proved: `infra_713_continuity_up_of_pi_mixed`) |
+| `infra_713_lift_pi_mixed` | Thm 7.13 (1b) across levels: mixed tied free lift of a PI list is PI | **open** |
 | `infra_713_realize` | Thm 7.13 (3) | **open**, hard (bounded-mark 7.8/7.9) |
 
 ### L4 — Section 8 (5 sorry)
