@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-18 12:57",
+  "updated": "2026-11-18 13:02",
   "sorryCount": 44,
   "legend": {
     "open": "No unfinished required proof-deps — try next",
@@ -2266,8 +2266,8 @@
       "section": 7,
       "file": "AEC/Section7/IsolationTransfer.lean",
       "status": "blocked",
-      "blocker": "infra_78_marginal_anchor, infra_78_iso_rename",
-      "detail": "Blocked (split grokbot cycle 61; full claim stays here = infra_78_isolation_over_A (done) + infra_78_anchor_iso (done) + infra_78_marginal_anchor (open) + infra_78_iso_rename (open)). Paper: Lemma 7.6 gives isolation over A; I_p still determines the marginal on b; bounded diagram homogeneity gives A ~ X carrying the anchors; transport of approximation evaluations carries tp(b/A) to p; renaming U along the isomorphism gives the asserted extension of the original X (the proposition_7_8 conclusion)."
+      "blocker": "infra_78_marginal_anchor",
+      "detail": "Blocked (split grokbot cycle 61; full claim stays here = infra_78_isolation_over_A (done) + infra_78_anchor_iso (done) + infra_78_marginal_anchor (open) + infra_78_iso_rename (done cycle 62)). Paper: Lemma 7.6 gives isolation over A; I_p still determines the marginal on b; bounded diagram homogeneity gives A ~ X carrying the anchors; transport of approximation evaluations carries tp(b/A) to p; renaming U along the isomorphism gives the asserted extension of the original X (the proposition_7_8 conclusion)."
     },
     {
       "id": "infra_78_mixed_ls_pair",
@@ -2616,10 +2616,10 @@
       "id": "infra_78_iso_rename",
       "label": "Prop 7.8: base change of relative isolation / Galois type along a structural isomorphism X ~ A (renaming U)",
       "section": 7,
-      "file": "AEC/Section7/IsolationTransfer.lean",
-      "status": "open",
+      "file": "AEC/Section7/IsoRename.lean",
+      "status": "done",
       "blocker": null,
-      "detail": "Open (split grokbot cycle 61). For a structural isomorphism phi : X -> A at one level and a tuple t over A hosted in U, the tuple over X with inclusion comp phi t.incl is relatively isolated (resp. has the same Galois type) iff t is: transport parameters along phi^{-1}, compose inclusions. Gives the proposition_7_8 conclusion from infra_78_isolation_over_A + infra_78_marginal_anchor with f := comp phi gu : X -> U."
+      "detail": "DONE (grokbot cycle 62, sorry-free, standard axioms). AEC/Section7/IsoRename.lean: infra_78_struct_inverse (inverse arrow psi of a bijective structural iso phi : X -> A, via a K.tau-equiv and infra_69_equivArrow); infra_78_sgt_base_change; infra_78_iso_rename: for t over A, the re-based tuple over X (same host/values, incl := comp phi t.incl) is relatively isolated IFF t is (parameters moved along psi; both directions); infra_78_iso_rename_galois: SameGaloisType of re-based tuples IFF over A; infra_78_iso_rename_asTuple: the proposition_7_8-shaped conclusion IsRelativelyIsolated (asTuple (comp phi gu) trivial (seqJoint bU c)) refl from isolation of the tuple over A produced by infra_78_isolation_over_A. Only pointwise arrow identities; no reindexing principle."
     }
   ],
   "edges": [
@@ -5131,6 +5131,6 @@
       "kind": "hard"
     }
   ],
-  "doneCount": 228,
+  "doneCount": 229,
   "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 43. Uncommitted in /tmp/aec-grok."
 }
