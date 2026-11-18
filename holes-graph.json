@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-18 17:21 grokbot_01",
+ "updated": "2026-11-18 17:23 grokbot_01",
  "sorryCount": 40,
  "legend": {
   "open": "No unfinished required proof-deps — try next",
@@ -3376,6 +3376,24 @@
    "status": "done",
    "blocker": null,
    "detail": "PROVED cycle 90: infra_712b_chain_succ (Lemma712Uniqueness.lean), with infra_712u_step / infra_712u_succ generalized to arity sigma (recursionClosedLevels P sigma, succ sigma <= mu, #idx <= sigma) and infra_712u_tiedFree_base_sameGalois to #idx < mu; infra_712u_chain_succ is the finite corollary."
+  },
+  {
+   "id": "infra_713_unique_short",
+   "label": "Thm 7.13 (1a) for |delta| <= mu",
+   "section": 7,
+   "file": "AEC/Section7/Theorem713.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "PROVED cycle 90 (axioms clean): on lemma_7_12's tail, L well-ordered, finite entries, |delta| <= mu, total <= mu, L and L' ProductIndependentTied with the same marginals (plain index bijection; order transported) ==> SameGaloisType L.whole L'.whole. From lemma_7_12 (1) chains for both + (2)."
+  },
+  {
+   "id": "infra_713_unique_long",
+   "label": "Thm 7.13 (1a) for |delta| > mu (bounded total)",
+   "section": 7,
+   "file": "AEC/Section7/Results.lean",
+   "status": "open",
+   "blocker": null,
+   "detail": "Open (cycle 90). Remaining case of theorem_7_13 (1a): |delta| > mu with total length < mu (all but < mu entries empty). Lemma 7.12 (1) needs |delta| <= mu; route: drop the empty entries (sub-list on the nonempty indices, whole type unchanged) and apply infra_713_unique_short, or extend 7.12 existence to long lists with few nonempty entries."
   }
  ],
  "edges": [
@@ -6805,8 +6823,20 @@
    "to": "lemma_7_12_bounded",
    "kind": "",
    "note": ""
+  },
+  {
+   "from": "infra_713_unique_short",
+   "to": "theorem_7_13",
+   "kind": "",
+   "note": ""
+  },
+  {
+   "from": "infra_713_unique_long",
+   "to": "theorem_7_13",
+   "kind": "",
+   "note": ""
   }
  ],
- "doneCount": 318,
+ "doneCount": 319,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

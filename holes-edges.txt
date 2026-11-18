@@ -625,3 +625,5 @@ infra_712u_nontrivial_card --> infra_712u_nontriv_card
 infra_712u_limit_finish --> infra_712u_common_long
 infra_712b_free_pull --> lemma_7_12_bounded
 infra_712b_chain_succ --> lemma_7_12_bounded
+infra_713_unique_short --> theorem_7_13
+infra_713_unique_long --> theorem_7_13
