@@ -17,6 +17,7 @@ public import AEC.Section7.Lemma712Existence
 public import AEC.Section7.Lemma712Recursion
 public import AEC.Section7.Lemma712Products
 public import AEC.Section7.Lemma712Uniqueness
+public import AEC.Section7.Lemma712Common
 public import AEC.Section7.ProductFreeLevel
 public import AEC.Section7.GeneralLevel
 public import AEC.Section7.Theorem79
@@ -336,8 +337,10 @@ level is `infra_712_existence_at`, assembled by `infra_712_existence_at_of_parts
 `infra_712_free_marks`), and `lemma_7_12_existence` (`AEC/Section7/Lemma712Products.lean`,
 cycle 87) proves clause (1) at every level in the 7.9 tail that is also a 7.11 level. Cycle 88:
 the whole lemma is assembled by `lemma_7_12_of_marks` (`Lemma712Uniqueness.lean`) on the tail
-`infra_712_levels P` from the single open tip `infra_712u_marks` (two witnessing chains' marks
-have the same type). -/
+`infra_712_levels P` from `infra_712u_marks` (two witnessing chains' marks have the same type).
+Cycle 89: that reduces to the common object `infra_712u_common`, proved for `|δ| ≤ μ`
+(`infra_712u_common_short`, packed recursion in `Lemma712Common.lean`); the one remaining sorry
+is `infra_712u_common_long` (more than `μ` entries, all but at most `μ` of them empty). -/
 theorem lemma_7_12 {K : AbstractElementaryClass.{u}} (P : SingleModelData K) :
     ∃ T, ∃ hT : Tail P.eligible T,
       ∀ μ (hμ : μ ∈ T) (A : P.scheme.Object μ (Tail.mem hT hμ)),

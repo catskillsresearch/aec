@@ -612,3 +612,7 @@ infra_712u_limit --> infra_712u_marks
 infra_712u_chain_succ --> infra_712u_marks
 infra_712u_common --> infra_712u_marks
 infra_712u_base --> infra_712u_common
+infra_712u_packed --> infra_712u_good
+infra_712u_good --> infra_712u_common_short
+infra_712u_common_short --> infra_712u_common
+infra_712u_common_long --> infra_712u_common

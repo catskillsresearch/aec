@@ -592,5 +592,9 @@ Counts are standalone `sorry` lines in `AEC/` (`git grep -nE '^\s*sorry\s*$'`), 
 | `infra_712u_succ` | infra_712u_succ | done (cycle 88): AEC/Section7/Lemma712Uniqueness.lean |
 | `infra_712u_limit` | infra_712u_limit | done (cycle 88): AEC/Section7/Lemma712Uniqueness.lean |
 | `infra_712u_chain_succ` | infra_712u_chain_succ | done (cycle 88): AEC/Section7/Lemma712Uniqueness.lean |
-| `infra_712u_common` | infra_712u_common | open (cycle 88): AEC/Section7/Lemma712Uniqueness.lean, the only sorry under lemma_7_12 |
+| `infra_712u_common` | infra_712u_common | blocked on infra_712u_common_long (cycle 89 glue infra_712u_common_of_parts proved): AEC/Section7/Lemma712Common.lean |
+| `infra_712u_packed` | infra_712u_packed | done (cycle 89): AEC/Section7/Lemma712Common.lean |
+| `infra_712u_good` | infra_712u_good | done (cycle 89): AEC/Section7/Lemma712Common.lean |
+| `infra_712u_common_short` | infra_712u_common_short | done (cycle 89): AEC/Section7/Lemma712Common.lean |
+| `infra_712u_common_long` | infra_712u_common_long | open (cycle 89): AEC/Section7/Lemma712Common.lean, the only sorry under lemma_7_12 (lists with more than μ entries, at most μ nonempty) |
 | `infra_712u_base` | infra_712u_base | done (cycle 88): AEC/Section7/Lemma712Uniqueness.lean |

@@ -526,15 +526,5 @@ theorem infra_712u_base {P : SingleModelData K} {μ : Cardinal.{u}} {hμ : μ �
   obtain ⟨ψ, h1, h2⟩ := infra_78_struct_inverse (C.into k) (fun v => C.first k hk v)
   exact ⟨ψ, h2, h1⟩
 
-/-- **7.12(2), the common object (open tip `infra_712u_common`).** The transfinite recursion of
-common objects `N_j` (successor `infra_712u_chain_succ`, limits `infra_712u_factor_continuous`
-on both chains, base `M_0 = A`). -/
-theorem infra_712u_common (P : SingleModelData K) : infra_712u_common_statement P := by
-  sorry
-
-/-- **7.12(2), the marks (glue, cycle 88).** -/
-theorem infra_712u_marks (P : SingleModelData K) : infra_712u_marks_statement P :=
-  infra_712u_marks_of_common P (infra_712u_common P)
-
 end
 end AEC

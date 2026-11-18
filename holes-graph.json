@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-18 16:28",
+ "updated": "2026-11-18 16:45",
  "sorryCount": 41,
  "legend": {
   "open": "No unfinished required proof-deps — try next",
@@ -3255,10 +3255,10 @@
    "id": "infra_712u_common",
    "label": "7.12(2): common level-mu object receiving both chains' last stages, identifying marks",
    "section": 7,
-   "file": "AEC/Section7/Lemma712Uniqueness.lean",
-   "status": "open",
-   "blocker": null,
-   "detail": "Open (cycle 88; the one sorry under lemma_7_12). infra_712u_common_statement: exists N (level mu), g : M_top -> N, g' : M'_top -> N agreeing on A and with g(mark i) = g'(mark' (e i) (ei i a)). All step lemmas PROVED: infra_712u_chain_succ (successor), infra_712u_factor_continuous (limit, both chains' continuity), infra_712_trans_level. Remaining: the recursion assembly over WithTop L.delta (transport e to WithTop) with state (N_j, g_j, g'_j); the generic infra_78_coherent_chain_engine has non-dependent S, so either carry g_j as carrier functions with an 'is arrow' predicate in Arr, or write a dedicated WellFounded.fix with a sigma state; base PROVED (infra_712u_base)."
+   "file": "AEC/Section7/Lemma712Common.lean",
+   "status": "blocked",
+   "blocker": "infra_712u_common_long",
+   "detail": "Cycle 89: split by list length. infra_712u_common_of_parts (proved glue): the |delta| <= mu case is infra_712u_common_short (PROVED: packed recursion infra_712u_good over WithTop L.delta via the generic engine's unfolding equations); the |delta| > mu case is the open tip infra_712u_common_long. Moved to AEC/Section7/Lemma712Common.lean."
   },
   {
    "id": "infra_712u_base",
@@ -3268,6 +3268,42 @@
    "status": "done",
    "blocker": null,
    "detail": "PROVED cycle 88: infra_712u_base (C.first + infra_78_struct_inverse). Axioms clean."
+  },
+  {
+   "id": "infra_712u_packed",
+   "label": "7.12(2) packed successor and limit steps (arrows as carrier functions + IsArr predicate)",
+   "section": 7,
+   "file": "AEC/Section7/Lemma712Common.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "PROVED cycle 89: infra_712u_IsArr (function on mu.ord.ToType underlying a strong arrow), infra_712u_packed_succ (chain_succ in packed form), infra_712u_packed_limit (directed union over Set.Iio k, |WithTop delta| <= mu, factor_continuous on both chains), infra_712u_succ_R / infra_712u_lim_R / infra_712u_base_R (valid-state specs incl. compatibility over A and mark identification). Axioms clean."
+  },
+  {
+   "id": "infra_712u_good",
+   "label": "7.12(2) common-object recursion valid at every stage",
+   "section": 7,
+   "file": "AEC/Section7/Lemma712Common.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "PROVED cycle 89: infra_712u_good: stage-independent packed state (N, G, G'), maps T -> T, driven by infra_78_engine (succ/min/lim unfolding equations); well-founded induction proves validity, arrows, coherence and identity/composition laws. Needs #(WithTop L.delta) <= mu. Axioms clean."
+  },
+  {
+   "id": "infra_712u_common_short",
+   "label": "7.12(2) common object for lists with |delta| <= mu",
+   "section": 7,
+   "file": "AEC/Section7/Lemma712Common.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "PROVED cycle 89: infra_712u_common_short: infra_712u_good read off at the top stage. Axioms clean."
+  },
+  {
+   "id": "infra_712u_common_long",
+   "label": "7.12(2) common object for lists with |delta| > mu (total length <= mu, so all but <= mu entries empty)",
+   "section": 7,
+   "file": "AEC/Section7/Lemma712Common.lean",
+   "status": "open",
+   "blocker": null,
+   "detail": "Open (cycle 89). Needed because lemma_7_12 (2) bounds the total length #(Sigma i, indexAt i) <= mu, not #delta. Plan: make the recursion trivial at steps with empty marks and surjective chain steps (at most mu nontrivial indices, injecting into stage top), and index limit unions by a cofinal set of nontrivial stages of size <= mu (or re-index the chains to the nontrivial indices)."
   }
  ],
  "edges": [
@@ -6630,8 +6666,28 @@
    "from": "infra_712u_base",
    "to": "infra_712u_common",
    "kind": "hard"
+  },
+  {
+   "from": "infra_712u_packed",
+   "to": "infra_712u_good",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_712u_good",
+   "to": "infra_712u_common_short",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_712u_common_short",
+   "to": "infra_712u_common",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_712u_common_long",
+   "to": "infra_712u_common",
+   "kind": "hard"
   }
  ],
- "doneCount": 301,
+ "doneCount": 304,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
