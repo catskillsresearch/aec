@@ -138,7 +138,7 @@ end
 namespace TiedListWitnessingChain
 
 variable {P : SingleModelData K} {μ : Cardinal.{u}} {hμ : μ ∈ P.eligible}
-  {A : P.scheme.Object μ hμ} {L : TupleList P.scheme hμ A} [LinearOrder L.δ]
+  {A : P.scheme.Object μ hμ} {L : TupleList P.scheme hμ A} [LinearOrder L.δ] [L.FiniteEach]
 
 /-- `x` has the tied product with every finite injective selection of marks below stage `k`. -/
 def prodBelow (C : TiedListWitnessingChain L)
@@ -220,7 +220,7 @@ def infra_711_successor_statement (P : SingleModelData K) : Prop :=
   ∀ {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible), μ ∈ recursionClosedLevels P ℵ₀ →
     Order.succ ℵ₀ ≤ μ →
     μ ∈ recursionClosedLevels P (infra_75_wide P ℵ₀) → Order.succ (infra_75_wide P ℵ₀) ≤ μ →
-    ∀ (A : P.scheme.Object μ hμ) (L : TupleList P.scheme hμ A) [LinearOrder L.δ]
+    ∀ (A : P.scheme.Object μ hμ) (L : TupleList P.scheme hμ A) [LinearOrder L.δ] [L.FiniteEach]
       [WellFoundedLT L.δ] (C : TiedListWitnessingChain L), C.AllDominatedIncrement →
       ∀ i j : WithTop L.δ, i ⋖ j → C.Claim i → C.Claim j
 
@@ -231,7 +231,7 @@ theorem infra_711_at_level (P : SingleModelData K) (hsucc : infra_711_successor_
     {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible) (h0 : μ ∈ recursionClosedLevels P ℵ₀)
     (h1 : Order.succ ℵ₀ ≤ μ) (hw1 : μ ∈ recursionClosedLevels P (infra_75_wide P ℵ₀))
     (hw2 : Order.succ (infra_75_wide P ℵ₀) ≤ μ) (A : P.scheme.Object μ hμ)
-    (L : TupleList P.scheme hμ A) [LinearOrder L.δ] [WellFoundedLT L.δ]
+    (L : TupleList P.scheme hμ A) [LinearOrder L.δ] [L.FiniteEach] [WellFoundedLT L.δ]
     (C : TiedListWitnessingChain L) (hinc : C.AllDominatedIncrement)
     (x : TupleOver K oneVertexShape P.scheme hμ (C.stage ⊤)) (hfin : Finite x.idx) (hxν : x.ν = μ)
     (hprod : ∀ (n : ℕ) (ix : Fin n → L.δ), Function.Injective ix →
@@ -262,7 +262,7 @@ literally the statement of `lemma_7_11`. -/
 theorem infra_711_induction (P : SingleModelData K) (hsucc : infra_711_successor_statement P) :
     ∃ T, ∃ hT : Tail P.eligible T,
       ∀ μ (hμ : μ ∈ T) (A : P.scheme.Object μ (Tail.mem hT hμ))
-        (L : TupleList P.scheme (Tail.mem hT hμ) A) [LinearOrder L.δ] [WellFoundedLT L.δ]
+        (L : TupleList P.scheme (Tail.mem hT hμ) A) [LinearOrder L.δ] [L.FiniteEach] [WellFoundedLT L.δ]
         (C : TiedListWitnessingChain L),
         C.AllDominatedIncrement →
         ∀ (x : TupleOver K oneVertexShape P.scheme (Tail.mem hT hμ) (C.stage ⊤)),
@@ -281,7 +281,7 @@ theorem infra_711_induction (P : SingleModelData K) (hsucc : infra_711_successor
     obtain ⟨μ, hle, hμ, hrec⟩ :=
       (infra_69_recursion_tail P hw).2 (max κ (Order.succ w))
     exact ⟨μ, (le_max_left _ _).trans hle, ⟨⟨hμ, hrec⟩, (le_max_right _ _).trans hle⟩⟩
-  refine ⟨T, hT, fun μ hμ A L _ _ C hinc x hfin hxν hprod => ?_⟩
+  refine ⟨T, hT, fun μ hμ A L _ _ _ C hinc x hfin hxν hprod => ?_⟩
   have h0 : μ ∈ recursionClosedLevels P ℵ₀ := infra_76_rec_mono hw hμ.1
   have h1 : Order.succ ℵ₀ ≤ μ := (Order.succ_le_succ hw).trans hμ.2
   exact infra_711_at_level P hsucc (Tail.mem hT hμ) h0 h1 hμ.1 hμ.2 A L C hinc x hfin hxν hprod

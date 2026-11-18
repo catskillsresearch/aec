@@ -76,7 +76,7 @@ theorem infra_712_trans_level (P : SingleModelData K) {μ : Cardinal.{u}} (hμ :
 /-- The whole list of marks of a witnessing chain, in its last stage, over `A`. -/
 def TiedListWitnessingChain.marksWhole {P : SingleModelData K} {μ : Cardinal.{u}}
     {hμ : μ ∈ P.eligible} {A : P.scheme.Object μ hμ} {L : TupleList P.scheme hμ A}
-    [LinearOrder L.δ] (C : TiedListWitnessingChain L) : TupleOver K oneVertexShape P.scheme hμ A where
+    [LinearOrder L.δ] [L.FiniteEach] (C : TiedListWitnessingChain L) : TupleOver K oneVertexShape P.scheme hμ A where
   ν := μ
   hν := hμ
   host := C.stage ⊤
@@ -88,7 +88,7 @@ def TiedListWitnessingChain.marksWhole {P : SingleModelData K} {μ : Cardinal.{u
 /-- The chain's marks have the type of the whole list (one amalgam: `C.top`). -/
 theorem TiedListWitnessingChain.marksWhole_sameGalois {P : SingleModelData K} {μ : Cardinal.{u}}
     {hμ : μ ∈ P.eligible} {A : P.scheme.Object μ hμ} {L : TupleList P.scheme hμ A}
-    [LinearOrder L.δ] (C : TiedListWitnessingChain L) :
+    [LinearOrder L.δ] [L.FiniteEach] (C : TiedListWitnessingChain L) :
     SameGaloisType C.marksWhole L.whole (Equiv.refl _) (Equiv.refl _) :=
   ⟨μ, hμ, C.top, C.toTop, C.listToTop, C.toTop_arrow, C.listToTop_arrow, C.comm_A,
     fun p => C.mark_spec p.1 p.2⟩
@@ -98,8 +98,8 @@ level, two witnessing chains of lists with the same successive marginal types ov
 marks of the same type over `A` (English proof: common objects `N_i` receiving both chains). -/
 def infra_712u_marks_statement (P : SingleModelData K) : Prop :=
   ∀ {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible), μ ∈ infra_712_levels P →
-    ∀ (A : P.scheme.Object μ hμ) (L L' : TupleList P.scheme hμ A) [LinearOrder L.δ]
-      [WellFoundedLT L.δ] [LinearOrder L'.δ] [WellFoundedLT L'.δ]
+    ∀ (A : P.scheme.Object μ hμ) (L L' : TupleList P.scheme hμ A) [LinearOrder L.δ] [L.FiniteEach]
+      [WellFoundedLT L.δ] [LinearOrder L'.δ] [L'.FiniteEach] [WellFoundedLT L'.δ]
       (e : L.δ ≃o L'.δ) (ei : ∀ i, L.indexAt i ≃ L'.indexAt (e i)),
       #(Σ i, L.indexAt i) ≤ μ → #(Σ i, L'.indexAt i) ≤ μ →
       ∀ (C : TiedListWitnessingChain L) (C' : TiedListWitnessingChain L'),
@@ -111,11 +111,11 @@ def infra_712u_marks_statement (P : SingleModelData K) : Prop :=
 theorem lemma_7_12_of_marks (P : SingleModelData K) (hm : infra_712u_marks_statement P) :
     ∃ T, ∃ hT : Tail P.eligible T,
       ∀ μ (hμ : μ ∈ T) (A : P.scheme.Object μ (Tail.mem hT hμ)),
-        (∀ (L : TupleList P.scheme (Tail.mem hT hμ) A) [LinearOrder L.δ] [WellFoundedLT L.δ],
+        (∀ (L : TupleList P.scheme (Tail.mem hT hμ) A) [LinearOrder L.δ] [L.FiniteEach] [WellFoundedLT L.δ],
           #L.δ ≤ μ → ProductIndependentTied L →
           ∃ C : TiedListWitnessingChain L, C.AllDominatedIncrement) ∧
-        (∀ (L L' : TupleList P.scheme (Tail.mem hT hμ) A) [LinearOrder L.δ] [WellFoundedLT L.δ]
-            [LinearOrder L'.δ] [WellFoundedLT L'.δ]
+        (∀ (L L' : TupleList P.scheme (Tail.mem hT hμ) A) [LinearOrder L.δ] [L.FiniteEach] [WellFoundedLT L.δ]
+            [LinearOrder L'.δ] [L'.FiniteEach] [WellFoundedLT L'.δ]
             (e : L.δ ≃o L'.δ) (ei : ∀ i, L.indexAt i ≃ L'.indexAt (e i)),
           #(Σ i, L.indexAt i) ≤ μ → #(Σ i, L'.indexAt i) ≤ μ →
           Nonempty (TiedListWitnessingChain L) → Nonempty (TiedListWitnessingChain L') →
@@ -129,7 +129,7 @@ theorem lemma_7_12_of_marks (P : SingleModelData K) (hm : infra_712u_marks_state
     exact lemma_7_12_existence P _ ht hc (infra_712_recursionClosed_of_615 hc le_rfl h0lt)
       (Order.succ_le_of_lt h0lt) (infra_712_recursionClosed_of_615 hc hw0 hw)
       (Order.succ_le_of_lt hw) A
-  · intro L L' _ _ _ _ e ei hs hs' ⟨C⟩ ⟨C'⟩ hm1
+  · intro L L' _ _ _ _ _ _ e ei hs hs' ⟨C⟩ ⟨C'⟩ hm1
     have h0 : μ ∈ recursionClosedLevels P ℵ₀ :=
       infra_712_recursionClosed_of_615 hμ.2.1 le_rfl (le_self_add.trans_lt hμ.2.2)
     have hM := hm _ hμ A L L' e ei hs hs' C C' hm1
@@ -383,7 +383,7 @@ theorem infra_712u_factor_continuous {P : SingleModelData K} {μ : Cardinal.{u}}
 
 section ChainSide
 variable {P : SingleModelData K} {μ : Cardinal.{u}} {hμ : μ ∈ P.eligible}
-  {A : P.scheme.Object μ hμ} {L : TupleList P.scheme hμ A} [LinearOrder L.δ]
+  {A : P.scheme.Object μ hμ} {L : TupleList P.scheme hμ A} [LinearOrder L.δ] [L.FiniteEach]
 
 /-- A witnessing chain forgets to a pre-chain. -/
 def TiedListWitnessingChain.toPre (C : TiedListWitnessingChain L) : TiedListPreChain L :=
@@ -426,8 +426,8 @@ compatibly over `A` into a common `N` extend to a common `N₁` receiving the ne
 `M'_{j₁'}` and identifying the marks `b_j`, `b'_{e j}` (`infra_712u_succ`). -/
 theorem infra_712u_chain_succ (P : SingleModelData K) {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
     (h0 : μ ∈ recursionClosedLevels P ℵ₀) (h1 : Order.succ ℵ₀ ≤ μ)
-    {A : P.scheme.Object μ hμ} {L L' : TupleList P.scheme hμ A} [LinearOrder L.δ]
-    [LinearOrder L'.δ] (C : TiedListWitnessingChain L) (C' : TiedListWitnessingChain L')
+    {A : P.scheme.Object μ hμ} {L L' : TupleList P.scheme hμ A} [LinearOrder L.δ] [L.FiniteEach]
+    [LinearOrder L'.δ] [L'.FiniteEach] (C : TiedListWitnessingChain L) (C' : TiedListWitnessingChain L')
     (e : L.δ ≃o L'.δ) (ei : ∀ i, L.indexAt i ≃ L'.indexAt (e i))
     (hm : ∀ i, SameGaloisType (L.one i) (L'.one (e i)) (ei i) (Equiv.refl _))
     (j : L.δ) (j₁ : WithTop L.δ) (hj : (j : WithTop L.δ) < j₁)
@@ -483,8 +483,8 @@ chains with the same successive marginals have a common level-`μ` object receiv
 stages compatibly over `A` and identifying corresponding marks (English: the final `N_δ`). -/
 def infra_712u_common_statement (P : SingleModelData K) : Prop :=
   ∀ {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible), μ ∈ infra_712_levels P →
-    ∀ (A : P.scheme.Object μ hμ) (L L' : TupleList P.scheme hμ A) [LinearOrder L.δ]
-      [WellFoundedLT L.δ] [LinearOrder L'.δ] [WellFoundedLT L'.δ]
+    ∀ (A : P.scheme.Object μ hμ) (L L' : TupleList P.scheme hμ A) [LinearOrder L.δ] [L.FiniteEach]
+      [WellFoundedLT L.δ] [LinearOrder L'.δ] [L'.FiniteEach] [WellFoundedLT L'.δ]
       (e : L.δ ≃o L'.δ) (ei : ∀ i, L.indexAt i ≃ L'.indexAt (e i)),
       #(Σ i, L.indexAt i) ≤ μ → #(Σ i, L'.indexAt i) ≤ μ →
       ∀ (C : TiedListWitnessingChain L) (C' : TiedListWitnessingChain L'),
@@ -503,7 +503,7 @@ def infra_712u_common_statement (P : SingleModelData K) : Prop :=
 /-- **7.12(2) marks from the common object (proved glue, cycle 88).** -/
 theorem infra_712u_marks_of_common (P : SingleModelData K)
     (hc : infra_712u_common_statement P) : infra_712u_marks_statement P := by
-  intro μ hμ hl A L L' _ _ _ _ e ei hs hs' C C' hm
+  intro μ hμ hl A L L' _ _ _ _ _ _ e ei hs hs' C C' hm
   obtain ⟨N, g, g', hA, hmk⟩ := hc hμ hl A L L' e ei hs hs' C C' hm
   let σ := Equiv.sigmaCongr e.toEquiv ei
   let Φ1 : (Σ i, L.indexAt i) → Occurrence K oneVertexShape (P.scheme.asSystem hμ N) :=
@@ -518,7 +518,7 @@ theorem infra_712u_marks_of_common (P : SingleModelData K)
 /-- **7.12(2) base of the common objects (proved, cycle 88).** The first stage of a witnessing
 chain is `A` itself (`first`), so it maps back onto `A` inverting `into`. -/
 theorem infra_712u_base {P : SingleModelData K} {μ : Cardinal.{u}} {hμ : μ ∈ P.eligible}
-    {A : P.scheme.Object μ hμ} {L : TupleList P.scheme hμ A} [LinearOrder L.δ]
+    {A : P.scheme.Object μ hμ} {L : TupleList P.scheme hμ A} [LinearOrder L.δ] [L.FiniteEach]
     (C : TiedListWitnessingChain L) (k : WithTop L.δ) (hk : ∀ j, k ≤ j) :
     ∃ r : SystemArrow K oneVertexShape (P.scheme.asSystem hμ (C.stage k)) (P.scheme.asSystem hμ A),
       (∀ x, r.onVertex PUnit.unit ((C.into k).onVertex PUnit.unit x) = x) ∧

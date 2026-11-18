@@ -42,7 +42,7 @@ theorem infra_711_tiedFree_arrow_congr {P : SingleModelData K} {μ : Cardinal.{u
 def infra_711_limit_statement (P : SingleModelData K) : Prop :=
   ∃ T, ∃ hT : Tail P.eligible T,
     ∀ μ (hμ : μ ∈ T) (A : P.scheme.Object μ (Tail.mem hT hμ))
-      (L : TupleList P.scheme (Tail.mem hT hμ) A) [LinearOrder L.δ] [WellFoundedLT L.δ]
+      (L : TupleList P.scheme (Tail.mem hT hμ) A) [LinearOrder L.δ] [L.FiniteEach] [WellFoundedLT L.δ]
       (C : TiedListWitnessingChain L) (j : WithTop L.δ),
       (∀ i, ¬ i ⋖ j) → (∃ i, i < j) →
       ∀ (p : TupleOver K oneVertexShape P.scheme (Tail.mem hT hμ) (C.stage j)),
@@ -55,7 +55,7 @@ def infra_711_limit_statement (P : SingleModelData K) : Prop :=
 
 /-- The stages below a limit stage `j`, as a `SameLevelChain` with union `M_j`. -/
 def infra_711_belowChain {P : SingleModelData K} {μ : Cardinal.{u}} {hμ : μ ∈ P.eligible}
-    {A : P.scheme.Object μ hμ} {L : TupleList P.scheme hμ A} [LinearOrder L.δ]
+    {A : P.scheme.Object μ hμ} {L : TupleList P.scheme hμ A} [LinearOrder L.δ] [L.FiniteEach]
     [WellFoundedLT L.δ] (C : TiedListWitnessingChain L) (j : WithTop L.δ)
     (hnc : ∀ i, ¬ i ⋖ j) (hex : ∃ i, i < j) : SameLevelChain P hμ := by
   classical
@@ -110,7 +110,7 @@ def infra_711_belowChain {P : SingleModelData K} {μ : Cardinal.{u}} {hμ : μ �
 theorem infra_711_limit (P : SingleModelData K) : infra_711_limit_statement P := by
   classical
   obtain ⟨T, hT, H⟩ := proposition_6_13 P aleph0 le_rfl
-  refine ⟨T, hT, fun μ hμ A L _ _ C j hnc hex p hpν hfin hfree => ?_⟩
+  refine ⟨T, hT, fun μ hμ A L _ _ _ C j hnc hex p hpν hfin hfree => ?_⟩
   let D := infra_711_belowChain C j hnc hex
   have hcard : #p.idx ≤ aleph0 := Cardinal.mk_le_aleph0
   have hcof : #p.idx < D.δ.cof :=

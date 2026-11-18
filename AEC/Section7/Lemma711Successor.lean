@@ -37,7 +37,7 @@ def infra_711_succ_product_statement (P : SingleModelData K) : Prop :=
   ∀ {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible), μ ∈ recursionClosedLevels P ℵ₀ →
     Order.succ ℵ₀ ≤ μ →
     μ ∈ recursionClosedLevels P (infra_75_wide P ℵ₀) → Order.succ (infra_75_wide P ℵ₀) ≤ μ →
-    ∀ (A : P.scheme.Object μ hμ) (L : TupleList P.scheme hμ A) [LinearOrder L.δ]
+    ∀ (A : P.scheme.Object μ hμ) (L : TupleList P.scheme hμ A) [LinearOrder L.δ] [L.FiniteEach]
       [WellFoundedLT L.δ] (C : TiedListWitnessingChain L), C.AllDominatedIncrement →
       ∀ (i0 : L.δ) (j : WithTop L.δ) (h : (i0 : WithTop L.δ) ⋖ j),
         C.Claim (i0 : WithTop L.δ) →
@@ -55,7 +55,7 @@ def infra_711_succ_product_statement (P : SingleModelData K) : Prop :=
 /-- **Lemma 7.11 successor step from the product over `Mᵢ` (proved).** -/
 theorem infra_711_successor_of_product (P : SingleModelData K)
     (hS : infra_711_succ_product_statement P) : infra_711_successor_statement P := by
-  intro μ hμ h0 h1 hw1 hw2 A L _ _ C hinc i j hij hCi
+  intro μ hμ h0 h1 hw1 hw2 A L _ _ _ C hinc i j hij hCi
   induction i using WithTop.recTopCoe with
   | top => exact absurd hij.lt (not_top_lt)
   | coe i0 =>
@@ -93,7 +93,7 @@ theorem infra_711_finite_sigma1 {I : Type u} (h : Finite I) : Finite (Σ _s : Fi
 
 /-- The pair `(x, bᵢ)` as a tuple over `M_δ` hosted with `x`. -/
 def infra_711_pairUp {P : SingleModelData K} {μ : Cardinal.{u}} {hμ : μ ∈ P.eligible}
-    {A : P.scheme.Object μ hμ} {L : TupleList P.scheme hμ A} [LinearOrder L.δ]
+    {A : P.scheme.Object μ hμ} {L : TupleList P.scheme hμ A} [LinearOrder L.δ] [L.FiniteEach]
     (C : TiedListWitnessingChain L) (x : TupleOver K oneVertexShape P.scheme hμ (C.stage ⊤))
     (i0 : L.δ) : TupleOver K oneVertexShape P.scheme hμ (C.stage ⊤) where
   ν := x.ν
@@ -112,7 +112,7 @@ def infra_711_succ_pair_statement (P : SingleModelData K) : Prop :=
   ∀ {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible), μ ∈ recursionClosedLevels P ℵ₀ →
     Order.succ ℵ₀ ≤ μ →
     μ ∈ recursionClosedLevels P (infra_75_wide P ℵ₀) → Order.succ (infra_75_wide P ℵ₀) ≤ μ →
-    ∀ (A : P.scheme.Object μ hμ) (L : TupleList P.scheme hμ A) [LinearOrder L.δ]
+    ∀ (A : P.scheme.Object μ hμ) (L : TupleList P.scheme hμ A) [LinearOrder L.δ] [L.FiniteEach]
       [WellFoundedLT L.δ] (C : TiedListWitnessingChain L), C.AllDominatedIncrement →
       ∀ (i0 : L.δ) (j : WithTop L.δ), (i0 : WithTop L.δ) ⋖ j →
         ∀ x : TupleOver K oneVertexShape P.scheme hμ (C.stage ⊤), Finite x.idx → x.ν = μ →
@@ -125,7 +125,7 @@ def infra_711_succ_base_change_statement (P : SingleModelData K) : Prop :=
   ∀ {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible), μ ∈ recursionClosedLevels P ℵ₀ →
     Order.succ ℵ₀ ≤ μ →
     μ ∈ recursionClosedLevels P (infra_75_wide P ℵ₀) → Order.succ (infra_75_wide P ℵ₀) ≤ μ →
-    ∀ (A : P.scheme.Object μ hμ) (L : TupleList P.scheme hμ A) [LinearOrder L.δ]
+    ∀ (A : P.scheme.Object μ hμ) (L : TupleList P.scheme hμ A) [LinearOrder L.δ] [L.FiniteEach]
       [WellFoundedLT L.δ] (C : TiedListWitnessingChain L), C.AllDominatedIncrement →
       ∀ (i0 : L.δ) (j : WithTop L.δ) (h : (i0 : WithTop L.δ) ⋖ j),
         ∀ x : TupleOver K oneVertexShape P.scheme hμ (C.stage ⊤), Finite x.idx → x.ν = μ →
@@ -145,7 +145,7 @@ applied to `x` and to `(x, bᵢ)`. -/
 theorem infra_711_succ_product_of_parts (P : SingleModelData K)
     (h1 : infra_711_succ_pair_statement P) (h2 : infra_711_succ_base_change_statement P) :
     infra_711_succ_product_statement P := by
-  intro μ hμ h0 h1' hw1 hw2 A L _ _ C hinc i0 j h hCi x hfin hxν hprod
+  intro μ hμ h0 h1' hw1 hw2 A L _ _ _ C hinc i0 j h hCi x hfin hxν hprod
   have hfin' : Finite (infra_711_pairUp C x i0).idx := by
     have h1 : Finite x.idx := hfin
     have h2 : Finite (Σ _s : Fin 1, L.indexAt i0) :=
@@ -224,7 +224,7 @@ theorem infra_711_isProductTied_incl_congr {P : SingleModelData K} {μ : Cardina
 
 theorem infra_711_succ_base_change (P : SingleModelData K) :
     infra_711_succ_base_change_statement P := by
-  intro μ hμ h0 h1 _ _ A L _ _ C _ i0 j h x hfin hxν hprod hFx hFxb
+  intro μ hμ h0 h1 _ _ A L _ _ _ C _ i0 j h x hfin hxν hprod hFx hFxb
   classical
   have hσμ : ℵ₀ < μ := (Order.lt_succ ℵ₀).trans_le h1
   have hfinI : Finite (L.indexAt i0) := L.finite_each i0
@@ -465,7 +465,7 @@ def infra_711_consEquiv {δ : Type*} (I : δ → Type u) (i0 : δ) {n : ℕ} (ix
     | succ s => rfl
 
 theorem infra_711_succ_pair (P : SingleModelData K) : infra_711_succ_pair_statement P := by
-  intro μ hμ h0 h1 _ _ A L _ _ C _ i0 j h x hfin hxν hprod n ix hinj hlt
+  intro μ hμ h0 h1 _ _ A L _ _ _ C _ i0 j h x hfin hxν hprod n ix hinj hlt
   classical
   have hσμ : ℵ₀ < μ := (Order.lt_succ ℵ₀).trans_le h1
   have hfinI : ∀ i, Finite (L.indexAt i) := L.finite_each

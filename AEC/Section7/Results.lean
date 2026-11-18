@@ -310,7 +310,7 @@ proved; cycle 80: tail closed at `infra_75_wide P ℵ₀`) reduces it to
 theorem lemma_7_11 {K : AbstractElementaryClass.{u}} (P : SingleModelData K) :
     ∃ T, ∃ hT : Tail P.eligible T,
       ∀ μ (hμ : μ ∈ T) (A : P.scheme.Object μ (Tail.mem hT hμ))
-        (L : TupleList P.scheme (Tail.mem hT hμ) A) [LinearOrder L.δ] [WellFoundedLT L.δ]
+        (L : TupleList P.scheme (Tail.mem hT hμ) A) [LinearOrder L.δ] [L.FiniteEach] [WellFoundedLT L.δ]
         (C : TiedListWitnessingChain L),
         C.AllDominatedIncrement →
         ∀ (x : TupleOver K oneVertexShape P.scheme (Tail.mem hT hμ) (C.stage ⊤)),
@@ -326,7 +326,7 @@ theorem lemma_7_11 {K : AbstractElementaryClass.{u}} (P : SingleModelData K) :
 Def 7.10) of finite tuples over `A`, well-ordered with `|δ| ≤ μ`, admits an all-dominated-increment
 witnessing chain (`TiedListWitnessingChain`, tied `tp(bᵢ/Mᵢ) = tp(bᵢ/A)^fr`), retaining its whole
 joint configuration in an extension `top` of the given ambient (`listToTop`, `mark_spec`);
-(2) two lists of total length at most the level, supplied with witnessing chains, with the same
+(2) two lists of finite tuples (`TupleList.FiniteEach`) of total length at most the level, supplied with witnessing chains, with the same
 successive marginal types over `A` have one amalgam identifying the entire lists
 (`SameGaloisType` of the whole lists). The paper's extension of (2) to bounded individual
 tuples is tracked separately (`lemma_7_12_bounded`). The former statement over the untied
@@ -344,11 +344,11 @@ of common objects in `Lemma712Common.lean` (`infra_712u_common_short` for `|δ| 
 theorem lemma_7_12 {K : AbstractElementaryClass.{u}} (P : SingleModelData K) :
     ∃ T, ∃ hT : Tail P.eligible T,
       ∀ μ (hμ : μ ∈ T) (A : P.scheme.Object μ (Tail.mem hT hμ)),
-        (∀ (L : TupleList P.scheme (Tail.mem hT hμ) A) [LinearOrder L.δ] [WellFoundedLT L.δ],
+        (∀ (L : TupleList P.scheme (Tail.mem hT hμ) A) [LinearOrder L.δ] [L.FiniteEach] [WellFoundedLT L.δ],
           #L.δ ≤ μ → ProductIndependentTied L →
           ∃ C : TiedListWitnessingChain L, C.AllDominatedIncrement) ∧
-        (∀ (L L' : TupleList P.scheme (Tail.mem hT hμ) A) [LinearOrder L.δ] [WellFoundedLT L.δ]
-            [LinearOrder L'.δ] [WellFoundedLT L'.δ]
+        (∀ (L L' : TupleList P.scheme (Tail.mem hT hμ) A) [LinearOrder L.δ] [L.FiniteEach] [WellFoundedLT L.δ]
+            [LinearOrder L'.δ] [L'.FiniteEach] [WellFoundedLT L'.δ]
             (e : L.δ ≃o L'.δ) (ei : ∀ i, L.indexAt i ≃ L'.indexAt (e i)),
           #(Σ i, L.indexAt i) ≤ μ → #(Σ i, L'.indexAt i) ≤ μ →
           Nonempty (TiedListWitnessingChain L) → Nonempty (TiedListWitnessingChain L') →
@@ -356,6 +356,29 @@ theorem lemma_7_12 {K : AbstractElementaryClass.{u}} (P : SingleModelData K) :
           SameGaloisType L.whole L'.whole
             (Equiv.sigmaCongr e.toEquiv ei) (Equiv.refl _)) :=
   lemma_7_12_of_marks P (infra_712u_marks P)
+
+/-- **Lemma 7.12 (2), bounded tuples (statement; open tip `lemma_7_12_bounded`).** The English
+of 7.12(2): "This assertion also permits bounded, rather than finite, individual tuples in the
+witnessing chains. For a list of total length at most the level, the assertion means that one
+amalgam identifies the entire lists; for a bounded total list it is an equality of the
+bounded-list types already defined."  Here each entry is only *bounded* (`#(indexAt i) < μ`,
+no `TupleList.FiniteEach`), the two lists have total length at most the level, carry tied
+witnessing chains (`TiedListWitnessingChain`, the tied free-lift clause, which is arity-free), and
+have the same successive marginal types over `A`; the conclusion is that one amalgam identifies
+the entire lists (`SameGaloisType` of the whole lists).  A bounded total list (`< μ`) is the
+special case, the whole-list `SameGaloisType` being the bounded-list type equality. -/
+theorem lemma_7_12_bounded {K : AbstractElementaryClass.{u}} (P : SingleModelData K) :
+    ∃ T, ∃ hT : Tail P.eligible T,
+      ∀ μ (hμ : μ ∈ T) (A : P.scheme.Object μ (Tail.mem hT hμ))
+        (L L' : TupleList P.scheme (Tail.mem hT hμ) A) [LinearOrder L.δ] [WellFoundedLT L.δ]
+        [LinearOrder L'.δ] [WellFoundedLT L'.δ]
+        (e : L.δ ≃o L'.δ) (ei : ∀ i, L.indexAt i ≃ L'.indexAt (e i)),
+        (∀ i, #(L.indexAt i) < μ) → (∀ i, #(L'.indexAt i) < μ) →
+        #(Σ i, L.indexAt i) ≤ μ → #(Σ i, L'.indexAt i) ≤ μ →
+        Nonempty (TiedListWitnessingChain L) → Nonempty (TiedListWitnessingChain L') →
+        (∀ i, SameGaloisType (L.one i) (L'.one (e i)) (ei i) (Equiv.refl _)) →
+        SameGaloisType L.whole L'.whole (Equiv.sigmaCongr e.toEquiv ei) (Equiv.refl _) := by
+  sorry
 
 /-- **Theorem 7.13.** Let `L` be a bounded product-independent list of finite tuples over `X`.
 (1) Its whole type is determined by its product data on finite sublists (equivalently, given

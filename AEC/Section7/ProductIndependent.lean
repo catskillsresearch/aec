@@ -12,7 +12,8 @@ universe u
 variable {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}} {W : WorkingScheme K S}
   {μ : Cardinal.{u}} {hμ : μ ∈ W.eligible} {A : W.Object μ hμ}
 
-/-- A list of finite tuples in one extension of `A`. -/
+/-- A list of tuples in one extension of `A` (finite entries: `TupleList.FiniteEach`; bounded
+entries, Lemma 7.12(2): `#(indexAt i) < μ`). -/
 structure TupleList (W : WorkingScheme K S) {μ : Cardinal.{u}} (hμ : μ ∈ W.eligible)
     (A : W.Object μ hμ) where
   δ : Type u
@@ -21,7 +22,14 @@ structure TupleList (W : WorkingScheme K S) {μ : Cardinal.{u}} (hμ : μ ∈ W.
   incl_arrow : W.permitted (X := A) (Y := host) incl
   indexAt : δ → Type u
   val : (i : δ) → indexAt i → Occurrence K S (W.asSystem hμ host)
-  finite_each : ∀ i, Finite (indexAt i)
+
+/-- A list of *finite* tuples (the default of Section 7). -/
+class TupleList.FiniteEach (L : TupleList W hμ A) : Prop where
+  finite_each : ∀ i, Finite (L.indexAt i)
+
+theorem TupleList.finite_each (L : TupleList W hμ A) [L.FiniteEach] (i : L.δ) :
+    Finite (L.indexAt i) :=
+  TupleList.FiniteEach.finite_each i
 
 /-- The type over `A` of one entry of a tuple list. -/
 def TupleList.one (L : TupleList W hμ A) (i : L.δ) : TupleOver K S W hμ A where

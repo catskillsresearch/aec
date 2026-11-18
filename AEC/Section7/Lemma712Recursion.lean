@@ -73,7 +73,7 @@ theorem StrongSub.arrow_eq {X : P.scheme.Object μ hμ} (t : StrongSub N)
 
 section Ops
 variable (ht : μ ∈ infra_78_closedTail P) (hc : μ ∈ infra_615_closed P)
-  {A : P.scheme.Object μ hμ} (L : TupleList P.scheme hμ A)
+  {A : P.scheme.Object μ hμ} (L : TupleList P.scheme hμ A) [L.FiniteEach]
 
 /-- The output of one successor step (`infra_712_succ`). -/
 structure SuccOut (s : StrongSub L.host) (i : L.δ) where
@@ -108,7 +108,7 @@ structure LimOut {ι : Type u} (cf : ι → StrongSub L.host) where
   strong : K.Strong h
   range : ∀ y, (∃ x, h x = y) ↔ ∃ j, y ∈ (cf j).set
 
-theorem limOut_nonempty (hδ : #L.δ ≤ μ) [LinearOrder L.δ] (k : WithTop L.δ)
+theorem limOut_nonempty (hδ : #L.δ ≤ μ) [LinearOrder L.δ] [L.FiniteEach] (k : WithTop L.δ)
     (cf : Set.Iio k → StrongSub L.host) (hne : ∃ j, j < k)
     (hmono : ∀ i j : Set.Iio k, i ≤ j → (cf i).set ⊆ (cf j).set) : Nonempty (LimOut L cf) := by
   obtain ⟨j0, hj0⟩ := hne
@@ -145,7 +145,7 @@ end Ops
 
 section Chain
 variable (ht : μ ∈ infra_78_closedTail P) (hc : μ ∈ infra_615_closed P)
-  {A : P.scheme.Object μ hμ} (L : TupleList P.scheme hμ A) [LinearOrder L.δ] [WellFoundedLT L.δ]
+  {A : P.scheme.Object μ hμ} (L : TupleList P.scheme hμ A) [LinearOrder L.δ] [L.FiniteEach] [WellFoundedLT L.δ]
   (hδ : #L.δ ≤ μ)
 
 /-- The first stage: the image of `A`. -/
@@ -229,7 +229,7 @@ theorem StrongSub.incl_bijective (s t : StrongSub N) (h1 : s.set ⊆ t.set) (h2 
 
 section Build
 variable (ht : μ ∈ infra_78_closedTail P) (hc : μ ∈ infra_615_closed P)
-  {A : P.scheme.Object μ hμ} (L : TupleList P.scheme hμ A) [LinearOrder L.δ] [WellFoundedLT L.δ]
+  {A : P.scheme.Object μ hμ} (L : TupleList P.scheme hμ A) [LinearOrder L.δ] [L.FiniteEach] [WellFoundedLT L.δ]
   (hδ : #L.δ ≤ μ)
 
 theorem stage_succ {β k : WithTop L.δ} (h : β ⋖ k) :
@@ -295,7 +295,7 @@ end Build
 
 section Assemble
 variable (ht : μ ∈ infra_78_closedTail P) (hc : μ ∈ infra_615_closed P)
-  {A : P.scheme.Object μ hμ} (L : TupleList P.scheme hμ A) [LinearOrder L.δ] [WellFoundedLT L.δ]
+  {A : P.scheme.Object μ hμ} (L : TupleList P.scheme hμ A) [LinearOrder L.δ] [L.FiniteEach] [WellFoundedLT L.δ]
   (hδ : #L.δ ≤ μ)
 
 /-- The pre-chain of Lemma 7.12(1), built inside `L.host`. -/
@@ -356,7 +356,7 @@ chain engine `infra_78_coherent_chain_engine` with trivial maps; the scheme arro
 stages are the factorizations through the embeddings (`factorEmbedding`, strong by coherence).
 Successors by `infra_712_succ`, limits by `infra_712_limit`. -/
 theorem infra_712_recursion (P : SingleModelData K) : infra_712_recursion_statement P :=
-  fun _ _ _ ht hc _ L _ _ hδ =>
+  fun _ _ _ ht hc _ L _ _ _ hδ =>
     ⟨Infra712Rec.preChain ht hc L hδ, Infra712Rec.preChain_allDominated ht hc L hδ⟩
 
 /-- **Lemma 7.12 (1) at a level from the products step (proved glue, cycle 86).** -/

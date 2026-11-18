@@ -194,7 +194,7 @@ def infra_712_products_L_statement (P : SingleModelData K) : Prop :=
   ∀ {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible), μ ∈ recursionClosedLevels P ℵ₀ →
     Order.succ ℵ₀ ≤ μ →
     μ ∈ recursionClosedLevels P (infra_75_wide P ℵ₀) → Order.succ (infra_75_wide P ℵ₀) ≤ μ →
-    ∀ (A : P.scheme.Object μ hμ) (L : TupleList P.scheme hμ A) [LinearOrder L.δ]
+    ∀ (A : P.scheme.Object μ hμ) (L : TupleList P.scheme hμ A) [LinearOrder L.δ] [L.FiniteEach]
       [WellFoundedLT L.δ], ProductIndependentTied L →
       ∀ (i : L.δ) (n : ℕ) (ix : Fin n → L.δ), Function.Injective ix → (∀ s, ix s < i) →
         IsProductTied (L.one i) (L.subConcat n ix) (L.consJoint i n ix) (Equiv.refl _)
@@ -204,7 +204,7 @@ Chain marks and list entries coincide in `C.top` (`mark_spec`, `mark_step`, `com
 amalgam each; then `infra_712_productTied_transfer`. -/
 theorem infra_712_products_of_L (P : SingleModelData K) (hL : infra_712_products_L_statement P) :
     infra_712_products_statement P := by
-  intro μ hμ h0 h1 hw1 hw2 A L _ _ hind C hC i hfree n ix hinj
+  intro μ hμ h0 h1 hw1 hw2 A L _ _ _ hind C hC i hfree n ix hinj
   have hinj' : Function.Injective (fun s => (ix s).1) := fun a b h => hinj (Subtype.ext h)
   have H := hL hμ h0 h1 hw1 hw2 A L hind i n (fun s => (ix s).1) hinj' (fun s => (ix s).2)
   have hincl : ∀ v, (C.toTop.onVertex v).comp (((C.step (le_top : (i : WithTop L.δ) ≤ ⊤)).onVertex v).comp
@@ -266,7 +266,7 @@ theorem infra_712_card_le_fin {α : Type u} [Finite α] (hμ : μ ∈ P.eligible
 
 /-- **List products, last entry of an injective selection (proved, cycle 87).** -/
 theorem infra_712_products_L_snoc (h0 : μ ∈ recursionClosedLevels P ℵ₀)
-    (h1 : Order.succ ℵ₀ ≤ μ) (L : TupleList P.scheme hμ A) (hind : ProductIndependentTied L)
+    (h1 : Order.succ ℵ₀ ≤ μ) (L : TupleList P.scheme hμ A) [L.FiniteEach] (hind : ProductIndependentTied L)
     (n : ℕ) (ixs : Fin (n + 1) → L.δ) (hinj : Function.Injective ixs) :
     IsProductTied (L.one (ixs (Fin.last n))) (L.subConcat n (fun s => ixs s.castSucc))
       (L.consJoint (ixs (Fin.last n)) n (fun s => ixs s.castSucc)) (Equiv.refl _) := by
@@ -378,7 +378,7 @@ theorem infra_712_products_L_snoc (h0 : μ ∈ recursionClosedLevels P ℵ₀)
 /-- **7.12(1), products in the list (proved, cycle 87).** Apply `infra_712_products_L_snoc` to
 the injective selection `snoc ix i`. -/
 theorem infra_712_products_L (P : SingleModelData K) : infra_712_products_L_statement P := by
-  intro μ hμ h0 h1 _ _ A L _ _ hind i n ix hinj hlt
+  intro μ hμ h0 h1 _ _ A L _ _ _ hind i n ix hinj hlt
   let ixs : Fin (n + 1) → L.δ := Fin.snoc (α := fun _ => L.δ) ix i
   have hinj' : Function.Injective ixs := by
     intro a b hab

@@ -130,7 +130,9 @@ def TupleList.below (L : TupleList P.scheme hμ A) [LinearOrder L.δ] (i : L.δ)
   incl_arrow := L.incl_arrow
   indexAt k := L.indexAt k.1
   val k := L.val k.1
-  finite_each k := L.finite_each k.1
+
+instance TupleList.below_finiteEach (L : TupleList P.scheme hμ A) [LinearOrder L.δ] [L.FiniteEach]
+    (i : L.δ) : (L.below i).FiniteEach := ⟨fun k => L.finite_each k.1⟩
 
 instance TupleList.below_linearOrder (L : TupleList P.scheme hμ A) [LinearOrder L.δ] (i : L.δ) :
     LinearOrder (L.below i).δ := inferInstanceAs (LinearOrder {k : L.δ // k < i})
@@ -196,15 +198,13 @@ end TupleList
 namespace TiedListPreChain
 variable {L : TupleList P.scheme hμ A} [LinearOrder L.δ]
 
-theorem free_pull (C : TiedListPreChain L) (k : L.δ) (hk : C.FreeAt k) (j : WithTop L.δ)
-    (hj : (k : WithTop L.δ) < j) :
+/-- `free_pull` for a *bounded* entry (`#(indexAt k) < μ`); used by `lemma_7_12_bounded`. -/
+theorem free_pull_of_lt (C : TiedListPreChain L) (k : L.δ) (hfin : #(L.indexAt k) < μ)
+    (hk : C.FreeAt k) (j : WithTop L.δ) (hj : (k : WithTop L.δ) < j) :
     IsTiedFree (C.into (k : WithTop L.δ))
       ((asTuple (C.step hj.le) (C.step_arrow _) (C.mark k j hj)).restrict
         (C.into (k : WithTop L.δ)) (C.into_arrow _))
       (asTuple (C.step hj.le) (C.step_arrow _) (C.mark k j hj)) (Equiv.refl _) := by
-  have hfin : #(L.indexAt k) < μ :=
-    haveI := L.finite_each k
-    (Cardinal.lt_aleph0_of_finite _).trans_le (P.aleph0_le hμ)
   have hjt : j ≤ ⊤ := le_top
   set rj := asTuple (C.step hj.le) (C.step_arrow _) (C.mark k j hj) with hrj
   set rt := asTuple (C.step (le_top : (k : WithTop L.δ) ≤ ⊤)) (C.step_arrow _)
@@ -229,6 +229,17 @@ theorem free_pull (C : TiedListPreChain L) (k : L.δ) (hk : C.FreeAt k) (j : Wit
       hfin (Equiv.refl _) (Equiv.refl _) (fun _ => rfl)).2 (by unfold FreeAt at hk; exact hk)
   exact infra_78_tiedFree_host_source' (C.into (k : WithTop L.δ)) (C.step_arrow hjt) hRp rfl rfl
     hfin rj (Equiv.refl _) (Equiv.refl _) (fun _ => rfl) H1
+
+theorem free_pull [L.FiniteEach] (C : TiedListPreChain L) (k : L.δ) (hk : C.FreeAt k)
+    (j : WithTop L.δ) (hj : (k : WithTop L.δ) < j) :
+    IsTiedFree (C.into (k : WithTop L.δ))
+      ((asTuple (C.step hj.le) (C.step_arrow _) (C.mark k j hj)).restrict
+        (C.into (k : WithTop L.δ)) (C.into_arrow _))
+      (asTuple (C.step hj.le) (C.step_arrow _) (C.mark k j hj)) (Equiv.refl _) :=
+  C.free_pull_of_lt k (haveI := L.finite_each k
+    (Cardinal.lt_aleph0_of_finite _).trans_le (P.aleph0_le hμ)) hk j hj
+
+variable [L.FiniteEach]
 
 
 /-- **The chain truncated at `i`** (a tied witnessing chain of `L.below i` with top stage `Mᵢ`),
@@ -292,7 +303,7 @@ end Truncation
 /-- Clause (1) of Lemma 7.12 over a fixed `A` at level `μ`. -/
 def infra_712_existence_at (P : SingleModelData K) {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
     (A : P.scheme.Object μ hμ) : Prop :=
-  ∀ (L : TupleList P.scheme hμ A) [LinearOrder L.δ] [WellFoundedLT L.δ],
+  ∀ (L : TupleList P.scheme hμ A) [LinearOrder L.δ] [L.FiniteEach] [WellFoundedLT L.δ],
     #L.δ ≤ μ → ProductIndependentTied L →
     ∃ C : TiedListWitnessingChain L, C.AllDominatedIncrement
 
@@ -304,7 +315,7 @@ tuple into the ambient by its primeness clause), limits by directed unions insid
 def infra_712_prechain_statement (P : SingleModelData K) : Prop :=
   ∀ {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible), μ ∈ infra_78_closedTail P →
     μ ∈ infra_615_closed P →
-    ∀ (A : P.scheme.Object μ hμ) (L : TupleList P.scheme hμ A) [LinearOrder L.δ]
+    ∀ (A : P.scheme.Object μ hμ) (L : TupleList P.scheme hμ A) [LinearOrder L.δ] [L.FiniteEach]
       [WellFoundedLT L.δ], #L.δ ≤ μ →
       ∃ C : TiedListPreChain L, C.AllDominatedIncrement
 
@@ -411,7 +422,7 @@ def infra_712_free_marks_statement (P : SingleModelData K) : Prop :=
   ∀ {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible), μ ∈ recursionClosedLevels P ℵ₀ →
     Order.succ ℵ₀ ≤ μ →
     μ ∈ recursionClosedLevels P (infra_75_wide P ℵ₀) → Order.succ (infra_75_wide P ℵ₀) ≤ μ →
-    ∀ (A : P.scheme.Object μ hμ) (L : TupleList P.scheme hμ A) [LinearOrder L.δ]
+    ∀ (A : P.scheme.Object μ hμ) (L : TupleList P.scheme hμ A) [LinearOrder L.δ] [L.FiniteEach]
       [WellFoundedLT L.δ], ProductIndependentTied L →
       ∀ C : TiedListPreChain L, C.AllDominatedIncrement → ∀ i, C.FreeAt i
 
@@ -424,7 +435,7 @@ def infra_712_products_statement (P : SingleModelData K) : Prop :=
   ∀ {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible), μ ∈ recursionClosedLevels P ℵ₀ →
     Order.succ ℵ₀ ≤ μ →
     μ ∈ recursionClosedLevels P (infra_75_wide P ℵ₀) → Order.succ (infra_75_wide P ℵ₀) ≤ μ →
-    ∀ (A : P.scheme.Object μ hμ) (L : TupleList P.scheme hμ A) [LinearOrder L.δ]
+    ∀ (A : P.scheme.Object μ hμ) (L : TupleList P.scheme hμ A) [LinearOrder L.δ] [L.FiniteEach]
       [WellFoundedLT L.δ], ProductIndependentTied L →
       ∀ C : TiedListPreChain L, C.AllDominatedIncrement →
         ∀ (i : L.δ) (hfree : ∀ k, k < i → C.FreeAt k) (n : ℕ) (ix : Fin n → (L.below i).δ),
@@ -442,7 +453,7 @@ def infra_712_free_step_statement (P : SingleModelData K) : Prop :=
   ∀ {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible), μ ∈ recursionClosedLevels P ℵ₀ →
     Order.succ ℵ₀ ≤ μ →
     μ ∈ recursionClosedLevels P (infra_75_wide P ℵ₀) → Order.succ (infra_75_wide P ℵ₀) ≤ μ →
-    ∀ (A : P.scheme.Object μ hμ) (L : TupleList P.scheme hμ A) [LinearOrder L.δ]
+    ∀ (A : P.scheme.Object μ hμ) (L : TupleList P.scheme hμ A) [LinearOrder L.δ] [L.FiniteEach]
       [WellFoundedLT L.δ], ProductIndependentTied L →
       ∀ C : TiedListPreChain L, C.AllDominatedIncrement →
         ∀ i, (∀ k, k < i → C.FreeAt k) → C.FreeAt i
@@ -451,7 +462,7 @@ def infra_712_free_step_statement (P : SingleModelData K) : Prop :=
 (`infra_711_at_level`) for the truncated chain `C.truncate i` and `x = bᵢ`. -/
 theorem infra_712_free_step_of_products (P : SingleModelData K)
     (h : infra_712_products_statement P) : infra_712_free_step_statement P := by
-  intro μ hμ h0 h1 hw1 hw2 A L _ _ hind C hC i hfree
+  intro μ hμ h0 h1 hw1 hw2 A L _ _ _ hind C hC i hfree
   exact infra_711_at_level P (infra_711_successor P) hμ h0 h1 hw1 hw2 A (L.below i)
     (C.truncate i hfree) (C.truncate_allDominated hC i hfree) (C.markTuple i) (L.finite_each i) rfl
     (h hμ h0 h1 hw1 hw2 A L hind C hC i hfree)
@@ -459,7 +470,7 @@ theorem infra_712_free_step_of_products (P : SingleModelData K)
 /-- **Freeness of all marks by well-founded induction (proved glue).** -/
 theorem infra_712_free_marks_of_step (P : SingleModelData K)
     (h : infra_712_free_step_statement P) : infra_712_free_marks_statement P := by
-  intro μ hμ h0 h1 hw1 hw2 A L _ _ hind C hC i
+  intro μ hμ h0 h1 hw1 hw2 A L _ _ _ hind C hC i
   induction i using WellFoundedLT.induction with
   | _ i ih => exact h hμ h0 h1 hw1 hw2 A L hind C hC i ih
 
@@ -471,7 +482,7 @@ theorem infra_712_existence_at_of_parts (P : SingleModelData K)
     (h1' : Order.succ ℵ₀ ≤ μ) (hw1 : μ ∈ recursionClosedLevels P (infra_75_wide P ℵ₀))
     (hw2 : Order.succ (infra_75_wide P ℵ₀) ≤ μ) (A : P.scheme.Object μ hμ) :
     infra_712_existence_at P hμ A := by
-  intro L _ _ hδ hind
+  intro L _ _ _ hδ hind
   obtain ⟨C, hC⟩ := h1 hμ ht hc A L hδ
   have hfree := h2 hμ h0 h1' hw1 hw2 A L hind C hC
   exact ⟨C.toChain hfree, C.toChain_allDominated hfree hC⟩
