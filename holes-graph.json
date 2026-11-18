@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-18 14:39",
+ "updated": "2026-11-18 15:16",
  "sorryCount": 42,
  "legend": {
   "open": "No unfinished required proof-deps — try next",
@@ -3069,7 +3069,7 @@
    "file": "AEC/Section7/Lemma711Successor.lean",
    "status": "blocked",
    "blocker": "infra_711_succ_pair (open), infra_711_succ_base_change (open); glue infra_711_succ_product_of_parts done",
-   "detail": "Open (cycle 80). Statement infra_711_succ_product_statement: under Claim i, finite x with prodBelow x j has IsProductTied (tp(x/M_i)) (tp(b_i/M_i) hosted with x) (joint) over M_i. English: (x,b_i) has product with earlier selections (finite product rules: assoc/symm/perm/proj level joints, chain free field + tied_exists), so IH gives tp(x,b_i/M_i) free from A; tp(x/M_i) free (IH), tp(b_i/M_i) free (chain); products lift freely (infra_612_tied_base_change_level_joints). The sub-tuple adapter (tied freeness of a sub-tuple) belongs here if needed."
+   "detail": "cycle 81 split: glue done; succ_base_change done (cycle 83); succ_pair open"
   },
   {
    "id": "infra_711_succ_pair",
@@ -3085,9 +3085,9 @@
    "label": "7.11 successor: products lift freely to M_i",
    "section": "7",
    "file": "AEC/Section7/Lemma711Successor.lean",
-   "status": "open",
+   "status": "done",
    "blocker": "",
-   "detail": "Open (cycle 81). Statement infra_711_succ_base_change_statement: with freeAt x i, freeAt (pairUp x b_i) i and the chain free field, x ⊗ b_i over A lifts to the tied product over M_i (infra_612_tied_base_change_level_joints with the product over M_i built explicitly as pB.join y, so no Galois transitivity needed). Needs reindexing transports (Fin 1 selection vs markOver) and host pushes (infra_75_tiedFree_base_congr / infra_75_tiedFree_target_push)."
+   "detail": "cycle 83: infra_711_succ_base_change (Lemma711Successor.lean): base change level-joints 6.12 with p=tp(x/A), q=tp(b_i/A), joint=(x,b_i) over A; tp(b_i/M_i) pushed into x's host (target_push) and reindexed (infra_711_tiedFree_base_equiv); axioms clean"
   },
   {
    "id": "infra_711_succ_product_glue",
@@ -6329,8 +6329,19 @@
    "from": "infra_711_succ_product_glue",
    "to": "infra_711_succ_product",
    "kind": "hard"
+  },
+  {
+   "from": "infra_75_eval_product",
+   "to": "infra_711_succ_base_change",
+   "kind": "hard",
+   "note": "uses infra_75_tiedFree_target_push"
+  },
+  {
+   "from": "infra_610_tied_free_lift",
+   "to": "infra_711_succ_base_change",
+   "kind": "hard"
   }
  ],
- "doneCount": 271,
+ "doneCount": 279,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
