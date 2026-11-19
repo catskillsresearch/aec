@@ -7606,6 +7606,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 229: proved."
+  },
+  {
+   "id": "infra_83_full_single_of_dominated_target",
+   "label": "Lemma 8.3 from the templates once, at each closed well-ordered level, the template mark realizes the prescription and Y_I maps over X_I into some V where the image of the mark is all-dominated (pulled back by dominated_pull)",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PieceMatch.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 230: proved."
   }
  ],
  "edges": [
@@ -13801,8 +13810,13 @@
    "from": "infra_83_dominated_iff_primeness_at",
    "to": "infra_83_arity_removal",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_full_single_of_dominated_target",
+   "to": "infra_83_lemma_8_3_full_single",
+   "kind": "hard"
   }
  ],
- "doneCount": 776,
+ "doneCount": 777,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

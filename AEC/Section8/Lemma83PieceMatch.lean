@@ -2234,4 +2234,46 @@ theorem infra_83_dominated_iff_primeness_at (P : SingleModelData K) {μ : Cardin
   · exact heq_of_eq (hb i)
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+set_option maxHeartbeats 1600000 in
+/-- **`full_single` from one arrow into an all-dominated target.** Weakening of the hypothesis of
+`infra_83_full_single_of_dominated`: at each closed well-ordered level it suffices that the
+template mark realizes the prescription and that `Y_I` maps over `X_I` into *some* object `V`
+whose image of the mark is all-dominated over `X_I` (all-domination is pulled back by
+`infra_83_dominated_pull`). This is the shape produced by Theorem 7.9 existence once a template
+arrow into the realization is built. -/
+theorem infra_83_full_single_of_dominated_target (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) :
+    ∃ (X Y : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
+        P.scheme.Object #I hI)
+      (incl : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
+        SystemArrow K oneVertexShape (P.scheme.asSystem hI (X I hI))
+          (P.scheme.asSystem hI (Y I hI)))
+      (mk : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
+        Fin Pr.n → Occurrence K oneVertexShape (P.scheme.asSystem hI (Y I hI))),
+      (∀ (I : Type u) [LinearOrder I] [WellFoundedLT I] [Nonempty I]
+          (hI : #I ∈ infra_78_closedTail P ∩ infra_615_closed P),
+          (∃ realEq : ULift.{u} (Fin Pr.n) ≃ (Pr.assign hI.2.1 (X I hI.2.1)).idx,
+            SameGaloisType (asTuple (incl I hI.2.1) trivial
+              (fun a : ULift.{u} (Fin Pr.n) => mk I hI.2.1 a.down))
+              (Pr.assign hI.2.1 (X I hI.2.1)) realEq (Equiv.refl _)) ∧
+          ∃ (V : P.scheme.Object #I hI.2.1)
+            (h : SystemArrow K oneVertexShape (P.scheme.asSystem hI.2.1 (Y I hI.2.1))
+              (P.scheme.asSystem hI.2.1 V)),
+            AllDominated (SystemArrow.comp (incl I hI.2.1) h) trivial (ULift.{u} (Fin Pr.n))
+              (fun a : ULift.{u} (Fin Pr.n) => h.mapOcc (mk I hI.2.1 a.down))) →
+      Lemma83Conclusion P.scheme Pr := by
+  obtain ⟨F, X, Y, eX, eY, incl, mk, hincl, harr⟩ := infra_83_pair_template_clauses P Pr
+  refine ⟨X, Y, incl, mk, fun hS => ?_⟩
+  refine infra_83_conclusion_of_marked_values_idx P Pr F X Y eX eY incl mk hincl harr _
+    (infra_83_closed_tail P) (fun I _ _ _ hI => ?_)
+  obtain ⟨⟨realEq, hr⟩, V, h, hD⟩ := hS I hI
+  refine ⟨ULift.{u} (Fin Pr.n), Equiv.refl _, realEq, hr, ?_⟩
+  exact infra_83_dominated_pull P (incl I hI.2.1) trivial h _
+    ((Cardinal.lt_aleph0_of_finite _).trans (P.aleph0_lt hI.2.1)) hD
+end
+
 end AEC
