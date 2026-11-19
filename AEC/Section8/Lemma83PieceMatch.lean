@@ -2051,4 +2051,39 @@ theorem infra_83_FZ_piece_for_list (P : SingleModelData K) {ν : Cardinal.{u}}
   · exact heq_of_eq (hy i)
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+/-- **The `X`-chart of a matched piece lies in the image of `X'` (proved, from its points).**
+If `gY ∘ inclu = F(emb) ∘ F(e₀) ∘ ψ` with `ψ : X' → F(J₀)` onto, and every `X`-chart point of a set
+`T` (a `j ∈ J` with `skeleton(emb j) ∈ T`) lies in `e₀[J₀]`, then `F` of the chart of `T` lies in
+`gY[X']`: input (iii), the hypothesis `hsub` of `infra_83_piece_XH_of_chart`, reduced to chart
+points. -/
+theorem infra_83_chart_sub_of_points (E : OrderPresentation K) {J Jp J0 : Type u}
+    [LinearOrder J] [Nonempty J] [LinearOrder Jp] [Nonempty Jp] [LinearOrder J0] [Nonempty J0]
+    (emb : J ↪o Jp) (e0 : J0 ↪o J) {Xc Yc : Type u} (inclu : Xc → Yc)
+    (gY : Yc → (E.obj Jp).carrier) (ψ : Xc → (E.obj J0).carrier) (hψ : Function.Surjective ψ)
+    (hX : ∀ x, gY (inclu x) = E.map emb (E.map e0 (ψ x)))
+    (T : Set (E.obj Jp).carrier) [Nonempty (Lab83.chart emb T)]
+    (hpts : ∀ j ∈ Lab83.chart emb T, j ∈ Set.range e0) :
+    Set.range (E.map (Lab83.chartEmb emb T)) ⊆ Set.range (gY ∘ inclu) := by
+  classical
+  choose pre hpre using fun j : Lab83.chart emb T => hpts j.1 j.2
+  let ι : Lab83.chart emb T ↪o J0 :=
+    OrderEmbedding.ofStrictMono pre fun a b hab => by
+      have : e0 (pre a) < e0 (pre b) := by rw [hpre, hpre]; exact hab
+      exact e0.lt_iff_lt.mp this
+  have hfac : Lab83.chartEmb emb T = (ι.trans e0).trans emb := by
+    ext j
+    show emb j.1 = emb (e0 (pre j))
+    rw [hpre]
+  rintro _ ⟨y, rfl⟩
+  obtain ⟨x, hx⟩ := hψ (E.map ι y)
+  refine ⟨x, ?_⟩
+  show gY (inclu x) = _
+  rw [hX, hx, hfac, E.map_comp, E.map_comp]
+  rfl
+end
+
 end AEC

@@ -7561,6 +7561,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 224: proved."
+  },
+  {
+   "id": "infra_83_chart_sub_of_points",
+   "label": "X-chart of a matched piece lies in the image of X' from its points: if gY o inclu = F(emb) o F(e0) o psi with psi onto and every X-chart point of T lies in e0[J0], then F of the chart of T lies in gY[X'] (input (iii), hsub of piece_XH_of_chart)",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PieceMatch.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 225: proved."
   }
  ],
  "edges": [
@@ -13731,8 +13740,13 @@
    "from": "infra_83_FZ_piece_for_list",
    "to": "infra_83_XH_sort",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_chart_sub_of_points",
+   "to": "infra_83_XH_sort",
+   "kind": "hard"
   }
  ],
- "doneCount": 771,
+ "doneCount": 772,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
