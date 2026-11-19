@@ -2694,4 +2694,63 @@ theorem infra_83_arrow_of_model_chain {M N : Model K.τ} (hM : K.Mem M) (hN : K.
   exact h
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+set_option maxHeartbeats 1600000 in
+/-- **Constructive primeness along a dominated chain (proved; Prop 7.5(1) + union).** Let
+`Y` be exhausted by a chain of pieces `A 0 → A 1 → …` (arrows `s n`, `e n : A n → Y` with
+`e (n+1) ∘ s n = e n`, images covering `Y`), where each step adds a mark `c n` of size `< μ`
+that is all-dominated over `A n`. If, for every arrow `g : A n → V`, `V` realizes the
+`g`-pushed type of `c n` over `A n`, then every arrow `g₀ : A 0 → V` extends to an arrow
+`Y → V`. Each step is `infra_75_embed` (Prop 7.5(1)); the union is
+`infra_83_arrow_of_model_chain`. This is the paper's nested-list arity removal in scheme form,
+for the template arrow of `infra_83_full_single_of_template_arrows` (with `A 0` the piece
+`X_I + b`). -/
+theorem infra_83_arrow_of_dominated_chain (P : SingleModelData K) {μ : Cardinal.{u}}
+    (hμ : μ ∈ P.eligible) (Y V : P.scheme.Object μ hμ) (A : ℕ → P.scheme.Object μ hμ)
+    (s : ∀ n, SystemArrow K oneVertexShape (P.scheme.asSystem hμ (A n))
+      (P.scheme.asSystem hμ (A (n + 1))))
+    (e : ∀ n, SystemArrow K oneVertexShape (P.scheme.asSystem hμ (A n)) (P.scheme.asSystem hμ Y))
+    (hes : ∀ n, SystemArrow.comp (s n) (e (n + 1)) = e n)
+    (hcover : ∀ x : ((P.scheme.asSystem hμ Y).obj PUnit.unit).carrier,
+      ∃ n y, (e n).onVertex PUnit.unit y = x)
+    {cIdx : ℕ → Type u}
+    (c : ∀ n, cIdx n → Occurrence K oneVertexShape (P.scheme.asSystem hμ (A (n + 1))))
+    (hc : ∀ n, #(cIdx n) < μ)
+    (hD : ∀ n, AllDominated (s n) trivial (cIdx n) (c n))
+    (hreal : ∀ n (g : SystemArrow K oneVertexShape (P.scheme.asSystem hμ (A n))
+        (P.scheme.asSystem hμ V)),
+      ∃ c' : cIdx n → Occurrence K oneVertexShape (P.scheme.asSystem hμ V),
+        SameGaloisType (asTuple (s n) trivial (c n)) (asTuple g trivial c')
+          (Equiv.refl _) (Equiv.refl _))
+    (g₀ : SystemArrow K oneVertexShape (P.scheme.asSystem hμ (A 0)) (P.scheme.asSystem hμ V)) :
+    ∃ f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ Y) (P.scheme.asSystem hμ V),
+      SystemArrow.comp (e 0) f = g₀ := by
+  obtain ⟨f, hf, hfc⟩ := infra_83_arrow_of_model_chain (K := K)
+    (M := (P.scheme.asSystem hμ Y).obj PUnit.unit) (N := (P.scheme.asSystem hμ V).obj PUnit.unit)
+    (K.strong_mem_cod _ ((e 0).onVertex_strong PUnit.unit))
+    (K.strong_mem_cod _ (g₀.onVertex_strong PUnit.unit))
+    (fun n => (P.scheme.asSystem hμ (A n)).obj PUnit.unit)
+    (fun n => K.strong_mem_dom _ ((e n).onVertex_strong PUnit.unit))
+    (fun n => (s n).onVertex PUnit.unit) (fun n => (e n).onVertex PUnit.unit)
+    (fun n => (e n).onVertex_strong PUnit.unit)
+    (fun n => congrArg (fun a => SystemArrow.onVertex a PUnit.unit) (hes n))
+    hcover (g₀.onVertex PUnit.unit) (g₀.onVertex_strong PUnit.unit)
+    (fun n g hg => by
+      let G : SystemArrow K oneVertexShape (P.scheme.asSystem hμ (A n)) (P.scheme.asSystem hμ V) :=
+        ⟨fun _ => g, fun _ => hg, fun h => h.elim⟩
+      obtain ⟨c', hc'⟩ := hreal n G
+      obtain ⟨g', -, hcomp, -⟩ := infra_75_embed hμ (A n) (A (n + 1)) V (s n) trivial G trivial
+        (c n) c' (hc n) hc' (hD n)
+      exact ⟨g'.onVertex PUnit.unit, g'.onVertex_strong PUnit.unit,
+        congrArg (fun a => SystemArrow.onVertex a PUnit.unit) hcomp⟩)
+  refine ⟨⟨fun _ => f, fun _ => hf, fun h => h.elim⟩, ?_⟩
+  show SystemArrow.mk _ _ _ = SystemArrow.mk _ _ _
+  congr 1
+  funext v
+  exact hfc
+end
+
 end AEC

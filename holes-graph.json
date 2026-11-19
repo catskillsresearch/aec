@@ -7696,6 +7696,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 239: proved."
+  },
+  {
+   "id": "infra_83_arrow_of_dominated_chain",
+   "label": "Constructive primeness along a dominated chain (Prop 7.5(1) per step + union): Y exhausted by pieces A n with steps adding marks c n (< mu) all-dominated over A n; if V realizes each g-pushed type of c n over A n, every arrow A 0 -> V extends to Y -> V",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PieceMatch.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 240: proved."
   }
  ],
  "edges": [
@@ -13941,8 +13950,13 @@
    "from": "infra_83_arrow_of_model_chain",
    "to": "infra_83_arity_removal",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_arrow_of_dominated_chain",
+   "to": "infra_83_arity_removal",
+   "kind": "hard"
   }
  ],
- "doneCount": 786,
+ "doneCount": 787,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
