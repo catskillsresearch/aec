@@ -5022,7 +5022,7 @@
    "file": "AEC/Section8/Lemma83Single.lean",
    "status": "open",
    "blocker": null,
-   "detail": "Cycle 101 split of the faithful 8.3 ('The samples and their language'). | Cycle 101: covered by infra_83_samples_strip (any J incl. padded dense; L = E(J+) via Prop 6.15 fresh strip) + infra_83_padded_dense_exists + infra_83_samples_retractions. Remaining: 'Choose the presentations sufficiently rich for any prescribed set-sized order-saturation bound' (order-saturated padded dense J, Z, W of the level size)."
+   "detail": "Cycle 101 split of the faithful 8.3 ('The samples and their language'). | Cycle 101: covered by infra_83_samples_strip (any J incl. padded dense; L = E(J+) via Prop 6.15 fresh strip) + infra_83_padded_dense_exists + infra_83_samples_retractions. Remaining: 'Choose the presentations sufficiently rich for any prescribed set-sized order-saturation bound' (order-saturated padded dense J, Z, W of the level size). | Cycle 102: extension lemma done (infra_83_order_sat_extension); existence of saturated orders at tail levels tracked as infra_83_saturated_orders_exist."
   },
   {
    "id": "infra_83_hull_extraction",
@@ -5131,6 +5131,24 @@
    "status": "open",
    "blocker": null,
    "detail": "Cycle 102 split of infra_83_hull_extraction."
+  },
+  {
+   "id": "infra_83_order_sat_extension",
+   "label": "Lemma 8.3 proof: κ-order saturation and the extension lemma (partial embeddings of a well-order of size < κ extend into a κ-saturated order)",
+   "section": 8,
+   "file": "AEC/Section8/OrderSat83.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 102: OrderSat83.OrderSaturated, OrderSat83.extend_strictMono (recursion along H realizing cuts). This is the only use the proof makes of sample order saturation. Axioms clean."
+  },
+  {
+   "id": "infra_83_saturated_orders_exist",
+   "label": "Lemma 8.3 proof: for every κ, κ-order-saturated padded dense orders at arbitrarily large tail levels (e.g. lex power ℚ^ν of size 2^ν, or μ with μ^{<κ} = μ)",
+   "section": 8,
+   "file": "AEC/Section8/OrderSat83.lean",
+   "status": "open",
+   "blocker": null,
+   "detail": "Cycle 102 split of infra_83_samples: remaining order-saturation existence at the level size (needs tail levels of the form 2^ν, or a saturation construction of size μ)."
   }
  ],
  "edges": [
@@ -9721,8 +9739,18 @@
    "from": "infra_83_template_from_colors",
    "to": "infra_83_hull_extraction",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_order_sat_extension",
+   "to": "infra_83_samples",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_83_saturated_orders_exist",
+   "to": "infra_83_samples",
+   "kind": "hard"
   }
  ],
- "doneCount": 506,
+ "doneCount": 507,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
