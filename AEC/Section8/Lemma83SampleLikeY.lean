@@ -1648,4 +1648,46 @@ theorem infra_83_pairMS2_Y_F_pieces (P : SingleModelData K)
       EM83.PiecesHom.limMap_strong _ I⟩⟩
 
 
+
+/-- **Natural order embeddings induce piece morphisms**: a family `g k : H k ↪o H' k` natural
+in the piece maps (`g l ∘ h e = h' e ∘ g k`) induces a strong natural `PiecesHom` between
+`k ↦ F(H k)` and `k ↦ F(H' k)`, componentwise `F(g k)`. -/
+noncomputable def orderPieces83Hom (E : OrderPresentation K) {H H' : ℕ → Type u}
+    [∀ k, LinearOrder (H k)] [∀ k, Nonempty (H k)] [∀ k, LinearOrder (H' k)] [∀ k, Nonempty (H' k)]
+    {h : ∀ {k l : ℕ}, (Fin (k + 1) ↪o Fin (l + 1)) → H k ↪o H l}
+    {hid : ∀ k (p : H k), h (idEmb (α := Fin (k + 1))) p = p}
+    {hcomp : ∀ {k l m : ℕ} (e : Fin (k + 1) ↪o Fin (l + 1)) (f : Fin (l + 1) ↪o Fin (m + 1))
+      (p : H k), h (e.trans f) p = h f (h e p)}
+    {h' : ∀ {k l : ℕ}, (Fin (k + 1) ↪o Fin (l + 1)) → H' k ↪o H' l}
+    {hid' : ∀ k (p : H' k), h' (idEmb (α := Fin (k + 1))) p = p}
+    {hcomp' : ∀ {k l m : ℕ} (e : Fin (k + 1) ↪o Fin (l + 1)) (f : Fin (l + 1) ↪o Fin (m + 1))
+      (p : H' k), h' (e.trans f) p = h' f (h' e p)}
+    (g : ∀ k, H k ↪o H' k)
+    (hg : ∀ {k l : ℕ} (e : Fin (k + 1) ↪o Fin (l + 1)) (p : H k), g l (h e p) = h' e (g k p)) :
+    EM83.PiecesHom (orderPieces83 E H h hid hcomp) (orderPieces83 E H' h' hid' hcomp') where
+  app k := E.map (g k)
+  strong k := E.map_strong _
+  natural e := by
+    show (E.map (g _)).comp (E.map (h e)) = (E.map (h' e)).comp (E.map (g _))
+    rw [← E.map_comp, ← E.map_comp]
+    congr 1
+    ext p
+    exact hg e p
+
+theorem infra_83_orderPieces_hom_app (E : OrderPresentation K) {H H' : ℕ → Type u}
+    [∀ k, LinearOrder (H k)] [∀ k, Nonempty (H k)] [∀ k, LinearOrder (H' k)] [∀ k, Nonempty (H' k)]
+    {h : ∀ {k l : ℕ}, (Fin (k + 1) ↪o Fin (l + 1)) → H k ↪o H l}
+    {hid : ∀ k (p : H k), h (idEmb (α := Fin (k + 1))) p = p}
+    {hcomp : ∀ {k l m : ℕ} (e : Fin (k + 1) ↪o Fin (l + 1)) (f : Fin (l + 1) ↪o Fin (m + 1))
+      (p : H k), h (e.trans f) p = h f (h e p)}
+    {h' : ∀ {k l : ℕ}, (Fin (k + 1) ↪o Fin (l + 1)) → H' k ↪o H' l}
+    {hid' : ∀ k (p : H' k), h' (idEmb (α := Fin (k + 1))) p = p}
+    {hcomp' : ∀ {k l m : ℕ} (e : Fin (k + 1) ↪o Fin (l + 1)) (f : Fin (l + 1) ↪o Fin (m + 1))
+      (p : H' k), h' (e.trans f) p = h' f (h' e p)}
+    (g : ∀ k, H k ↪o H' k)
+    (hg : ∀ {k l : ℕ} (e : Fin (k + 1) ↪o Fin (l + 1)) (p : H k), g l (h e p) = h' e (g k p))
+    (k : ℕ) (x : (E.obj (H k)).carrier) :
+    (orderPieces83Hom E (hid := hid) (hcomp := hcomp) (hid' := hid') (hcomp' := hcomp') g hg).app k x =
+      E.map (g k) x := rfl
+
 end AEC
