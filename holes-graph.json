@@ -5112,7 +5112,7 @@
    "file": "AEC/Section8/HullExtract83.lean",
    "status": "done",
    "blocker": null,
-   "detail": "Cycle 102: Hull83.coherent_colors / Hull83.exists_extend — the Section 2 exists_extend/colorTower argument (erdos_color + recursivePartitionBound) restated for arbitrary ColorSample families with set-sized palettes; to be instantiated for the expanded pair samples. Axioms clean."
+   "detail": "Cycle 102: Hull83.coherent_colors / Hull83.exists_extend — the Section 2 exists_extend/colorTower argument (erdos_color + recursivePartitionBound) restated for arbitrary ColorSample families with set-sized palettes; to be instantiated for the expanded pair samples. Axioms clean. | Cycle 102: + ColorSample.reindex / Homog.reindex (homogeneity along order embeddings; restriction = reindexing along the inclusion)."
   },
   {
    "id": "infra_83_pair_sample_family",

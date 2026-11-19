@@ -188,5 +188,24 @@ theorem coherent_colors :
   rw [hhom m hm0 hm s hs]
   exact tower_stable hres hlarge hm0 n hm
 
+
+/-- Reindexing a sample along an order embedding of index orders. -/
+def ColorSample.reindex (S : ColorSample C) {β : Type u} [LinearOrder β] (e : β ↪o S.α) :
+    ColorSample C where
+  α := β
+  col m s := S.col m (s.map e.toEmbedding)
+
+/-- Homogeneity survives reindexing along order embeddings: an `I`-indexed copy of a
+homogeneous sample, for any order `I` embedding into its index order, has the same colors.
+This is how the extracted colors are read on the index orders `J_H`, `W_H` of the template. -/
+theorem Homog.reindex {S : ColorSample C} {n : ℕ} {d : (m : ℕ) → 0 < m → C m}
+    (h : Homog S n d) {β : Type u} [LinearOrder β] (e : β ↪o S.α) :
+    Homog (S.reindex e) n d := fun m hm0 hm s hs =>
+  h m hm0 hm (s.map e.toEmbedding) ((Finset.card_map _).trans hs)
+
+/-- Restriction is reindexing along the inclusion. -/
+theorem ColorSample.restrict_eq_reindex (S : ColorSample C) (H : Set S.α) :
+    S.restrict H = S.reindex (OrderEmbedding.subtype (· ∈ H)) := rfl
+
 end Hull83
 end AEC
