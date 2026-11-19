@@ -283,3 +283,55 @@ theorem infra_83_pairMS_X_pieces_iso (P : SingleModelData K)
   exact ⟨J, Jp, i1, i2, i3, i4, emb, g, _, hne, ε, hbij, hε⟩
 
 end AEC
+
+namespace AEC
+
+variable {K : AbstractElementaryClass.{u}}
+
+/-- **The marked template over sample-like structures, with `X_k ≅ F(J_k)`**: piece functors
+`F_X → F_Y → F_L` with strong natural maps, an order presentation with values `F_L(I)`, strong
+induced maps natural in order embeddings, and every `X`-piece `τ`-isomorphic to `F` of a
+nonempty subset of an order (its chart). -/
+theorem infra_83_pairMS_template (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) :
+    ∃ (FX FY FL : EM83.FinPieces K) (ηXY : EM83.PiecesHom FX FY) (ηYL : EM83.PiecesHom FY FL)
+      (E : OrderPresentation K),
+      (∀ (I : Type u) [LinearOrder I] [Nonempty I], E.obj I = (FL.limit I).obj) ∧
+      (∀ (I : Type u) [LinearOrder I] [Nonempty I],
+        K.Strong (ηXY.limMap I) ∧ K.Strong (ηYL.limMap I) ∧
+          (ηYL.comp ηXY).limMap I = (ηYL.limMap I).comp (ηXY.limMap I)) ∧
+      (∀ {I J : Type u} [LinearOrder I] [LinearOrder J] [Nonempty I] [Nonempty J] (f : I ↪o J),
+        K.Strong (EM83.gEmMap (F := FX) f) ∧ K.Strong (EM83.gEmMap (F := FY) f) ∧
+        K.Strong (EM83.gEmMap (F := FL) f) ∧
+        (ηXY.limMap J).comp (EM83.gEmMap (F := FX) f) =
+            (EM83.gEmMap (F := FY) f).comp (ηXY.limMap I) ∧
+          (ηYL.limMap J).comp (EM83.gEmMap (F := FY) f) =
+            (EM83.gEmMap (F := FL) f).comp (ηYL.limMap I)) ∧
+      ∀ k : ℕ, ∃ (J : Type u) (_ : LinearOrder J) (_ : Nonempty J) (H : Set J) (_ : Nonempty H)
+        (ε : (FX.obj k).carrier ↪[K.τ] (P.E.obj H).carrier), Function.Bijective ε := by
+  obtain ⟨c, hc, hcoh, hiso⟩ := infra_83_pairMS_X_pieces_iso P Pr
+  let σ : Fin 2 → Fin 3 := fun i => i.castSucc
+  let τ : Fin 1 → Fin 2 := fun _ => 0
+  let φ₀ := (LS83.pairInlR P.E).comp (LS83.lsInl K)
+  have hX : Hull83.SubHullStrong ((psiM P.E Pr.n).comp (chiM P.E Pr.n)) φ₀
+      (fun N _ => pairMAdmittedS P.E Pr.n N) :=
+    fun M _ hM => pairM_subHullStrongX P.E Pr.n M hM.1
+  have hY : Hull83.SubHullStrong (psiM P.E Pr.n) ((chiM P.E Pr.n).comp φ₀)
+      (fun N _ => pairMAdmittedS P.E Pr.n N) :=
+    fun M _ hM => pairM_subHullStrongY P.E Pr.n M hM.1
+  have hL : Hull83.HullStrong ((psiM P.E Pr.n).comp ((chiM P.E Pr.n).comp φ₀))
+      (fun N _ => pairMAdmittedS P.E Pr.n N) :=
+    fun M _ hM => pairM_hullStrong P.E Pr.n M hM.1
+  let ηXY := Hull83.subLangMixHom (chiM P.E Pr.n) (psiM P.E Pr.n) φ₀ hc hcoh σ τ hX hY
+  let ηYL := Hull83.subLangChain (psiM P.E Pr.n) ((chiM P.E Pr.n).comp φ₀) hc hcoh σ hY hL
+  refine ⟨_, _, _, ηXY, ηYL,
+    Hull83.tpPresentationB hc hcoh (by norm_num) ((psiM P.E Pr.n).comp ((chiM P.E Pr.n).comp φ₀))
+      hL (LS83.pairLangM3_functions_le P.E Pr.n),
+    fun I _ _ => rfl,
+    fun I _ _ => ⟨ηXY.limMap_strong I, ηYL.limMap_strong I, EM83.PiecesHom.limMap_comp _ _ I⟩,
+    fun f => ⟨EM83.gEmMap_strong f, EM83.gEmMap_strong f, EM83.gEmMap_strong f,
+      ηXY.limMap_natural f, ηYL.limMap_natural f⟩, fun k => ?_⟩
+  obtain ⟨J, Jp, i1, i2, i3, i4, emb, g, H, hH, ε, hε, -⟩ := hiso k
+  exact ⟨J, i1, i2, H, hH, ε, hε⟩
+
+end AEC
