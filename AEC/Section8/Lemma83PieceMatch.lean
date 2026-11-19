@@ -2424,4 +2424,33 @@ theorem infra_83_full_single_of_template_arrows (P : SingleModelData K)
     ((Cardinal.lt_aleph0_of_finite _).trans (P.aleph0_lt hI.2.1)) hd
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+set_option maxHeartbeats 1600000 in
+/-- **Template arrows from an all-dominated realizing mark (proved).** Converse direction for
+`infra_83_full_single_of_template_arrows`: if a mark `b` (indexed by `p.idx`) of `X ≤ Y` is
+all-dominated and realizes `p`, then `Y` maps over `X`, carrying `b` to `b'`, into every
+extension `(V, b')` of `X` realizing `p` (Theorem 7.9 same-level primeness). -/
+theorem infra_83_template_arrow_of_dominated {P : SingleModelData K} {μ : Cardinal.{u}}
+    (hμ : μ ∈ P.eligible) {X Y V : P.scheme.Object μ hμ}
+    (p : TupleOver K oneVertexShape P.scheme hμ X) [Finite p.idx]
+    (incl : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ Y))
+    (b : p.idx → Occurrence K oneVertexShape (P.scheme.asSystem hμ Y))
+    (hD : AllDominated incl trivial p.idx b)
+    (hp : SameGaloisType p (asTuple incl trivial b) (Equiv.refl _) (Equiv.refl _))
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ V))
+    (b' : p.idx → Occurrence K oneVertexShape (P.scheme.asSystem hμ V))
+    (hT : SameGaloisType p (asTuple f trivial b') (Equiv.refl _) (Equiv.refl _)) :
+    ∃ h : SystemArrow K oneVertexShape (P.scheme.asSystem hμ Y) (P.scheme.asSystem hμ V),
+      SystemArrow.comp incl h = f ∧ ∀ i, h.mapOcc (b i) = b' i := by
+  obtain ⟨h, -, hh, hb⟩ := infra_79_primeness_same_level hμ X p (inferInstanceAs (Finite p.idx))
+    Y incl trivial b hD hp V f trivial b' hT
+  refine ⟨h, hh, fun i => ?_⟩
+  apply Sigma.ext
+  · exact Subsingleton.elim _ _
+  · exact heq_of_eq (hb i)
+end
+
 end AEC

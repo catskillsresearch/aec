@@ -7651,6 +7651,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 234: proved."
+  },
+  {
+   "id": "infra_83_template_arrow_of_dominated",
+   "label": "Converse for full_single_of_template_arrows: an all-dominated mark realizing p gives arrows over X carrying it into every realization (V,b') of p (Theorem 7.9 same-level primeness); so the template-arrow hypothesis is exactly all-domination of the template mark",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PieceMatch.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 235: proved."
   }
  ],
  "edges": [
@@ -13871,8 +13880,13 @@
    "from": "infra_83_full_single_of_template_arrows",
    "to": "infra_83_lemma_8_3_full_single",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_template_arrow_of_dominated",
+   "to": "infra_83_arity_removal",
+   "kind": "hard"
   }
  ],
- "doneCount": 781,
+ "doneCount": 782,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
