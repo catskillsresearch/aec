@@ -593,4 +593,60 @@ theorem infra_83_piece_match_arrows (P : SingleModelData K)
   rw [hh, hX, htoA]
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+open FirstOrder.Language
+
+set_option maxHeartbeats 1600000 in
+/-- **The count clause of one bounded-list match (proved).** For a piece `X' ≤ Y_u` with scheme
+arrows `toA`, `h` into a ret-sample forming the pair square, an `L₀`-embedding `mY` of `Y_u`
+reading `F ∘ h` with `ret` interpreted by the evaluation `G`, and the sort intersection `hmeet`
+on the piece: at least `ν = |X'|` Cor 6.16 indices send `h(d)` into `toA[X']` for every tuple `d`
+of `Y_u` (`infra_83_retained_of_match_ret` + `infra_83_tuple_count_of_piece_count`). -/
+theorem infra_83_piece_count (P : SingleModelData K)
+    {Pr : StationaryPrescription K oneVertexShape P.scheme}
+    {J Jplus : Type u} [LinearOrder J] [Nonempty J] [LinearOrder Jplus] [Nonempty Jplus]
+    {M : MarkedPair K oneVertexShape P.scheme Pr}
+    (eX : (P.E.obj J).carrier → ((P.scheme.asSystem M.hμ M.X).obj PUnit.unit).carrier)
+    (hsurj : Function.Surjective eX) (emb : J ↪o Jplus)
+    (F : ((P.scheme.asSystem M.hμ M.Y).obj PUnit.unit).carrier → (P.E.obj Jplus).carrier)
+    (hF : ∀ x, F (M.incl.onVertex PUnit.unit (eX x)) = P.E.map emb x)
+    (hFi : Function.Injective (fun z => F (M.incl.onVertex PUnit.unit z)))
+    (R : ApproximateRetraction K oneVertexShape P.scheme M.hμ M.X M.Y M.incl)
+    (code : R.index → (P.E.obj J).carrier) (hcode : Function.Bijective code)
+    (G : (P.E.obj Jplus).carrier → (P.E.obj Jplus).carrier → (P.E.obj Jplus).carrier)
+    (heval : ∀ i y, G (P.E.map emb (code i)) (F y) =
+      F (M.incl.onVertex PUnit.unit ((R.retr i).onVertex PUnit.unit y)))
+    {ν : Cardinal.{u}} {hν : ν ∈ P.eligible} {X' Yu : P.scheme.Object ν hν}
+    (inclu : SystemArrow K oneVertexShape (P.scheme.asSystem hν X') (P.scheme.asSystem hν Yu))
+    (toA : SystemArrow K oneVertexShape (P.scheme.asSystem hν X') (P.scheme.asSystem M.hμ M.X))
+    (h : SystemArrow K oneVertexShape (P.scheme.asSystem hν Yu) (P.scheme.asSystem M.hμ M.Y))
+    (hsq : SystemArrow.comp inclu h = SystemArrow.comp toA M.incl)
+    {L₀ : FirstOrder.Language.{u, u}} [L₀.Structure ((P.scheme.asSystem hν Yu).obj PUnit.unit).carrier]
+    [L₀.Structure (P.E.obj Jplus).carrier]
+    (mY : ((P.scheme.asSystem hν Yu).obj PUnit.unit).carrier ↪[L₀] (P.E.obj Jplus).carrier)
+    (hmY : ∀ y, mY y = F (h.onVertex PUnit.unit y))
+    (ret : L₀.Functions 2) (hret : ∀ a b, Structure.funMap ret ![a, b] = G a b)
+    (hmeet : ∀ (x' : ((P.scheme.asSystem hν Yu).obj PUnit.unit).carrier)
+      (z : ((P.scheme.asSystem M.hμ M.X).obj PUnit.unit).carrier),
+      F (h.onVertex PUnit.unit x') = F (M.incl.onVertex PUnit.unit z) →
+        ∃ y, x' = inclu.onVertex PUnit.unit y)
+    {idx : Type u} (d : idx → Occurrence K oneVertexShape (P.scheme.asSystem hν Yu)) :
+    ν ≤ #{i : R.index // ∀ s, ∃ y, toA.onVertex (d s).1 y =
+      (R.retr i).onVertex (d s).1 (h.onVertex (d s).1 (d s).2)} := by
+  have hcomm : ∀ x, h.onVertex PUnit.unit (inclu.onVertex PUnit.unit x) =
+      M.incl.onVertex PUnit.unit (toA.onVertex PUnit.unit x) := fun x =>
+    congrArg (fun φ : SystemArrow K oneVertexShape _ _ => φ.onVertex PUnit.unit x) hsq
+  have hFX : Function.Injective
+      (fun x => F (M.incl.onVertex PUnit.unit (toA.onVertex PUnit.unit x))) :=
+    hFi.comp (toA.onVertex PUnit.unit).injective
+  have H := infra_83_retained_of_match_ret P eX hsurj emb F hF R code hcode G heval
+    (toA.onVertex PUnit.unit) (h.onVertex PUnit.unit) (inclu.onVertex PUnit.unit) hcomm
+    mY hmY ret hret hmeet hFX hFi
+  have hcard : #((P.scheme.asSystem hν X').obj PUnit.unit).carrier = ν := X'.card
+  rw [hcard] at H
+  exact infra_83_tuple_count_of_piece_count P toA h R.retr d H
+end
+
 end AEC

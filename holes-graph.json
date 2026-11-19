@@ -7237,6 +7237,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 188: proved."
+  },
+  {
+   "id": "infra_83_piece_count",
+   "label": "Count clause of one bounded-list match: for a piece X' <= Y_u with toA, h into a ret-sample forming the pair square, an L0-embedding of Y_u reading F o h with ret = eval, and the sort intersection on the piece, at least nu = |X'| Cor 6.16 indices send h(d) into toA[X'] for every tuple d",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PieceMatch.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 189: proved."
   }
  ],
  "edges": [
@@ -13227,8 +13236,13 @@
    "from": "infra_83_piece_match_arrows",
    "to": "infra_83_bounded_list_match",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_piece_count",
+   "to": "infra_83_bounded_list_match",
+   "kind": "hard"
   }
  ],
- "doneCount": 735,
+ "doneCount": 736,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
