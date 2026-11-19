@@ -537,6 +537,9 @@ Lean: imports `Section5.Results` and `Section6.Results`. Soft paper chain after 
 | `infra_83_samples_retractions` | Lemma 8.3 proof (P.scheme): retraction family of the samples | [`Lemma83Samples.lean`](AEC/Section8/Lemma83Samples.lean) (**done**, cycle 101) |
 | `infra_83_padded_dense_exists` | Lemma 8.3 proof: padded dense orders exist | [`Lemma83Samples.lean`](AEC/Section8/Lemma83Samples.lean) (**done**, cycle 101) |
 | `infra_83_samples_strip` | Lemma 8.3 proof (P.scheme): samples for any J, Y into E(J+) over the base (Prop 6.15) | [`Lemma83Samples.lean`](AEC/Section8/Lemma83Samples.lean) (**done**, cycle 101) |
+| `infra_83_color_tower` | Lemma 8.3 proof: generic coherent color extraction (Theorem 2.6 tower) | [`HullExtract83.lean`](AEC/Section8/HullExtract83.lean) (**done**, cycle 102) |
+| `infra_83_pair_sample_family` | Lemma 8.3 proof: expanded pair samples as a thinning-closed colored sample family | [`HullExtract83.lean`](AEC/Section8/HullExtract83.lean) (open, cycle 102) |
+| `infra_83_template_from_colors` | Lemma 8.3 proof: EM-limit pair template from coherent colors | [`HullExtract83.lean`](AEC/Section8/HullExtract83.lean) (open, cycle 102) |
 | `infra_72_mixed_level` | Lemma 7.2 last sentence (A at a smaller level than B), stated with sorry (audit) | [`Lemma72Mixed.lean`](AEC/Section7/Lemma72Mixed.lean) (open, cycle 96) |
 | `infra_82_tiedFreeMixed_base_equiv` | Mixed tied freeness under a reindexed change of base tuple | [`TiedAlong.lean`](AEC/Section8/TiedAlong.lean) (**done**, cycle 97) |
 | `infra_82_mark_tied_along_single` | Lemma 8.2(4) for `P.scheme`: tied freeness of the mark along arrows (Def 8.1 tied, cycle 97 ruling) | [`TiedAlong.lean`](AEC/Section8/TiedAlong.lean) (**done**, cycle 97) |

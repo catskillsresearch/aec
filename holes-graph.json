@@ -5031,7 +5031,7 @@
    "file": "AEC/Section8/Lemma83Single.lean",
    "status": "open",
    "blocker": null,
-   "detail": "Cycle 101 split ('Homogeneous finite hulls')."
+   "detail": "Cycle 101 split ('Homogeneous finite hulls'). | Cycle 102: split into infra_83_color_tower (done), infra_83_pair_sample_family, infra_83_template_from_colors."
   },
   {
    "id": "infra_83_template_strong",
@@ -5104,6 +5104,33 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 101: infra_79_existence_at + infra_615_two_sided."
+  },
+  {
+   "id": "infra_83_color_tower",
+   "label": "Lemma 8.3 proof: generic coherent color extraction (Theorem 2.6 tower) for any thinning-closed family of colored samples",
+   "section": 8,
+   "file": "AEC/Section8/HullExtract83.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 102: Hull83.coherent_colors / Hull83.exists_extend — the Section 2 exists_extend/colorTower argument (erdos_color + recursivePartitionBound) restated for arbitrary ColorSample families with set-sized palettes; to be instantiated for the expanded pair samples. Axioms clean."
+  },
+  {
+   "id": "infra_83_pair_sample_family",
+   "label": "Lemma 8.3 proof: expanded pair samples as a thinning-closed ColorSample family (colors = iso types of displayed finite hulls in the fixed finitary expansion; set-sized palettes; arbitrarily large)",
+   "section": 8,
+   "file": "AEC/Section8/HullExtract83.lean",
+   "status": "open",
+   "blocker": null,
+   "detail": "Cycle 102 split of infra_83_hull_extraction: instantiate Hull83.coherent_colors."
+  },
+  {
+   "id": "infra_83_template_from_colors",
+   "label": "Lemma 8.3 proof: EM-limit template F^b from coherent pair colors (analogue of emLimit/emOrderPresentation), with X_H = F(J_H), Y_H ~ F(Z_H), L_H = F(J_H + W_H)",
+   "section": 8,
+   "file": "AEC/Section8/HullExtract83.lean",
+   "status": "open",
+   "blocker": null,
+   "detail": "Cycle 102 split of infra_83_hull_extraction."
   }
  ],
  "edges": [
@@ -9679,8 +9706,23 @@
    "from": "infra_83_samples_strip",
    "to": "infra_83_samples",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_color_tower",
+   "to": "infra_83_hull_extraction",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_83_pair_sample_family",
+   "to": "infra_83_hull_extraction",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_83_template_from_colors",
+   "to": "infra_83_hull_extraction",
+   "kind": "hard"
   }
  ],
- "doneCount": 505,
+ "doneCount": 506,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
