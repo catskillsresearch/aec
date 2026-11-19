@@ -623,7 +623,7 @@
    "file": "AEC/Section7/Results.lean",
    "status": "done",
    "blocker": null,
-   "detail": "DONE cycle 67, statement unchanged: proof := <infra_78_closedTail P, infra_78_closedTail_tail P, infra_78_marginal_general_level P>. Axioms: propext, Classical.choice, Quot.sound (no sorryAx). RESTATED (grokbot_01 Phase 1.1), open with sorry. Now over SingleModelData P (P.scheme, oneVertexShape: the package of theorem_6_10, proposition_6_13, proposition_7_3_uniform, lemma_7_6_tied) instead of a bare WorkingScheme; tail T chosen before theta (uniform closure). Bounded-mark (Def 7.7) generalization not stated. Blocked on infra_78_mixed_level_isolation (stubs in AEC/Section7/MixedLevel.lean). AUDIT NOTE (cycle 64, no statement change): paper 'Proposition 7.8. Let lambda be a sufficiently closed eligible level, let X be an object there, and let p = tp(b/X) be a finite-tuple type. For every infinite theta < lambda there is a same-level extension X <= U containing a realization of p such that tp(b, c/X) is isolated relative to b for every c in U with |c| <= theta.' Types are Theorem 6.6's tp(v/A; B) for arrows A -> B0, B1 (identification in an amalgam over A), with no restriction on the level of B; so the Lean p with any host level >= lambda matches the English as written. Its proof for hosts above lambda uses the cross-level identification the paper takes from Theorem 6.6, whose Lean form (infra_78_cross_level_galois / infra_612_galois_trans_cross_level, via infra_78_tuple_amalgam_large) is unverified. The case p.nu = lambda is infra_78_matrix_assembly_level. Cycle 66: the case p.nu = lambda is proved (infra_78_matrix_assembly_level, sorry-free); proposition_7_8 unchanged and still sorry.",
+   "detail": "Cycle 95: restated to include the English 'More generally the assertion holds for a bounded mark b satisfying Definition 7.7, with |b| ≤ θ' as a second conjunct (hypotheses #p.idx ≤ θ and SatisfiesContinuityTied p, exactly the English), proved by infra_78_general. | DONE cycle 67, statement unchanged: proof := <infra_78_closedTail P, infra_78_closedTail_tail P, infra_78_marginal_general_level P>. Axioms: propext, Classical.choice, Quot.sound (no sorryAx). RESTATED (grokbot_01 Phase 1.1), open with sorry. Now over SingleModelData P (P.scheme, oneVertexShape: the package of theorem_6_10, proposition_6_13, proposition_7_3_uniform, lemma_7_6_tied) instead of a bare WorkingScheme; tail T chosen before theta (uniform closure). Bounded-mark (Def 7.7) generalization not stated. Blocked on infra_78_mixed_level_isolation (stubs in AEC/Section7/MixedLevel.lean). AUDIT NOTE (cycle 64, no statement change): paper 'Proposition 7.8. Let lambda be a sufficiently closed eligible level, let X be an object there, and let p = tp(b/X) be a finite-tuple type. For every infinite theta < lambda there is a same-level extension X <= U containing a realization of p such that tp(b, c/X) is isolated relative to b for every c in U with |c| <= theta.' Types are Theorem 6.6's tp(v/A; B) for arrows A -> B0, B1 (identification in an amalgam over A), with no restriction on the level of B; so the Lean p with any host level >= lambda matches the English as written. Its proof for hosts above lambda uses the cross-level identification the paper takes from Theorem 6.6, whose Lean form (infra_78_cross_level_galois / infra_612_galois_trans_cross_level, via infra_78_tuple_amalgam_large) is unverified. The case p.nu = lambda is infra_78_matrix_assembly_level. Cycle 66: the case p.nu = lambda is proved (infra_78_matrix_assembly_level, sorry-free); proposition_7_8 unchanged and still sorry.",
    "restated": true
   },
   {
@@ -642,7 +642,7 @@
    "file": "AEC/Section7/Results.lean",
    "status": "done",
    "blocker": null,
-   "detail": "DONE cycle 72: theorem_7_9 := infra_79_of_existence P (infra_79_existence P); no sorry; axioms propext, Classical.choice, Quot.sound. Statement = the cycle-68 audited English form (existence clause + embedding clause into an ambient at any eligible level >= mu); the paper's \"more generally ... bounded marginal satisfying Definition 7.7\" sentence is the soft hypothesis infra_78_def77_bounded_marks, treated exactly as for proposition_7_8. Cycle 71: theorem_7_9 = infra_79_of_existence (infra_79_existence_of_parts P <infra_79_tail P, ?_>); the one sorry is exactly infra_79_retraction_pair_statement. Cycle 70: existence clause split; theorem_7_9 = infra_79_of_existence (infra_79_existence_of_parts P ?_) with the one sorry standing for infra_79_tail AND infra_79_retraction_pair. Cycle 69: infra_79_primeness_mixed DONE, so theorem_7_9 = infra_79_of_existence applied to infra_79_existence_statement (the only open part; one sorry). Blocked (cycle 68 audit + split). Statement audit vs English ('At sufficiently closed eligible levels, every finite-tuple type p = tp(b/X) has an all-dominated realization: there is Y >= X all-dominated over X + b realizing p. More generally this holds for a bounded marginal satisfying Definition 7.7. An all-dominated realization embeds over X, b into any actual ambient containing a realization of that type, with the mixed-level conventions of Proposition 7.5.'): the Phase 3.1 Lean form omitted the embedding clause; RESTATED cycle 68 to existence AND (every all-dominated realization embeds over X, b into any ambient N at any eligible level nu >= mu containing a realization of p). The bounded-marginal generalization is a paper hypothesis (infra_78_def77_bounded_marks, soft), as for proposition_7_8. Full claim = infra_79_existence (open) + infra_79_primeness_same_level (done) + infra_79_primeness_mixed (open) + infra_79_assemble (done). Previous: Open (cycle 67): every hard dep done (proposition_7_8 done cycle 67, lemma_6_17). RESTATED (grokbot_01 Phase 3.1), open with sorry: over SingleModelData (was bare WorkingScheme, underhypothesized). Omitted: bounded-mark generalization, primeness clause. Blocked on proposition_7_8.",
+   "detail": "Cycle 95: restated to include 'More generally this holds for a bounded marginal satisfying Definition 7.7' (hypotheses #p.idx < μ and SatisfiesContinuityTied p) with existence and the mixed-level embedding clause; proved by infra_79_existence_general + bounded primeness. | DONE cycle 72: theorem_7_9 := infra_79_of_existence P (infra_79_existence P); no sorry; axioms propext, Classical.choice, Quot.sound. Statement = the cycle-68 audited English form (existence clause + embedding clause into an ambient at any eligible level >= mu); the paper's \"more generally ... bounded marginal satisfying Definition 7.7\" sentence is the soft hypothesis infra_78_def77_bounded_marks, treated exactly as for proposition_7_8. Cycle 71: theorem_7_9 = infra_79_of_existence (infra_79_existence_of_parts P <infra_79_tail P, ?_>); the one sorry is exactly infra_79_retraction_pair_statement. Cycle 70: existence clause split; theorem_7_9 = infra_79_of_existence (infra_79_existence_of_parts P ?_) with the one sorry standing for infra_79_tail AND infra_79_retraction_pair. Cycle 69: infra_79_primeness_mixed DONE, so theorem_7_9 = infra_79_of_existence applied to infra_79_existence_statement (the only open part; one sorry). Blocked (cycle 68 audit + split). Statement audit vs English ('At sufficiently closed eligible levels, every finite-tuple type p = tp(b/X) has an all-dominated realization: there is Y >= X all-dominated over X + b realizing p. More generally this holds for a bounded marginal satisfying Definition 7.7. An all-dominated realization embeds over X, b into any actual ambient containing a realization of that type, with the mixed-level conventions of Proposition 7.5.'): the Phase 3.1 Lean form omitted the embedding clause; RESTATED cycle 68 to existence AND (every all-dominated realization embeds over X, b into any ambient N at any eligible level nu >= mu containing a realization of p). The bounded-marginal generalization is a paper hypothesis (infra_78_def77_bounded_marks, soft), as for proposition_7_8. Full claim = infra_79_existence (open) + infra_79_primeness_same_level (done) + infra_79_primeness_mixed (open) + infra_79_assemble (done). Previous: Open (cycle 67): every hard dep done (proposition_7_8 done cycle 67, lemma_6_17). RESTATED (grokbot_01 Phase 3.1), open with sorry: over SingleModelData (was bare WorkingScheme, underhypothesized). Omitted: bounded-mark generalization, primeness clause. Blocked on proposition_7_8.",
    "restated": true
   },
   {
@@ -2418,10 +2418,10 @@
    "label": "Def 7.7 for bounded marks at small cofinality (paper hypothesis of the general Prop 7.8)",
    "section": 7,
    "file": null,
-   "status": "open",
+   "status": "done",
    "blocker": null,
    "hypothesis_only": true,
-   "detail": "Open (board-only; PAPER HYPOTHESIS, not a theorem of the paper). Prop 7.8's 'more general' form assumes the bounded mark b satisfies Definition 7.7 (continuity of the marked marginal over chain unions). Proved instances: |b| < cf delta, in particular all finite marks (infra_78_limit_invariant5, via Prop 6.13). For |b| >= cf delta the paper gives no proof ('This will let us identify exactly where the proof for a finite mark must be supplemented for a long independent list'). Not on the path of the Lean proposition_7_8 (Finite p.idx). To be formalized as an explicit hypothesis if the bounded-mark generalization of Prop 7.8 / Theorem 7.9 is ever stated; do not try to prove it unconditionally. | Cycle 93: not needed by Thm 7.13(3) (Def 7.7 for product-independent lists is 7.13(2), proved). | Cycle 94: formalized as the explicit hypothesis SatisfiesContinuityTied p of infra_78_general and infra_79_general (both proved); Thm 7.13(3) gets it from 7.13(2). The hard edge to infra_713_realize is historical (realize is proved without assuming it)."
+   "detail": "RESOLVED cycle 95: as the English states, Definition 7.7 is a hypothesis of the 'more generally' clauses of Prop 7.8 and Thm 7.9 (now conjuncts of proposition_7_8 / theorem_7_9, hypothesis SatisfiesContinuityTied p); Thm 7.13 carries no such hypothesis: clause (3) gets Def 7.7 from clause (2) (infra_713_realize_of_general uses infra_713_continuity). Not proved unconditionally (the paper does not claim it). | Open (board-only; PAPER HYPOTHESIS, not a theorem of the paper). Prop 7.8's 'more general' form assumes the bounded mark b satisfies Definition 7.7 (continuity of the marked marginal over chain unions). Proved instances: |b| < cf delta, in particular all finite marks (infra_78_limit_invariant5, via Prop 6.13). For |b| >= cf delta the paper gives no proof ('This will let us identify exactly where the proof for a finite mark must be supplemented for a long independent list'). Not on the path of the Lean proposition_7_8 (Finite p.idx). To be formalized as an explicit hypothesis if the bounded-mark generalization of Prop 7.8 / Theorem 7.9 is ever stated; do not try to prove it unconditionally. | Cycle 93: not needed by Thm 7.13(3) (Def 7.7 for product-independent lists is 7.13(2), proved). | Cycle 94: formalized as the explicit hypothesis SatisfiesContinuityTied p of infra_78_general and infra_79_general (both proved); Thm 7.13(3) gets it from 7.13(2). The hard edge to infra_713_realize is historical (realize is proved without assuming it)."
   },
   {
    "id": "infra_78_matrix_recursion",
@@ -4078,6 +4078,24 @@
    "status": "done",
    "blocker": null,
    "detail": "PROVED cycle 94 (axioms clean): one marked pair U at the level; each base (M i).X ≅ U.X by categoricity; infra_82_pair_extend_same_level. Not lemma_8_5 itself (arbitrary WorkingScheme). AUDIT: the Lean lemma_8_5 has no chain hypothesis and no union clause (English: the union of an increasing chain of total size the level is a marked pair, plus the common-upper-bound clause into a larger eligible level); for P.scheme the Lean form is a triviality of categoricity, so it is much weaker than the English. Restatement needed (tracked here)."
+  },
+  {
+   "id": "infra_79_existence_general",
+   "label": "Thm 7.9 general existence, any host level",
+   "section": 7,
+   "file": "AEC/Section7/Prop78General.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "PROVED cycle 95 (axioms clean): level copy + infra_78_satisfiesContinuity_congr + infra_79_existence_at_bounded + cross-level transitivity."
+  },
+  {
+   "id": "infra_79_primeness_mixed_bounded",
+   "label": "Thm 7.9 mixed-level primeness for a bounded mark",
+   "section": 7,
+   "file": "AEC/Section7/Prop78General.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "PROVED cycle 95 (axioms clean): port of infra_79_primeness_mixed with |p| ≤ θ."
   }
  ],
  "edges": [
@@ -8053,8 +8071,23 @@
    "from": "infra_85_lemma_8_5_single",
    "to": "lemma_8_5",
    "kind": "hard"
+  },
+  {
+   "from": "infra_79_existence_general",
+   "to": "theorem_7_9",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_79_primeness_mixed_bounded",
+   "to": "theorem_7_9",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_78_general",
+   "to": "proposition_7_8",
+   "kind": "hard"
   }
  ],
- "doneCount": 404,
+ "doneCount": 407,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

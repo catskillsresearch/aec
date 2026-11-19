@@ -221,7 +221,9 @@ every `c ∈ U` with `|c| ≤ θ`. The closure requirements are uniform (do not 
 `SingleModelData` (the package on which Sections 6-7 are developed: `theorem_6_10`,
 `proposition_6_13`, `proposition_7_3_uniform`, `lemma_7_6_tied`), instead of a bare
 `WorkingScheme` with no working-package hypotheses. The tail `T` is chosen before `θ` (uniform
-closure). The general bounded-mark form (marks satisfying Definition 7.7) is not stated.
+closure). Cycle 95: the general bounded-mark form ("More generally the assertion holds for a
+bounded mark b satisfying Definition 7.7, with |b| ≤ θ") is the second conjunct, proved by
+`infra_78_general`; Definition 7.7 (`SatisfiesContinuityTied`) is the English hypothesis.
 
 **Proved (cycle 67).** The tail is `infra_78_closedTail P`; the conclusion is
 `infra_78_marginal_general_level` (`AEC/Section7/GeneralLevel.lean`): a level-`λ` copy of `p`
@@ -232,19 +234,34 @@ theorem proposition_7_8 {K : AbstractElementaryClass.{u}} (P : SingleModelData K
     ∃ T, ∃ hT : Tail P.eligible T,
       ∀ μ (hμ : μ ∈ T) (X : P.scheme.Object μ (Tail.mem hT hμ))
         (p : TupleOver K oneVertexShape P.scheme (Tail.mem hT hμ) X) (θ : Cardinal.{u}),
-        Finite p.idx → aleph0 ≤ θ → θ < μ →
-        ∃ (U : P.scheme.Object μ (Tail.mem hT hμ))
-          (f : SystemArrow K oneVertexShape (P.scheme.asSystem _ X) (P.scheme.asSystem _ U))
-          (hf : P.scheme.permitted (X := X) (Y := U) f)
-          (b : p.idx → Occurrence K oneVertexShape (P.scheme.asSystem _ U)) (e : p.idx ≃ p.idx),
-          SameGaloisType p (asTuple f hf b) e (Equiv.refl p.idx) ∧
-          ∀ {cIdx : Type u} (c : cIdx → Occurrence K oneVertexShape (P.scheme.asSystem _ U)),
-            #cIdx ≤ θ →
-            IsRelativelyIsolated (uIdx := p.idx) (cIdx := cIdx)
-              (asTuple f hf (seqJoint b c)) (Equiv.refl (p.idx ⊕ cIdx)) := by
-  refine ⟨infra_78_closedTail P, infra_78_closedTail_tail P, fun μ hμ X p θ hfin hθ hθμ => ?_⟩
-  obtain ⟨U, f, hf, b, hgal, hiso⟩ := infra_78_marginal_general_level P μ hμ X p θ hfin hθ hθμ
-  exact ⟨U, f, hf, b, Equiv.refl _, hgal, hiso⟩
+        (Finite p.idx → aleph0 ≤ θ → θ < μ →
+          ∃ (U : P.scheme.Object μ (Tail.mem hT hμ))
+            (f : SystemArrow K oneVertexShape (P.scheme.asSystem _ X) (P.scheme.asSystem _ U))
+            (hf : P.scheme.permitted (X := X) (Y := U) f)
+            (b : p.idx → Occurrence K oneVertexShape (P.scheme.asSystem _ U)) (e : p.idx ≃ p.idx),
+            SameGaloisType p (asTuple f hf b) e (Equiv.refl p.idx) ∧
+            ∀ {cIdx : Type u} (c : cIdx → Occurrence K oneVertexShape (P.scheme.asSystem _ U)),
+              #cIdx ≤ θ →
+              IsRelativelyIsolated (uIdx := p.idx) (cIdx := cIdx)
+                (asTuple f hf (seqJoint b c)) (Equiv.refl (p.idx ⊕ cIdx))) ∧
+        -- "More generally the assertion holds for a bounded mark b satisfying Definition 7.7,
+        -- with |b| ≤ θ."
+        (#p.idx ≤ θ → SatisfiesContinuityTied p → aleph0 ≤ θ → θ < μ →
+          ∃ (U : P.scheme.Object μ (Tail.mem hT hμ))
+            (f : SystemArrow K oneVertexShape (P.scheme.asSystem _ X) (P.scheme.asSystem _ U))
+            (hf : P.scheme.permitted (X := X) (Y := U) f)
+            (b : p.idx → Occurrence K oneVertexShape (P.scheme.asSystem _ U)),
+            SameGaloisType p (asTuple f hf b) (Equiv.refl p.idx) (Equiv.refl p.idx) ∧
+            ∀ {cIdx : Type u} (c : cIdx → Occurrence K oneVertexShape (P.scheme.asSystem _ U)),
+              #cIdx ≤ θ →
+              IsRelativelyIsolated (uIdx := p.idx) (cIdx := cIdx)
+                (asTuple f hf (seqJoint b c)) (Equiv.refl (p.idx ⊕ cIdx))) := by
+  refine ⟨infra_78_closedTail P, infra_78_closedTail_tail P, fun μ hμ X p θ => ⟨?_, ?_⟩⟩
+  · intro hfin hθ hθμ
+    obtain ⟨U, f, hf, b, hgal, hiso⟩ := infra_78_marginal_general_level P μ hμ X p θ hfin hθ hθμ
+    exact ⟨U, f, hf, b, Equiv.refl _, hgal, hiso⟩
+  · intro hidx hp hθ hθμ
+    exact infra_78_general P μ hμ X p θ hidx hp hθ hθμ
 
 /-- **Theorem 7.9.** At sufficiently closed eligible levels, every finite-tuple type
 `p = tp(b/X)` has an all-dominated realization: there is `Y ≥ X` all-dominated over `X + b`
@@ -255,8 +272,10 @@ containing a realization of that type, with the mixed-level conventions of Propo
 **Statement (restated, grokbot_01 Phase 3.1; cycle 68 audit):** over `SingleModelData`
 (the package on which Sections 6-7 are developed) instead of a bare `WorkingScheme`; `p` may be
 hosted at any level. Cycle 68 restored the paper's embedding (primeness) clause, which the Phase
-3.1 form had omitted. The "more generally ... bounded marginal satisfying Definition 7.7" form is
-a paper hypothesis tracked by `infra_78_def77_bounded_marks` (as for `proposition_7_8`).
+3.1 form had omitted. Cycle 95: the "More generally this holds for a bounded marginal satisfying
+Definition 7.7" form is the second conjunct (existence `infra_79_existence_general`, primeness
+`infra_79_primeness_same_level_bounded` / `infra_79_primeness_mixed_bounded`); Definition 7.7
+(`SatisfiesContinuityTied`) is the English hypothesis, and boundedness is `|p| < μ`.
 Split (`AEC/Section7/Theorem79.lean`): `infra_79_existence_statement` (open),
 `infra_79_primeness_same_level` (proved), `infra_79_primeness_mixed` (proved, cycle 69),
 `infra_79_assemble` (proved). The existence clause is split further
@@ -268,7 +287,7 @@ theorem theorem_7_9 {K : AbstractElementaryClass.{u}} (P : SingleModelData K) :
     ∃ T, ∃ hT : Tail P.eligible T,
       ∀ μ (hμ : μ ∈ T) (X : P.scheme.Object μ (Tail.mem hT hμ))
         (p : TupleOver K oneVertexShape P.scheme (Tail.mem hT hμ) X),
-        Finite p.idx →
+        (Finite p.idx →
         (∃ (Y : P.scheme.Object μ (Tail.mem hT hμ))
           (f : SystemArrow K oneVertexShape (P.scheme.asSystem _ X) (P.scheme.asSystem _ Y))
           (hf : P.scheme.permitted (X := X) (Y := Y) f)
@@ -292,8 +311,57 @@ theorem theorem_7_9 {K : AbstractElementaryClass.{u}} (P : SingleModelData K) :
             ∃ h : SystemArrow K oneVertexShape (P.scheme.asSystem _ Y) (P.scheme.asSystem hν N),
               P.scheme.permitted (X := Y) (Y := N) h ∧
               SystemArrow.comp f h = g ∧
-              ∀ i, h.onVertex (b i).1 (b i).2 = (b' i).2 := by
-  exact infra_79_of_existence P (infra_79_existence P)
+              ∀ i, h.onVertex (b i).1 (b i).2 = (b' i).2) ∧
+        -- "More generally this holds for a bounded marginal satisfying Definition 7.7."
+        (#p.idx < μ → SatisfiesContinuityTied p →
+        (∃ (Y : P.scheme.Object μ (Tail.mem hT hμ))
+          (f : SystemArrow K oneVertexShape (P.scheme.asSystem _ X) (P.scheme.asSystem _ Y))
+          (hf : P.scheme.permitted (X := X) (Y := Y) f)
+          (b : p.idx → Occurrence K oneVertexShape (P.scheme.asSystem _ Y)),
+          AllDominated f hf p.idx b ∧
+          SameGaloisType p (asTuple f hf b) (Equiv.refl p.idx) (Equiv.refl p.idx)) ∧
+        ∀ (Y : P.scheme.Object μ (Tail.mem hT hμ))
+          (f : SystemArrow K oneVertexShape (P.scheme.asSystem _ X) (P.scheme.asSystem _ Y))
+          (hf : P.scheme.permitted (X := X) (Y := Y) f)
+          (b : p.idx → Occurrence K oneVertexShape (P.scheme.asSystem _ Y)),
+          AllDominated f hf p.idx b →
+          SameGaloisType p (asTuple f hf b) (Equiv.refl p.idx) (Equiv.refl p.idx) →
+          ∀ ν (hν : ν ∈ P.eligible) (N : P.scheme.Object ν hν)
+            (g : SystemArrow K oneVertexShape (P.scheme.asSystem _ X) (P.scheme.asSystem hν N))
+            (hg : P.scheme.permitted (X := X) (Y := N) g)
+            (b' : p.idx → Occurrence K oneVertexShape (P.scheme.asSystem hν N)),
+            μ ≤ ν →
+            SameGaloisType p (⟨ν, hν, N, g, hg, p.idx, b'⟩ :
+              TupleOver K oneVertexShape P.scheme (Tail.mem hT hμ) X)
+              (Equiv.refl p.idx) (Equiv.refl p.idx) →
+            ∃ h : SystemArrow K oneVertexShape (P.scheme.asSystem _ Y) (P.scheme.asSystem hν N),
+              P.scheme.permitted (X := Y) (Y := N) h ∧
+              SystemArrow.comp f h = g ∧
+              ∀ i, h.onVertex (b i).1 (b i).2 = (b' i).2) := by
+  classical
+  have htail := infra_79_tail P
+  have hT : Tail P.eligible (infra_78_closedTail P ∩ infra_615_closed P) :=
+    ⟨fun μ hμ => hμ.1.1, fun κ => by
+      obtain ⟨μ, hκμ, h1, h2⟩ := htail κ
+      exact ⟨μ, hκμ, h1, h2⟩⟩
+  refine ⟨_, hT, fun μ hμ X p => ⟨fun hfin => ⟨?_, ?_⟩, fun hidx hp => ⟨?_, ?_⟩⟩⟩
+  · exact infra_79_existence_at P ⟨htail, infra_79_retraction_pair P⟩ hμ X p hfin
+  · intro Y f hf b hAll hpg ν hν N g hg b' hμν hN
+    rcases hμν.lt_or_eq with hlt | heq
+    · exact infra_79_primeness_mixed P μ (Tail.mem hT hμ) X p hfin Y f hf b hAll hpg ν hν N g hg
+        b' hlt hN
+    · subst heq
+      exact infra_79_primeness_same_level (Tail.mem hT hμ) X p hfin Y f hf b hAll hpg N g hg b' hN
+  · exact infra_79_existence_general P hμ X p hidx hp
+  · intro Y f hf b hAll hpg ν hν N g hg b' hμν hN
+    have hθ : ℵ₀ ≤ max #p.idx ℵ₀ := le_max_right _ _
+    have hθμ : max #p.idx ℵ₀ < μ := max_lt hidx (P.aleph0_lt (Tail.mem hT hμ))
+    rcases hμν.lt_or_eq with hlt | heq
+    · exact infra_79_primeness_mixed_bounded P (Tail.mem hT hμ) X p _ hθ hθμ (le_max_left _ _)
+        Y f hf b hAll hpg ν hν N g hg b' hN
+    · subst heq
+      exact infra_79_primeness_same_level_bounded (Tail.mem hT hμ) X p _ hθ hθμ (le_max_left _ _)
+        Y f hf b hAll hpg N g hg b' hN
 
 /-- **Lemma 7.11** (tied, restated cycle 73). Suppose `(M_i)_{i ≤ δ}` is an all-dominated-increment
 chain over `A` for finite tuples `(b_i)_{i < δ}` (`TiedListWitnessingChain`, Definition 7.10 with

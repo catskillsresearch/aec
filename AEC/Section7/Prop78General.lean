@@ -1856,4 +1856,100 @@ theorem infra_713_realize (P : SingleModelData K) : infra_713_realize_statement 
   · exact infra_713_realize_finite P hμ hl X L hfin
   · exact infra_713_realize_infinite P hμ hl X L hPI hS hfin
 
+/-- **Definition 7.7 is invariant under Galois type (proved, cycle 95).** -/
+theorem infra_78_satisfiesContinuity_congr {P : SingleModelData K} {μ : Cardinal.{u}}
+    {hμ : μ ∈ P.eligible} {A : P.scheme.Object μ hμ} {p p' : TupleOver K oneVertexShape P.scheme hμ A}
+    (e2 : p'.idx ≃ p.idx) (h : SameGaloisType p p' (Equiv.refl p.idx) e2) (hidx : #p.idx < μ)
+    (hp : SatisfiesContinuityTied p) : SatisfiesContinuityTied p' := by
+  obtain ⟨T, hT, hTC, H⟩ := hp
+  exact ⟨T, hT, hTC, fun μ' hμ' hle => infra_78_def77_at_congr e2 h hidx (H μ' hμ' hle)⟩
+
+/-- **Theorem 7.9 existence for a bounded marginal satisfying Definition 7.7, any host level
+(proved, cycle 95).** As `infra_79_existence_at_bounded` without `p.ν = μ`: a level-`μ` copy `p'`
+(`infra_612_exists_level_copy`), Definition 7.7 transported to it
+(`infra_78_satisfiesContinuity_congr`), and cross-level Galois transitivity `p ~ p' ~ b`. -/
+theorem infra_79_existence_general (P : SingleModelData K) {μ : Cardinal.{u}}
+    (hμ : μ ∈ infra_78_closedTail P ∩ infra_615_closed P) (X : P.scheme.Object μ hμ.1.1)
+    (p : TupleOver K oneVertexShape P.scheme hμ.1.1 X) (hidx : #p.idx < μ)
+    (hp : SatisfiesContinuityTied p) :
+    ∃ (Y : P.scheme.Object μ hμ.1.1)
+      (f : SystemArrow K oneVertexShape (P.scheme.asSystem _ X) (P.scheme.asSystem _ Y))
+      (hf : P.scheme.permitted (X := X) (Y := Y) f)
+      (b : p.idx → Occurrence K oneVertexShape (P.scheme.asSystem _ Y)),
+      AllDominated f hf p.idx b ∧
+      SameGaloisType p (asTuple f hf b) (Equiv.refl p.idx) (Equiv.refl p.idx) := by
+  classical
+  have hlt : ℵ₀ < μ := P.aleph0_lt hμ.1.1
+  obtain ⟨host, incl, hincl, val, h12⟩ := infra_612_exists_level_copy p hidx.le
+  let p' : TupleOver K oneVertexShape P.scheme hμ.1.1 X :=
+    ⟨μ, hμ.1.1, host, incl, hincl, p.idx, val⟩
+  have hp' : SatisfiesContinuityTied p' :=
+    infra_78_satisfiesContinuity_congr (p := p) (p' := p') (Equiv.refl _) h12 hidx hp
+  obtain ⟨Y, f, hf, b, hAll, hS⟩ := infra_79_existence_at_bounded P hμ X p' rfl hidx hp'
+  refine ⟨Y, f, hf, b, hAll, ?_⟩
+  let σ : Cardinal.{u} := max #p.idx ℵ₀
+  have hσ : ℵ₀ ≤ σ := le_max_right _ _
+  have hσμ : σ < μ := max_lt hidx hlt
+  have hrec : μ ∈ recursionClosedLevels P σ := (hμ.1.2.1 σ hσ hσμ).1
+  have h := infra_612_galois_trans_cross_level_right_base (t1 := p) (t2 := p')
+    (t3 := asTuple f hf b) (e12 := Equiv.refl p.idx) (e32 := Equiv.refl p.idx) h12 hS
+    σ hσ hσμ (le_max_left _ _) hrec rfl rfl
+  simp only [Equiv.refl_trans] at h
+  exact h
+
+/-- **Theorem 7.9 mixed-level primeness for a bounded mark (proved, cycle 95).** As
+`infra_79_primeness_mixed` with `|p| ≤ θ < μ` (`θ ≥ ℵ₀`) in place of finiteness. -/
+theorem infra_79_primeness_mixed_bounded (P : SingleModelData K) {μ : Cardinal.{u}}
+    (hμ : μ ∈ P.eligible) (X : P.scheme.Object μ hμ)
+    (p : TupleOver K oneVertexShape P.scheme hμ X) (θ : Cardinal.{u}) (hθ : ℵ₀ ≤ θ) (hθμ : θ < μ)
+    (hidx : #p.idx ≤ θ)
+    (Y : P.scheme.Object μ hμ)
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ Y))
+    (hf : P.scheme.permitted (X := X) (Y := Y) f)
+    (b : p.idx → Occurrence K oneVertexShape (P.scheme.asSystem hμ Y))
+    (hAll : AllDominated f hf p.idx b)
+    (hp : SameGaloisType p (asTuple f hf b) (Equiv.refl p.idx) (Equiv.refl p.idx))
+    (ν : Cardinal.{u}) (hν : ν ∈ P.eligible) (N : P.scheme.Object ν hν)
+    (g : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hν N))
+    (hg : P.scheme.permitted (X := X) (Y := N) g)
+    (b' : p.idx → Occurrence K oneVertexShape (P.scheme.asSystem hν N))
+    (hN : SameGaloisType p (⟨ν, hν, N, g, hg, p.idx, b'⟩ :
+      TupleOver K oneVertexShape P.scheme hμ X) (Equiv.refl p.idx) (Equiv.refl p.idx)) :
+    ∃ h : SystemArrow K oneVertexShape (P.scheme.asSystem hμ Y) (P.scheme.asSystem hν N),
+      P.scheme.permitted (X := Y) (Y := N) h ∧
+      SystemArrow.comp f h = g ∧
+      ∀ i, h.onVertex (b i).1 (b i).2 = (b' i).2 := by
+  let t : TupleOver K oneVertexShape P.scheme hμ X := ⟨ν, hν, N, g, hg, p.idx, b'⟩
+  obtain ⟨N0, incl0, hincl0, val0, r, _hr, hcomp, hval⟩ :=
+    infra_612_exists_level_copy_arrow t (hidx.trans hθμ.le)
+  let c : TupleOver K oneVertexShape P.scheme hμ X := ⟨μ, hμ, N0, incl0, hincl0, p.idx, val0⟩
+  have hct : SameGaloisType c t (Equiv.refl p.idx) (Equiv.refl p.idx) := by
+    refine ⟨ν, hν, N, r, SystemArrow.refl _, trivial, trivial, ?_, ?_⟩
+    · intro v
+      have h := congrArg (fun a => SystemArrow.onVertex a v) hcomp
+      refine DFunLike.ext _ _ fun x => ?_
+      have hx := DFunLike.congr_fun h x
+      exact hx
+    · intro i
+      have hv : (val0 i).1 = (b' i).1 := Subsingleton.elim _ _
+      change (⟨(val0 i).1, r.onVertex (val0 i).1 (val0 i).2⟩ :
+          Occurrence K oneVertexShape (P.scheme.asSystem hν N)) = ⟨(b' i).1, (b' i).2⟩
+      rw [hval]
+      rw [hv]
+  have h1 : SameGaloisType t (asTuple f hf b) (Equiv.refl p.idx) (Equiv.refl p.idx) :=
+    infra_612_galois_trans_last_base (t1 := t) (t2 := p) (t3 := asTuple f hf b)
+      (e12 := Equiv.refl p.idx) (e32 := Equiv.refl p.idx) hN.symm hp θ hθ hθμ hidx rfl
+  have h2 : SameGaloisType c (asTuple f hf b) (Equiv.refl p.idx) (Equiv.refl p.idx) :=
+    infra_612_galois_trans_last_base (t1 := c) (t2 := t) (t3 := asTuple f hf b)
+      (e12 := Equiv.refl p.idx) (e32 := Equiv.refl p.idx) hct h1 θ hθ hθμ hidx rfl
+  obtain ⟨h0, _hh0, hcomp0, hb0⟩ := infra_75_embed hμ X Y N0 f hf incl0 hincl0 b val0
+    (hidx.trans_lt hθμ) h2.symm hAll
+  refine ⟨SystemArrow.comp h0 r, trivial, ?_, ?_⟩
+  · rw [← SystemArrow.comp_assoc, hcomp0]
+    exact hcomp
+  · intro i
+    change r.onVertex (b i).1 (h0.onVertex (b i).1 (b i).2) = (b' i).2
+    rw [hb0 i]
+    exact hval _ i
+
 end AEC
