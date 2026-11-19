@@ -258,5 +258,53 @@ theorem infra_83_isolation_of_matched_tuple (P : SingleModelData K) {ν l : Card
     (hlT.2.1 σ hσ (hσν.trans_le hνl)) hνl toA htoA (asTuple incl' hincl' d')
     (asTuple incl hincl dU) (Equiv.refl _) (Equiv.refl _) rfl rfl (le_max_right _ _) hExt hT hIso
 
+
+/-- **All-domination from matched bounded tuples (proved).** Paper (Lemma 8.3, "the actual sample
+pair is all-dominated" at bounded arity): if for every bounded tuple `c` of `Y'` there is a pair
+`A ≤ U` at a closed level `l ≥ ν` (an actual sample pair) with an arrow `toA : X' → A`, `ν`
+retractions `r_i : U → A` almost fixing `A`, and a tuple `u* = dU` of `U` identified with `(b, c)`
+over `X'` (`SameGaloisType` along `toA`) whose retraction images lie in `toA[X']` and whose type
+over `A` is isolated relative to its first part, then `Y'` is all-dominated over `X' + b`.
+The matching data may vary with `c` (bounded lists; no arrow of the whole `Y'`). -/
+theorem infra_83_dominated_of_matched_tuples (P : SingleModelData K) {ν : Cardinal.{u}}
+    (hνC : ν ∈ infra_615_closed P) (hνT : ν ∈ infra_78_closedTail P)
+    {X' Y' : P.scheme.Object ν hνC.1}
+    (incl' : SystemArrow K oneVertexShape (P.scheme.asSystem hνC.1 X')
+      (P.scheme.asSystem hνC.1 Y'))
+    (hincl' : P.scheme.permitted (X := X') (Y := Y') incl')
+    {bIdx : Type u} [Finite bIdx]
+    (b : bIdx → Occurrence K oneVertexShape (P.scheme.asSystem hνC.1 Y'))
+    (hmatch : ∀ (cIdx : Type u) (c : cIdx → Occurrence K oneVertexShape (P.scheme.asSystem hνC.1 Y')),
+      #cIdx < ν →
+      ∃ (l : Cardinal.{u}) (hlC : l ∈ infra_615_closed P) (_ : l ∈ infra_78_closedTail P)
+        (_ : ν ≤ l) (A U : P.scheme.Object l hlC.1)
+        (toA : SystemArrow K oneVertexShape (P.scheme.asSystem hνC.1 X')
+          (P.scheme.asSystem hlC.1 A))
+        (htoA : P.scheme.permitted (X := X') (Y := A) toA)
+        (incl : SystemArrow K oneVertexShape (P.scheme.asSystem hlC.1 A)
+          (P.scheme.asSystem hlC.1 U))
+        (hincl : P.scheme.permitted (X := A) (Y := U) incl)
+        (ι : Type u) (r : ι → SystemArrow K oneVertexShape
+          (P.scheme.asSystem hlC.1 U) (P.scheme.asSystem hlC.1 A))
+        (_ : #ι = ν)
+        (_ : ∀ a : Occurrence K oneVertexShape (P.scheme.asSystem hlC.1 A),
+          Finite {i : ι // (r i).onVertex a.1 (incl.onVertex a.1 a.2) ≠ a.2})
+        (dU : bIdx ⊕ cIdx → Occurrence K oneVertexShape (P.scheme.asSystem hlC.1 U)),
+        (∀ i s, ∃ y, toA.onVertex (dU s).1 y = (r i).onVertex (dU s).1 (dU s).2) ∧
+        SameGaloisType (asTuple incl' hincl' (seqJoint b c))
+          ((asTuple incl hincl dU).restrict toA htoA) (Equiv.refl _) (Equiv.refl _) ∧
+        IsRelativelyIsolated (uIdx := bIdx) (cIdx := cIdx) (asTuple incl hincl dU)
+          (Equiv.refl _)) :
+    AllDominated incl' hincl' bIdx b := by
+  intro cIdx c hc
+  obtain ⟨l, hlC, hlT, hνl, A, U, toA, htoA, incl, hincl, ι, r, hιcard, halmost, dU, himg, hExt,
+    hIso⟩ := hmatch cIdx c hc
+  have hν0 : ℵ₀ ≤ ν := P.aleph0_le hνC.1
+  have hd : #(bIdx ⊕ cIdx) < ν := by
+    rw [Cardinal.mk_sum, Cardinal.lift_id, Cardinal.lift_id]
+    exact Cardinal.add_lt_of_lt hν0 ((Cardinal.lt_aleph0_of_finite bIdx).trans_le hν0) hc
+  exact infra_83_isolation_of_matched_tuple P hνC hlC hνT hlT hνl A U X' Y' toA htoA incl hincl
+    incl' hincl' r hιcard halmost (seqJoint b c) dU hd himg hExt hIso
+
 end
 end AEC
