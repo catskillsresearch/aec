@@ -258,6 +258,7 @@ public import AEC.Section8.HullColorsFormula83
 public import AEC.Section8.Lemma83SampleLike
 public import AEC.Section8.Lemma83SampleLikeY
 public import AEC.Section8.Lemma83RetGood
+public import AEC.Section8.Lemma83TupleDescent
 public import AEC.Section8.OrderColimit83
 public import AEC.Section8.Lemma84Single
 public import AEC.Section8.Results

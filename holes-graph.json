@@ -6967,6 +6967,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 159: proved."
+  },
+  {
+   "id": "infra_83_tied_from_retractions_tuple",
+   "label": "(7) for one tuple: if every retraction image r_i(d) of a tuple d of U lies in toA[A'], tp(d/A) is tied free over its restriction to A' (Lemma 6.11 mixed; no whole-object arrow)",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83TupleDescent.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 160: proved."
   }
  ],
  "edges": [
@@ -12807,8 +12816,13 @@
    "from": "infra_83_retr_majority",
    "to": "infra_83_bounded_arity_free",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_tied_from_retractions_tuple",
+   "to": "infra_83_bounded_arity_free",
+   "kind": "hard"
   }
  ],
- "doneCount": 706,
+ "doneCount": 707,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
