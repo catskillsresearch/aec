@@ -5284,6 +5284,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 103: Hull83.Hull (terms modulo equal value), hullEmb (into the sample), term_eq_iff_of_tp / rel_iff_of_tp, hullMapEmb (L-embedding along any position map g with tp(v') = tp(v o g)), hullMap_id, hullMap_comp, tp_witness, TpWit/wit, tpPiece/tpPieceMap (functorial: tpPieceMap_refl/_trans), tpPieceEmb, tp_pieces_exist. Axioms clean."
+  },
+  {
+   "id": "infra_83_hull_finpieces",
+   "label": "Lemma 8.3 proof: hull pieces of an expansion with vertex LS witnesses form FinPieces K",
+   "section": 8,
+   "file": "AEC/Section8/HullReduct83.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 103: Hull83.red/redEmb/redEquiv (reducts along phi : K.tau ->L L), HullStrong (reduct of every finite term hull strong in the sample: the vertex LS witnesses, as a hypothesis on the admitted class), hullMap_strong (coherence + iso invariance), tpFinPieces : FinPieces K. Axioms clean."
   }
  ],
  "edges": [
@@ -9959,8 +9968,13 @@
    "from": "infra_83_type_hull_pieces",
    "to": "infra_83_pair_pieces",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_hull_finpieces",
+   "to": "infra_83_pair_pieces",
+   "kind": "hard"
   }
  ],
- "doneCount": 523,
+ "doneCount": 524,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
