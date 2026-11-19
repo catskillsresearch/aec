@@ -676,4 +676,71 @@ theorem infra_83_mark_clause (P : SingleModelData K)
   · exact heq_of_eq (hFi (hm a.down))
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+open FirstOrder.Language
+
+set_option maxHeartbeats 3200000 in
+/-- **One bounded-list match from template-side piece data (proved assembly).** In ret-sample data
+(strong bijective `eX : F(J) → X`, strong `F : Y → F(Jp)` with `F ∘ incl ∘ eX = F(emb)`, a Cor 6.16
+family `R` with bijective codes and evaluation `G`), suppose the template piece `X' ≤ Y_u` comes
+with: a strong `ψ : X' → F(J₀)` and `e₀ : J₀ ↪o J`; a strong `gY : Y_u → F(Jp)` inside `F[M.Y]`
+agreeing on `X'` with `F(emb) ∘ F(e₀) ∘ ψ`; an `L₀`-embedding reading `gY` with `ret` read as `G`;
+the sort intersection on the piece (`gY x' = F(incl z) → x' ∈ X'`); and mark positions `m` read as
+the sample marks. Then there are `toA`, `h` and `τ` with the square, the mark clause and the count
+clause of `infra_83_marked_of_piece_arrows` for every tuple `d` whose mark part is `m`. -/
+theorem infra_83_one_match_of_piece (P : SingleModelData K)
+    {Pr : StationaryPrescription K oneVertexShape P.scheme} {M : MarkedPair K oneVertexShape P.scheme Pr}
+    {J Jp J0 : Type u} [LinearOrder J] [Nonempty J] [LinearOrder Jp] [Nonempty Jp]
+    [LinearOrder J0] [Nonempty J0] (emb : J ↪o Jp)
+    (eX : Language.Embedding K.τ (P.E.obj J).carrier
+      ((P.scheme.asSystem M.hμ M.X).obj PUnit.unit).carrier)
+    (F : Language.Embedding K.τ ((P.scheme.asSystem M.hμ M.Y).obj PUnit.unit).carrier
+      (P.E.obj Jp).carrier)
+    (hsurj : Function.Surjective eX) (hsX : K.Strong eX) (hsF : K.Strong F)
+    (hF : ∀ x, F (M.incl.onVertex PUnit.unit (eX x)) = P.E.map emb x)
+    (R : ApproximateRetraction K oneVertexShape P.scheme M.hμ M.X M.Y M.incl)
+    (code : R.index → (P.E.obj J).carrier) (hcode : Function.Bijective code)
+    (G : (P.E.obj Jp).carrier → (P.E.obj Jp).carrier → (P.E.obj Jp).carrier)
+    (heval : ∀ i y, G (P.E.map emb (code i)) (F y) =
+      F (M.incl.onVertex PUnit.unit ((R.retr i).onVertex PUnit.unit y)))
+    {ν : Cardinal.{u}} {hν : ν ∈ P.eligible} {X' Yu : P.scheme.Object ν hν}
+    (ψ : Language.Embedding K.τ ((P.scheme.asSystem hν X').obj PUnit.unit).carrier
+      (P.E.obj J0).carrier) (hψ : K.Strong ψ) (e0 : J0 ↪o J)
+    (inclu : SystemArrow K oneVertexShape (P.scheme.asSystem hν X') (P.scheme.asSystem hν Yu))
+    (gY : Language.Embedding K.τ ((P.scheme.asSystem hν Yu).obj PUnit.unit).carrier
+      (P.E.obj Jp).carrier) (hgY : K.Strong gY)
+    (hr : ∀ x, gY x ∈ Set.range F)
+    (hX : ∀ x, gY (inclu.onVertex PUnit.unit x) = P.E.map emb (P.E.map e0 (ψ x)))
+    {L₀ : FirstOrder.Language.{u, u}} [L₀.Structure ((P.scheme.asSystem hν Yu).obj PUnit.unit).carrier]
+    [L₀.Structure (P.E.obj Jp).carrier]
+    (mY : ((P.scheme.asSystem hν Yu).obj PUnit.unit).carrier ↪[L₀] (P.E.obj Jp).carrier)
+    (hmY : ∀ y, mY y = gY y)
+    (ret : L₀.Functions 2) (hret : ∀ a b, Structure.funMap ret ![a, b] = G a b)
+    (hmeet : ∀ (x' : ((P.scheme.asSystem hν Yu).obj PUnit.unit).carrier)
+      (z : ((P.scheme.asSystem M.hμ M.X).obj PUnit.unit).carrier),
+      gY x' = F (M.incl.onVertex PUnit.unit z) → ∃ y, x' = inclu.onVertex PUnit.unit y)
+    (m : Fin Pr.n → ((P.scheme.asSystem hν Yu).obj PUnit.unit).carrier)
+    (hm : ∀ k, gY (m k) = F (markY M k)) :
+    ∃ (toA : SystemArrow K oneVertexShape (P.scheme.asSystem hν X')
+        (P.scheme.asSystem M.hμ M.X))
+      (h : SystemArrow K oneVertexShape (P.scheme.asSystem hν Yu)
+        (P.scheme.asSystem M.hμ M.Y))
+      (τ : ULift.{u} (Fin Pr.n) ≃ M.bIdx),
+      SystemArrow.comp inclu h = SystemArrow.comp toA M.incl ∧
+      (∀ a : ULift.{u} (Fin Pr.n), h.mapOcc ⟨PUnit.unit, m a.down⟩ = M.b (τ a)) ∧
+      ∀ {idx : Type u} (d : idx → Occurrence K oneVertexShape (P.scheme.asSystem hν Yu)),
+        ν ≤ #{i : R.index // ∀ s, ∃ y, toA.onVertex (d s).1 y =
+          (R.retr i).onVertex (d s).1 (h.onVertex (d s).1 (d s).2)} := by
+  obtain ⟨toA, h, hsq, hh⟩ :=
+    infra_83_piece_match_arrows P emb eX F hsX hsF hF ψ hψ e0 inclu gY hgY hr hX
+  obtain ⟨τ, hτ⟩ := infra_83_mark_clause P F F.injective h m (fun k => by rw [hh, hm])
+  have hFi : Function.Injective (fun z => F (M.incl.onVertex PUnit.unit z)) :=
+    F.injective.comp (M.incl.onVertex PUnit.unit).injective
+  refine ⟨toA, h, τ, hsq, hτ, fun d => ?_⟩
+  exact infra_83_piece_count P eX hsurj emb F hF hFi R code hcode G heval inclu toA h hsq mY
+    (fun y => by rw [hmY, hh]) ret hret (fun x' z hxz => hmeet x' z (by rw [← hh]; exact hxz)) d
+end
+
 end AEC

@@ -7255,6 +7255,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 190: proved."
+  },
+  {
+   "id": "infra_83_one_match_of_piece",
+   "label": "One bounded-list match assembled from template-side piece data: from ret-sample data and a piece X' <= Y_u with strong psi : X' -> F(J0), strong gY : Y_u -> F(Jp) inside F[M.Y] agreeing on X', an L0 reading of gY, the sort intersection and mark positions read as markY, get toA, h, tau with the square, mark and count clauses",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PieceMatch.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 191: proved."
   }
  ],
  "edges": [
@@ -13255,8 +13264,13 @@
    "from": "infra_83_mark_clause",
    "to": "infra_83_bounded_list_match",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_one_match_of_piece",
+   "to": "infra_83_bounded_list_match",
+   "kind": "hard"
   }
  ],
- "doneCount": 737,
+ "doneCount": 738,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
