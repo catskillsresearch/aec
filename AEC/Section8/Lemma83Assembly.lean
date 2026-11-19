@@ -295,4 +295,46 @@ theorem infra_83_values_realize_of_cofinal (P : SingleModelData K)
   exact infra_83_values_realize_down P Pr X Y incl mk harr I (I ⊕ₗ μ.ord.ToType)
     (sumLexEmbedLeftIncl I _) hI hJ (H _ hJ hcard)
 
+/-- The Lemma 8.2 tail `infra_78_closedTail P ∩ infra_615_closed P` is a tail of eligible levels. -/
+theorem infra_83_closed_tail (P : SingleModelData K) :
+    Tail P.scheme.eligible (infra_78_closedTail P ∩ infra_615_closed P) :=
+  ⟨fun μ hμ => hμ.1.1, fun κ => by
+    obtain ⟨μ, hκμ, h1, h2⟩ := infra_79_tail P κ
+    exact ⟨μ, hκμ, h1, h2⟩⟩
+
+/-- **Lemma 8.3 (P.scheme) reduced to the marked-pair property of the constructed template.**
+For the pair template of `infra_83_pair_template_clauses` (some `F^b`, values `X_I ≤ Y_I`, marks
+`mk_I`, clauses (1)-(2) proved), `Lemma83Conclusion` holds as soon as, on the Lemma 8.2 tail,
+the values (R) realize `p_{X_I}` and (O) have onto prime arrows
+(`infra_83_conclusion_of_realizing_onto_values`). -/
+theorem infra_83_full_single_reduction (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) :
+    ∃ (F : TermTemplate K oneVertexShape.{u}.doubled)
+      (X Y : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
+        P.scheme.Object #I hI)
+      (incl : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
+        SystemArrow K oneVertexShape (P.scheme.asSystem hI (X I hI))
+          (P.scheme.asSystem hI (Y I hI)))
+      (mk : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
+        Fin Pr.n → Occurrence K oneVertexShape (P.scheme.asSystem hI (Y I hI))),
+      (∀ (I : Type u) [LinearOrder I] [WellFoundedLT I] [Nonempty I]
+          (hI : #I ∈ infra_78_closedTail P ∩ infra_615_closed P),
+        (∃ realEq : ULift.{u} (Fin Pr.n) ≃ (Pr.assign hI.1.1 (X I hI.1.1)).idx,
+          SameGaloisType (asTuple (incl I hI.1.1) trivial
+              (fun j : ULift.{u} (Fin Pr.n) => mk I hI.1.1 j.down))
+            (Pr.assign hI.1.1 (X I hI.1.1)) realEq (Equiv.refl _)) ∧
+        ∀ (Y'' : P.scheme.Object #I hI.1.1)
+          (incl'' : SystemArrow K oneVertexShape (P.scheme.asSystem _ (X I hI.1.1))
+            (P.scheme.asSystem _ Y''))
+          (b'' : ULift.{u} (Fin Pr.n) → Occurrence K oneVertexShape (P.scheme.asSystem _ Y''))
+          (h : SystemArrow K oneVertexShape (P.scheme.asSystem _ Y'')
+            (P.scheme.asSystem _ (Y I hI.1.1))),
+          SystemArrow.comp incl'' h = incl I hI.1.1 →
+            (∀ j, h.mapOcc (b'' j) = mk I hI.1.1 j.down) →
+            ∀ v, Function.Surjective (h.onVertex v)) →
+      Lemma83Conclusion P.scheme Pr := by
+  obtain ⟨F, X, Y, eX, eY, incl, mk, hincl, harr⟩ := infra_83_pair_template_clauses P Pr
+  exact ⟨F, X, Y, incl, mk, fun hRO => infra_83_conclusion_of_realizing_onto_values P Pr F X Y
+    eX eY incl mk hincl harr _ (infra_83_closed_tail P) subset_rfl hRO⟩
+
 end AEC

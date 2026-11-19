@@ -6400,6 +6400,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 109: proved (I embeds as left summand of I ⊕ₗ μ.ord.ToType; infra_83_values_realize_down)."
+  },
+  {
+   "id": "infra_83_full_single_reduction",
+   "label": "Lemma 8.3 (P.scheme) reduced, for the constructed pair template (infra_83_pair_template_clauses), to (R) values realize p and (O) onto prime arrows on the Lemma 8.2 tail",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83Assembly.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 109: proved (sorry-free reduction; with infra_83_closed_tail). The faithful full_single remains open: (R) and (O)/(domination) are the remaining mathematics."
   }
  ],
  "edges": [
@@ -11900,8 +11909,13 @@
    "from": "infra_83_values_realize_of_cofinal",
    "to": "infra_83_bounded_arity_free",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_full_single_reduction",
+   "to": "infra_83_lemma_8_3_full_single",
+   "kind": "hard"
   }
  ],
- "doneCount": 648,
+ "doneCount": 649,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
