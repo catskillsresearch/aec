@@ -630,4 +630,73 @@ theorem infra_84_object_witness_single (P : SingleModelData K) {ν : Cardinal.{u
   by_contra hne
   exact hno ⟨γ, Z', hγ, hne⟩
 
+/-- **Lemma 8.4 for P.scheme, tests from `U` alone (uniform bound).** For an object `X` at an
+eligible level `ν` (the small upper object `U`) read in `T` by `x` and in `T′` by `x′` (for Lemma
+8.4: `x = uT`, `x′ = uT' ∘ iso`), with `T`, `T′` at a level `μ ≥ ν`: candidates `v ∈ T`, `v′ ∈ T′`
+of length at most `σ < ν` that agree on all tests from `X` of size at most `g(σ) + LS(K)` agree on
+all tests from `X` of total size `< ν`. Level-`ν` hulls of `x(X) ∪ v` and `x′(X) ∪ v′`
+(`infra_72_level_hull`), then `infra_84_object_testing_single`. This is the `C`-free part of the
+testing property of Lemma 8.4 (the `U`-free part is `infra_84_C_tests_single`). -/
+theorem infra_84_U_tests_single (P : SingleModelData K) {ν μ : Cardinal.{u}}
+    (hν : ν ∈ P.eligible) (hμ : μ ∈ P.eligible) (hνμ : ν ≤ μ)
+    (I₁ I₂ : Type u) [LinearOrder I₁] [WellFoundedLT I₁] [LinearOrder I₂] [WellFoundedLT I₂]
+    [Nonempty I₁] (hI : #(Lex (I₁ ⊕ I₂)) = ν)
+    (X : P.scheme.Object ν hν) (Tt Tt' : P.scheme.Object μ hμ)
+    (x : SystemArrow K oneVertexShape (P.scheme.asSystem hν X) (P.scheme.asSystem hμ Tt))
+    (x' : SystemArrow K oneVertexShape (P.scheme.asSystem hν X) (P.scheme.asSystem hμ Tt'))
+    {α : Type u} {σ : Cardinal.{u}} (hσinf : aleph0 ≤ σ) (hσ : σ < ν) (hα : #α ≤ σ)
+    (v : α → Occurrence K oneVertexShape (P.scheme.asSystem hμ Tt))
+    (v' : α → Occurrence K oneVertexShape (P.scheme.asSystem hμ Tt'))
+    (hsmall : ∀ {β : Type u} (Z : β → Occurrence K oneVertexShape (P.scheme.asSystem hν X)),
+      #β ≤ P.g σ + ls K →
+      P.scheme.DiagramEq (X := Tt) (Y := Tt')
+        (Sum.elim v (fun b => x.mapOcc (Z b))) (Sum.elim v' (fun b => x'.mapOcc (Z b))))
+    {β : Type u} (Z : β → Occurrence K oneVertexShape (P.scheme.asSystem hν X))
+    (hj : #(α ⊕ β) < ν) :
+    P.scheme.DiagramEq (X := Tt) (Y := Tt')
+      (Sum.elim v (fun b => x.mapOcc (Z b))) (Sum.elim v' (fun b => x'.mapOcc (Z b))) := by
+  have hαν : #α < ν := hα.trans_lt hσ
+  obtain ⟨B₀, f₀, j₀, v₀, hc₀, hv₀⟩ := infra_72_level_hull x v hαν
+  obtain ⟨B₁, f₁, j₁, v₁, hc₁, hv₁⟩ := infra_72_level_hull x' v' hαν
+  have hz₀ : ∀ z, j₀.mapOcc (f₀.mapOcc z) = x.mapOcc z := by
+    rintro ⟨⟨⟩, a⟩; exact congrArg (fun y => (⟨PUnit.unit, y⟩ :
+      Occurrence K oneVertexShape (P.scheme.asSystem hμ Tt))) (hc₀ a)
+  have hz₁ : ∀ z, j₁.mapOcc (f₁.mapOcc z) = x'.mapOcc z := by
+    rintro ⟨⟨⟩, a⟩; exact congrArg (fun y => (⟨PUnit.unit, y⟩ :
+      Occurrence K oneVertexShape (P.scheme.asSystem hμ Tt'))) (hc₁ a)
+  -- diagrams in the hulls are the diagrams in `T`, `T′`
+  have tr₀ : ∀ {γ : Type u} (Y : γ → Occurrence K oneVertexShape (P.scheme.asSystem hν X)),
+      #(α ⊕ γ) < ν → P.scheme.DiagramEq (X := B₀) (Y := Tt)
+        (Sum.elim v₀ (fun b => f₀.mapOcc (Y b))) (Sum.elim v (fun b => x.mapOcc (Y b))) := by
+    intro γ Y hγ
+    have d := P.scheme.diagram_preserved B₀ Tt j₀ trivial
+      (Sum.elim v₀ (fun b => f₀.mapOcc (Y b))) hγ (hγ.trans_le hνμ)
+    exact infra_73_diagramEq_of_eq d (fun _ => rfl) (fun t => by
+      rcases t with a | b
+      · exact (hv₀ a).symm
+      · exact hz₀ (Y b))
+  have tr₁ : ∀ {γ : Type u} (Y : γ → Occurrence K oneVertexShape (P.scheme.asSystem hν X)),
+      #(α ⊕ γ) < ν → P.scheme.DiagramEq (X := B₁) (Y := Tt')
+        (Sum.elim v₁ (fun b => f₁.mapOcc (Y b))) (Sum.elim v' (fun b => x'.mapOcc (Y b))) := by
+    intro γ Y hγ
+    have d := P.scheme.diagram_preserved B₁ Tt' j₁ trivial
+      (Sum.elim v₁ (fun b => f₁.mapOcc (Y b))) hγ (hγ.trans_le hνμ)
+    exact infra_73_diagramEq_of_eq d (fun _ => rfl) (fun t => by
+      rcases t with a | b
+      · exact (hv₁ a).symm
+      · exact hz₁ (Y b))
+  have hg : P.g σ < ν := (hν.1.closed P.g (Set.mem_insert_of_mem _ rfl)).below σ hσinf hσ
+  have sumlt : ∀ {γ : Type u}, #γ < ν → #(α ⊕ γ) < ν := fun {γ} h => by
+    rw [Cardinal.mk_sum, Cardinal.lift_id, Cardinal.lift_id]
+    exact add_lt_of_lt (P.aleph0_le hν) hαν h
+  have H := infra_84_object_testing_single P hν I₁ I₂ hI X B₀ B₁ f₀ f₁ hσinf hσ hα v₀ v₁
+    (fun {γ} Y hγ => by
+      have hγν : #(α ⊕ γ) < ν :=
+        sumlt (lt_of_le_of_lt hγ (add_lt_of_lt (P.aleph0_le hν) hg hν.2))
+      exact P.scheme.diagram_trans _ _ _ _ _ _ (tr₀ Y hγν)
+        (P.scheme.diagram_trans _ _ _ _ _ _ (hsmall Y hγ)
+          (P.scheme.diagram_symm _ _ _ _ (tr₁ Y hγν)))) Z hj
+  exact P.scheme.diagram_trans _ _ _ _ _ _ (P.scheme.diagram_symm _ _ _ _ (tr₀ Z hj))
+    (P.scheme.diagram_trans _ _ _ _ _ _ H (tr₁ Z hj))
+
 end AEC
