@@ -220,5 +220,112 @@ theorem infra_82_comparison_preservation_single (P : SingleModelData K)
   obtain ⟨ρ, hρ, top, g1, g2, -, -, hc, hv⟩ := hW.2 q' _ hNN.symm hmarg hdiag
   exact ⟨ρ, hρ, top, g1, g2, hc, fun k => hv (Sum.inl k), fun i => hv (Sum.inr i)⟩
 
+/-- The small mark read through `σ`, as a tuple over `M₂.X`, indexed by `M₁`'s mark positions. -/
+abbrev infra_82_markVia {P : SingleModelData K}
+    {Pr : StationaryPrescription K oneVertexShape P.scheme}
+    {M₁ M₂ : MarkedPair K oneVertexShape P.scheme Pr} (σ : M₁.bIdx ≃ M₂.bIdx) :
+    TupleOver K oneVertexShape P.scheme M₂.hμ M₂.X :=
+  ⟨M₂.μ, M₂.hμ, M₂.Y, M₂.incl, trivial, M₁.bIdx, fun k => M₂.b (σ k)⟩
+
+/-- If a pair isomorphism `β : N₁ → N₂` matches the marks along `f₁⁻¹ ∘ σ ∘ f₂`, then `M₂`'s mark
+read through `σ` is, over `M₂.X`, the restriction along `f₂` of the image of `M₁`'s mark along
+`β ∘ f₁`. -/
+theorem infra_82_markVia_ext {P : SingleModelData K}
+    {Pr : StationaryPrescription K oneVertexShape P.scheme}
+    {M₁ M₂ N₁ N₂ : MarkedPair K oneVertexShape P.scheme Pr}
+    (f₁ : MarkedArrow K oneVertexShape P.scheme Pr M₁ N₁)
+    (f₂ : MarkedArrow K oneVertexShape P.scheme Pr M₂ N₂)
+    (β : MarkedArrow K oneVertexShape P.scheme Pr N₁ N₂) (σ : M₁.bIdx ≃ M₂.bIdx)
+    (hβσ : β.markMap = f₁.markMap.symm.trans (σ.trans f₂.markMap)) :
+    SameGaloisType (infra_82_markVia σ)
+      ((infra_82_markImage (infra_82_markedComp f₁ β)).restrict f₂.onX trivial)
+      (Equiv.refl _) (Equiv.refl _) := by
+  refine ⟨N₂.μ, N₂.hμ, N₂.Y, f₂.onY, SystemArrow.refl _, trivial, trivial, fun v => ?_,
+    fun i => ?_⟩
+  · have h := congrArg (fun g => SystemArrow.onVertex g v) f₂.comm
+    change (f₂.onY.onVertex v).comp (M₂.incl.onVertex v) =
+      (Language.Embedding.refl K.τ _).comp ((N₂.incl.onVertex v).comp (f₂.onX.onVertex v))
+    rw [Language.Embedding.refl_comp]
+    exact h
+  · have h := f₂.preserves_mark (σ i)
+    have hm : β.markMap (f₁.markMap i) = f₂.markMap (σ i) := by
+      rw [hβσ]; simp
+    change (⟨(M₂.b (σ i)).1, f₂.onY.onVertex (M₂.b (σ i)).1 (M₂.b (σ i)).2⟩ :
+        Occurrence K oneVertexShape (P.scheme.asSystem N₂.hμ N₂.Y)) =
+      ⟨(N₂.b (β.markMap (f₁.markMap i))).1,
+        (Language.Embedding.refl K.τ _) (N₂.b (β.markMap (f₁.markMap i))).2⟩
+    rw [h, hm]
+    rfl
+
+/-- Bookkeeping of positional matchings for `infra_82_mark_reflect_single`. -/
+theorem infra_82_reflect_equiv_id {B1 A1 A2 B2 BN AN : Type u} {F : Type*}
+    (r1 : B1 ≃ A1) (a1 : A1 ≃ F) (a2 : A2 ≃ F) (r2 : B2 ≃ A2) (rN : BN ≃ AN) (aN : AN ≃ F) :
+    (r1.trans ((a1.trans a2.symm).trans r2.symm)).trans
+      ((Equiv.refl B2).trans
+        (((Equiv.refl B1).trans
+            ((((r1.trans (a1.trans aN.symm)).trans rN.symm).symm.trans
+              (Equiv.refl B1).symm.symm).trans (Equiv.refl B1).symm).symm).trans
+          ((((r2.trans (a2.trans aN.symm)).trans rN.symm).symm.trans
+            (Equiv.refl B2).symm.symm).trans (Equiv.refl B2).symm).symm.symm).symm).symm.symm =
+      Equiv.refl B1 := by
+  ext k
+  simp
+
+set_option maxHeartbeats 400000 in
+/-- **Marks reflect from a larger level (P.scheme; reflection half of 8.2(5), mark marginal).**
+Marked arrows `f₁ : M₁ → N₁`, `f₂ : M₂ → N₂` (the `M`s at one level, the `N`s at one larger
+level, all recursion closed at `ℵ₀`) and a marked arrow `β : N₁ → N₂` matching the marks along
+`f₁⁻¹ ∘ σ ∘ f₂`: for every structural isomorphism `e : M₁.X ≅ M₂.X`, the mark of `M₁` and the
+mark of `M₂` read through `σ` and back along `e` have the same type over `M₁.X`. (Both
+`β ∘ f₁` and `f₂` carry the small marks to free extensions, which are positional up to type,
+`infra_82_mark_positional_mixed`; restricting along `f₂` gives `tp(b₂ ∘ σ) = tp(b₂ ∘ π)` over
+`M₂.X`, and `CommutesWithIso` transports along `e`.) -/
+theorem infra_82_mark_reflect_single {P : SingleModelData K}
+    {Pr : StationaryPrescription K oneVertexShape P.scheme} (hiso : Pr.CommutesWithIso)
+    (hTA : Pr.TiedAlong) {M₁ M₂ N₁ N₂ : MarkedPair K oneVertexShape P.scheme Pr}
+    (f₁ : MarkedArrow K oneVertexShape P.scheme Pr M₁ N₁)
+    (f₂ : MarkedArrow K oneVertexShape P.scheme Pr M₂ N₂)
+    (β : MarkedArrow K oneVertexShape P.scheme Pr N₁ N₂) (σ : M₁.bIdx ≃ M₂.bIdx)
+    (hβσ : β.markMap = f₁.markMap.symm.trans (σ.trans f₂.markMap))
+    (hM : M₁.μ = M₂.μ) (hN : N₁.μ = N₂.μ) (hlev : M₁.μ ≤ N₁.μ)
+    (hMrec : M₁.μ ∈ recursionClosedLevels P ℵ₀) (hNrec : N₁.μ ∈ recursionClosedLevels P ℵ₀)
+    (e : SystemArrow K oneVertexShape (P.scheme.asSystem M₁.hμ M₁.X)
+      (P.scheme.asSystem M₂.hμ M₂.X))
+    (hbij : ∀ v, Function.Bijective (e.onVertex v)) :
+    SameGaloisType (asTuple M₁.incl M₁.incl_arrow M₁.b)
+      ((infra_82_markVia σ).restrict e trivial) (Equiv.refl _) (Equiv.refl _) := by
+  classical
+  have hlevg : M₁.μ ≤ N₂.μ := hN ▸ hlev
+  have hlev₂ : M₂.μ ≤ N₂.μ := hM ▸ hN ▸ hlev
+  have hM₂rec : M₂.μ ∈ recursionClosedLevels P ℵ₀ := hM ▸ hMrec
+  have hN₂rec : N₂.μ ∈ recursionClosedLevels P ℵ₀ := hN ▸ hNrec
+  have hμ0 : ℵ₀ < M₂.μ := P.aleph0_lt M₂.hμ
+  have hμ0₁ : ℵ₀ < M₁.μ := P.aleph0_lt M₁.hμ
+  have hfinB : Finite M₁.bIdx :=
+    Finite.of_equiv _ (M₁.realEq.trans (Pr.arity M₁.hμ M₁.X)).symm
+  have hfinN : Finite N₂.bIdx :=
+    Finite.of_equiv _ (N₂.realEq.trans (Pr.arity N₂.hμ N₂.X)).symm
+  have PQ := infra_82_mark_positional_mixed hTA (infra_82_markedComp f₁ β) hlevg hMrec hN₂rec
+  have PQr := infra_82_sgt_restrict f₂.onX trivial PQ
+  have E := infra_82_markVia_ext f₁ f₂ β σ hβσ
+  have A1 := infra_612_galois_trans_last_base (infra_73_sgt_uncommon (SameGaloisType.symm PQr))
+    (SameGaloisType.symm E) ℵ₀ le_rfl hμ0 (Cardinal.lt_aleph0_of_finite N₂.bIdx).le rfl
+  have Pf := infra_82_mark_positional_mixed hTA f₂ hlev₂ hM₂rec hN₂rec
+  have Pfr := infra_82_sgt_restrict f₂.onX trivial Pf
+  have Ef := infra_82_mark_ext_single f₂
+  have B1 := infra_612_galois_trans_last_base (infra_73_sgt_uncommon (SameGaloisType.symm Pfr))
+    (SameGaloisType.symm Ef) ℵ₀ le_rfl hμ0 (Cardinal.lt_aleph0_of_finite N₂.bIdx).le rfl
+  have C := infra_612_galois_trans_last_base (infra_73_sgt_uncommon (SameGaloisType.symm A1))
+    (SameGaloisType.swap_refl B1) ℵ₀ le_rfl hμ0 (Cardinal.lt_aleph0_of_finite M₁.bIdx).le rfl
+  have D := infra_82_sgt_restrict e trivial C
+  have I := infra_82_mark_type_iso_single hiso M₁ M₂ hM e hbij
+  have F := infra_612_galois_trans_last_base I
+    (SameGaloisType.swap_refl (infra_73_sgt_uncommon (SameGaloisType.symm D))) ℵ₀ le_rfl hμ0₁
+    (Cardinal.lt_aleph0_of_finite M₁.bIdx).le hM.symm
+  have hE := infra_82_reflect_equiv_id M₁.realEq (Pr.arity M₁.hμ M₁.X) (Pr.arity M₂.hμ M₂.X)
+      M₂.realEq N₂.realEq (Pr.arity N₂.hμ N₂.X)
+  exact cast (congrArg (fun E => SameGaloisType (asTuple M₁.incl M₁.incl_arrow M₁.b)
+    ((infra_82_markVia σ).restrict e trivial) E (Equiv.refl _)) hE) F
+
 end
 end AEC

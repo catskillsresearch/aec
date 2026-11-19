@@ -4338,7 +4338,7 @@
    "file": "AEC/Section8/Results.lean",
    "status": "open",
    "blocker": null,
-   "detail": "Cycle 96. English 8.2: comparisons preserved and reflected from a common small level to a common larger level. Preservation route mirrors clause (4): cross homogeneity (infra_82_base_homogeneity_cross_single), cross diagram transport (infra_82_orbit_diagram_cross_single), mixed over-B isolation, positional mark matching between two pairs (needs the realizing equivalence as data, see the markMap/list-position finding), tied mark freeness (infra_82_mark_tied_along_single). Reflection: paper 'let a large pair isomorphism match the two images ... approximation list'. | Cycle 97: MarkedPair.realEq is data; infra_82_mark_type_iso_single now gives the explicit positional matching realEq1 . arity1 . arity2^-1 . realEq2^-1. | Cycle 98: preservation direction proved (infra_82_comparison_preservation_single). Remaining: reflection (N-orbit equal implies M-orbit equal)."
+   "detail": "Cycle 96. English 8.2: comparisons preserved and reflected from a common small level to a common larger level. Preservation route mirrors clause (4): cross homogeneity (infra_82_base_homogeneity_cross_single), cross diagram transport (infra_82_orbit_diagram_cross_single), mixed over-B isolation, positional mark matching between two pairs (needs the realizing equivalence as data, see the markMap/list-position finding), tied mark freeness (infra_82_mark_tied_along_single). Reflection: paper 'let a large pair isomorphism match the two images ... approximation list'. | Cycle 97: MarkedPair.realEq is data; infra_82_mark_type_iso_single now gives the explicit positional matching realEq1 . arity1 . arity2^-1 . realEq2^-1. | Cycle 98: preservation direction proved (infra_82_comparison_preservation_single). Remaining: reflection (N-orbit equal implies M-orbit equal). | Cycle 98 reflection plan (paper par. 34-36): (R1) mark marginal: done (infra_82_mark_reflect_single). (R2) small base isomorphism: given beta, realize inside M2.X a copy Z2 of the transported small approximation list beta(f1 Z1) over the required base entries of t2; needs a realization INSIDE the small base (IsSaturated only realizes in an extension Z of M2.X at the same level; need a homogeneity/universality step to pull it into M2.X), then diagram_iso gives e_M with e_M Z1 = Z2. (R3) type transport: tests of size below the uniform testing bound, matched upstairs over both approximation lists; each list computes the free extension (mixed tied freeness of (b,t) along f_i), beta identifies answers, Theorem 6.6 / isolation (infra_72_over_B / dominated) identifies the whole joint type over M1.X. (R4) small pair isomorphism test (infra_82_pointed_all). Open sub-tips: infra_82_reflect_small_realization (R2), infra_82_reflect_type_transport (R3)."
   },
   {
    "id": "infra_82_base_homogeneity_cross_single",
@@ -4510,6 +4510,15 @@
    "status": "done",
    "blocker": null,
    "detail": "DONE cycle 98. Tail infra_615_closed; hypotheses CommutesWithIso and TiedAlong (Definition 8.1). Homogeneity across pairs, mark transport, mixed over-B isolation (infra_72_mixed_level_closed), pair isomorphism test. Axioms clean."
+  },
+  {
+   "id": "infra_82_mark_reflect_single",
+   "label": "Lemma 8.2(5) reflection, mark marginal (P.scheme)",
+   "section": 8,
+   "file": "AEC/Section8/ComparisonSingle.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "DONE cycle 98. Given a large pair arrow beta : N1 -> N2 matching marks along f1^-1 sigma f2, every base isomorphism e : M1.X = M2.X carries tp(b1/M1.X) to tp(b2 o sigma/M2.X) (positional free extensions along beta o f1 and f2, restriction along f2, CommutesWithIso). The mark-marginal input of the small isolation step of reflection."
   }
  ],
  "edges": [
@@ -8755,8 +8764,13 @@
    "from": "infra_82_comparison_preservation_single",
    "to": "infra_82_comparison_single",
    "kind": "hard"
+  },
+  {
+   "from": "infra_82_mark_reflect_single",
+   "to": "infra_82_comparison_single",
+   "kind": "hard"
   }
  ],
- "doneCount": 447,
+ "doneCount": 448,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
