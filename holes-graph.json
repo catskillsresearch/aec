@@ -4771,6 +4771,24 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 100: local_realization + bridge; part of assembly step (ii). Axioms clean."
+  },
+  {
+   "id": "infra_84_object_testing_single",
+   "label": "Layout (8) testing over a level-nu base object via a two-segment chart: agreement at g(sigma)+LS gives agreement for all base parameters < nu (P.scheme)",
+   "section": 8,
+   "file": "AEC/Section8/Layout84Single.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 100: chart P.E(I1 +lex I2) ~= X (categoricity), infra_84_layout_testing_single_presented, bridge diagramEq_iff_sameD, helper infra_84_sameD_of_eq. Base X at level nu, hosts B0, B1 at level nu; bound depends only on sigma and P. Remaining for infra_84_layout_amalgam: make X the layout U_{H'} with U and A_{H'} embedded so that (a) questioned joint tests from U and C in T, T' are realized in level-nu hosts B0, B1 over X with the same diagrams, and (b) witnesses over X read back into U and C (needs the F^b(H) presentation from lemma_8_3 single and the universal strip). Axioms clean."
+  },
+  {
+   "id": "infra_84_sameD_of_eq",
+   "label": "Pointwise rewriting in D-diagram equality",
+   "section": 8,
+   "file": "AEC/Section8/Layout84Single.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 100 helper."
   }
  ],
  "edges": [
@@ -9161,8 +9179,18 @@
    "from": "infra_84_local_realization_sameD",
    "to": "infra_84_layout_amalgam",
    "kind": "hard"
+  },
+  {
+   "from": "infra_84_object_testing_single",
+   "to": "infra_84_layout_amalgam",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_84_sameD_of_eq",
+   "to": "infra_84_object_testing_single",
+   "kind": "hard"
   }
  ],
- "doneCount": 475,
+ "doneCount": 477,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

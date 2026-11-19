@@ -518,4 +518,85 @@ theorem infra_84_local_realization_sameD (P : SingleModelData K) {ν μ : Cardin
   exact ⟨B₀, f₀, j, L₀, h1, h2,
     (infra_84_scheme_diagramEq_iff_sameD P B₀ Tt L₀ L hκ (hκ.trans_le hνμ)).mp h3⟩
 
+/-- Pointwise rewriting of the two lists in a `D`-diagram equality. -/
+theorem infra_84_sameD_of_eq {D : StableDiagram K} {α : Type u} {M N : Model K.τ}
+    {xs xs' : α → M.carrier} {ys ys' : α → N.carrier} (h : D.SameD M N xs ys)
+    (hx : ∀ i, xs i = xs' i) (hy : ∀ i, ys i = ys' i) : D.SameD M N xs' ys' := by
+  have e1 : xs = xs' := funext hx
+  have e2 : ys = ys' := funext hy
+  subst e1 e2
+  exact h
+
+/-- **Testing over a base object at level `ν` through a two-segment chart (P.scheme).** For
+objects `X`, `B₀`, `B₁` at an eligible level `ν` with arrows `i₀ : X → B₀`, `i₁ : X → B₁`, and a
+two-segment well-order `I₁ ⊕ₗ I₂` of size `ν` (a chart `P.E(I₁ ⊕ₗ I₂) ≅ X`, by categoricity):
+candidates `d₀ ∈ B₀`, `d₁ ∈ B₁` of length at most `σ < ν` that have equal diagrams with every
+parameter list from `X` of size at most `g(σ) + LS(K)` have equal diagrams with every parameter
+list from `X` of total size `< ν`. The bound depends only on `σ` and `P`. This is the testing step
+of Lemma 8.4 once the layout `U_{H'}` (with `A_{H'}` as second segment) is the base `X`. -/
+theorem infra_84_object_testing_single (P : SingleModelData K) {ν : Cardinal.{u}}
+    (hν : ν ∈ P.eligible)
+    (I₁ I₂ : Type u) [LinearOrder I₁] [WellFoundedLT I₁] [LinearOrder I₂] [WellFoundedLT I₂]
+    [Nonempty I₁] (hI : #(Lex (I₁ ⊕ I₂)) = ν)
+    (X B₀ B₁ : P.scheme.Object ν hν)
+    (i₀ : SystemArrow K oneVertexShape (P.scheme.asSystem hν X) (P.scheme.asSystem hν B₀))
+    (i₁ : SystemArrow K oneVertexShape (P.scheme.asSystem hν X) (P.scheme.asSystem hν B₁))
+    {α : Type u} {σ : Cardinal.{u}} (hσinf : aleph0 ≤ σ) (hσ : σ < ν) (hα : #α ≤ σ)
+    (d₀ : α → Occurrence K oneVertexShape (P.scheme.asSystem hν B₀))
+    (d₁ : α → Occurrence K oneVertexShape (P.scheme.asSystem hν B₁))
+    (hsmall : ∀ {β : Type u} (Z : β → Occurrence K oneVertexShape (P.scheme.asSystem hν X)),
+      #β ≤ P.g σ + ls K →
+      P.scheme.DiagramEq (X := B₀) (Y := B₁)
+        (Sum.elim d₀ (fun b => i₀.mapOcc (Z b))) (Sum.elim d₁ (fun b => i₁.mapOcc (Z b))))
+    {β : Type u} (Z : β → Occurrence K oneVertexShape (P.scheme.asSystem hν X))
+    (hj : #(α ⊕ β) < ν) :
+    P.scheme.DiagramEq (X := B₀) (Y := B₁)
+      (Sum.elim d₀ (fun b => i₀.mapOcc (Z b))) (Sum.elim d₁ (fun b => i₁.mapOcc (Z b))) := by
+  have : Nonempty (Lex (I₁ ⊕ I₂)) := ⟨toLex (Sum.inl (Classical.arbitrary I₁))⟩
+  obtain ⟨e⟩ := SingleModelData.exists_present_equiv hν X (Lex (I₁ ⊕ I₂)) hI
+  have hes : K.Strong e.toEmbedding := strong_of_equiv K e (P.hE _)
+  let incl₀ := (i₀.onVertex PUnit.unit).comp e.toEmbedding
+  let incl₁ := (i₁.onVertex PUnit.unit).comp e.toEmbedding
+  have hs₀ : K.Strong incl₀ := K.strong_trans _ _ hes (i₀.onVertex_strong PUnit.unit)
+  have hs₁ : K.Strong incl₁ := K.strong_trans _ _ hes (i₁.onVertex_strong PUnit.unit)
+  have hg : P.g σ < ν := (hν.1.closed P.g (Set.mem_insert_of_mem _ rfl)).below σ hσinf hσ
+  have hαν : #α < ν := hα.trans_lt hσ
+  have sumlt : ∀ {γ : Type u}, #γ < ν → #(α ⊕ γ) < ν := fun {γ} h => by
+    rw [Cardinal.mk_sum, Cardinal.lift_id, Cardinal.lift_id]
+    exact add_lt_of_lt (P.aleph0_le hν) hαν h
+  have key := infra_84_layout_testing_single_presented P hν I₁ I₂ hI incl₀ incl₁
+    (SMObject.mem B₀) (SMObject.mem B₁) hs₀ hs₁ (SMObject.card B₀) (SMObject.card B₁)
+    hσinf hσ hα (fun a => SMObject.val B₀ (d₀ a)) (fun a => SMObject.val B₁ (d₁ a))
+    (fun {β'} hβ' p => by
+      have hβ'ν : #β' < ν := lt_of_le_of_lt hβ' (add_lt_of_lt (P.aleph0_le hν) hg hν.2)
+      have hD := hsmall (fun b => SMObject.occ X (e (p b))) hβ'
+      have hS := (infra_84_scheme_diagramEq_iff_sameD P B₀ B₁ _ _ (sumlt hβ'ν)
+        (sumlt hβ'ν)).mp hD
+      have h0 : (fun i => SMObject.val B₀ (Sum.elim d₀
+          (fun b => i₀.mapOcc (SMObject.occ X (e (p b)))) i)) =
+          Sum.elim (fun a => SMObject.val B₀ (d₀ a)) (fun b => incl₀ (p b)) := by
+        funext i; rcases i with a | b <;> rfl
+      have h1 : (fun i => SMObject.val B₁ (Sum.elim d₁
+          (fun b => i₁.mapOcc (SMObject.occ X (e (p b)))) i)) =
+          Sum.elim (fun a => SMObject.val B₁ (d₁ a)) (fun b => incl₁ (p b)) := by
+        funext i; rcases i with a | b <;> rfl
+      exact infra_84_sameD_of_eq hS (fun i => congrFun h0 i) (fun i => congrFun h1 i))
+    (fun b => e.symm (SMObject.val X (Z b))) hj
+  refine (infra_84_scheme_diagramEq_iff_sameD P B₀ B₁ _ _ hj hj).mpr ?_
+  have h0 : (fun i => SMObject.val B₀ (Sum.elim d₀ (fun b => i₀.mapOcc (Z b)) i)) =
+      Sum.elim (fun a => SMObject.val B₀ (d₀ a))
+        (fun b => incl₀ (e.symm (SMObject.val X (Z b)))) := by
+    funext i; rcases i with a | b
+    · rfl
+    · show _ = i₀.onVertex PUnit.unit (e (e.symm (SMObject.val X (Z b))))
+      rw [e.apply_symm_apply]; rfl
+  have h1 : (fun i => SMObject.val B₁ (Sum.elim d₁ (fun b => i₁.mapOcc (Z b)) i)) =
+      Sum.elim (fun a => SMObject.val B₁ (d₁ a))
+        (fun b => incl₁ (e.symm (SMObject.val X (Z b)))) := by
+    funext i; rcases i with a | b
+    · rfl
+    · show _ = i₁.onVertex PUnit.unit (e (e.symm (SMObject.val X (Z b))))
+      rw [e.apply_symm_apply]; rfl
+  exact infra_84_sameD_of_eq key (fun i => (congrFun h0 i).symm) (fun i => (congrFun h1 i).symm)
+
 end AEC

@@ -500,6 +500,8 @@ Lean: imports `Section5.Results` and `Section6.Results`. Soft paper chain after 
 | `infra_84_layout_testing_single_presented` | Layout (8) testing for P over the presented two-segment layout (SameD form) | [`Layout84Single.lean`](AEC/Section8/Layout84Single.lean) (**done**, cycle 100) |
 | `infra_84_scheme_diagramEq_iff_sameD` | Bridge: P.scheme diagrams are canonical-bound D-diagrams | [`Layout84Single.lean`](AEC/Section8/Layout84Single.lean) (**done**, cycle 100) |
 | `infra_84_local_realization_sameD` | Layout (8): bounded test in T as a D-diagram at level nu over A | [`Layout84Single.lean`](AEC/Section8/Layout84Single.lean) (**done**, cycle 100) |
+| `infra_84_object_testing_single` | Layout (8) testing over a level-nu base object via a two-segment chart | [`Layout84Single.lean`](AEC/Section8/Layout84Single.lean) (**done**, cycle 100) |
+| `infra_84_sameD_of_eq` | Pointwise rewriting in D-diagram equality | [`Layout84Single.lean`](AEC/Section8/Layout84Single.lean) (**done**, cycle 100) |
 | `infra_72_mixed_level` | Lemma 7.2 last sentence (A at a smaller level than B), stated with sorry (audit) | [`Lemma72Mixed.lean`](AEC/Section7/Lemma72Mixed.lean) (open, cycle 96) |
 | `infra_82_tiedFreeMixed_base_equiv` | Mixed tied freeness under a reindexed change of base tuple | [`TiedAlong.lean`](AEC/Section8/TiedAlong.lean) (**done**, cycle 97) |
 | `infra_82_mark_tied_along_single` | Lemma 8.2(4) for `P.scheme`: tied freeness of the mark along arrows (Def 8.1 tied, cycle 97 ruling) | [`TiedAlong.lean`](AEC/Section8/TiedAlong.lean) (**done**, cycle 97) |
