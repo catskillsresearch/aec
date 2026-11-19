@@ -7858,6 +7858,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 257: proved."
+  },
+  {
+   "id": "infra_83_dominated_of_bounded_lists_at",
+   "label": "At a closed level, with strong monotone finite-support pieces Piece J (size <= lam < mu) covering Y and an exhaustion D n of the indices, the mark is all-dominated once each nested bounded-width list (elements over <= n indices of D n) is isolated with the mark relative to it over X (nested_lists + dominated_of_lists_at)",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PieceMatch.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 258: proved."
   }
  ],
  "edges": [
@@ -14193,8 +14202,13 @@
    "from": "infra_83_nested_lists",
    "to": "infra_83_arity_removal",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_dominated_of_bounded_lists_at",
+   "to": "infra_83_arity_removal",
+   "kind": "hard"
   }
  ],
- "doneCount": 804,
+ "doneCount": 805,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

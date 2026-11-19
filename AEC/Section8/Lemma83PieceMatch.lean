@@ -3759,4 +3759,54 @@ theorem infra_83_nested_lists {Y Z : Type u} {μ lam : Cardinal.{u}} (hμ : ℵ�
     exact ⟨⟨J, hn.trans (hDmono (le_max_left _ _)), le_max_right _ _⟩, hy⟩
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+set_option maxHeartbeats 1600000 in
+/-- **All-domination from isolation of the nested bounded-width lists (proved).** At a closed
+level `μ`, let `Y` carry strong "finite-support pieces" `Piece J` (`J` a finite set of indices
+of some `Z`, monotone in `J`, of size `≤ lam < μ`, covering `Y`), and let `D n` be an increasing
+exhaustion of `Z` by sets of size `< μ`. If the mark `b` together with each nested list
+`nestedList83 D Piece n` (elements over `≤ n` indices of `D n`) is isolated relative to `b`
+over `X`, then `b` is all-dominated. For `Y = F(Z)` the pieces are `F(J)` and the `n`-th list
+has entries of width `≤ n`: the paper's arity removal, reducing all-domination to isolation of
+bounded-width lists. -/
+theorem infra_83_dominated_of_bounded_lists_at (P : SingleModelData K) {μ : Cardinal.{u}}
+    (hμ : μ ∈ infra_78_closedTail P ∩ infra_615_closed P) {X Y : P.scheme.Object μ hμ.1.1}
+    (incl : SystemArrow K oneVertexShape (P.scheme.asSystem _ X) (P.scheme.asSystem _ Y))
+    {bIdx : Type u} [Finite bIdx]
+    (b : bIdx → Occurrence K oneVertexShape (P.scheme.asSystem _ Y))
+    {Z : Type u} {lam : Cardinal.{u}} (hlam : lam < μ)
+    (D : ℕ → Set Z) (hDmono : Monotone D) (hDcov : ∀ z, ∃ n, z ∈ D n)
+    (hDcard : ∀ n, #(D n) < μ)
+    (Piece : Finset Z → K.τ.Substructure Y.model.carrier) (hPmono : Monotone Piece)
+    (hPcard : ∀ J, #(Piece J) ≤ lam)
+    (hPS : ∀ J, K.Strong (M := subM83 (Piece J)) (N := Y.model) (Piece J).subtype)
+    (hPcov : ∀ y, ∃ J, y ∈ Piece J)
+    (hIso : ∀ n, IsRelativelyIsolated (uIdx := bIdx)
+      (cIdx := nestedList83 D (fun J => (Piece J : Set Y.model.carrier)) n)
+      (asTuple incl trivial (seqJoint b (fun k => Y.occ k.1)))
+      (Equiv.refl _)) :
+    AllDominated incl trivial bIdx b := by
+  classical
+  obtain ⟨hcard, hsub, habs⟩ := infra_83_nested_lists (P.aleph0_lt hμ.1.1) hlam D hDmono hDcov
+    hDcard (fun J => (Piece J : Set Y.model.carrier)) hPcard
+  refine infra_83_dominated_of_lists_at P hμ incl b
+    (δ := fun n => nestedList83 D (fun J => (Piece J : Set Y.model.carrier)) n)
+    (fun n k => k.1) hcard (fun n k => ⟨⟨k.1, hsub n k.2⟩, rfl⟩) hIso (Set.range Piece)
+    ⟨Piece ∅, ∅, rfl⟩ ?_ ?_ ?_ ?_
+  · rintro _ ⟨J1, rfl⟩ _ ⟨J2, rfl⟩
+    exact ⟨Piece (J1 ∪ J2), ⟨_, rfl⟩, hPmono Finset.subset_union_left,
+      hPmono Finset.subset_union_right⟩
+  · rintro _ ⟨J, rfl⟩
+    exact hPS J
+  · intro y
+    obtain ⟨J, hJ⟩ := hPcov y
+    exact ⟨Piece J, ⟨J, rfl⟩, hJ⟩
+  · rintro _ ⟨J, rfl⟩
+    obtain ⟨n, hn⟩ := habs J
+    exact ⟨n, fun y hy => ⟨⟨y, hn hy⟩, rfl⟩⟩
+end
+
 end AEC
