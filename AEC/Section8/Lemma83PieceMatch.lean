@@ -3361,4 +3361,46 @@ theorem infra_83_dominated_iff_small_pieces_at (P : SingleModelData K) {μ : Car
     infra_83_dominated_of_small_pieces_at P hμ incl b⟩
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+set_option maxHeartbeats 1600000 in
+/-- **`full_single` from realization + isolation of small strong pieces (proved reduction).**
+Lemma 8.3 follows once, at each closed well-ordered level, the template mark realizes the
+prescription and every small strong submodel `M ≤ Y_I` holding the mark has `(mk, M)` isolated
+relative to `mk` over `X_I` (exact, by `infra_83_dominated_iff_small_pieces_at`). -/
+theorem infra_83_full_single_of_small_pieces (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) :
+    ∃ (X Y : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
+        P.scheme.Object #I hI)
+      (incl : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
+        SystemArrow K oneVertexShape (P.scheme.asSystem hI (X I hI))
+          (P.scheme.asSystem hI (Y I hI)))
+      (mk : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
+        Fin Pr.n → Occurrence K oneVertexShape (P.scheme.asSystem hI (Y I hI))),
+      (∀ (I : Type u) [LinearOrder I] [WellFoundedLT I] [Nonempty I]
+          (hI : #I ∈ infra_78_closedTail P ∩ infra_615_closed P),
+          (∃ realEq : ULift.{u} (Fin Pr.n) ≃ (Pr.assign hI.2.1 (X I hI.2.1)).idx,
+            SameGaloisType (asTuple (incl I hI.2.1) trivial
+              (fun a : ULift.{u} (Fin Pr.n) => mk I hI.2.1 a.down))
+              (Pr.assign hI.2.1 (X I hI.2.1)) realEq (Equiv.refl _)) ∧
+          ∀ (M : Model K.τ) (j : Language.Embedding K.τ M.carrier (Y I hI.2.1).model.carrier),
+            K.Strong j → Model.card M < #I →
+            (∀ a : ULift.{u} (Fin Pr.n), ∃ x, j x = (mk I hI.2.1 a.down).2) →
+            IsRelativelyIsolated (uIdx := ULift.{u} (Fin Pr.n)) (cIdx := M.carrier)
+              (asTuple (incl I hI.2.1) trivial
+                (seqJoint (fun a : ULift.{u} (Fin Pr.n) => mk I hI.2.1 a.down)
+                  (fun x => (Y I hI.2.1).occ (j x))))
+              (Equiv.refl (ULift.{u} (Fin Pr.n) ⊕ M.carrier))) →
+      Lemma83Conclusion P.scheme Pr := by
+  obtain ⟨F, X, Y, eX, eY, incl, mk, hincl, harr⟩ := infra_83_pair_template_clauses P Pr
+  refine ⟨X, Y, incl, mk, fun hS => ?_⟩
+  refine infra_83_conclusion_of_marked_values_idx P Pr F X Y eX eY incl mk hincl harr _
+    (infra_83_closed_tail P) (fun I _ _ _ hI => ?_)
+  obtain ⟨⟨realEq, hr⟩, hIso⟩ := hS I hI
+  exact ⟨ULift.{u} (Fin Pr.n), Equiv.refl _, realEq, hr,
+    infra_83_dominated_of_small_pieces_at P hI (incl I hI.2.1) _ hIso⟩
+end
+
 end AEC
