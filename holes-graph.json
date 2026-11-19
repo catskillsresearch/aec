@@ -7228,6 +7228,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 187: proved."
+  },
+  {
+   "id": "infra_83_piece_match_arrows",
+   "label": "Arrow part of one bounded-list match: with X' = F(J0) via strong psi, e0 : J0 -> J, and a piece Y_u >= X' mapping strongly into F(Jp) inside F[M.Y] and agreeing on X' with F(emb) o F(e0) o psi, there are scheme arrows toA : X' -> M.X, h : Y_u -> M.Y forming the pair square with F o h = gY",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PieceMatch.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 188: proved."
   }
  ],
  "edges": [
@@ -13213,8 +13222,13 @@
    "from": "infra_83_square_of_F",
    "to": "infra_83_bounded_list_match",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_piece_match_arrows",
+   "to": "infra_83_bounded_list_match",
+   "kind": "hard"
   }
  ],
- "doneCount": 734,
+ "doneCount": 735,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

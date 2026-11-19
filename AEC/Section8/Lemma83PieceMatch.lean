@@ -553,4 +553,44 @@ theorem infra_83_square_of_F (P : SingleModelData K)
   exact F.injective (hpt x)
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+/-- **The arrow part of one bounded-list match from `F(Jp)` readings (proved).** In ret-sample
+data (`infra_83_ret_sample_tau`), let the template-side base `X'` be identified with `F(J₀)` by a
+strong `ψ`, let `e₀ : J₀ ↪o J`, and let the piece `Y_u ⊇ X'` (`inclu`) map by a strong `gY` into
+`F(Jp)` inside `F[M.Y]`, agreeing on `X'` with `F(emb) ∘ F(e₀) ∘ ψ`. Then there are scheme arrows
+`toA : X' → M.X` and `h : Y_u → M.Y` forming the pair square, with `F ∘ h = gY`: the arrow inputs
+of `infra_83_marked_of_piece_arrows`. -/
+theorem infra_83_piece_match_arrows (P : SingleModelData K)
+    {Pr : StationaryPrescription K oneVertexShape P.scheme} {M : MarkedPair K oneVertexShape P.scheme Pr}
+    {ν : Cardinal.{u}} {hν : ν ∈ P.eligible} {X' Yu : P.scheme.Object ν hν}
+    {J Jp J0 : Type u} [LinearOrder J] [Nonempty J] [LinearOrder Jp] [Nonempty Jp]
+    [LinearOrder J0] [Nonempty J0] (emb : J ↪o Jp)
+    (eX : Language.Embedding K.τ (P.E.obj J).carrier
+      ((P.scheme.asSystem M.hμ M.X).obj PUnit.unit).carrier)
+    (F : Language.Embedding K.τ ((P.scheme.asSystem M.hμ M.Y).obj PUnit.unit).carrier
+      (P.E.obj Jp).carrier)
+    (hsX : K.Strong eX) (hsF : K.Strong F)
+    (hF : ∀ x, F (M.incl.onVertex PUnit.unit (eX x)) = P.E.map emb x)
+    (ψ : Language.Embedding K.τ ((P.scheme.asSystem hν X').obj PUnit.unit).carrier
+      (P.E.obj J0).carrier) (hψ : K.Strong ψ) (e0 : J0 ↪o J)
+    (inclu : SystemArrow K oneVertexShape (P.scheme.asSystem hν X') (P.scheme.asSystem hν Yu))
+    (gY : Language.Embedding K.τ ((P.scheme.asSystem hν Yu).obj PUnit.unit).carrier
+      (P.E.obj Jp).carrier) (hgY : K.Strong gY)
+    (hr : ∀ x, gY x ∈ Set.range F)
+    (hX : ∀ x, gY (inclu.onVertex PUnit.unit x) = P.E.map emb (P.E.map e0 (ψ x))) :
+    ∃ (toA : SystemArrow K oneVertexShape (P.scheme.asSystem hν X')
+        (P.scheme.asSystem M.hμ M.X))
+      (h : SystemArrow K oneVertexShape (P.scheme.asSystem hν Yu)
+        (P.scheme.asSystem M.hμ M.Y)),
+      SystemArrow.comp inclu h = SystemArrow.comp toA M.incl ∧
+      ∀ x, F (h.onVertex PUnit.unit x) = gY x := by
+  obtain ⟨toA, htoA⟩ := infra_83_toA_arrow P X' emb eX F hsX hF ψ hψ e0
+  obtain ⟨h, hh⟩ := infra_83_piece_arrow_factor P Yu F hsF gY hgY hr
+  refine ⟨toA, h, infra_83_square_of_F P F inclu toA h fun x => ?_, hh⟩
+  rw [hh, hX, htoA]
+end
+
 end AEC
