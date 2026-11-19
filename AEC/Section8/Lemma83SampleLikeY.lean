@@ -1241,18 +1241,22 @@ theorem infra_83_pairMS2_X_chart_orderEmb (P : SingleModelData K)
   subst this
   exact hq p
 
-/-- **`ε_l ∘ F_X(e) = F(h_e) ∘ ε_k`**: the coherent `X`-charts identify every piece map with
-`F` of an order embedding `h_e : H_k ↪o H_l` of the charts. -/
-theorem infra_83_pairMS2_X_chart_natural (P : SingleModelData K)
-    (Pr : StationaryPrescription K oneVertexShape P.scheme) :
-    ∃ (c : (m : ℕ) → 0 < m → Hull83.TpColorB (LS83.pairLangM3 P.E Pr.n) 3 m)
+/-- Parametric form of `infra_83_pairMS2_X_chart_natural`: for any coherent colors `c` (with the `θ`/`ρ` facts) and
+any `hXs`. -/
+theorem infra_83_pairMS2_X_chart_natural_c (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme)
+    (c : (m : ℕ) → 0 < m → Hull83.TpColorB (LS83.pairLangM3 P.E Pr.n) 3 m)
       (hc : ∀ (n : ℕ) (κ : Cardinal.{u}),
         Hull83.Joint (Hull83.TpSampleB (fun N _ => pairMAdmittedS2 P.E Pr.n N) 3) n c κ)
       (hcoh : ∀ {m m' : ℕ} (hm' : 0 < m') (hm : 0 < m) (f : Fin m' ↪o Fin m),
         c m' hm' = Hull83.tpResB 3 f (c m hm))
+      (hθ : ∀ (m : ℕ) (hm : 0 < m) (a : Fin m) (i : Fin 3),
+        (thetaM P.E Pr.n i).relabel (fun _ => (a, i)) ∈ c m hm)
+      (hρ : ∀ (m : ℕ) (hm : 0 < m) (a b : Fin m), a < b → ∀ i : Fin 3,
+        (rhoM P.E Pr.n i).relabel ![(a, i), (b, i)] ∈ c m hm)
       (hXs : Hull83.SubHullStrong ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
-        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) (fun N _ => pairMAdmittedS2 P.E Pr.n N))
-      (ch : ∀ k, PieceChart P.E ((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) (fun N _ => pairMAdmittedS2 P.E Pr.n N)) :
+    ∃ (ch : ∀ k, PieceChart P.E ((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
         ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).obj k) k),
       (∀ k (a : Fin (k + 1)), (ch k).ε (Quotient.mk _ (Term.var (a, (0 : Fin 1))) : ((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
         ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).obj k).carrier) = P.E.skeleton ((ch k).j a) ∧
@@ -1263,7 +1267,6 @@ theorem infra_83_pairMS2_X_chart_natural (P : SingleModelData K)
       ∀ {k l : ℕ} (e : Fin (k + 1) ↪o Fin (l + 1)), ∃ h : (ch k).H ↪o (ch l).H,
         ∀ x, (ch l).ε ((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
         ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).map e x) = P.E.map h ((ch k).ε x) := by
-  obtain ⟨c, hc, hcoh, hθ, hρ⟩ := infra_83_pairMS2_coherent_colors P Pr
   have hXs : Hull83.SubHullStrong ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
       ((LS83.pairInlR P.E).comp (LS83.lsInl K)) (fun N _ => pairMAdmittedS2 P.E Pr.n N) :=
     fun M _ hM => pairM_subHullStrongX P.E Pr.n M hM.1.1
@@ -1313,7 +1316,7 @@ theorem infra_83_pairMS2_X_chart_natural (P : SingleModelData K)
       (iff_of_eq (congrArg _ (funext fun i => ?_))))
     · fin_cases i <;> rfl
     · fin_cases i <;> rfl
-  refine ⟨c, hc, hcoh, hXs, fun k =>
+  refine ⟨fun k =>
     { J := J k, lo := lo k, ne := ne k, H := H k, hne := hne k, ε := ε k, bij := hb k,
       j := jH k, inj := hi k, mono := hmo k },
     fun k a => ⟨hcoord k _ a rfl, fun {l} e =>
@@ -1364,18 +1367,47 @@ theorem infra_83_pairMS2_X_chart_natural (P : SingleModelData K)
   rw [hq, P.E.skeleton_natural]
   rfl
 
-/-- **`ε_l ∘ F_Y(e) = F(h_e) ∘ ε_k`**: the coherent `Y`-charts identify every piece map with
+/-- **`ε_l ∘ F_X(e) = F(h_e) ∘ ε_k`**: the coherent `X`-charts identify every piece map with
 `F` of an order embedding `h_e : H_k ↪o H_l` of the charts. -/
-theorem infra_83_pairMS2_Y_chart_natural (P : SingleModelData K)
+theorem infra_83_pairMS2_X_chart_natural (P : SingleModelData K)
     (Pr : StationaryPrescription K oneVertexShape P.scheme) :
     ∃ (c : (m : ℕ) → 0 < m → Hull83.TpColorB (LS83.pairLangM3 P.E Pr.n) 3 m)
       (hc : ∀ (n : ℕ) (κ : Cardinal.{u}),
         Hull83.Joint (Hull83.TpSampleB (fun N _ => pairMAdmittedS2 P.E Pr.n N) 3) n c κ)
       (hcoh : ∀ {m m' : ℕ} (hm' : 0 < m') (hm : 0 < m) (f : Fin m' ↪o Fin m),
         c m' hm' = Hull83.tpResB 3 f (c m hm))
+      (hXs : Hull83.SubHullStrong ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) (fun N _ => pairMAdmittedS2 P.E Pr.n N))
+      (ch : ∀ k, PieceChart P.E ((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).obj k) k),
+      (∀ k (a : Fin (k + 1)), (ch k).ε (Quotient.mk _ (Term.var (a, (0 : Fin 1))) : ((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).obj k).carrier) = P.E.skeleton ((ch k).j a) ∧
+        ∀ {l : ℕ} (e : Fin (k + 1) ↪o Fin (l + 1)),
+          (ch l).ε ((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).map e (Quotient.mk _ (Term.var (a, (0 : Fin 1))) : ((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).obj k).carrier)) = P.E.skeleton ((ch l).j (e a))) ∧
+      ∀ {k l : ℕ} (e : Fin (k + 1) ↪o Fin (l + 1)), ∃ h : (ch k).H ↪o (ch l).H,
+        ∀ x, (ch l).ε ((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).map e x) = P.E.map h ((ch k).ε x) := by
+  obtain ⟨c, hc, hcoh, hθ, hρ⟩ := infra_83_pairMS2_coherent_colors P Pr
+  exact ⟨c, hc, hcoh, fun M _ hM => pairM_subHullStrongX P.E Pr.n M hM.1.1, infra_83_pairMS2_X_chart_natural_c P Pr c hc hcoh hθ hρ (fun M _ hM => pairM_subHullStrongX P.E Pr.n M hM.1.1)⟩
+
+/-- Parametric form of `infra_83_pairMS2_Y_chart_natural`: for any coherent colors `c` (with the `θ`/`ρ` facts) and
+any `hXs`. -/
+theorem infra_83_pairMS2_Y_chart_natural_c (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme)
+    (c : (m : ℕ) → 0 < m → Hull83.TpColorB (LS83.pairLangM3 P.E Pr.n) 3 m)
+      (hc : ∀ (n : ℕ) (κ : Cardinal.{u}),
+        Hull83.Joint (Hull83.TpSampleB (fun N _ => pairMAdmittedS2 P.E Pr.n N) 3) n c κ)
+      (hcoh : ∀ {m m' : ℕ} (hm' : 0 < m') (hm : 0 < m) (f : Fin m' ↪o Fin m),
+        c m' hm' = Hull83.tpResB 3 f (c m hm))
+      (hθ : ∀ (m : ℕ) (hm : 0 < m) (a : Fin m) (i : Fin 3),
+        (thetaM P.E Pr.n i).relabel (fun _ => (a, i)) ∈ c m hm)
+      (hρ : ∀ (m : ℕ) (hm : 0 < m) (a b : Fin m), a < b → ∀ i : Fin 3,
+        (rhoM P.E Pr.n i).relabel ![(a, i), (b, i)] ∈ c m hm)
       (hXs : Hull83.SubHullStrong (psiM P.E Pr.n)
-        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) (fun N _ => pairMAdmittedS2 P.E Pr.n N))
-      (ch : ∀ k, PieceChart P.E ((Hull83.subLangPieces (psiM P.E Pr.n)
+        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) (fun N _ => pairMAdmittedS2 P.E Pr.n N)) :
+    ∃ (ch : ∀ k, PieceChart P.E ((Hull83.subLangPieces (psiM P.E Pr.n)
         ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs).obj k) k),
       (∀ k (a : Fin (k + 1)), (ch k).ε (Quotient.mk _ (Term.var (a, (1 : Fin 2))) : ((Hull83.subLangPieces (psiM P.E Pr.n)
         ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs).obj k).carrier) = P.E.skeleton ((ch k).j a) ∧
@@ -1386,7 +1418,6 @@ theorem infra_83_pairMS2_Y_chart_natural (P : SingleModelData K)
       ∀ {k l : ℕ} (e : Fin (k + 1) ↪o Fin (l + 1)), ∃ h : (ch k).H ↪o (ch l).H,
         ∀ x, (ch l).ε ((Hull83.subLangPieces (psiM P.E Pr.n)
         ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs).map e x) = P.E.map h ((ch k).ε x) := by
-  obtain ⟨c, hc, hcoh, hθ, hρ⟩ := infra_83_pairMS2_coherent_colors P Pr
   have hXs : Hull83.SubHullStrong (psiM P.E Pr.n)
       ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) (fun N _ => pairMAdmittedS2 P.E Pr.n N) :=
     fun M _ hM => pairM_subHullStrongY P.E Pr.n M hM.1.1
@@ -1436,7 +1467,7 @@ theorem infra_83_pairMS2_Y_chart_natural (P : SingleModelData K)
       (iff_of_eq (congrArg _ (funext fun i => ?_))))
     · fin_cases i <;> rfl
     · fin_cases i <;> rfl
-  refine ⟨c, hc, hcoh, hXs, fun k =>
+  refine ⟨fun k =>
     { J := J k, lo := lo k, ne := ne k, H := H k, hne := hne k, ε := ε k, bij := hb k,
       j := jH k, inj := hi k, mono := hmo k },
     fun k a => ⟨hcoord k _ a rfl, fun {l} e =>
@@ -1487,6 +1518,84 @@ theorem infra_83_pairMS2_Y_chart_natural (P : SingleModelData K)
   rw [hq, P.E.skeleton_natural]
   rfl
 
+/-- **`ε_l ∘ F_Y(e) = F(h_e) ∘ ε_k`**: the coherent `Y`-charts identify every piece map with
+`F` of an order embedding `h_e : H_k ↪o H_l` of the charts. -/
+theorem infra_83_pairMS2_Y_chart_natural (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) :
+    ∃ (c : (m : ℕ) → 0 < m → Hull83.TpColorB (LS83.pairLangM3 P.E Pr.n) 3 m)
+      (hc : ∀ (n : ℕ) (κ : Cardinal.{u}),
+        Hull83.Joint (Hull83.TpSampleB (fun N _ => pairMAdmittedS2 P.E Pr.n N) 3) n c κ)
+      (hcoh : ∀ {m m' : ℕ} (hm' : 0 < m') (hm : 0 < m) (f : Fin m' ↪o Fin m),
+        c m' hm' = Hull83.tpResB 3 f (c m hm))
+      (hXs : Hull83.SubHullStrong (psiM P.E Pr.n)
+        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) (fun N _ => pairMAdmittedS2 P.E Pr.n N))
+      (ch : ∀ k, PieceChart P.E ((Hull83.subLangPieces (psiM P.E Pr.n)
+        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs).obj k) k),
+      (∀ k (a : Fin (k + 1)), (ch k).ε (Quotient.mk _ (Term.var (a, (1 : Fin 2))) : ((Hull83.subLangPieces (psiM P.E Pr.n)
+        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs).obj k).carrier) = P.E.skeleton ((ch k).j a) ∧
+        ∀ {l : ℕ} (e : Fin (k + 1) ↪o Fin (l + 1)),
+          (ch l).ε ((Hull83.subLangPieces (psiM P.E Pr.n)
+        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs).map e (Quotient.mk _ (Term.var (a, (1 : Fin 2))) : ((Hull83.subLangPieces (psiM P.E Pr.n)
+        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs).obj k).carrier)) = P.E.skeleton ((ch l).j (e a))) ∧
+      ∀ {k l : ℕ} (e : Fin (k + 1) ↪o Fin (l + 1)), ∃ h : (ch k).H ↪o (ch l).H,
+        ∀ x, (ch l).ε ((Hull83.subLangPieces (psiM P.E Pr.n)
+        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs).map e x) = P.E.map h ((ch k).ε x) := by
+  obtain ⟨c, hc, hcoh, hθ, hρ⟩ := infra_83_pairMS2_coherent_colors P Pr
+  exact ⟨c, hc, hcoh, fun M _ hM => pairM_subHullStrongY P.E Pr.n M hM.1.1, infra_83_pairMS2_Y_chart_natural_c P Pr c hc hcoh hθ hρ (fun M _ hM => pairM_subHullStrongY P.E Pr.n M hM.1.1)⟩
+
+/-- Parametric form of `infra_83_pairMS2_X_chart_functor`: for any coherent colors `c` (with the `θ`/`ρ` facts) and
+any `hXs`. -/
+theorem infra_83_pairMS2_X_chart_functor_c (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme)
+    (c : (m : ℕ) → 0 < m → Hull83.TpColorB (LS83.pairLangM3 P.E Pr.n) 3 m)
+      (hc : ∀ (n : ℕ) (κ : Cardinal.{u}),
+        Hull83.Joint (Hull83.TpSampleB (fun N _ => pairMAdmittedS2 P.E Pr.n N) 3) n c κ)
+      (hcoh : ∀ {m m' : ℕ} (hm' : 0 < m') (hm : 0 < m) (f : Fin m' ↪o Fin m),
+        c m' hm' = Hull83.tpResB 3 f (c m hm))
+      (hθ : ∀ (m : ℕ) (hm : 0 < m) (a : Fin m) (i : Fin 3),
+        (thetaM P.E Pr.n i).relabel (fun _ => (a, i)) ∈ c m hm)
+      (hρ : ∀ (m : ℕ) (hm : 0 < m) (a b : Fin m), a < b → ∀ i : Fin 3,
+        (rhoM P.E Pr.n i).relabel ![(a, i), (b, i)] ∈ c m hm)
+      (hXs : Hull83.SubHullStrong ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) (fun N _ => pairMAdmittedS2 P.E Pr.n N)) :
+    ∃ (ch : ∀ k, PieceChart P.E ((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).obj k) k)
+      (h : ∀ {k l : ℕ}, (Fin (k + 1) ↪o Fin (l + 1)) → (ch k).H ↪o (ch l).H),
+      (∀ k (a : Fin (k + 1)), (ch k).ε (Quotient.mk _ (Term.var (a, (0 : Fin 1))) : ((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).obj k).carrier) = P.E.skeleton ((ch k).j a)) ∧
+      (∀ {k l : ℕ} (e : Fin (k + 1) ↪o Fin (l + 1)) x,
+        (ch l).ε ((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).map e x) = P.E.map (h e) ((ch k).ε x)) ∧
+      (∀ {k l : ℕ} (e : Fin (k + 1) ↪o Fin (l + 1)) (a : Fin (k + 1)),
+        h e ((ch k).j a) = (ch l).j (e a)) ∧
+      (∀ k (p : (ch k).H), h (idEmb (α := Fin (k + 1))) p = p) ∧
+      ∀ {k l m : ℕ} (e : Fin (k + 1) ↪o Fin (l + 1)) (f : Fin (l + 1) ↪o Fin (m + 1))
+        (p : (ch k).H), h (e.trans f) p = h f (h e p) := by
+  obtain ⟨ch, hj, hn⟩ := infra_83_pairMS2_X_chart_natural_c P Pr c hc hcoh hθ hρ hXs
+  have hn' : ∀ (k l : ℕ) (e : Fin (k + 1) ↪o Fin (l + 1)), ∃ h : (ch k).H ↪o (ch l).H,
+      ∀ x, (ch l).ε ((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).map e x) = P.E.map h ((ch k).ε x) := fun k l e => hn e
+  choose h hh using hn'
+  have key : ∀ (k l : ℕ) (e : Fin (k + 1) ↪o Fin (l + 1)) (p : (ch k).H) x,
+      (ch k).ε x = P.E.skeleton p →
+        (ch l).ε ((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).map e x) = P.E.skeleton (h k l e p) := by
+    intro k l e p x hx
+    rw [hh, hx, P.E.skeleton_natural]
+  refine ⟨ch, fun {k l} e => h k l e, fun k a => (hj k a).1, fun {k l} e x => hh k l e x, ?_, ?_, ?_⟩
+  · intro k l e a
+    exact (P.E.skeleton.injective ((key k l e _ _ (hj k a).1).symm.trans ((hj k a).2 e)))
+  · intro k p
+    obtain ⟨x, hx⟩ := (ch k).bij.2 (P.E.skeleton p)
+    have h1 := key k k idEmb p x hx
+    rw [EM83.FinPieces.map_refl, Language.Embedding.refl_apply] at h1
+    exact (P.E.skeleton.injective (hx.symm.trans h1)).symm
+  · intro k l m e f p
+    obtain ⟨x, hx⟩ := (ch k).bij.2 (P.E.skeleton p)
+    have h1 := key k m (e.trans f) p x hx
+    rw [EM83.FinPieces.map_trans, Language.Embedding.comp_apply] at h1
+    have h2 := key l m f (h k l e p) _ (key k l e p x hx)
+    exact P.E.skeleton.injective (h1.symm.trans h2)
 
 /-- **The induced chart order embeddings form a functor**: choosing `h_e : H_k ↪o H_l` with
 `ε_l ∘ F_X(e) = F(h_e) ∘ ε_k`, we get `h_id = id` and `h_(e ≫ f) = h_f ∘ h_e`. -/
@@ -1512,18 +1621,49 @@ theorem infra_83_pairMS2_X_chart_functor (P : SingleModelData K)
       (∀ k (p : (ch k).H), h (idEmb (α := Fin (k + 1))) p = p) ∧
       ∀ {k l m : ℕ} (e : Fin (k + 1) ↪o Fin (l + 1)) (f : Fin (l + 1) ↪o Fin (m + 1))
         (p : (ch k).H), h (e.trans f) p = h f (h e p) := by
-  obtain ⟨c, hc, hcoh, hXs, ch, hj, hn⟩ := infra_83_pairMS2_X_chart_natural P Pr
+  obtain ⟨c, hc, hcoh, hθ, hρ⟩ := infra_83_pairMS2_coherent_colors P Pr
+  exact ⟨c, hc, hcoh, fun M _ hM => pairM_subHullStrongX P.E Pr.n M hM.1.1, infra_83_pairMS2_X_chart_functor_c P Pr c hc hcoh hθ hρ (fun M _ hM => pairM_subHullStrongX P.E Pr.n M hM.1.1)⟩
+
+/-- Parametric form of `infra_83_pairMS2_Y_chart_functor`: for any coherent colors `c` (with the `θ`/`ρ` facts) and
+any `hXs`. -/
+theorem infra_83_pairMS2_Y_chart_functor_c (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme)
+    (c : (m : ℕ) → 0 < m → Hull83.TpColorB (LS83.pairLangM3 P.E Pr.n) 3 m)
+      (hc : ∀ (n : ℕ) (κ : Cardinal.{u}),
+        Hull83.Joint (Hull83.TpSampleB (fun N _ => pairMAdmittedS2 P.E Pr.n N) 3) n c κ)
+      (hcoh : ∀ {m m' : ℕ} (hm' : 0 < m') (hm : 0 < m) (f : Fin m' ↪o Fin m),
+        c m' hm' = Hull83.tpResB 3 f (c m hm))
+      (hθ : ∀ (m : ℕ) (hm : 0 < m) (a : Fin m) (i : Fin 3),
+        (thetaM P.E Pr.n i).relabel (fun _ => (a, i)) ∈ c m hm)
+      (hρ : ∀ (m : ℕ) (hm : 0 < m) (a b : Fin m), a < b → ∀ i : Fin 3,
+        (rhoM P.E Pr.n i).relabel ![(a, i), (b, i)] ∈ c m hm)
+      (hXs : Hull83.SubHullStrong (psiM P.E Pr.n)
+        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) (fun N _ => pairMAdmittedS2 P.E Pr.n N)) :
+    ∃ (ch : ∀ k, PieceChart P.E ((Hull83.subLangPieces (psiM P.E Pr.n)
+        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs).obj k) k)
+      (h : ∀ {k l : ℕ}, (Fin (k + 1) ↪o Fin (l + 1)) → (ch k).H ↪o (ch l).H),
+      (∀ k (a : Fin (k + 1)), (ch k).ε (Quotient.mk _ (Term.var (a, (1 : Fin 2))) : ((Hull83.subLangPieces (psiM P.E Pr.n)
+        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs).obj k).carrier) = P.E.skeleton ((ch k).j a)) ∧
+      (∀ {k l : ℕ} (e : Fin (k + 1) ↪o Fin (l + 1)) x,
+        (ch l).ε ((Hull83.subLangPieces (psiM P.E Pr.n)
+        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs).map e x) = P.E.map (h e) ((ch k).ε x)) ∧
+      (∀ {k l : ℕ} (e : Fin (k + 1) ↪o Fin (l + 1)) (a : Fin (k + 1)),
+        h e ((ch k).j a) = (ch l).j (e a)) ∧
+      (∀ k (p : (ch k).H), h (idEmb (α := Fin (k + 1))) p = p) ∧
+      ∀ {k l m : ℕ} (e : Fin (k + 1) ↪o Fin (l + 1)) (f : Fin (l + 1) ↪o Fin (m + 1))
+        (p : (ch k).H), h (e.trans f) p = h f (h e p) := by
+  obtain ⟨ch, hj, hn⟩ := infra_83_pairMS2_Y_chart_natural_c P Pr c hc hcoh hθ hρ hXs
   have hn' : ∀ (k l : ℕ) (e : Fin (k + 1) ↪o Fin (l + 1)), ∃ h : (ch k).H ↪o (ch l).H,
-      ∀ x, (ch l).ε ((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
-        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).map e x) = P.E.map h ((ch k).ε x) := fun k l e => hn e
+      ∀ x, (ch l).ε ((Hull83.subLangPieces (psiM P.E Pr.n)
+        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs).map e x) = P.E.map h ((ch k).ε x) := fun k l e => hn e
   choose h hh using hn'
   have key : ∀ (k l : ℕ) (e : Fin (k + 1) ↪o Fin (l + 1)) (p : (ch k).H) x,
       (ch k).ε x = P.E.skeleton p →
-        (ch l).ε ((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
-        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).map e x) = P.E.skeleton (h k l e p) := by
+        (ch l).ε ((Hull83.subLangPieces (psiM P.E Pr.n)
+        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs).map e x) = P.E.skeleton (h k l e p) := by
     intro k l e p x hx
     rw [hh, hx, P.E.skeleton_natural]
-  refine ⟨c, hc, hcoh, hXs, ch, fun {k l} e => h k l e, fun k a => (hj k a).1, fun {k l} e x => hh k l e x, ?_, ?_, ?_⟩
+  refine ⟨ch, fun {k l} e => h k l e, fun k a => (hj k a).1, fun {k l} e x => hh k l e x, ?_, ?_, ?_⟩
   · intro k l e a
     exact (P.E.skeleton.injective ((key k l e _ _ (hj k a).1).symm.trans ((hj k a).2 e)))
   · intro k p
@@ -1537,7 +1677,6 @@ theorem infra_83_pairMS2_X_chart_functor (P : SingleModelData K)
     rw [EM83.FinPieces.map_trans, Language.Embedding.comp_apply] at h1
     have h2 := key l m f (h k l e p) _ (key k l e p x hx)
     exact P.E.skeleton.injective (h1.symm.trans h2)
-
 
 /-- **The induced chart order embeddings form a functor**: choosing `h_e : H_k ↪o H_l` with
 `ε_l ∘ F_Y(e) = F(h_e) ∘ ε_k`, we get `h_id = id` and `h_(e ≫ f) = h_f ∘ h_e`. -/
@@ -1563,33 +1702,8 @@ theorem infra_83_pairMS2_Y_chart_functor (P : SingleModelData K)
       (∀ k (p : (ch k).H), h (idEmb (α := Fin (k + 1))) p = p) ∧
       ∀ {k l m : ℕ} (e : Fin (k + 1) ↪o Fin (l + 1)) (f : Fin (l + 1) ↪o Fin (m + 1))
         (p : (ch k).H), h (e.trans f) p = h f (h e p) := by
-  obtain ⟨c, hc, hcoh, hXs, ch, hj, hn⟩ := infra_83_pairMS2_Y_chart_natural P Pr
-  have hn' : ∀ (k l : ℕ) (e : Fin (k + 1) ↪o Fin (l + 1)), ∃ h : (ch k).H ↪o (ch l).H,
-      ∀ x, (ch l).ε ((Hull83.subLangPieces (psiM P.E Pr.n)
-        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs).map e x) = P.E.map h ((ch k).ε x) := fun k l e => hn e
-  choose h hh using hn'
-  have key : ∀ (k l : ℕ) (e : Fin (k + 1) ↪o Fin (l + 1)) (p : (ch k).H) x,
-      (ch k).ε x = P.E.skeleton p →
-        (ch l).ε ((Hull83.subLangPieces (psiM P.E Pr.n)
-        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs).map e x) = P.E.skeleton (h k l e p) := by
-    intro k l e p x hx
-    rw [hh, hx, P.E.skeleton_natural]
-  refine ⟨c, hc, hcoh, hXs, ch, fun {k l} e => h k l e, fun k a => (hj k a).1, fun {k l} e x => hh k l e x, ?_, ?_, ?_⟩
-  · intro k l e a
-    exact (P.E.skeleton.injective ((key k l e _ _ (hj k a).1).symm.trans ((hj k a).2 e)))
-  · intro k p
-    obtain ⟨x, hx⟩ := (ch k).bij.2 (P.E.skeleton p)
-    have h1 := key k k idEmb p x hx
-    rw [EM83.FinPieces.map_refl, Language.Embedding.refl_apply] at h1
-    exact (P.E.skeleton.injective (hx.symm.trans h1)).symm
-  · intro k l m e f p
-    obtain ⟨x, hx⟩ := (ch k).bij.2 (P.E.skeleton p)
-    have h1 := key k m (e.trans f) p x hx
-    rw [EM83.FinPieces.map_trans, Language.Embedding.comp_apply] at h1
-    have h2 := key l m f (h k l e p) _ (key k l e p x hx)
-    exact P.E.skeleton.injective (h1.symm.trans h2)
-
-
+  obtain ⟨c, hc, hcoh, hθ, hρ⟩ := infra_83_pairMS2_coherent_colors P Pr
+  exact ⟨c, hc, hcoh, fun M _ hM => pairM_subHullStrongY P.E Pr.n M hM.1.1, infra_83_pairMS2_Y_chart_functor_c P Pr c hc hcoh hθ hρ (fun M _ hM => pairM_subHullStrongY P.E Pr.n M hM.1.1)⟩
 
 /-- **`F` along a functor of orders**: given orders `H k` and order embeddings
 `h e : H k ↪o H l`, functorial in `e`, the piece functor `k ↦ F(H k)`, `e ↦ F(h e)`. -/
@@ -1611,6 +1725,45 @@ noncomputable def orderPieces83 (E : OrderPresentation K) (H : ℕ → Type u)
       ext p; exact hcomp e f p
     rw [this, E.map_comp]
   strong e := E.map_strong _
+
+/-- Parametric form of `infra_83_pairMS2_X_F_pieces`: for any coherent colors `c` (with the `θ`/`ρ` facts) and
+any `hXs`. -/
+theorem infra_83_pairMS2_X_F_pieces_c (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme)
+    (c : (m : ℕ) → 0 < m → Hull83.TpColorB (LS83.pairLangM3 P.E Pr.n) 3 m)
+      (hc : ∀ (n : ℕ) (κ : Cardinal.{u}),
+        Hull83.Joint (Hull83.TpSampleB (fun N _ => pairMAdmittedS2 P.E Pr.n N) 3) n c κ)
+      (hcoh : ∀ {m m' : ℕ} (hm' : 0 < m') (hm : 0 < m) (f : Fin m' ↪o Fin m),
+        c m' hm' = Hull83.tpResB 3 f (c m hm))
+      (hθ : ∀ (m : ℕ) (hm : 0 < m) (a : Fin m) (i : Fin 3),
+        (thetaM P.E Pr.n i).relabel (fun _ => (a, i)) ∈ c m hm)
+      (hρ : ∀ (m : ℕ) (hm : 0 < m) (a b : Fin m), a < b → ∀ i : Fin 3,
+        (rhoM P.E Pr.n i).relabel ![(a, i), (b, i)] ∈ c m hm)
+      (hXs : Hull83.SubHullStrong ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) (fun N _ => pairMAdmittedS2 P.E Pr.n N)) :
+    ∃ (ch : ∀ k, PieceChart P.E ((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).obj k) k)
+      (h : ∀ {k l : ℕ}, (Fin (k + 1) ↪o Fin (l + 1)) → (ch k).H ↪o (ch l).H)
+      (hid : ∀ k (p : (ch k).H), h (idEmb (α := Fin (k + 1))) p = p)
+      (hcomp : ∀ {k l m : ℕ} (e : Fin (k + 1) ↪o Fin (l + 1)) (f : Fin (l + 1) ↪o Fin (m + 1))
+        (p : (ch k).H), h (e.trans f) p = h f (h e p))
+      (hjc : ∀ {k l : ℕ} (e : Fin (k + 1) ↪o Fin (l + 1)) (a : Fin (k + 1)),
+        h e ((ch k).j a) = (ch l).j (e a))
+      (η : EM83.PiecesHom (Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs) (orderPieces83 P.E (fun k => (ch k).H) h hid hcomp)),
+      (∀ k (a : Fin (k + 1)), (ch k).ε (Quotient.mk _ (Term.var (a, (0 : Fin 1))) : ((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).obj k).carrier) = P.E.skeleton ((ch k).j a)) ∧
+      (∀ k x, η.app k x = (ch k).ε x) ∧ (∀ k, Function.Bijective (η.app k)) ∧
+      ∀ (I : Type u) [LinearOrder I] [Nonempty I],
+        Function.Bijective (η.limMap I) ∧ K.Strong (η.limMap I) := by
+  obtain ⟨ch, h, hv, hnat, hjc, hid, hcomp⟩ := infra_83_pairMS2_X_chart_functor_c P Pr c hc hcoh hθ hρ hXs
+  refine ⟨ch, h, hid, hcomp, hjc,
+    { app := fun k => (ch k).ε
+      strong := fun k => strong_of_equiv K (embeddingEquivOfSurjective (ch k).ε (ch k).bij.2)
+        ((Hull83.subLangPieces _ _ hc hcoh _ hXs).mem k)
+      natural := fun e => by ext x; exact hnat e x }, hv, fun _ _ => rfl, fun k => (ch k).bij,
+    fun I _ _ => ⟨EM83.PiecesHom.limMap_bijective _ I (fun k => (ch k).bij.2),
+      EM83.PiecesHom.limMap_strong _ I⟩⟩
 
 /-- **`F_X ≅ F ∘ H`**: the `X`-pieces are naturally isomorphic (componentwise the charts
 `ε_k`) to the piece functor `k ↦ F(H_k)`, `e ↦ F(h_e)` of a functor of orders; hence each
@@ -1639,15 +1792,47 @@ theorem infra_83_pairMS2_X_F_pieces (P : SingleModelData K)
       (∀ k x, η.app k x = (ch k).ε x) ∧ (∀ k, Function.Bijective (η.app k)) ∧
       ∀ (I : Type u) [LinearOrder I] [Nonempty I],
         Function.Bijective (η.limMap I) ∧ K.Strong (η.limMap I) := by
-  obtain ⟨c, hc, hcoh, hXs, ch, h, hv, hnat, hjc, hid, hcomp⟩ := infra_83_pairMS2_X_chart_functor P Pr
-  refine ⟨c, hc, hcoh, hXs, ch, h, hid, hcomp, hjc,
+  obtain ⟨c, hc, hcoh, hθ, hρ⟩ := infra_83_pairMS2_coherent_colors P Pr
+  exact ⟨c, hc, hcoh, fun M _ hM => pairM_subHullStrongX P.E Pr.n M hM.1.1, infra_83_pairMS2_X_F_pieces_c P Pr c hc hcoh hθ hρ (fun M _ hM => pairM_subHullStrongX P.E Pr.n M hM.1.1)⟩
+
+/-- Parametric form of `infra_83_pairMS2_Y_F_pieces`: for any coherent colors `c` (with the `θ`/`ρ` facts) and
+any `hXs`. -/
+theorem infra_83_pairMS2_Y_F_pieces_c (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme)
+    (c : (m : ℕ) → 0 < m → Hull83.TpColorB (LS83.pairLangM3 P.E Pr.n) 3 m)
+      (hc : ∀ (n : ℕ) (κ : Cardinal.{u}),
+        Hull83.Joint (Hull83.TpSampleB (fun N _ => pairMAdmittedS2 P.E Pr.n N) 3) n c κ)
+      (hcoh : ∀ {m m' : ℕ} (hm' : 0 < m') (hm : 0 < m) (f : Fin m' ↪o Fin m),
+        c m' hm' = Hull83.tpResB 3 f (c m hm))
+      (hθ : ∀ (m : ℕ) (hm : 0 < m) (a : Fin m) (i : Fin 3),
+        (thetaM P.E Pr.n i).relabel (fun _ => (a, i)) ∈ c m hm)
+      (hρ : ∀ (m : ℕ) (hm : 0 < m) (a b : Fin m), a < b → ∀ i : Fin 3,
+        (rhoM P.E Pr.n i).relabel ![(a, i), (b, i)] ∈ c m hm)
+      (hXs : Hull83.SubHullStrong (psiM P.E Pr.n)
+        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) (fun N _ => pairMAdmittedS2 P.E Pr.n N)) :
+    ∃ (ch : ∀ k, PieceChart P.E ((Hull83.subLangPieces (psiM P.E Pr.n)
+        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs).obj k) k)
+      (h : ∀ {k l : ℕ}, (Fin (k + 1) ↪o Fin (l + 1)) → (ch k).H ↪o (ch l).H)
+      (hid : ∀ k (p : (ch k).H), h (idEmb (α := Fin (k + 1))) p = p)
+      (hcomp : ∀ {k l m : ℕ} (e : Fin (k + 1) ↪o Fin (l + 1)) (f : Fin (l + 1) ↪o Fin (m + 1))
+        (p : (ch k).H), h (e.trans f) p = h f (h e p))
+      (hjc : ∀ {k l : ℕ} (e : Fin (k + 1) ↪o Fin (l + 1)) (a : Fin (k + 1)),
+        h e ((ch k).j a) = (ch l).j (e a))
+      (η : EM83.PiecesHom (Hull83.subLangPieces (psiM P.E Pr.n)
+        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs) (orderPieces83 P.E (fun k => (ch k).H) h hid hcomp)),
+      (∀ k (a : Fin (k + 1)), (ch k).ε (Quotient.mk _ (Term.var (a, (1 : Fin 2))) : ((Hull83.subLangPieces (psiM P.E Pr.n)
+        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs).obj k).carrier) = P.E.skeleton ((ch k).j a)) ∧
+      (∀ k x, η.app k x = (ch k).ε x) ∧ (∀ k, Function.Bijective (η.app k)) ∧
+      ∀ (I : Type u) [LinearOrder I] [Nonempty I],
+        Function.Bijective (η.limMap I) ∧ K.Strong (η.limMap I) := by
+  obtain ⟨ch, h, hv, hnat, hjc, hid, hcomp⟩ := infra_83_pairMS2_Y_chart_functor_c P Pr c hc hcoh hθ hρ hXs
+  refine ⟨ch, h, hid, hcomp, hjc,
     { app := fun k => (ch k).ε
       strong := fun k => strong_of_equiv K (embeddingEquivOfSurjective (ch k).ε (ch k).bij.2)
         ((Hull83.subLangPieces _ _ hc hcoh _ hXs).mem k)
       natural := fun e => by ext x; exact hnat e x }, hv, fun _ _ => rfl, fun k => (ch k).bij,
     fun I _ _ => ⟨EM83.PiecesHom.limMap_bijective _ I (fun k => (ch k).bij.2),
       EM83.PiecesHom.limMap_strong _ I⟩⟩
-
 
 /-- **`F_Y ≅ F ∘ H`**: the `Y`-pieces are naturally isomorphic (componentwise the charts
 `ε_k`) to the piece functor `k ↦ F(H_k)`, `e ↦ F(h_e)` of a functor of orders; hence each
@@ -1676,16 +1861,8 @@ theorem infra_83_pairMS2_Y_F_pieces (P : SingleModelData K)
       (∀ k x, η.app k x = (ch k).ε x) ∧ (∀ k, Function.Bijective (η.app k)) ∧
       ∀ (I : Type u) [LinearOrder I] [Nonempty I],
         Function.Bijective (η.limMap I) ∧ K.Strong (η.limMap I) := by
-  obtain ⟨c, hc, hcoh, hXs, ch, h, hv, hnat, hjc, hid, hcomp⟩ := infra_83_pairMS2_Y_chart_functor P Pr
-  refine ⟨c, hc, hcoh, hXs, ch, h, hid, hcomp, hjc,
-    { app := fun k => (ch k).ε
-      strong := fun k => strong_of_equiv K (embeddingEquivOfSurjective (ch k).ε (ch k).bij.2)
-        ((Hull83.subLangPieces _ _ hc hcoh _ hXs).mem k)
-      natural := fun e => by ext x; exact hnat e x }, hv, fun _ _ => rfl, fun k => (ch k).bij,
-    fun I _ _ => ⟨EM83.PiecesHom.limMap_bijective _ I (fun k => (ch k).bij.2),
-      EM83.PiecesHom.limMap_strong _ I⟩⟩
-
-
+  obtain ⟨c, hc, hcoh, hθ, hρ⟩ := infra_83_pairMS2_coherent_colors P Pr
+  exact ⟨c, hc, hcoh, fun M _ hM => pairM_subHullStrongY P.E Pr.n M hM.1.1, infra_83_pairMS2_Y_F_pieces_c P Pr c hc hcoh hθ hρ (fun M _ hM => pairM_subHullStrongY P.E Pr.n M hM.1.1)⟩
 
 /-- **Natural order embeddings induce piece morphisms**: a family `g k : H k ↪o H' k` natural
 in the piece maps (`g l ∘ h e = h' e ∘ g k`) induces a strong natural `PiecesHom` between

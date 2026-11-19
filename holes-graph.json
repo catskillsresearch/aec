@@ -6229,6 +6229,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 107: infra_83_pairMS2_X_hull_natural / infra_83_pairMS2_Y_hull_natural (strong bijective m_I, commuting squares with the colimit maps J_f). | Cycle 108: J_I/Z_I functorial — colMap id = id and colMap (f≫g) = colMap g ∘ colMap f, proved from naturality + gEmMap_id/comp + surjectivity of m_I + faithfulness of E.map (OrderColimit83.lean). | Cycle 108 (later): natural skeleton embedding g_I : I ↪o J_I (i ↦ colimit image of chart coordinate j(pos i), independent of s ∋ i) with J_f ∘ g_I = g_I' ∘ f (OCol83.pos_indexCast). | Cycle 108 (later): m_I sends the chart coordinate of i (x with ε x = skeleton(j(pos s i))) to skeleton(g_I i), and #J_I ≤ #(Finset I)·ls K, all in the natural theorem."
+  },
+  {
+   "id": "infra_83_pairMS2_c_parametric",
+   "label": "Lemma 8.3 proof: X/Y chart chain parametric in the coherent colors c (chart_natural_c, chart_functor_c, F_pieces_c, hull_natural_c)",
+   "section": 8,
+   "file": "AEC/Section8/OrderColimit83.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 108: c-parametric versions of the X/Y chain alongside the old existential ones (which are now wrappers), so X, Y and L statements can share one choice of c."
   }
  ],
  "edges": [
@@ -11629,8 +11638,13 @@
    "from": "infra_83_pairMS2_hull_natural",
    "to": "infra_83_Y_hull_eq_FZ",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_pairMS2_c_parametric",
+   "to": "infra_83_pair_pieces",
+   "kind": "hard"
   }
  ],
- "doneCount": 627,
+ "doneCount": 628,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
