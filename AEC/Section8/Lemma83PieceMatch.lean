@@ -3986,4 +3986,16 @@ theorem infra_83_template_list_data (F : EM83.FinPieces K) (I : Type u) [LinearO
   exact ⟨D, P1, monotone_nat_of_le_succ hDs, hDc, hDk, hm', hk', hs', hc'⟩
 end
 
+
+section
+
+/-- **Size of a term hull (proved).** The term hull of a tuple `v : ι → M` has at most
+`max ℵ₀ #(ι ⊕ Σ i, L.Functions i)` elements (it is a quotient of `L.Term ι`): the size bound
+`F.obj k ≤ lam` for the hull pieces of the template (`infra_83_template_list_data`). -/
+theorem infra_83_hull_card_le {L : FirstOrder.Language.{u, u}} {M : Type u} [L.Structure M]
+    {ι : Type} (v : ι → M) :
+    #(Hull83.Hull (L := L) v) ≤ max ℵ₀ #(ι ⊕ (Σ i, L.Functions i)) :=
+  (Cardinal.mk_le_of_surjective Quotient.mk_surjective).trans FirstOrder.Language.Term.card_le
+end
+
 end AEC
