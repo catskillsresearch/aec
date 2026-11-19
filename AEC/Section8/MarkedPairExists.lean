@@ -170,4 +170,32 @@ theorem infra_83_lemma_8_3_single (P : SingleModelData K)
   have hcat := SingleModelData.categorical (P := P) hμe
   exact hcat.unique_model (P.E.obj I) M.Y.model (P.hE I) M.Y.mem hcI (M.Y.card.trans hMμ)
 
+/-- **Lean `lemma_8_5` statement for the Prop 5.6 scheme (proved, cycle 94).** On the Theorem 7.9
+tail, any family of at most `μ` marked pairs at level `μ` has a common upper bound: take a marked
+pair `U` at `μ` (`infra_82_marked_pair_exists` over a model of size `μ`); every base `(M i).X` is
+isomorphic to `U.X` by categoricity, and the isomorphism extends to an arrow of marked pairs
+(`infra_82_pair_extend_same_level`). Audit note: the Lean `lemma_8_5` has no chain hypothesis and
+no union clause; the English asserts that the union of an increasing chain is a marked pair. -/
+theorem infra_85_lemma_8_5_single (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) :
+    ∃ T, ∃ hT : Tail P.scheme.eligible T,
+      ∀ μ (hμ : μ ∈ T) (index : Type u) (M : index → MarkedPair K oneVertexShape P.scheme Pr),
+        (∀ i, (M i).μ = μ) → #index ≤ μ →
+        ∃ U : MarkedPair K oneVertexShape P.scheme Pr, U.μ = μ ∧
+          ∀ i, Nonempty (MarkedArrow K oneVertexShape P.scheme Pr (M i) U) := by
+  obtain ⟨T, hT, H⟩ := infra_82_marked_pair_exists P Pr
+  refine ⟨T, hT, fun μ hμ index M hM _ => ?_⟩
+  have hμe : μ ∈ P.eligible := Tail.mem hT hμ
+  have hcat := SingleModelData.categorical (P := P) hμe
+  obtain ⟨N0, hN0mem, hN0c⟩ := hcat.exists_model
+  obtain ⟨U, hUμ, -⟩ := H μ hμ (SMObject.ofModel N0 hN0mem hN0c)
+  refine ⟨U, hUμ, fun i => ?_⟩
+  obtain ⟨φ⟩ := hcat.unique_model (M i).X.model U.X.model (M i).X.mem U.X.mem
+    ((M i).X.card.trans (hM i)) (U.X.card.trans hUμ)
+  let e : SystemArrow K oneVertexShape (P.scheme.asSystem (M i).hμ (M i).X)
+      (P.scheme.asSystem U.hμ U.X) :=
+    oneVertexArrow φ.toEmbedding (strong_of_equiv K φ (M i).X.mem)
+  obtain ⟨arr, -⟩ := infra_82_pair_extend_same_level P Pr (M i) U ((hM i).trans hUμ.symm) e trivial
+  exact ⟨arr⟩
+
 end AEC
