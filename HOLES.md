@@ -476,6 +476,7 @@ Lean: imports `Section5.Results` and `Section6.Results`. Soft paper chain after 
 | `infra_82_reflect_type_transport` | 8.2(5) reflection: small isomorphism transports the joint type | [`ComparisonSingle.lean`](AEC/Section8/ComparisonSingle.lean) (open, cycle 98) |
 | `infra_82_saturate_inside` | Saturation realized inside the object (8.2(5) reflection) | [`ReflectSingle.lean`](AEC/Section8/ReflectSingle.lean) (**done**, cycle 99) |
 | `infra_82_isolated_fixing_iso` | Isolated types invariant under base self-arrows fixing the fragment | [`ReflectSingle.lean`](AEC/Section8/ReflectSingle.lean) (**done**, cycle 99) |
+| `infra_82_reflect_realize_single` | 8.2(5) reflection core: large-base lists realized in the small pair with the same joint diagram | [`ReflectSingle.lean`](AEC/Section8/ReflectSingle.lean) (**done**, cycle 99) |
 | `infra_72_mixed_level` | Lemma 7.2 last sentence (A at a smaller level than B), stated with sorry (audit) | [`Lemma72Mixed.lean`](AEC/Section7/Lemma72Mixed.lean) (open, cycle 96) |
 | `infra_82_tiedFreeMixed_base_equiv` | Mixed tied freeness under a reindexed change of base tuple | [`TiedAlong.lean`](AEC/Section8/TiedAlong.lean) (**done**, cycle 97) |
 | `infra_82_mark_tied_along_single` | Lemma 8.2(4) for `P.scheme`: tied freeness of the mark along arrows (Def 8.1 tied, cycle 97 ruling) | [`TiedAlong.lean`](AEC/Section8/TiedAlong.lean) (**done**, cycle 97) |

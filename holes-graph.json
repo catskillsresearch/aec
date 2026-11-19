@@ -4527,7 +4527,7 @@
    "file": "AEC/Section8/ComparisonSingle.lean",
    "status": "open",
    "blocker": null,
-   "detail": "Cycle 98. Paper par. 34: inside the second small base realize a copy of beta(f1 Z1) over the second small approximation list and the required base entries (bounded realization problem; diagram unchanged under the mixed embedding; mixed saturation). Lean gap: IsSaturated realizes in an extension of M2.X at the same level, not inside M2.X."
+   "detail": "Cycle 98. Paper par. 34: inside the second small base realize a copy of beta(f1 Z1) over the second small approximation list and the required base entries (bounded realization problem; diagram unchanged under the mixed embedding; mixed saturation). Lean gap: IsSaturated realizes in an extension of M2.X at the same level, not inside M2.X. | Cycle 99: core proved as infra_82_reflect_realize_single (with infra_82_saturate_inside). Remaining: the small base isomorphism assembly inside the 8.2(5) reflection theorem."
   },
   {
    "id": "infra_82_reflect_type_transport",
@@ -4555,6 +4555,15 @@
    "status": "done",
    "blocker": null,
    "detail": "DONE cycle 99. Approximation calculation of the 8.2 proof: if Wf isolates q relative to its u-marginal and h fixes Wf with u-marginal type preserved, q read through h has q's type. Sub-lemma of infra_82_reflect_type_transport."
+  },
+  {
+   "id": "infra_82_reflect_realize_single",
+   "label": "8.2(5) reflection core: lists of the large base are realized in the small pair with the same joint diagram",
+   "section": 8,
+   "file": "AEC/Section8/ReflectSingle.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "DONE cycle 99. For f : M -> N up a level on the closure tail, bounded t in M.Y and bounded list Wl of N.X, some V in M.X has diag_{M.Y}(b,t,V) = diag_{N.Y}(b' o markMap, f t, Wl). Saturation inside M.X over the small approximation list, isolation of the free extension over N.X by f Z (infra_72_mixed_level_closed), and a fragment-fixing automorphism of N.X (infra_82_isolated_fixing_iso, CommutesWithIso for the marks)."
   }
  ],
  "edges": [
@@ -8825,8 +8834,13 @@
    "from": "infra_82_isolated_fixing_iso",
    "to": "infra_82_reflect_type_transport",
    "kind": "hard"
+  },
+  {
+   "from": "infra_82_reflect_realize_single",
+   "to": "infra_82_reflect_small_realization",
+   "kind": "hard"
   }
  ],
- "doneCount": 450,
+ "doneCount": 451,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
