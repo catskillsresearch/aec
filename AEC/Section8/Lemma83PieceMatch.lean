@@ -1852,4 +1852,51 @@ theorem infra_83_dominated_of_primeness_at (P : SingleModelData K) {μ : Cardina
     ((Cardinal.lt_aleph0_of_finite _).trans (P.aleph0_lt hμ.1.1)) hD
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+set_option maxHeartbeats 3200000 in
+/-- **Lemma 8.3 (P.scheme) reduced to realization plus constructive primeness (proved
+reduction).** `Lemma83Conclusion` holds for the constructed pair template once, at every
+closed-tail well-order `I`, the template mark realizes the prescribed type and `Y_I` maps over
+`X_I` (carrying the mark) into every all-dominated realization of the mark's type at level `#I`
+(`infra_83_dominated_of_primeness_at`): no bound on the width of the dominated tuples. -/
+theorem infra_83_full_single_of_primeness (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) :
+    ∃ (X Y : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
+        P.scheme.Object #I hI)
+      (incl : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
+        SystemArrow K oneVertexShape (P.scheme.asSystem hI (X I hI))
+          (P.scheme.asSystem hI (Y I hI)))
+      (mk : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
+        Fin Pr.n → Occurrence K oneVertexShape (P.scheme.asSystem hI (Y I hI))),
+      (∀ (I : Type u) [LinearOrder I] [WellFoundedLT I] [Nonempty I]
+          (hI : #I ∈ infra_78_closedTail P ∩ infra_615_closed P),
+          (∃ realEq : ULift.{u} (Fin Pr.n) ≃ (Pr.assign hI.2.1 (X I hI.2.1)).idx,
+            SameGaloisType (asTuple (incl I hI.2.1) trivial
+              (fun a : ULift.{u} (Fin Pr.n) => mk I hI.2.1 a.down))
+              (Pr.assign hI.2.1 (X I hI.2.1)) realEq (Equiv.refl _)) ∧
+          ∀ (V : P.scheme.Object #I hI.2.1)
+            (inclV : SystemArrow K oneVertexShape (P.scheme.asSystem hI.2.1 (X I hI.2.1))
+              (P.scheme.asSystem hI.2.1 V))
+            (b' : ULift.{u} (Fin Pr.n) → Occurrence K oneVertexShape (P.scheme.asSystem hI.2.1 V)),
+            AllDominated inclV trivial (ULift.{u} (Fin Pr.n)) b' →
+            SameGaloisType (asTuple (incl I hI.2.1) trivial
+                (fun a : ULift.{u} (Fin Pr.n) => mk I hI.2.1 a.down))
+              (asTuple inclV trivial b') (Equiv.refl _) (Equiv.refl _) →
+            ∃ h : SystemArrow K oneVertexShape (P.scheme.asSystem hI.2.1 (Y I hI.2.1))
+                (P.scheme.asSystem hI.2.1 V),
+              SystemArrow.comp (incl I hI.2.1) h = inclV ∧
+              ∀ a, h.mapOcc (mk I hI.2.1 a.down) = b' a) →
+      Lemma83Conclusion P.scheme Pr := by
+  obtain ⟨F, X, Y, eX, eY, incl, mk, hincl, harr⟩ := infra_83_pair_template_clauses P Pr
+  refine ⟨X, Y, incl, mk, fun hS => ?_⟩
+  refine infra_83_conclusion_of_marked_values_idx P Pr F X Y eX eY incl mk hincl harr _
+    (infra_83_closed_tail P) (fun I _ _ _ hI => ?_)
+  obtain ⟨⟨realEq, hr⟩, hprime⟩ := hS I hI
+  exact ⟨ULift.{u} (Fin Pr.n), Equiv.refl _, realEq, hr,
+    infra_83_dominated_of_primeness_at P hI (incl I hI.2.1) _ hprime⟩
+end
+
 end AEC
