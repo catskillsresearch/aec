@@ -4978,6 +4978,24 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 101: exists_present_equiv + infra_84_layout_agree_single."
+  },
+  {
+   "id": "infra_84_segment_model_homogeneity",
+   "label": "Lemma 8.4 (P.scheme): two strong copies in a level-mu object B of a model of size < mu (the U_H segment E(I1)) have the same diagram (model homogeneity over small submodels)",
+   "section": 8,
+   "file": "AEC/Section8/TermGen84Single.lean",
+   "status": "open",
+   "blocker": null,
+   "detail": "Cycle 101: the remaining input for a segment-compatible chart (infra_84_segment_chart_of_diagramEq). Lists have length #U = nu < mu but are not bounded at the source level, so diagram_preserved does not apply; needs saturation/model-homogeneity of P.scheme objects over small submodels."
+  },
+  {
+   "id": "infra_84_segment_chart_of_diagramEq",
+   "label": "Lemma 8.4 (P.scheme): segment-compatible chart of the layout object, given equal diagrams of the two copies of the U_H segment",
+   "section": 8,
+   "file": "AEC/Section8/TermGen84Single.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 101: diagramEq_iff_equiv; reduction of the F^b(H)-style presentation to infra_84_segment_model_homogeneity."
   }
  ],
  "edges": [
@@ -9488,8 +9506,18 @@
    "from": "infra_84_layout_agree_presented",
    "to": "infra_84_layout_amalgam",
    "kind": "hard"
+  },
+  {
+   "from": "infra_84_segment_model_homogeneity",
+   "to": "infra_84_layout_amalgam",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_84_segment_chart_of_diagramEq",
+   "to": "infra_84_layout_amalgam",
+   "kind": "hard"
   }
  ],
- "doneCount": 497,
+ "doneCount": 498,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

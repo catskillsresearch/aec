@@ -595,4 +595,20 @@ theorem infra_84_layout_agree_presented
     f hf q qB₁ qB₂ eB₁ eB₂ e hqν hB₁ν hB₂ν hidx hidxν W hW hExt₁ hExt₂ hMarg₁ hMarg₂ I₁ I₂ hI c
     hτinf hτ hα P₀ P₁ h₀ h₁⟩
 
+/-- **Segment-compatible chart, reduced to a diagram condition.** English (Lemma 8.4 proof):
+"Present (A, U, b) as F^b(H)": the layout object must be presented so that the `U_H` segment is
+carried onto the given copy of `U`. For a level-`μ` object `B` charted by `c'` onto `P.E(J)`, an
+order embedding `ι : I₁ ↪o J` of the segment, and a map `ψ : P.E(I₁) → B` (the given copy of `U`,
+fewer than `μ` elements): if the two lists `c' ∘ E(ι)` and `ψ` have the same diagram in `B`, then
+some chart `c` of `B` carries the segment exactly onto `ψ`. (The diagram condition on lists of
+length `#U < μ` is the remaining input; it is not implied by the bounded-at-`#U` hypotheses.) -/
+theorem infra_84_segment_chart_of_diagramEq (P : SingleModelData K) {μ : Cardinal.{u}}
+    (hμ : μ ∈ P.eligible) (B : SMObject K μ) {I₁ J : Type u} [LinearOrder I₁] [LinearOrder J]
+    [Nonempty I₁] [Nonempty J] (ι : I₁ ↪o J) (c' : (P.E.obj J).carrier ≃[K.τ] B.model.carrier)
+    (ψ : (P.E.obj I₁).carrier → B.model.carrier) (hcard : #(P.E.obj I₁).carrier < μ)
+    (hD : P.DiagramEq hμ hμ B B (fun x => c' (P.E.map ι x)) ψ) :
+    ∃ c : (P.E.obj J).carrier ≃[K.τ] B.model.carrier, ∀ x, c (P.E.map ι x) = ψ x := by
+  obtain ⟨e, he⟩ := (P.diagramEq_iff_equiv hμ B B _ ψ hcard).mp hD
+  exact ⟨e.comp c', fun x => he x⟩
+
 end AEC
