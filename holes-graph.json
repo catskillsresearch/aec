@@ -5913,7 +5913,7 @@
    "file": "AEC/Section8/Lemma83SampleLikeY.lean",
    "status": "done",
    "blocker": null,
-   "detail": "Cycle 106: infra_83_pairMS2_X_chart_maps. Remaining for F_X(I) ≅ F(J_I): θ_e = E.map of an order embedding H_k → H_l (needs the order of chart points recorded by the colors and the term structure matched), then the limit."
+   "detail": "Cycle 106: infra_83_pairMS2_X_chart_maps. Remaining for F_X(I) ≅ F(J_I): θ_e = E.map of an order embedding H_k → H_l (needs the order of chart points recorded by the colors and the term structure matched), then the limit. | Cycle 106: strengthened - each θ_e is a τ-embedding F(H_k) ↪ F(H_l)."
   },
   {
    "id": "infra_83_pairMS2_Y_chart_maps",
@@ -5922,7 +5922,7 @@
    "file": "AEC/Section8/Lemma83SampleLikeY.lean",
    "status": "done",
    "blocker": null,
-   "detail": "Cycle 106: infra_83_pairMS2_Y_chart_maps."
+   "detail": "Cycle 106: infra_83_pairMS2_Y_chart_maps. | Cycle 106: strengthened - each θ_e is a τ-embedding F(H_k) ↪ F(H_l)."
   }
  ],
  "edges": [
