@@ -4185,7 +4185,7 @@
    "file": "AEC/Section8/Lemma83Single.lean",
    "status": "open",
    "blocker": null,
-   "detail": "Cycle 101 restatement (ruling): stated with sorry. The cycle-95 proof now proves infra_83_lemma_8_3_weak_single only. Needs a pair template on the doubled shape whose values are marked pairs functorially (marks as designated terms), e.g. X = E(I), Y = E(I +lex extra) with the mark realized by terms (stationarity), plus marked-arrow uniqueness. | Cycle 109: assembly done (infra_83_conclusion_of_marked_values: template clauses (1)-(2) + clause (3) + realEq); remaining = template values are marked pairs on a tail (realizes + all-dominated), reducible via infra_83_marked_of_sub to an embedding over X_I into a marked pair over X_I sending mk_I to its mark."
+   "detail": "Cycle 101 restatement (ruling): stated with sorry. The cycle-95 proof now proves infra_83_lemma_8_3_weak_single only. Needs a pair template on the doubled shape whose values are marked pairs functorially (marks as designated terms), e.g. X = E(I), Y = E(I +lex extra) with the mark realized by terms (stationarity), plus marked-arrow uniqueness. | Cycle 109: assembly done (infra_83_conclusion_of_marked_values: template clauses (1)-(2) + clause (3) + realEq); remaining = template values are marked pairs on a tail (realizes + all-dominated), reducible via infra_83_marked_of_sub to an embedding over X_I into a marked pair over X_I sending mk_I to its mark. | PLAN (cycle 154, from re-reading the Lemma 8.3 proof, paper pp. 62-64): (a) the paper never maps a whole template value into one sample. Bounded horizontal arity: fix a bounded list u=(b,c) of Y_H whose entries use <= q horizontal indices each; take a sample homogeneous only at the arities needed to compare such positions (<= 2x a fixed finite arity) with an order copy of H and order saturation > lambda; match only the positions representing u and r_i(u) (i among lambda distinguished retraction indices) and extend these partial ORDER maps to order embeddings J_H -> J, W_H -> W by saturation (not a map of the term hull). F of that order embedding embeds X_H = F(J_H) into X = F(J) and identifies u with an actual u*. The stationary prescription gives that the mark realizes p_{X_H}; (7) tp(u*/X) is the free extension of tp(u/X_H) by the majority estimate of Lemma 6.11 over kappa retained retractions whose images of u* lie in the embedded X_H (their representing positions were matched); Lemma 7.6 then gives tp(b,c/X_H) isolated relative to b. Removing the arity restriction: exhaust Y_H by countably many nested bounded lists of uniformly finite per-entry arity (with small vertex witness models), realize each over the previous assignment and X_H in an all-dominated V by Prop 7.5 constructive primeness; the union is an arrow Y_H -> V over X_H, so Y_H is all-dominated. Galois types enter only through bounded diagram preservation/reflection, never through an all-arity sample. (b) Y_H cap X-sort = X_H is not an extra hypothesis: in the paper J_H, Z_H, W_H are the chart sorts of the WHOLE evaluated term data and X_H = F(J_H) is the X-sort part of the hull (both directions of generation via representation tags/coordinates). Our X_I (X-language hull of the J-coordinates only) is smaller; the fix is to take X_H := X-sort part of the Y_H hull (tip infra_83_XH_sort), not to change the samples. New route tips: infra_83_XH_sort, infra_83_bounded_list_match, then infra_83_bounded_arity_free, infra_83_all_dominated. Retired as off-path: infra_83_all_arity_sample (needs an omega-Erdos-type sample; audit JointNoAllArity), infra_83_pairMS3_rebase (whole-arrow route), infra_83_YX_meet (superseded by infra_83_XH_sort). The proved whole-arrow reductions (infra_83_full_single_of_sample_arrows/_families/_ret_evals) stay as proved but off-path lemmas."
   },
   {
    "id": "infra_82_orbit_preservation_single",
@@ -6694,9 +6694,9 @@
    "label": "Lemma 8.3 (P.scheme) gap: an admitted pairMS2 sample homogeneous in EVERY arity for the template colors (hypothesis hhom of infra_83_mix_pair_into_saturated_sample), or a finite-fragment replacement of the global value->sample arrow",
    "section": 8,
    "file": "AEC/Section8/Lemma83Isolation.lean",
-   "status": "open",
+   "status": "retired",
    "blocker": null,
-   "detail": "Cycle 131 (found): Hull83.Joint only gives samples homogeneous through each finite n; a single all-arity homogeneous sample is not supplied by the coherent colors (that is what the EM limit avoids). The global-arrow route of infra_83_full_single_of_ret_evals therefore needs either this sample or a tuple-wise (bounded-arity) reformulation; infra_83_piece_matches_bounded gives the finite matches. | Cycle 150: AEC/Audit/JointNoAllArity.lean (sorry-free): the abstract Joint interface (∀ n κ, Joint P n c κ) does NOT yield an infinite P-sample homogeneous in every arity (Boolean colors, c ≡ true, P = 'true exactly up to some N'). Simultaneous homogeneity for colorings of [S]^{<ω} is an omega-Erdős-type partition property, not available in ZFC in general, so this gap should be closed by the tuple-wise reformulation (pieces of bounded arity via infra_83_piece_matches_bounded), not by producing the sample."
+   "detail": "Cycle 131 (found): Hull83.Joint only gives samples homogeneous through each finite n; a single all-arity homogeneous sample is not supplied by the coherent colors (that is what the EM limit avoids). The global-arrow route of infra_83_full_single_of_ret_evals therefore needs either this sample or a tuple-wise (bounded-arity) reformulation; infra_83_piece_matches_bounded gives the finite matches. | Cycle 150: AEC/Audit/JointNoAllArity.lean (sorry-free): the abstract Joint interface (∀ n κ, Joint P n c κ) does NOT yield an infinite P-sample homogeneous in every arity (Boolean colors, c ≡ true, P = 'true exactly up to some N'). Simultaneous homogeneity for colorings of [S]^{<ω} is an omega-Erdős-type partition property, not available in ZFC in general, so this gap should be closed by the tuple-wise reformulation (pieces of bounded arity via infra_83_piece_matches_bounded), not by producing the sample. | Retired cycle 154: off-path. The paper (Lemma 8.3, bounded horizontal arity) only uses samples homogeneous at bounded arities; an all-arity sample is an omega-Erdos-type demand (audit AEC/Audit/JointNoAllArity.lean)."
   },
   {
    "id": "infra_83_ret_admission",
@@ -6820,9 +6820,9 @@
    "label": "Rebase the pairMS2 template chain (joint, pieces_iso, matches) onto the ret-admitted pairMS3 colors so full_single_of_ret_evals can read the eval law from matched samples",
    "section": 8,
    "file": "AEC/Section8/Lemma83SampleLikeY.lean",
-   "status": "open",
+   "status": "retired",
    "blocker": null,
-   "detail": "Open (cycle 145). | Cycle 146: infra_83_pairMS2_coherent_colors now also returns the pairMAdmittedS3 joint samples for the SAME colors c (via joint_tpSampleB_mono); all 15 consumers updated. Remaining: expose hc3 through infra_83_pairMS2_joint and the matching into samples. | Cycle 147: infra_83_pairMS2_joint also returns the pairMAdmittedS3 joint samples for its colors c."
+   "detail": "Open (cycle 145). | Cycle 146: infra_83_pairMS2_coherent_colors now also returns the pairMAdmittedS3 joint samples for the SAME colors c (via joint_tpSampleB_mono); all 15 consumers updated. Remaining: expose hc3 through infra_83_pairMS2_joint and the matching into samples. | Cycle 147: infra_83_pairMS2_joint also returns the pairMAdmittedS3 joint samples for its colors c. | Retired cycle 154: off-path (whole-value arrow route). The ret-admission data (RetSampleLike) stays in use for the bounded-list matches."
   },
   {
    "id": "infra_83_pairMS3_coherent_colors",
@@ -6883,9 +6883,9 @@
    "label": "Lemma 8.3 (P.scheme): in a matched ret-sample the Y_I-image meets the sample's X-copy only in the X_I-image (hmeet of infra_83_good_codes_of_match_ret; paper: colors record that Y-terms landing in the X sort are X-terms)",
    "section": 8,
    "file": "AEC/Section8/Lemma83RetGood.lean",
-   "status": "open",
+   "status": "retired",
    "blocker": null,
-   "detail": "Open (cycle 152): split off from infra_83_ret_admission, whose ret-evaluation half is closed by RetSampleLike. Needed: chart of the Y_I-hull ∩ X-copy = J-chart of X_I (xHull_eq_chart gives X_I-hull = F(J_H); XSampleLike chart clause gives T ∩ X = F(chart T)). | Cycle 153: reduced (infra_83_meet_of_chart) to: the X-skeleton points in the matched Y_I-hull (its X-chart) lie in the matched X_I-image, i.e. the colors must record that Y-hull X-chart points are J-coordinates of the tuple."
+   "detail": "Open (cycle 152): split off from infra_83_ret_admission, whose ret-evaluation half is closed by RetSampleLike. Needed: chart of the Y_I-hull ∩ X-copy = J-chart of X_I (xHull_eq_chart gives X_I-hull = F(J_H); XSampleLike chart clause gives T ∩ X = F(chart T)). | Cycle 153: reduced (infra_83_meet_of_chart) to: the X-skeleton points in the matched Y_I-hull (its X-chart) lie in the matched X_I-image, i.e. the colors must record that Y-hull X-chart points are J-coordinates of the tuple. | Retired cycle 154: superseded by infra_83_XH_sort. In the paper X_H is the X-sort of the whole hull, so the matched Y_H meets X only in X_H by definition."
   },
   {
    "id": "infra_83_meet_of_subset",
@@ -6904,6 +6904,24 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 153: proved."
+  },
+  {
+   "id": "infra_83_XH_sort",
+   "label": "Lemma 8.3 (P.scheme): take X_H as the X-sort part of the Y_H term hull (paper: chart sorts of the whole evaluated term data); X_H = F(J_H) with J_H its X-chart, both directions of generation",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83RetGood.lean",
+   "status": "open",
+   "blocker": null,
+   "detail": "Open (cycle 154 plan)."
+  },
+  {
+   "id": "infra_83_bounded_list_match",
+   "label": "Lemma 8.3 (P.scheme): positions of a bounded list u (<= q horizontal indices per entry) and of r_i(u) match an actual sample homogeneous at bounded arity with an order copy of H; the partial order maps extend (order saturation > lambda) to J_H -> J, W_H -> W, and F of them embeds X_H into X identifying u with u*",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83RetGood.lean",
+   "status": "open",
+   "blocker": null,
+   "detail": "Open (cycle 154 plan)."
   }
  ],
  "edges": [
@@ -12708,6 +12726,16 @@
   {
    "from": "infra_83_meet_of_chart",
    "to": "infra_83_YX_meet",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_83_XH_sort",
+   "to": "infra_83_bounded_list_match",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_83_bounded_list_match",
+   "to": "infra_83_bounded_arity_free",
    "kind": "hard"
   }
  ],
