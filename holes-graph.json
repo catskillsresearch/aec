@@ -4717,6 +4717,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 100: specialization of lemma_6_5 (placedComparisons) to E(I1 +lex I2) of size nu at a closed level nu. Axioms clean."
+  },
+  {
+   "id": "infra_84_layout_testing_presented",
+   "label": "Layout (8) testing over the presented two-segment layout: agreement on parameter sets <= g(sigma)+LS gives agreement on all bounded layout parameters",
+   "section": 8,
+   "file": "AEC/Section8/Layout84Single.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 100: lemma_6_5 lifts + placedComparison_agree_iff_tests (sufficiency) + LiftsBounded.same_of_agreeOn (necessity) on E(I1 +lex I2) at a closed level nu. Bound depends only on sigma and the template. Axioms clean. Covers assembly step (iii) of infra_84_layout_amalgam."
   }
  ],
  "edges": [
@@ -9077,8 +9086,13 @@
    "from": "infra_84_two_segment_placed_comparison",
    "to": "infra_84_layout_amalgam",
    "kind": "hard"
+  },
+  {
+   "from": "infra_84_layout_testing_presented",
+   "to": "infra_84_layout_amalgam",
+   "kind": "hard"
   }
  ],
- "doneCount": 469,
+ "doneCount": 470,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

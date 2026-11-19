@@ -379,4 +379,44 @@ theorem infra_84_two_segment_placed_comparison (K : AbstractElementaryClass.{u})
     d₀ d₁
   exact ⟨h1, h3⟩
 
+/-- **Testing over the presented two-segment layout (8).** English (Lemma 8.4 proof): "If the two
+candidates disagree on the questioned test, their placed comparisons disagree and yield a witness
+within that bound." Over the well-ordered two-segment presentation `E(I₁ ⊕ₗ I₂)` of size `ν` at a
+closed level `ν`: candidates `d₀ ∈ B₀`, `d₁ ∈ B₁` (strong extensions of size `ν`, length at most
+`σ < ν`) that agree on all layout parameter sets of size at most `g(σ) + LS(K)` agree on every
+bounded layout parameter set (Lemma 6.5: tester for sufficiency, placement lifting for
+necessity). The bound depends only on `σ` and the template, not on the segments. -/
+theorem infra_84_layout_testing_presented (K : AbstractElementaryClass.{u})
+    [CategoricalUnbounded K] (E : OrderPresentation K) (D : StableDiagram K)
+    (g : Cardinal.{u} → Cardinal.{u}) {ν : Cardinal.{u}} (hL : ClosedLevel K E D g ν)
+    (I₁ I₂ : Type u) [LinearOrder I₁] [WellFoundedLT I₁] [LinearOrder I₂] [WellFoundedLT I₂]
+    [Nonempty I₁] (hI : #(Lex (I₁ ⊕ I₂)) = ν)
+    {B₀ B₁ : Model K.τ}
+    (incl₀ : Language.Embedding K.τ (E.obj (Lex (I₁ ⊕ I₂))).carrier B₀.carrier)
+    (incl₁ : Language.Embedding K.τ (E.obj (Lex (I₁ ⊕ I₂))).carrier B₁.carrier)
+    (hB₀ : K.Mem B₀) (hB₁ : K.Mem B₁) (hs₀ : K.Strong incl₀) (hs₁ : K.Strong incl₁)
+    (hc₀ : Model.card B₀ = ν) (hc₁ : Model.card B₁ = ν)
+    {α : Type u} {σ : Cardinal.{u}} (hσinf : aleph0 ≤ σ) (hσ : σ < ν) (hα : #α ≤ σ)
+    (d₀ : α → B₀.carrier) (d₁ : α → B₁.carrier)
+    (hsmall : ∀ {β : Type u}, #β ≤ g σ + ls K → ∀ (ρ : Cardinal.{u}),
+      aleph0 ≤ ρ → ρ < ν → ∀ (p : β → (E.obj (Lex (I₁ ⊕ I₂))).carrier)
+        (hj : #(α ⊕ β) ≤ ρ)
+        (ht₀ : D.t ρ ≤ Model.card B₀) (ht₁ : D.t ρ ≤ Model.card B₁),
+        D.same hj hB₀ hB₁ ht₀ ht₁
+          (Sum.elim d₀ (fun b => incl₀ (p b))) (Sum.elim d₁ (fun b => incl₁ (p b))))
+    {β : Type u} (ρ : Cardinal.{u}) (hρinf : aleph0 ≤ ρ) (hρ : ρ < ν)
+    (p : β → (E.obj (Lex (I₁ ⊕ I₂))).carrier) (hj : #(α ⊕ β) ≤ ρ)
+    (ht₀ : D.t ρ ≤ Model.card B₀) (ht₁ : D.t ρ ≤ Model.card B₁) :
+    D.same hj hB₀ hB₁ ht₀ ht₁
+      (Sum.elim d₀ (fun b => incl₀ (p b))) (Sum.elim d₁ (fun b => incl₁ (p b))) := by
+  have : Nonempty (Lex (I₁ ⊕ I₂)) := ⟨toLex (Sum.inl (Classical.arbitrary I₁))⟩
+  obtain ⟨⟨P₀, h₀⟩, _, _⟩ := lemma_6_5 K E D g hL hI incl₀ incl₁ hB₀ hB₁ hs₀ hs₁ hc₀ hc₁
+    hσinf hσ hα d₀ d₁
+  obtain ⟨⟨P₁, h₁⟩, _, _⟩ := lemma_6_5 K E D g hL hI incl₁ incl₀ hB₁ hB₀ hs₁ hs₀ hc₁ hc₀
+    hσinf hσ hα d₁ d₀
+  have hag : P₀.AgreeOn E D P₁ Set.univ :=
+    ((placedComparison_agree_iff_tests hL hI hc₀ hc₁ hσinf hσ hα h₀ h₁).mpr
+      (fun hβ ρ' h1 h2 p' hj' ht₀' ht₁' => hsmall hβ ρ' h1 h2 p' hj' ht₀' ht₁'))
+  exact h₀.same_of_agreeOn hL hI h₁ hag ρ hρinf hρ p hj ht₀ ht₁
+
 end AEC
