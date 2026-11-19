@@ -6445,6 +6445,24 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 110: proved (infra_83_realizes_descend + infra_83_dominated_of_retraction_pair_mixed)."
+  },
+  {
+   "id": "infra_83_conclusion_of_marked_values_idx",
+   "label": "Lemma 8.3 assembly with per-value mark indexing (bIdx_I ≃ Fin n)",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83Isolation.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 111: proved."
+  },
+  {
+   "id": "infra_83_full_single_of_sample_arrows",
+   "label": "Lemma 8.3 (P.scheme) reduced to retraction-carrying arrows from the template values into marked sample pairs",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83Isolation.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 111: proved reduction (template_clauses + marked_of_sample_arrow + idx assembly)."
   }
  ],
  "edges": [
@@ -11970,8 +11988,18 @@
    "from": "infra_83_marked_of_sample_arrow",
    "to": "infra_83_lemma_8_3_full_single",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_conclusion_of_marked_values_idx",
+   "to": "infra_83_lemma_8_3_full_single",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_83_full_single_of_sample_arrows",
+   "to": "infra_83_lemma_8_3_full_single",
+   "kind": "hard"
   }
  ],
- "doneCount": 653,
+ "doneCount": 655,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

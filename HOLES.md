@@ -545,6 +545,8 @@ Lean: imports `Section5.Results` and `Section6.Results`. Soft paper chain after 
 | `infra_83_dominated_of_retraction_pair` | Lemma 8.3 proof (P.scheme): (7) via Lemma 6.17 retractions + Lemma 7.6 gives all-domination along a pair arrow | [`Lemma83Isolation.lean`](AEC/Section8/Lemma83Isolation.lean) (**done**, cycle 110) |
 | `infra_83_dominated_of_retraction_pair_mixed` | Lemma 8.3 proof (P.scheme): cross-level all-domination from a retraction-carrying arrow into a larger all-dominated pair | [`Lemma83Isolation.lean`](AEC/Section8/Lemma83Isolation.lean) (**done**, cycle 110) |
 | `infra_83_marked_of_sample_arrow` | Lemma 8.3 proof (P.scheme): pair with retraction-carrying arrow into a marked sample is marked | [`Lemma83Isolation.lean`](AEC/Section8/Lemma83Isolation.lean) (**done**, cycle 110) |
+| `infra_83_conclusion_of_marked_values_idx` | Lemma 8.3 assembly with per-value mark indexing | [`Lemma83Isolation.lean`](AEC/Section8/Lemma83Isolation.lean) (**done**, cycle 111) |
+| `infra_83_full_single_of_sample_arrows` | Lemma 8.3 (P.scheme) ⟸ retraction-carrying arrows from template values into marked samples | [`Lemma83Isolation.lean`](AEC/Section8/Lemma83Isolation.lean) (**done**, cycle 111) |
 | `infra_83_samples_core` | Lemma 8.3 proof (P.scheme): sample pair with base E(J) embedded into E(J + W) over the base | [`Lemma83Samples.lean`](AEC/Section8/Lemma83Samples.lean) (**done**, cycle 101) |
 | `infra_83_samples_order_exists` | Lemma 8.3 proof (P.scheme): the W of the samples exists | [`Lemma83Samples.lean`](AEC/Section8/Lemma83Samples.lean) (**done**, cycle 101) |
 | `infra_83_samples_retractions` | Lemma 8.3 proof (P.scheme): retraction family of the samples | [`Lemma83Samples.lean`](AEC/Section8/Lemma83Samples.lean) (**done**, cycle 101) |

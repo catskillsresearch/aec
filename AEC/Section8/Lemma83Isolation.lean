@@ -258,4 +258,114 @@ theorem infra_83_marked_of_sample_arrow (P : SingleModelData K)
   exact infra_83_dominated_of_retraction_pair_mixed P hνC hlC hνT hlT hνl incl nincl onX onY
     hcomm r hιcard halmost himg b nb hb hd
 
+/-- **Assembly with per-value mark indexing (proved).** As `infra_83_conclusion_of_marked_values`,
+but the value at `I` may index its marks by any type `bIdx_I` identified with the mark positions
+(`σ_I : bIdx_I ≃ Fin n`), as for the marks of the sample pairs. -/
+theorem infra_83_conclusion_of_marked_values_idx (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme)
+    (F : TermTemplate K oneVertexShape.{u}.doubled)
+    (X Y : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
+      P.scheme.Object #I hI)
+    (eX : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible) v,
+      ((F.present I).obj (Sum.inl v)).carrier ≃[K.τ]
+        ((P.scheme.asSystem hI (X I hI)).obj v).carrier)
+    (eY : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible) v,
+      ((F.present I).obj (Sum.inr v)).carrier ≃[K.τ]
+        ((P.scheme.asSystem hI (Y I hI)).obj v).carrier)
+    (incl : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
+      SystemArrow K oneVertexShape (P.scheme.asSystem hI (X I hI))
+        (P.scheme.asSystem hI (Y I hI)))
+    (mk : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
+      Fin Pr.n → Occurrence K oneVertexShape (P.scheme.asSystem hI (Y I hI)))
+    (hincl : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible) v x,
+      (incl I hI).onVertex v (eX I hI v x) =
+        eY I hI v ((F.present I).edge
+          (show (oneVertexShape.{u}).doubled.specified (Sum.inl v) (Sum.inr v) from rfl) x))
+    (harr : ∀ (I J : Type u) [LinearOrder I] [Nonempty I] [LinearOrder J] [Nonempty J]
+      (f : I ↪o J) (hI : #I ∈ P.eligible) (hJ : #J ∈ P.eligible),
+      ∃ (onX : SystemArrow K oneVertexShape (P.scheme.asSystem hI (X I hI))
+          (P.scheme.asSystem hJ (X J hJ)))
+        (onY : SystemArrow K oneVertexShape (P.scheme.asSystem hI (Y I hI))
+          (P.scheme.asSystem hJ (Y J hJ))),
+        SystemArrow.comp (incl I hI) onY = SystemArrow.comp onX (incl J hJ) ∧
+        (∀ v x, onX.onVertex v (eX I hI v x) =
+          eX J hJ v ((F.onOrder f).onVertex (Sum.inl v) x)) ∧
+        (∀ v x, onY.onVertex v (eY I hI v x) =
+          eY J hJ v ((F.onOrder f).onVertex (Sum.inr v) x)) ∧
+        ∀ i, (⟨(mk I hI i).1, onY.onVertex (mk I hI i).1 (mk I hI i).2⟩ :
+          Occurrence K oneVertexShape (P.scheme.asSystem hJ (Y J hJ))) = mk J hJ i)
+    (T : Set Cardinal.{u}) (hT : Tail P.scheme.eligible T)
+    (hmark : ∀ (I : Type u) [LinearOrder I] [WellFoundedLT I] [Nonempty I] (hI : #I ∈ T),
+      ∃ (bIdx : Type u) (σ : bIdx ≃ ULift.{u} (Fin Pr.n))
+        (realEq : bIdx ≃ (Pr.assign (Tail.mem hT hI) (X I (Tail.mem hT hI))).idx),
+        SameGaloisType (asTuple (incl I (Tail.mem hT hI)) trivial
+            (fun j => mk I (Tail.mem hT hI) (σ j).down))
+          (Pr.assign (Tail.mem hT hI) (X I (Tail.mem hT hI))) realEq (Equiv.refl _) ∧
+        AllDominated (incl I (Tail.mem hT hI)) trivial bIdx
+          (fun j => mk I (Tail.mem hT hI) (σ j).down)) :
+    Lemma83Conclusion P.scheme Pr := by
+  classical
+  choose bI σI rEI hr hd using hmark
+  let val : (I : Type u) → [LinearOrder I] → [WellFoundedLT I] → [Nonempty I] →
+      #I ∈ T → MarkedPair K oneVertexShape P.scheme Pr := fun I _ _ _ hI =>
+    ⟨#I, Tail.mem hT hI, X I (Tail.mem hT hI), Y I (Tail.mem hT hI), incl I (Tail.mem hT hI),
+      trivial, bI I hI, fun j => mk I (Tail.mem hT hI) (σI I hI j).down, rEI I hI,
+      hr I hI, hd I hI⟩
+  refine ⟨F, T, hT, val, fun I _ _ _ hI => eX I (Tail.mem hT hI),
+    fun I _ _ _ hI => eY I (Tail.mem hT hI),
+    fun I _ _ _ hI => ⟨rfl, fun v x => hincl I (Tail.mem hT hI) v x,
+      fun _ _ h => h.elim, fun _ _ h => h.elim⟩,
+    fun I J _ _ _ _ _ _ f hI hJ => ?_,
+    infra_83_clause3_single P Pr T val (fun _ _ _ _ _ => rfl)⟩
+  obtain ⟨onX, onY, hc, hX, hY, hm⟩ := harr I J f (Tail.mem hT hI) (Tail.mem hT hJ)
+  refine ⟨⟨onX, onY, trivial, trivial, hc, (σI I hI).trans (σI J hJ).symm, fun j => ?_⟩, hX, hY⟩
+  refine (hm _).trans ?_
+  show mk J _ _ = mk J _ ((σI J hJ) ((σI J hJ).symm _)).down
+  rw [Equiv.apply_symm_apply]
+
+/-- **Lemma 8.3 (P.scheme) reduced to arrows into marked samples (proved reduction).** For the
+constructed pair template (`infra_83_pair_template_clauses`), `Lemma83Conclusion` holds once every
+value on a well-order `I` with `#I` in the Lemma 8.2 tail admits a mark-preserving arrow of pairs
+into a marked pair `N` at a closed level `≥ #I` together with `#I` retractions `N.Y → N.X` almost
+fixing `N.X` and sending the image of `Y_I` into the image of `X_I` — the paper's matching of the
+value with an actual homogeneous sample ("bounded horizontal arity") with the Corollary 6.16
+retractions of the sample (`infra_83_marked_of_sample_arrow`). -/
+theorem infra_83_full_single_of_sample_arrows (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) :
+    ∃ (X Y : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
+        P.scheme.Object #I hI)
+      (incl : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
+        SystemArrow K oneVertexShape (P.scheme.asSystem hI (X I hI))
+          (P.scheme.asSystem hI (Y I hI)))
+      (mk : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
+        Fin Pr.n → Occurrence K oneVertexShape (P.scheme.asSystem hI (Y I hI))),
+      (∀ (I : Type u) [LinearOrder I] [WellFoundedLT I] [Nonempty I]
+          (hI : #I ∈ infra_78_closedTail P ∩ infra_615_closed P),
+        ∃ (N : MarkedPair K oneVertexShape P.scheme Pr) (_ : N.μ ∈ infra_615_closed P)
+          (_ : N.μ ∈ infra_78_closedTail P) (_ : #I ≤ N.μ)
+          (onX : SystemArrow K oneVertexShape (P.scheme.asSystem hI.1.1 (X I hI.1.1))
+            (P.scheme.asSystem N.hμ N.X))
+          (onY : SystemArrow K oneVertexShape (P.scheme.asSystem hI.1.1 (Y I hI.1.1))
+            (P.scheme.asSystem N.hμ N.Y))
+          (ι : Type u) (r : ι → SystemArrow K oneVertexShape (P.scheme.asSystem N.hμ N.Y)
+            (P.scheme.asSystem N.hμ N.X))
+          (σ : N.bIdx ≃ ULift.{u} (Fin Pr.n)),
+          SystemArrow.comp (incl I hI.1.1) onY = SystemArrow.comp onX N.incl ∧
+          #ι = #I ∧
+          (∀ a : Occurrence K oneVertexShape (P.scheme.asSystem N.hμ N.X),
+            Finite {i : ι // (r i).onVertex a.1 (N.incl.onVertex a.1 a.2) ≠ a.2}) ∧
+          (∀ i (x : (Y I hI.1.1).model.carrier), ∃ y : (X I hI.1.1).model.carrier,
+            onX.onVertex PUnit.unit y = (r i).onVertex PUnit.unit (onY.onVertex PUnit.unit x)) ∧
+          ∀ j, onY.mapOcc (mk I hI.1.1 (σ j).down) = N.b j) →
+      Lemma83Conclusion P.scheme Pr := by
+  obtain ⟨F, X, Y, eX, eY, incl, mk, hincl, harr⟩ := infra_83_pair_template_clauses P Pr
+  refine ⟨X, Y, incl, mk, fun hS => ?_⟩
+  refine infra_83_conclusion_of_marked_values_idx P Pr F X Y eX eY incl mk hincl harr _
+    (infra_83_closed_tail P) (fun I _ _ _ hI => ?_)
+  obtain ⟨N, hlC, hlT, hle, onX, onY, ι, r, σ, hc, hι, hal, him, hb⟩ := hS I hI
+  obtain ⟨hR, hD⟩ := infra_83_marked_of_sample_arrow P Pr hI.2 hI.1 (incl I hI.1.1) N hlC hlT
+    hle onX onY hc r hι hal him (fun j => mk I hI.1.1 (σ j).down) hb
+  obtain ⟨realEq, hr⟩ := hR
+  exact ⟨N.bIdx, σ, realEq, hr, hD⟩
+
 end AEC
