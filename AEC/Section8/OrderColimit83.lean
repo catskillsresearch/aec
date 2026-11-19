@@ -1333,4 +1333,46 @@ theorem pairTemplate83_edge (FX FY : EM83.FinPieces K) (η : EM83.PiecesHom FX F
       (show (oneVertexShape.{u}).doubled.specified (Sum.inl v) (Sum.inr v) from rfl) x =
       η.limMap I x := rfl
 
+/-- **Lemma 8.3, clauses (1)–(2) without the mark**: from one coherent color family, the pair
+template `F_X → F_Y` (strong inclusion `η`) has, at every `I` of eligible size, values that are
+scheme objects `X_I ⊆ Y_I` at level `|I|` (`τ`-isomorphisms `e_X`, `e_Y` carrying `η_I` to the
+inclusion), and every order embedding `f : I ↪o J` gives strong arrows `X_I → X_J`, `Y_I → Y_J`
+equal to `F_X(f)`, `F_Y(f)` under the isomorphisms and commuting with the inclusions. (The mark,
+its realized type and domination are the remaining parts of the marked pairs.) -/
+theorem infra_83_pair_values (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) :
+    ∃ (FX FY : EM83.FinPieces K) (η : EM83.PiecesHom FX FY),
+      (∀ (I : Type u) [LinearOrder I] [Nonempty I], K.Strong (η.limMap I)) ∧
+      ∃ (X Y : ∀ (I : Type u) [LinearOrder I] [Nonempty I], #I ∈ P.eligible → SMObject K #I)
+        (eX : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
+          (FX.limit I).obj.carrier ≃[K.τ] (X I hI).model.carrier)
+        (eY : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
+          (FY.limit I).obj.carrier ≃[K.τ] (Y I hI).model.carrier)
+        (incl : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
+          (X I hI).model.carrier ↪[K.τ] (Y I hI).model.carrier),
+        (∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
+          K.Strong (incl I hI) ∧ ∀ a, incl I hI (eX I hI a) = eY I hI (η.limMap I a)) ∧
+        ∀ (I J : Type u) [LinearOrder I] [Nonempty I] [LinearOrder J] [Nonempty J] (f : I ↪o J)
+          (hI : #I ∈ P.eligible) (hJ : #J ∈ P.eligible),
+          ∃ (onX : (X I hI).model.carrier ↪[K.τ] (X J hJ).model.carrier)
+            (onY : (Y I hI).model.carrier ↪[K.τ] (Y J hJ).model.carrier),
+            K.Strong onX ∧ K.Strong onY ∧
+            (∀ a, onX (eX I hI a) = eX J hJ (EM83.gEmMap (F := FX) f a)) ∧
+            (∀ b, onY (eY I hI b) = eY J hJ (EM83.gEmMap (F := FY) f b)) ∧
+            ∀ x, onY (incl I hI x) = incl J hJ (onX x) := by
+  obtain ⟨c, hc, hcoh, hXs, hYs, ηXY, FL, ηYL, E, hE, hstr, hnat, hXb, hYb⟩ := infra_83_pairMS2_joint P Pr
+  obtain ⟨chX, hX', hidX, hcompX, mX, hvX, hmX, -, -, -, gX, -, -, -, hcX⟩ := hXb
+  obtain ⟨chY, hY', hidY, hcompY, mY, hvY, hmY, -, -, -, gY, -, -, -, hcY⟩ := hYb
+  have key : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible), _ :=
+    fun I _ _ hI => infra_83_value_pair P hI rfl (gX I) (hcX I) (gY I) (hcY I) _ _
+      (EM83.FinPieces.limit_spec _ I).1 (ηXY.limMap I) (hstr I).1 (mX I) (hmX I).2 (mY I) (hmY I).2
+  choose X Y eX eY incl hincl using key
+  refine ⟨_, _, ηXY, fun I _ _ => (hstr I).1, X, Y, eX, eY, incl, hincl, ?_⟩
+  intro I J _ _ _ _ f hI hJ
+  exact infra_83_value_arrow (X I hI).mem (Y I hI).mem (EM83.FinPieces.limit_spec _ J).1
+    (EM83.FinPieces.limit_spec _ J).1 (ηXY.limMap I) (ηXY.limMap J) (eX I hI) (eY I hI)
+    (eX J hJ) (eY J hJ) (incl I hI) (incl J hJ) (hincl I hI).2 (hincl J hJ).2
+    (EM83.gEmMap f) (EM83.gEmMap f) (EM83.gEmMap_strong f) (EM83.gEmMap_strong f)
+    (fun a => congrFun (congrArg (⇑) ((hnat f).1)) a)
+
 end AEC

@@ -6310,6 +6310,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 108: pairTemplate83 (+ pairPresent83, pairOnOrder83, pairTemplate83_edge)."
+  },
+  {
+   "id": "infra_83_pair_values",
+   "label": "Lemma 8.3 clauses (1)-(2) without the mark: values X_I ⊆ Y_I are scheme objects at level |I| (iso to F_X(I) → F_Y(I)), and order embeddings give strong commuting arrows equal to F_X(f), F_Y(f)",
+   "section": 8,
+   "file": "AEC/Section8/OrderColimit83.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 108: infra_83_pair_values (one color family; via joint, value_pair, value_arrow). Remaining for faithful 8.3: marks (realized Galois type = P.assign, AllDominated), markMap preservation, clause (3)."
   }
  ],
  "edges": [
@@ -11760,8 +11769,13 @@
    "from": "infra_83_pair_term_template",
    "to": "infra_83_template_from_colors",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_pair_values",
+   "to": "infra_83_template_from_colors",
+   "kind": "hard"
   }
  ],
- "doneCount": 637,
+ "doneCount": 638,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
