@@ -7336,6 +7336,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 199: proved."
+  },
+  {
+   "id": "infra_83_gY_strong_of_FZ",
+   "label": "Strongness of gY from a Y_H = F(Z_H) identification: if the piece is identified with F(Z0) by a strong psiY and gY = F(eZ) o psiY for an order embedding eZ, then gY is strong",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PieceMatch.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 200: proved."
   }
  ],
  "edges": [
@@ -13381,8 +13390,13 @@
    "from": "infra_83_hull_image_closed",
    "to": "infra_83_XH_sort",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_gY_strong_of_FZ",
+   "to": "infra_83_XH_sort",
+   "kind": "hard"
   }
  ],
- "doneCount": 746,
+ "doneCount": 747,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

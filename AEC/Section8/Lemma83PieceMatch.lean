@@ -1096,4 +1096,25 @@ theorem infra_83_hull_image_closed {L : FirstOrder.Language.{u, u}} {A N : Type 
     exact hT f _ fun i => ih i
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+/-- **Strongness of `gY` from a `Y_H = F(Z_H)` identification (proved).** Paper (Lemma 8.3:
+`Y_H ≅ F(Z_H)`, matched by `F` of an order map): if the piece carrier is identified with `F(Z₀)`
+by a strong `ψY` and `gY = F(e_Z) ∘ ψY` for an order embedding `e_Z : Z₀ ↪o Jp`, then `gY` is
+strong (`map_strong` and `strong_trans`): the clause `K.Strong gY` of the piece data. -/
+theorem infra_83_gY_strong_of_FZ (E : OrderPresentation K) {A : Model K.τ}
+    {Z0 Jp : Type u} [LinearOrder Z0] [Nonempty Z0] [LinearOrder Jp] [Nonempty Jp]
+    (ψY : Language.Embedding K.τ A.carrier (E.obj Z0).carrier) (hψY : K.Strong ψY) (eZ : Z0 ↪o Jp)
+    (gY : Language.Embedding K.τ A.carrier (E.obj Jp).carrier)
+    (hgY : ∀ y, gY y = E.map eZ (ψY y)) :
+    K.Strong gY := by
+  have : gY = (E.map eZ).comp ψY := by
+    ext y
+    exact hgY y
+  rw [this]
+  exact K.strong_trans ψY (E.map eZ) hψY (E.map_strong eZ)
+end
+
 end AEC
