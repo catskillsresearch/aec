@@ -7273,6 +7273,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 192: proved."
+  },
+  {
+   "id": "infra_83_marked_of_piece_data",
+   "label": "Marked from template-side piece data: as marked_of_piece_arrows (bIdx = Fin n) with the per-c input being template piece data (psi, e0, piece Yu with strong gY inside F[N.Y], L0 reading with ret as G, sort intersection, marks read as markY) into ret-sample data at a closed level >= nu",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PieceMatch.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 193: proved."
   }
  ],
  "edges": [
@@ -13283,8 +13292,13 @@
    "from": "infra_83_one_match_of_retSample",
    "to": "infra_83_bounded_list_match",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_marked_of_piece_data",
+   "to": "infra_83_bounded_list_match",
+   "kind": "hard"
   }
  ],
- "doneCount": 739,
+ "doneCount": 740,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
