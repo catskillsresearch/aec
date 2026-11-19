@@ -239,4 +239,25 @@ theorem infra_83_ret_term_fix_card_mu (P : SingleModelData K)
   rw [infra_83_ret_term_fix_card P eX emb F hF R code G heval (by rw [R.index_card]; exact hinf) A,
     R.index_card]
 
+
+/-- **Each ret-translate maps the `Y`-copy into the `X`-copy.** Set form of
+`infra_83_ret_term_into_X`: `ret(c_i, ·) '' F(Y) ⊆ F(J)`. -/
+theorem infra_83_ret_image_into_X (P : SingleModelData K)
+    {Pr : StationaryPrescription K oneVertexShape P.scheme}
+    {J Jplus : Type u} [LinearOrder J] [Nonempty J] [LinearOrder Jplus] [Nonempty Jplus]
+    {M : MarkedPair K oneVertexShape P.scheme Pr}
+    (eX : (P.E.obj J).carrier → ((P.scheme.asSystem M.hμ M.X).obj PUnit.unit).carrier)
+    (hsurj : Function.Surjective eX) (emb : J ↪o Jplus)
+    (F : ((P.scheme.asSystem M.hμ M.Y).obj PUnit.unit).carrier → (P.E.obj Jplus).carrier)
+    (hF : ∀ x, F (M.incl.onVertex PUnit.unit (eX x)) = P.E.map emb x)
+    (R : ApproximateRetraction K oneVertexShape P.scheme M.hμ M.X M.Y M.incl)
+    (code : R.index → (P.E.obj J).carrier)
+    (G : (P.E.obj Jplus).carrier → (P.E.obj Jplus).carrier → (P.E.obj Jplus).carrier)
+    (heval : ∀ i y, G (P.E.map emb (code i)) (F y) =
+      F (M.incl.onVertex PUnit.unit ((R.retr i).onVertex PUnit.unit y)))
+    (i : R.index) :
+    G (P.E.map emb (code i)) '' Set.range F ⊆ Set.range (P.E.map emb) := by
+  rintro _ ⟨_, ⟨y, rfl⟩, rfl⟩
+  exact infra_83_ret_term_into_X P eX hsurj emb F hF R code G heval i y
+
 end AEC
