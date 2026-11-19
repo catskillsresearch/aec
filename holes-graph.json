@@ -6787,6 +6787,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 141: proved."
+  },
+  {
+   "id": "infra_83_ret_term_fix_card_mu",
+   "label": "For a marked pair of infinite size μ, the codes fixing F(x) on a finite A ⊆ J number exactly μ.",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83Isolation.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 142: proved."
   }
  ],
  "edges": [
@@ -12512,8 +12521,13 @@
    "from": "infra_83_ret_term_fix_card",
    "to": "infra_83_ret_admission",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_ret_term_fix_card_mu",
+   "to": "infra_83_ret_admission",
+   "kind": "hard"
   }
  ],
- "doneCount": 689,
+ "doneCount": 690,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
