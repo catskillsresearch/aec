@@ -1,4 +1,4 @@
-# Nodes: (see holes-graph.json)  Hard edges: 813
+# Nodes: (see holes-graph.json)  Hard edges: 815
 # Convention: FROM --> TO means the English proof of TO requires FROM.
 # infra_78_mixed_level_isolation (Prop 7.8 rho^+ matrix argument; mixed tied free lift and mixed Lemma 7.6 done grokbot_02)
 # Retired: infra_610_qPres_empty_joint_on_I, infra_610_same_head_transfers_joint, infra_69_transfer_sequence, WorkingScheme.exists_approximationSequence.
@@ -816,3 +816,5 @@ infra_84_transfer_of_agreeOn --> infra_84_layout_amalgam
 infra_84_agreeOn_of_generator_tests --> infra_84_layout_amalgam
 infra_84_transfer_of_agreeOn_values --> infra_84_layout_amalgam
 infra_84_generator_transfer_iff --> infra_84_layout_amalgam
+infra_84_range_map_subset --> infra_84_two_segment_generated
+infra_84_two_segment_generated --> infra_84_layout_amalgam
