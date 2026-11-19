@@ -6247,6 +6247,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 108: infra_83_pairMS2_joint (single c; uses the c-parametric chain)."
+  },
+  {
+   "id": "infra_83_pairMS2_Y_marks",
+   "label": "Lemma 8.3 proof: marks as designated terms of the Y-template: mark constants give b_I in F_Y(I), preserved by F_Y(f) and transported by F(Z_f)",
+   "section": 8,
+   "file": "AEC/Section8/OrderColimit83.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 108: infra_83_pairMS2_Y_marks_c (+ generic EM83const_canon / EM83const_gEmMap)."
   }
  ],
  "edges": [
@@ -11662,8 +11671,13 @@
    "from": "infra_83_pairMS2_joint",
    "to": "infra_83_template_from_colors",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_pairMS2_Y_marks",
+   "to": "infra_83_pair_pieces",
+   "kind": "hard"
   }
  ],
- "doneCount": 629,
+ "doneCount": 630,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

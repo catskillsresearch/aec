@@ -1017,4 +1017,113 @@ theorem infra_83_pairMS2_joint (P : SingleModelData K)
     infra_83_pairMS2_X_hull_natural_c P Pr c hc hcoh hθ hρ hX,
     infra_83_pairMS2_Y_hull_natural_c P Pr c hc hcoh hθ hρ hY⟩
 
+/-- A family of piece elements fixed by every piece map has a well-defined image in every limit
+value: all canonical images agree. -/
+theorem EM83const_canon (F : EM83.FinPieces K) (d : ∀ k, (F.obj k).carrier)
+    (hd : ∀ {k l : ℕ} (e : Fin (k + 1) ↪o Fin (l + 1)), F.map e (d k) = d l)
+    (I : Type u) [LinearOrder I] [Nonempty I] (s t : (F.system I).ι) :
+    (F.limit I).canon s (d _) = (F.limit I).canon t (d _) := by
+  obtain ⟨u, hsu, htu⟩ := (F.system I).directed s t
+  have h1 := congrFun (congrArg (⇑) ((F.limit I).compat hsu)) (d _)
+  have h2 := congrFun (congrArg (⇑) ((F.limit I).compat htu)) (d _)
+  refine h1.symm.trans (Eq.trans ?_ h2)
+  exact congrArg ((F.limit I).canon u)
+    ((hd (placeSucc hsu s.2 u.2)).trans (hd (placeSucc htu t.2 u.2)).symm)
+
+/-- ... and these images are preserved by the EM maps `F(f)`. -/
+theorem EM83const_gEmMap (F : EM83.FinPieces K) (d : ∀ k, (F.obj k).carrier)
+    (hd : ∀ {k l : ℕ} (e : Fin (k + 1) ↪o Fin (l + 1)), F.map e (d k) = d l)
+    {I J : Type u} [LinearOrder I] [Nonempty I] [LinearOrder J] [Nonempty J] (f : I ↪o J)
+    (s : (F.system I).ι) (t : (F.system J).ι) :
+    EM83.gEmMap (F := F) f ((F.limit I).canon s (d _)) = (F.limit J).canon t (d _) := by
+  have h := congrFun (congrArg (⇑) (EM83.gEmMap_canon (F := F) f s)) (d _)
+  refine h.trans ?_
+  show (F.limit J).canon _ (F.map (indexCast f s) (d _)) = _
+  rw [hd]
+  exact EM83const_canon F d hd J _ t
+
+/-- The `i`-th mark constant as an element of the `Y`-piece at `k` (the hull class of the
+constant term of the mark language). -/
+noncomputable def pairMS2_markY (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme)
+    (c : (m : ℕ) → 0 < m → Hull83.TpColorB (LS83.pairLangM3 P.E Pr.n) 3 m)
+    (hc : ∀ (n : ℕ) (κ : Cardinal.{u}),
+        Hull83.Joint (Hull83.TpSampleB (fun N _ => pairMAdmittedS2 P.E Pr.n N) 3) n c κ)
+    (hcoh : ∀ {m m' : ℕ} (hm' : 0 < m') (hm : 0 < m) (f : Fin m' ↪o Fin m),
+        c m' hm' = Hull83.tpResB 3 f (c m hm))
+    (hY : Hull83.SubHullStrong (psiM P.E Pr.n)
+        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) (fun N _ => pairMAdmittedS2 P.E Pr.n N)) (k : ℕ) (i : Fin Pr.n) : ((Hull83.subLangPieces (psiM P.E Pr.n)
+        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hY).obj k).carrier :=
+  Quotient.mk _ (Term.func (Sum.inr (Sum.inr ⟨⟨i⟩, rfl⟩) : (LS83.pairLangM2 P.E Pr.n).Functions 0) Fin.elim0)
+
+/-- The `Y`-piece maps fix the mark constants. -/
+theorem pairMS2_markY_map (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme)
+    (c : (m : ℕ) → 0 < m → Hull83.TpColorB (LS83.pairLangM3 P.E Pr.n) 3 m)
+    (hc : ∀ (n : ℕ) (κ : Cardinal.{u}),
+        Hull83.Joint (Hull83.TpSampleB (fun N _ => pairMAdmittedS2 P.E Pr.n N) 3) n c κ)
+    (hcoh : ∀ {m m' : ℕ} (hm' : 0 < m') (hm : 0 < m) (f : Fin m' ↪o Fin m),
+        c m' hm' = Hull83.tpResB 3 f (c m hm))
+    (hY : Hull83.SubHullStrong (psiM P.E Pr.n)
+        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) (fun N _ => pairMAdmittedS2 P.E Pr.n N)) (i : Fin Pr.n) {k l : ℕ} (e : Fin (k + 1) ↪o Fin (l + 1)) :
+    (Hull83.subLangPieces (psiM P.E Pr.n)
+        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hY).map e (pairMS2_markY P Pr c hc hcoh hY k i) = pairMS2_markY P Pr c hc hcoh hY l i := by
+  show Quotient.mk _ _ = Quotient.mk _ _
+  congr 1
+  show Term.func _ _ = Term.func _ _
+  congr 1
+  funext z
+  exact Fin.elim0 z
+
+/-- **Marks as designated terms of the template**: the mark constants give, in every value
+`F_Y(I)`, a mark tuple `b_I` (the common canonical image of the piece marks), preserved by every
+template map `F_Y(f)`; under any natural identification `m_I : F_Y(I) ≅ F(Z_I)` with
+`m_J ∘ F_Y(f) = F(Z_f) ∘ m_I`, the transported marks are carried to each other by `F(Z_f)`. -/
+theorem infra_83_pairMS2_Y_marks_c (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme)
+    (c : (m : ℕ) → 0 < m → Hull83.TpColorB (LS83.pairLangM3 P.E Pr.n) 3 m)
+    (hc : ∀ (n : ℕ) (κ : Cardinal.{u}),
+        Hull83.Joint (Hull83.TpSampleB (fun N _ => pairMAdmittedS2 P.E Pr.n N) 3) n c κ)
+    (hcoh : ∀ {m m' : ℕ} (hm' : 0 < m') (hm : 0 < m) (f : Fin m' ↪o Fin m),
+        c m' hm' = Hull83.tpResB 3 f (c m hm))
+    (hY : Hull83.SubHullStrong (psiM P.E Pr.n)
+        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) (fun N _ => pairMAdmittedS2 P.E Pr.n N)) :
+    ∃ b : ∀ (I : Type u) [LinearOrder I] [Nonempty I], Fin Pr.n → ((Hull83.subLangPieces (psiM P.E Pr.n)
+        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hY).limit I).obj.carrier,
+      (∀ (I : Type u) [LinearOrder I] [Nonempty I] (s : ((Hull83.subLangPieces (psiM P.E Pr.n)
+        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hY).system I).ι) (i : Fin Pr.n),
+        ((Hull83.subLangPieces (psiM P.E Pr.n)
+        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hY).limit I).canon s (pairMS2_markY P Pr c hc hcoh hY _ i) = b I i) ∧
+      (∀ (I J : Type u) [LinearOrder I] [Nonempty I] [LinearOrder J] [Nonempty J] (f : I ↪o J)
+        (i : Fin Pr.n), EM83.gEmMap (F := Hull83.subLangPieces (psiM P.E Pr.n)
+        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hY) f (b I i) = b J i) ∧
+      ∀ (Z : ∀ (I : Type u) [LinearOrder I] [Nonempty I], Type u)
+        [∀ (I : Type u) [LinearOrder I] [Nonempty I], LinearOrder (Z I)]
+        [∀ (I : Type u) [LinearOrder I] [Nonempty I], Nonempty (Z I)]
+        (Zf : ∀ {I J : Type u} [LinearOrder I] [Nonempty I] [LinearOrder J] [Nonempty J],
+          (I ↪o J) → (Z I ↪o Z J))
+        (m : ∀ (I : Type u) [LinearOrder I] [Nonempty I],
+          ((Hull83.subLangPieces (psiM P.E Pr.n)
+        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hY).limit I).obj.carrier ↪[K.τ] (P.E.obj (Z I)).carrier),
+        (∀ (I J : Type u) [LinearOrder I] [Nonempty I] [LinearOrder J] [Nonempty J] (f : I ↪o J) x,
+          m J (EM83.gEmMap (F := Hull83.subLangPieces (psiM P.E Pr.n)
+        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hY) f x) = P.E.map (Zf f) (m I x)) →
+        ∀ (I J : Type u) [LinearOrder I] [Nonempty I] [LinearOrder J] [Nonempty J] (f : I ↪o J)
+          (i : Fin Pr.n), P.E.map (Zf f) (m I (b I i)) = m J (b J i) := by
+  let d : Fin Pr.n → ∀ k, ((Hull83.subLangPieces (psiM P.E Pr.n)
+        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hY).obj k).carrier := fun i k => pairMS2_markY P Pr c hc hcoh hY k i
+  have hd : ∀ i {k l : ℕ} (e : Fin (k + 1) ↪o Fin (l + 1)), (Hull83.subLangPieces (psiM P.E Pr.n)
+        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hY).map e (d i k) = d i l :=
+    fun i _ _ e => pairMS2_markY_map P Pr c hc hcoh hY i e
+  let s0 : ∀ (I : Type u) [LinearOrder I] [Nonempty I], ((Hull83.subLangPieces (psiM P.E Pr.n)
+        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hY).system I).ι :=
+    fun I _ _ => ⟨{Classical.choice ‹Nonempty I›}, Finset.singleton_nonempty _⟩
+  refine ⟨fun I _ _ i => ((Hull83.subLangPieces (psiM P.E Pr.n)
+        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hY).limit I).canon (s0 I) (d i _), fun I _ _ s i =>
+    EM83const_canon _ (d i) (hd i) I s (s0 I), fun I J _ _ _ _ f i =>
+    EM83const_gEmMap _ (d i) (hd i) f (s0 I) (s0 J), ?_⟩
+  intro Z _ _ Zf m hm I J _ _ _ _ f i
+  rw [← hm]
+  exact congrArg (m J) (EM83const_gEmMap _ (d i) (hd i) f (s0 I) (s0 J))
+
 end AEC
