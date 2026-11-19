@@ -1060,4 +1060,83 @@ theorem infra_78_general_assembly_closed (P : SingleModelData K) :
   intro cIdx c hc
   exact infra_78_iso_rename_asTuple φ hφ gu bU c (hisoU cIdx hc c)
 
+/-- **Definition 7.7 is invariant under Galois type (proved, cycle 93).** Its hypotheses read `p`
+only through mixed tied freeness, which depends only on small-test diagrams
+(`infra_78_tiedFreeMixed_left_congr`, `infra_612_dEq_of_sameGalois`). -/
+theorem infra_78_def77_at_congr {P : SingleModelData K} {μ : Cardinal.{u}} {hμ : μ ∈ P.eligible}
+    {A : P.scheme.Object μ hμ} {p p' : TupleOver K oneVertexShape P.scheme hμ A}
+    (e2 : p'.idx ≃ p.idx)
+    (h : SameGaloisType p p' (Equiv.refl p.idx) e2) (hidx : #p.idx < μ)
+    {κ : Cardinal.{u}} {hκ : κ ∈ P.eligible} (H : infra_78_def77_at p κ hκ) :
+    infra_78_def77_at p' κ hκ := by
+  intro C g hg b e hbν hmix hst
+  refine H C g hg b (e2.symm.trans e) hbν ?_ hst
+  refine infra_78_tiedFreeMixed_left_congr (q := p') (q' := p)
+    (qB := b.restrict (C.toUnion 0 C.hlim.1) (C.toUnion_arrow 0 C.hlim.1)) g e
+    e2.symm hmix ?_
+  intro β Z hβ
+  have D := infra_612_dEq_of_sameGalois h Z hidx hβ
+  refine infra_73_diagramEq_of_eq D ?_ ?_
+  · rintro (u | x) <;> rfl
+  · rintro (u | x)
+    · rfl
+    · rfl
+
+/-- **General Prop 7.8, closed-level reading of Definition 7.7 (proved, cycle 93).** The
+`infra_78_general_statement` conclusion for every bounded mark `|p| ≤ θ` over `X`, hosted at any
+eligible level, assuming Definition 7.7 for `p` at every level of `infra_73_tailSet P μ` (the
+closed-level reading of "holds at every sufficiently closed eligible level"). Reduction to the
+level copy as in `infra_78_marginal_general_level`, Definition 7.7 transported by
+`infra_78_def77_at_congr`. Remaining for `infra_78_general` itself: `infra_78_def77_tail_meet`. -/
+theorem infra_78_general_closed (P : SingleModelData K) :
+    ∀ μ (hμ : μ ∈ infra_78_closedTail P)
+      (X : P.scheme.Object μ (Tail.mem (infra_78_closedTail_tail P) hμ))
+      (p : TupleOver K oneVertexShape P.scheme (Tail.mem (infra_78_closedTail_tail P) hμ) X)
+      (θ : Cardinal.{u}),
+      #p.idx ≤ θ →
+      (∀ κ (hκT : κ ∈ infra_73_tailSet P μ), infra_78_def77_at p κ hκT.1.1) →
+      aleph0 ≤ θ → θ < μ →
+      ∃ (U : P.scheme.Object μ (Tail.mem (infra_78_closedTail_tail P) hμ))
+        (f : SystemArrow K oneVertexShape (P.scheme.asSystem _ X) (P.scheme.asSystem _ U))
+        (hf : P.scheme.permitted (X := X) (Y := U) f)
+        (b : p.idx → Occurrence K oneVertexShape (P.scheme.asSystem _ U)),
+        SameGaloisType p (asTuple f hf b) (Equiv.refl p.idx) (Equiv.refl p.idx) ∧
+        ∀ {cIdx : Type u} (c : cIdx → Occurrence K oneVertexShape (P.scheme.asSystem _ U)),
+          #cIdx ≤ θ →
+          IsRelativelyIsolated (uIdx := p.idx) (cIdx := cIdx)
+            (asTuple f hf (seqJoint b c)) (Equiv.refl (p.idx ⊕ cIdx)) := by
+  intro μ hμ X p θ hidxθ hcont hθ hθμ
+  have hel : μ ∈ P.eligible := Tail.mem (infra_78_closedTail_tail P) hμ
+  have hidxμ : #p.idx < μ := hidxθ.trans_lt hθμ
+  obtain ⟨host, incl, hincl, val, h12⟩ := infra_612_exists_level_copy p hidxμ.le
+  let p' : TupleOver K oneVertexShape P.scheme (Tail.mem (infra_78_closedTail_tail P) hμ) X :=
+    ⟨μ, Tail.mem (infra_78_closedTail_tail P) hμ, host, incl, hincl, p.idx, val⟩
+  obtain ⟨U, f, hf, b, hgal, hiso⟩ :=
+    infra_78_general_assembly_closed P μ hμ X p' θ hidxθ rfl hθ hθμ
+      (fun κ hκT => infra_78_def77_at_congr (p := p) (p' := p') (Equiv.refl _) h12 hidxμ (hcont κ hκT))
+  refine ⟨U, f, hf, b, ?_, hiso⟩
+  have hrec : μ ∈ recursionClosedLevels P θ := (hμ.2.1 θ hθ hθμ).1
+  have h := infra_612_galois_trans_cross_level_right_base (t1 := p) (t2 := p')
+    (t3 := asTuple f hf b) (e12 := Equiv.refl p.idx) (e32 := (Equiv.refl p.idx).symm) h12
+    (SameGaloisType.swap_refl hgal) θ hθ hθμ hidxθ hrec rfl rfl
+  simp only [Equiv.refl_trans] at h
+  exact h
+
+/-- **`infra_78_def77_tail_meet` (statement; open, needs a ruling).** Definition 7.7 as formalized
+(`SatisfiesContinuityTied`, an existential cofinal set `T` of levels) yields Definition 7.7 at
+every matrix level closed at `μ`. Not derivable as stated in general: `Tail` is only cofinality,
+and `infra_73_tailSet P μ` is not upward closed, so the two sets may be disjoint. -/
+def infra_78_def77_tail_meet_statement (P : SingleModelData K) : Prop :=
+  ∀ μ (hμ : μ ∈ infra_78_closedTail P)
+    (X : P.scheme.Object μ (Tail.mem (infra_78_closedTail_tail P) hμ))
+    (p : TupleOver K oneVertexShape P.scheme (Tail.mem (infra_78_closedTail_tail P) hμ) X),
+    SatisfiesContinuityTied p →
+    ∀ κ (hκT : κ ∈ infra_73_tailSet P μ), infra_78_def77_at p κ hκT.1.1
+
+/-- **General Prop 7.8 from the tail meet (proved, cycle 93).** -/
+theorem infra_78_general_of_tail_meet (P : SingleModelData K)
+    (hmeet : infra_78_def77_tail_meet_statement P) : infra_78_general_statement P :=
+  fun μ hμ X p θ hidxθ hp hθ hθμ =>
+    infra_78_general_closed P μ hμ X p θ hidxθ (hmeet μ hμ X p hp) hθ hθμ
+
 end AEC
