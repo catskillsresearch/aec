@@ -5482,6 +5482,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 104: LS83.hull_strong_in_closed (hull_range_sub + factorEmbedding + coherence with hullStrong_lsClosed). Axioms clean."
+  },
+  {
+   "id": "infra_83_J_colors",
+   "label": "Lemma 8.3 proof: coherent type colors of the J-skeleton sequences in LS-expanded samples (one-sort bundles, arbitrarily large homogeneous LS-closed samples)",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83JColors.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 104: infra_83_J_skeleton_large (skeleton(emb j) = F(emb)(skeleton j) ∈ X, injective, κ ≤ #J, LS-closed expansion) and infra_83_J_coherent_colors (Hull83.tpB_coherent_colors, r = 1). Remaining for infra_83_pair_sample_family: the Z- and W-sorts and the retraction index in one bundle (r = 3+) with a common index order, and the saturation demand. Axioms clean."
   }
  ],
  "edges": [
@@ -10277,8 +10286,13 @@
    "from": "infra_83_hull_in_sort",
    "to": "infra_83_template_strong",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_J_colors",
+   "to": "infra_83_pair_sample_family",
+   "kind": "hard"
   }
  ],
- "doneCount": 545,
+ "doneCount": 546,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
