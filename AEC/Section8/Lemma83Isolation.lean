@@ -491,4 +491,37 @@ theorem infra_83_full_single_of_ret_evals (P : SingleModelData K)
     infra_83_good_of_ret_eval _ (N.incl.onVertex PUnit.unit).injective F hF _ _ _ g (code i)
       (hev i) hi
 
+/-- **Matching a template pair into a sample pair (proved).** English (Lemma 8.3 proof): the
+partial matches of the template pieces into a homogeneous sample, made compatible, give the map
+of the value pair `F_X(I) ≤ F_Y(I)` into the sample pair `M_X ≤ M_Y`. For piece functors
+`F_X → F_Y` (`η`) and compatible strong families of piece embeddings `gX s : F_X(s) → M_X`,
+`gY s : F_Y(s) → M_Y` with `gY s ∘ η_s = ι ∘ gX s`, there are strong embeddings of the EM
+values extending them and commuting with `η` and `ι`. -/
+theorem infra_83_pair_limit_desc {FX FY : EM83.FinPieces K} (η : EM83.PiecesHom FX FY)
+    (I : Type u) [LinearOrder I] [Nonempty I] {MX MY : Model K.τ} (hMX : K.Mem MX)
+    (hMY : K.Mem MY) (ι : MX.carrier ↪[K.τ] MY.carrier)
+    (gX : ∀ s : (FX.system I).ι, ((FX.system I).obj s).carrier ↪[K.τ] MX.carrier)
+    (gY : ∀ s : (FY.system I).ι, ((FY.system I).obj s).carrier ↪[K.τ] MY.carrier)
+    (hgX : ∀ s, K.Strong (gX s)) (hgY : ∀ s, K.Strong (gY s))
+    (hcX : ∀ {s t} (h : (FX.system I).rel s t), (gX t).comp ((FX.system I).map h) = gX s)
+    (hcY : ∀ {s t} (h : (FY.system I).rel s t), (gY t).comp ((FY.system I).map h) = gY s)
+    (hsq : ∀ (s : (FX.system I).ι) x, gY s (η.app s.1.card.pred x) = ι (gX s x)) :
+    ∃ (onX : (FX.limit I).obj.carrier ↪[K.τ] MX.carrier)
+      (onY : (FY.limit I).obj.carrier ↪[K.τ] MY.carrier),
+      K.Strong onX ∧ K.Strong onY ∧
+      (∀ s, onX.comp ((FX.limit I).canon s) = gX s) ∧
+      (∀ s, onY.comp ((FY.limit I).canon s) = gY s) ∧
+      ∀ x, onY (η.limMap I x) = ι (onX x) := by
+  obtain ⟨onX, hsX, hX⟩ := (FX.limit_spec I).2.2 MX gX hMX hgX hcX
+  obtain ⟨onY, hsY, hY⟩ := (FY.limit_spec I).2.2 MY gY hMY hgY hcY
+  refine ⟨onX, onY, hsX, hsY, hX, hY, fun x => ?_⟩
+  obtain ⟨s, y, rfl⟩ := (FX.limit I).joint x
+  have h1 := congrFun (congrArg (⇑) (η.limMap_canon I s)) y
+  have h2 := congrFun (congrArg (⇑) (hY s)) (η.app s.1.card.pred y)
+  have h3 := congrFun (congrArg (⇑) (hX s)) y
+  simp only [Language.Embedding.comp_apply, EM83.PiecesHom.cocone] at h1 h2 h3
+  rw [h1]
+  refine h2.trans ?_
+  exact (hsq s y).trans (by rw [h3])
+
 end AEC

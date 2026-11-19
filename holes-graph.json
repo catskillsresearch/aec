@@ -6499,6 +6499,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 113: proved reduction."
+  },
+  {
+   "id": "infra_83_pair_limit_desc",
+   "label": "Compatible strong piece embeddings of a template pair into a sample pair extend to commuting strong embeddings of the EM values",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83Isolation.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 114: proved."
   }
  ],
  "edges": [
@@ -12054,8 +12063,13 @@
    "from": "infra_83_full_single_of_ret_evals",
    "to": "infra_83_lemma_8_3_full_single",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_pair_limit_desc",
+   "to": "infra_83_bounded_arity_free",
+   "kind": "hard"
   }
  ],
- "doneCount": 659,
+ "doneCount": 660,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
