@@ -2845,4 +2845,62 @@ theorem infra_83_template_arrow_of_chain (P : SingleModelData K) {μ : Cardinal.
     · exact heq_of_eq (hg₀m i)
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+/-- **Arrow from a compatible sequence on an exhausting chain of strong pieces (proved).**
+Sequence form of `infra_83_arrow_of_model_chain`: strong `G n : A n → N` with
+`G (n+1) ∘ s n = G n` glue to a strong `f : M → N` with `f ∘ e n = G n` for all `n`. -/
+theorem infra_83_arrow_of_model_chain_seq {M N : Model K.τ} (hM : K.Mem M) (hN : K.Mem N)
+    (A : ℕ → Model K.τ) (hA : ∀ n, K.Mem (A n))
+    (s : ∀ n, Language.Embedding K.τ (A n).carrier (A (n + 1)).carrier)
+    (e : ∀ n, Language.Embedding K.τ (A n).carrier M.carrier) (he : ∀ n, K.Strong (e n))
+    (hes : ∀ n, (e (n + 1)).comp (s n) = e n)
+    (hcover : ∀ x : M.carrier, ∃ n y, e n y = x)
+    (G : ∀ n, Language.Embedding K.τ (A n).carrier N.carrier) (hG : ∀ n, K.Strong (G n))
+    (hGs : ∀ n, (G (n + 1)).comp (s n) = G n) :
+    ∃ f : Language.Embedding K.τ M.carrier N.carrier, K.Strong f ∧ ∀ n, f.comp (e n) = G n := by
+  let R : ℕ → K.τ.Substructure M.carrier := fun n => (e n).toHom.range
+  have hes' : ∀ n y, e (n + 1) (s n y) = e n y := fun n y =>
+    congrFun (congrArg DFunLike.coe (hes n)) y
+  have hmono : Monotone R := by
+    refine monotone_nat_of_le_succ fun n => ?_
+    rintro _ ⟨y, rfl⟩
+    exact ⟨s n y, hes' n y⟩
+  have hmemR : ∀ n, K.Mem (subM83 (R n)) := fun n =>
+    K.iso_closed (M := A n) (N := subM83 (R n)) ⟨(e n).equivRange⟩ (hA n)
+  have hsubR : ∀ n, (R n).subtype = (e n).comp (e n).equivRange.symm.toEmbedding := by
+    intro n
+    ext ⟨x, y, rfl⟩
+    simp only [Language.Embedding.comp_apply, Language.Equiv.coe_toEmbedding]
+    rw [infra_83_equivRange_symm_self (e n) _ y rfl]
+    rfl
+  have hSR : ∀ n, K.Strong (M := subM83 (R n)) (N := M) (R n).subtype := by
+    intro n
+    rw [hsubR n]
+    exact K.strong_trans (M := subM83 (R n)) (N := A n) (P := M) _ _
+      (strong_of_equiv K (M := subM83 (R n)) (N := A n) (e n).equivRange.symm (hmemR n)) (he n)
+  obtain ⟨f, hf, hfc⟩ := infra_83_arrow_of_chain_seq hM hN R hmono hSR
+    (fun x => by obtain ⟨n, y, rfl⟩ := hcover x; exact ⟨n, y, rfl⟩)
+    (fun n => (G n).comp (e n).equivRange.symm.toEmbedding)
+    (fun n => K.strong_trans (M := subM83 (R n)) (N := A n) (P := N) _ _
+      (strong_of_equiv K (M := subM83 (R n)) (N := A n) (e n).equivRange.symm (hmemR n)) (hG n))
+    (fun n => by
+      ext ⟨x, y, rfl⟩
+      have hc' := congrFun (congrArg DFunLike.coe (hGs n)) y
+      simp only [Language.Embedding.comp_apply, Language.Equiv.coe_toEmbedding] at hc' ⊢
+      have h1 : (Language.Substructure.inclusion (hmono n.le_succ)
+          (⟨(e n).toHom y, y, rfl⟩ : R n)) = ⟨e (n + 1) (s n y), s n y, rfl⟩ :=
+        Subtype.ext (hes' n y).symm
+      rw [h1, infra_83_equivRange_symm_self (e (n + 1)) _ (s n y) rfl, hc',
+        infra_83_equivRange_symm_self (e n) _ y rfl])
+  refine ⟨f, hf, fun n => ?_⟩
+  ext y
+  have h := congrFun (congrArg DFunLike.coe (hfc n)) (⟨e n y, y, rfl⟩ : R n)
+  simp only [Language.Embedding.comp_apply, Language.Equiv.coe_toEmbedding] at h ⊢
+  rw [infra_83_equivRange_symm_self (e n) _ y rfl] at h
+  exact h
+end
+
 end AEC
