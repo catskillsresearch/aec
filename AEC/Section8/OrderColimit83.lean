@@ -1189,4 +1189,18 @@ theorem infra_83_colim_card_eq {I J : Type u} (hI : ℵ₀ ≤ #I) (hls : ls K �
   rw [Cardinal.mk_finset_of_infinite]
   exact (mul_le_mul_right hls _).trans (Cardinal.mul_eq_self hI).le
 
+/-- **The template values are scheme objects at the level `|I|`**: at an eligible level
+`μ = |I|`, a value identified with `F(J)` (`J ⊇ I`, `|J| ≤ |Finset I|·LS(K)`, as for `J_I`, `Z_I`)
+is `τ`-isomorphic to an object of the single-model scheme at level `μ` (`SMObject K μ`). -/
+theorem infra_83_value_object (P : SingleModelData K) {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
+    {I J : Type u} [LinearOrder I] [Nonempty I] [LinearOrder J] [Nonempty J] (hI : #I = μ)
+    (g : I ↪o J) (hJ : #J ≤ #(Finset I) * ls K) {A : Type u} [K.τ.Structure A]
+    (m : A ↪[K.τ] (P.E.obj J).carrier) (hm : Function.Bijective m) :
+    ∃ X : SMObject K μ, Nonempty (A ≃[K.τ] X.model.carrier) := by
+  have hJI : #J = #I := infra_83_colim_card_eq (K := K) (hI ▸ SingleModelData.aleph0_le hμ)
+    (hI ▸ (SingleModelData.ls_lt hμ).le) g.toEmbedding hJ
+  have hc := SingleModelData.card_obj_eq hμ J (hJI.trans hI)
+  exact ⟨SMObject.ofModel (P.E.obj J) (P.hE J) hc,
+    ⟨(SMObject.ofModelEquiv (P.E.obj J) (P.hE J) hc).comp (embeddingEquivOfSurjective m hm.2)⟩⟩
+
 end AEC
