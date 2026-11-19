@@ -2,6 +2,7 @@ module
 
 public import AEC.Section8.Lemma83ExpSamples
 public import AEC.Section8.LSPairLang83
+public import AEC.Section8.HullBundle83
 
 @[expose] public section
 
@@ -106,5 +107,26 @@ theorem infra_83_JZ_coherent_colors (P : SingleModelData K)
   fin_cases i
   · exact hinj
   · exact hy
+
+/-- **The `X → Y` template of the two-sort skeleton colors** (Lemma 8.3, `X_H = F(J_H)` inside
+`Y_H`).  From the coherent `J`/`Z` colors: piece functors `F_X` (hulls of the `J`-coordinates)
+and `F_Y` (hulls of both coordinates) with a strong natural transformation `F_X → F_Y`, an order
+presentation of `K` whose values are the EM values of `F_Y`, and induced maps `F_X(I) → F_Y(I)`
+that are strong and natural in order embeddings. -/
+theorem infra_83_JZ_template (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) :
+    ∃ (FX FY : EM83.FinPieces K) (η : EM83.PiecesHom FX FY) (E : OrderPresentation K),
+      (∀ (I : Type u) [LinearOrder I] [Nonempty I], E.obj I = (FY.limit I).obj) ∧
+      (∀ (I : Type u) [LinearOrder I] [Nonempty I], K.Strong (η.limMap I)) ∧
+      ∀ {I J : Type u} [LinearOrder I] [LinearOrder J] [Nonempty I] [Nonempty J] (f : I ↪o J),
+        (η.limMap J).comp (EM83.gEmMap (F := FX) f) =
+          (EM83.gEmMap (F := FY) f).comp (η.limMap I) := by
+  obtain ⟨c, hc, hcoh⟩ := infra_83_JZ_coherent_colors P Pr
+  let σX : Fin 1 → Fin 2 := fun _ => 0
+  let η := Hull83.subBundleHom hc hcoh σX (LS83.lsInl K) LS83.hullStrong_lsClosed
+  exact ⟨_, _, η,
+    Hull83.tpPresentationB hc hcoh (by norm_num) (LS83.lsInl K) LS83.hullStrong_lsClosed
+      LS83.lsLang_functions_le,
+    fun I _ _ => rfl, fun I _ _ => η.limMap_strong I, fun f => η.limMap_natural f⟩
 
 end AEC

@@ -581,6 +581,7 @@ Lean: imports `Section5.Results` and `Section6.Results`. Soft paper chain after 
 | `infra_83_hull_in_sort` | Lemma 8.3 proof: hulls of tuples from a closed strong sort are strong in that sort | [`LSPairLang83.lean`](AEC/Section8/LSPairLang83.lean) (**done**, cycle 104) |
 | `infra_83_J_colors` | Lemma 8.3 proof: coherent colors of the J-skeleton in LS-expanded samples | [`Lemma83JColors.lean`](AEC/Section8/Lemma83JColors.lean) (**done**, cycle 104) |
 | `infra_83_JZ_colors` | Lemma 8.3 proof: coherent colors of two-sort (J in X, Z in Y) skeleton bundles | [`Lemma83JColors.lean`](AEC/Section8/Lemma83JColors.lean) (**done**, cycle 104) |
+| `infra_83_JZ_template` | Lemma 8.3 proof: X → Y template from two-sort skeleton colors | [`Lemma83JColors.lean`](AEC/Section8/Lemma83JColors.lean) (**done**, cycle 104) |
 | `infra_72_mixed_level` | Lemma 7.2 last sentence (A at a smaller level than B), stated with sorry (audit) | [`Lemma72Mixed.lean`](AEC/Section7/Lemma72Mixed.lean) (open, cycle 96) |
 | `infra_82_tiedFreeMixed_base_equiv` | Mixed tied freeness under a reindexed change of base tuple | [`TiedAlong.lean`](AEC/Section8/TiedAlong.lean) (**done**, cycle 97) |
 | `infra_82_mark_tied_along_single` | Lemma 8.2(4) for `P.scheme`: tied freeness of the mark along arrows (Def 8.1 tied, cycle 97 ruling) | [`TiedAlong.lean`](AEC/Section8/TiedAlong.lean) (**done**, cycle 97) |

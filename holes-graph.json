@@ -5500,6 +5500,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 104: infra_83_JZ_skeleton_large (Z = J, Y ≅ F(J) via the sample iso, carried by F into L; X ⊆ Y closed sorts) and infra_83_JZ_coherent_colors (r = 2). Remaining for infra_83_pair_sample_family: W-sort / retraction index and the saturation demand (TpSampleD). Axioms clean."
+  },
+  {
+   "id": "infra_83_JZ_template",
+   "label": "Lemma 8.3 proof: X → Y template from the two-sort skeleton colors (F_X = hulls of J-coordinates, F_Y = hulls of J,Z-coordinates; presentation of K with values F_Y(I); strong natural F_X(I) → F_Y(I))",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83JColors.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 104: infra_83_JZ_template (subBundleHom along σX = const 0, tpPresentationB with LS language). Remaining toward infra_83_template_from_colors: the L-sort (W coordinates) and the mark as designated terms. Axioms clean."
   }
  ],
  "edges": [
@@ -10305,8 +10314,18 @@
    "from": "infra_83_JZ_colors",
    "to": "infra_83_pair_sample_family",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_JZ_template",
+   "to": "infra_83_template_from_colors",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_83_JZ_template",
+   "to": "infra_83_pair_pieces",
+   "kind": "hard"
   }
  ],
- "doneCount": 547,
+ "doneCount": 548,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
