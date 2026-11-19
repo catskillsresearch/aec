@@ -216,4 +216,66 @@ theorem infra_84_C_tests_single (P : SingleModelData K) {ν μ σ : Cardinal.{u}
   exact key _ _ _ _ (by funext x; rcases x with i | j <;> rfl)
     (by funext x; rcases x with i | j <;> rfl) H
 
+
+/-- **Lemma 8.4 for P.scheme, C-extension of joint tests with a fixed `U`-part.** Sub-lemma of
+`infra_84_layout_testing_single`. For a fixed `U`-part `w` (read in `T`) and `w′` (read in `T′`) of
+length at most `θ < ν`, put `s = max (max σ θ) ℵ₀` and `k = g(s) + LS(K) < ν`: if `v ⌢ w` and
+`v′ ⌢ w′` agree on all joint tests with `C`-parts of size at most `k`, they agree on all joint tests
+with `C`-parts of size `< μ`. (The remaining content of Lemma 8.4 is to bound the `U`-part
+uniformly: the natural layout (8).) Proof: `infra_84_C_tests_single` for the longer tuple. -/
+theorem infra_84_joint_C_extension_single (P : SingleModelData K) {ν μ σ θ : Cardinal.{u}}
+    (hν : ν ∈ P.eligible) (hμT : μ ∈ infra_615_closed P) (hσν : σ < ν) (hθν : θ < ν)
+    (hνμ : ν < μ) :
+    P.g (max (max (max σ θ) ℵ₀) ℵ₀) + ls K < ν ∧
+    ∀ (C Tt Tt' : P.scheme.Object μ hμT.1)
+      (cT : SystemArrow K oneVertexShape (P.scheme.asSystem hμT.1 C) (P.scheme.asSystem hμT.1 Tt))
+      (cT' : SystemArrow K oneVertexShape (P.scheme.asSystem hμT.1 C)
+        (P.scheme.asSystem hμT.1 Tt'))
+      {α ιU : Type u} (v : α → Occurrence K oneVertexShape (P.scheme.asSystem hμT.1 Tt))
+      (v' : α → Occurrence K oneVertexShape (P.scheme.asSystem hμT.1 Tt'))
+      (w : ιU → Occurrence K oneVertexShape (P.scheme.asSystem hμT.1 Tt))
+      (w' : ιU → Occurrence K oneVertexShape (P.scheme.asSystem hμT.1 Tt')), #α ≤ σ → #ιU ≤ θ →
+      (∀ {ιC : Type u} (ZC : ιC → Occurrence K oneVertexShape (P.scheme.asSystem hμT.1 C)),
+        #ιC ≤ P.g (max (max (max σ θ) ℵ₀) ℵ₀) + ls K →
+        P.scheme.DiagramEq (X := Tt) (Y := Tt')
+          (Sum.elim v (Sum.elim w (fun i => cT.mapOcc (ZC i))))
+          (Sum.elim v' (Sum.elim w' (fun i => cT'.mapOcc (ZC i))))) →
+      ∀ {ιC : Type u} (ZC : ιC → Occurrence K oneVertexShape (P.scheme.asSystem hμT.1 C)),
+        #ιC < μ →
+        P.scheme.DiagramEq (X := Tt) (Y := Tt')
+          (Sum.elim v (Sum.elim w (fun i => cT.mapOcc (ZC i))))
+          (Sum.elim v' (Sum.elim w' (fun i => cT'.mapOcc (ZC i)))) := by
+  have hsν : max (max σ θ) ℵ₀ < ν := max_lt (max_lt hσν hθν) (P.aleph0_lt hν)
+  obtain ⟨hb, H⟩ := infra_84_C_tests_single P hν hμT hsν hνμ
+  refine ⟨hb, ?_⟩
+  intro C Tt Tt' cT cT' α ιU v v' w w' hα hU hsmall ιC ZC hZ
+  have hcard : #(α ⊕ ιU) ≤ max (max σ θ) ℵ₀ := by
+    rw [Cardinal.mk_sum, Cardinal.lift_id, Cardinal.lift_id]
+    exact add_le_of_le (le_max_right _ _) (hα.trans ((le_max_left _ _).trans (le_max_left _ _)))
+      (hU.trans ((le_max_right _ _).trans (le_max_left _ _)))
+  have fwd : ∀ {γ : Type u} (Z : γ → Occurrence K oneVertexShape (P.scheme.asSystem hμT.1 C)),
+      P.scheme.DiagramEq (X := Tt) (Y := Tt')
+        (Sum.elim v (Sum.elim w (fun i => cT.mapOcc (Z i))))
+        (Sum.elim v' (Sum.elim w' (fun i => cT'.mapOcc (Z i)))) →
+      P.scheme.DiagramEq (X := Tt) (Y := Tt')
+        (Sum.elim (Sum.elim v w) (fun i => cT.mapOcc (Z i)))
+        (Sum.elim (Sum.elim v' w') (fun i => cT'.mapOcc (Z i))) := by
+    intro γ Z h
+    have h1 := (P.scheme.diagram_reindex Tt Tt' (Equiv.sumAssoc α ιU γ).symm _ _).mp h
+    exact infra_73_diagramEq_of_eq h1 (fun x => by rcases x with (a | j) | c <;> rfl)
+      (fun x => by rcases x with (a | j) | c <;> rfl)
+  have bwd : ∀ {γ : Type u} (Z : γ → Occurrence K oneVertexShape (P.scheme.asSystem hμT.1 C)),
+      P.scheme.DiagramEq (X := Tt) (Y := Tt')
+        (Sum.elim (Sum.elim v w) (fun i => cT.mapOcc (Z i)))
+        (Sum.elim (Sum.elim v' w') (fun i => cT'.mapOcc (Z i))) →
+      P.scheme.DiagramEq (X := Tt) (Y := Tt')
+        (Sum.elim v (Sum.elim w (fun i => cT.mapOcc (Z i))))
+        (Sum.elim v' (Sum.elim w' (fun i => cT'.mapOcc (Z i)))) := by
+    intro γ Z h
+    have h1 := (P.scheme.diagram_reindex Tt Tt' (Equiv.sumAssoc α ιU γ) _ _).mp h
+    exact infra_73_diagramEq_of_eq h1 (fun x => by rcases x with a | j | c <;> rfl)
+      (fun x => by rcases x with a | j | c <;> rfl)
+  exact bwd ZC (H C Tt Tt' cT cT' (Sum.elim v w) (Sum.elim v' w') hcard
+    (fun Z hZ' => fwd Z (hsmall Z hZ')) ZC hZ)
+
 end AEC

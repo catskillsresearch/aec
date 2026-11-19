@@ -4329,7 +4329,7 @@
    "file": "AEC/Section8/Lemma84Single.lean",
    "status": "open",
    "blocker": null,
-   "detail": "Cycle 96. Remaining content of infra_84_single: tests mixing U and C. Paper proof: present (A,U,b) as F^b(H); include questioned C-tuples in V <= C at level nu; universal strip H' (presentation-invariant), Corollary 6.7 embeds AH' into C; joint diagrams of U and AH' in T are those of the natural layout UH cup AH' inside UH' (Lemma 7.2: U-tuples with b isolated over A, b/AH' prescribed free extension); mixed saturation; Lemma 6.4 lifts to placed comparisons; Proposition 6.3 bound depending on arity and template only. Needs: universal-strip embedding for the pair template, Lemma 6.4/Prop 6.3 for the two-segment layout."
+   "detail": "Cycle 96. Remaining content of infra_84_single: tests mixing U and C. Paper proof: present (A,U,b) as F^b(H); include questioned C-tuples in V <= C at level nu; universal strip H' (presentation-invariant), Corollary 6.7 embeds AH' into C; joint diagrams of U and AH' in T are those of the natural layout UH cup AH' inside UH' (Lemma 7.2: U-tuples with b isolated over A, b/AH' prescribed free extension); mixed saturation; Lemma 6.4 lifts to placed comparisons; Proposition 6.3 bound depending on arity and template only. Needs: universal-strip embedding for the pair template, Lemma 6.4/Prop 6.3 for the two-segment layout. | Cycle 99: split into infra_84_joint_C_extension_single (done) and infra_84_U_part_bound (open)."
   },
   {
    "id": "infra_82_comparison_single",
@@ -4591,6 +4591,24 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 99: proved; axioms propext, Classical.choice, Quot.sound."
+  },
+  {
+   "id": "infra_84_joint_C_extension_single",
+   "label": "Lemma 8.4 (P.scheme): joint tests with a fixed bounded U-part extend from C-parts of size <= g(s)+LS to C-parts < mu",
+   "section": 8,
+   "file": "AEC/Section8/Lemma84Single.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 99: proved via infra_84_C_tests_single on v^w (sumAssoc reindex). Axioms: propext, Classical.choice, Quot.sound."
+  },
+  {
+   "id": "infra_84_U_part_bound",
+   "label": "Lemma 8.4 (P.scheme): uniform bound on the U-part of joint tests (natural layout (8))",
+   "section": 8,
+   "file": "AEC/Section8/Lemma84Single.lean",
+   "status": "open",
+   "blocker": null,
+   "detail": "Cycle 99 split of infra_84_layout_testing_single. Remaining: show agreement on joint tests of total size <= k(sigma) implies agreement for U-parts of every size < nu (with C-parts then handled by infra_84_joint_C_extension_single). Paper: present (A,U,b) as F^b(H); universal strip H' embedded in C (Cor 6.7); joint diagrams of U and AH' are those of the natural layout UH cup AH' inside UH' (Lemma 7.2, b/AH' prescribed free extension); mixed saturation; Lemma 6.4 placed comparisons; Prop 6.3 bound depending on arity and template only. Lean gap: no common base object containing U and C mapped into both T and T' (the layout amalgam)."
   }
  ],
  "edges": [
@@ -8881,8 +8899,18 @@
    "from": "infra_82_diag_eq_transfer",
    "to": "infra_82_comparison_single",
    "kind": "hard"
+  },
+  {
+   "from": "infra_84_joint_C_extension_single",
+   "to": "infra_84_layout_testing_single",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_84_U_part_bound",
+   "to": "infra_84_layout_testing_single",
+   "kind": "hard"
   }
  ],
- "doneCount": 457,
+ "doneCount": 458,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
