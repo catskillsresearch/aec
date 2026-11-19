@@ -5175,7 +5175,7 @@
    "file": "AEC/Section8/OrderSat83.lean",
    "status": "open",
    "blocker": null,
-   "detail": "Cycle 102 split of infra_83_saturated_orders_exist: the remaining base case; with infra_83_order_sat_lex and strong-limit levels it gives saturated padded dense orders of every eligible size above 2^λ."
+   "detail": "Cycle 102 split of infra_83_saturated_orders_exist: the remaining base case; with infra_83_order_sat_lex and strong-limit levels it gives saturated padded dense orders of every eligible size above 2^λ. | Cycle 102 plan: T = Lex(ι → V), ι = λ.ord.ToType with λ regular ≥ κ (sets of size < κ strictly bounded), V = Lex(λᵒᵈ ⊕ λ) (no endpoints; any S ≤ U of size < κ has v with S ≤ v ≤ U: max S, else sup of S in the λ-part, else the reversed sup of U). Given A < B: γ bounds all first differences in A ∪ B; define x below γ by recursion keeping x|β ≥ a|β, ≤ b|β for the a, b agreeing with x so far; at γ at most one of A ∪ B still agrees with x, and V has no endpoints, giving strictness."
   }
  ],
  "edges": [
