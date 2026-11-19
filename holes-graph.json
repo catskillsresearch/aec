@@ -5148,7 +5148,7 @@
    "file": "AEC/Section8/OrderSat83.lean",
    "status": "open",
    "blocker": null,
-   "detail": "Cycle 102 split of infra_83_samples: remaining order-saturation existence at the level size (needs tail levels of the form 2^ν, or a saturation construction of size μ)."
+   "detail": "Cycle 102 split of infra_83_samples: remaining order-saturation existence at the level size (needs tail levels of the form 2^ν, or a saturation construction of size μ). | Cycle 102: reduced to infra_83_small_saturated_order via infra_83_order_sat_lex (levels are strong limits of cof ω, so WithTop(μ.ord.ToType) ×lex J0 has size μ when #J0 < μ)."
   },
   {
    "id": "infra_83_color_tower_section2",
@@ -5158,6 +5158,24 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 102: Hull83.section2_coherent_colors via KSample (thinning-closed by tupleCode_subtype, large by ArbitrarilyLarge). Confirms the generic interface fits finite-hull colors; the pair instance is infra_83_pair_sample_family. Axioms clean."
+  },
+  {
+   "id": "infra_83_order_sat_lex",
+   "label": "Lemma 8.3 proof: I ×lex J0 is κ-order-saturated for a well-order I with top and κ-saturated J0 (saturated orders of the level size from a small saturated J0)",
+   "section": 8,
+   "file": "AEC/Section8/OrderSat83.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 102: OrderSat83.orderSaturated_lex. Eligible levels are strong limits of countable cofinality (IsWorkingLevel), so μ^{<κ} > μ is possible and the level-size saturated order is built as WithTop(μ.ord.ToType) ×lex J0 with #J0 < μ. Axioms clean."
+  },
+  {
+   "id": "infra_83_small_saturated_order",
+   "label": "Lemma 8.3 proof: for every κ, some κ-order-saturated linear order J0 : Type u exists (e.g. lex power ℚ^λ, λ regular ≥ κ, of size 2^λ)",
+   "section": 8,
+   "file": "AEC/Section8/OrderSat83.lean",
+   "status": "open",
+   "blocker": null,
+   "detail": "Cycle 102 split of infra_83_saturated_orders_exist: the remaining base case; with infra_83_order_sat_lex and strong-limit levels it gives saturated padded dense orders of every eligible size above 2^λ."
   }
  ],
  "edges": [
@@ -9763,8 +9781,18 @@
    "from": "infra_83_color_tower_section2",
    "to": "infra_83_pair_sample_family",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_order_sat_lex",
+   "to": "infra_83_saturated_orders_exist",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_83_small_saturated_order",
+   "to": "infra_83_saturated_orders_exist",
+   "kind": "hard"
   }
  ],
- "doneCount": 508,
+ "doneCount": 509,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
