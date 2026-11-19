@@ -5212,6 +5212,33 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 102: Hull83.coherent_colors_compat. Axioms clean."
+  },
+  {
+   "id": "infra_83_em_pieces_system",
+   "label": "Lemma 8.3 proof: generic EM directed system and direct limit in K for any functor of finite pieces (FinPieces); Section 2 pieces as instance",
+   "section": 8,
+   "file": "AEC/Section8/EMExtend83.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 102: EM83.FinPieces, FinPieces.system, FinPieces.limit_exists, section2Pieces_system (= emSystem by rfl). Axioms clean."
+  },
+  {
+   "id": "infra_83_em_extension_generic",
+   "label": "Lemma 8.3 proof: generic EM order presentation from FinPieces (generalize Presentation.lean emMap/emRealize/emSkeleton/emSub/card bounds from pieceSucc to any FinPieces)",
+   "section": 8,
+   "file": "AEC/Section8/EMExtend83.lean",
+   "status": "open",
+   "blocker": null,
+   "detail": "Cycle 102 split of infra_83_template_from_colors: Section 2's emOrderPresentation uses only pieceSucc/arityMapSucc functoriality after emSystem, so it can be restated over FinPieces and instantiated for the pair pieces (X, Y, L components plus natural maps)."
+  },
+  {
+   "id": "infra_83_pair_pieces",
+   "label": "Lemma 8.3 proof: FinPieces functors for the X, Y, L components coded by the coherent pair colors, with natural strong maps X -> Y -> L",
+   "section": 8,
+   "file": "AEC/Section8/EMExtend83.lean",
+   "status": "open",
+   "blocker": null,
+   "detail": "Cycle 102 split of infra_83_template_from_colors; uses infra_83_color_coherence for functoriality."
   }
  ],
  "edges": [
@@ -9847,8 +9874,23 @@
    "from": "infra_83_color_coherence",
    "to": "infra_83_template_from_colors",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_em_pieces_system",
+   "to": "infra_83_template_from_colors",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_83_em_extension_generic",
+   "to": "infra_83_template_from_colors",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_83_pair_pieces",
+   "to": "infra_83_template_from_colors",
+   "kind": "hard"
   }
  ],
- "doneCount": 516,
+ "doneCount": 517,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
