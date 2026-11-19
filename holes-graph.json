@@ -5914,6 +5914,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 106: infra_83_pairMS2_X_chart_maps. Remaining for F_X(I) ≅ F(J_I): θ_e = E.map of an order embedding H_k → H_l (needs the order of chart points recorded by the colors and the term structure matched), then the limit."
+  },
+  {
+   "id": "infra_83_pairMS2_Y_chart_maps",
+   "label": "Lemma 8.3 proof: transported Y-piece maps on F(H_k) (Z-charts) form a functor moving skeleton coordinates, as for X",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83SampleLikeY.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 106: infra_83_pairMS2_Y_chart_maps."
   }
  ],
  "edges": [
@@ -11064,8 +11073,13 @@
    "from": "infra_83_pairMS2_X_chart_maps",
    "to": "infra_83_X_hull_eq_FJ",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_pairMS2_Y_chart_maps",
+   "to": "infra_83_Y_hull_eq_FZ",
+   "kind": "hard"
   }
  ],
- "doneCount": 590,
+ "doneCount": 591,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
