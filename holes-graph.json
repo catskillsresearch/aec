@@ -7426,6 +7426,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 209: proved."
+  },
+  {
+   "id": "infra_83_piece_for_list",
+   "label": "Piece, preimage and mark positions for one bounded list: for incl' : X' -> Y', a mark b indexed by Fin n and a bounded c, a piece X' <= Y_u <= Y', a preimage d of (b, c) and mark positions m with d (inl a) = <*, m a> (hj, hjd, hdm of the piece data)",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PieceMatch.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 210: proved."
   }
  ],
  "edges": [
@@ -13521,8 +13530,13 @@
    "from": "infra_83_marked_of_pieces",
    "to": "infra_83_arity_removal",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_piece_for_list",
+   "to": "infra_83_XH_sort",
+   "kind": "hard"
   }
  ],
- "doneCount": 756,
+ "doneCount": 757,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

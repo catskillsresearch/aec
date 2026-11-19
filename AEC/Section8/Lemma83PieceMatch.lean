@@ -1460,4 +1460,35 @@ theorem infra_83_marked_of_pieces (P : SingleModelData K)
   exact H
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+/-- **Piece, preimage and mark positions for one bounded list (proved).** For `incl' : X' → Y'` at
+level `ν`, a mark `b` indexed by `Fin n` and a bounded `c` (`#cIdx < ν`), there are a piece
+`X' ≤ Y_u ≤ Y'`, a preimage `d` of `(b, c)` in `Y_u` and mark positions `m` with
+`d (inl a) = ⟨*, m a⟩`: the clauses `hj`, `hjd`, `hdm` of `infra_83_marked_of_piece_data`
+(`infra_83_piece_with_tuple`, `infra_83_mark_positions`). -/
+theorem infra_83_piece_for_list (P : SingleModelData K) {ν : Cardinal.{u}} {hν : ν ∈ P.eligible}
+    {X' Y' : P.scheme.Object ν hν}
+    (incl' : SystemArrow K oneVertexShape (P.scheme.asSystem hν X') (P.scheme.asSystem hν Y'))
+    {n : ℕ} (b : ULift.{u} (Fin n) → Occurrence K oneVertexShape (P.scheme.asSystem hν Y'))
+    {cIdx : Type u} (c : cIdx → Occurrence K oneVertexShape (P.scheme.asSystem hν Y'))
+    (hc : #cIdx < ν) :
+    ∃ (Yu : P.scheme.Object ν hν)
+      (inclu : SystemArrow K oneVertexShape (P.scheme.asSystem hν X') (P.scheme.asSystem hν Yu))
+      (j : SystemArrow K oneVertexShape (P.scheme.asSystem hν Yu) (P.scheme.asSystem hν Y'))
+      (m : Fin n → ((P.scheme.asSystem hν Yu).obj PUnit.unit).carrier)
+      (d : ULift.{u} (Fin n) ⊕ cIdx → Occurrence K oneVertexShape (P.scheme.asSystem hν Yu)),
+      SystemArrow.comp inclu j = incl' ∧ (∀ s, j.mapOcc (d s) = seqJoint b c s) ∧
+      ∀ a, d (Sum.inl a) = ⟨PUnit.unit, m a.down⟩ := by
+  have hcard : #(ULift.{u} (Fin n) ⊕ cIdx) ≤ ν := by
+    rw [Cardinal.mk_sum, Cardinal.lift_id, Cardinal.lift_id]
+    exact Cardinal.add_le_of_le (P.aleph0_le hν)
+      ((Cardinal.lt_aleph0_of_finite _).le.trans (P.aleph0_le hν)) hc.le
+  obtain ⟨Yu, inclu, j, d, hj, hjd⟩ := infra_83_piece_with_tuple P incl' (seqJoint b c) hcard
+  obtain ⟨m, hm⟩ := infra_83_mark_positions P d
+  exact ⟨Yu, inclu, j, m, d, hj, hjd, hm⟩
+end
+
 end AEC
