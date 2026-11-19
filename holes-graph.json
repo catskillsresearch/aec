@@ -4465,6 +4465,24 @@
    "status": "done",
    "blocker": null,
    "detail": "DONE cycle 97. Extra hypotheses vs English: nu in infra_73_tailSet and mu recursion closed, used only by the uniqueness step (infra_72_tied_unique_mixed: testing over B). All other steps use bounds at nu only. For 8.2(5). Axioms clean."
+  },
+  {
+   "id": "infra_82_mark_tied_along_mixed",
+   "label": "Tied freeness of the mark along marked arrows, mixed levels (P.scheme)",
+   "section": 8,
+   "file": "AEC/Section8/TiedAlong.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "DONE cycle 98. Mixed-level form of infra_82_mark_tied_along_single (M.mu <= N.mu); both transitivity steps keep the third tuple at the base level. Axioms clean."
+  },
+  {
+   "id": "infra_82_mark_positional_mixed",
+   "label": "Mark map of a marked arrow is positional up to type (P.scheme, mixed levels)",
+   "section": 8,
+   "file": "AEC/Section8/TiedAlong.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "DONE cycle 98. tp(N.b o markMap / N.X) = tp(N.b o (realEq_M . arity_M . arity_N^-1 . realEq_N^-1)) for M.mu in the aleph0-tail and N.mu recursion closed: both are tied free extensions of tp(b/M.X) (TiedAlong), uniqueness infra_72_tied_unique_mixed. Mark-transport input for 8.2(5)."
   }
  ],
  "edges": [
@@ -8685,8 +8703,18 @@
    "from": "infra_72_mixed_level_closed",
    "to": "infra_82_comparison_single",
    "kind": "hard"
+  },
+  {
+   "from": "infra_82_mark_tied_along_mixed",
+   "to": "infra_82_mark_positional_mixed",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_82_mark_positional_mixed",
+   "to": "infra_82_comparison_single",
+   "kind": "hard"
   }
  ],
- "doneCount": 442,
+ "doneCount": 444,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

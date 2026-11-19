@@ -17,6 +17,18 @@ Definition 8.1 freeness is therefore the predicate `StationaryPrescription.TiedA
 through `arity` like `CommutesWithIso`: along every permitted arrow (including a mixed-level
 one) `p_{X′}` read back is `p_X` coordinate by coordinate, and `p_{X′}` is a tied free extension
 of `p_X` with that matching.
+
+**Audit (cycle 98): `TiedAlong` is the tied reading of the English, not an extra assumption.**
+Its two conjuncts are exactly the two halves of Definition 8.1's "for every arrow `X → X′`,
+including an arrow between eligible levels, `p_{X′}` is the free extension of `p_X`, after
+identifying the base by that arrow": (i) *extension* (`p_{X′}` restricted along the arrow is
+`p_X`, positionally through `arity`, the same positional convention as `CommutesWithIso`), and
+(ii) *free* (tied, `IsTiedFreeMixed`, which at equal levels is definitionally `IsTiedFree`). It
+quantifies over the same arrows as the English (every permitted arrow, same or mixed level) and
+adds nothing else. It appears as a hypothesis only where the English assumes a Definition 8.1
+prescription: `infra_82_mark_tied_along_single` and `infra_82_orbit_preservation_single` (8.2(4)),
+and the 8.2(5) single-scheme lemmas, all of which the English states for a stationary finite
+prescription in the sense of Definition 8.1.
 -/
 
 namespace AEC
@@ -26,7 +38,9 @@ universe u
 open Cardinal Classical FirstOrder Function
 variable {K : AbstractElementaryClass.{u}}
 
-/-- **Definition 8.1, tied free extension along arrows (P.scheme).** -/
+/-- **Definition 8.1, tied free extension along arrows (P.scheme).** The tied reading of the
+English "for every arrow `X → X′` ... `p_{X′}` is the free extension of `p_X`, after identifying
+the base by that arrow"; see the module docstring audit: no assumption beyond the English. -/
 def StationaryPrescription.TiedAlong {P : SingleModelData K}
     (Pr : StationaryPrescription K oneVertexShape P.scheme) : Prop :=
   ∀ {ν μ : Cardinal.{u}} {hν : ν ∈ P.eligible} {hμ : μ ∈ P.eligible}
@@ -223,6 +237,105 @@ theorem infra_82_mark_tied_along_single {P : SingleModelData K}
     ((Equiv.refl _).trans (f.markMap.trans N.realEq).symm)
     (infra_82_host_level_ge _) le_rfl hfin hT hR
   exact hres
+
+set_option maxHeartbeats 1600000 in
+/-- **Tied freeness of the mark along marked arrows (P.scheme; input to Lemma 8.2(4)).** Under the
+Definition 8.1 tied free extension along arrows (`TiedAlong`), for a marked arrow `f : M → N`
+from a level to a larger or equal one (cycle 98: mixed-level form, toward 8.2(5); both
+transitivity steps keep the third tuple at the base level `M.μ`), the image of the mark of `M` (read through `markMap`) is a tied free extension over
+`N.X` of the mark of `M` over `M.X`, positions matched by the identity. -/
+theorem infra_82_mark_tied_along_mixed {P : SingleModelData K}
+    {Pr : StationaryPrescription K oneVertexShape P.scheme} (hTA : Pr.TiedAlong)
+    {M N : MarkedPair K oneVertexShape P.scheme Pr}
+    (f : MarkedArrow K oneVertexShape P.scheme Pr M N) (hlev : M.μ ≤ N.μ) :
+    IsTiedFreeMixed f.onX (asTuple M.incl M.incl_arrow M.b) (infra_82_markImage f)
+      (Equiv.refl _) := by
+  classical
+  obtain ⟨h1, h2⟩ := hTA M.X N.X f.onX f.onX_arrow
+  have hμ0 : ℵ₀ < M.μ := P.aleph0_lt M.hμ
+  have hfinM : Finite (Pr.assign M.hμ M.X).idx := Finite.of_equiv _ (Pr.arity M.hμ M.X).symm
+  have hA : #(Pr.assign M.hμ M.X).idx ≤ ℵ₀ :=
+    (Cardinal.lt_aleph0_of_finite (Pr.assign M.hμ M.X).idx).le
+  have hfinB : Finite M.bIdx := Finite.of_equiv _ (M.realEq.trans (Pr.arity M.hμ M.X)).symm
+  have hii := infra_82_sgt_restrict f.onX f.onX_arrow (infra_82_markImage_realizes f)
+  have hi := infra_82_mark_ext_single f
+  have hfinN : Finite (Pr.assign N.hμ N.X).idx := Finite.of_equiv _ (Pr.arity N.hμ N.X).symm
+  have hAN : #((Pr.assign N.hμ N.X).restrict f.onX f.onX_arrow).idx ≤ ℵ₀ :=
+    (Cardinal.lt_aleph0_of_finite (Pr.assign N.hμ N.X).idx).le
+  have s1 := infra_612_galois_trans_last_base
+    (infra_73_sgt_uncommon (SameGaloisType.symm hii)) (SameGaloisType.symm hi) ℵ₀ le_rfl hμ0 hAN
+    rfl
+  have s2 := infra_612_galois_trans_last_base h1 (SameGaloisType.swap_refl s1) ℵ₀ le_rfl hμ0 hA
+    rfl
+  have s3 := infra_73_sgt_uncommon (SameGaloisType.symm s2)
+  have hB := infra_82_tiedFreeMixed_base_equiv f.onX _ _ _ _ _ (fun {ι} Z hι => by
+      have hs : #((Pr.assign M.hμ M.X).idx ⊕ ι) < M.μ := by
+        rw [mk_sum, lift_id, lift_id]
+        exact add_lt_of_lt (P.aleph0_le M.hμ) (hA.trans_lt hμ0) hι
+      exact infra_82_diag_of_sgt_equiv s3 Z hs (hs.trans_le (infra_82_host_level_ge _))) h2
+  have hR := infra_73_sgt_uncommon (SameGaloisType.symm (infra_82_markImage_realizes f))
+  have hT : IsTiedFreeMixed f.onX (asTuple M.incl M.incl_arrow M.b) (Pr.assign N.hμ N.X)
+      ((Equiv.refl M.bIdx).trans
+        ((Equiv.refl _).trans (f.markMap.trans N.realEq).symm).symm) := by
+    have hE : (Equiv.refl M.bIdx).trans
+        ((Equiv.refl _).trans (f.markMap.trans N.realEq).symm).symm =
+        ((Equiv.refl _).trans ((((Pr.arity M.hμ M.X).trans (Pr.arity N.hμ N.X).symm).trans
+          (f.markMap.trans N.realEq).symm).trans (Equiv.refl _).symm).symm).trans
+          ((Pr.arity M.hμ M.X).trans (Pr.arity N.hμ N.X).symm) := by
+      ext k
+      simp
+    rw [hE]
+    exact hB
+  have hfin : #M.bIdx < M.μ := (Cardinal.lt_aleph0_of_finite M.bIdx).trans hμ0
+  have hres := infra_72_tiedFreeMixed_of_sameGalois hlev f.onX
+    (asTuple M.incl M.incl_arrow M.b) (Pr.assign N.hμ N.X) (infra_82_markImage f)
+    (Equiv.refl M.bIdx) (Equiv.refl M.bIdx)
+    ((Equiv.refl _).trans (f.markMap.trans N.realEq).symm)
+    (infra_82_host_level_ge _) le_rfl hfin hT hR
+  exact hres
+
+set_option maxHeartbeats 1600000 in
+/-- **The mark map of a marked arrow is positional up to type (P.scheme; toward 8.2(5)).** For
+a marked arrow `f : M → N` from a level `M.μ` in the `ℵ₀`-tail to a larger or equal recursion-closed
+level, the image of the source mark read through `f.markMap` has, over `N.X`, the type of the
+target mark read through the positional matching
+`M.realEq ∘ arity_M ∘ arity_N⁻¹ ∘ N.realEq⁻¹`: both are tied free extensions of `tp(b/M.X)`
+along `f.onX` (Definition 8.1, `TiedAlong`), so they agree by uniqueness of mixed tied free
+extensions (`infra_72_tied_unique_mixed`). -/
+theorem infra_82_mark_positional_mixed {P : SingleModelData K}
+    {Pr : StationaryPrescription K oneVertexShape P.scheme} (hTA : Pr.TiedAlong)
+    {M N : MarkedPair K oneVertexShape P.scheme Pr}
+    (f : MarkedArrow K oneVertexShape P.scheme Pr M N) (hlev : M.μ ≤ N.μ)
+    (hMT : M.μ ∈ infra_73_tailSet P ℵ₀) (hNrec : N.μ ∈ recursionClosedLevels P ℵ₀) :
+    SameGaloisType (infra_82_markImage f) (asTuple N.incl N.incl_arrow N.b)
+      (Equiv.refl M.bIdx).symm
+      ((M.realEq.trans ((Pr.arity M.hμ M.X).trans (Pr.arity N.hμ N.X).symm)).trans
+        N.realEq.symm).symm := by
+  classical
+  obtain ⟨-, h2⟩ := hTA M.X N.X f.onX f.onX_arrow
+  have hμ0 : ℵ₀ < M.μ := P.aleph0_lt M.hμ
+  have hfinM : Finite (Pr.assign M.hμ M.X).idx := Finite.of_equiv _ (Pr.arity M.hμ M.X).symm
+  have hA : #(Pr.assign M.hμ M.X).idx ≤ ℵ₀ :=
+    (Cardinal.lt_aleph0_of_finite (Pr.assign M.hμ M.X).idx).le
+  have hfinB : Finite M.bIdx := Finite.of_equiv _ (M.realEq.trans (Pr.arity M.hμ M.X)).symm
+  have hfinN : Finite (Pr.assign N.hμ N.X).idx := Finite.of_equiv _ (Pr.arity N.hμ N.X).symm
+  have hB := infra_82_tiedFreeMixed_base_equiv f.onX _ (asTuple M.incl M.incl_arrow M.b)
+    M.realEq _ _ (fun {ι} Z hι => by
+      have hs : #((Pr.assign M.hμ M.X).idx ⊕ ι) < M.μ := by
+        rw [mk_sum, lift_id, lift_id]
+        exact add_lt_of_lt (P.aleph0_le M.hμ) (hA.trans_lt hμ0) hι
+      exact infra_82_diag_of_sgt_equiv M.realizes Z hs (hs.trans_le (infra_82_host_level_ge _))) h2
+  have hT2 := infra_72_tiedFreeMixed_of_sameGalois hlev f.onX
+    (asTuple M.incl M.incl_arrow M.b) (Pr.assign N.hμ N.X) (asTuple N.incl N.incl_arrow N.b)
+    (M.realEq.trans ((Pr.arity M.hμ M.X).trans (Pr.arity N.hμ N.X).symm)) N.realEq
+    (Equiv.refl _) (infra_82_host_level_ge _) le_rfl
+    ((Cardinal.lt_aleph0_of_finite _).trans hμ0) hB (SameGaloisType.symm N.realizes)
+  have hT1 := infra_82_mark_tied_along_mixed hTA f hlev
+  have hidx : #(asTuple M.incl M.incl_arrow M.b).idx ≤ ℵ₀ :=
+    (Cardinal.lt_aleph0_of_finite M.bIdx).le
+  exact infra_72_tied_unique_mixed P ℵ₀ le_rfl M.hμ hMT N.hμ hlev hNrec f.onX f.onX_arrow
+    (asTuple M.incl M.incl_arrow M.b) hidx (infra_82_markImage f)
+    (asTuple N.incl N.incl_arrow N.b) (Equiv.refl _) _ rfl rfl hT1 hT2
 
 /-- **Lemma 8.2(4) for P.scheme (proved).** English: "Same-level arrows preserve bounded pair
 orbits." For a stationary prescription satisfying Definition 8.1 (commutes with isomorphisms;
