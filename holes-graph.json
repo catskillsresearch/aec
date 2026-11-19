@@ -5049,7 +5049,7 @@
    "file": "AEC/Section8/Lemma83Single.lean",
    "status": "open",
    "blocker": null,
-   "detail": "Cycle 101 split ('Bounded horizontal arity')."
+   "detail": "Cycle 101 split ('Bounded horizontal arity'). | Cycle 109: reduced (infra_83_marked_of_sub) to embedding the template value Y_I over X_I into a Lemma 8.2(1) marked pair over X_I with b_I going to its mark."
   },
   {
    "id": "infra_83_all_dominated",
@@ -5058,7 +5058,7 @@
    "file": "AEC/Section8/Lemma83Single.lean",
    "status": "open",
    "blocker": null,
-   "detail": "Cycle 101 split ('The actual sample pair is all-dominated' / 'Removing the arity restriction')."
+   "detail": "Cycle 101 split ('The actual sample pair is all-dominated' / 'Removing the arity restriction'). | Cycle 109: all-domination pulls back to sub-objects containing the mark (infra_83_dominated_pull) and transports along onto arrows (infra_83_dominated_push)."
   },
   {
    "id": "infra_83_samples_core",
@@ -6337,6 +6337,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 109: proved (infra_83_realizes_push, infra_83_relIso_push, infra_83_dominated_push, MarkedPair.pushY). Lets the template values be shown marked by identifying (X_I, Y_I, b_I) over X_I with the Lemma 8.2(1) marked pair over X_I."
+  },
+  {
+   "id": "infra_83_marked_sub_pair",
+   "label": "Lemma 8.3 proof (P.scheme): a sub-pair X <= Y of a marked pair over X containing the mark is marked (realizes with the same realEq + all-dominated), MarkedPair.pullY",
+   "section": 8,
+   "file": "AEC/Section8/MarkedPairTransport.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 109: proved (infra_83_realizes_pull, infra_83_relIso_pull, infra_83_dominated_pull, infra_83_marked_of_sub, MarkedPair.pullY). Reduces realizes/dominated for the template values (X_I, Y_I, b_I) to an embedding of Y_I over X_I into a marked pair over X_I sending b_I to its mark."
   }
  ],
  "edges": [
@@ -11802,8 +11811,13 @@
    "from": "infra_83_marked_pair_transport",
    "to": "infra_83_lemma_8_3_full_single",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_marked_sub_pair",
+   "to": "infra_83_lemma_8_3_full_single",
+   "kind": "hard"
   }
  ],
- "doneCount": 641,
+ "doneCount": 642,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

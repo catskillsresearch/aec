@@ -203,4 +203,146 @@ theorem infra_83_markedPair_push {P : SingleModelData K}
       (∀ i, (M.pushY Y' h hsurj).b i = h.mapOcc (M.b i)) :=
   ⟨rfl, rfl, rfl, rfl, rfl, fun _ => rfl⟩
 
+/-- **Prescribed-type clause pulls back along the upper object.** If the image `h(b)` of the mark
+under an arrow `h : Y → Y'` realizes `Pr.assign X` for the pushed inclusion, so does `b`. -/
+theorem infra_83_realizes_pull (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) {μ : Cardinal.{u}}
+    {hμ : μ ∈ P.eligible} {X Y Y' : P.scheme.Object μ hμ}
+    (incl : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ Y))
+    (hincl : P.scheme.permitted (X := X) (Y := Y) incl)
+    (h : SystemArrow K oneVertexShape (P.scheme.asSystem hμ Y) (P.scheme.asSystem hμ Y'))
+    {bIdx : Type u} (b : bIdx → Occurrence K oneVertexShape (P.scheme.asSystem hμ Y))
+    (realEq : bIdx ≃ (Pr.assign hμ X).idx)
+    (hr : SameGaloisType (asTuple (SystemArrow.comp incl h) trivial (fun i => h.mapOcc (b i)))
+      (Pr.assign hμ X) realEq (Equiv.refl _)) :
+    SameGaloisType (asTuple incl hincl b) (Pr.assign hμ X) realEq (Equiv.refl _) := by
+  have hidx : #(Pr.assign hμ X).idx ≤ ℵ₀ := by
+    have : Finite (Pr.assign hμ X).idx := Finite.of_equiv _ (Pr.arity hμ X).symm
+    exact (Cardinal.lt_aleph0_of_finite _).le
+  have h12 := SameGaloisType.unswap_refl hr.symm
+  have h32 := (infra_83_sameGalois_push incl hincl h b).symm
+  have S := infra_612_galois_trans_last_base h12 h32 ℵ₀ le_rfl (P.aleph0_lt hμ) hidx rfl
+  exact SameGaloisType.unswap_refl S.symm
+
+/-- **Relative isolation pulls back along the upper object** (converse of
+`infra_83_relIso_push`, same isolating parameters). -/
+theorem infra_83_relIso_pull (P : SingleModelData K) {μ : Cardinal.{u}}
+    {hμ : μ ∈ P.eligible} {X Y Y' : P.scheme.Object μ hμ}
+    (incl : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ Y))
+    (hincl : P.scheme.permitted (X := X) (Y := Y) incl)
+    (h : SystemArrow K oneVertexShape (P.scheme.asSystem hμ Y) (P.scheme.asSystem hμ Y'))
+    {idx uIdx cIdx : Type u} (v : idx → Occurrence K oneVertexShape (P.scheme.asSystem hμ Y))
+    (e : idx ≃ uIdx ⊕ cIdx) (hcard : #idx < μ)
+    (hI : IsRelativelyIsolated
+      (asTuple (SystemArrow.comp incl h) trivial (fun i => h.mapOcc (v i))) e) :
+    IsRelativelyIsolated (asTuple incl hincl v) e := by
+  obtain ⟨ι, Z, hZ, H⟩ := hI
+  refine ⟨ι, Z, hZ, fun q' e' hν hmarg hdiag => ?_⟩
+  have hlt : ℵ₀ < μ := P.aleph0_lt hμ
+  have hσ : max ℵ₀ #idx < μ := max_lt hlt hcard
+  have hu : #uIdx ≤ #idx :=
+    Cardinal.mk_le_of_injective (f := fun x : uIdx => e.symm (Sum.inl x))
+      (fun a b hab => by simpa using hab)
+  have hm0 : SameGaloisType
+      ((asTuple (SystemArrow.comp incl h) trivial (fun i => h.mapOcc (v i))).marginal e)
+      (q'.marginal e') (Equiv.refl uIdx) (Equiv.refl uIdx) := by
+    have h12 := (infra_83_sameGalois_push incl hincl h
+      (fun i : uIdx => v (e.symm (Sum.inl i)))).symm
+    exact infra_612_galois_trans_last_base h12 hmarg (max ℵ₀ #idx) (le_max_left _ _) hσ
+      (hu.trans (le_max_right _ _)) hν
+  have hd0 : P.scheme.DiagramEq (X := Y') (Y := q'.host)
+      (alignJoint e (typeJoint (p := asTuple (SystemArrow.comp incl h) trivial
+        (fun i => h.mapOcc (v i))) Z))
+      (alignJoint e' (typeJoint (p := q') Z)) := by
+    have hα : #((uIdx ⊕ cIdx) ⊕ ι) < μ := by
+      rw [Cardinal.mk_sum, Cardinal.lift_id, Cardinal.lift_id, ← Cardinal.mk_congr e]
+      exact Cardinal.add_lt_of_lt (hlt.le) hcard hZ
+    have hp := P.scheme.diagram_preserved Y Y' h trivial
+      (alignJoint e (typeJoint (p := asTuple incl hincl v) Z)) hα hα
+    have hx : (fun i => (⟨(alignJoint e (typeJoint (p := asTuple incl hincl v) Z) i).1,
+        h.onVertex _ (alignJoint e (typeJoint (p := asTuple incl hincl v) Z) i).2⟩ :
+          Occurrence K oneVertexShape (P.scheme.asSystem hμ Y'))) =
+        alignJoint e (typeJoint (p := asTuple (SystemArrow.comp incl h) trivial
+          (fun i => h.mapOcc (v i))) Z) := by
+      funext s
+      rcases s with s | s <;> rfl
+    have hp' : P.scheme.DiagramEq (X := Y) (Y := Y')
+        (alignJoint e (typeJoint (p := asTuple incl hincl v) Z))
+        (alignJoint e (typeJoint (p := asTuple (SystemArrow.comp incl h) trivial
+          (fun i => h.mapOcc (v i))) Z)) := hx ▸ hp
+    exact P.scheme.diagram_trans _ _ _ _ _ _ (P.scheme.diagram_symm _ _ _ _ hp') hdiag
+  have S0 := H q' e' hν hm0 hd0
+  have h12 := infra_83_sameGalois_push incl hincl h v
+  have h32 := infra_83_sgt_to_refl S0
+  have S := infra_612_galois_trans_last_base h12 h32 (max ℵ₀ #idx) (le_max_left _ _) hσ
+    (le_max_right _ _) hν
+  apply infra_83_sgt_of_refl
+  exact SameGaloisType.swap_refl S
+
+/-- **All-domination pulls back to a sub-object containing the mark.** If `h : Y → Y'` and
+`Y'` is all-dominated over `X + h(b)` (pushed inclusion), then `Y` is all-dominated over `X + b`. -/
+theorem infra_83_dominated_pull (P : SingleModelData K) {μ : Cardinal.{u}}
+    {hμ : μ ∈ P.eligible} {X Y Y' : P.scheme.Object μ hμ}
+    (incl : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ Y))
+    (hincl : P.scheme.permitted (X := X) (Y := Y) incl)
+    (h : SystemArrow K oneVertexShape (P.scheme.asSystem hμ Y) (P.scheme.asSystem hμ Y'))
+    {bIdx : Type u} (b : bIdx → Occurrence K oneVertexShape (P.scheme.asSystem hμ Y))
+    (hb : #bIdx < μ)
+    (hd : AllDominated (SystemArrow.comp incl h) trivial bIdx (fun i => h.mapOcc (b i))) :
+    AllDominated incl hincl bIdx b := by
+  intro cIdx c hc
+  have hcard : #(bIdx ⊕ cIdx) < μ := by
+    rw [Cardinal.mk_sum, Cardinal.lift_id, Cardinal.lift_id]
+    exact Cardinal.add_lt_of_lt (P.aleph0_lt hμ).le hb hc
+  have H := hd cIdx (fun j => h.mapOcc (c j)) hc
+  have hx : seqJoint (fun i => h.mapOcc (b i)) (fun j => h.mapOcc (c j)) =
+      (fun s => h.mapOcc (seqJoint b c s)) := by
+    funext s
+    rcases s with s | s <;> rfl
+  rw [hx] at H
+  exact infra_83_relIso_pull P incl hincl h (seqJoint b c) (Equiv.refl _) hcard H
+
+/-- **Sub-pairs of marked pairs containing the mark are marked (Lemma 8.3 support).** If
+`X ≤ Y''` is a marked pair (`realizes` via `realEq`, all-dominated) and `h : Y → Y''` is an arrow
+over the base (`incl ; h = incl''`) carrying `b` to the mark `b''`, then `b` realizes the
+prescribed type (same `realEq`) and `Y` is all-dominated over `X + b`. -/
+theorem infra_83_marked_of_sub (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) {μ : Cardinal.{u}}
+    {hμ : μ ∈ P.eligible} {X Y Y'' : P.scheme.Object μ hμ}
+    (incl : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ Y))
+    (h : SystemArrow K oneVertexShape (P.scheme.asSystem hμ Y) (P.scheme.asSystem hμ Y''))
+    (incl'' : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ Y''))
+    (hcomm : SystemArrow.comp incl h = incl'')
+    {bIdx : Type u} (b : bIdx → Occurrence K oneVertexShape (P.scheme.asSystem hμ Y))
+    (b'' : bIdx → Occurrence K oneVertexShape (P.scheme.asSystem hμ Y''))
+    (hb : ∀ i, h.mapOcc (b i) = b'' i)
+    (realEq : bIdx ≃ (Pr.assign hμ X).idx)
+    (hr : SameGaloisType (asTuple incl'' trivial b'') (Pr.assign hμ X) realEq (Equiv.refl _))
+    (hd : AllDominated incl'' trivial bIdx b'') :
+    SameGaloisType (asTuple incl trivial b) (Pr.assign hμ X) realEq (Equiv.refl _) ∧
+      AllDominated incl trivial bIdx b := by
+  have hb' : b'' = fun i => h.mapOcc (b i) := (funext hb).symm
+  subst hb' hcomm
+  have hfin : Finite bIdx := Finite.of_equiv _ (realEq.trans (Pr.arity hμ X)).symm
+  exact ⟨infra_83_realizes_pull P Pr incl trivial h b realEq hr,
+    infra_83_dominated_pull P incl trivial h b
+      ((Cardinal.lt_aleph0_of_finite _).trans (P.aleph0_lt hμ)) hd⟩
+
+/-- The marked pair `(N.X, Y, b)` obtained from `infra_83_marked_of_sub` for a marked pair `N`. -/
+noncomputable def MarkedPair.pullY {P : SingleModelData K}
+    {Pr : StationaryPrescription K oneVertexShape P.scheme}
+    (N : MarkedPair K oneVertexShape P.scheme Pr) (Y : P.scheme.Object N.μ N.hμ)
+    (incl : SystemArrow K oneVertexShape (P.scheme.asSystem N.hμ N.X)
+      (P.scheme.asSystem N.hμ Y))
+    (h : SystemArrow K oneVertexShape (P.scheme.asSystem N.hμ Y) (P.scheme.asSystem N.hμ N.Y))
+    (hcomm : SystemArrow.comp incl h = N.incl)
+    (b : N.bIdx → Occurrence K oneVertexShape (P.scheme.asSystem N.hμ Y))
+    (hb : ∀ i, h.mapOcc (b i) = N.b i) :
+    MarkedPair K oneVertexShape P.scheme Pr :=
+  ⟨N.μ, N.hμ, N.X, Y, incl, trivial, N.bIdx, b, N.realEq,
+    (infra_83_marked_of_sub P Pr incl h N.incl hcomm b N.b hb N.realEq N.realizes
+      N.dominated).1,
+    (infra_83_marked_of_sub P Pr incl h N.incl hcomm b N.b hb N.realEq N.realizes
+      N.dominated).2⟩
+
 end AEC
