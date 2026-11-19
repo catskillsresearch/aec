@@ -6319,6 +6319,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 108: infra_83_pair_values (one color family; via joint, value_pair, value_arrow). Remaining for faithful 8.3: marks (realized Galois type = P.assign, AllDominated), markMap preservation, clause (3). | Cycle 108 (later): marks added — mark tuples b_I in F_Y(I) fixed by F_Y(f), and the Y-arrows carry eY(b_I) to eY(b_J) (preserves_mark with markMap = id on Fin n)."
+  },
+  {
+   "id": "infra_83_pair_template_clauses",
+   "label": "Lemma 8.3 clauses (1)-(2), unmarked, in Lemma83Conclusion format: TermTemplate F^b on the doubled shape, values iso to scheme objects X_I → Y_I carrying the edge, order embeddings give commuting system arrows equal to F^b(f)",
+   "section": 8,
+   "file": "AEC/Section8/OrderColimit83.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 108: infra_83_pair_template_clauses. Remaining for infra_83_lemma_8_3_full_single: MarkedPair data (mark occurrences b, realEq, realizes = SameGaloisType with P.assign, AllDominated), markMap/preserves_mark in clause (2), clause (3), and the tail T (WellFoundedLT I)."
   }
  ],
  "edges": [
@@ -11774,8 +11783,13 @@
    "from": "infra_83_pair_values",
    "to": "infra_83_template_from_colors",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_pair_template_clauses",
+   "to": "infra_83_template_from_colors",
+   "kind": "hard"
   }
  ],
- "doneCount": 638,
+ "doneCount": 639,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

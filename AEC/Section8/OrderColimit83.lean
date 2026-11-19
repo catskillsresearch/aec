@@ -1383,4 +1383,42 @@ theorem infra_83_pair_values (P : SingleModelData K)
     (fun a => congrFun (congrArg (⇑) ((hnat f).1)) a)
   exact ⟨onX, onY, h1, h2, h3, h4, h5, fun i => (h4 _).trans (congrArg _ (hb I J f i))⟩
 
+/-- **Lemma 8.3 clauses (1)–(2), unmarked, in the format of `Lemma83Conclusion`**: the pair
+template `F^b` is a `TermTemplate` on the doubled shape; at every `I` of eligible size its base and
+extension copies are `τ`-isomorphic to scheme objects `X_I`, `Y_I`, with a system arrow
+`X_I → Y_I` carrying the template edge; and every order embedding gives commuting system arrows
+`X_I → X_J`, `Y_I → Y_J` equal to `F^b(f)` under the isomorphisms. -/
+theorem infra_83_pair_template_clauses (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) :
+    ∃ (F : TermTemplate K oneVertexShape.{u}.doubled)
+      (X Y : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible), P.scheme.Object #I hI)
+      (eX : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible) v,
+        ((F.present I).obj (Sum.inl v)).carrier ≃[K.τ] ((P.scheme.asSystem hI (X I hI)).obj v).carrier)
+      (eY : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible) v,
+        ((F.present I).obj (Sum.inr v)).carrier ≃[K.τ] ((P.scheme.asSystem hI (Y I hI)).obj v).carrier)
+      (incl : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
+        SystemArrow K oneVertexShape (P.scheme.asSystem hI (X I hI)) (P.scheme.asSystem hI (Y I hI))),
+      (∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible) v x,
+        (incl I hI).onVertex v (eX I hI v x) =
+          eY I hI v ((F.present I).edge
+            (show (oneVertexShape.{u}).doubled.specified (Sum.inl v) (Sum.inr v) from rfl) x)) ∧
+      ∀ (I J : Type u) [LinearOrder I] [Nonempty I] [LinearOrder J] [Nonempty J] (f : I ↪o J)
+        (hI : #I ∈ P.eligible) (hJ : #J ∈ P.eligible),
+        ∃ (onX : SystemArrow K oneVertexShape (P.scheme.asSystem hI (X I hI)) (P.scheme.asSystem hJ (X J hJ)))
+          (onY : SystemArrow K oneVertexShape (P.scheme.asSystem hI (Y I hI)) (P.scheme.asSystem hJ (Y J hJ))),
+          SystemArrow.comp (incl I hI) onY = SystemArrow.comp onX (incl J hJ) ∧
+          (∀ v x, onX.onVertex v (eX I hI v x) = eX J hJ v ((F.onOrder f).onVertex (Sum.inl v) x)) ∧
+          (∀ v x, onY.onVertex v (eY I hI v x) = eY J hJ v ((F.onOrder f).onVertex (Sum.inr v) x)) := by
+  obtain ⟨FX, FY, η, b, -, hη, X, Y, eX, eY, incl, hincl, harr⟩ := infra_83_pair_values P Pr
+  refine ⟨pairTemplate83 FX FY η, X, Y, fun I _ _ hI _ => eX I hI, fun I _ _ hI _ => eY I hI,
+    fun I _ _ hI => oneVertexArrow (incl I hI) (hincl I hI).1, fun I _ _ hI v x => (hincl I hI).2 x,
+    fun I J _ _ _ _ f hI hJ => ?_⟩
+  obtain ⟨onX, onY, h1, h2, h3, h4, h5, -⟩ := harr I J f hI hJ
+  refine ⟨oneVertexArrow onX h1, oneVertexArrow onY h2, ?_, fun v x => h3 x, fun v x => h4 x⟩
+  show SystemArrow.mk _ _ _ = SystemArrow.mk _ _ _
+  congr 1
+  funext v
+  ext x
+  exact h5 x
+
 end AEC
