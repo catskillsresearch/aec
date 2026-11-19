@@ -6354,7 +6354,7 @@
    "file": "AEC/Section8/Lemma83Assembly.lean",
    "status": "done",
    "blocker": null,
-   "detail": "Cycle 109: proved. infra_83_lemma_8_3_full_single now reduces exactly to the marked-pair property of the template values (infra_83_bounded_arity_free, infra_83_all_dominated); realEq := ULift-Fin n ≃ assign via Pr.arity."
+   "detail": "Cycle 109: proved. infra_83_lemma_8_3_full_single now reduces exactly to the marked-pair property of the template values (infra_83_bounded_arity_free, infra_83_all_dominated); realEq := ULift-Fin n ≃ assign via Pr.arity. | Cycle 109: prescribed-index variant infra_83_conclusion_of_marked_values_assign (marks indexed by (Pr.assign X_I).idx, realEq = id, as for Lemma 8.2(1) pairs)."
   }
  ],
  "edges": [
