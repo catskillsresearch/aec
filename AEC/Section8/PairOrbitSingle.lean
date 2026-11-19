@@ -88,4 +88,50 @@ theorem infra_82_orbit_criterion_single (P : SingleModelData K)
   · exact hv (Sum.inr i)
   · exact hv (Sum.inl j)
 
+/-- **Base automorphisms keep the mark's type (P.scheme).** If the prescription commutes with
+isomorphisms (Definition 8.1), every structural automorphism `e` of the base of a marked pair keeps
+`tp(b/X)` position by position. This is hypothesis (b) of `infra_82_orbit_criterion_single`. -/
+theorem infra_82_mark_type_auto_single {P : SingleModelData K}
+    {Pr : StationaryPrescription K oneVertexShape P.scheme} (hiso : Pr.CommutesWithIso)
+    (N : MarkedPair K oneVertexShape P.scheme Pr)
+    (e : SystemArrow K oneVertexShape (P.scheme.asSystem N.hμ N.X) (P.scheme.asSystem N.hμ N.X))
+    (hbij : ∀ v, Function.Bijective (e.onVertex v)) :
+    SameGaloisType (asTuple N.incl N.incl_arrow N.b)
+      (⟨N.μ, N.hμ, N.Y, SystemArrow.comp e N.incl, trivial, N.bIdx, N.b⟩ :
+        TupleOver K oneVertexShape P.scheme N.hμ N.X) (Equiv.refl _) (Equiv.refl _) := by
+  obtain ⟨eb, hR⟩ := N.realizes
+  have hk := hiso N.X N.X e trivial hbij
+  have hκ : (Pr.arity N.hμ N.X).trans (Pr.arity N.hμ N.X).symm = Equiv.refl _ := by
+    ext i; simp
+  rw [hκ] at hk
+  -- restrict the realization along `e`
+  have hRe : SameGaloisType
+      ((asTuple N.incl N.incl_arrow N.b).restrict e trivial)
+      ((Pr.assign N.hμ N.X).restrict e trivial) eb (Equiv.refl _) := by
+    rcases hR with ⟨ρ, hρ, top, f1, f2, hf1, hf2, hc, hv⟩
+    refine ⟨ρ, hρ, top, f1, f2, hf1, hf2, fun v => ?_, hv⟩
+    change (f1.onVertex v).comp ((N.incl.onVertex v).comp (e.onVertex v)) =
+      (f2.onVertex v).comp (((Pr.assign N.hμ N.X).incl.onVertex v).comp (e.onVertex v))
+    have h := congrArg (fun g => FirstOrder.Language.Embedding.comp g (e.onVertex v)) (hc v)
+    simp only [FirstOrder.Language.Embedding.comp_assoc] at h ⊢
+    exact h
+  have hμ0 : ℵ₀ < N.μ := P.aleph0_lt N.hμ
+  have hfinA : Finite (Pr.assign N.hμ N.X).idx := Finite.of_equiv _ (Pr.arity N.hμ N.X).symm
+  have hfinB : Finite N.bIdx := Finite.of_equiv _ eb.symm
+  have hA : #(Pr.assign N.hμ N.X).idx ≤ ℵ₀ :=
+    (Cardinal.lt_aleph0_of_finite (Pr.assign N.hμ N.X).idx).le
+  have hB : #N.bIdx ≤ ℵ₀ := (Cardinal.lt_aleph0_of_finite N.bIdx).le
+  -- assign → assign∘e → (b over X via e)
+  have h24 := infra_612_galois_trans_last_base hk hRe.symm ℵ₀ le_rfl hμ0 hA rfl
+  have h24' := SameGaloisType.swap_refl h24
+  have h14 := infra_612_galois_trans_last_base hR h24' ℵ₀ le_rfl hμ0 hB rfl
+  rcases h14 with ⟨ρ, hρ, top, f1, f2, hf1, hf2, hc, hv⟩
+  refine ⟨ρ, hρ, top, f1, f2, hf1, hf2, hc, fun i => ?_⟩
+  have h := hv i
+  have hidx : ∀ j : N.bIdx,
+      (eb.trans ((Equiv.refl (Pr.assign N.hμ N.X).idx).trans eb.symm).symm.symm).symm j = j :=
+    fun j => by simp
+  erw [hidx i] at h
+  exact h
+
 end AEC

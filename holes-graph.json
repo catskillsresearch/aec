@@ -652,7 +652,7 @@
    "file": "AEC/Section8/Results.lean",
    "status": "blocked",
    "blocker": null,
-   "detail": "Cycle 95 restatement to the English (Lars ruling): hypotheses = Section 8 conventions (IsWorkingPackage W, Section8Arrows W: arrows = componentwise strong embeddings); clauses (1) marked pairs over every object, (2) base iso extends to pair iso, (3) pointed iff (base entries + tp(t,b/X) transported, markedJointOver), (4) same-level arrows preserve bounded pair orbits (PairOrbitEq, one-way as in English), (5) mixed-level preservation and reflection (iff). Blocked: proof needs the Section 6-7 calculus/isolation for a general working scheme (Lean has it only for SingleModelData; infra_8_general_calculus) and Def 8.1 'prescription commutes with isomorphisms' (not in StationaryPrescription; infra_81_prescription_iso). For W := P.scheme clause (3) needs Prop 7.5 back-and-forth on pairs; clause (5) hits both_off (infra_82_mixed_reflection). Former weaker statement proved for P.scheme as infra_82_lemma_8_2_single. | Cycle 95: clause (1) for P.scheme = infra_82_marked_pair_exists; clause (2) for P.scheme = infra_82_iso_single (done). Next for P.scheme: clause (3) pointed iff (Prop 7.5(2) with the extra tuple t, both directions) and clause (4). | Cycle 95 (2): P.scheme clause (3) = infra_82_pointed_single (done). Remaining for P.scheme: clause (4) same-level orbit preservation; clause (5) = infra_82_mixed_reflection (both_off). | Cycle 96: PairOrbitEq now carries the mark matching sigma (an isomorphism of pairs takes the mark to the mark; previously markMap unconstrained, too large an orbit under repeated/symmetric entries). Clause (4) uses sigma = refl; clause (5) quantifies sigma on the M side and uses f1.markMap.symm . sigma . f2.markMap on the N side. P.scheme clause (4) tracked as infra_82_orbit_preservation_single."
+   "detail": "Cycle 95 restatement to the English (Lars ruling): hypotheses = Section 8 conventions (IsWorkingPackage W, Section8Arrows W: arrows = componentwise strong embeddings); clauses (1) marked pairs over every object, (2) base iso extends to pair iso, (3) pointed iff (base entries + tp(t,b/X) transported, markedJointOver), (4) same-level arrows preserve bounded pair orbits (PairOrbitEq, one-way as in English), (5) mixed-level preservation and reflection (iff). Blocked: proof needs the Section 6-7 calculus/isolation for a general working scheme (Lean has it only for SingleModelData; infra_8_general_calculus) and Def 8.1 'prescription commutes with isomorphisms' (not in StationaryPrescription; infra_81_prescription_iso). For W := P.scheme clause (3) needs Prop 7.5 back-and-forth on pairs; clause (5) hits both_off (infra_82_mixed_reflection). Former weaker statement proved for P.scheme as infra_82_lemma_8_2_single. | Cycle 95: clause (1) for P.scheme = infra_82_marked_pair_exists; clause (2) for P.scheme = infra_82_iso_single (done). Next for P.scheme: clause (3) pointed iff (Prop 7.5(2) with the extra tuple t, both directions) and clause (4). | Cycle 95 (2): P.scheme clause (3) = infra_82_pointed_single (done). Remaining for P.scheme: clause (4) same-level orbit preservation; clause (5) = infra_82_mixed_reflection (both_off). | Cycle 96: PairOrbitEq now carries the mark matching sigma (an isomorphism of pairs takes the mark to the mark; previously markMap unconstrained, too large an orbit under repeated/symmetric entries). Clause (4) uses sigma = refl; clause (5) quantifies sigma on the M side and uses f1.markMap.symm . sigma . f2.markMap on the N side. P.scheme clause (4) tracked as infra_82_orbit_preservation_single. | Cycle 96: StationaryPrescription.CommutesWithIso made positional (coordinates matched through arity), per Def 8.1: p_X is the type of a finite tuple with specified component sorts."
   },
   {
    "id": "lemma_8_3",
@@ -4221,7 +4221,7 @@
    "file": "AEC/Section8/PairOrbitSingle.lean",
    "status": "open",
    "blocker": null,
-   "detail": "Cycle 96. Remaining piece of infra_82_orbit_preservation_single: given a same-level marked arrow f : M -> N and a pair automorphism of M (marks fixed) taking t1 to t2, produce an automorphism e of N.X meeting infra_82_orbit_criterion_single for s = f t1, s' = f t2: base entries, tp(b_N/N.X) kept positionwise, diagram of (b,s,Z) carried to (b,s',eZ). Paper (3010-3018): Lemma 7.2 free extension of joint types, bounded approximation lists, bounded diagram homogeneity (P.scheme.diagram_iso, Def 5.2(3)), testing bound. The global condition on tp(b/N.X) is not a bounded-list condition, so diagram_iso alone does not give it."
+   "detail": "Cycle 96. Remaining piece of infra_82_orbit_preservation_single: given a same-level marked arrow f : M -> N and a pair automorphism of M (marks fixed) taking t1 to t2, produce an automorphism e of N.X meeting infra_82_orbit_criterion_single for s = f t1, s' = f t2: base entries, tp(b_N/N.X) kept positionwise, diagram of (b,s,Z) carried to (b,s',eZ). Paper (3010-3018): Lemma 7.2 free extension of joint types, bounded approximation lists, bounded diagram homogeneity (P.scheme.diagram_iso, Def 5.2(3)), testing bound. The global condition on tp(b/N.X) is not a bounded-list condition, so diagram_iso alone does not give it. | Cycle 96: condition (b) (mark type kept) is now automatic under CommutesWithIso (infra_82_mark_type_auto_single). Remaining: an automorphism e of N.X with the diagram condition (c) (and base entries (a), which follow from the resulting SGT). Route: isolating fragment of tp(b_N, f t1/N.X) pushed from M.X (Lemma 7.2 'same isolating fragment'), then e from P.scheme.diagram_iso on N.X matching f Ziso to f(alpha Ziso). Needs: Lemma 7.2 over-B isolation with the pushed fragment, and tied freeness of tp(b_N/N.X) over M.X along f.onX. Finding: StationaryPrescription.along is the untied IsFreeLift, which the repo notes follows from the extension alone; for P.scheme a tied-free hypothesis predicate (like CommutesWithIso) is the faithful reading of 'free extension' (ruling needed)."
   },
   {
    "id": "infra_84_base_testing_single",
@@ -4240,6 +4240,15 @@
    "status": "done",
    "blocker": null,
    "detail": "DONE cycle 96. Tail of eligible mu with mu in recursionClosedLevels P sigma for every infinite sigma < mu (diagonal tower; new monotonicity of the profile recursion in sigma, infra_84_pad_recursion_mono_sigma). Gives k(sigma) = g(max sigma aleph0) + LS(K) < nu uniformly. Axioms clean."
+  },
+  {
+   "id": "infra_82_mark_type_auto_single",
+   "label": "Lemma 8.2(4) for P.scheme: base automorphisms keep tp(b/X) positionwise",
+   "section": 8,
+   "file": "AEC/Section8/PairOrbitSingle.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "DONE cycle 96. Under Pr.CommutesWithIso (now positional, via arity), every structural automorphism e of a marked pair's base keeps tp(b/X) position by position: hypothesis (b) of infra_82_orbit_criterion_single. Realization + CommutesWithIso + restriction along e + infra_612_galois_trans_last_base twice. Axioms clean."
   }
  ],
  "edges": [
@@ -8335,8 +8344,13 @@
    "from": "infra_84_diagonal_tail",
    "to": "infra_84_single",
    "kind": "hard"
+  },
+  {
+   "from": "infra_82_mark_type_auto_single",
+   "to": "infra_82_orbit_preservation_single",
+   "kind": "hard"
   }
  ],
- "doneCount": 418,
+ "doneCount": 419,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
