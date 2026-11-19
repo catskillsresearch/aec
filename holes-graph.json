@@ -5815,6 +5815,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 106: XSampleLike, xHull_eq_chart, thetaM(_zero/_one), pairMAdmittedS, infra_83_pairMS_coherent_colors, infra_83_pairMS_X_pieces."
+  },
+  {
+   "id": "infra_83_X_pieces_iso",
+   "label": "Lemma 8.3 proof: X_k ≅ F(J_k): every X-piece (X-language hull of the J-coordinates of the witness bundle) has a bijective τ-embedding onto F of its chart, compatible with the sample identification (sample-like class now includes τ-compatibility of g)",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83SampleLike.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 106: tauRed, emb_equiv_of_range, sampleEmb, infra_83_pairMS_X_pieces_iso."
   }
  ],
  "edges": [
@@ -10885,8 +10894,13 @@
    "from": "infra_83_X_pieces_setlevel",
    "to": "infra_83_X_hull_eq_FJ",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_X_pieces_iso",
+   "to": "infra_83_X_hull_eq_FJ",
+   "kind": "hard"
   }
  ],
- "doneCount": 579,
+ "doneCount": 580,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
