@@ -1036,4 +1036,40 @@ theorem infra_83_piece_mark_reading {L : FirstOrder.Language.{u, u}} {A N B : Ty
   rw [hgY, hm, HomClass.map_constants, hN]
 end
 
+
+section
+open FirstOrder.Language
+
+/-- **The `τ`-embedding `gY` of a piece from its pair-language match (proved).** If the piece `A`
+carries an `L`-structure whose reduct along `φ : L' →ᴸ L` is its own `L'`-structure, the sample
+identification `g : N ≃ B` carries the `φ`-reduct of `N` to the `L'`-structure of `B` (as
+`YSampleLike` records for `τ`), and `mN : A ↪[L] N`, then `g ∘ mN` is an `L'`-embedding: the
+`τ`-embedding `gY` of the piece data, read from the hull match. -/
+theorem infra_83_tau_embedding_of_reading {L L' : FirstOrder.Language.{u, u}} {A N B : Type u}
+    [L.Structure A] [L.Structure N] [L'.Structure A] [L'.Structure B] (φ : L' →ᴸ L)
+    (hAf : ∀ {k} (f : L'.Functions k) (x : Fin k → A),
+      Structure.funMap f x = Structure.funMap (φ.onFunction f) x)
+    (hAr : ∀ {k} (r : L'.Relations k) (x : Fin k → A),
+      Structure.RelMap r x ↔ Structure.RelMap (φ.onRelation r) x)
+    (g : N ≃ B)
+    (hgf : ∀ {k} (f : L'.Functions k) (x : Fin k → N),
+      g (Structure.funMap (φ.onFunction f) x) = Structure.funMap f (g ∘ x))
+    (hgr : ∀ {k} (r : L'.Relations k) (x : Fin k → N),
+      Structure.RelMap (φ.onRelation r) x ↔ Structure.RelMap r (g ∘ x))
+    (mN : A ↪[L] N) :
+    ∃ gY : A ↪[L'] B, ∀ y, gY y = g (mN y) := by
+  let gY : A ↪[L'] B :=
+    { toFun := fun y => g (mN y)
+      inj' := fun a b hab => mN.injective (g.injective hab)
+      map_fun' := fun {k} f x => by
+        show g (mN (Structure.funMap f x)) = Structure.funMap f (fun i => g (mN (x i)))
+        rw [hAf, mN.map_fun, hgf]
+        rfl
+      map_rel' := fun {k} r x => by
+        show Structure.RelMap r (fun i => g (mN (x i))) ↔ Structure.RelMap r x
+        rw [hAr, ← mN.map_rel (φ.onRelation r) x, hgr]
+        rfl }
+  exact ⟨gY, fun y => rfl⟩
+end
+
 end AEC

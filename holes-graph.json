@@ -7318,6 +7318,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 197: proved."
+  },
+  {
+   "id": "infra_83_tau_embedding_of_reading",
+   "label": "tau-embedding gY of a piece from its pair-language match: if the piece's L-structure reducts along phi to its L'-structure and g carries the phi-reduct of the sample to B, then g o mN is an L'-embedding",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PieceMatch.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 198: proved."
   }
  ],
  "edges": [
@@ -13353,8 +13362,13 @@
    "from": "infra_83_piece_mark_reading",
    "to": "infra_83_XH_sort",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_tau_embedding_of_reading",
+   "to": "infra_83_XH_sort",
+   "kind": "hard"
   }
  ],
- "doneCount": 744,
+ "doneCount": 745,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
