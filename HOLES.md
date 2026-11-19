@@ -576,6 +576,7 @@ Lean: imports `Section5.Results` and `Section6.Results`. Soft paper chain after 
 | `infra_83_hull_emb_term` | matches of template hulls evaluate terms at the matched generators | [`Lemma83Isolation.lean`](AEC/Section8/Lemma83Isolation.lean) (**done**, cycle 132) |
 | `infra_83_range_closed` | images of L-embeddings (template matches) are closed under the function symbols | [`Lemma83Isolation.lean`](AEC/Section8/Lemma83Isolation.lean) (**done**, cycle 133) |
 | `infra_83_range_closed_binary` | matched Y-images are closed under g(code, -) for codes in the image (hclosed of good_of_closure) | [`Lemma83Isolation.lean`](AEC/Section8/Lemma83Isolation.lean) (**done**, cycle 133) |
+| `infra_83_card_codes` | at least #X_I retraction indices have codes in the matched base when codes cover it | [`Lemma83Isolation.lean`](AEC/Section8/Lemma83Isolation.lean) (**done**, cycle 134) |
 | `infra_83_all_arity_sample` | gap: admitted sample homogeneous in every arity (or a bounded-arity replacement of the global value→sample arrow) | [`Lemma83Isolation.lean`](AEC/Section8/Lemma83Isolation.lean) (open, cycle 131) |
 | `infra_83_ret_admission` | gap: admission records ret = Cor 6.16 retractions of the sample's marked pair + Y∩X-sort terms are X-terms | [`Lemma83Isolation.lean`](AEC/Section8/Lemma83Isolation.lean) (open, cycle 131) |
 | `infra_83_samples_core` | Lemma 8.3 proof (P.scheme): sample pair with base E(J) embedded into E(J + W) over the base | [`Lemma83Samples.lean`](AEC/Section8/Lemma83Samples.lean) (**done**, cycle 101) |

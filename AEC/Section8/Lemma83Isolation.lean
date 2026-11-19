@@ -1293,4 +1293,42 @@ theorem infra_83_range_closed_binary {L : FirstOrder.Language.{u, u}} {A N : Typ
   obtain ⟨y', hy'⟩ := h
   exact ⟨y', by rw [← hg, hy']⟩
 
+/-- **Enough codes in the matched base (proved).** If every point of the matched base image
+`h(X_I)` is a code of some retraction index (e.g. codes onto the sample base), then at least
+`#X_I` indices have their code in the matched base. -/
+theorem infra_83_card_codes {ι : Type u} {XI L : Type u} (code : ι → L) (h : XI → L)
+    (hh : Function.Injective h) (hcov : Set.range h ⊆ Set.range code) :
+    #XI ≤ #{i : ι // code i ∈ Set.range h} := by
+  have key : ∀ x, ∃ i, code i = h x := fun x => hcov ⟨x, rfl⟩
+  choose j hj using key
+  refine Cardinal.mk_le_of_injective (f := fun x => (⟨j x, x, (hj x).symm⟩ : {i // _})) ?_
+  intro x y hxy
+  apply hh
+  rw [← hj x, ← hj y]
+  exact congrArg code (congrArg Subtype.val hxy)
+
+/-- **Good evaluation indices from matches (proved).** Combining closure of the matched `Y_I`
+image under `ret` (`infra_83_range_closed_binary`), the sort intersection and the eval law
+(`infra_83_good_of_closure`), and codes covering the matched base (`infra_83_card_codes`):
+at least `#X_I` evaluation indices send the image of `Y_I` into the image of `X_I` — the
+cardinality clause of `infra_83_full_single_of_ret_evals` once `#I ≤ #X_I`. -/
+theorem infra_83_good_codes_of_match {L₀ : FirstOrder.Language.{u, u}} {ι Xc Yc LL XI YI : Type u}
+    [L₀.Structure YI] [L₀.Structure LL] (incl : Xc → Yc) (F : Yc → LL) (r : ι → Yc → Xc)
+    (onX : XI → Xc) (onY : YI → Yc) (inclI : XI → YI)
+    (hcomm : ∀ x, onY (inclI x) = incl (onX x)) (g : LL → LL → LL) (code : ι → LL)
+    (hev : ∀ i y, g (code i) (F y) = F (incl (r i y)))
+    (mY : YI ↪[L₀] LL) (hmY : ∀ y, mY y = F (onY y)) (ret : L₀.Functions 2)
+    (hret : ∀ a b, FirstOrder.Language.Structure.funMap ret ![a, b] = g a b)
+    (hmeet : ∀ (x' : YI) (z : Xc), F (onY x') = F (incl z) → ∃ y, x' = inclI y)
+    (hFX : Function.Injective (fun x => F (incl (onX x))))
+    (hcov : Set.range (fun x => F (incl (onX x))) ⊆ Set.range code) :
+    #XI ≤ #{i : ι // ∀ x : YI, ∃ y : XI, g (code i) (F (onY x)) = F (incl (onX y))} := by
+  refine (infra_83_card_codes code _ hFX hcov).trans (Cardinal.mk_subtype_mono fun i hi => ?_)
+  obtain ⟨x0, hx0⟩ := hi
+  refine infra_83_good_of_closure incl F (r i) onX onY inclI hcomm g (code i) (hev i) ?_ hmeet
+  intro x
+  have hc : code i ∈ Set.range mY := ⟨inclI x0, by rw [hmY, hcomm]; exact hx0⟩
+  obtain ⟨y', hy'⟩ := infra_83_range_closed_binary mY ret g hret hc x
+  exact ⟨y', by rw [← hmY, ← hmY]; exact hy'⟩
+
 end AEC
