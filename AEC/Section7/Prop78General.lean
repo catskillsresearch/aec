@@ -1208,4 +1208,123 @@ theorem infra_78_general_of_closed_def77 (P : SingleModelData K) (μ : Cardinal.
           (asTuple f hf (seqJoint b c)) (Equiv.refl (p.idx ⊕ cIdx)) :=
   infra_78_general_closed P μ hμ X p θ hidxθ (infra_78_def77_meet_of_closed p T hT hTC H) hθ hθμ
 
+/-- **Theorem 7.9 descent step for a bounded mark (proved, cycle 93).** As `infra_79_descent`,
+with the finite mark replaced by any mark of size `< ν` (finiteness was used only for
+`|b, c| < ν`). Sub-step of `infra_79_general`. -/
+theorem infra_79_descent_bounded (P : SingleModelData K) {ν l : Cardinal.{u}}
+    (hνC : ν ∈ infra_615_closed P) (hlC : l ∈ infra_615_closed P)
+    (hνT : ν ∈ infra_78_closedTail P) (hlT : l ∈ infra_78_closedTail P) (hνl : ν ≤ l)
+    (A U : P.scheme.Object l hlC.1) (A' U' : P.scheme.Object ν hνC.1)
+    (toA : SystemArrow K oneVertexShape (P.scheme.asSystem hνC.1 A') (P.scheme.asSystem hlC.1 A))
+    (toU : SystemArrow K oneVertexShape (P.scheme.asSystem hνC.1 U') (P.scheme.asSystem hlC.1 U))
+    (incl : SystemArrow K oneVertexShape (P.scheme.asSystem hlC.1 A) (P.scheme.asSystem hlC.1 U))
+    (incl' : SystemArrow K oneVertexShape (P.scheme.asSystem hνC.1 A')
+      (P.scheme.asSystem hνC.1 U'))
+    (htoA : P.scheme.permitted (X := A') (Y := A) toA)
+    (htoU : P.scheme.permitted (X := U') (Y := U) toU)
+    (hincl : P.scheme.permitted (X := A) (Y := U) incl)
+    (hincl' : P.scheme.permitted (X := A') (Y := U') incl')
+    (hsq : ∀ v, (incl.onVertex v).comp (toA.onVertex v) =
+      (toU.onVertex v).comp (incl'.onVertex v))
+    {ι : Type u} (r : ι → SystemArrow K oneVertexShape
+      (P.scheme.asSystem hlC.1 U) (P.scheme.asSystem hlC.1 A))
+    (hιcard : #ι = ν) (_hr : ∀ i, P.scheme.permitted (X := U) (Y := A) (r i))
+    (halmost : ∀ a : Occurrence K oneVertexShape (P.scheme.asSystem hlC.1 A),
+      Finite {i : ι // (r i).onVertex a.1 (incl.onVertex a.1 a.2) ≠ a.2})
+    (himg : ∀ i (x : ((P.scheme.asSystem hνC.1 U').obj PUnit.unit).carrier),
+      ∃ y, toA.onVertex PUnit.unit y = (r i).onVertex PUnit.unit (toU.onVertex PUnit.unit x))
+    {uIdx : Type u} (huν : #uIdx < ν)
+    (b' : uIdx → Occurrence K oneVertexShape (P.scheme.asSystem hνC.1 U'))
+    (bU : uIdx → Occurrence K oneVertexShape (P.scheme.asSystem hlC.1 U))
+    (hbU : ∀ k, bU k = ⟨(b' k).1, toU.onVertex (b' k).1 (b' k).2⟩)
+    (hiso : ∀ {J : Type u} (c : J → Occurrence K oneVertexShape (P.scheme.asSystem hlC.1 U)),
+      #J < ν →
+      IsRelativelyIsolated (uIdx := uIdx) (cIdx := J)
+        (asTuple incl hincl (seqJoint bU c)) (Equiv.refl (uIdx ⊕ J))) :
+    AllDominated incl' hincl' uIdx b' := by
+  classical
+  intro cIdx c hc
+  have hν0 : ℵ₀ ≤ ν := P.aleph0_le hνC.1
+  let d : uIdx ⊕ cIdx → Occurrence K oneVertexShape (P.scheme.asSystem hνC.1 U') := seqJoint b' c
+  have hd : #(uIdx ⊕ cIdx) < ν := by
+    rw [Cardinal.mk_sum, Cardinal.lift_id, Cardinal.lift_id]
+    exact Cardinal.add_lt_of_lt hν0 huν hc
+  let σ : Cardinal.{u} := max ℵ₀ #(uIdx ⊕ cIdx)
+  have hσ : ℵ₀ ≤ σ := le_max_left _ _
+  have hσν : σ < ν := max_lt (P.aleph0_lt hνC.1) hd
+  have hT := infra_617_tied_from_retractions P hνC hlC hνl A U A' U' toA toU incl incl'
+    htoA htoU hincl hincl' hsq r hιcard halmost himg d hd
+  have hS := infra_617_same_galois A U A' U' toA toU incl incl' htoA htoU hincl hincl' hsq d
+  let c' : cIdx → Occurrence K oneVertexShape (P.scheme.asSystem hlC.1 U) :=
+    fun j => ⟨(c j).1, toU.onVertex (c j).1 (c j).2⟩
+  have hfun : (fun j => (⟨(d j).1, toU.onVertex (d j).1 (d j).2⟩ :
+      Occurrence K oneVertexShape (P.scheme.asSystem hlC.1 U))) = seqJoint bU c' := by
+    funext j
+    rcases j with k | j
+    · exact (hbU k).symm
+    · rfl
+  have hI := hiso c' hc
+  rw [← hfun] at hI
+  exact infra_78_tied_descent_mixed P σ hσ hνC.1 (infra_79_closedTail_sigma2 hνT hσ hσν)
+    (hlT.2.1 σ hσ (hσν.trans_le hνl)) hνl toA htoA (asTuple incl' hincl' d)
+    (asTuple incl hincl _) (Equiv.refl _) (Equiv.refl _) rfl rfl (le_max_right _ _) hS hT hI
+
+/-- **Theorem 7.9 identification step for a bounded mark (proved, cycle 93).** As
+`infra_79_identify`, with the finite mark replaced by `|p| ≤ θ < ν` (`θ ≥ ℵ₀`): the testing
+arity and recursion closure are taken at `θ` instead of `ℵ₀`. Sub-step of `infra_79_general`. -/
+theorem infra_79_identify_bounded (P : SingleModelData K) {ν l : Cardinal.{u}}
+    (hν : ν ∈ infra_78_closedTail P) (hl : l ∈ P.eligible) (hνl : ν ≤ l)
+    (X : P.scheme.Object ν hν.1) (p : TupleOver K oneVertexShape P.scheme hν.1 X)
+    (hpν : p.ν = ν) (θ : Cardinal.{u}) (hθ : ℵ₀ ≤ θ) (hθν : θ < ν) (hidxθ : #p.idx ≤ θ)
+    {B U : P.scheme.Object l hl}
+    (ι : SystemArrow K oneVertexShape (P.scheme.asSystem hν.1 X) (P.scheme.asSystem hl B))
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hl B) (P.scheme.asSystem hl U))
+    (bU : p.idx → Occurrence K oneVertexShape (P.scheme.asSystem hl U))
+    (hseed : ∀ {β : Type u} (Z : β → Occurrence K oneVertexShape (P.scheme.asSystem hν.1 X)),
+      #β < ν →
+      P.scheme.DiagramEq (X := p.host) (Y := U) (typeJoint (p := p) Z)
+        (typeJoint (p := (asTuple f trivial bU).restrict ι trivial) Z))
+    (hT : IsTiedFreeMixed ι ((asTuple f trivial bU).restrict ι trivial) (asTuple f trivial bU)
+      (Equiv.refl _))
+    {A' U' : P.scheme.Object ν hν.1}
+    (toA : SystemArrow K oneVertexShape (P.scheme.asSystem hν.1 A') (P.scheme.asSystem hl B))
+    (toU : SystemArrow K oneVertexShape (P.scheme.asSystem hν.1 U') (P.scheme.asSystem hl U))
+    (incl' : SystemArrow K oneVertexShape (P.scheme.asSystem hν.1 A')
+      (P.scheme.asSystem hν.1 U'))
+    (hsq : ∀ v, (f.onVertex v).comp (toA.onVertex v) = (toU.onVertex v).comp (incl'.onVertex v))
+    (b' : p.idx → Occurrence K oneVertexShape (P.scheme.asSystem hν.1 U'))
+    (hbU : ∀ k, bU k = ⟨(b' k).1, toU.onVertex (b' k).1 (b' k).2⟩)
+    (hX : ∀ x, ∃ y, toA.onVertex PUnit.unit y = ι.onVertex PUnit.unit x) :
+    ∃ φ : SystemArrow K oneVertexShape (P.scheme.asSystem hν.1 X) (P.scheme.asSystem hν.1 A'),
+      P.scheme.IsStructIso (X := X) (Y := A') φ ∧
+      SameGaloisType p (asTuple (SystemArrow.comp φ incl') trivial b')
+        (Equiv.refl p.idx) (Equiv.refl p.idx) := by
+  classical
+  have hlt : ℵ₀ < ν := P.aleph0_lt hν.1
+  have hrec : ν ∈ recursionClosedLevels P θ := (hν.2.1 θ hθ hθν).1
+  have hidx : #p.idx ≤ θ := hidxθ
+  obtain ⟨seq, -, -, -, -, htest, hlong, hτν, -⟩ := infra_78_tied_at_mixed P θ hθ hν.1 hrec
+    (Order.succ_le_of_lt hθν) hl hνl ι trivial p hpν hidx ℵ₀ hlt
+  let q : TupleOver K oneVertexShape P.scheme hl B := asTuple f trivial bU
+  let seqq : ApproximationSequence (q.restrict ι trivial) :=
+    infra_78_seq_diagram_transfer (t2 := q.restrict ι trivial) (Equiv.refl p.idx) seq
+      (fun Z hZ => by
+        refine infra_73_diagramEq_of_eq (hseed Z (hZ.trans_lt hτν)) (fun _ => rfl) ?_
+        rintro (u | x) <;> rfl)
+  have hseed' : ∀ {β : Type u} (Z : β → Occurrence K oneVertexShape (P.scheme.asSystem hν.1 X)),
+      #β < ν →
+      P.scheme.DiagramEq (X := p.host) (Y := q.host)
+        (alignJoint (Equiv.refl _) (typeJoint (p := p) Z))
+        (typeJoint (p := q.restrict ι trivial) Z) := fun Z hβ =>
+    infra_73_diagramEq_of_eq (hseed Z hβ) (by rintro (u | x) <;> rfl) (fun _ => rfl)
+  have hanch : ∀ a k, ∃ y, toA.onVertex PUnit.unit y =
+      ι.onVertex PUnit.unit (seqq.family a k).2 := fun a k => hX _
+  have hsq' : ∀ x, toU.onVertex PUnit.unit (incl'.onVertex PUnit.unit x) =
+      q.incl.onVertex PUnit.unit (toA.onVertex PUnit.unit x) := fun x =>
+    (DFunLike.congr_fun (hsq PUnit.unit) x).symm
+  obtain ⟨φ, hφ, -, hGal⟩ := infra_78_marginal_identify_level P θ hθ hν.1 (hμ := hl) hrec
+    hθν hνl (A := A') (U := U') p hpν hidx ι trivial q hνl (Equiv.refl _) hseed' hT seqq
+    htest hlong toA hanch incl' toU hsq' b' hbU
+  exact ⟨φ, hφ, hGal⟩
+
 end AEC
