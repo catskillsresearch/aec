@@ -3930,4 +3930,36 @@ theorem infra_83_finPieces_pieces (F : EM83.FinPieces K) (I : Type u) [LinearOrd
     exact congrFun (congrArg DFunLike.coe ((F.limit I).compat hr)) y
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+/-- **Transporting piece data along an isomorphism (proved).** Monotone strong covering pieces
+of size `≤ lam` on `M` give such pieces on any `N ≃ M` (images under the isomorphism): moves the
+template pieces of `FY.limit I` to `Y_I` along `eY`. -/
+theorem infra_83_pieces_transport {M N : Model K.τ} {Z : Type u} {lam : Cardinal.{u}}
+    (eq : M.carrier ≃[K.τ] N.carrier)
+    (Piece : Finset Z → K.τ.Substructure M.carrier) (hPm : Monotone Piece)
+    (hPk : ∀ J, #(Piece J) ≤ lam)
+    (hPS : ∀ J, K.Strong (M := subM83 (Piece J)) (N := M) (Piece J).subtype)
+    (hPc : ∀ y, ∃ J, y ∈ Piece J) :
+    ∃ Piece' : Finset Z → K.τ.Substructure N.carrier,
+      Monotone Piece' ∧ (∀ J, #(Piece' J) ≤ lam) ∧
+      (∀ J, K.Strong (M := subM83 (Piece' J)) (N := N) (Piece' J).subtype) ∧
+      ∀ y, ∃ J, y ∈ Piece' J := by
+  classical
+  obtain ⟨J0⟩ : Nonempty (Finset Z) := ⟨∅⟩
+  have hMm : K.Mem M := K.strong_mem_cod _ (hPS J0)
+  refine infra_83_range_pieces (fun J => subM83 (Piece J))
+    (fun J => K.strong_mem_dom _ (hPS J))
+    (fun J => eq.toEmbedding.comp (Piece J).subtype)
+    (fun J => K.strong_trans _ _ (hPS J) (strong_of_equiv K eq hMm)) hPk ?_ ?_
+  · intro J J' h y
+    exact ⟨⟨y.1, hPm h y.2⟩, rfl⟩
+  · intro x
+    obtain ⟨J, hJ⟩ := hPc (eq.symm x)
+    refine ⟨J, ⟨eq.symm x, hJ⟩, ?_⟩
+    simp
+end
+
 end AEC

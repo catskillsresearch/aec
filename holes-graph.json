@@ -7894,6 +7894,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 261: proved."
+  },
+  {
+   "id": "infra_83_pieces_transport",
+   "label": "Monotone strong covering pieces of size <= lam on M transport to any N ≃ M (images under the iso); moves FY.limit I pieces to Y_I along eY",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PieceMatch.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 262: proved."
   }
  ],
  "edges": [
@@ -14249,8 +14258,13 @@
    "from": "infra_83_finPieces_pieces",
    "to": "infra_83_arity_removal",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_pieces_transport",
+   "to": "infra_83_arity_removal",
+   "kind": "hard"
   }
  ],
- "doneCount": 808,
+ "doneCount": 809,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
