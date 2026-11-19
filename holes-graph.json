@@ -5224,12 +5224,12 @@
   },
   {
    "id": "infra_83_em_extension_generic",
-   "label": "Lemma 8.3 proof: generic EM order presentation from FinPieces (generalize Presentation.lean emMap/emRealize/emSkeleton/emSub/card bounds from pieceSucc to any FinPieces)",
+   "label": "Lemma 8.3 proof: generic EM order presentation from FinPieces with enumeration data (PieceEnum: small labels enumerating pieces, distinguished singleton element with distinct copies)",
    "section": 8,
-   "file": "AEC/Section8/EMExtend83.lean",
-   "status": "open",
+   "file": "AEC/Section8/EMPresent83.lean",
+   "status": "done",
    "blocker": null,
-   "detail": "Cycle 102 split of infra_83_template_from_colors: Section 2's emOrderPresentation uses only pieceSucc/arityMapSucc functoriality after emSystem, so it can be restated over FinPieces and instantiated for the pair pieces (X, Y, L components plus natural maps). | Cycle 102: functor part done (infra_83_em_functor_generic); remaining: labels/realize/skeleton/sub/card bounds (Presentation.lean 832-1528), which read terms from the piece enumerations."
+   "detail": "Cycle 103 DONE: EM83.presentation E : OrderPresentation K (port of Presentation.lean 832-1528: realize/surjective/mapTerm, sub/strong/card/mono/cover, skeleton + injectivity via PieceEnum.skel_distinct, card bounds, pattern determination). Axioms clean."
   },
   {
    "id": "infra_83_pair_pieces",
@@ -9919,6 +9919,6 @@
    "kind": "hard"
   }
  ],
- "doneCount": 519,
+ "doneCount": 520,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
