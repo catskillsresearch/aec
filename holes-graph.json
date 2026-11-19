@@ -5437,6 +5437,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 104: LS83.exists_chain_ls_expansion — for M ∈ K and strong submodels X ⊆ Y of M (ranges nested) there is an lsLang K-expansion with τ-reduct M, LSClosed, and range jX, range jY closed under every expanded function. LS83 system generalized to an arbitrary hull chooser (ChosenHull-valued); chainCh computes hulls in X, else Y, else M; Respects + subHull_range_sub. Axioms clean."
+  },
+  {
+   "id": "infra_83_ls_expanded_samples",
+   "label": "Lemma 8.3 proof: large order-saturated samples X = F(J) ≤ Y ≤ L = F(J⁺) with L expanded by vertex LS witnesses (reduct L, nonempty closed sets strong, X and Y closed)",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83ExpSamples.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 104: infra_83_ls_expanded_samples = infra_83_large_saturated_samples + LS83.exists_chain_ls_expansion applied to jX = F∘incl∘eX (= P.E.map emb) and jY = F. Axioms clean."
   }
  ],
  "edges": [
@@ -10197,8 +10206,13 @@
    "from": "infra_83_chain_ls_expansion",
    "to": "infra_83_pair_sample_family",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_ls_expanded_samples",
+   "to": "infra_83_pair_sample_family",
+   "kind": "hard"
   }
  ],
- "doneCount": 540,
+ "doneCount": 541,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
