@@ -5635,6 +5635,15 @@
    "status": "open",
    "blocker": null,
    "detail": "Cycle 105 split from infra_83_pair_pieces."
+  },
+  {
+   "id": "infra_83_sublang_mix_hom",
+   "label": "Lemma 8.3 proof: sort map between hulls in two nested sublanguages L₁ ⊆ L₂ ⊆ L (X_H in the X-language into Y_H in the Y-language), bundled: strong natural PiecesHom",
+   "section": 8,
+   "file": "AEC/Section8/HullSubMix83.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 105: Hull83.mixMap, hullVal_mixMap, mixEmb, mixEmb_strong, subLangMixHom. Makes X ⊆ Y independent of X being closed under the Y-labels, so Y-labels can be transported along any Y ≅ F(Z)."
   }
  ],
  "edges": [
@@ -10550,8 +10559,13 @@
    "from": "infra_83_X_hull_eq_FJ",
    "to": "infra_83_pair_pieces",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_sublang_mix_hom",
+   "to": "infra_83_pair_pieces",
+   "kind": "hard"
   }
  ],
- "doneCount": 559,
+ "doneCount": 560,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
