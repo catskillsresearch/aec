@@ -448,7 +448,9 @@ orders, there are strong bijective `τ`-isomorphisms `m_I : F_X(I) → F(J_I)` s
 order embedding `f : I ↪o I'`, `m_I' ∘ F_X(f) = F(J_f) ∘ m_I` with `J_f : J_I ↪o J_I'` the
 induced map of colimits; moreover `I ↦ J_I`, `f ↦ J_f` is a functor (J_id = id,
 J_(g∘f) = J_g ∘ J_f), and `i ↦` (colimit image of the chart coordinate of `i`) is an order
-embedding `g_I : I ↪o J_I` natural in `I`: `J_f ∘ g_I = g_I' ∘ f`. -/
+embedding `g_I : I ↪o J_I` natural in `I`: `J_f ∘ g_I = g_I' ∘ f`; `m_I` sends the chart
+coordinate of `i` (the element charted to `skeleton(j(pos i))`) to `skeleton(g_I i)`; and
+`#J_I ≤ #(Finset I) · ls K`. -/
 theorem infra_83_pairMS2_X_hull_natural (P : SingleModelData K)
     (Pr : StationaryPrescription K oneVertexShape P.scheme) :
     ∃ (c : (m : ℕ) → 0 < m → Hull83.TpColorB (LS83.pairLangM3 P.E Pr.n) 3 m)
@@ -483,8 +485,16 @@ theorem infra_83_pairMS2_X_hull_natural (P : SingleModelData K)
         (∀ (I : Type u) [LinearOrder I] (s : OCol83.Idx I) (i : I) (hi : i ∈ s.1),
           g I i = OCol83.iota (OCol83.phiH h I) (OCol83.phiH_comp h hcomp I) (OCol83.phiH_id h hid I) s
             ((ch s.1.card.pred).j (OCol83.pos s i hi))) ∧
-        ∀ (I I' : Type u) [LinearOrder I] [LinearOrder I'] (f : I ↪o I') (i : I),
-          OCol83.colMap h hid hcomp f (g I i) = g I' (f i) := by
+        (∀ (I I' : Type u) [LinearOrder I] [LinearOrder I'] (f : I ↪o I') (i : I),
+          OCol83.colMap h hid hcomp f (g I i) = g I' (f i)) ∧
+        (∀ (I : Type u) [LinearOrder I] [Nonempty I] (s : OCol83.Idx I) (i : I) (hi : i ∈ s.1)
+          (x : ((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).obj s.1.card.pred).carrier),
+          (ch s.1.card.pred).ε x = P.E.skeleton ((ch s.1.card.pred).j (OCol83.pos s i hi)) →
+          m I (((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).limit I).canon s x) = P.E.skeleton (g I i)) ∧
+      ∀ (I : Type u) [LinearOrder I],
+        #(OCol83.Col (OCol83.phiH h I) (OCol83.phiH_comp h hcomp I)) ≤ #(Finset I) * ls K := by
   obtain ⟨c, hc, hcoh, hXs, ch, h, hid, hcomp, hjc, η, happ, -, hlim⟩ := infra_83_pairMS2_X_F_pieces P Pr
   have hco : ∀ (I : Type u) [LinearOrder I] [Nonempty I], ∃ m' : ((orderPieces83 P.E (fun k => (ch k).H) h hid hcomp).limit I).obj.carrier ↪[K.τ]
         (P.E.obj (OCol83.Col (OCol83.phiH h I) (OCol83.phiH_comp h hcomp I))).carrier,
@@ -547,6 +557,16 @@ theorem infra_83_pairMS2_X_hull_natural (P : SingleModelData K)
   have hsurj : ∀ (I : Type u) [LinearOrder I] [Nonempty I],
       Function.Surjective ((Classical.choose (hco I)).comp (η.limMap I)) :=
     fun I _ _ => ((Classical.choose_spec (hco I)).2.1.comp (hlim I).1).2
+  have hpc : ∀ k, #((ch k).H) ≤ ls K := by
+    intro k
+    have hsurj : Function.Surjective (fun t : (LS83.pairLangR P.E).Term (Fin (k + 1) × Fin 1) =>
+        (Quotient.mk _ t : ((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).obj k).carrier)) := fun x => Quotient.exists_rep x
+    refine P.E.card_lower.trans ?_
+    refine (Cardinal.mk_congr (Equiv.ofBijective _ (ch k).bij)).symm.le.trans ?_
+    exact (Cardinal.mk_le_of_surjective hsurj).trans
+      ((Cardinal.mk_le_of_injective (sigma_mk_injective (β := fun n => (LS83.pairLangR P.E).Term (Fin n × Fin 1)) (i := k + 1))).trans
+        (Hull83.card_bundle_terms_le 1 (LS83.pairLangR_functions_le P.E)))
   have hg : ∀ (I : Type u) [LinearOrder I], ∃ g : I ↪o OCol83.Col (OCol83.phiH h I) (OCol83.phiH_comp h hcomp I),
       ∀ (s : OCol83.Idx I) (i : I) (hi : i ∈ s.1),
         g i = OCol83.iota (OCol83.phiH h I) (OCol83.phiH_comp h hcomp I) (OCol83.phiH_id h hid I) s
@@ -558,13 +578,21 @@ theorem infra_83_pairMS2_X_hull_natural (P : SingleModelData K)
         rw [hjc, OCol83.pos_place])
       (fun s i i' hi hi' hii' => (ch s.1.card.pred).mono (OCol83.pos_strictMono s i i' hi hi' hii'))
   refine ⟨hsq, fun I _ _ => ?_, fun I I' I'' _ _ _ _ _ _ f g => ?_,
-    fun I _ => Classical.choose (hg I), fun I _ => Classical.choose_spec (hg I), ?_⟩
+    fun I _ => Classical.choose (hg I), fun I _ => Classical.choose_spec (hg I), ?_, ?_, fun I _ =>
+    (OCol83.card_col_le (OCol83.phiH h I) (OCol83.phiH_comp h hcomp I) (ls K) (fun s => hpc s.1.card.pred)).trans
+      (mul_le_mul_left (Cardinal.mk_subtype_le _) _)⟩
   rotate_left 2
   · intro I I' _ _ f i
     let s : OCol83.Idx I := ⟨{i}, Finset.singleton_nonempty i⟩
     have hi : i ∈ s.1 := Finset.mem_singleton_self i
     rw [Classical.choose_spec (hg I) s i hi, OCol83.colMap_iota, hjc, OCol83.pos_indexCast,
       ← Classical.choose_spec (hg I') (imageIndex f s) (f i) (Finset.mem_map_of_mem f.toEmbedding hi)]
+  · intro I _ _ s i hi x hx
+    have e2 := congrFun (congrArg (⇑) (η.limMap_canon I s)) x
+    have e3 := congrFun (congrArg (⇑) ((Classical.choose_spec (hco I)).2.2 s)) (η.app _ x)
+    refine (congrArg (fun z => Classical.choose (hco I) z) e2).trans (e3.trans ?_)
+    rw [happ, hx]
+    exact (P.E.skeleton_natural _ _).trans (congrArg (fun z => P.E.skeleton z) (Classical.choose_spec (hg I) s i hi).symm)
   · apply infra_83_map_faithful P.E
     intro y
     obtain ⟨x, rfl⟩ := hsurj I y
@@ -584,7 +612,9 @@ orders, there are strong bijective `τ`-isomorphisms `m_I : F_Y(I) → F(Z_I)` s
 order embedding `f : I ↪o I'`, `m_I' ∘ F_Y(f) = F(Z_f) ∘ m_I` with `Z_f : Z_I ↪o Z_I'` the
 induced map of colimits; moreover `I ↦ Z_I`, `f ↦ Z_f` is a functor (Z_id = id,
 Z_(g∘f) = Z_g ∘ Z_f), and `i ↦` (colimit image of the chart coordinate of `i`) is an order
-embedding `g_I : I ↪o Z_I` natural in `I`: `Z_f ∘ g_I = g_I' ∘ f`. -/
+embedding `g_I : I ↪o Z_I` natural in `I`: `Z_f ∘ g_I = g_I' ∘ f`; `m_I` sends the chart
+coordinate of `i` (the element charted to `skeleton(j(pos i))`) to `skeleton(g_I i)`; and
+`#Z_I ≤ #(Finset I) · ls K`. -/
 theorem infra_83_pairMS2_Y_hull_natural (P : SingleModelData K)
     (Pr : StationaryPrescription K oneVertexShape P.scheme) :
     ∃ (c : (m : ℕ) → 0 < m → Hull83.TpColorB (LS83.pairLangM3 P.E Pr.n) 3 m)
@@ -619,8 +649,16 @@ theorem infra_83_pairMS2_Y_hull_natural (P : SingleModelData K)
         (∀ (I : Type u) [LinearOrder I] (s : OCol83.Idx I) (i : I) (hi : i ∈ s.1),
           g I i = OCol83.iota (OCol83.phiH h I) (OCol83.phiH_comp h hcomp I) (OCol83.phiH_id h hid I) s
             ((ch s.1.card.pred).j (OCol83.pos s i hi))) ∧
-        ∀ (I I' : Type u) [LinearOrder I] [LinearOrder I'] (f : I ↪o I') (i : I),
-          OCol83.colMap h hid hcomp f (g I i) = g I' (f i) := by
+        (∀ (I I' : Type u) [LinearOrder I] [LinearOrder I'] (f : I ↪o I') (i : I),
+          OCol83.colMap h hid hcomp f (g I i) = g I' (f i)) ∧
+        (∀ (I : Type u) [LinearOrder I] [Nonempty I] (s : OCol83.Idx I) (i : I) (hi : i ∈ s.1)
+          (x : ((Hull83.subLangPieces (psiM P.E Pr.n)
+        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs).obj s.1.card.pred).carrier),
+          (ch s.1.card.pred).ε x = P.E.skeleton ((ch s.1.card.pred).j (OCol83.pos s i hi)) →
+          m I (((Hull83.subLangPieces (psiM P.E Pr.n)
+        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs).limit I).canon s x) = P.E.skeleton (g I i)) ∧
+      ∀ (I : Type u) [LinearOrder I],
+        #(OCol83.Col (OCol83.phiH h I) (OCol83.phiH_comp h hcomp I)) ≤ #(Finset I) * ls K := by
   obtain ⟨c, hc, hcoh, hXs, ch, h, hid, hcomp, hjc, η, happ, -, hlim⟩ := infra_83_pairMS2_Y_F_pieces P Pr
   have hco : ∀ (I : Type u) [LinearOrder I] [Nonempty I], ∃ m' : ((orderPieces83 P.E (fun k => (ch k).H) h hid hcomp).limit I).obj.carrier ↪[K.τ]
         (P.E.obj (OCol83.Col (OCol83.phiH h I) (OCol83.phiH_comp h hcomp I))).carrier,
@@ -683,6 +721,16 @@ theorem infra_83_pairMS2_Y_hull_natural (P : SingleModelData K)
   have hsurj : ∀ (I : Type u) [LinearOrder I] [Nonempty I],
       Function.Surjective ((Classical.choose (hco I)).comp (η.limMap I)) :=
     fun I _ _ => ((Classical.choose_spec (hco I)).2.1.comp (hlim I).1).2
+  have hpc : ∀ k, #((ch k).H) ≤ ls K := by
+    intro k
+    have hsurj : Function.Surjective (fun t : (LS83.pairLangM2 P.E Pr.n).Term (Fin (k + 1) × Fin 2) =>
+        (Quotient.mk _ t : ((Hull83.subLangPieces (psiM P.E Pr.n)
+        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs).obj k).carrier)) := fun x => Quotient.exists_rep x
+    refine P.E.card_lower.trans ?_
+    refine (Cardinal.mk_congr (Equiv.ofBijective _ (ch k).bij)).symm.le.trans ?_
+    exact (Cardinal.mk_le_of_surjective hsurj).trans
+      ((Cardinal.mk_le_of_injective (sigma_mk_injective (β := fun n => (LS83.pairLangM2 P.E Pr.n).Term (Fin n × Fin 2)) (i := k + 1))).trans
+        (Hull83.card_bundle_terms_le 2 (LS83.pairLangM2_functions_le P.E Pr.n)))
   have hg : ∀ (I : Type u) [LinearOrder I], ∃ g : I ↪o OCol83.Col (OCol83.phiH h I) (OCol83.phiH_comp h hcomp I),
       ∀ (s : OCol83.Idx I) (i : I) (hi : i ∈ s.1),
         g i = OCol83.iota (OCol83.phiH h I) (OCol83.phiH_comp h hcomp I) (OCol83.phiH_id h hid I) s
@@ -694,13 +742,21 @@ theorem infra_83_pairMS2_Y_hull_natural (P : SingleModelData K)
         rw [hjc, OCol83.pos_place])
       (fun s i i' hi hi' hii' => (ch s.1.card.pred).mono (OCol83.pos_strictMono s i i' hi hi' hii'))
   refine ⟨hsq, fun I _ _ => ?_, fun I I' I'' _ _ _ _ _ _ f g => ?_,
-    fun I _ => Classical.choose (hg I), fun I _ => Classical.choose_spec (hg I), ?_⟩
+    fun I _ => Classical.choose (hg I), fun I _ => Classical.choose_spec (hg I), ?_, ?_, fun I _ =>
+    (OCol83.card_col_le (OCol83.phiH h I) (OCol83.phiH_comp h hcomp I) (ls K) (fun s => hpc s.1.card.pred)).trans
+      (mul_le_mul_left (Cardinal.mk_subtype_le _) _)⟩
   rotate_left 2
   · intro I I' _ _ f i
     let s : OCol83.Idx I := ⟨{i}, Finset.singleton_nonempty i⟩
     have hi : i ∈ s.1 := Finset.mem_singleton_self i
     rw [Classical.choose_spec (hg I) s i hi, OCol83.colMap_iota, hjc, OCol83.pos_indexCast,
       ← Classical.choose_spec (hg I') (imageIndex f s) (f i) (Finset.mem_map_of_mem f.toEmbedding hi)]
+  · intro I _ _ s i hi x hx
+    have e2 := congrFun (congrArg (⇑) (η.limMap_canon I s)) x
+    have e3 := congrFun (congrArg (⇑) ((Classical.choose_spec (hco I)).2.2 s)) (η.app _ x)
+    refine (congrArg (fun z => Classical.choose (hco I) z) e2).trans (e3.trans ?_)
+    rw [happ, hx]
+    exact (P.E.skeleton_natural _ _).trans (congrArg (fun z => P.E.skeleton z) (Classical.choose_spec (hg I) s i hi).symm)
   · apply infra_83_map_faithful P.E
     intro y
     obtain ⟨x, rfl⟩ := hsurj I y
