@@ -110,5 +110,26 @@ theorem skeleton_mem_range {J Jp : Type u} [LinearOrder J] [Nonempty J] [LinearO
   simp only [g, g', boolEmb_apply, ofLex_toLex] at h3
   simp [hi'] at h3
 
+/-- **The image of `E(f)` is closed under the label symbols.** -/
+theorem labFun_mem_range {J Jp : Type u} [LinearOrder J] [Nonempty J] [LinearOrder Jp]
+    [Nonempty Jp] (f : J ↪o Jp) {n : ℕ} (a : (labLang E).Functions n)
+    (x : Fin n → (E.obj Jp).carrier) (hx : ∀ k, x k ∈ Set.range (E.map f)) :
+    labFun a x ∈ Set.range (E.map f) := by
+  unfold labFun
+  split_ifs with h
+  · have hmem : ∀ k, h.choose k ∈ Set.range f := fun k =>
+      skeleton_mem_range f (by rw [h.choose_spec.2 k]; exact hx k)
+    choose q hq using hmem
+    have hqm : StrictMono q := fun k l hkl => by
+      have := h.choose_spec.1 hkl
+      rw [← hq k, ← hq l] at this
+      exact f.lt_iff_lt.mp this
+    refine ⟨E.realize ⟨a.1, fun k => q (Fin.cast a.2 k),
+      fun _ _ hkl => hqm (show Fin.cast a.2 _ < Fin.cast a.2 _ from hkl)⟩, ?_⟩
+    rw [E.realize_map f]
+    congr 1
+    exact SupportTerm.ext_of_label_eq rfl fun k => by simp [hq]
+  · exact hx _
+
 end Lab83
 end AEC
