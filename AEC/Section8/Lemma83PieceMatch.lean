@@ -1523,4 +1523,39 @@ theorem infra_83_realizes_piece_iff (P : SingleModelData K)
     exact H'
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+/-- **Relative isolation is local to pieces (proved).** For a piece `X ≤ Y_u ≤ Y`
+(`inclu ; j = incl`) holding a preimage `d` of `(b, c)`, `tp(b, c / X)` in `Y` is isolated relative
+to `b` iff `tp(d / X)` in `Y_u` is (`infra_83_relIso_push`, `infra_83_relIso_pull`): the clause of
+Definition 7.4 for one bounded `c` can be checked on any piece holding `(b, c)`. -/
+theorem infra_83_relIso_piece_iff (P : SingleModelData K) {μ : Cardinal.{u}}
+    {hμ : μ ∈ P.eligible} {X Y Yu : P.scheme.Object μ hμ}
+    (incl : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ Y))
+    (inclu : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ Yu))
+    (j : SystemArrow K oneVertexShape (P.scheme.asSystem hμ Yu) (P.scheme.asSystem hμ Y))
+    {bIdx cIdx : Type u} (b : bIdx → Occurrence K oneVertexShape (P.scheme.asSystem hμ Y))
+    (c : cIdx → Occurrence K oneVertexShape (P.scheme.asSystem hμ Y))
+    (d : bIdx ⊕ cIdx → Occurrence K oneVertexShape (P.scheme.asSystem hμ Yu))
+    (hj : SystemArrow.comp inclu j = incl) (hjd : ∀ s, j.mapOcc (d s) = seqJoint b c s)
+    (hcard : #(bIdx ⊕ cIdx) < μ) :
+    IsRelativelyIsolated (uIdx := bIdx) (cIdx := cIdx) (asTuple incl trivial (seqJoint b c))
+        (Equiv.refl _) ↔
+      IsRelativelyIsolated (uIdx := bIdx) (cIdx := cIdx) (asTuple inclu trivial d)
+        (Equiv.refl _) := by
+  have hx : (fun s => j.mapOcc (d s)) = seqJoint b c := funext hjd
+  constructor
+  · intro H
+    have H' : IsRelativelyIsolated (uIdx := bIdx) (cIdx := cIdx)
+        (asTuple (SystemArrow.comp inclu j) trivial (fun s => j.mapOcc (d s))) (Equiv.refl _) := by
+      rw [hx, hj]; exact H
+    exact infra_83_relIso_pull P inclu trivial j d (Equiv.refl _) hcard H'
+  · intro H
+    have H' := infra_83_relIso_push P inclu trivial j d (Equiv.refl _) hcard H
+    rw [hx, hj] at H'
+    exact H'
+end
+
 end AEC
