@@ -6382,6 +6382,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 109: proved via infra_83_realizes_descend. bounded_arity_free only needs a cofinal class of levels."
+  },
+  {
+   "id": "infra_83_conclusion_of_realizing_onto_values",
+   "label": "Lemma 8.3 proof (P.scheme): faithful Lemma83Conclusion from pair-template data on a tail inside the Lemma 8.2 tail once the values (R) realize p and (O) prime arrows into Y_I over X_I hitting mk_I are onto (any mark indexing)",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83Assembly.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 109: proved (with infra_83_dominated_of_realizes_onto', TupleOver.reidx83, infra_83_sgt_reidx). Open inputs: (R) infra_83_bounded_arity_free; (O) one route to infra_83_all_dominated (the paper's route is Lemma 7.6 isolation + Prop 7.5 constructive primeness, which gives domination directly and can be fed to infra_83_conclusion_of_marked_values instead)."
   }
  ],
  "edges": [
@@ -11872,8 +11881,13 @@
    "from": "infra_83_values_realize_down",
    "to": "infra_83_bounded_arity_free",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_conclusion_of_realizing_onto_values",
+   "to": "infra_83_lemma_8_3_full_single",
+   "kind": "hard"
   }
  ],
- "doneCount": 646,
+ "doneCount": 647,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

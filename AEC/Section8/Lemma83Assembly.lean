@@ -188,4 +188,69 @@ theorem infra_83_values_realize_down (P : SingleModelData K)
     (fun j : ULift.{u} (Fin Pr.n) => mk J hJ j.down) (Equiv.refl _) (fun j => hm j.down)
     realEq' hr'
 
+/-- **Faithful Lemma 8.3 from realizing values with onto prime arrows (proved reduction).** For
+pair-template data as in `infra_83_pair_template_clauses` and a tail `T` inside the Lemma 8.2 tail
+(`infra_78_closedTail P ∩ infra_615_closed P`), `Lemma83Conclusion` follows once, at every
+well-order `I` with `#I ∈ T`, (R) the mark `mk_I` realizes `p_{X_I}` and (O) every arrow
+`Y'' → Y_I` over `X_I` carrying the mark of a pair over `X_I` to `mk_I` is onto. All-domination is
+then `infra_83_dominated_of_realizes_onto'` (primeness of the Theorem 7.9 pair), and the rest is
+`infra_83_conclusion_of_marked_values`. Open inputs: (R) = `infra_83_bounded_arity_free`,
+(O) = the remaining part of `infra_83_all_dominated`. -/
+theorem infra_83_conclusion_of_realizing_onto_values (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme)
+    (F : TermTemplate K oneVertexShape.{u}.doubled)
+    (X Y : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
+      P.scheme.Object #I hI)
+    (eX : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible) v,
+      ((F.present I).obj (Sum.inl v)).carrier ≃[K.τ]
+        ((P.scheme.asSystem hI (X I hI)).obj v).carrier)
+    (eY : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible) v,
+      ((F.present I).obj (Sum.inr v)).carrier ≃[K.τ]
+        ((P.scheme.asSystem hI (Y I hI)).obj v).carrier)
+    (incl : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
+      SystemArrow K oneVertexShape (P.scheme.asSystem hI (X I hI))
+        (P.scheme.asSystem hI (Y I hI)))
+    (mk : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
+      Fin Pr.n → Occurrence K oneVertexShape (P.scheme.asSystem hI (Y I hI)))
+    (hincl : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible) v x,
+      (incl I hI).onVertex v (eX I hI v x) =
+        eY I hI v ((F.present I).edge
+          (show (oneVertexShape.{u}).doubled.specified (Sum.inl v) (Sum.inr v) from rfl) x))
+    (harr : ∀ (I J : Type u) [LinearOrder I] [Nonempty I] [LinearOrder J] [Nonempty J]
+      (f : I ↪o J) (hI : #I ∈ P.eligible) (hJ : #J ∈ P.eligible),
+      ∃ (onX : SystemArrow K oneVertexShape (P.scheme.asSystem hI (X I hI))
+          (P.scheme.asSystem hJ (X J hJ)))
+        (onY : SystemArrow K oneVertexShape (P.scheme.asSystem hI (Y I hI))
+          (P.scheme.asSystem hJ (Y J hJ))),
+        SystemArrow.comp (incl I hI) onY = SystemArrow.comp onX (incl J hJ) ∧
+        (∀ v x, onX.onVertex v (eX I hI v x) =
+          eX J hJ v ((F.onOrder f).onVertex (Sum.inl v) x)) ∧
+        (∀ v x, onY.onVertex v (eY I hI v x) =
+          eY J hJ v ((F.onOrder f).onVertex (Sum.inr v) x)) ∧
+        ∀ i, (⟨(mk I hI i).1, onY.onVertex (mk I hI i).1 (mk I hI i).2⟩ :
+          Occurrence K oneVertexShape (P.scheme.asSystem hJ (Y J hJ))) = mk J hJ i)
+    (T : Set Cardinal.{u}) (hT : Tail P.scheme.eligible T)
+    (hT0 : T ⊆ infra_78_closedTail P ∩ infra_615_closed P)
+    (hRO : ∀ (I : Type u) [LinearOrder I] [WellFoundedLT I] [Nonempty I] (hI : #I ∈ T),
+      (∃ realEq : ULift.{u} (Fin Pr.n) ≃
+          (Pr.assign (Tail.mem hT hI) (X I (Tail.mem hT hI))).idx,
+        SameGaloisType (asTuple (incl I (Tail.mem hT hI)) trivial
+            (fun j : ULift.{u} (Fin Pr.n) => mk I (Tail.mem hT hI) j.down))
+          (Pr.assign (Tail.mem hT hI) (X I (Tail.mem hT hI))) realEq (Equiv.refl _)) ∧
+      ∀ (Y'' : P.scheme.Object #I (Tail.mem hT hI))
+        (incl'' : SystemArrow K oneVertexShape (P.scheme.asSystem _ (X I (Tail.mem hT hI)))
+          (P.scheme.asSystem _ Y''))
+        (b'' : ULift.{u} (Fin Pr.n) → Occurrence K oneVertexShape (P.scheme.asSystem _ Y''))
+        (h : SystemArrow K oneVertexShape (P.scheme.asSystem _ Y'')
+          (P.scheme.asSystem _ (Y I (Tail.mem hT hI)))),
+        SystemArrow.comp incl'' h = incl I (Tail.mem hT hI) →
+          (∀ j, h.mapOcc (b'' j) = mk I (Tail.mem hT hI) j.down) →
+          ∀ v, Function.Surjective (h.onVertex v)) :
+    Lemma83Conclusion P.scheme Pr := by
+  refine infra_83_conclusion_of_marked_values P Pr F X Y eX eY incl mk hincl harr T hT
+    (fun I _ _ _ hI => ?_)
+  obtain ⟨⟨realEq, hr⟩, honto⟩ := hRO I hI
+  exact ⟨realEq, hr, infra_83_dominated_of_realizes_onto' P Pr (hT0 hI) (incl I (Tail.mem hT hI))
+    (fun j : ULift.{u} (Fin Pr.n) => mk I (Tail.mem hT hI) j.down) realEq hr honto⟩
+
 end AEC

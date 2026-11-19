@@ -439,4 +439,70 @@ theorem infra_83_realizes_descend (P : SingleModelData K)
     ℵ₀ le_rfl hlt hfin rfl
   exact ⟨_, SameGaloisType.unswap_refl SB.symm⟩
 
+/-- Reindex the coordinates of a tuple along `e : β ≃ p.idx`. -/
+def TupleOver.reidx83 {S : SystemShape.{u}} {W : WorkingScheme K S} {μ : Cardinal.{u}}
+    {hμ : μ ∈ W.eligible} {base : W.Object μ hμ} (p : TupleOver K S W hμ base) {β : Type u}
+    (e : β ≃ p.idx) : TupleOver K S W hμ base :=
+  ⟨p.ν, p.hν, p.host, p.incl, p.incl_arrow, β, fun i => p.val (e i)⟩
+
+/-- A realization along `realEq` is a realization of the reindexed prescribed tuple. -/
+theorem infra_83_sgt_reidx {S : SystemShape.{u}} {W : WorkingScheme K S} {μ : Cardinal.{u}}
+    {hμ : μ ∈ W.eligible} {base : W.Object μ hμ} {t p : TupleOver K S W hμ base}
+    (realEq : t.idx ≃ p.idx) (h : SameGaloisType t p realEq (Equiv.refl _)) :
+    SameGaloisType (p.reidx83 realEq) t (Equiv.refl _) (Equiv.refl _) := by
+  rcases h with ⟨ρ, hρ, top, f1, f2, hf1, hf2, hcomm, hval⟩
+  refine ⟨ρ, hρ, top, f2, f1, hf2, hf1, fun v => (hcomm v).symm, fun i => ?_⟩
+  have key : realEq.symm (realEq i) = i := realEq.symm_apply_apply i
+  have := hval (realEq i)
+  rw [key] at this
+  exact this.symm
+
+/-- **All-domination from a realizing mark and onto prime arrows, any mark indexing.** As
+`infra_83_dominated_of_realizes_onto`, for a mark `b : bIdx → Y` realizing `Pr.assign X` along an
+arbitrary identification `realEq` of positions. -/
+theorem infra_83_dominated_of_realizes_onto' (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) {μ : Cardinal.{u}}
+    (hμ : μ ∈ infra_78_closedTail P ∩ infra_615_closed P) {X Y : P.scheme.Object μ hμ.1.1}
+    (incl : SystemArrow K oneVertexShape (P.scheme.asSystem hμ.1.1 X)
+      (P.scheme.asSystem hμ.1.1 Y))
+    {bIdx : Type u} (b : bIdx → Occurrence K oneVertexShape (P.scheme.asSystem hμ.1.1 Y))
+    (realEq : bIdx ≃ (Pr.assign hμ.1.1 X).idx)
+    (hr : SameGaloisType (asTuple incl trivial b) (Pr.assign hμ.1.1 X) realEq (Equiv.refl _))
+    (honto : ∀ (Y'' : P.scheme.Object μ hμ.1.1)
+      (incl'' : SystemArrow K oneVertexShape (P.scheme.asSystem hμ.1.1 X)
+        (P.scheme.asSystem hμ.1.1 Y''))
+      (b'' : bIdx → Occurrence K oneVertexShape (P.scheme.asSystem hμ.1.1 Y''))
+      (h : SystemArrow K oneVertexShape (P.scheme.asSystem hμ.1.1 Y'')
+        (P.scheme.asSystem hμ.1.1 Y)),
+      SystemArrow.comp incl'' h = incl → (∀ i, h.mapOcc (b'' i) = b i) →
+        ∀ v, Function.Surjective (h.onVertex v)) :
+    AllDominated incl trivial bIdx b := by
+  have hfin : Finite bIdx :=
+    Finite.of_equiv _ (realEq.trans (Pr.arity hμ.1.1 X)).symm
+  set p' := (Pr.assign hμ.1.1 X).reidx83 realEq
+  have hp'b : SameGaloisType p' (asTuple incl trivial b) (Equiv.refl _) (Equiv.refl _) :=
+    infra_83_sgt_reidx (t := asTuple incl trivial b) realEq hr
+  obtain ⟨Y'', f, hf, b'', hAll, hp⟩ := infra_79_existence_at P
+    ⟨infra_79_tail P, infra_79_retraction_pair P⟩ hμ X p' hfin
+  obtain ⟨h, -, hcomp, hv⟩ := infra_79_primeness_same_level hμ.1.1 X p' hfin
+    Y'' f hf b'' hAll hp Y incl trivial b hp'b
+  have hb : ∀ i, h.mapOcc (b'' i) = b i := fun i => by
+    have h1 : h.onVertex (b'' i).1 (b'' i).2 = (b i).2 := hv i
+    show (⟨(b'' i).1, h.onVertex (b'' i).1 (b'' i).2⟩ :
+      Occurrence K oneVertexShape (P.scheme.asSystem hμ.1.1 Y)) = b i
+    revert h1
+    generalize b'' i = o1
+    generalize b i = o2
+    obtain ⟨⟨⟩, x1⟩ := o1
+    obtain ⟨⟨⟩, x2⟩ := o2
+    intro h1
+    exact congrArg (Sigma.mk PUnit.unit) h1
+  have hsurj := honto Y'' f b'' h hcomp hb
+  have hfin' : #bIdx < μ := (Cardinal.lt_aleph0_of_finite _).trans (P.aleph0_lt hμ.1.1)
+  have H := infra_83_dominated_push P f hf h hsurj b'' hfin' hAll
+  have e1 : (fun i => h.mapOcc (b'' i)) = b := funext hb
+  rw [e1] at H
+  subst hcomp
+  exact H
+
 end AEC
