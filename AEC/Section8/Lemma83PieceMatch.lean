@@ -3899,4 +3899,35 @@ theorem infra_83_range_pieces {M : Model K.τ} {Z : Type u} {lam : Cardinal.{u}}
     exact ⟨J, y, rfl⟩
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+/-- **Finite-support pieces of a generic EM value (proved).** For finite pieces `F` with every
+`F.obj k` of size `≤ lam` and a point `i0 ∈ I`, the pieces `Piece J := range (canon (J ∪ {i0}))`
+of `F.limit I` are monotone, of size `≤ lam`, strong, and cover: the piece data of the template
+model `Y_I ≅ FY.limit I` for `infra_83_dominated_of_bounded_lists_at`. -/
+theorem infra_83_finPieces_pieces (F : EM83.FinPieces K) (I : Type u) [LinearOrder I]
+    [Nonempty I] {lam : Cardinal.{u}} (hF : ∀ k, #(F.obj k).carrier ≤ lam) :
+    ∃ Piece : Finset I → K.τ.Substructure (F.limit I).obj.carrier,
+      Monotone Piece ∧ (∀ J, #(Piece J) ≤ lam) ∧
+      (∀ J, K.Strong (M := subM83 (Piece J)) (N := (F.limit I).obj) (Piece J).subtype) ∧
+      ∀ y, ∃ J, y ∈ Piece J := by
+  classical
+  let i0 : I := Classical.choice ‹Nonempty I›
+  let sJ : Finset I → (F.system I).ι := fun J => ⟨insert i0 J, Finset.insert_nonempty _ _⟩
+  have hL := F.limit_spec I
+  refine infra_83_range_pieces (fun J => (F.system I).obj (sJ J)) (fun J => F.mem _)
+    (fun J => (F.limit I).canon (sJ J)) (fun J => hL.2.1 _) (fun J => hF _) ?_ ?_
+  · intro J J' h y
+    have hr : (F.system I).rel (sJ J) (sJ J') := Finset.insert_subset_insert _ h
+    exact ⟨(F.system I).map hr y, congrFun (congrArg DFunLike.coe ((F.limit I).compat hr)) y⟩
+  · intro x
+    obtain ⟨i, y, hy⟩ := (F.limit I).joint x
+    have hr : (F.system I).rel i (sJ i.1) := Finset.subset_insert _ _
+    refine ⟨i.1, (F.system I).map hr y, ?_⟩
+    rw [← hy]
+    exact congrFun (congrArg DFunLike.coe ((F.limit I).compat hr)) y
+end
+
 end AEC

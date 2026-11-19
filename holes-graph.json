@@ -7885,6 +7885,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 260: proved."
+  },
+  {
+   "id": "infra_83_finPieces_pieces",
+   "label": "Generic EM value F.limit I: if every F.obj k has size <= lam, the pieces range(canon(J ∪ {i0})) for finite J ⊆ I are monotone, size <= lam, strong and covering (template piece data for Y_I ≅ FY.limit I)",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PieceMatch.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 261: proved."
   }
  ],
  "edges": [
@@ -14235,8 +14244,13 @@
    "from": "infra_83_range_pieces",
    "to": "infra_83_arity_removal",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_finPieces_pieces",
+   "to": "infra_83_arity_removal",
+   "kind": "hard"
   }
  ],
- "doneCount": 807,
+ "doneCount": 808,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
