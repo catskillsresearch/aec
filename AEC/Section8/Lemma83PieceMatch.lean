@@ -3859,4 +3859,44 @@ theorem infra_83_full_single_of_bounded_lists (P : SingleModelData K)
       hPk hPS hPc hIso⟩
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+/-- **Range pieces of strong finite-support embeddings (proved).** Strong embeddings
+`e J : A J → M` from members of size `≤ lam`, indexed by finite sets, with increasing ranges
+covering `M`, give the piece data of `infra_83_dominated_of_bounded_lists_at`:
+`Piece J := range (e J)` is monotone, of size `≤ lam`, strong, and covering. -/
+theorem infra_83_range_pieces {M : Model K.τ} {Z : Type u} {lam : Cardinal.{u}}
+    (A : Finset Z → Model K.τ) (hA : ∀ J, K.Mem (A J))
+    (e : ∀ J, Language.Embedding K.τ (A J).carrier M.carrier) (he : ∀ J, K.Strong (e J))
+    (hAcard : ∀ J, #(A J).carrier ≤ lam)
+    (hmono : ∀ {J J'}, J ⊆ J' → ∀ y, ∃ y', e J' y' = e J y)
+    (hcov : ∀ x : M.carrier, ∃ J y, e J y = x) :
+    ∃ Piece : Finset Z → K.τ.Substructure M.carrier,
+      Monotone Piece ∧ (∀ J, #(Piece J) ≤ lam) ∧
+      (∀ J, K.Strong (M := subM83 (Piece J)) (N := M) (Piece J).subtype) ∧
+      ∀ y, ∃ J, y ∈ Piece J := by
+  let R : Finset Z → K.τ.Substructure M.carrier := fun J => (e J).toHom.range
+  have hmemR : ∀ J, K.Mem (subM83 (R J)) := fun J =>
+    K.iso_closed (M := A J) (N := subM83 (R J)) ⟨(e J).equivRange⟩ (hA J)
+  have hsubR : ∀ J, (R J).subtype = (e J).comp (e J).equivRange.symm.toEmbedding := by
+    intro J
+    ext ⟨x, y, rfl⟩
+    simp only [Language.Embedding.comp_apply, Language.Equiv.coe_toEmbedding]
+    rw [infra_83_equivRange_symm_self (e J) _ y rfl]
+    rfl
+  refine ⟨R, fun J J' h => ?_, fun J => ?_, fun J => ?_, fun x => ?_⟩
+  · rintro _ ⟨y, rfl⟩
+    obtain ⟨y', hy'⟩ := hmono h y
+    exact ⟨y', hy'⟩
+  · calc #(R J) = #(A J).carrier := (Cardinal.mk_congr (e J).equivRange.toEquiv).symm
+      _ ≤ lam := hAcard J
+  · rw [hsubR J]
+    exact K.strong_trans (M := subM83 (R J)) (N := A J) (P := M) _ _
+      (strong_of_equiv K (M := subM83 (R J)) (N := A J) (e J).equivRange.symm (hmemR J)) (he J)
+  · obtain ⟨J, y, rfl⟩ := hcov x
+    exact ⟨J, y, rfl⟩
+end
+
 end AEC
