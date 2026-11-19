@@ -482,6 +482,8 @@ Lean: imports `Section5.Results` and `Section6.Results`. Soft paper chain after 
 | `infra_82_diag_eq_transfer` | Equal entries transfer along DiagramEq at equal levels | [`ReflectSingle.lean`](AEC/Section8/ReflectSingle.lean) (**done**, cycle 99) |
 | `infra_84_joint_C_extension_single` | Lemma 8.4 (P.scheme): joint tests with a fixed bounded U-part extend in the C-part | [`Lemma84Single.lean`](AEC/Section8/Lemma84Single.lean) (**done**, cycle 99) |
 | `infra_84_U_part_bound` | Lemma 8.4 (P.scheme): uniform bound on the U-part of joint tests (natural layout (8)) | [`Lemma84Single.lean`](AEC/Section8/Lemma84Single.lean) (open, cycle 99) |
+| `infra_84_testing_of_common_base` | Lemma 8.4 (P.scheme): joint testing through a common generated object D | [`Lemma84Single.lean`](AEC/Section8/Lemma84Single.lean) (**done**, cycle 99) |
+| `infra_84_layout_amalgam` | Lemma 8.4 (P.scheme): natural layout (8), common object of U and C in T, T' | [`Lemma84Single.lean`](AEC/Section8/Lemma84Single.lean) (open, cycle 99) |
 | `infra_72_mixed_level` | Lemma 7.2 last sentence (A at a smaller level than B), stated with sorry (audit) | [`Lemma72Mixed.lean`](AEC/Section7/Lemma72Mixed.lean) (open, cycle 96) |
 | `infra_82_tiedFreeMixed_base_equiv` | Mixed tied freeness under a reindexed change of base tuple | [`TiedAlong.lean`](AEC/Section8/TiedAlong.lean) (**done**, cycle 97) |
 | `infra_82_mark_tied_along_single` | Lemma 8.2(4) for `P.scheme`: tied freeness of the mark along arrows (Def 8.1 tied, cycle 97 ruling) | [`TiedAlong.lean`](AEC/Section8/TiedAlong.lean) (**done**, cycle 97) |
