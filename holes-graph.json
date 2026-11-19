@@ -5634,7 +5634,7 @@
    "file": "AEC/Section8/Lemma83PairTemplate.lean",
    "status": "open",
    "blocker": null,
-   "detail": "Cycle 105 split from infra_83_pair_pieces. | Cycle 105: applies equally to the pair3 template (X-language = pairLang). | Cycle 105: sample-level identification done (infra_83_chart_generation). Remaining: add the representation-position functions to the X-language (X and Y closed under them), then apply inter_eq_chart to the X-hulls with J_H := chart of the hull."
+   "detail": "Cycle 105 split from infra_83_pair_pieces. | Cycle 105: applies equally to the pair3 template (X-language = pairLang). | Cycle 105: sample-level identification done (infra_83_chart_generation). Remaining: add the representation-position functions to the X-language (X and Y closed under them), then apply inter_eq_chart to the X-hulls with J_H := chart of the hull. | Cycle 105: the target is now the pairR template (infra_83_pairR_template). Remaining: the X-piece over H is the X-language hull S; S is closed under pairLangR, so by infra_83_pairR_samples S ∩ X = F(J_S). Still to show: X-hulls lie in X (the hull of X-points under pairLangR stays in X), and transfer to the limit pieces."
   },
   {
    "id": "infra_83_sublang_mix_hom",
@@ -5707,6 +5707,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 105: infra_83_pairR_samples (pair2/pair3 samples now also expose that the X-label copy is labR X)."
+  },
+  {
+   "id": "infra_83_pairR_template",
+   "label": "Lemma 8.3 proof: template with representation positions (X_H in pairLangR, Y_H in pairLangR2, L_H in pairLangR3): coherent colors, strong natural X→Y→L, order presentation, template strongness incl. order-embedding maps",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PairTemplateR.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 105: pairR_subHullStrongX/Y, pairR_hullStrong, infra_83_pairR_coherent_colors, infra_83_pairR_template, infra_83_pairR_template_strong. This supersedes the pair3 template as the candidate F^b: its X-hulls are closed under representation positions."
   }
  ],
  "edges": [
@@ -10672,8 +10681,28 @@
    "from": "infra_83_pairR_samples",
    "to": "infra_83_pair_sample_family",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_pairR_template",
+   "to": "infra_83_pair_pieces",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_83_pairR_template",
+   "to": "infra_83_template_from_colors",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_83_pairR_template",
+   "to": "infra_83_template_strong",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_83_pairR_template",
+   "to": "infra_83_X_hull_eq_FJ",
+   "kind": "hard"
   }
  ],
- "doneCount": 566,
+ "doneCount": 567,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
