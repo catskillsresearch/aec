@@ -7984,6 +7984,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 271: proved."
+  },
+  {
+   "id": "infra_83_tuple_match_of_piece_arrow",
+   "label": "For one tuple c (#c < nu), piece-arrow data into a marked sample pair N (piece Y_u over X' with preimage d of (b,c), h : Y_u -> N.Y over toA, marks to N.b∘tau, >= nu good Cor 6.16 indices) give the matched-tuple datum of isolation_of_matched_tuple: retained retractions, images in toA[X'], Galois type along toA, sample isolation",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PieceMatch.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 272: proved."
   }
  ],
  "edges": [
@@ -14384,8 +14393,13 @@
    "from": "infra_83_full_single_of_template_list_matches",
    "to": "infra_83_lemma_8_3_full_single",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_tuple_match_of_piece_arrow",
+   "to": "infra_83_lemma_8_3_full_single",
+   "kind": "hard"
   }
  ],
- "doneCount": 818,
+ "doneCount": 819,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

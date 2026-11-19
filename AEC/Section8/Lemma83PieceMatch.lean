@@ -4294,4 +4294,85 @@ theorem infra_83_full_single_of_template_list_matches (P : SingleModelData K)
     toA htoA inclS hinclS (incl I hI.2.1) trivial r hιcard halmost _ dU hd himg hExt hIso
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+set_option maxHeartbeats 3200000 in
+/-- **A matched-tuple datum from one piece arrow (proved).** For one tuple `c` of `Y'`
+(`#c < ν`), piece-arrow data into a marked sample pair `N` (as in
+`infra_83_marked_of_piece_arrows`: a piece `Y_u` over `X'` holding a preimage `d` of `(b, c)`,
+`h : Y_u → N.Y` over `toA`, mark part to `N.b ∘ τ`, at least `ν` good Cor 6.16 indices) give
+the matched-tuple datum of `infra_83_isolation_of_matched_tuple` for `(b, c)`: retained
+retractions, retraction images in `toA[X']`, the Galois type along `toA`, and the sample's
+isolation (`N` all-dominated). -/
+theorem infra_83_tuple_match_of_piece_arrow (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) {ν : Cardinal.{u}}
+    (hνC : ν ∈ infra_615_closed P)
+    {X' Y' : P.scheme.Object ν hνC.1}
+    (incl' : SystemArrow K oneVertexShape (P.scheme.asSystem hνC.1 X')
+      (P.scheme.asSystem hνC.1 Y'))
+    {bIdx : Type u} [Finite bIdx]
+    (b : bIdx → Occurrence K oneVertexShape (P.scheme.asSystem hνC.1 Y'))
+    {cIdx : Type u} (c : cIdx → Occurrence K oneVertexShape (P.scheme.asSystem hνC.1 Y'))
+    (hc : #cIdx < ν)
+    (N : MarkedPair K oneVertexShape P.scheme Pr) (hlC : N.μ ∈ infra_615_closed P)
+    (hνl : ν ≤ N.μ)
+    (toA : SystemArrow K oneVertexShape (P.scheme.asSystem hνC.1 X')
+      (P.scheme.asSystem hlC.1 N.X))
+    (R : ApproximateRetraction K oneVertexShape P.scheme N.hμ N.X N.Y N.incl)
+    (τ : bIdx ≃ N.bIdx) (Yu : P.scheme.Object ν hνC.1)
+    (inclu : SystemArrow K oneVertexShape (P.scheme.asSystem hνC.1 X')
+      (P.scheme.asSystem hνC.1 Yu))
+    (j : SystemArrow K oneVertexShape (P.scheme.asSystem hνC.1 Yu)
+      (P.scheme.asSystem hνC.1 Y'))
+    (h : SystemArrow K oneVertexShape (P.scheme.asSystem hνC.1 Yu)
+      (P.scheme.asSystem hlC.1 N.Y))
+    (d : bIdx ⊕ cIdx → Occurrence K oneVertexShape (P.scheme.asSystem hνC.1 Yu))
+    (hj : SystemArrow.comp inclu j = incl')
+    (hh : SystemArrow.comp inclu h = SystemArrow.comp toA N.incl)
+    (hjd : ∀ s, j.mapOcc (d s) = seqJoint b c s)
+    (hb : ∀ a, h.mapOcc (d (Sum.inl a)) = N.b (τ a))
+    (hcount : ν ≤ #{i : R.index // ∀ s, ∃ y, toA.onVertex (d s).1 y =
+          (R.retr i).onVertex (d s).1 (h.onVertex (d s).1 (d s).2)}) :
+    ∃ (ι : Type u) (r : ι → SystemArrow K oneVertexShape
+        (P.scheme.asSystem hlC.1 N.Y) (P.scheme.asSystem hlC.1 N.X))
+      (_ : #ι = ν)
+      (_ : ∀ a : Occurrence K oneVertexShape (P.scheme.asSystem hlC.1 N.X),
+        Finite {i : ι // (r i).onVertex a.1 (N.incl.onVertex a.1 a.2) ≠ a.2})
+      (dU : bIdx ⊕ cIdx → Occurrence K oneVertexShape (P.scheme.asSystem hlC.1 N.Y)),
+      (∀ i s, ∃ y, toA.onVertex (dU s).1 y = (r i).onVertex (dU s).1 (dU s).2) ∧
+      SameGaloisType (asTuple incl' trivial (seqJoint b c))
+        ((asTuple N.incl trivial dU).restrict toA trivial) (Equiv.refl _) (Equiv.refl _) ∧
+      IsRelativelyIsolated (uIdx := bIdx) (cIdx := cIdx) (asTuple N.incl trivial dU)
+        (Equiv.refl _) := by
+  let cU : cIdx → Occurrence K oneVertexShape (P.scheme.asSystem hlC.1 N.Y) :=
+    fun k => h.mapOcc (d (Sum.inr k))
+  have hx : seqJoint (fun a => N.b (τ a)) cU = fun s => h.mapOcc (d s) := by
+    funext s
+    rcases s with a | k
+    · exact (hb a).symm
+    · rfl
+  have hy : seqJoint b c = fun s => j.mapOcc (d s) := by
+    funext s
+    exact (hjd s).symm
+  have hd : #(bIdx ⊕ cIdx) < ν := by
+    rw [Cardinal.mk_sum, Cardinal.lift_id, Cardinal.lift_id]
+    exact Cardinal.add_lt_of_lt (P.aleph0_le hνC.1)
+      ((Cardinal.lt_aleph0_of_finite bIdx).trans_le (P.aleph0_le hνC.1)) hc
+  obtain ⟨S, hS, hSg⟩ := infra_83_pick_retained _ hcount
+  have hIso := infra_82_isolated_reindex_mark N.incl τ N.b cU
+    (N.dominated cIdx cU (hc.trans_le hνl))
+  refine ⟨S, fun i => R.retr i.1, hS, fun a => ?_, seqJoint (fun a => N.b (τ a)) cU,
+    fun i s => ?_, ?_, hIso⟩
+  · haveI := R.almost_id a
+    exact Finite.of_injective (β := {i : R.index // (R.retr i).onVertex a.1
+      (N.incl.onVertex a.1 a.2) ≠ a.2}) (fun i => ⟨i.1.1, i.2⟩)
+      (fun x y h => Subtype.ext (Subtype.ext (congrArg Subtype.val h :)))
+  · rw [hx]
+    exact hSg i.1 i.2 s
+  · rw [hx, hy]
+    exact infra_83_sgt_of_piece_arrow P inclu incl' j hj toA N.incl h hh d hd
+end
+
 end AEC
