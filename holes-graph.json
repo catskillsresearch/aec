@@ -3652,9 +3652,9 @@
    "label": "General Prop 7.8: bounded mark satisfying Def 7.7, |b| <= theta",
    "section": 7,
    "file": "AEC/Section7/Prop78General.lean",
-   "status": "blocked",
-   "blocker": "infra_78_general_assembly",
-   "detail": "OPEN, board-only (cycle 93). English: 'More generally the assertion holds for a bounded mark b satisfying Definition 7.7, with |b| <= theta.' The finite proof (infra_78_marginal_general_level, matrix construction) uses finiteness at: limit invariance of the fixed mark (replace infra_78_limit_invariant5 by the Def 7.7 hypothesis), and isolation bounds at the joint arity (|b| <= theta). Hard; first step is to state it. | Cycle 93: STATED as infra_78_general_statement (Prop78General.lean; same uniform tail infra_78_closedTail as proposition_7_8, tied Def 7.7 SatisfiesContinuityTied p, #p.idx <= theta). Finite case proved (infra_78_general_finite). Split: infra_78_general_small_cof (open), infra_78_general_assembly (blocked on it). | Cycle 93 (end): small_cof and assembly DONE (infra_78_general_assembly_closed). Remaining: infra_78_def77_tail_meet (ruling: Def 7.7 tail is only cofinal) and the any-host reduction (p.nu arbitrary, as infra_78_marginal_general_level does for finite p). | Cycle 93 (end 2): any-host reduction DONE (infra_78_general_closed); infra_78_general_of_tail_meet: infra_78_general follows from infra_78_def77_tail_meet_statement alone. Blocked only on that ruling."
+   "status": "done",
+   "blocker": null,
+   "detail": "PROVED cycle 94 (infra_78_general := infra_78_general_of_tail_meet + infra_78_def77_tail_meet). Axioms clean."
   },
   {
    "id": "infra_612_tied_symm_core",
@@ -3886,9 +3886,9 @@
    "label": "Def 7.7 tail meets the matrix closure tail",
    "section": 7,
    "file": "AEC/Section7/Prop78General.lean",
-   "status": "open",
-   "blocker": "ruling",
-   "detail": "OPEN cycle 93 (needs a ruling). SatisfiesContinuityTied p gives SOME cofinal set T of levels (Tail = cofinal only, not closed under intersection); the Prop 7.8 matrix level kappa must lie in infra_73_tailSet P lambda (recursion-closed levels, not upward closed). Two cofinal sets can be disjoint, so infra_78_general (via infra_78_general_assembly_closed) cannot obtain Def 7.7 at a matrix level from the current formal Def 7.7. English Def 7.7: 'the following holds at every sufficiently closed eligible level to which p is freely lifted'. Options: (a) restate SatisfiesContinuityTied with the closed-level reading (Def 7.7 at every kappa in infra_73_tailSet P sigma for some sigma, or every eligible level above some bound), checking downstream users (Theorem 7.13 / infra_713_*); (b) keep it and add the meet as a hypothesis of infra_78_general (weaker than English: not allowed for a paper-numbered statement). | Stated as infra_78_def77_tail_meet_statement (Prop78General.lean); infra_78_general_of_tail_meet proves infra_78_general from it, so this ruling is the ONLY remaining gap for infra_78_general. | Narrowed (cycle 93, end): only needed that the Def 7.7 tail T lies (cofinally) within infra_78_closedTail ('sufficiently closed'); infra_78_def77_meet_of_closed proves the rest, and the only producer of Def 7.7 (Theorem 7.13 (2), infra_713_continuity) uses T = infra_712_levels P within infra_78_closedTail. Ruling options: (a) add T ⊆ infra_78_closedTail P to SatisfiesContinuityTied (matches 'every sufficiently closed eligible level'; infra_713_continuity still proves it); (b) leave as is (infra_78_general then not derivable for arbitrary cofinal T)."
+   "status": "done",
+   "blocker": null,
+   "detail": "PROVED cycle 94 (infra_78_def77_tail_meet). Ruling (a): Def 7.7 (SatisfiesContinuityTied) now requires its tail T ⊆ infra_78_closedTail P ('every sufficiently closed eligible level'); Thm 7.13(2) infra_713_continuity supplies it with T = infra_712_levels P. Then infra_78_def77_meet_of_closed."
   },
   {
    "id": "infra_78_def77_at_congr",
@@ -7899,6 +7899,6 @@
    "kind": "hard"
   }
  ],
- "doneCount": 389,
+ "doneCount": 391,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

@@ -168,11 +168,15 @@ continuous same-level chain at `μ'` (`SameLevelChain`, union an object at `μ'`
 `A ≤ X₀` is — ruling cycle 93; the chain maps `Xᵢ → Xⱼ` and `Xᵢ → ⋃` are class embeddings by
 `SameLevelChain.le_arrow` / `toUnion_arrow`, as in the English), and every realization `b` over the union at `μ'`: if `tp(b/X₀)` is
 the tied free lift of `p` (`IsTiedFreeMixed`; for `μ' = μ` the shape of `IsTiedFree`) and
-`tp(b/Xᵢ) = tp(b/X₀)^fr_{Xᵢ}` (tied) for every `i < δ`, then the same holds over the union. -/
+`tp(b/Xᵢ) = tp(b/X₀)^fr_{Xᵢ}` (tied) for every `i < δ`, then the same holds over the union.
+**Ruling (cycle 94, option (a)):** "sufficiently closed" is made explicit: the tail `T` consists of
+levels in `infra_78_closedTail P` (the Prop 7.8 closure tail: Lemma 7.6 / Prop 7.3 closure at every
+infinite `σ` below the level), matching the English "every sufficiently closed eligible level".
+Theorem 7.13 (2) (`infra_713_continuity`) supplies it with `T = infra_712_levels P`. -/
 def SatisfiesContinuityTied {K : AbstractElementaryClass.{u}} {P : SingleModelData K}
     {μ : Cardinal.{u}} {hμ : μ ∈ P.eligible} {A : P.scheme.Object μ hμ}
     (p : TupleOver K oneVertexShape P.scheme hμ A) : Prop :=
-  ∃ T, ∃ hT : Tail P.eligible T, ∀ μ' (hμ' : μ' ∈ T), μ ≤ μ' →
+  ∃ T, ∃ hT : Tail P.eligible T, T ⊆ infra_78_closedTail P ∧ ∀ μ' (hμ' : μ' ∈ T), μ ≤ μ' →
   ∀ (C : SameLevelChain P (Tail.mem hT hμ'))
     (g : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A)
       (P.scheme.asSystem (Tail.mem hT hμ') (C.obj 0 C.hlim.1)))
@@ -997,7 +1001,8 @@ theorem infra_713_continuity_up (P : SingleModelData K) : infra_713_continuity_u
 `μ' > μ` are `infra_713_continuity_up`. -/
 theorem infra_713_continuity (P : SingleModelData K) : infra_713_continuity_statement P := by
   intro μ hμ hl X L _ _ _ hPI hS
-  refine ⟨infra_712_levels P, infra_712_levels_tail P, fun μ' hμ' hle C g hg b e hbν hT hst => ?_⟩
+  refine ⟨infra_712_levels P, infra_712_levels_tail P, fun _ h => h.1,
+    fun μ' hμ' hle C g hg b e hbν hT hst => ?_⟩
   rcases eq_or_lt_of_le hle with h | h
   · subst h
     exact infra_713_continuity_same_level P hμ hl X L hPI hS C g hg b e hbν hT hst

@@ -36,7 +36,7 @@ namespace AEC
 
 variable {K : AbstractElementaryClass.{u}}
 
-/-- **Prop 7.8, general bounded-mark form (statement; open tip `infra_78_general`).** -/
+/-- **Prop 7.8, general bounded-mark form (statement; proved as `infra_78_general`, cycle 94).** -/
 def infra_78_general_statement (P : SingleModelData K) : Prop :=
   ∀ μ (hμ : μ ∈ infra_78_closedTail P)
     (X : P.scheme.Object μ (Tail.mem (infra_78_closedTail_tail P) hμ))
@@ -438,7 +438,7 @@ theorem infra_78_hF_of_def77 (P : SingleModelData K) {μ : Cardinal.{u}} {hμ : 
             (b.restrict (C.toUnion i hi) (C.toUnion_arrow i hi)) (Equiv.refl _)) →
         IsTiedFree (C.toUnion 0 C.hlim.1)
           (b.restrict (C.toUnion 0 C.hlim.1) (C.toUnion_arrow 0 C.hlim.1)) b (Equiv.refl _) := by
-  obtain ⟨T, hT, H⟩ := hp
+  obtain ⟨T, hT, -, H⟩ := hp
   refine ⟨T, hT, ?_⟩
   intro κ hκT hμκ σ hσ hrec hσSucc C b hbν hidx Xb g0 hg0 gA hgA e hmix h0 hAll
   exact H κ hκT hμκ C gA hgA b e hbν hmix
@@ -1154,10 +1154,11 @@ theorem infra_78_general_closed (P : SingleModelData K) :
   simp only [Equiv.refl_trans] at h
   exact h
 
-/-- **`infra_78_def77_tail_meet` (statement; open, needs a ruling).** Definition 7.7 as formalized
-(`SatisfiesContinuityTied`, an existential cofinal set `T` of levels) yields Definition 7.7 at
-every matrix level closed at `μ`. Not derivable as stated in general: `Tail` is only cofinality,
-and `infra_73_tailSet P μ` is not upward closed, so the two sets may be disjoint. -/
+/-- **`infra_78_def77_tail_meet` (statement; proved below, cycle 94).** Definition 7.7
+(`SatisfiesContinuityTied`) yields Definition 7.7 at cofinally many levels of
+`infra_78_closedTail P`. Before the cycle-94 ruling (Def 7.7's tail `T ⊆ infra_78_closedTail P`,
+English "every sufficiently closed eligible level") this was not derivable: `Tail` is only
+cofinality, and `infra_73_tailSet P μ` is not upward closed. -/
 def infra_78_def77_tail_meet_statement (P : SingleModelData K) : Prop :=
   ∀ μ (hμ : μ ∈ infra_78_closedTail P)
     (X : P.scheme.Object μ (Tail.mem (infra_78_closedTail_tail P) hμ))
@@ -1579,5 +1580,17 @@ theorem infra_78_tiedFreeMixed_trans_mm
   have a2 := P.scheme.diagram_trans _ _ _ _ _ _ a1 (P.scheme.diagram_symm _ _ _ _ (hZ1 k))
   have a3 := P.scheme.diagram_trans _ _ _ _ _ _ a2 (P.scheme.diagram_symm _ _ _ _ hk2)
   exact P.scheme.diagram_trans _ _ _ _ _ _ a3 hq
+
+/-- **`infra_78_def77_tail_meet` (proved, cycle 94).** With Definition 7.7's tail contained in
+`infra_78_closedTail P` (ruling (a)), the meet is `infra_78_def77_meet_of_closed`. -/
+theorem infra_78_def77_tail_meet (P : SingleModelData K) : infra_78_def77_tail_meet_statement P := by
+  intro μ hμ X p hp
+  obtain ⟨T, hT, hTC, H⟩ := hp
+  exact infra_78_def77_meet_of_closed p T hT hTC (fun μ' hμ' hle => H μ' hμ' hle)
+
+/-- **Proposition 7.8, general bounded-mark form (proved, cycle 94; was tip `infra_78_general`).**
+For a bounded mark `|p| ≤ θ` (`ℵ₀ ≤ θ < μ`, `μ ∈ infra_78_closedTail P`) satisfying Definition 7.7. -/
+theorem infra_78_general (P : SingleModelData K) : infra_78_general_statement P :=
+  infra_78_general_of_tail_meet P (infra_78_def77_tail_meet P)
 
 end AEC

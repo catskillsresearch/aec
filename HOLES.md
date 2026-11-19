@@ -418,10 +418,10 @@ Lean: imports `AEC.Section6.Results`.
 | `infra_713_realize_finite` | Thm 7.13 (3), finite list | **done** (cycle 93, via Thm 7.9 at the level) |
 | `infra_713_realize_infinite` | Thm 7.13 (3), infinite list | reduced (cycle 93) to `infra_79_general` via `infra_713_realize_of_general` (**done**); Def 7.7 comes from 7.13(2), so def77 is not needed |
 | `infra_79_general` | Thm 7.9 general form (bounded marginal with Def 7.7) | **open**, blocked on `infra_78_general` (1 `sorry` in `Theorem713.lean`; cycle 93: primeness clause `infra_79_general_primeness`, bounded descent/identify/retraction pair **done**; existence clause remains: bounded lift_isolate + existence_at) |
-| `infra_78_general` | Prop 7.8 general form (bounded mark with Def 7.7, `|b| ≤ θ`) | **blocked** only on `infra_78_def77_tail_meet` (cycle 93: `infra_78_general_of_tail_meet` **done** — the general statement follows from the tail meet; `infra_78_general_closed`, `infra_78_general_assembly_closed`, finite case **done**) |
+| `infra_78_general` | Prop 7.8 general form (bounded mark with Def 7.7, `|b| ≤ θ`) | [`Prop78General.lean`](AEC/Section7/Prop78General.lean) (**done**, cycle 94: `infra_78_general` from `infra_78_general_of_tail_meet` + `infra_78_def77_tail_meet`) |
 | `infra_78_general_small_cof` | Prop 7.8 general: invariant (5) at limits with `cf δ ≤ |b|` via Def 7.7 | **done** (cycle 93: `infra_78_rc_inv5_all_def77`, `infra_78_limit_inv5_cocone_def77`, `infra_78_matrix_limit_step_def77`, cancellation `infra_78_tiedFree_cancel`, `infra_78_chain_stage_free`, `infra_78_rc_stage_seed`) |
 | `infra_78_general_assembly` | Prop 7.8 general: matrix assembly for bounded marks | **done** (cycle 93: `infra_78_general_assembly_closed`, Def 7.7 at every closed matrix level) |
-| `infra_78_def77_tail_meet` | Def 7.7 tail (only cofinal) vs the matrix closure tail | **open** (needs a ruling: require the Def 7.7 tail `T ⊆ infra_78_closedTail P`? `infra_78_def77_meet_of_closed` **done** proves the rest; Thm 7.13 (2) already produces such `T`) |
+| `infra_78_def77_tail_meet` | Def 7.7 tail vs the matrix closure tail | [`Prop78General.lean`](AEC/Section7/Prop78General.lean) (**done**, cycle 94; ruling (a): `SatisfiesContinuityTied` requires `T ⊆ infra_78_closedTail P`, English "every sufficiently closed eligible level"; supplied by `infra_713_continuity` with `T = infra_712_levels P`) |
 
 ### L4 — Section 8 (5 sorry)
 
