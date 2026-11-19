@@ -5670,7 +5670,7 @@
    "file": "AEC/Section8/Lemma83PairTemplate3.lean",
    "status": "open",
    "blocker": null,
-   "detail": "Cycle 105 split from infra_83_pair_pieces; replaces infra_83_Y_iso_over_X."
+   "detail": "Cycle 105 split from infra_83_pair_pieces; replaces infra_83_Y_iso_over_X. | Cycle 105: sample-level generation done (infra_83_chart_generation_Y). Remaining: add repTStr to the Y-language (a pairLangR2 variant with a repLang copy), the Y-hull lemma (as Lab83.hull_eq_chart), and the transfer to the template pieces."
   },
   {
    "id": "infra_83_pair3_template_strong",
@@ -5725,6 +5725,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 105: Lab83.hull_eq_chart (hypotheses supplied by infra_83_pairR_samples)."
+  },
+  {
+   "id": "infra_83_chart_generation_Y",
+   "label": "Lemma 8.3 proof: both directions of generation for Y ≅ F(Z): transported representation positions (repTFun/repTStr) and S ∩ range e = e(F(Z_S)) for sets closed under transported labels and positions",
+   "section": 8,
+   "file": "AEC/Section8/LabRepT83.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 105: Lab83.labT_apply, repTN/repTA/repTP, chartT, inter_eq_chartT, repTFun, repTStr, repTFun_mem, repT_closed."
   }
  ],
  "edges": [
@@ -10715,8 +10724,13 @@
    "from": "infra_83_sample_X_hull_eq_FJ",
    "to": "infra_83_X_hull_eq_FJ",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_chart_generation_Y",
+   "to": "infra_83_Y_hull_eq_FZ",
+   "kind": "hard"
   }
  ],
- "doneCount": 568,
+ "doneCount": 569,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
