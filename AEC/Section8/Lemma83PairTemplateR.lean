@@ -64,7 +64,7 @@ theorem infra_83_pairR_coherent_colors (P : SingleModelData K)
     F, -, -, s₀, hcl, -⟩ := infra_83_pairR_samples P Pr (κ := ℵ₀) le_rfl κ
   obtain ⟨e⟩ : Nonempty (J ≃ strip) := Cardinal.eq.mp (hJ.trans hstrip.symm)
   refine ⟨J, i1, (P.E.obj Jplus).carrier, @Language.sumStructure _ _ _
-      (@Language.sumStructure _ _ _ s₀ (Lab83.labTStr (fun y => F (ι y)))) Lab83.labStr, hcl,
+      (@Language.sumStructure _ _ _ s₀ (@Language.sumStructure _ _ _ (Lab83.labTStr (fun y => F (ι y))) (Lab83.repTStr (fun y => F (ι y))))) Lab83.labStr, hcl,
     hJ ▸ hθ, jzwBundle (fun j => P.E.skeleton (emb j)) (fun j => F (ι (P.E.skeleton j)))
       (fun j => P.E.skeleton (e j).1), fun i => ?_⟩
   fin_cases i

@@ -51,16 +51,23 @@ theorem infra_83_pairR_samples (P : SingleModelData K)
         (∀ {n} (f : (LS83.pairLangR2 P.E).Functions n) (x : Fin n → (P.E.obj Jplus).carrier),
           (∀ i, x i ∈ Set.range F) →
             @Language.Structure.funMap _ _
-              (@Language.sumStructure _ _ _ sR (Lab83.labTStr (fun y => F (ι y)))) n f x ∈
+              (@Language.sumStructure _ _ _ sR (@Language.sumStructure _ _ _ (Lab83.labTStr (fun y => F (ι y))) (Lab83.repTStr (fun y => F (ι y))))) n f x ∈
               Set.range F) ∧
+        (∀ (S : Set (P.E.obj Jplus).carrier) [Nonempty (Lab83.chartT (fun y => F (ι y)) S)],
+          (∀ {n} (f : (LS83.pairLangR2 P.E).Functions n) (x : Fin n → (P.E.obj Jplus).carrier),
+            (∀ i, x i ∈ S) → @Language.Structure.funMap _ _
+              (@Language.sumStructure _ _ _ sR (@Language.sumStructure _ _ _
+                (Lab83.labTStr (fun y => F (ι y))) (Lab83.repTStr (fun y => F (ι y))))) n f x ∈ S) →
+          S ∩ Set.range (fun y => F (ι y)) = Set.range ((fun y => F (ι y)) ∘
+            P.E.map (OrderEmbedding.subtype (fun z => z ∈ Lab83.chartT (fun y => F (ι y)) S)))) ∧
         (∀ t : SupportTerm P.E.lab P.E.arity J,
           @Language.Structure.funMap _ _
-            (@Language.sumStructure _ _ _ sR (Lab83.labTStr (fun y => F (ι y)))) _
-            (Sum.inr ⟨t.label, rfl⟩) (fun k => F (ι (P.E.skeleton (t.pos k)))) =
+            (@Language.sumStructure _ _ _ sR (@Language.sumStructure _ _ _ (Lab83.labTStr (fun y => F (ι y))) (Lab83.repTStr (fun y => F (ι y))))) _
+            (Sum.inr (Sum.inl ⟨t.label, rfl⟩)) (fun k => F (ι (P.E.skeleton (t.pos k)))) =
             F (ι (P.E.realize t))) ∧
         (∀ t : SupportTerm P.E.lab P.E.arity Jplus,
           @Language.Structure.funMap _ _ (@Language.sumStructure _ _ _
-            (@Language.sumStructure _ _ _ sR (Lab83.labTStr (fun y => F (ι y)))) Lab83.labStr) _
+            (@Language.sumStructure _ _ _ sR (@Language.sumStructure _ _ _ (Lab83.labTStr (fun y => F (ι y))) (Lab83.repTStr (fun y => F (ι y))))) Lab83.labStr) _
             (Sum.inr ⟨t.label, rfl⟩) (fun k => P.E.skeleton (t.pos k)) = P.E.realize t) := by
   classical
   obtain ⟨μ, h1, h2, J, i1, i2, h4, hJ, M, h8, eX, h9, sX, ι, Jplus, i3, i4, emb, strip, hs, hc,
@@ -69,7 +76,7 @@ theorem infra_83_pairR_samples (P : SingleModelData K)
     rintro _ ⟨z, rfl⟩
     exact ⟨_, hF z⟩
   refine ⟨μ, h1, h2, J, i1, i2, h4, hJ, M, h8, eX, h9, sX, ι, Jplus, i3, i4, emb, strip, hs, hc,
-    F, sF, hF, @Language.sumStructure _ _ _ s₀ (Lab83.repStr emb), hcl, hred, ?_, ?_, ?_,
+    F, sF, hF, @Language.sumStructure _ _ _ s₀ (Lab83.repStr emb), hcl, hred, ?_, ?_, ?_, ?_,
     fun t => hYlab t, fun t => hfull t⟩
   · intro n f x hx
     rcases f with f | f
@@ -83,9 +90,15 @@ theorem infra_83_pairR_samples (P : SingleModelData K)
     · exact Lab83.rep_closed emb (fun i z hz => hS (Sum.inr ⟨⟨i⟩, rfl⟩) (fun _ => z)
         (fun _ => hz)) x hx k
   · intro n f x hx
-    rcases f with (f | f) | f
+    rcases f with (f | f) | (f | f)
     · exact hY (Sum.inl f) x hx
     · exact Lab83.repFun_mem emb hXF _ (hx _)
     · exact hY (Sum.inr f) x hx
+    · exact Lab83.repTFun_mem _ (by rintro _ ⟨z, rfl⟩; exact ⟨_, rfl⟩) _ (hx _)
+  · intro S _ hS
+    have hinj : Function.Injective (fun y => F (ι y)) := F.injective.comp ι.injective
+    refine Lab83.inter_eq_chartT _ hinj S (fun a y hy => hS (Sum.inr (Sum.inl a)) y hy)
+      (fun x hx k => Lab83.repT_closed _ hinj (fun i z hz => hS (Sum.inr (Sum.inr ⟨⟨i⟩, rfl⟩))
+        (fun _ => z) (fun _ => hz)) x hx k)
 
 end AEC

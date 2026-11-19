@@ -5670,7 +5670,7 @@
    "file": "AEC/Section8/Lemma83PairTemplate3.lean",
    "status": "open",
    "blocker": null,
-   "detail": "Cycle 105 split from infra_83_pair_pieces; replaces infra_83_Y_iso_over_X. | Cycle 105: sample-level generation done (infra_83_chart_generation_Y). Remaining: add repTStr to the Y-language (a pairLangR2 variant with a repLang copy), the Y-hull lemma (as Lab83.hull_eq_chart), and the transfer to the template pieces."
+   "detail": "Cycle 105 split from infra_83_pair_pieces; replaces infra_83_Y_iso_over_X. | Cycle 105: sample-level generation done (infra_83_chart_generation_Y). Remaining: add repTStr to the Y-language (a pairLangR2 variant with a repLang copy), the Y-hull lemma (as Lab83.hull_eq_chart), and the transfer to the template pieces. | Cycle 105 (later): repTStr added to the Y-language and Y chart generation is in infra_83_pairR_samples. Remaining: Y-hull lemma and transfer to the pieces."
   },
   {
    "id": "infra_83_pair3_template_strong",
@@ -5706,7 +5706,7 @@
    "file": "AEC/Section8/Lemma83PairSamplesR.lean",
    "status": "done",
    "blocker": null,
-   "detail": "Cycle 105: infra_83_pairR_samples (pair2/pair3 samples now also expose that the X-label copy is labR X)."
+   "detail": "Cycle 105: infra_83_pairR_samples (pair2/pair3 samples now also expose that the X-label copy is labR X). | Cycle 105 (later): Y-language now carries the transported representation positions (pairLangR2 = pairLangR ⊕ (labLang ⊕ repLang)); added the Y chart-generation clause S ∩ Y = e(F(Z_S))."
   },
   {
    "id": "infra_83_pairR_template",

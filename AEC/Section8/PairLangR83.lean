@@ -1,7 +1,7 @@
 module
 
 public import AEC.Section8.PairLang83
-public import AEC.Section8.LabRep83
+public import AEC.Section8.LabRepT83
 
 /-!
 # Lemma 8.3: the pair languages with representation positions
@@ -60,8 +60,11 @@ abbrev pairLangR : Language.{u, u} := (pairLang E).sum Lab83.repLang
 abbrev pairInlR : lsLang K →ᴸ pairLangR E :=
   (LHom.sumInl : pairLang E →ᴸ pairLangR E).comp (pairInl E)
 
+/-- The `Y`-sort additions: transported labels and transported representation positions. -/
+abbrev yLang : Language.{u, u} := (Lab83.labLang E).sum Lab83.repLang
+
 /-- The `Y`-language. -/
-abbrev pairLangR2 : Language.{u, u} := (pairLangR E).sum (Lab83.labLang E)
+abbrev pairLangR2 : Language.{u, u} := (pairLangR E).sum (yLang E)
 
 abbrev pairInlR2 : lsLang K →ᴸ pairLangR2 E :=
   (LHom.sumInl : pairLangR E →ᴸ pairLangR2 E).comp (pairInlR E)
@@ -87,8 +90,12 @@ theorem hullStrong_pairR3 :
 theorem pairLangR_functions_le : max ℵ₀ #(Σ i, (pairLangR E).Functions i) ≤ ls K :=
   sum_functions_le (pairLang_functions_le E) (Lab83.repLang_card.trans (isLSBound_ls K).1)
 
+theorem yLang_card_le : #(Σ i, (yLang E).Functions i) ≤ ls K :=
+  le_trans (le_max_right _ _) (sum_functions_le (max_le (isLSBound_ls K).1 (labLang_card_le E))
+    (Lab83.repLang_card.trans (isLSBound_ls K).1))
+
 theorem pairLangR2_functions_le : max ℵ₀ #(Σ i, (pairLangR2 E).Functions i) ≤ ls K :=
-  sum_functions_le (pairLangR_functions_le E) (labLang_card_le E)
+  sum_functions_le (pairLangR_functions_le E) (yLang_card_le E)
 
 theorem pairLangR3_functions_le : max ℵ₀ #(Σ i, (pairLangR3 E).Functions i) ≤ ls K :=
   sum_functions_le (pairLangR2_functions_le E) (labLang_card_le E)
