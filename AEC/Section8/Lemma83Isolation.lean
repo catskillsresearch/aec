@@ -831,4 +831,35 @@ theorem infra_83_pair_into_sample {L : FirstOrder.Language.{u, u}}
     hcX hcY hsq
   exact ⟨onX, onY, h1, h2, hc', fun s p => congrFun (congrArg (⇑) (hY s)) _⟩
 
+/-- **The template pair maps into any homogeneous sample along an order embedding (proved).**
+English (Lemma 8.3 proof): "embed `I` into the order of a homogeneous sample (order saturation)
+and match". For a bundled sample `S` with admitted structure `M`, homogeneous in every arity for
+the template colors, and `e : I ↪o S.α`, the template pair of `I` maps strongly into `M`,
+commuting with the inclusion, generators of a support `s` going to the bundles of `e(s)`. -/
+theorem infra_83_pair_into_sample_along {L : FirstOrder.Language.{u, u}}
+    {P : ∀ (M : Type u) [L.Structure M], Prop} {r r₀ : ℕ} [NeZero r] [NeZero r₀]
+    {c : (m : ℕ) → 0 < m → Hull83.TpColorB L r m}
+    (hc : ∀ (n : ℕ) (κ : Cardinal.{u}), Hull83.Joint (Hull83.TpSampleB P r) n c κ)
+    (hcoh : ∀ {m m' : ℕ} (hm' : 0 < m') (hm : 0 < m) (f : Fin m' ↪o Fin m),
+      c m' hm' = Hull83.tpResB r f (c m hm))
+    (σ : Fin r₀ → Fin r) (φ : K.τ →ᴸ L) (hP : Hull83.HullStrong φ P)
+    {S : Hull83.ColorSample (Hull83.TpColorB L r)} {M : Type u} [L.Structure M] (hPM : P M)
+    (hMK : K.Mem (Hull83.red φ M)) (base : S.α → Fin r → M)
+    (hcol : ∀ (m : ℕ) (s : Finset S.α) (h : s.card = m),
+      S.col m s = Hull83.tpCode (Hull83.bundleOf base s h))
+    (hhom : ∀ n, Hull83.Homog S n c) {I : Type u} [LinearOrder I] [Nonempty I] (e : I ↪o S.α) :
+    ∃ (onX : ((Hull83.subBundlePieces hc hcoh σ φ hP).limit I).obj.carrier
+        ↪[K.τ] (Hull83.red φ M).carrier)
+      (onY : ((Hull83.tpFinPiecesB (hc := hc) (hcoh := hcoh) (φ := φ) hP).limit I).obj.carrier
+        ↪[K.τ] (Hull83.red φ M).carrier),
+      K.Strong onX ∧ K.Strong onY ∧
+      (∀ x, onY ((Hull83.subBundleHom hc hcoh σ φ hP).limMap I x) = onX x) ∧
+      ∀ (s : {s : Finset I // s.Nonempty}) p,
+        onY (((Hull83.tpFinPiecesB (hc := hc) (hcoh := hcoh) (φ := φ) hP).limit I).canon s
+          (Quotient.mk _ (FirstOrder.Language.Term.var p))) =
+          Hull83.bundleOf (fun i => base (e i)) s.1
+            (Nat.succ_pred_eq_of_pos (Finset.card_pos.mpr s.2)).symm p :=
+  infra_83_pair_into_sample hc hcoh σ φ hP hPM hMK (fun i => base (e i))
+    (infra_83_sample_tp_orderMap base hcol hhom e)
+
 end AEC
