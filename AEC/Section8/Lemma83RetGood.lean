@@ -221,4 +221,33 @@ theorem infra_83_retr_fix_small (P : SingleModelData K)
     rw [max_assoc, max_self]
     exact max_le le_self_add le_add_self)
 
+
+/-- **Majority of retained retractions fix a small set (proved).** English (Lemma 8.3 proof, (7)):
+"retain a set of `κ` selected retractions with `χ + ℵ₀ < κ` … For each `Z ⊆ X` with `|Z| ≤ χ`,
+all but at most `|Z| + ℵ₀` of these retractions fix `Z` pointwise." Hence exactly `κ` of the
+retained retractions fix `Z` pointwise (the majority used with Lemma 6.11). -/
+theorem infra_83_retr_majority (P : SingleModelData K)
+    {Pr : StationaryPrescription K oneVertexShape P.scheme}
+    {M : MarkedPair K oneVertexShape P.scheme Pr}
+    (R : ApproximateRetraction K oneVertexShape P.scheme M.hμ M.X M.Y M.incl)
+    (Z : Set ((P.scheme.asSystem M.hμ M.X).obj PUnit.unit).carrier)
+    (S : Set R.index) {κ : Cardinal.{u}} (hS : #S = κ) (hZ : #Z + ℵ₀ < κ) :
+    #{i : R.index | i ∈ S ∧ ∀ z ∈ Z, (R.retr i).onVertex PUnit.unit
+        (M.incl.onVertex PUnit.unit z) = z} = κ := by
+  set bad := {i : R.index | ∃ z ∈ Z, (R.retr i).onVertex PUnit.unit
+        (M.incl.onVertex PUnit.unit z) ≠ z}
+  have hbad : #bad < κ := (infra_83_retr_fix_small P R Z).trans_lt hZ
+  have hκ : ℵ₀ ≤ κ := le_add_self.trans hZ.le
+  have heq : {i : R.index | i ∈ S ∧ ∀ z ∈ Z, (R.retr i).onVertex PUnit.unit
+        (M.incl.onVertex PUnit.unit z) = z} = S \ bad := by
+    ext i
+    simp [bad]
+  rw [heq]
+  refine le_antisymm ((Cardinal.mk_le_mk_of_subset Set.diff_subset).trans hS.le) ?_
+  by_contra hlt
+  rw [not_le] at hlt
+  have h1 := Cardinal.le_mk_sdiff_add_mk S bad
+  rw [hS] at h1
+  exact absurd h1 (not_le.mpr (Cardinal.add_lt_of_lt hκ hlt hbad))
+
 end AEC

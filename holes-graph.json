@@ -6958,6 +6958,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 158: proved."
+  },
+  {
+   "id": "infra_83_retr_majority",
+   "label": "Of κ retained retractions, exactly κ fix a set Z with |Z| + ℵ₀ < κ pointwise (majority setup of (7) with Lemma 6.11)",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83RetGood.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 159: proved."
   }
  ],
  "edges": [
@@ -12793,8 +12802,13 @@
    "from": "infra_83_retr_fix_small",
    "to": "infra_83_bounded_arity_free",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_retr_majority",
+   "to": "infra_83_bounded_arity_free",
+   "kind": "hard"
   }
  ],
- "doneCount": 705,
+ "doneCount": 706,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
