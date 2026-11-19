@@ -525,4 +525,32 @@ theorem infra_83_piece_arrow_factor (P : SingleModelData K)
   exact ⟨⟨fun _ => hE, fun _ => hsh, fun h => h.elim⟩, fun x => hh0 x⟩
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+/-- **The pair square from the `F(Jp)` readings (proved).** If `toA : X' → M.X`,
+`inclu : X' → Y_u` and `h : Y_u → M.Y` satisfy `F (h (inclu x)) = F (incl (toA x))` for every `x`
+(as produced by `infra_83_toA_arrow`, `infra_83_piece_arrow_factor` and the order square
+`infra_83_sample_pair_square`), then `inclu ; h = toA ; incl` as scheme arrows (`F` injective):
+the hypothesis `hh` of `infra_83_sgt_of_piece_arrow`. -/
+theorem infra_83_square_of_F (P : SingleModelData K)
+    {Pr : StationaryPrescription K oneVertexShape P.scheme} {M : MarkedPair K oneVertexShape P.scheme Pr}
+    {ν : Cardinal.{u}} {hν : ν ∈ P.eligible} {X' Yu : P.scheme.Object ν hν}
+    {Jp : Type u} [LinearOrder Jp] [Nonempty Jp]
+    (F : Language.Embedding K.τ ((P.scheme.asSystem M.hμ M.Y).obj PUnit.unit).carrier
+      (P.E.obj Jp).carrier)
+    (inclu : SystemArrow K oneVertexShape (P.scheme.asSystem hν X') (P.scheme.asSystem hν Yu))
+    (toA : SystemArrow K oneVertexShape (P.scheme.asSystem hν X') (P.scheme.asSystem M.hμ M.X))
+    (h : SystemArrow K oneVertexShape (P.scheme.asSystem hν Yu) (P.scheme.asSystem M.hμ M.Y))
+    (hpt : ∀ x, F (h.onVertex PUnit.unit (inclu.onVertex PUnit.unit x)) =
+      F (M.incl.onVertex PUnit.unit (toA.onVertex PUnit.unit x))) :
+    SystemArrow.comp inclu h = SystemArrow.comp toA M.incl := by
+  apply SystemArrow.ext
+  intro v
+  cases v
+  ext x
+  exact F.injective (hpt x)
+end
+
 end AEC

@@ -7219,6 +7219,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 186: proved."
+  },
+  {
+   "id": "infra_83_square_of_F",
+   "label": "The pair square inclu;h = toA;incl as scheme arrows from the F(Jp) readings F(h(inclu x)) = F(incl(toA x)) (F injective); supplies hh of infra_83_sgt_of_piece_arrow",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PieceMatch.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 187: proved."
   }
  ],
  "edges": [
@@ -13199,8 +13208,13 @@
    "from": "infra_83_piece_arrow_factor",
    "to": "infra_83_bounded_list_match",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_square_of_F",
+   "to": "infra_83_bounded_list_match",
+   "kind": "hard"
   }
  ],
- "doneCount": 733,
+ "doneCount": 734,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
