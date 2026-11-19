@@ -81,3 +81,20 @@ theorem exists_ls_tp_presentation
         (tpPresentation hc hcoh hullStrong_lsClosed lsLang_functions_le).obj I =
           ((tpFinPieces hc hcoh hullStrong_lsClosed).limit I).obj :=
   exists_tp_presentation (large_lsClosed hlarge) hullStrong_lsClosed lsLang_functions_le
+
+/-- **Hulls are strong inside closed strong sorts.**  In an LS-closed structure, if a strong
+submodel `X` (e.g. the sort `X = F(J)` or `Y` of a sample) has function-closed image, then the
+term hull of a nonempty finite tuple from `X` lies in `X` and is a strong submodel of `X`. -/
+theorem hull_strong_in_closed {N : Type u} [(lsLang K).Structure N] (hN : LSClosed (K := K) N)
+    {X : Model K.τ} (j : X.carrier ↪[K.τ] (red (lsInl K) N).carrier) (hj : K.Strong j)
+    (hR : ∀ {n} (f : (lsLang K).Functions n) (x : Fin n → N), (∀ i, x i ∈ Set.range j) →
+      Structure.funMap f x ∈ Set.range j)
+    {ι : Type} [Finite ι] [Nonempty ι] (v : ι → N) (hv : ∀ i, v i ∈ Set.range j) :
+    ∃ g : (red (lsInl K) (Hull (L := lsLang K) v)).carrier ↪[K.τ] X.carrier,
+      K.Strong g ∧ j.comp g = redEmb (lsInl K) (hullEmb (L := lsLang K) v) := by
+  have hsub := hull_range_sub v hR hv
+  have himg : ∀ a, ∃ b, j b = redEmb (lsInl K) (hullEmb (L := lsLang K) v) a :=
+    fun a => hsub ⟨a, rfl⟩
+  have hcomp := factorEmbedding_comp (redEmb (lsInl K) (hullEmb (L := lsLang K) v)) j himg
+  refine ⟨factorEmbedding _ j himg, ?_, hcomp⟩
+  exact K.coherence _ _ j (hullStrong_lsClosed N hN v) hj hcomp

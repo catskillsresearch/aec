@@ -5473,6 +5473,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 104: Hull83.subSubBundleHom (X → Y), pairChainHom = subBundleHom.comp subSubBundleHom (X → L), pairChain_limMap. Axioms clean."
+  },
+  {
+   "id": "infra_83_hull_in_sort",
+   "label": "Lemma 8.3 proof: in LS-closed samples, hulls of tuples from a function-closed strong sort (X or Y) are strong submodels of that sort",
+   "section": 8,
+   "file": "AEC/Section8/LSPairLang83.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 104: LS83.hull_strong_in_closed (hull_range_sub + factorEmbedding + coherence with hullStrong_lsClosed). Axioms clean."
   }
  ],
  "edges": [
@@ -10258,8 +10267,18 @@
    "from": "infra_83_pair_sort_chain",
    "to": "infra_83_pair_pieces",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_hull_in_sort",
+   "to": "infra_83_pair_pieces",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_83_hull_in_sort",
+   "to": "infra_83_template_strong",
+   "kind": "hard"
   }
  ],
- "doneCount": 544,
+ "doneCount": 545,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
