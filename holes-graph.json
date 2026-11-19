@@ -5634,7 +5634,7 @@
    "file": "AEC/Section8/Lemma83PairTemplate.lean",
    "status": "open",
    "blocker": null,
-   "detail": "Cycle 105 split from infra_83_pair_pieces. | Cycle 105: applies equally to the pair3 template (X-language = pairLang). | Cycle 105: sample-level identification done (infra_83_chart_generation). Remaining: add the representation-position functions to the X-language (X and Y closed under them), then apply inter_eq_chart to the X-hulls with J_H := chart of the hull. | Cycle 105: the target is now the pairR template (infra_83_pairR_template). Remaining: the X-piece over H is the X-language hull S; S is closed under pairLangR, so by infra_83_pairR_samples S ∩ X = F(J_S). Still to show: X-hulls lie in X (the hull of X-points under pairLangR stays in X), and transfer to the limit pieces. | Cycle 105: sample-level X_H = F(J_H) done (infra_83_sample_X_hull_eq_FJ). Remaining: transfer to the template pieces: the X-piece at k is the hull of the J-coordinates of witB k in a homogeneous sample; give each piece its chart and the iso to F(chart), natural in the piece maps, then pass to the limit F_X(I) ≅ F(J_I). | Cycle 105 design note for the transfer: TpSampleB witnesses are arbitrary admitted structures with arbitrary injective bases, so the piece-level identification needs (a) the admitted class strengthened to concrete-sample-like structures (X closed + chart generation, as in infra_83_pairR_samples), and (b) the chart relations of pairLangR4 (infra_83_chart_relations) so that the colors force witness coordinates to be chart points. Then apply Lab83.hull_eq_chart in the witness sample. The target template is infra_83_pairR4_template."
+   "detail": "Cycle 105 split from infra_83_pair_pieces. | Cycle 105: applies equally to the pair3 template (X-language = pairLang). | Cycle 105: sample-level identification done (infra_83_chart_generation). Remaining: add the representation-position functions to the X-language (X and Y closed under them), then apply inter_eq_chart to the X-hulls with J_H := chart of the hull. | Cycle 105: the target is now the pairR template (infra_83_pairR_template). Remaining: the X-piece over H is the X-language hull S; S is closed under pairLangR, so by infra_83_pairR_samples S ∩ X = F(J_S). Still to show: X-hulls lie in X (the hull of X-points under pairLangR stays in X), and transfer to the limit pieces. | Cycle 105: sample-level X_H = F(J_H) done (infra_83_sample_X_hull_eq_FJ). Remaining: transfer to the template pieces: the X-piece at k is the hull of the J-coordinates of witB k in a homogeneous sample; give each piece its chart and the iso to F(chart), natural in the piece maps, then pass to the limit F_X(I) ≅ F(J_I). | Cycle 105 design note for the transfer: TpSampleB witnesses are arbitrary admitted structures with arbitrary injective bases, so the piece-level identification needs (a) the admitted class strengthened to concrete-sample-like structures (X closed + chart generation, as in infra_83_pairR_samples), and (b) the chart relations of pairLangR4 (infra_83_chart_relations) so that the colors force witness coordinates to be chart points. Then apply Lab83.hull_eq_chart in the witness sample. The target template is infra_83_pairR4_template. | Cycle 106: piece-level set identity done (infra_83_X_pieces_setlevel). Remaining: g compatible with τ (so the identity is a τ-iso X_k ≅ F(J_k)), template rebuilt over pairMAdmittedS, and passage to limits."
   },
   {
    "id": "infra_83_sublang_mix_hom",
@@ -5806,6 +5806,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 106: Hull83.TpSampleBF, tpSampleBF_reindex, tpB_coherent_colors_formula, witB_realize."
+  },
+  {
+   "id": "infra_83_X_pieces_setlevel",
+   "label": "Lemma 8.3 proof: strengthened admitted class (LS-closed and sample-like); colors record that J-coordinates are chart points; in every witness sample the X-piece's image is exactly F(J_H) for its chart (set level, through the sample identification g)",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83SampleLike.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 106: XSampleLike, xHull_eq_chart, thetaM(_zero/_one), pairMAdmittedS, infra_83_pairMS_coherent_colors, infra_83_pairMS_X_pieces."
   }
  ],
  "edges": [
@@ -10871,8 +10880,13 @@
    "from": "infra_83_colors_formula",
    "to": "infra_83_Y_hull_eq_FZ",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_X_pieces_setlevel",
+   "to": "infra_83_X_hull_eq_FJ",
+   "kind": "hard"
   }
  ],
- "doneCount": 578,
+ "doneCount": 579,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
