@@ -376,6 +376,7 @@ Lean: imports `AEC.Section6.Results`.
 | `infra_75_eval_project` | 7.5(3) (iv): symmetry + projection give free evaluation | **done** (cycle 79: `infra_75_eval_project` via `infra_75_eval_one`; symmetry at arity `infra_75_wide P σ`; the level 7.5(3) statements now also assume closure at that arity) |
 | `infra_75_free_eval_glue` | free evaluation from the two steps | **done** (`infra_75_free_eval_of_parts`) |
 | `infra_75_product_free` | Prop 7.5(3) tied: product with `b` + all-dominated `Y` ⇒ `tp(x/Y)` free from `X` | **open**, off-path (cycle 93: closure at `σ` only; the paper clause is `proposition_7_5_product_free`, **done**) |
+| `infra_612_finiteLevel_exists` | Prop 6.12 (5,6) soundness: level-form finite products exist | `AEC/Section6/ProductTied.lean` (**done** cycle 93; soft edge into `proposition_6_12`) |
 | `proposition_7_5_product_free` | Prop 7.5(3), paper clause (tail of sufficiently closed levels) | `AEC/Section7/ProductFreeLevel.lean` (**done** cycle 93) |
 | `infra_711_induction` | Lemma 7.11 induction assembly | [`Lemma711Induction.lean`](AEC/Section7/Lemma711Induction.lean) (**done**, cycle 75; `lemma_7_11` from `infra_711_successor_statement`; first stage via `infra_711_tiedFree_of_bijective`, limit via tied 6.13) |
 | `lemma_7_12` | Lemma 7.12 | `AEC/Section7/Results.lean` (**done**, cycle 89: sorry-free, axioms propext / Classical.choice / Quot.sound; restated cycle 76 to the tied notions: `ProductIndependentTied`, `TiedListWitnessingChain`) |
@@ -417,7 +418,9 @@ Lean: imports `AEC.Section6.Results`.
 | `infra_713_realize_finite` | Thm 7.13 (3), finite list | **done** (cycle 93, via Thm 7.9 at the level) |
 | `infra_713_realize_infinite` | Thm 7.13 (3), infinite list | reduced (cycle 93) to `infra_79_general` via `infra_713_realize_of_general` (**done**); Def 7.7 comes from 7.13(2), so def77 is not needed |
 | `infra_79_general` | Thm 7.9 general form (bounded marginal with Def 7.7) | **open**, blocked on `infra_78_general` (1 `sorry` in `Theorem713.lean`) |
-| `infra_78_general` | Prop 7.8 general form (bounded mark with Def 7.7, `|b| ≤ θ`) | **open**, hard, board-only |
+| `infra_78_general` | Prop 7.8 general form (bounded mark with Def 7.7, `|b| ≤ θ`) | **blocked** (cycle 93: stated as `infra_78_general_statement` in `AEC/Section7/Prop78General.lean`; finite case `infra_78_general_finite` **done**) |
+| `infra_78_general_small_cof` | Prop 7.8 general: invariant (5) at limits with `cf δ ≤ |b|` via Def 7.7 | **open** |
+| `infra_78_general_assembly` | Prop 7.8 general: matrix assembly for bounded marks | **blocked** on `infra_78_general_small_cof` |
 
 ### L4 — Section 8 (5 sorry)
 

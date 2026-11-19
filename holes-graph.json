@@ -3651,10 +3651,10 @@
    "id": "infra_78_general",
    "label": "General Prop 7.8: bounded mark satisfying Def 7.7, |b| <= theta",
    "section": 7,
-   "file": null,
-   "status": "open",
-   "blocker": null,
-   "detail": "OPEN, board-only (cycle 93). English: 'More generally the assertion holds for a bounded mark b satisfying Definition 7.7, with |b| <= theta.' The finite proof (infra_78_marginal_general_level, matrix construction) uses finiteness at: limit invariance of the fixed mark (replace infra_78_limit_invariant5 by the Def 7.7 hypothesis), and isolation bounds at the joint arity (|b| <= theta). Hard; first step is to state it."
+   "file": "AEC/Section7/Prop78General.lean",
+   "status": "blocked",
+   "blocker": "infra_78_general_assembly",
+   "detail": "OPEN, board-only (cycle 93). English: 'More generally the assertion holds for a bounded mark b satisfying Definition 7.7, with |b| <= theta.' The finite proof (infra_78_marginal_general_level, matrix construction) uses finiteness at: limit invariance of the fixed mark (replace infra_78_limit_invariant5 by the Def 7.7 hypothesis), and isolation bounds at the joint arity (|b| <= theta). Hard; first step is to state it. | Cycle 93: STATED as infra_78_general_statement (Prop78General.lean; same uniform tail infra_78_closedTail as proposition_7_8, tied Def 7.7 SatisfiesContinuityTied p, #p.idx <= theta). Finite case proved (infra_78_general_finite). Split: infra_78_general_small_cof (open), infra_78_general_assembly (blocked on it)."
   },
   {
    "id": "infra_612_tied_symm_core",
@@ -3736,6 +3736,42 @@
    "status": "done",
    "blocker": null,
    "detail": "PROVED cycle 93 (axioms clean). English: 'Let Y be all-dominated over X + b at a sufficiently closed eligible level µ. ... 3. In an actual coupling, if a bounded tuple x has product with b over X, then tp(x/Y) is free from X.' Tail of levels closed at sigma and at infra_75_wide P sigma (a function of sigma: 'sufficiently closed'); actual coupling x.nu = mu; tied product/freeness. From infra_75_product_free_level."
+  },
+  {
+   "id": "infra_612_finiteLevel_exists",
+   "label": "Level-form finite products exist (soundness of 6.12 (5),(6))",
+   "section": 6,
+   "file": "AEC/Section6/ProductTied.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "PROVED cycle 93 (axioms clean): given a level-mu seed tuple (only for the empty product), every finite family of bounded mu-types has an IsFiniteProductTiedLevel product at level mu, by iterating infra_612_tied_exists_witness_aux (sigma split infra_612_sigmaLast). Closes the vacuity check for the level-form hypotheses of clauses 5 and 6."
+  },
+  {
+   "id": "infra_78_general_finite",
+   "label": "Prop 7.8 general form, finite marks",
+   "section": 7,
+   "file": "AEC/Section7/Prop78General.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "PROVED cycle 93 (axioms clean): finite-mark case of infra_78_general_statement, = infra_78_marginal_general_level (Def 7.7 not needed)."
+  },
+  {
+   "id": "infra_78_general_small_cof",
+   "label": "Prop 7.8 general: invariant (5) at matrix limits with cf(delta) <= |b|",
+   "section": 7,
+   "file": "AEC/Section7/Prop78General.lean",
+   "status": "open",
+   "blocker": null,
+   "detail": "OPEN (cycle 93). English: 'At limits use the working scheme's unions; Definition 7.7 preserves the marginal invariant.' For |b| < cf(delta) the invariant is infra_78_limit_invariant5 (proved). For cf(delta) <= |b| <= theta: choose the matrix level kappa also in the SatisfiesContinuityTied tail of p and apply Def 7.7 to the chain of base stages (b in the union of the upper stages, tied free from each X_i by (5) below delta)."
+  },
+  {
+   "id": "infra_78_general_assembly",
+   "label": "Prop 7.8 general: matrix assembly for bounded marks |b| <= theta",
+   "section": 7,
+   "file": "AEC/Section7/Prop78General.lean",
+   "status": "blocked",
+   "blocker": "infra_78_general_small_cof",
+   "detail": "BLOCKED on infra_78_general_small_cof (cycle 93). Re-run infra_78_matrix_assembly_level (AssemblyGlue) for a bounded mark: replace [Finite p.idx] by #p.idx <= theta, the limit invariant by infra_78_general_small_cof / infra_78_limit_invariant5, and the joint isolation arity aleph0 + theta by theta; then the any-host reduction as in infra_78_marginal_general_level."
   }
  ],
  "edges": [
@@ -7450,8 +7486,29 @@
    "from": "infra_75_product_free_level",
    "to": "proposition_7_5_product_free",
    "kind": "hard"
+  },
+  {
+   "from": "infra_612_finiteLevel_exists",
+   "to": "proposition_6_12",
+   "kind": "soft",
+   "note": "soundness check: the level-form hypotheses of clauses 5, 6 are satisfiable"
+  },
+  {
+   "from": "infra_78_general_small_cof",
+   "to": "infra_78_general_assembly",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_78_general_assembly",
+   "to": "infra_78_general",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_78_general_finite",
+   "to": "infra_78_general",
+   "kind": "hard"
   }
  ],
- "doneCount": 361,
+ "doneCount": 363,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

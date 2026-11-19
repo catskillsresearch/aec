@@ -2167,6 +2167,64 @@ theorem infra_612_finiteLevel_copy
       · intro k
         simp only [Equiv.trans_apply, hE2 k]
 
+/-- Split off the last coordinate block of a `Fin (n + 1)`-indexed sigma type. -/
+def infra_612_sigmaLast {n : ℕ} (β : Fin (n + 1) → Type u) :
+    (Σ i, β i) ≃ (Σ i : Fin n, β i.castSucc) ⊕ β (Fin.last n) where
+  toFun t := Fin.lastCases (motive := fun i => β i → (Σ i : Fin n, β i.castSucc) ⊕ β (Fin.last n))
+    (fun k => Sum.inr k) (fun j k => Sum.inl ⟨j, k⟩) t.1 t.2
+  invFun := Sum.elim (fun t => ⟨t.1.castSucc, t.2⟩) (fun k => ⟨Fin.last n, k⟩)
+  left_inv := by
+    rintro ⟨i, k⟩
+    induction i using Fin.lastCases with
+    | last => simp [Fin.lastCases_last]
+    | cast j => simp [Fin.lastCases_castSucc]
+  right_inv := by
+    rintro (⟨j, k⟩ | k)
+    · simp [Fin.lastCases_castSucc]
+    · simp [Fin.lastCases_last]
+
+theorem infra_612_sigmaLast_castSucc {n : ℕ} (β : Fin (n + 1) → Type u) (i : Fin n)
+    (k : β i.castSucc) : infra_612_sigmaLast β ⟨i.castSucc, k⟩ = Sum.inl ⟨i, k⟩ := by
+  simp only [infra_612_sigmaLast, Equiv.coe_fn_mk, Fin.lastCases_castSucc]
+
+theorem infra_612_sigmaLast_last {n : ℕ} (β : Fin (n + 1) → Type u) (k : β (Fin.last n)) :
+    infra_612_sigmaLast β ⟨Fin.last n, k⟩ = Sum.inr k := by
+  simp only [infra_612_sigmaLast, Equiv.coe_fn_mk, Fin.lastCases_last]
+
+/-- **Level-form finite products exist (proved, cycle 93; soundness of Prop 6.12 (5), (6)).**
+Given any level-`μ` tuple `seed` over `A` (used only for the empty product), every finite family
+of bounded `μ`-types has a finite product all of whose partial products (and the product itself)
+are `μ`-types: iterate `infra_612_tied_exists_witness_aux`. So the level-form hypotheses of
+clauses 5 and 6 are satisfiable. -/
+theorem infra_612_finiteLevel_exists
+    (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ)
+    {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
+    (hrec : μ ∈ recursionClosedLevels P σ) (hσμ : Order.succ σ ≤ μ)
+    {A : P.scheme.Object μ hμ} (seed : TupleOver K oneVertexShape P.scheme hμ A)
+    (hseed : seed.ν = μ) :
+    ∀ (n : ℕ) (b : Fin n → TupleOver K oneVertexShape P.scheme hμ A),
+      (∀ i, (b i).ν = μ ∧ #(b i).idx ≤ σ) →
+      ∃ (j : TupleOver K oneVertexShape P.scheme hμ A) (E : (Σ i, (b i).idx) ≃ j.idx),
+        IsFiniteProductTiedLevel n b j E ∧ j.ν = μ
+  | 0, b, _ => by
+      refine ⟨⟨seed.ν, seed.hν, seed.host, seed.incl, seed.incl_arrow, PEmpty, PEmpty.elim⟩,
+        Equiv.equivOfIsEmpty _ _, ?_, hseed⟩
+      show IsEmpty PEmpty
+      infer_instance
+  | n + 1, b, hb => by
+      obtain ⟨left, El, hL, hlν⟩ := infra_612_finiteLevel_exists P σ hσ hμ hrec hσμ seed hseed n
+        (fun i => b i.castSucc) (fun i => hb i.castSucc)
+      obtain ⟨y, ey, hyν, -, hprod⟩ := infra_612_tied_exists_witness_aux P σ hσ hμ hrec hσμ hlν
+        left.hν left.host left.incl left.incl_arrow left.idx left.val (b (Fin.last n)) (hb _).1
+        (hb _).2
+      refine ⟨left.join y, (infra_612_sigmaLast (fun i => (b i).idx)).trans
+        (Equiv.sumCongr El ey), ⟨left, El, hlν, hL, Equiv.sumCongr (Equiv.refl _) ey, hprod,
+        ?_, ?_⟩, hyν⟩
+      · intro i k
+        exact congrArg (Equiv.sumCongr El ey) (infra_612_sigmaLast_castSucc (fun i => (b i).idx) i k)
+      · intro k
+        exact congrArg (Equiv.sumCongr El ey) (infra_612_sigmaLast_last (fun i => (b i).idx) k)
+
 /-- **Proposition 6.12** (Products of bounded types). For bounded types `p(x)`, `q(y)` over
 `A`, realize `p` in an extension `B ≥ A` and then realize `q^B` (the free lift) in a further
 extension; the joint type `p ⊗ q` of `(x, y)` over `A` (`IsProductTied`):
