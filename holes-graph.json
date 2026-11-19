@@ -7084,6 +7084,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 172: proved."
+  },
+  {
+   "id": "infra_83_full_single_of_value_matches",
+   "label": "Lemma83Conclusion for the constructed pair template from bounded-list matches of each value (per bounded c: marked sample N, toA : X_I -> N.X, >= #I Cor 6.16 indices sending u* into toA[X_I], tp(mk_I,c/X_I) = tp(u*/N.X)|toA); no whole-value arrow",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83FullMatches.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 173: proved."
   }
  ],
  "edges": [
@@ -12989,8 +12998,13 @@
    "from": "infra_83_retained_of_match_ret",
    "to": "infra_83_bounded_list_match",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_full_single_of_value_matches",
+   "to": "infra_83_lemma_8_3_full_single",
+   "kind": "hard"
   }
  ],
- "doneCount": 719,
+ "doneCount": 720,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
