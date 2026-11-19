@@ -230,6 +230,7 @@ public import AEC.Section8.Lemma83JColors
 public import AEC.Section8.LSRet83
 public import AEC.Section8.Lemma83RetSamples
 public import AEC.Section8.LabLang83
+public import AEC.Section8.PairLang83
 public import AEC.Section8.Lemma84Single
 public import AEC.Section8.Results
 public import AEC.Section8.StationaryPrescription
