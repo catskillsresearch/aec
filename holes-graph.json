@@ -5130,7 +5130,7 @@
    "file": "AEC/Section8/HullExtract83.lean",
    "status": "open",
    "blocker": null,
-   "detail": "Cycle 102 split of infra_83_hull_extraction."
+   "detail": "Cycle 102 split of infra_83_hull_extraction. | Cycle 103: single-sort template from expanded samples done generically (infra_83_hull_presentation: given an expansion L of K.tau with HullStrong admitted class, coherent types -> FinPieces K + PieceEnum -> OrderPresentation K). Remaining: three sorts X <= Y <= L (sort predicates / separate hull reducts and PiecesHom between them), mark as designated terms, and matching F(J), F(Z) (infra_83_pair_pieces), plus the concrete expanded pair language and its HullStrong samples (infra_83_pair_sample_family)."
   },
   {
    "id": "infra_83_order_sat_extension",
@@ -5293,6 +5293,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 103: Hull83.red/redEmb/redEquiv (reducts along phi : K.tau ->L L), HullStrong (reduct of every finite term hull strong in the sample: the vertex LS witnesses, as a hypothesis on the admitted class), hullMap_strong (coherence + iso invariance), tpFinPieces : FinPieces K. Axioms clean."
+  },
+  {
+   "id": "infra_83_hull_presentation",
+   "label": "Lemma 8.3 proof: enumerated hull pieces and the EM order presentation of expanded samples",
+   "section": 8,
+   "file": "AEC/Section8/HullReduct83.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 103: card_terms_le, tpEnum (terms in finitely many variables), tpPieceEnum : PieceEnum (tpFinPieces ..) (skeleton = first variable, distinct by witness injectivity), tpPresentation := EM83.presentation, exists_tp_presentation (hypotheses: large admitted class, HullStrong, small expansion). Axioms clean."
   }
  ],
  "edges": [
@@ -9973,8 +9982,13 @@
    "from": "infra_83_hull_finpieces",
    "to": "infra_83_pair_pieces",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_hull_presentation",
+   "to": "infra_83_template_from_colors",
+   "kind": "hard"
   }
  ],
- "doneCount": 524,
+ "doneCount": 525,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

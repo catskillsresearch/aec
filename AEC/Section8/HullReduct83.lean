@@ -1,7 +1,8 @@
 module
 
 public import AEC.Section8.HullPieces83
-public import AEC.Section8.EMExtend83
+public import AEC.Section8.EMPresent83
+public import Mathlib.ModelTheory.Encoding
 
 /-!
 # Lemma 8.3: from expanded-language hull pieces to finite pieces of `K`
@@ -119,6 +120,86 @@ noncomputable def tpFinPieces (hP : HullStrong φ P) : EM83.FinPieces K where
   strong e := hullMap_strong hP (wit hc _).mem (wit hc _).mem e (tpPiece_tp hc hcoh e)
 
 end Pieces
+
+theorem hullMap_mk {M N : Type u} [L.Structure M] [L.Structure N] {m m' : ℕ}
+    {v' : Fin m' → N} {v : Fin m → M} (g : Fin m' → Fin m)
+    (h : tpCode (L := L) v' = tpCode (v ∘ g)) (t : L.Term (Fin m')) :
+    hullMap g h (Quotient.mk (hullSetoid v') t) = Quotient.mk (hullSetoid v) (t.relabel g) := rfl
+
+/-- Terms in finitely many variables are few when the function symbols are. -/
+theorem card_terms_le (hL : max ℵ₀ #(Σ i, L.Functions i) ≤ ls K) :
+    #(Σ n, L.Term (Fin n)) ≤ ls K := by
+  have e : (Σ n, L.Term (Empty ⊕ Fin n)) ≃ (Σ n, L.Term (Fin n)) :=
+    Equiv.sigmaCongrRight fun n => Term.relabelEquiv (Equiv.emptySum Empty (Fin n))
+  rw [← Cardinal.mk_congr e, Term.card_sigma, mk_sum]
+  simpa using hL
+
+section Enum
+
+variable {P : ∀ (M : Type u) [L.Structure M], Prop} {c : (m : ℕ) → 0 < m → TpColor L m}
+  (hc : ∀ (n : ℕ) (κ : Cardinal.{u}), Joint (TpSample P) n c κ)
+  (hcoh : ∀ {m m' : ℕ} (hm' : 0 < m') (hm : 0 < m) (f : Fin m' ↪o Fin m),
+    c m' hm' = tpRes f (c m hm))
+
+/-- The term enumeration of the hull pieces. -/
+noncomputable def tpEnum (k : ℕ) (a : Σ n, L.Term (Fin n)) : tpPiece hc k :=
+  if h : a.1 = k + 1 then Quotient.mk _ (a.2.relabel (Fin.cast h)) else Quotient.mk _ (Term.var 0)
+
+theorem tpEnum_surj (k : ℕ) : Function.Surjective (tpEnum hc k) := by
+  intro x
+  induction x using Quotient.ind with
+  | _ t =>
+    refine ⟨⟨k + 1, t⟩, ?_⟩
+    simp only [tpEnum, dite_true]
+    congr 1
+    have : (Fin.cast (rfl : k + 1 = k + 1)) = id := by funext i; rfl
+    rw [this]
+    exact Term.relabel_id t
+
+include hcoh in
+/-- **Enumeration data** for the hull pieces: labels are terms in finitely many variables,
+and the skeleton is the first variable (distinct copies by injectivity of the witnesses). -/
+noncomputable def tpPieceEnum (hP : HullStrong φ P) (hL : max ℵ₀ #(Σ i, L.Functions i) ≤ ls K) :
+    EM83.PieceEnum (tpFinPieces hc hcoh hP) where
+  Lab := Σ n, L.Term (Fin n)
+  lab_small := card_terms_le hL
+  enum k := tpEnum hc k
+  surj k := tpEnum_surj hc k
+  skelLab := ⟨1, Term.var 0⟩
+  skel_distinct {l} e e' hne heq := by
+    have h2 : hullVal (wit hc l).v (hullMap (L := L) (⇑e) (tpPiece_tp hc hcoh e)
+        (Quotient.mk _ ((Term.var 0 : L.Term (Fin 1)).relabel (Fin.cast rfl)))) =
+        hullVal (wit hc l).v (hullMap (L := L) (⇑e') (tpPiece_tp hc hcoh e')
+        (Quotient.mk _ ((Term.var 0 : L.Term (Fin 1)).relabel (Fin.cast rfl)))) :=
+      congrArg (hullVal (L := L) (wit hc l).v) heq
+    rw [hullMap_mk, hullMap_mk, hullVal_mk, hullVal_mk] at h2
+    simp only [Term.realize_relabel, Term.realize_var, Function.comp_apply] at h2
+    exact hne (by simpa using (wit hc l).inj h2)
+
+include hcoh in
+/-- The Ehrenfeucht–Mostowski order presentation of the hull pieces read off coherent types
+of an admitted class with vertex LS witnesses and a small expanded language. -/
+noncomputable def tpPresentation (hP : HullStrong φ P)
+    (hL : max ℵ₀ #(Σ i, L.Functions i) ≤ ls K) : OrderPresentation K :=
+  EM83.presentation (tpPieceEnum hc hcoh hP hL)
+
+/-- **Template from the expanded samples.**  An admitted class of `L`-structures with
+arbitrarily large members, vertex LS witnesses, and a small expansion yields coherent types
+whose hull pieces form an enumerated `FinPieces K`, hence an order presentation of `K`
+whose finite pieces embed in actual homogeneous samples. -/
+theorem exists_tp_presentation
+    (hlarge : ∀ κ : Cardinal.{u}, ∃ (M : Type u) (_ : L.Structure M), P M ∧ κ ≤ #M)
+    (hP : HullStrong φ P) (hL : max ℵ₀ #(Σ i, L.Functions i) ≤ ls K) :
+    ∃ (c : (m : ℕ) → 0 < m → TpColor L m) (hc : ∀ (n : ℕ) (κ : Cardinal.{u}),
+        Joint (TpSample P) n c κ)
+      (hcoh : ∀ {m m' : ℕ} (hm' : 0 < m') (hm : 0 < m) (f : Fin m' ↪o Fin m),
+        c m' hm' = tpRes f (c m hm)),
+      ∀ (I : Type u) [LinearOrder I] [Nonempty I],
+        (tpPresentation hc hcoh hP hL).obj I = ((tpFinPieces hc hcoh hP).limit I).obj := by
+  obtain ⟨c, hc, hcoh⟩ := tp_coherent_colors hlarge
+  exact ⟨c, hc, hcoh, fun I _ _ => rfl⟩
+
+end Enum
 
 end Hull83
 end AEC
