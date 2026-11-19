@@ -5532,10 +5532,10 @@
    "id": "infra_83_ret_interpretation",
    "label": "Lemma 8.3 proof: interpret ret in the LS-expanded samples by the approximate retraction family r_i : Y → X (indices coded by elements of X; ret(x, y) = r_x(y) on Y, x otherwise), X and Y closed",
    "section": 8,
-   "file": "AEC/Section8/LSRet83.lean",
-   "status": "open",
+   "file": "AEC/Section8/Lemma83RetSamples.lean",
+   "status": "done",
    "blocker": null,
-   "detail": "Cycle 104 split of infra_83_pair_sample_family: concrete retraction interpretation (infra_83_samples_retractions + infra_83_ls_expanded_samples + retExp_closed)."
+   "detail": "Cycle 104: infra_83_ret_samples — samples X ≤ Y ≤ L with R : ApproximateRetraction (Cor 6.16), injective code : R.index → F(J), LS-closed str with reduct L, g with g(code i, F y) = F(incl(r_i y)), X and Y closed under all retLang functions. Axioms clean."
   }
  ],
  "edges": [
@@ -10373,6 +10373,6 @@
    "kind": "hard"
   }
  ],
- "doneCount": 550,
+ "doneCount": 551,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
