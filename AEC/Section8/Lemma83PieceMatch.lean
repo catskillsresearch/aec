@@ -253,4 +253,30 @@ theorem infra_83_full_single_of_piece_arrows (P : SingleModelData K)
   exact ⟨ULift.{u} (Fin Pr.n), Equiv.refl _, realEq, hr, hD⟩
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+/-- **Tuple count from a piece-level count (proved).** If at least `ν` retractions send the whole
+piece `h[Y_u]` into `toA[X']` (the form produced by `infra_83_retained_of_match_ret` with
+`onX = toA`, `onY = h`), then at least `ν` send `h(d)` into `toA[X']` for any tuple `d` of `Y_u`:
+the count clause of `infra_83_marked_of_piece_arrows`. -/
+theorem infra_83_tuple_count_of_piece_count (P : SingleModelData K) {ν l : Cardinal.{u}}
+    {hν : ν ∈ P.eligible} {hl : l ∈ P.eligible}
+    {X' Yu : P.scheme.Object ν hν} {A U : P.scheme.Object l hl}
+    (toA : SystemArrow K oneVertexShape (P.scheme.asSystem hν X') (P.scheme.asSystem hl A))
+    (h : SystemArrow K oneVertexShape (P.scheme.asSystem hν Yu) (P.scheme.asSystem hl U))
+    {ι : Type u} (r : ι → SystemArrow K oneVertexShape (P.scheme.asSystem hl U)
+      (P.scheme.asSystem hl A))
+    {idx : Type u} (d : idx → Occurrence K oneVertexShape (P.scheme.asSystem hν Yu))
+    (hcount : ν ≤ #{i : ι // ∀ x, ∃ y, toA.onVertex PUnit.unit y =
+      (r i).onVertex PUnit.unit (h.onVertex PUnit.unit x)}) :
+    ν ≤ #{i : ι // ∀ s, ∃ y, toA.onVertex (d s).1 y =
+      (r i).onVertex (d s).1 (h.onVertex (d s).1 (d s).2)} := by
+  refine hcount.trans (Cardinal.mk_subtype_mono fun i hi s => ?_)
+  obtain ⟨v, x⟩ := d s
+  cases v
+  exact hi x
+end
+
 end AEC
