@@ -5040,7 +5040,7 @@
    "file": "AEC/Section8/Lemma83Single.lean",
    "status": "open",
    "blocker": null,
-   "detail": "Cycle 101 split ('The vertex LS witnesses prove ...')."
+   "detail": "Cycle 101 split ('The vertex LS witnesses prove ...'). | Cycle 105: content proved for the pair3 template (infra_83_pair3_template_strong). Stays open until the pair3 template is identified with F^b: X_H ≅ F(J_H) (infra_83_X_hull_eq_FJ), Y_H ≅ F(Z_H) (infra_83_Y_hull_eq_FZ), and the mark."
   },
   {
    "id": "infra_83_bounded_arity_free",
@@ -5671,6 +5671,15 @@
    "status": "open",
    "blocker": null,
    "detail": "Cycle 105 split from infra_83_pair_pieces; replaces infra_83_Y_iso_over_X."
+  },
+  {
+   "id": "infra_83_pair3_template_strong",
+   "label": "Lemma 8.3 proof: pair3 template strongness: sort maps X_H → Y_H → L_H strong (and their composite), maps induced by any order embedding (mixed sizes) strong on each sort and commuting with the sort maps",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PairTemplate3.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 105: infra_83_pair3_template_strong."
   }
  ],
  "edges": [
@@ -10611,8 +10620,13 @@
    "from": "infra_83_Y_hull_eq_FZ",
    "to": "infra_83_pair_pieces",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_pair3_template_strong",
+   "to": "infra_83_template_strong",
+   "kind": "hard"
   }
  ],
- "doneCount": 562,
+ "doneCount": 563,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

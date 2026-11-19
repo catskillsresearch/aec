@@ -108,4 +108,29 @@ theorem infra_83_pair3_template (P : SingleModelData K)
     fun I _ _ => ⟨ηXY.limMap_strong I, ηYL.limMap_strong I, EM83.PiecesHom.limMap_comp _ _ I⟩,
     fun f => ⟨ηXY.limMap_natural f, ηYL.limMap_natural f⟩⟩
 
+/-- **Template strongness** (Lemma 8.3 proof, "The vertex LS witnesses prove `X_H → Y_H → L_H`
+componentwise strong ... also for maps induced by order embeddings of `H`, including mixed
+sizes"): for the three-language template, the sort maps are strong, the maps induced by any order
+embedding `f : I ↪o J` (any sizes) are strong on each sort, and the sort maps commute with them. -/
+theorem infra_83_pair3_template_strong (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) :
+    ∃ (FX FY FL : EM83.FinPieces K) (ηXY : EM83.PiecesHom FX FY) (ηYL : EM83.PiecesHom FY FL)
+      (E : OrderPresentation K),
+      (∀ (I : Type u) [LinearOrder I] [Nonempty I], E.obj I = (FL.limit I).obj) ∧
+      (∀ (I : Type u) [LinearOrder I] [Nonempty I],
+        K.Strong (ηXY.limMap I) ∧ K.Strong (ηYL.limMap I) ∧
+          K.Strong ((ηYL.limMap I).comp (ηXY.limMap I))) ∧
+      ∀ {I J : Type u} [LinearOrder I] [LinearOrder J] [Nonempty I] [Nonempty J] (f : I ↪o J),
+        K.Strong (EM83.gEmMap (F := FX) f) ∧ K.Strong (EM83.gEmMap (F := FY) f) ∧
+        K.Strong (EM83.gEmMap (F := FL) f) ∧
+        (ηXY.limMap J).comp (EM83.gEmMap (F := FX) f) =
+            (EM83.gEmMap (F := FY) f).comp (ηXY.limMap I) ∧
+          (ηYL.limMap J).comp (EM83.gEmMap (F := FY) f) =
+            (EM83.gEmMap (F := FL) f).comp (ηYL.limMap I) := by
+  obtain ⟨FX, FY, FL, ηXY, ηYL, E, hE, hs, hn⟩ := infra_83_pair3_template P Pr
+  refine ⟨FX, FY, FL, ηXY, ηYL, E, hE, fun I _ _ => ⟨(hs I).1, (hs I).2.1, ?_⟩,
+    fun f => ⟨EM83.gEmMap_strong f, EM83.gEmMap_strong f, EM83.gEmMap_strong f, hn f⟩⟩
+  rw [← (hs I).2.2]
+  exact (ηYL.comp ηXY).limMap_strong I
+
 end AEC
