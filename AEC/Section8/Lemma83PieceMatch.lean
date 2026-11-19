@@ -3403,4 +3403,74 @@ theorem infra_83_full_single_of_small_pieces (P : SingleModelData K)
     infra_83_dominated_of_small_pieces_at P hI (incl I hI.2.1) _ hIso⟩
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+/-- **A Galois match as one common strong amalgam (proved).** A same-Galois-type match of
+`v1` (over `incl : X → Y`) and `v2` (over `f : X → N`) gives strong `g0 : Y → T`, `g1 : N → T`
+agreeing on the matched coordinates and over `X`. -/
+theorem infra_83_galois_common {P : SingleModelData K} {μ : Cardinal.{u}} {hμ : μ ∈ P.eligible}
+    {X Y N : P.scheme.Object μ hμ} {ι : Type u}
+    (incl : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ Y))
+    (hincl : P.scheme.permitted (X := X) (Y := Y) incl)
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ N))
+    (hf : P.scheme.permitted (X := X) (Y := N) f)
+    (v1 : ι → Occurrence K oneVertexShape (P.scheme.asSystem hμ Y))
+    (v2 : ι → Occurrence K oneVertexShape (P.scheme.asSystem hμ N))
+    (h : SameGaloisType (asTuple incl hincl v1) (asTuple f hf v2)
+      (Equiv.refl ι) (Equiv.refl ι)) :
+    ∃ (T : Model K.τ) (g0 : Language.Embedding K.τ Y.model.carrier T.carrier)
+      (g1 : Language.Embedding K.τ N.model.carrier T.carrier),
+      K.Strong g0 ∧ K.Strong g1 ∧ (∀ k, g0 (v1 k).2 = g1 (v2 k).2) ∧
+      ∀ a, g0 (incl.onVertex PUnit.unit a) = g1 (f.onVertex PUnit.unit a) := by
+  rcases h with ⟨_, _, top, f1, f2, _, _, hcomm, hval⟩
+  let v0 : oneVertexShape.Vertex := PUnit.unit
+  refine ⟨_, f1.onVertex v0, f2.onVertex v0, f1.onVertex_strong v0, f2.onVertex_strong v0,
+    fun k => ?_, fun a => DFunLike.congr_fun (hcomm v0) a⟩
+  have hv := hval k
+  obtain ⟨_, hsnd⟩ := Sigma.ext_iff.mp hv
+  have hEqv := eq_of_heq hsnd
+  have hEL := infra_75_onVertex_eq_unit
+    (v := ((asTuple incl hincl v1).val ((Equiv.refl ι).symm k)).1)
+    f1 (Subsingleton.elim _ _)
+    ((asTuple incl hincl v1).val ((Equiv.refl ι).symm k)).2
+  have hER := infra_75_onVertex_eq_unit
+    (v := ((asTuple f hf v2).val ((Equiv.refl ι).symm k)).1)
+    f2 (Subsingleton.elim _ _)
+    ((asTuple f hf v2).val ((Equiv.refl ι).symm k)).2
+  exact hEL.symm.trans (hEqv.trans hER)
+
+/-- **Strong restriction of a list match to a witness model (proved).** If a list `s` of `Y`
+is Galois-matched (together with `b`, over `X`) by `s'` in `N`, and a strong submodel
+`w : W → Y` lies inside the list (`s (φ a) = w a`), then `a ↦ s' (φ a)` is a strong embedding
+`W → N`. This is how the list-based tower gets strongness: from the common strong amalgam of
+the Galois match, by coherence. -/
+theorem infra_83_witness_strong {P : SingleModelData K} {μ : Cardinal.{u}} {hμ : μ ∈ P.eligible}
+    {X Y N : P.scheme.Object μ hμ}
+    (incl : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ Y))
+    (hincl : P.scheme.permitted (X := X) (Y := Y) incl)
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ N))
+    (hf : P.scheme.permitted (X := X) (Y := N) f)
+    {bIdx δ : Type u}
+    (b : bIdx → Occurrence K oneVertexShape (P.scheme.asSystem hμ Y))
+    (b' : bIdx → Occurrence K oneVertexShape (P.scheme.asSystem hμ N))
+    (s : δ → Y.model.carrier) (s' : δ → N.model.carrier)
+    (h : SameGaloisType
+      (asTuple incl hincl (seqJoint b (fun k => Y.occ (s k))))
+      (asTuple f hf (seqJoint b' (fun k => N.occ (s' k))))
+      (Equiv.refl (bIdx ⊕ δ)) (Equiv.refl (bIdx ⊕ δ)))
+    {W : Model K.τ} (w : Language.Embedding K.τ W.carrier Y.model.carrier) (hw : K.Strong w)
+    (φ : W.carrier → δ) (hφ : ∀ a, s (φ a) = w a) :
+    ∃ G : Language.Embedding K.τ W.carrier N.model.carrier, K.Strong G ∧ ∀ a, G a = s' (φ a) := by
+  obtain ⟨T, g0, g1, hg0, hg1, hk, -⟩ := infra_83_galois_common incl hincl f hf _ _ h
+  have hmap : ∀ k, g0 (s k) = g1 (s' k) := fun k => hk (Sum.inr k)
+  have himg : ∀ a, ∃ y, g1 y = (g0.comp w) a := fun a =>
+    ⟨s' (φ a), by rw [Language.Embedding.comp_apply, ← hφ a, hmap]⟩
+  refine ⟨factorEmbedding (g0.comp w) g1 himg,
+    strong_factorEmbedding (g0.comp w) g1 (K.strong_trans w g0 hw hg0) hg1 himg, fun a => ?_⟩
+  apply g1.injective
+  rw [factorEmbedding_apply, Language.Embedding.comp_apply, ← hφ a, hmap]
+end
+
 end AEC
