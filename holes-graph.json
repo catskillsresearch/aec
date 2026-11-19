@@ -5419,6 +5419,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 103: LS83.strong_of_directed_cover (lemma_2_1 limit, factorEmbedding onto the limit is bijective, iso invariance, transitivity). Used to show closures under the LS witness functions are strong. Axioms clean."
+  },
+  {
+   "id": "infra_83_hull_closed_strong",
+   "label": "Lemma 8.3 proof: submodels containing the LS hull N_s of each of their finite subsets are strong",
+   "section": 8,
+   "file": "AEC/Section8/LSSystem83.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 103: LS83.strong_of_hull_closed (lsSystem over the submodel's own elements + strong_of_directed_cover; singletons cover). Remaining for infra_83_vertex_ls_expansion: only the witness language and its interpretation (closed substructure => contains each N_s). Axioms clean."
   }
  ],
  "edges": [
@@ -10169,8 +10178,13 @@
    "from": "infra_83_directed_cover_strong",
    "to": "infra_83_vertex_ls_expansion",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_hull_closed_strong",
+   "to": "infra_83_vertex_ls_expansion",
+   "kind": "hard"
   }
  ],
- "doneCount": 537,
+ "doneCount": 538,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

@@ -256,5 +256,35 @@ theorem strong_of_directed_cover (S : DirectedSystem K.τ) (hmem : ∀ i, K.Mem 
   rw [this]
   exact K.strong_trans _ _ he hf
 
+open Classical in
+/-- **Hull-closed submodels are strong.**  If a model `A` embedded in `M ∈ K` contains (through
+the embedding) the LS hull `N_s` of every nonempty finite set `s` of its elements, then the
+embedding is strong.  Closure under LS witness functions is exactly this condition. -/
+theorem strong_of_hull_closed {A : Model K.τ} [Nonempty A.carrier]
+    (incl : A.carrier ↪[K.τ] M.carrier)
+    (hcl : ∀ (s : {t : Finset A.carrier // t.Nonempty}) (x : (subModel hM incl s).carrier),
+      ∃ a, incl a = subIncl hM incl s x) :
+    K.Strong incl := by
+  let S := lsSystem hM incl
+  let g : ∀ s : S.ι, (S.obj s).carrier ↪[K.τ] A.carrier := fun s =>
+    factorEmbedding (subIncl hM incl s) incl (hcl s)
+  have hg : ∀ s, incl.comp (g s) = subIncl hM incl s := fun s =>
+    factorEmbedding_comp _ _ (hcl s)
+  refine strong_of_directed_cover S (fun s => subModel_mem hM incl s)
+    (fun h => lsSystem_strong hM incl h) hM incl g (fun s => by rw [hg]; exact subIncl_strong hM incl s)
+    (fun {s t} hst => ?_) (fun a => ?_)
+  · ext x
+    apply incl.injective
+    have h1 := congrFun (congrArg (⇑) (hg t)) (S.map hst x)
+    have h2 := congrFun (congrArg (⇑) (hg s)) x
+    exact h1.trans ((sysMap_spec hM incl s t hst x).trans h2.symm)
+  · let s : S.ι := ⟨{a}, Finset.singleton_nonempty a⟩
+    have hmem : incl a ∈ (subHull hM incl s).1 := by
+      rw [subHull_eq hM incl s]
+      exact Or.inl ⟨a, Finset.mem_singleton_self a, rfl⟩
+    obtain ⟨x, hx⟩ := subIncl_covers hM incl s hmem
+    refine ⟨s, x, incl.injective ?_⟩
+    exact (congrFun (congrArg (⇑) (hg s)) x).trans hx
+
 end LS83
 end AEC
