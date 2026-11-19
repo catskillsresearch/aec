@@ -527,7 +527,7 @@ Lean: imports `Section5.Results` and `Section6.Results`. Soft paper chain after 
 | `infra_84_segment_chart_of_diagramEq` | Lemma 8.4 (P.scheme): segment-compatible chart from a diagram condition | [`TermGen84Single.lean`](AEC/Section8/TermGen84Single.lean) (**done**, cycle 101) |
 | `infra_84_segment_model_homogeneity` | Lemma 8.4 (P.scheme): small submodel copies in a level-mu object have the same diagram | [`TermGen84Single.lean`](AEC/Section8/TermGen84Single.lean) (open, off-path: rerouted via faithful 8.3 clause (2), cycle 101) |
 | `infra_83_clause3_single` | Lemma 8.3 (P.scheme): faithful clause (3) for any values of the right levels | [`Lemma83Single.lean`](AEC/Section8/Lemma83Single.lean) (**done**, cycle 101) |
-| `infra_83_samples` | Lemma 8.3 proof (P.scheme): samples X = F(J) <= Y ~ F(Z) inside L = F(J+W) | [`Lemma83Single.lean`](AEC/Section8/Lemma83Single.lean) (open, cycle 101) |
+| `infra_83_samples` | Lemma 8.3 proof (P.scheme): samples X = F(J) <= Y ~ F(Z) inside L = F(J+W) | [`Lemma83Single.lean`](AEC/Section8/Lemma83Single.lean) (**done**, cycle 102) |
 | `infra_83_hull_extraction` | Lemma 8.3 proof (P.scheme): homogeneous finite hulls give the pair template F^b | [`Lemma83Single.lean`](AEC/Section8/Lemma83Single.lean) (open, cycle 101) |
 | `infra_83_template_strong` | Lemma 8.3 proof (P.scheme): template values and order maps are componentwise strong | [`Lemma83Single.lean`](AEC/Section8/Lemma83Single.lean) (open, cycle 101) |
 | `infra_83_bounded_arity_free` | Lemma 8.3 proof (P.scheme): bounded-arity mark realizes p and free extension (7) | [`Lemma83Single.lean`](AEC/Section8/Lemma83Single.lean) (open, cycle 101) |
@@ -541,7 +541,7 @@ Lean: imports `Section5.Results` and `Section6.Results`. Soft paper chain after 
 | `infra_83_pair_sample_family` | Lemma 8.3 proof: expanded pair samples as a thinning-closed colored sample family | [`HullExtract83.lean`](AEC/Section8/HullExtract83.lean) (open, cycle 102) |
 | `infra_83_template_from_colors` | Lemma 8.3 proof: EM-limit pair template from coherent colors | [`HullExtract83.lean`](AEC/Section8/HullExtract83.lean) (open, cycle 102) |
 | `infra_83_order_sat_extension` | Lemma 8.3 proof: order saturation extension lemma | [`OrderSat83.lean`](AEC/Section8/OrderSat83.lean) (**done**, cycle 102) |
-| `infra_83_saturated_orders_exist` | Lemma 8.3 proof: saturated padded dense orders at tail levels | [`OrderSat83.lean`](AEC/Section8/OrderSat83.lean) (open, cycle 102) |
+| `infra_83_saturated_orders_exist` | Lemma 8.3 proof: saturated padded dense orders at tail levels | [`Lemma83Samples.lean`](AEC/Section8/Lemma83Samples.lean) (**done**, cycle 102) |
 | `infra_83_color_tower_section2` | Lemma 8.3 reuse check: Section 2 colors as instance of the generic tower | [`HullExtract83Section2.lean`](AEC/Section8/HullExtract83Section2.lean) (**done**, cycle 102) |
 | `infra_83_order_sat_lex` | Lemma 8.3 proof: lex product with a complete well-order preserves order saturation | [`OrderSat83.lean`](AEC/Section8/OrderSat83.lean) (**done**, cycle 102) |
 | `infra_83_small_saturated_order` | Lemma 8.3 proof: some κ-order-saturated order exists | [`OrderSat83.lean`](AEC/Section8/OrderSat83.lean) (**done**, cycle 102) |

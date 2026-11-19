@@ -1,6 +1,7 @@
 module
 
 public import AEC.Section8.Layout84Single
+public import AEC.Section8.OrderSat83
 
 @[expose] public section
 
@@ -206,5 +207,18 @@ theorem infra_83_samples_strip (P : SingleModelData K)
       ((P.scheme.asSystem M.hμ M.Y).inK PUnit.unit)
       (K.strong_trans _ _ hsX (M.incl.onVertex_strong PUnit.unit)) hcY
     exact ⟨Jplus, l, n, emb, strip, V, h1, h2, h3, h4, h5, F, hF, hFi⟩
+
+
+/-- **Order-saturated sample orders at every eligible level** (Lemma 8.3, "Choose the
+presentations sufficiently rich for any prescribed set-sized order-saturation bound").  Every
+eligible level is a strong limit, so above any infinite `κ` it carries a dense
+`κ`-order-saturated order of the level size with a well-ordered subset of the level size
+(a padded dense order).  Combined with `infra_83_samples_strip` (any `J` of the level size) and
+`OrderSat83.extend_strictMono` (the use the proof makes of saturation). -/
+theorem infra_83_saturated_sample_order (P : SingleModelData K) {κ μ : Cardinal.{u}}
+    (hκ : ℵ₀ ≤ κ) (hμ : μ ∈ P.eligible) (hκμ : κ < μ) :
+    ∃ (J : Type u) (_ : LinearOrder J), OrderSat83.OrderSaturated κ J ∧ DenselyOrdered J ∧
+      #J = μ ∧ ∃ S : Set J, #S = μ ∧ S.WellFoundedOn (· < ·) :=
+  OrderSat83.exists_saturated_padded hκ hμ.1.working.strongLimit hκμ
 
 end AEC

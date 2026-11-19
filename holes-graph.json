@@ -5019,10 +5019,10 @@
    "id": "infra_83_samples",
    "label": "Lemma 8.3 proof (P.scheme): samples X = F(J) <= Y ~ F(Z), Y all-dominated over X+b, Y over X into L = F(J+W) (Prop 6.15 presentation-invariant), padded dense orders",
    "section": 8,
-   "file": "AEC/Section8/Lemma83Single.lean",
-   "status": "open",
+   "file": "AEC/Section8/Lemma83Samples.lean",
+   "status": "done",
    "blocker": null,
-   "detail": "Cycle 101 split of the faithful 8.3 ('The samples and their language'). | Cycle 101: covered by infra_83_samples_strip (any J incl. padded dense; L = E(J+) via Prop 6.15 fresh strip) + infra_83_padded_dense_exists + infra_83_samples_retractions. Remaining: 'Choose the presentations sufficiently rich for any prescribed set-sized order-saturation bound' (order-saturated padded dense J, Z, W of the level size). | Cycle 102: extension lemma done (infra_83_order_sat_extension); existence of saturated orders at tail levels tracked as infra_83_saturated_orders_exist."
+   "detail": "Cycle 101 split of the faithful 8.3 ('The samples and their language'). Cycle 101: infra_83_samples_strip (any J incl. padded dense; L = E(J+) via Prop 6.15 fresh strip) + infra_83_padded_dense_exists + infra_83_samples_retractions. Cycle 102 DONE: order saturation — infra_83_saturated_sample_order (saturated padded dense J of every eligible size, usable in samples_strip) and infra_83_order_sat_extension (the extension property the proof uses)."
   },
   {
    "id": "infra_83_hull_extraction",
@@ -5143,12 +5143,12 @@
   },
   {
    "id": "infra_83_saturated_orders_exist",
-   "label": "Lemma 8.3 proof: for every κ, κ-order-saturated padded dense orders at arbitrarily large tail levels (e.g. lex power ℚ^ν of size 2^ν, or μ with μ^{<κ} = μ)",
+   "label": "Lemma 8.3 proof: for every κ, κ-order-saturated padded dense orders at every eligible level above κ",
    "section": 8,
-   "file": "AEC/Section8/OrderSat83.lean",
-   "status": "open",
+   "file": "AEC/Section8/Lemma83Samples.lean",
+   "status": "done",
    "blocker": null,
-   "detail": "Cycle 102 split of infra_83_samples: remaining order-saturation existence at the level size (needs tail levels of the form 2^ν, or a saturation construction of size μ). | Cycle 102: reduced to infra_83_small_saturated_order via infra_83_order_sat_lex (levels are strong limits of cof ω, so WithTop(μ.ord.ToType) ×lex J0 has size μ when #J0 < μ)."
+   "detail": "Cycle 102 DONE: infra_83_saturated_sample_order (eligible levels are strong limits; OrderSat83.exists_saturated_padded = WithTop μ.ord.ToType ×lex J0, J0 the lex power of size 2^κ⁺). Axioms clean."
   },
   {
    "id": "infra_83_color_tower_section2",
@@ -9821,6 +9821,6 @@
    "kind": "hard"
   }
  ],
- "doneCount": 512,
+ "doneCount": 514,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

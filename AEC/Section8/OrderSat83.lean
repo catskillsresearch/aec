@@ -3,6 +3,7 @@ module
 public import AEC.Section2.Partition
 public import Mathlib.Order.PiLex
 public import Mathlib.SetTheory.Cardinal.Regular
+public import Mathlib.Order.WellFoundedSet
 
 /-!
 # Lemma 8.3: order saturation of the sample orders
@@ -403,6 +404,49 @@ theorem exists_orderSaturated {κ : Cardinal.{u}} (hκ : aleph0 ≤ κ) :
     rw [hι, mul_eq_self (hκ.trans (Order.le_succ κ))]
   show #(ι → V) = _
   rw [← power_def, hV, hι, power_self_eq (hκ.trans (Order.le_succ κ))]
+
+/-- **Saturated padded dense orders at strong-limit levels.**  If `μ` is a strong limit above
+`κ` (every working level is), there is a dense `κ`-order-saturated order of size `μ` containing
+a well-ordered subset of size `μ`: `WithTop μ.ord.ToType ×ₗ J₀` with `J₀` the small saturated
+order of `exists_orderSaturated`. -/
+theorem exists_saturated_padded {κ μ : Cardinal.{u}} (hκ : aleph0 ≤ κ) (hμ : μ.IsStrongLimit)
+    (hκμ : κ < μ) :
+    ∃ (J : Type u) (_ : LinearOrder J), OrderSaturated κ J ∧ DenselyOrdered J ∧ #J = μ ∧
+      ∃ S : Set J, #S = μ ∧ S.WellFoundedOn (· < ·) := by
+  obtain ⟨J₀, _, hJ₀, hcard₀⟩ := exists_orderSaturated hκ
+  have hμ0 : aleph0 ≤ μ := hμ.aleph0_le
+  have hsucc : Order.succ κ < μ := hμ.isSuccLimit.succ_lt hκμ
+  have hsmall : #J₀ < μ := hcard₀ ▸ hμ.2 hsucc
+  have hne₀ : Nonempty J₀ := by
+    rw [← Cardinal.mk_ne_zero_iff, hcard₀]
+    exact (power_ne_zero _ two_ne_zero)
+  let I := WithTop μ.ord.ToType
+  let J := Lex (I × J₀)
+  have hsat : OrderSaturated κ J := orderSaturated_lex hJ₀
+  have hκ1 : (1 : Cardinal) < κ := one_lt_aleph0.trans_le hκ
+  refine ⟨J, inferInstance, hsat, ⟨fun a b hab => ?_⟩, ?_, ?_⟩
+  · obtain ⟨x, hx1, hx2⟩ := hsat {a} {b} (by simpa using hκ1) (by simpa using hκ1)
+      (by simp [hab])
+    exact ⟨x, hx1 a rfl, hx2 b rfl⟩
+  · have hI : #I = μ := by
+      show #(Option μ.ord.ToType) = μ
+      rw [mk_option, Cardinal.mk_ord_toType]
+      exact add_one_eq hμ0
+    show #(I × J₀) = μ
+    rw [mk_prod, lift_id, lift_id, hI]
+    exact mul_eq_left hμ0 hsmall.le (Cardinal.mk_ne_zero _)
+  · let j₀ := Classical.arbitrary J₀
+    let f : μ.ord.ToType → J := fun i => toLex ((i : I), j₀)
+    have hf : StrictMono f := fun a b hab =>
+      Prod.Lex.toLex_lt_toLex.2 (Or.inl (WithTop.coe_lt_coe.2 hab))
+    refine ⟨Set.range f, ?_, ?_⟩
+    · rw [Cardinal.mk_range_eq f hf.injective, Cardinal.mk_ord_toType]
+    · rw [Set.wellFoundedOn_range]
+      have : Function.onFun (· < ·) f = (· < · : μ.ord.ToType → μ.ord.ToType → Prop) := by
+        funext a b
+        exact propext hf.lt_iff_lt
+      rw [this]
+      exact wellFounded_lt
 
 end OrderSat83
 end AEC
