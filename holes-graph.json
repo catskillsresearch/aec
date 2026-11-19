@@ -5446,6 +5446,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 104: infra_83_ls_expanded_samples = infra_83_large_saturated_samples + LS83.exists_chain_ls_expansion applied to jX = F∘incl∘eX (= P.E.map emb) and jY = F. Axioms clean."
+  },
+  {
+   "id": "infra_83_ls_pair_lang",
+   "label": "Lemma 8.3 proof: LS-closedness passes to further expansions of lsLang K (HullStrong for the pair language) and hulls of tuples from closed sorts stay in the sort",
+   "section": 8,
+   "file": "AEC/Section8/LSPairLang83.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 104: LS83.hullStrong_exp (ψ : lsLang K →ᴸ L'; HullStrong (ψ.comp lsInl) for structures with LS-closed reduct, via subOfExp) and LS83.hull_range_sub (term hull of a tuple from a function-closed set stays in it; used for X_H ⊆ X, Y_H ⊆ Y). Axioms clean."
   }
  ],
  "edges": [
@@ -10211,8 +10220,18 @@
    "from": "infra_83_ls_expanded_samples",
    "to": "infra_83_pair_sample_family",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_ls_pair_lang",
+   "to": "infra_83_pair_sample_family",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_83_ls_pair_lang",
+   "to": "infra_83_pair_pieces",
+   "kind": "hard"
   }
  ],
- "doneCount": 541,
+ "doneCount": 542,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
