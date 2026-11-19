@@ -4924,6 +4924,24 @@
    "status": "open",
    "blocker": null,
    "detail": "Cycle 101 audit. English: 'the values of F^b are the presented small pairs'. Lean lemma_8_3 clause (1) only gives separate per-vertex isos F.present I (inl v) ~ X, (inr v) ~ Y, with no compatibility with the edge, the marks, or the arrows of clause (2); infra_83_doubledTemplate (both copies F.present I, identity edge) satisfies it vacuously, so the Lean statement is weaker than the English. Needed for Lemma 8.4 (term generation of U_{H'} over U_H cup A_{H'}). Proposed restatement: add isos eX, eY with eY o F(edge) = incl o eX and marks preserved, and arrows of (2) equal to F.map f under eX, eY. infra_83_lemma_8_3_full_single stays as the narrowed infra form (tracked here)."
+  },
+  {
+   "id": "infra_84_mixed_tests_of_amalgam",
+   "label": "Lemma 8.4 (P.scheme): a common amalgam over E(I) identifying the candidates gives all bounded tests, incl. mixed-term parameters",
+   "section": 8,
+   "file": "AEC/Section8/TermGen84Single.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 101: via StableDiagram.same_of_amalgam."
+  },
+  {
+   "id": "infra_84_agree_of_amalgam",
+   "label": "Lemma 8.4 (P.scheme): a common amalgam over E(I) gives placed agreement on every small position set",
+   "section": 8,
+   "file": "AEC/Section8/TermGen84Single.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 101: infra_84_mixed_tests_of_amalgam + infra_84_agreeOn_of_generator_tests."
   }
  ],
  "edges": [
@@ -9404,8 +9422,18 @@
    "from": "infra_83_template_presents_pair",
    "to": "infra_84_layout_amalgam",
    "kind": "hard"
+  },
+  {
+   "from": "infra_84_mixed_tests_of_amalgam",
+   "to": "infra_84_layout_amalgam",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_84_agree_of_amalgam",
+   "to": "infra_84_layout_amalgam",
+   "kind": "hard"
   }
  ],
- "doneCount": 491,
+ "doneCount": 493,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

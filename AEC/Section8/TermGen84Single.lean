@@ -370,4 +370,50 @@ theorem infra_84_pair_generator_tests_agree (K : AbstractElementaryClass.{u})
   exact (infra_84_agreeOn_of_generator_tests hL hI h₀ h₁ X hρinf hρ ht₀ ht₁ hαχ hXc
     (htests X₁ X₂ hX₁ hX₂)).mono Set.subset_union_left
 
+/-- **Mixed-term tests from a common amalgam over the presented pair.** English (Lemma 8.4 proof,
+layout (8)): Lemma 7.2 determines the joint type of the candidate over the layout, so candidates
+with the same type over `E(I)` agree on every test, in particular on parameters that are mixed
+terms in both segments. Lean form: if strong maps `g₀ : B₀ → N`, `g₁ : B₁ → N` agree on `E(I)`
+(through `incl₀`, `incl₁`) and identify `d₀` with `d₁`, then `d₀`, `d₁` have equal diagrams with
+every bounded parameter list of `E(I)`. -/
+theorem infra_84_mixed_tests_of_amalgam {E : OrderPresentation K} {D : StableDiagram K}
+    {I : Type u} [LinearOrder I] [Nonempty I] {B₀ B₁ N : Model K.τ} (hB₀ : K.Mem B₀)
+    (hB₁ : K.Mem B₁) (hN : K.Mem N)
+    (incl₀ : Language.Embedding K.τ (E.obj I).carrier B₀.carrier)
+    (incl₁ : Language.Embedding K.τ (E.obj I).carrier B₁.carrier)
+    (g₀ : Language.Embedding K.τ B₀.carrier N.carrier)
+    (g₁ : Language.Embedding K.τ B₁.carrier N.carrier) (hg₀ : K.Strong g₀) (hg₁ : K.Strong g₁)
+    (hcomm : ∀ x, g₀ (incl₀ x) = g₁ (incl₁ x)) {α : Type u} (d₀ : α → B₀.carrier)
+    (d₁ : α → B₁.carrier) (hd : ∀ a, g₀ (d₀ a) = g₁ (d₁ a)) {β : Type u}
+    (p : β → (E.obj I).carrier) {ρ : Cardinal.{u}} (hρinf : aleph0 ≤ ρ) (hj : #(α ⊕ β) ≤ ρ)
+    (ht₀ : D.t ρ ≤ Model.card B₀) (ht₁ : D.t ρ ≤ Model.card B₁) :
+    D.same hj hB₀ hB₁ ht₀ ht₁ (Sum.elim d₀ (fun b => incl₀ (p b)))
+      (Sum.elim d₁ (fun b => incl₁ (p b))) :=
+  D.same_of_amalgam hB₀ hB₁ hN g₀ g₁ hg₀ hg₁ _ _
+    (by rintro (a | b); exacts [hd a, hcomm (p b)]) hρinf hj ht₀ ht₁
+
+/-- **Placed agreement over the pair from a common amalgam.** Candidates over a presented `E(I)` at
+a closed level that are identified by strong maps into a common model agreeing on `E(I)` have
+lifting placements with the same full comparison (via the generator tests of
+`infra_84_generator_transfer_iff`, supplied by `infra_84_mixed_tests_of_amalgam`). -/
+theorem infra_84_agree_of_amalgam [CategoricalUnbounded K] {E : OrderPresentation K}
+    {D : StableDiagram K} {g : Cardinal.{u} → Cardinal.{u}} {μ : Cardinal.{u}} {I : Type u}
+    [LinearOrder I] [Nonempty I] {B₀ B₁ N : Model K.τ} {hB₀ : K.Mem B₀} {hB₁ : K.Mem B₁}
+    (hN : K.Mem N) {incl₀ : Language.Embedding K.τ (E.obj I).carrier B₀.carrier}
+    {incl₁ : Language.Embedding K.τ (E.obj I).carrier B₁.carrier} {α : Type u}
+    (hL : ClosedLevel K E D g μ) (hI : #I = μ)
+    {d₀ : α → B₀.carrier} {d₁ : α → B₁.carrier} {P₀ P₁ : Placement E.lab E.arity I α}
+    (h₀ : P₀.LiftsBounded E D hB₀ incl₀ d₀ μ) (h₁ : P₁.LiftsBounded E D hB₁ incl₁ d₁ μ)
+    (g₀ : Language.Embedding K.τ B₀.carrier N.carrier)
+    (g₁ : Language.Embedding K.τ B₁.carrier N.carrier) (hg₀ : K.Strong g₀) (hg₁ : K.Strong g₁)
+    (hcomm : ∀ x, g₀ (incl₀ x) = g₁ (incl₁ x)) (hd : ∀ a, g₀ (d₀ a) = g₁ (d₁ a))
+    (X : Set I) {ρ χ : Cardinal.{u}} (hρinf : aleph0 ≤ ρ) (hρ : ρ < μ)
+    (ht₀ : D.t ρ ≤ Model.card B₀) (ht₁ : D.t ρ ≤ Model.card B₁)
+    (hαχ : ∀ {β : Type u}, #β ≤ χ → #(α ⊕ β) ≤ ρ) (hX : #X + 1 + ls K ≤ χ) :
+    P₀.AgreeOn E D P₁ X :=
+  (infra_84_agreeOn_of_generator_tests hL hI h₀ h₁ X hρinf hρ ht₀ ht₁ hαχ hX
+    (fun Y _ hY => infra_84_mixed_tests_of_amalgam hB₀ hB₁ hN incl₀ incl₁ g₀ g₁ hg₀ hg₁ hcomm
+      d₀ d₁ hd (Subtype.val : ↥Y → (E.obj I).carrier) hρinf (hαχ hY) ht₀ ht₁)).mono
+    Set.subset_union_left
+
 end AEC
