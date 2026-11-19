@@ -330,6 +330,41 @@ theorem infra_72_level_hull {P : SingleModelData K} {ν μ : Cardinal.{u}}
     rw [eB.symm_apply_apply, hy k]
     rfl
 
+/-- **Mixed tied freeness restricts to a level-`ν` factor (proved; toward the mixed
+`infra_73_tied_answer`).** If `f : A → B` factors as `A → B₀ → B` with `B₀` at the level `ν` of
+`A`, a mixed tied-free extension `qB` over `B` read back over `B₀` is a same-level tied-free
+extension along `f₀ : A → B₀`. -/
+theorem infra_72_tiedFree_restrict_factor {P : SingleModelData K} {ν μ : Cardinal.{u}}
+    {hν : ν ∈ P.eligible} {hμ : μ ∈ P.eligible} (hνμ : ν ≤ μ)
+    {A B₀ : P.scheme.Object ν hν} {B : P.scheme.Object μ hμ}
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hν A) (P.scheme.asSystem hμ B))
+    (f₀ : SystemArrow K oneVertexShape (P.scheme.asSystem hν A) (P.scheme.asSystem hν B₀))
+    (j : SystemArrow K oneVertexShape (P.scheme.asSystem hν B₀) (P.scheme.asSystem hμ B))
+    (hj : P.scheme.permitted (X := B₀) (Y := B) j)
+    (hcomp : ∀ a, j.onVertex PUnit.unit (f₀.onVertex PUnit.unit a) = f.onVertex PUnit.unit a)
+    (q : TupleOver K oneVertexShape P.scheme hν A)
+    (qB : TupleOver K oneVertexShape P.scheme hμ B) (eB : q.idx ≃ qB.idx)
+    (hidx : #q.idx < ν)
+    (hT : IsTiedFreeMixed f q qB eB) :
+    IsTiedFree f₀ q (qB.restrict j hj) eB := by
+  intro seq ι Z Z0 hlong hι hιν hmv
+  have hmv' : infra_78_isMoveMixed f seq (pushParams j Z) Z0 := by
+    intro i
+    have hcard : #(q.idx ⊕ ι) < ν := by
+      rw [mk_sum, lift_id, lift_id]
+      exact add_lt_of_lt (P.aleph0_le hν) hidx hιν
+    have h0 := hmv i
+    have h1 := P.scheme.diagram_preserved B₀ B j hj
+      (seqJoint (fun k => ⟨(seq.family i k).1, f₀.onVertex (seq.family i k).1
+        (seq.family i k).2⟩) Z) hcard (hcard.trans_le hνμ)
+    have h2 := P.scheme.diagram_trans _ _ _ _ _ _ h0 h1
+    refine infra_73_diagramEq_of_eq h2 (fun _ => rfl) (fun t => ?_)
+    rcases t with k | k
+    · exact Sigma.ext rfl (heq_of_eq (hcomp (seq.family i k).2))
+    · rfl
+  have T := hT seq (pushParams j Z) Z0 hlong hι hιν hmv'
+  exact infra_73_diagramEq_of_eq T (fun _ => rfl) (fun t => by cases t <;> rfl)
+
 /-- **English Lemma 7.2, clause 2 at mixed levels (open).** -/
 theorem infra_72_mixed_level
     (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : ℵ₀ ≤ σ)

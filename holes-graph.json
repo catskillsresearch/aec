@@ -4438,6 +4438,15 @@
    "status": "done",
    "blocker": null,
    "detail": "DONE cycle 97. Replaces the structural iso A = B of the same-level tied_answer: the plan for the mixed tied_answer is to run infra_73_tied_answer at level nu over A -> B0 (B0 the hull of f(A) and the query), with qB restricted to B0 and realized at nu. Axioms clean."
+  },
+  {
+   "id": "infra_72_tiedFree_restrict_factor",
+   "label": "Mixed tied freeness restricts to a level-nu factor A -> B0 -> B",
+   "section": 8,
+   "file": "AEC/Section7/Lemma72Mixed.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "DONE cycle 97. Axioms clean."
   }
  ],
  "edges": [
@@ -8643,8 +8652,13 @@
    "from": "infra_72_level_hull",
    "to": "infra_72_mixed_level",
    "kind": "hard"
+  },
+  {
+   "from": "infra_72_tiedFree_restrict_factor",
+   "to": "infra_72_mixed_level",
+   "kind": "hard"
   }
  ],
- "doneCount": 439,
+ "doneCount": 440,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
