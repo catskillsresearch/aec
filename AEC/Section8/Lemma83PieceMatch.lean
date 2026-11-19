@@ -743,4 +743,65 @@ theorem infra_83_one_match_of_piece (P : SingleModelData K)
     (fun y => by rw [hmY, hh]) ret hret (fun x' z hxz => hmeet x' z (by rw [← hh]; exact hxz)) d
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+open FirstOrder.Language
+
+set_option maxHeartbeats 3200000 in
+/-- **One bounded-list match into an admitted ret-sample (proved assembly).** Every ret-admitted
+sample `N` (`RetSampleLike`, verified on the real samples) supplies a marked pair `M` with
+`ℵ₀ ≤ M.μ`, orders `J ↪o Jp`, the strong identifications `eX`, `F`, a Cor 6.16 family `R`, and the
+`ret` evaluation `G a b = g (ret (g⁻¹ a) (g⁻¹ b))` read in `F(Jp)`, such that any template-side
+piece data over it (as in `infra_83_one_match_of_piece`, with `ret` of the template read as `G`)
+yield `toA`, `h`, `τ` with the square, mark and count clauses. -/
+theorem infra_83_one_match_of_retSample (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) {N : Type u}
+    [(LS83.pairLangM3 P.E Pr.n).Structure N] (hN : RetSampleLike P Pr N) :
+    ∃ (M : MarkedPair K oneVertexShape P.scheme Pr) (J Jp : Type u) (_ : LinearOrder J)
+      (_ : Nonempty J) (_ : LinearOrder Jp) (_ : Nonempty Jp) (emb : J ↪o Jp)
+      (F : Language.Embedding K.τ ((P.scheme.asSystem M.hμ M.Y).obj PUnit.unit).carrier
+        (P.E.obj Jp).carrier)
+      (R : ApproximateRetraction K oneVertexShape P.scheme M.hμ M.X M.Y M.incl)
+      (G : (P.E.obj Jp).carrier → (P.E.obj Jp).carrier → (P.E.obj Jp).carrier),
+      ℵ₀ ≤ M.μ ∧
+      ∀ {J0 : Type u} [LinearOrder J0] [Nonempty J0]
+        {ν : Cardinal.{u}} {hν : ν ∈ P.eligible} {X' Yu : P.scheme.Object ν hν}
+        (ψ : Language.Embedding K.τ ((P.scheme.asSystem hν X').obj PUnit.unit).carrier
+          (P.E.obj J0).carrier) (_ : K.Strong ψ) (e0 : J0 ↪o J)
+        (inclu : SystemArrow K oneVertexShape (P.scheme.asSystem hν X') (P.scheme.asSystem hν Yu))
+        (gY : Language.Embedding K.τ ((P.scheme.asSystem hν Yu).obj PUnit.unit).carrier
+          (P.E.obj Jp).carrier) (_ : K.Strong gY)
+        (_ : ∀ x, gY x ∈ Set.range F)
+        (_ : ∀ x, gY (inclu.onVertex PUnit.unit x) = P.E.map emb (P.E.map e0 (ψ x)))
+        {L₀ : FirstOrder.Language.{u, u}}
+        [L₀.Structure ((P.scheme.asSystem hν Yu).obj PUnit.unit).carrier]
+        [L₀.Structure (P.E.obj Jp).carrier]
+        (mY : ((P.scheme.asSystem hν Yu).obj PUnit.unit).carrier ↪[L₀] (P.E.obj Jp).carrier)
+        (_ : ∀ y, mY y = gY y)
+        (ret : L₀.Functions 2) (_ : ∀ a b, Structure.funMap ret ![a, b] = G a b)
+        (_ : ∀ (x' : ((P.scheme.asSystem hν Yu).obj PUnit.unit).carrier)
+          (z : ((P.scheme.asSystem M.hμ M.X).obj PUnit.unit).carrier),
+          gY x' = F (M.incl.onVertex PUnit.unit z) → ∃ y, x' = inclu.onVertex PUnit.unit y)
+        (m : Fin Pr.n → ((P.scheme.asSystem hν Yu).obj PUnit.unit).carrier)
+        (_ : ∀ k, gY (m k) = F (markY M k)),
+        ∃ (toA : SystemArrow K oneVertexShape (P.scheme.asSystem hν X')
+            (P.scheme.asSystem M.hμ M.X))
+          (h : SystemArrow K oneVertexShape (P.scheme.asSystem hν Yu)
+            (P.scheme.asSystem M.hμ M.Y))
+          (τ : ULift.{u} (Fin Pr.n) ≃ M.bIdx),
+          SystemArrow.comp inclu h = SystemArrow.comp toA M.incl ∧
+          (∀ a : ULift.{u} (Fin Pr.n), h.mapOcc ⟨PUnit.unit, m a.down⟩ = M.b (τ a)) ∧
+          ∀ {idx : Type u} (d : idx → Occurrence K oneVertexShape (P.scheme.asSystem hν Yu)),
+            ν ≤ #{i : R.index // ∀ s, ∃ y, toA.onVertex (d s).1 y =
+              (R.retr i).onVertex (d s).1 (h.onVertex (d s).1 (d s).2)} := by
+  obtain ⟨M, J, Jp, i1, i2, i3, i4, emb, g, eX, F, R, code, hsurj, -, hsX, hsF, hF, hcode, hμ,
+    -, -, -, hev⟩ := hN
+  refine ⟨M, J, Jp, i1, i2, i3, i4, emb, F, R,
+    fun a b => g (Structure.funMap (retM3 P.E Pr.n) ![g.symm a, g.symm b]), hμ, ?_⟩
+  intro J0 _ _ ν hν X' Yu ψ hψ e0 inclu gY hgY hr hX L₀ _ _ mY hmY ret hret hmeet m hm
+  exact infra_83_one_match_of_piece P emb eX F hsurj hsX hsF hF R code hcode _ hev ψ hψ e0
+    inclu gY hgY hr hX mY hmY ret hret hmeet m hm
+end
+
 end AEC

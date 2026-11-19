@@ -7264,6 +7264,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 191: proved."
+  },
+  {
+   "id": "infra_83_one_match_of_retSample",
+   "label": "One bounded-list match into any admitted ret-sample: RetSampleLike N supplies M (aleph0 <= mu), J <-o Jp, strong F, a Cor 6.16 family R and the ret evaluation G read through g, such that template-side piece data over it give toA, h, tau with square, mark and count clauses",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PieceMatch.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 192: proved."
   }
  ],
  "edges": [
@@ -13269,8 +13278,13 @@
    "from": "infra_83_one_match_of_piece",
    "to": "infra_83_bounded_list_match",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_one_match_of_retSample",
+   "to": "infra_83_bounded_list_match",
+   "kind": "hard"
   }
  ],
- "doneCount": 738,
+ "doneCount": 739,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
