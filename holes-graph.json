@@ -4519,6 +4519,24 @@
    "status": "done",
    "blocker": null,
    "detail": "DONE cycle 98. Given a large pair arrow beta : N1 -> N2 matching marks along f1^-1 sigma f2, every base isomorphism e : M1.X = M2.X carries tp(b1/M1.X) to tp(b2 o sigma/M2.X) (positional free extensions along beta o f1 and f2, restriction along f2, CommutesWithIso). The mark-marginal input of the small isolation step of reflection."
+  },
+  {
+   "id": "infra_82_reflect_small_realization",
+   "label": "Lemma 8.2(5) reflection: realize the transported approximation list inside the small base",
+   "section": 8,
+   "file": "AEC/Section8/ComparisonSingle.lean",
+   "status": "open",
+   "blocker": null,
+   "detail": "Cycle 98. Paper par. 34: inside the second small base realize a copy of beta(f1 Z1) over the second small approximation list and the required base entries (bounded realization problem; diagram unchanged under the mixed embedding; mixed saturation). Lean gap: IsSaturated realizes in an extension of M2.X at the same level, not inside M2.X."
+  },
+  {
+   "id": "infra_82_reflect_type_transport",
+   "label": "Lemma 8.2(5) reflection: the small isomorphism transports the joint type",
+   "section": 8,
+   "file": "AEC/Section8/ComparisonSingle.lean",
+   "status": "open",
+   "blocker": null,
+   "detail": "Cycle 98. Paper par. 36: tests below the uniform testing bound matched upstairs over both approximation lists; each list computes the free extension; beta identifies answers; Theorem 6.6 / isolation identifies the joint type; then infra_82_pointed_all. Mark marginal input done (infra_82_mark_reflect_single)."
   }
  ],
  "edges": [
@@ -8767,6 +8785,16 @@
   },
   {
    "from": "infra_82_mark_reflect_single",
+   "to": "infra_82_comparison_single",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_82_reflect_small_realization",
+   "to": "infra_82_comparison_single",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_82_reflect_type_transport",
    "to": "infra_82_comparison_single",
    "kind": "hard"
   }

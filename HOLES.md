@@ -472,6 +472,8 @@ Lean: imports `Section5.Results` and `Section6.Results`. Soft paper chain after 
 | `infra_82_mark_transport_cross_single` | Mark transport between pairs at a larger level (with `infra_82_markedComp`) | [`ComparisonSingle.lean`](AEC/Section8/ComparisonSingle.lean) (**done**, cycle 98) |
 | `infra_82_comparison_preservation_single` | Lemma 8.2(5) for P.scheme, preservation direction | [`ComparisonSingle.lean`](AEC/Section8/ComparisonSingle.lean) (**done**, cycle 98) |
 | `infra_82_mark_reflect_single` | Lemma 8.2(5) reflection: mark marginal transported to the small level | [`ComparisonSingle.lean`](AEC/Section8/ComparisonSingle.lean) (**done**, cycle 98) |
+| `infra_82_reflect_small_realization` | 8.2(5) reflection: realize the transported approximation list inside the small base | [`ComparisonSingle.lean`](AEC/Section8/ComparisonSingle.lean) (open, cycle 98) |
+| `infra_82_reflect_type_transport` | 8.2(5) reflection: small isomorphism transports the joint type | [`ComparisonSingle.lean`](AEC/Section8/ComparisonSingle.lean) (open, cycle 98) |
 | `infra_72_mixed_level` | Lemma 7.2 last sentence (A at a smaller level than B), stated with sorry (audit) | [`Lemma72Mixed.lean`](AEC/Section7/Lemma72Mixed.lean) (open, cycle 96) |
 | `infra_82_tiedFreeMixed_base_equiv` | Mixed tied freeness under a reindexed change of base tuple | [`TiedAlong.lean`](AEC/Section8/TiedAlong.lean) (**done**, cycle 97) |
 | `infra_82_mark_tied_along_single` | Lemma 8.2(4) for `P.scheme`: tied freeness of the mark along arrows (Def 8.1 tied, cycle 97 ruling) | [`TiedAlong.lean`](AEC/Section8/TiedAlong.lean) (**done**, cycle 97) |
