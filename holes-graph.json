@@ -7939,6 +7939,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 266: proved."
+  },
+  {
+   "id": "infra_83_pair_values_small",
+   "label": "infra_83_pair_values plus the uniform piece bound #(FY.obj k) <= ls K for the template's finite pieces (subLangPieces_card + pairLangM2_functions_le); with ls K < mu this is the lam < mu of template_list_data for Y_I ≅ FY.limit I",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PieceMatch.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 267: proved."
   }
  ],
  "edges": [
@@ -14319,8 +14328,13 @@
    "from": "infra_83_subLangPieces_card",
    "to": "infra_83_arity_removal",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_pair_values_small",
+   "to": "infra_83_arity_removal",
+   "kind": "hard"
   }
  ],
- "doneCount": 813,
+ "doneCount": 814,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
