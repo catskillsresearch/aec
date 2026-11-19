@@ -5400,7 +5400,16 @@
    "file": "AEC/Section8/HullReduct83.lean",
    "status": "open",
    "blocker": null,
-   "detail": "Cycle 103 split: the remaining input of HullStrong via hullStrong_of_substructures. Needs a coherent choice N_s <= M (s finite) with s ⊆ N_s, N_s <= N_t for s ⊆ t, #N_s <= ls K, enumerated by ls K many s-ary functions; closure under them is a directed union of the N_s, strong by chain/coherence axioms."
+   "detail": "Cycle 103 split: the remaining input of HullStrong via hullStrong_of_substructures. Needs a coherent choice N_s <= M (s finite) with s ⊆ N_s, N_s <= N_t for s ⊆ t, #N_s <= ls K, enumerated by ls K many s-ary functions; closure under them is a directed union of the N_s, strong by chain/coherence axioms. | Cycle 103: directed system done (infra_83_ls_system). Remaining: the expansion language (for each n and each of ls K slots an n-ary function enumerating N_s for the n-element set s, in increasing enumeration of a well-order of M), closure = union of the N_s over finite s (directed), strong via chain_union/chain_upper or a directed-union lemma."
+  },
+  {
+   "id": "infra_83_ls_system",
+   "label": "Lemma 8.3 proof: coherent finite-subset LS system over an arbitrary index type",
+   "section": 8,
+   "file": "AEC/Section8/LSSystem83.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 103: LS83.subHull/subModel/subIncl (strong, covers base '' s), subInclFactor (strong, commuting) for t ⊊ s, subModel_card <= ls K; port of Section 2 FiniteHull from Fin n to any DecidableEq α. Axioms clean."
   }
  ],
  "edges": [
@@ -10141,8 +10150,13 @@
    "from": "infra_83_vertex_ls_expansion",
    "to": "infra_83_pair_sample_family",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_ls_system",
+   "to": "infra_83_vertex_ls_expansion",
+   "kind": "hard"
   }
  ],
- "doneCount": 535,
+ "doneCount": 536,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

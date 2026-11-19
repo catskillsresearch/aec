@@ -570,6 +570,7 @@ Lean: imports `Section5.Results` and `Section6.Results`. Soft paper chain after 
 | `infra_83_joint_demand` | Lemma 8.3 proof: color extraction with size and saturation as one demand | [`HullTypes83.lean`](AEC/Section8/HullTypes83.lean) (**done**, cycle 103) |
 | `infra_83_hullstrong_substructures` | Lemma 8.3 proof: strong closed substructures give strong term hulls | [`HullReduct83.lean`](AEC/Section8/HullReduct83.lean) (**done**, cycle 103) |
 | `infra_83_vertex_ls_expansion` | Lemma 8.3 proof: LS witness expansion so closed substructures are strong | [`HullReduct83.lean`](AEC/Section8/HullReduct83.lean) (open, cycle 103) |
+| `infra_83_ls_system` | Lemma 8.3 proof: coherent finite-subset LS system over any index type | [`LSSystem83.lean`](AEC/Section8/LSSystem83.lean) (**done**, cycle 103) |
 | `infra_72_mixed_level` | Lemma 7.2 last sentence (A at a smaller level than B), stated with sorry (audit) | [`Lemma72Mixed.lean`](AEC/Section7/Lemma72Mixed.lean) (open, cycle 96) |
 | `infra_82_tiedFreeMixed_base_equiv` | Mixed tied freeness under a reindexed change of base tuple | [`TiedAlong.lean`](AEC/Section8/TiedAlong.lean) (**done**, cycle 97) |
 | `infra_82_mark_tied_along_single` | Lemma 8.2(4) for `P.scheme`: tied freeness of the mark along arrows (Def 8.1 tied, cycle 97 ruling) | [`TiedAlong.lean`](AEC/Section8/TiedAlong.lean) (**done**, cycle 97) |
