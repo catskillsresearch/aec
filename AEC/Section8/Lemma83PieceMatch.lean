@@ -4018,4 +4018,24 @@ theorem infra_83_hull_card_le_finite {L : FirstOrder.Language.{u, u}} {M : Type 
     _ = max ℵ₀ #(Σ i, L.Functions i) := Cardinal.add_eq_self (le_max_left _ _)
 end
 
+
+section
+
+open Hull83 in
+/-- **Uniform size of the sublanguage hull pieces (proved).** Every piece of
+`subLangPieces ψ φ₀ hc hcoh σ hP₀` (the finite pieces of the template `X`/`Y` values) has at
+most `max ℵ₀ #(Σ i, L₀.Functions i)` elements: the uniform bound `lam` of
+`infra_83_template_list_data`. -/
+theorem infra_83_subLangPieces_card {K : AbstractElementaryClass.{u}}
+    {L₀ L : FirstOrder.Language.{u, u}} (ψ : L₀ →ᴸ L) (φ₀ : K.τ →ᴸ L₀)
+    {P : ∀ (M : Type u) [L.Structure M], Prop} {r : ℕ}
+    {c : (m : ℕ) → 0 < m → TpColorB L r m}
+    (hc : ∀ (n : ℕ) (κ : Cardinal.{u}), Joint (TpSampleB P r) n c κ)
+    (hcoh : ∀ {m m' : ℕ} (hm' : 0 < m') (hm : 0 < m) (f : Fin m' ↪o Fin m),
+      c m' hm' = tpResB r f (c m hm))
+    {r₁ : ℕ} (σ : Fin r₁ → Fin r) [NeZero r] [NeZero r₁] (hP₀ : SubHullStrong ψ φ₀ P) (k : ℕ) :
+    #((subLangPieces ψ φ₀ hc hcoh σ hP₀).obj k).carrier ≤ max ℵ₀ #(Σ i, L₀.Functions i) :=
+  @infra_83_hull_card_le_finite L₀ _ (ψ.reduct _) _ _ _
+end
+
 end AEC
