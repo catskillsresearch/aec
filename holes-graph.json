@@ -5455,6 +5455,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 104: LS83.hullStrong_exp (ψ : lsLang K →ᴸ L'; HullStrong (ψ.comp lsInl) for structures with LS-closed reduct, via subOfExp) and LS83.hull_range_sub (term hull of a tuple from a function-closed set stays in it; used for X_H ⊆ X, Y_H ⊆ Y). Axioms clean."
+  },
+  {
+   "id": "infra_83_ls_presentation",
+   "label": "Lemma 8.3 proof (single sort): K with arbitrarily large models has an order presentation from coherent types of LS-closed expansions",
+   "section": 8,
+   "file": "AEC/Section8/LSPairLang83.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 104: LS83.exists_ls_tp_presentation = Hull83.exists_tp_presentation with L = lsLang K, P = LSClosed, hullStrong_lsClosed, lsLang_functions_le (≤ LS(K)), large_lsClosed (exists_ls_expansion). Axioms clean."
   }
  ],
  "edges": [
@@ -10230,8 +10239,13 @@
    "from": "infra_83_ls_pair_lang",
    "to": "infra_83_pair_pieces",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_ls_presentation",
+   "to": "infra_83_template_from_colors",
+   "kind": "hard"
   }
  ],
- "doneCount": 542,
+ "doneCount": 543,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

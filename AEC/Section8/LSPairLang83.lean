@@ -52,3 +52,32 @@ theorem hull_range_sub {N : Type u} [L.Structure N] {ι : Type} (v : ι → N) {
     induction t with
     | var i => exact hv i
     | func f ts ih => exact hR f _ ih
+
+/-- The function symbols of `lsLang K` number at most `LS(K)`. -/
+theorem lsLang_functions_le : max ℵ₀ #(Σ i, (lsLang K).Functions i) ≤ ls K := by
+  refine max_le (isLSBound_ls K).1 (le_trans ?_ lsLang_card_le)
+  exact mk_le_of_injective (f := fun a : (Σ i, (lsLang K).Functions i) =>
+    (Sum.inl a : (lsLang K).Symbols)) Sum.inl_injective
+
+/-- Arbitrarily large models of `K` give arbitrarily large LS-closed expansions. -/
+theorem large_lsClosed
+    (hlarge : ∀ κ : Cardinal.{u}, ∃ M : Model K.τ, K.Mem M ∧ κ ≤ Model.card M) (κ : Cardinal.{u}) :
+    ∃ (N : Type u) (_ : (lsLang K).Structure N), LSClosed (K := K) N ∧ κ ≤ #N := by
+  obtain ⟨M, hM, hκ⟩ := hlarge κ
+  obtain ⟨str, -, hcl⟩ := exists_ls_expansion M hM
+  exact ⟨M.carrier, str, hcl, hκ⟩
+
+/-- **An Ehrenfeucht–Mostowski presentation from the LS witness expansion** (the single-sort
+case of the Lemma 8.3 construction, Shelah's presentation route).  If `K` has arbitrarily large
+models, coherent types of the LS-closed expansions give an order presentation of `K` whose
+models are the direct limits of the hull pieces. -/
+theorem exists_ls_tp_presentation
+    (hlarge : ∀ κ : Cardinal.{u}, ∃ M : Model K.τ, K.Mem M ∧ κ ≤ Model.card M) :
+    ∃ (c : (m : ℕ) → 0 < m → TpColor (lsLang K) m)
+      (hc : ∀ (n : ℕ) (κ : Cardinal.{u}), Joint (TpSample (fun N _ => LSClosed (K := K) N)) n c κ)
+      (hcoh : ∀ {m m' : ℕ} (hm' : 0 < m') (hm : 0 < m) (f : Fin m' ↪o Fin m),
+        c m' hm' = tpRes f (c m hm)),
+      ∀ (I : Type u) [LinearOrder I] [Nonempty I],
+        (tpPresentation hc hcoh hullStrong_lsClosed lsLang_functions_le).obj I =
+          ((tpFinPieces hc hcoh hullStrong_lsClosed).limit I).obj :=
+  exists_tp_presentation (large_lsClosed hlarge) hullStrong_lsClosed lsLang_functions_le
