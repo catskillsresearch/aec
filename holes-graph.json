@@ -4194,7 +4194,7 @@
    "file": "AEC/Section8/Results.lean",
    "status": "open",
    "blocker": null,
-   "detail": "Cycle 96. English (8.2): 'Same-level arrows preserve bounded pair orbits'; orbits are pair isomorphism orbits (line 3173), the base moves. Lean PairOrbitEq M M refl t1 t2 -> PairOrbitEq N N refl (f t1) (f t2) matches (bijective onX allowed; mark fixed entrywise). Proof (paper 3010-3018): Lemma 7.2 free extension of joint types, bounded approximation lists, an automorphism of N.X matching them by bounded diagram homogeneity in C, testing bound, then the pair isomorphism test (clause 3, done for P.scheme as infra_82_pointed_single). Not provided by infra_82_iso_any / infra_75_iso (same base only); no bounded diagram homogeneity lemma exists in Lean yet. | Cycle 96: reduction proved (infra_82_orbit_criterion_single); remaining piece infra_82_orbit_base_auto_single."
+   "detail": "Cycle 96. English (8.2): 'Same-level arrows preserve bounded pair orbits'; orbits are pair isomorphism orbits (line 3173), the base moves. Lean PairOrbitEq M M refl t1 t2 -> PairOrbitEq N N refl (f t1) (f t2) matches (bijective onX allowed; mark fixed entrywise). Proof (paper 3010-3018): Lemma 7.2 free extension of joint types, bounded approximation lists, an automorphism of N.X matching them by bounded diagram homogeneity in C, testing bound, then the pair isomorphism test (clause 3, done for P.scheme as infra_82_pointed_single). Not provided by infra_82_iso_any / infra_75_iso (same base only); no bounded diagram homogeneity lemma exists in Lean yet. | Cycle 96: reduction proved (infra_82_orbit_criterion_single); remaining piece infra_82_orbit_base_auto_single. | Cycle 96: proved given infra_82_mark_tied_along_single and infra_82_orbit_tail_single (infra_82_orbit_preservation_of_tied_single)."
   },
   {
    "id": "infra_84_single",
@@ -4219,9 +4219,9 @@
    "label": "Lemma 8.2(4) for P.scheme: the base automorphism",
    "section": 8,
    "file": "AEC/Section8/PairOrbitSingle.lean",
-   "status": "open",
+   "status": "done",
    "blocker": null,
-   "detail": "Cycle 96. Remaining piece of infra_82_orbit_preservation_single: given a same-level marked arrow f : M -> N and a pair automorphism of M (marks fixed) taking t1 to t2, produce an automorphism e of N.X meeting infra_82_orbit_criterion_single for s = f t1, s' = f t2: base entries, tp(b_N/N.X) kept positionwise, diagram of (b,s,Z) carried to (b,s',eZ). Paper (3010-3018): Lemma 7.2 free extension of joint types, bounded approximation lists, bounded diagram homogeneity (P.scheme.diagram_iso, Def 5.2(3)), testing bound. The global condition on tp(b/N.X) is not a bounded-list condition, so diagram_iso alone does not give it. | Cycle 96: condition (b) (mark type kept) is now automatic under CommutesWithIso (infra_82_mark_type_auto_single). Remaining: an automorphism e of N.X with the diagram condition (c) (and base entries (a), which follow from the resulting SGT). Route: isolating fragment of tp(b_N, f t1/N.X) pushed from M.X (Lemma 7.2 'same isolating fragment'), then e from P.scheme.diagram_iso on N.X matching f Ziso to f(alpha Ziso). Needs: Lemma 7.2 over-B isolation with the pushed fragment, and tied freeness of tp(b_N/N.X) over M.X along f.onX. Finding: StationaryPrescription.along is the untied IsFreeLift, which the repo notes follows from the extension alone; for P.scheme a tied-free hypothesis predicate (like CommutesWithIso) is the faithful reading of 'free extension' (ruling needed)."
+   "detail": "DONE cycle 96 (superseded): base automorphism from bounded diagram homogeneity (infra_82_base_homogeneity_single) and the assembly infra_82_orbit_preservation_of_tied_single. Remaining inputs tracked as infra_82_mark_tied_along_single and infra_82_orbit_tail_single."
   },
   {
    "id": "infra_84_base_testing_single",
@@ -4276,6 +4276,33 @@
    "status": "done",
    "blocker": null,
    "detail": "DONE cycle 96. Images of one list of M.Y under f.onY, alpha.onY. Axioms clean."
+  },
+  {
+   "id": "infra_82_orbit_preservation_of_tied_single",
+   "label": "Lemma 8.2(4) for P.scheme given tied freeness of the mark and diagonal closure",
+   "section": 8,
+   "file": "AEC/Section8/PairOrbitSingle.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "DONE cycle 96. Clause (4) for P.scheme (PairOrbitEq refl -> PairOrbitEq refl along a same-level marked arrow), with two explicit hypotheses tracked separately: (i) IsTiedFreeMixed f.onX of the marks (tp(b'/N.X) in M's positions is the tied free extension of tp(b/M.X)) = infra_82_mark_tied_along_single; (ii) M.mu recursion-closed at every infinite sigma < M.mu, on the clause-(3) tail = infra_82_orbit_tail_single. Proof: all-domination fragment Z of tp(b,t1/M.X); over-B isolation by the pushed fragment (infra_72_over_B_isolation); base automorphism e with e(fZ) = f(alpha Z) (infra_82_base_homogeneity_single); mark type kept (infra_82_mark_type_auto_single); diagram transport; pair isomorphism test (infra_82_pointed_single). Axioms clean."
+  },
+  {
+   "id": "infra_82_mark_tied_along_single",
+   "label": "Lemma 8.2(4) for P.scheme: tied freeness of the mark along same-level marked arrows",
+   "section": 8,
+   "file": "AEC/Section8/PairOrbitSingle.lean",
+   "status": "open",
+   "blocker": null,
+   "detail": "Cycle 96. Needed: for a same-level marked arrow f : M -> N, IsTiedFreeMixed f.onX (b over M.X) (b' o markMap over N.X) refl. English Def 8.1: 'for every arrow X -> X', p_X' is the free extension of p_X'. Lean StationaryPrescription.along is the untied IsFreeLift, which the repo notes follows from the extension alone (infra_73_ext_isFreeLift), so it does not give this. Proposed: a P.scheme hypothesis predicate Pr.TiedAlong (positional via arity, like CommutesWithIso) plus transport from assign to the realizing marks (infra_75_tiedFree_base_congr and a target-side congruence). Needs a ruling: whether 'free extension' in Def 8.1 is the tied notion (as in Sections 6-7)."
+  },
+  {
+   "id": "infra_82_orbit_tail_single",
+   "label": "Lemma 8.2(4) for P.scheme: diagonal closure on the clause-(3) tail",
+   "section": 8,
+   "file": "AEC/Section8/PairOrbitSingle.lean",
+   "status": "open",
+   "blocker": null,
+   "detail": "Cycle 96. Needed: unboundedly many levels in the clause-(3) tail (infra_78_closedTail cap infra_615_closed) that are also recursion-closed at every infinite sigma below them (infra_84_diagonal_tail property). A joint countable tower should do."
   }
  ],
  "edges": [
@@ -8391,8 +8418,23 @@
    "from": "infra_82_orbit_diagram_single",
    "to": "infra_82_orbit_base_auto_single",
    "kind": "hard"
+  },
+  {
+   "from": "infra_82_orbit_preservation_of_tied_single",
+   "to": "infra_82_orbit_preservation_single",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_82_mark_tied_along_single",
+   "to": "infra_82_orbit_preservation_single",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_82_orbit_tail_single",
+   "to": "infra_82_orbit_preservation_single",
+   "kind": "hard"
   }
  ],
- "doneCount": 422,
+ "doneCount": 424,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

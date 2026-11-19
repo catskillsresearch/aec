@@ -204,38 +204,35 @@ theorem infra_82_orbit_diagram_single {P : SingleModelData K}
     {ι γ : Type u} (t₁ t₂ : ι → Occurrence K oneVertexShape (P.scheme.asSystem M.hμ M.Y))
     (hα : ∀ i, α.onY.mapOcc (t₁ i) = t₂ i)
     (Z : γ → Occurrence K oneVertexShape (P.scheme.asSystem M.hμ M.X))
-    (hb : #((N.bIdx ⊕ ι) ⊕ γ) < M.μ) :
+    (hb : #((M.bIdx ⊕ ι) ⊕ γ) < M.μ) :
     P.scheme.DiagramEq (X := N.Y) (Y := N.Y)
-      (seqJoint (seqJoint N.b (fun i => f.onY.mapOcc (t₁ i)))
+      (seqJoint (seqJoint (fun k => N.b (f.markMap k)) (fun i => f.onY.mapOcc (t₁ i)))
         (fun j => N.incl.mapOcc (f.onX.mapOcc (Z j))))
-      (seqJoint (seqJoint N.b (fun i => f.onY.mapOcc (t₂ i)))
+      (seqJoint (seqJoint (fun k => N.b (f.markMap k)) (fun i => f.onY.mapOcc (t₂ i)))
         (fun j => N.incl.mapOcc (f.onX.mapOcc (α.onX.mapOcc (Z j))))) := by
-  have hbN : #((N.bIdx ⊕ ι) ⊕ γ) < N.μ := hlev ▸ hb
+  have hbN : #((M.bIdx ⊕ ι) ⊕ γ) < N.μ := hlev ▸ hb
   have hcommf : ∀ x : Occurrence K oneVertexShape (P.scheme.asSystem M.hμ M.X),
       f.onY.mapOcc (M.incl.mapOcc x) = N.incl.mapOcc (f.onX.mapOcc x) := fun x =>
     congrArg (Sigma.mk x.1) (congrArg (fun g => SystemArrow.onVertex g x.1 x.2) f.comm)
   have hcommα : ∀ x : Occurrence K oneVertexShape (P.scheme.asSystem M.hμ M.X),
       α.onY.mapOcc (M.incl.mapOcc x) = M.incl.mapOcc (α.onX.mapOcc x) := fun x =>
     congrArg (Sigma.mk x.1) (congrArg (fun g => SystemArrow.onVertex g x.1 x.2) α.comm)
-  have hmarkf : ∀ j, f.onY.mapOcc (M.b (f.markMap.symm j)) = N.b j := fun j => by
-    have h := f.preserves_mark (f.markMap.symm j)
-    rw [Equiv.apply_symm_apply] at h
-    exact h
+  have hmarkf : ∀ k, f.onY.mapOcc (M.b k) = N.b (f.markMap k) := fun k => f.preserves_mark k
   have hmarkα : ∀ k, α.onY.mapOcc (M.b k) = M.b k := fun k => by
     have h := α.preserves_mark k
     rw [hαb] at h
     exact h
-  let L : (N.bIdx ⊕ ι) ⊕ γ → Occurrence K oneVertexShape (P.scheme.asSystem M.hμ M.Y) :=
-    seqJoint (seqJoint (fun j => M.b (f.markMap.symm j)) t₁) (fun j => M.incl.mapOcc (Z j))
-  let L' : (N.bIdx ⊕ ι) ⊕ γ → Occurrence K oneVertexShape (P.scheme.asSystem M.hμ M.Y) :=
-    seqJoint (seqJoint (fun j => M.b (f.markMap.symm j)) t₂)
+  let L : (M.bIdx ⊕ ι) ⊕ γ → Occurrence K oneVertexShape (P.scheme.asSystem M.hμ M.Y) :=
+    seqJoint (seqJoint M.b t₁) (fun j => M.incl.mapOcc (Z j))
+  let L' : (M.bIdx ⊕ ι) ⊕ γ → Occurrence K oneVertexShape (P.scheme.asSystem M.hμ M.Y) :=
+    seqJoint (seqJoint M.b t₂)
       (fun j => M.incl.mapOcc (α.onX.mapOcc (Z j)))
   have d1 := P.scheme.diagram_preserved M.Y N.Y f.onY trivial L hb hbN
   have d2 := P.scheme.diagram_preserved M.Y M.Y α.onY trivial L hb hb
   have d3 := P.scheme.diagram_preserved M.Y N.Y f.onY trivial L' hb hbN
   have e1 : (fun x => (⟨(L x).1, f.onY.onVertex (L x).1 (L x).2⟩ :
       Occurrence K oneVertexShape (P.scheme.asSystem N.hμ N.Y))) =
-      seqJoint (seqJoint N.b (fun i => f.onY.mapOcc (t₁ i)))
+      seqJoint (seqJoint (fun k => N.b (f.markMap k)) (fun i => f.onY.mapOcc (t₁ i)))
         (fun j => N.incl.mapOcc (f.onX.mapOcc (Z j))) := by
     funext x
     rcases x with (j | i) | j
@@ -251,7 +248,7 @@ theorem infra_82_orbit_diagram_single {P : SingleModelData K}
     · exact hcommα (Z j)
   have e3 : (fun x => (⟨(L' x).1, f.onY.onVertex (L' x).1 (L' x).2⟩ :
       Occurrence K oneVertexShape (P.scheme.asSystem N.hμ N.Y))) =
-      seqJoint (seqJoint N.b (fun i => f.onY.mapOcc (t₂ i)))
+      seqJoint (seqJoint (fun k => N.b (f.markMap k)) (fun i => f.onY.mapOcc (t₂ i)))
         (fun j => N.incl.mapOcc (f.onX.mapOcc (α.onX.mapOcc (Z j)))) := by
     funext x
     rcases x with (j | i) | j
@@ -263,5 +260,137 @@ theorem infra_82_orbit_diagram_single {P : SingleModelData K}
   rw [e3] at d3
   exact P.scheme.diagram_trans _ _ _ _ _ _
     (P.scheme.diagram_trans _ _ _ _ _ _ (P.scheme.diagram_symm _ _ _ _ d1) d2) d3
+
+/-- Arrows of one-vertex systems are injective on occurrences. -/
+theorem infra_82_mapOcc_injective {X Y : SystemObject K oneVertexShape}
+    (g : SystemArrow K oneVertexShape X Y) {x y : Occurrence K oneVertexShape X}
+    (h : g.mapOcc x = g.mapOcc y) : x = y := by
+  obtain ⟨⟨⟩, a⟩ := x
+  obtain ⟨⟨⟩, b⟩ := y
+  have h2 := eq_of_heq (Sigma.mk.inj h).2
+  have h3 : a = b := (g.onVertex PUnit.unit).injective h2
+  subst h3
+  rfl
+
+/-- **Lemma 8.2(4) for P.scheme, given tied freeness of the mark along the arrow.** On the
+clause-(3) tail, at a level closed for the profile recursion at every smaller size, a same-level
+marked arrow `f : M → N` along which `tp(b′/N.X)` (read in `M`'s mark positions through
+`f.markMap`) is the tied free extension of `tp(b/M.X)` preserves bounded pair orbits. English
+(Lemma 8.2 proof): the joint type over the larger base is the free extension (Lemma 7.2, over-`B`
+isolation by the pushed fragment, `infra_72_over_B_isolation`); "An isomorphism of the two bases
+matching these lists exists by bounded diagram homogeneity in C"
+(`infra_82_base_homogeneity_single`); then the pair isomorphism test (clause 3). -/
+theorem infra_82_orbit_preservation_of_tied_single (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) (hiso : Pr.CommutesWithIso) :
+    ∃ T, ∃ _hT : Tail P.scheme.eligible T,
+      ∀ (M N : MarkedPair K oneVertexShape P.scheme Pr)
+        (f : MarkedArrow K oneVertexShape P.scheme Pr M N),
+        N.μ ∈ T → M.μ = N.μ →
+        (∀ σ, ℵ₀ ≤ σ → σ < M.μ → M.μ ∈ recursionClosedLevels P σ) →
+        IsTiedFreeMixed f.onX (asTuple M.incl M.incl_arrow M.b)
+          (⟨N.μ, N.hμ, N.Y, N.incl, trivial, M.bIdx, fun k => N.b (f.markMap k)⟩ :
+            TupleOver K oneVertexShape P.scheme N.hμ N.X) (Equiv.refl _) →
+        ∀ {ι : Type u} (t₁ t₂ : ι → Occurrence K oneVertexShape (P.scheme.asSystem M.hμ M.Y)),
+          #ι < M.μ →
+          PairOrbitEq M M (Equiv.refl _) t₁ t₂ →
+          PairOrbitEq N N (Equiv.refl _) (fun i => f.onY.mapOcc (t₁ i))
+            (fun i => f.onY.mapOcc (t₂ i)) := by
+  classical
+  obtain ⟨T, hT, H3⟩ := infra_82_pointed_single P Pr
+  refine ⟨T, hT, fun M N f hN hlev hrecAll hTied ι t₁ t₂ hι hO => ?_⟩
+  obtain ⟨α, hαb, -, -, hαt⟩ := hO
+  obtain ⟨γ, Z, hγ, HZ⟩ := M.dominated ι t₁ hι
+  obtain ⟨e, hbij, he⟩ := infra_82_base_homogeneity_single M N hlev f α Z hγ
+  -- sizes
+  obtain ⟨eb, -⟩ := M.realizes
+  have hfinB : Finite M.bIdx :=
+    Finite.of_equiv _ (eb.trans (Pr.arity M.hμ M.X)).symm
+  have hμ0 : ℵ₀ < M.μ := P.aleph0_lt M.hμ
+  have hBlt : #M.bIdx < M.μ := (Cardinal.lt_aleph0_of_finite M.bIdx).trans hμ0
+  have hbι : #(M.bIdx ⊕ ι) < M.μ := by
+    simp only [mk_sum, lift_id]
+    exact add_lt_of_lt (P.aleph0_le M.hμ) hBlt hι
+  have hbιγ : #((M.bIdx ⊕ ι) ⊕ γ) < M.μ := by
+    simp only [mk_sum, lift_id] at hbι ⊢
+    exact add_lt_of_lt (P.aleph0_le M.hμ) hbι hγ
+  have hD := infra_82_orbit_diagram_single hlev f α hαb t₁ t₂ hαt Z hbιγ
+  have hExt := infra_82_marked_arrow_ext_single f t₁
+  have hMk := infra_82_mark_type_auto_single hiso N e hbij
+  have hιN : #ι < N.μ := hlev ▸ hι
+  let σ : Cardinal.{u} := max (#(M.bIdx ⊕ ι)) ℵ₀
+  have hσ : ℵ₀ ≤ σ := le_max_right _ _
+  have hσμ : σ < M.μ := max_lt hbι hμ0
+  have hrec := hrecAll σ hσ hσμ
+  have hσSucc : Order.succ σ ≤ M.μ := Order.succ_le_of_lt hσμ
+  have hidx : #(M.bIdx ⊕ ι) ≤ σ := le_max_left _ _
+  -- the pair-isomorphism test at `N`
+  refine (fun H => ?_) (H3 N N e hN hN hbij trivial (Equiv.refl _)
+    (fun i => f.onY.mapOcc (t₁ i)) (fun i => f.onY.mapOcc (t₂ i)) hιN)
+  suffices hG : ∃ (ρ : Cardinal.{u}) (hρ : ρ ∈ P.scheme.eligible) (top : P.scheme.Object ρ hρ)
+      (g1 g2 : SystemArrow K oneVertexShape (P.scheme.asSystem N.hμ N.Y)
+        (P.scheme.asSystem hρ top)),
+      (∀ v, (g1.onVertex v).comp (N.incl.onVertex v) =
+        (g2.onVertex v).comp ((SystemArrow.comp e N.incl).onVertex v)) ∧
+      (∀ k, g1.mapOcc (N.b (f.markMap k)) = g2.mapOcc (N.b (f.markMap k))) ∧
+      (∀ i, g1.mapOcc (f.onY.mapOcc (t₁ i)) = g2.mapOcc (f.onY.mapOcc (t₂ i))) by
+    obtain ⟨ρ, hρ, top, g1, g2, hc, hvb, hvt⟩ := hG
+    have hbase : ∀ i (x : Occurrence K oneVertexShape (P.scheme.asSystem N.hμ N.X)),
+        f.onY.mapOcc (t₁ i) = N.incl.mapOcc x →
+          f.onY.mapOcc (t₂ i) = N.incl.mapOcc (e.mapOcc x) := by
+      intro i x hx
+      apply infra_82_mapOcc_injective g2
+      rw [← hvt i, hx]
+      exact congrArg (Sigma.mk x.1) (DFunLike.congr_fun (hc x.1) x.2)
+    have hsgt : SameGaloisType
+        (asTuple N.incl N.incl_arrow (Sum.elim (fun i => f.onY.mapOcc (t₁ i)) N.b))
+        (markedJointOver N N e trivial (Equiv.refl _) (fun i => f.onY.mapOcc (t₂ i)))
+        (Equiv.refl _) (Equiv.refl _) := by
+      refine ⟨ρ, hρ, top, g1, g2, trivial, trivial, hc, fun i => ?_⟩
+      rcases i with i | j
+      · exact hvt i
+      · have h := hvb (f.markMap.symm j)
+        rw [Equiv.apply_symm_apply] at h
+        exact h
+    obtain ⟨arr, hX, hσ', hY, hmap⟩ := H.mpr ⟨hbase, hsgt⟩
+    exact ⟨arr, hσ', fun v => by rw [hX]; exact hbij v, hY, hmap⟩
+  -- over-`B` isolation at the common level
+  obtain ⟨μM, hμM, XM, YM, inclM, hinclM, bIM, bM, hrM, hdM⟩ := M
+  obtain ⟨μN, hμN, XN, YN, inclN, hinclN, bIN, bN, hrN, hdN⟩ := N
+  change μM = μN at hlev
+  subst hlev
+  have hW := infra_72_over_B_isolation P σ hσ hμM hrec hσSucc f.onX trivial
+    (asTuple inclM hinclM (seqJoint bM t₁))
+    (asTuple inclN hinclN (seqJoint bN (fun i => f.onY.mapOcc (t₁ i))))
+    (Equiv.sumCongr f.markMap (Equiv.refl ι)) (Equiv.refl _) rfl rfl hidx hbι Z ⟨hγ, HZ⟩ hExt hTied
+  let q' : TupleOver K oneVertexShape P.scheme hμN XN :=
+    ⟨μM, hμN, YN, SystemArrow.comp e inclN, trivial, bIN ⊕ ι,
+      seqJoint bN (fun i => f.onY.mapOcc (t₂ i))⟩
+  have hmarg : SameGaloisType
+      ((asTuple inclN hinclN (seqJoint bN (fun i => f.onY.mapOcc (t₁ i)))).marginal
+        ((Equiv.sumCongr f.markMap (Equiv.refl ι)).symm.trans (Equiv.refl _)))
+      (q'.marginal ((Equiv.sumCongr f.markMap (Equiv.refl ι)).symm.trans (Equiv.refl _)))
+      (Equiv.refl _) (Equiv.refl _) := by
+    rcases hMk with ⟨ρ, hρ, top, g1, g2, h1, h2, hc, hv⟩
+    exact ⟨ρ, hρ, top, g1, g2, h1, h2, hc, fun k => hv (f.markMap k)⟩
+  have hdiag : P.scheme.DiagramEq (X := YN) (Y := q'.host)
+      (alignJoint ((Equiv.sumCongr f.markMap (Equiv.refl ι)).symm.trans (Equiv.refl _))
+        (typeJoint (p := asTuple inclN hinclN (seqJoint bN (fun i => f.onY.mapOcc (t₁ i))))
+          (pushParams f.onX Z)))
+      (alignJoint ((Equiv.sumCongr f.markMap (Equiv.refl ι)).symm.trans (Equiv.refl _))
+        (typeJoint (p := q') (pushParams f.onX Z))) := by
+    have key : ∀ {α : Type u} (xs xs' ys ys' : α → Occurrence K oneVertexShape
+        (P.scheme.asSystem hμN YN)), xs = xs' → ys = ys' →
+        P.scheme.DiagramEq (X := YN) (Y := YN) xs ys →
+        P.scheme.DiagramEq (X := YN) (Y := YN) xs' ys' := by
+      intro _ _ _ _ _ h1 h2 h; subst h1 h2; exact h
+    refine key _ _ _ _ ?_ ?_ hD
+    · funext x; rcases x with (k | i) | j <;> rfl
+    · funext x
+      rcases x with (k | i) | j
+      · rfl
+      · rfl
+      · exact (congrArg inclN.mapOcc (he j)).symm
+  obtain ⟨ρ, hρ, top, g1, g2, -, -, hc, hv⟩ := hW.2 q' _ rfl hmarg hdiag
+  exact ⟨ρ, hρ, top, g1, g2, hc, fun k => hv (Sum.inl k), fun i => hv (Sum.inr i)⟩
 
 end AEC
