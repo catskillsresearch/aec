@@ -661,7 +661,7 @@
    "file": "AEC/Section8/Results.lean",
    "status": "blocked",
    "blocker": null,
-   "detail": "Cycle 95 restatement to the English: template F^b on SystemShape.doubled, values on well-orders of tail size presented by marked pairs val I, order embeddings give MarkedArrows (also between levels), every marked pair at a tail level is isomorphic (vertexwise bijective MarkedArrow) to the value of its size. Hypotheses: IsWorkingPackage W, Section8Arrows W. Open; needs infra_8_general_calculus. Former weaker statement proved for P.scheme (infra_83_lemma_8_3_single). | Cycle 95 (2): for P.scheme, clauses (1), (3) and same-size (2) proved (infra_83_single_parts); cross-level (2) open (infra_83_order_arrows_mixed). General statement additionally needs infra_8_general_calculus. | Cycle 95 (3): full restated statement proved for P.scheme (infra_83_lemma_8_3_full_single). General W remains blocked on infra_8_general_calculus. | Cycle 101 audit: statement weaker than the English (F^b values only vertexwise isomorphic to the pairs, no edge/mark compatibility); tracked by infra_83_template_presents_pair."
+   "detail": "Cycle 95 restatement to the English: template F^b on SystemShape.doubled, values on well-orders of tail size presented by marked pairs val I, order embeddings give MarkedArrows (also between levels), every marked pair at a tail level is isomorphic (vertexwise bijective MarkedArrow) to the value of its size. Hypotheses: IsWorkingPackage W, Section8Arrows W. Open; needs infra_8_general_calculus. Former weaker statement proved for P.scheme (infra_83_lemma_8_3_single). | Cycle 95 (2): for P.scheme, clauses (1), (3) and same-size (2) proved (infra_83_single_parts); cross-level (2) open (infra_83_order_arrows_mixed). General statement additionally needs infra_8_general_calculus. | Cycle 95 (3): full restated statement proved for P.scheme (infra_83_lemma_8_3_full_single). General W remains blocked on infra_8_general_calculus. | Cycle 101 audit: statement weaker than the English (F^b values only vertexwise isomorphic to the pairs, no edge/mark compatibility); tracked by infra_83_template_presents_pair. | Cycle 101: restated to Lemma83Conclusion per ruling (faithful to the English); still sorry (general W blocked on infra_8_general_calculus; single form infra_83_lemma_8_3_full_single open)."
   },
   {
    "id": "lemma_8_4",
@@ -4180,12 +4180,12 @@
   },
   {
    "id": "infra_83_lemma_8_3_full_single",
-   "label": "Restated Lemma 8.3 for P.scheme (all clauses)",
+   "label": "Lemma 8.3 for P.scheme, faithful form: Lemma83Conclusion P.scheme Pr (template values are the marked pairs incl. edge and marks; arrows of (2) are F^b(f) as marked arrows; every pair isomorphic as marked pair to a value)",
    "section": 8,
    "file": "AEC/Section8/Lemma83Single.lean",
-   "status": "done",
+   "status": "open",
    "blocker": null,
-   "detail": "DONE cycle 95. The restated lemma_8_3 conclusion for W := P.scheme with F^b = infra_83_doubledTemplate P.template: values, order arrows (same size and larger size), every pair isomorphic to a value. Axioms clean. | Cycle 101 audit: narrowed infra form (vertexwise isos only); the full English claim is tracked by infra_83_template_presents_pair."
+   "detail": "Cycle 101 restatement (ruling): stated with sorry. The cycle-95 proof now proves infra_83_lemma_8_3_weak_single only. Needs a pair template on the doubled shape whose values are marked pairs functorially (marks as designated terms), e.g. X = E(I), Y = E(I +lex extra) with the mark realized by terms (stationarity), plus marked-arrow uniqueness."
   },
   {
    "id": "infra_82_orbit_preservation_single",
@@ -4918,12 +4918,12 @@
   },
   {
    "id": "infra_83_template_presents_pair",
-   "label": "Lemma 8.3 audit: F^b(I) must present the marked pair val I itself (isos compatible with the pair edge X -> Y and the marks; arrows of (2) = F^b(f)), not only vertexwise isomorphic copies",
+   "label": "Lemma 8.3 audit: F^b(I) must present the marked pair val I itself",
    "section": 8,
    "file": "AEC/Section8/Results.lean",
-   "status": "open",
+   "status": "done",
    "blocker": null,
-   "detail": "Cycle 101 audit. English: 'the values of F^b are the presented small pairs'. Lean lemma_8_3 clause (1) only gives separate per-vertex isos F.present I (inl v) ~ X, (inr v) ~ Y, with no compatibility with the edge, the marks, or the arrows of clause (2); infra_83_doubledTemplate (both copies F.present I, identity edge) satisfies it vacuously, so the Lean statement is weaker than the English. Needed for Lemma 8.4 (term generation of U_{H'} over U_H cup A_{H'}). Proposed restatement: add isos eX, eY with eY o F(edge) = incl o eX and marks preserved, and arrows of (2) equal to F.map f under eX, eY. infra_83_lemma_8_3_full_single stays as the narrowed infra form (tracked here)."
+   "detail": "Cycle 101 resolved: lemma_8_3 restated as Lemma83Conclusion (edge/specified-map compatible presentations eX, eY; arrows of (2) equal F^b(f); marked-pair isomorphism in (3))."
   },
   {
    "id": "infra_84_mixed_tests_of_amalgam",
@@ -4996,6 +4996,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 101: diagramEq_iff_equiv; reduction of the F^b(H)-style presentation to infra_84_segment_model_homogeneity."
+  },
+  {
+   "id": "infra_83_lemma_8_3_weak_single",
+   "label": "Weaker cycle-95 form of Lemma 8.3 for P.scheme (doubled template; vertexwise isos unrelated to the pair edge/marks; some marked arrow per order embedding)",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83Single.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 101: renamed from infra_83_lemma_8_3_full_single; proves only the cycle-95 statement, which is weaker than the English (audit infra_83_template_presents_pair)."
   }
  ],
  "edges": [
@@ -9516,8 +9525,13 @@
    "from": "infra_84_segment_chart_of_diagramEq",
    "to": "infra_84_layout_amalgam",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_lemma_8_3_full_single",
+   "to": "infra_84_layout_amalgam",
+   "kind": "hard"
   }
  ],
- "doneCount": 498,
+ "doneCount": 499,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

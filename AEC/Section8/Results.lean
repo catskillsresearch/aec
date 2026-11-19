@@ -130,38 +130,74 @@ theorem lemma_8_2 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
             PairOrbitEq N₁ N₂ (f₁.markMap.symm.trans (σ.trans f₂.markMap)) (fun i => f₁.onY.mapOcc (t₁ i)) (fun i => f₂.onY.mapOcc (t₂ i)))) := by
   sorry
 
-/-- **Lemma 8.3** (The marked-pair template; restated cycle 95 to the English). English:
-"There is a fixed set-sized finitary term template F^b such that, on a further class of
-sufficiently closed eligible levels, its values on well-orders are objects of C^b. Order
-embeddings give the componentwise arrows of Definition 8.1, also between such levels. Every
-marked pair at a level is isomorphic to a value of this template of that size." `F^b` lives on
-the doubled shape (base copy `inl`, extension copy `inr`); its value on a well-order `I` of a
-tail size is presented by a marked pair `val I` of level `#I`; order embeddings give marked
-arrows (also between levels); and every marked pair at a tail level is isomorphic (vertexwise
-bijective marked arrow) to the value of that size. Hypotheses: the Section 8 conventions. -/
+/-- **The conclusion of Lemma 8.3** (restated cycle 101 to the English; stated once, used by
+`lemma_8_3` and by the single-scheme tip `infra_83_lemma_8_3_full_single`). English: "There is a
+fixed set-sized finitary term template F^b such that, on a further class of sufficiently closed
+eligible levels, its values on well-orders are objects of C^b. Order embeddings give the
+componentwise arrows of Definition 8.1, also between such levels. Every marked pair at a level is
+isomorphic to a value of this template of that size."
+Lean: `F^b` lives on the doubled shape (base copy `inl`, extension copy `inr`, edge `inl v → inr v`).
+(1) its value on a well-order `I` of tail size *is* the marked pair `val I` (level `#I`): vertexwise
+isomorphisms `eX`, `eY` of `F^b(I)` with the base and the extension that carry the edge of `F^b(I)`
+to the pair's inclusion and the specified maps of each copy to those of `X`, `Y` (the mark is the
+pair's mark); (2) every order embedding `f : I ↪o J` (also between levels) gives a marked arrow
+`val I → val J` (carrying the mark to the mark) which is `F^b(f)` under `eX`, `eY`; (3) every marked
+pair at a tail level is isomorphic as a marked pair (vertexwise bijective marked arrow) to the value
+of its size. (Cycle 95–100 form, `infra_83_lemma_8_3_weak_single`, only asked for unrelated
+per-vertex isomorphisms in (1) and arbitrary marked arrows in (2); audit
+`infra_83_template_presents_pair`.) -/
+def Lemma83Conclusion {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
+    (W : WorkingScheme K S) (P : StationaryPrescription K S W) : Prop :=
+  ∃ F : TermTemplate K S.doubled, ∃ T, ∃ _hT : Tail W.eligible T,
+    ∃ val : (I : Type u) → [LinearOrder I] → [WellFoundedLT I] → [Nonempty I] →
+        #I ∈ T → MarkedPair K S W P,
+    ∃ eX : (I : Type u) → [LinearOrder I] → [WellFoundedLT I] → [Nonempty I] →
+        (hI : #I ∈ T) → ∀ v, ((F.present I).obj (Sum.inl v)).carrier ≃[K.τ]
+          ((W.asSystem (val I hI).hμ (val I hI).X).obj v).carrier,
+    ∃ eY : (I : Type u) → [LinearOrder I] → [WellFoundedLT I] → [Nonempty I] →
+        (hI : #I ∈ T) → ∀ v, ((F.present I).obj (Sum.inr v)).carrier ≃[K.τ]
+          ((W.asSystem (val I hI).hμ (val I hI).Y).obj v).carrier,
+      -- (1) the values are the marked pairs (edge and specified maps carried over)
+      (∀ (I : Type u) [LinearOrder I] [WellFoundedLT I] [Nonempty I] (hI : #I ∈ T),
+        (val I hI).μ = #I ∧
+        (∀ v x, (val I hI).incl.onVertex v (eX I hI v x) =
+          eY I hI v ((F.present I).edge
+            (show S.doubled.specified (Sum.inl v) (Sum.inr v) from rfl) x)) ∧
+        (∀ i j (h : S.specified i j) x,
+          (W.asSystem (val I hI).hμ (val I hI).X).edge h (eX I hI i x) =
+            eX I hI j ((F.present I).edge
+              (show S.doubled.specified (Sum.inl i) (Sum.inl j) from h) x)) ∧
+        (∀ i j (h : S.specified i j) x,
+          (W.asSystem (val I hI).hμ (val I hI).Y).edge h (eY I hI i x) =
+            eY I hI j ((F.present I).edge
+              (show S.doubled.specified (Sum.inr i) (Sum.inr j) from h) x))) ∧
+      -- (2) order embeddings give marked arrows, equal to `F^b(f)` under the presentations
+      (∀ (I J : Type u) [LinearOrder I] [WellFoundedLT I] [Nonempty I]
+          [LinearOrder J] [WellFoundedLT J] [Nonempty J] (f : I ↪o J)
+          (hI : #I ∈ T) (hJ : #J ∈ T),
+        ∃ arr : MarkedArrow K S W P (val I hI) (val J hJ),
+          (∀ v x, arr.onX.onVertex v (eX I hI v x) =
+            eX J hJ v ((F.onOrder f).onVertex (Sum.inl v) x)) ∧
+          (∀ v x, arr.onY.onVertex v (eY I hI v x) =
+            eY J hJ v ((F.onOrder f).onVertex (Sum.inr v) x))) ∧
+      -- (3) every marked pair at a tail level is isomorphic, as a marked pair, to a value
+      (∀ M : MarkedPair K S W P, M.μ ∈ T →
+        ∃ (I : Type u) (_ : LinearOrder I) (_ : WellFoundedLT I) (_ : Nonempty I)
+          (hI : #I ∈ T), #I = M.μ ∧
+          ∃ arr : MarkedArrow K S W P M (val I hI),
+            (∀ v, Function.Bijective (arr.onX.onVertex v)) ∧
+            ∀ v, Function.Bijective (arr.onY.onVertex v))
+
+/-- **Lemma 8.3** (The marked-pair template; restated cycle 101 to the English, see
+`Lemma83Conclusion`). English: "There is a fixed set-sized finitary term template F^b such that,
+on a further class of sufficiently closed eligible levels, its values on well-orders are objects of
+C^b. Order embeddings give the componentwise arrows of Definition 8.1, also between such levels.
+Every marked pair at a level is isomorphic to a value of this template of that size."
+Hypotheses: the Section 8 conventions. -/
 theorem lemma_8_3 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
     (W : WorkingScheme K S) (P : StationaryPrescription K S W)
     (_hpack : IsWorkingPackage W) (_harr : Section8Arrows W)
-    (_hiso : P.CommutesWithIso) :
-    ∃ F : TermTemplate K S.doubled, ∃ T, ∃ _hT : Tail W.eligible T,
-      ∃ val : (I : Type u) → [LinearOrder I] → [WellFoundedLT I] → [Nonempty I] →
-          #I ∈ T → MarkedPair K S W P,
-        (∀ (I : Type u) [LinearOrder I] [WellFoundedLT I] [Nonempty I] (hI : #I ∈ T),
-          (val I hI).μ = #I ∧
-          ∀ v, Nonempty (((F.present I).obj (Sum.inl v)).carrier ≃[K.τ]
-                ((W.asSystem (val I hI).hμ (val I hI).X).obj v).carrier) ∧
-              Nonempty (((F.present I).obj (Sum.inr v)).carrier ≃[K.τ]
-                ((W.asSystem (val I hI).hμ (val I hI).Y).obj v).carrier)) ∧
-        (∀ (I J : Type u) [LinearOrder I] [WellFoundedLT I] [Nonempty I]
-            [LinearOrder J] [WellFoundedLT J] [Nonempty J] (_f : I ↪o J)
-            (hI : #I ∈ T) (hJ : #J ∈ T),
-          Nonempty (MarkedArrow K S W P (val I hI) (val J hJ))) ∧
-        (∀ M : MarkedPair K S W P, M.μ ∈ T →
-          ∃ (I : Type u) (_ : LinearOrder I) (_ : WellFoundedLT I) (_ : Nonempty I)
-            (hI : #I ∈ T), #I = M.μ ∧
-            ∃ arr : MarkedArrow K S W P M (val I hI),
-              (∀ v, Function.Bijective (arr.onX.onVertex v)) ∧
-              ∀ v, Function.Bijective (arr.onY.onVertex v)) := by
+    (_hiso : P.CommutesWithIso) : Lemma83Conclusion W P := by
   sorry
 
 /-- The conclusion of **Lemma 8.4** (stated once, used by `lemma_8_4` and by the single-scheme

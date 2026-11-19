@@ -442,7 +442,8 @@ Lean: imports `Section5.Results` and `Section6.Results`. Soft paper chain after 
 | `infra_83_single_parts` | Lemma 8.3 for `P.scheme`: template, values, same-size arrows, pairs are values | [`Lemma83Single.lean`](AEC/Section8/Lemma83Single.lean) (**done**, cycle 95) |
 | `infra_83_order_arrows_mixed` | Lemma 8.3(2) cross-level order arrows for `P.scheme` | [`Lemma83Single.lean`](AEC/Section8/Lemma83Single.lean) (**done**, cycle 95) |
 | `infra_82_pair_extend_mixed` | Cross-level marked-pair extension for `P.scheme` | [`Lemma83Single.lean`](AEC/Section8/Lemma83Single.lean) (**done**, cycle 95) |
-| `infra_83_lemma_8_3_full_single` | Restated Lemma 8.3 for `P.scheme`, all clauses | [`Lemma83Single.lean`](AEC/Section8/Lemma83Single.lean) (**done**, cycle 95) |
+| `infra_83_lemma_8_3_full_single` | Lemma 8.3 for `P.scheme`, faithful (cycle 101) form `Lemma83Conclusion` | [`Lemma83Single.lean`](AEC/Section8/Lemma83Single.lean) (open, cycle 101; stated with sorry) |
+| `infra_83_lemma_8_3_weak_single` | Weaker cycle-95 form of Lemma 8.3 for `P.scheme` (vertexwise isos only) | [`Lemma83Single.lean`](AEC/Section8/Lemma83Single.lean) (**done**, cycle 95; weaker than the English) |
 | `infra_83_lemma_8_3_single` | Lean `lemma_8_3` statement for `W := P.scheme` | [`MarkedPairExists.lean`](AEC/Section8/MarkedPairExists.lean) (**done**, cycle 94, categoricity; `lemma_8_3` itself stays open) |
 | `infra_85_lemma_8_5_single` | Lean `lemma_8_5` statement for `W := P.scheme` | [`MarkedPairExists.lean`](AEC/Section8/MarkedPairExists.lean) (**done**, cycle 94, categoricity + pair extension; audit: Lean 8.5 lacks the chain/union clause, restatement needed) |
 | `infra_82_orbit_preservation_single` | Lemma 8.2(4) for `P.scheme`: same-level arrows preserve pair orbits (under Def 8.1 `CommutesWithIso` + `TiedAlong`) | [`TiedAlong.lean`](AEC/Section8/TiedAlong.lean) (**done**, cycle 97) |
@@ -516,7 +517,7 @@ Lean: imports `Section5.Results` and `Section6.Results`. Soft paper chain after 
 | `infra_84_two_segment_generated` | Lemma 8.4 (P.scheme): both segments lie in the jointly generated sub-presentation | [`TermGen84Single.lean`](AEC/Section8/TermGen84Single.lean) (**done**, cycle 101) |
 | `infra_84_pair_bounded_generation` | Lemma 8.4 (P.scheme): bounded generation in the two-segment presentation | [`TermGen84Single.lean`](AEC/Section8/TermGen84Single.lean) (**done**, cycle 101) |
 | `infra_84_pair_generator_tests_agree` | Lemma 8.4 (P.scheme): bounded generator tests over the segments give full placed agreement | [`TermGen84Single.lean`](AEC/Section8/TermGen84Single.lean) (**done**, cycle 101) |
-| `infra_83_template_presents_pair` | Lemma 8.3 audit: F^b(I) must present the marked pair itself (edge/mark-compatible isos) | [`Results.lean`](AEC/Section8/Results.lean) (open, cycle 101) |
+| `infra_83_template_presents_pair` | Lemma 8.3 audit: F^b(I) must present the marked pair itself (edge/mark-compatible isos) | [`Results.lean`](AEC/Section8/Results.lean) (**done**, cycle 101: restated as `Lemma83Conclusion`) |
 | `infra_84_mixed_tests_of_amalgam` | Lemma 8.4 (P.scheme): mixed-term tests from a common amalgam over the pair | [`TermGen84Single.lean`](AEC/Section8/TermGen84Single.lean) (**done**, cycle 101) |
 | `infra_84_agree_of_amalgam` | Lemma 8.4 (P.scheme): placed agreement from a common amalgam over the pair | [`TermGen84Single.lean`](AEC/Section8/TermGen84Single.lean) (**done**, cycle 101) |
 | `infra_84_tests_of_sameGaloisType` | Lemma 8.4: equal Galois types give all bounded tests over the base | [`TermGen84Single.lean`](AEC/Section8/TermGen84Single.lean) (**done**, cycle 101) |
@@ -535,7 +536,7 @@ Lean: imports `Section5.Results` and `Section6.Results`. Soft paper chain after 
 | `infra_84_C_tests_single` | Lemma 8.4 for `P.scheme`: tests from C alone, uniform k(σ) | [`Lemma84Single.lean`](AEC/Section8/Lemma84Single.lean) (**done**, cycle 96) |
 | `infra_84_layout_testing_single` | Lemma 8.4 for `P.scheme`: joint tests with U (natural layout (8)) | `AEC/Section8/Lemma84Single.lean` (open, cycle 96) |
 | `infra_84_single` | `Lemma84Conclusion P.scheme Pr` (uniform testing bound; no both_off) | `AEC/Section8/Results.lean` (open, cycle 96) |
-| `lemma_8_3` | Lemma 8.3 | `AEC/Section8/Results.lean:142` (restated, cycle 95) |
+| `lemma_8_3` | Lemma 8.3 | `AEC/Section8/Results.lean:197` (restated, cycle 101: `Lemma83Conclusion`) |
 | `lemma_8_4` | Lemma 8.4 | `AEC/Section8/Results.lean:242` (restated, cycle 95; conclusion `Lemma84Conclusion`) |
 | `lemma_8_5` | Lemma 8.5 | `AEC/Section8/Results.lean:255` (restated, cycle 95) |
 | `theorem_8_6` |  Theorem 8.6 | `AEC/Section8/Results.lean` (**restated, open**: nonempty objects, doubled shape, marked-pair correspondence) |

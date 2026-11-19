@@ -13,7 +13,8 @@ embeddings give the componentwise arrows of Definition 8.1, also between such le
 pair at a level is isomorphic to a value of this template of that size."
 Proved here for `P.scheme`: the doubled template, the values, the same-size order arrows, and
 every pair isomorphic to a value. The cross-level order arrows come from `infra_82_pair_extend_mixed` (Theorem 7.9 mixed
-primeness), giving the full restated statement `infra_83_lemma_8_3_full_single`.
+primeness), giving the cycle-95 statement `infra_83_lemma_8_3_weak_single` (weaker than the English; the
+faithful `infra_83_lemma_8_3_full_single` is open).
 -/
 
 universe u
@@ -65,7 +66,7 @@ Theorem 7.9 tail: each well-order `I` of a tail size has a marked pair `val I` o
 base and extension are isomorphic to the two copies of `F^b(I)`; order embeddings between
 well-orders of one size give marked arrows; and every marked pair at a tail level is isomorphic
 (vertexwise bijective marked arrow) to the value of its size. The cross-level part of clause (2)
-(`#I < #J`) is in `infra_83_lemma_8_3_full_single`. -/
+(`#I < #J`) is in `infra_83_lemma_8_3_weak_single`. -/
 theorem infra_83_single_parts (P : SingleModelData K)
     (Pr : StationaryPrescription K oneVertexShape P.scheme) :
     ∃ T, ∃ _hT : Tail P.scheme.eligible T,
@@ -181,12 +182,16 @@ theorem infra_82_pair_extend_mixed (P : SingleModelData K)
   intro h1
   exact congrArg (Sigma.mk PUnit.unit) h1
 
-/-- **Lemma 8.3 for the Prop 5.6 scheme (restated English form, all clauses).** The restated
+/-- **Weaker (cycle 95–100) form of Lemma 8.3 for the Prop 5.6 scheme (proved).** This proves the
+cycle-95 restatement, which is weaker than the English (audit `infra_83_template_presents_pair`,
+cycle 101): clause (1) only gives per-vertex isomorphisms unrelated to the pair's inclusion and
+marks, and clause (2) gives some marked arrow, not `F^b(f)`. The faithful statement is
+`Lemma83Conclusion` (`infra_83_lemma_8_3_full_single`, open). The cycle-95
 `lemma_8_3` conclusion for `W := P.scheme` with `F^b = infra_83_doubledTemplate P.template`:
 values on well-orders of tail size, marked arrows from order embeddings (same size by
 `infra_82_pair_extend_same_level`, larger size by `infra_82_pair_extend_mixed`), and every marked
 pair isomorphic to the value of its size. -/
-theorem infra_83_lemma_8_3_full_single (P : SingleModelData K)
+theorem infra_83_lemma_8_3_weak_single (P : SingleModelData K)
     (Pr : StationaryPrescription K oneVertexShape P.scheme) :
     ∃ F : TermTemplate K oneVertexShape.doubled, ∃ T, ∃ _hT : Tail P.scheme.eligible T,
       ∃ val : (I : Type u) → [LinearOrder I] → [WellFoundedLT I] → [Nonempty I] →
@@ -241,5 +246,18 @@ theorem infra_83_lemma_8_3_full_single (P : SingleModelData K)
     obtain ⟨arr, -⟩ := infra_82_pair_extend_mixed P Pr (val I hI) (val J hJ) hlev e trivial
     exact ⟨arr⟩
   · exact h2 I J f hI hJ heq
+
+/-- **Lemma 8.3 for the Prop 5.6 scheme, faithful form (open).** The restated
+`Lemma83Conclusion` (cycle 101, matching the English: the template values are the marked pairs,
+edge and marks included; order embeddings give the marked arrows `F^b(f)`; every marked pair is
+isomorphic as a marked pair to the value of its size) for `W := P.scheme`. English (Lemma 8.3):
+"There is a fixed set-sized finitary term template F^b such that, on a further class of
+sufficiently closed eligible levels, its values on well-orders are objects of C^b. Order
+embeddings give the componentwise arrows of Definition 8.1, also between such levels. Every marked
+pair at a level is isomorphic to a value of this template of that size." -/
+theorem infra_83_lemma_8_3_full_single (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) :
+    Lemma83Conclusion P.scheme Pr := by
+  sorry
 
 end AEC
