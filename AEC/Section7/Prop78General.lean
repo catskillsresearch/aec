@@ -1523,4 +1523,61 @@ theorem infra_79_retraction_pair_bounded (P : SingleModelData K) :
     refine ⟨(lA (a + 1)).onVertex PUnit.unit z, (hlA' _ z).trans (hz.trans ?_)⟩
     rw [← hyx, hlU']
 
+/-- **Mixed–mixed transitivity of tied freeness (cycle 93).** As `infra_78_tiedFreeMixed_trans`
+with the second leg also across levels (`ν ≤ l ≤ μ`). -/
+theorem infra_78_tiedFreeMixed_trans_mm
+    {P : SingleModelData K} {ν l μ : Cardinal.{u}} {hν : ν ∈ P.eligible} {hl : l ∈ P.eligible}
+    {hμ : μ ∈ P.eligible}
+    {X : P.scheme.Object ν hν} {A : P.scheme.Object l hl} {B : P.scheme.Object μ hμ}
+    (g : SystemArrow K oneVertexShape (P.scheme.asSystem hν X) (P.scheme.asSystem hl A))
+    (hg : P.scheme.permitted (X := X) (Y := A) g)
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hl A) (P.scheme.asSystem hμ B))
+    (hf : P.scheme.permitted (X := A) (Y := B) f)
+    (q : TupleOver K oneVertexShape P.scheme hμ B) (hνμ : ν ≤ l) (hlμ : l ≤ μ)
+    (hXA : IsTiedFreeMixed g ((q.restrict f hf).restrict g hg) (q.restrict f hf) (Equiv.refl _))
+    (hAB : IsTiedFreeMixed f (q.restrict f hf) q (Equiv.refl _)) :
+    IsTiedFreeMixed (SystemArrow.comp g f) (q.restrict (SystemArrow.comp g f) trivial) q
+      (Equiv.refl _) := by
+  classical
+  intro seq ι Z Z0 hκ hι hιν hmove
+  let b : ApproximationSequence (q.restrict f hf) :=
+    { τ := #ι
+      κIndex := seq.κIndex
+      family := fun j k => pushOcc g (seq.family j k)
+      concat_bounded := seq.concat_bounded.trans_le hνμ
+      few_exceptions := fun {β} W hW => by
+        have hWτ : #β ≤ seq.τ := hW.trans hι
+        obtain ⟨W0, hW0⟩ := infra_78_move_query_mixed g hg hνμ seq W (hW.trans_lt hιν)
+        have ht := hXA seq W W0 hκ hWτ (hW.trans_lt hιν) hW0
+        refine le_trans ?_ (seq.few_exceptions W0 hWτ)
+        refine Cardinal.mk_le_of_injective (f := fun j => ⟨j.1, fun hgood => j.2 ?_⟩)
+          (by
+            intro j₁ j₂ hj
+            apply Subtype.ext
+            have := congrArg Subtype.val hj
+            exact this)
+        have e1 := P.scheme.diagram_symm _ _ _ _ ht
+        have e2 := P.scheme.diagram_trans _ _ _ _ _ _ e1 hgood
+        have e3 := P.scheme.diagram_trans _ _ _ _ _ _ e2 (hW0 j.1)
+        erw [infra_78_anchored_refl (q.restrict f hf) W] at e3
+        exact e3 }
+  have hκb : b.τ + ℵ₀ < #b.κIndex := (add_le_add hι le_rfl).trans_lt hκ
+  have hιb : #ι ≤ b.τ := le_rfl
+  have hιμ : #ι < l := hιν.trans_le hνμ
+  obtain ⟨Z1, hZ1⟩ := infra_78_move_query_mixed f hf hlμ b Z hιμ
+  have hq := hAB b Z Z1 hκb hιb hιμ hZ1
+  have hcι : ℵ₀ ≤ #ι + ℵ₀ := le_add_self
+  obtain ⟨k, hk1, hk2⟩ := infra_78_exists_outside_two
+    {k | ¬ P.scheme.DiagramEq (X := q.host) (Y := X)
+      (typeJoint (p := q.restrict (SystemArrow.comp g f) trivial) Z0)
+      (seqJoint (seq.family k) Z0)}
+    {k | ¬ P.scheme.DiagramEq (X := q.host) (Y := A)
+      (typeJoint (p := q.restrict f hf) Z1) (seqJoint (b.family k) Z1)}
+    hcι (seq.few_exceptions Z0 hι) (b.few_exceptions Z1 hιb) hκb
+  simp only [Set.mem_ofPred_eq, not_not] at hk1 hk2
+  have a1 := P.scheme.diagram_trans _ _ _ _ _ _ hk1 (hmove k)
+  have a2 := P.scheme.diagram_trans _ _ _ _ _ _ a1 (P.scheme.diagram_symm _ _ _ _ (hZ1 k))
+  have a3 := P.scheme.diagram_trans _ _ _ _ _ _ a2 (P.scheme.diagram_symm _ _ _ _ hk2)
+  exact P.scheme.diagram_trans _ _ _ _ _ _ a3 hq
+
 end AEC
