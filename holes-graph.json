@@ -5860,6 +5860,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 106: infra_83_pairMS2_limit_local. The coherent global iso F_X(I) ≅ F(J_I) stays in infra_83_X_hull_eq_FJ."
+  },
+  {
+   "id": "infra_83_pairMS2_X_pieces_coord",
+   "label": "Lemma 8.3 proof: X_k ≅ F(J_k) sends the a-th J-coordinate of the piece to the skeleton point of j a, with j : Fin (k+1) → J_k injective",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83SampleLikeY.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 106: infra_83_pairMS2_X_pieces_coord (first ingredient for coherence of the piece isos along piece maps)."
   }
  ],
  "edges": [
@@ -10975,8 +10984,13 @@
    "from": "infra_83_pairMS2_limit_local",
    "to": "infra_83_Y_hull_eq_FZ",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_pairMS2_X_pieces_coord",
+   "to": "infra_83_X_hull_eq_FJ",
+   "kind": "hard"
   }
  ],
- "doneCount": 584,
+ "doneCount": 585,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

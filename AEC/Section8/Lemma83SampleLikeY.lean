@@ -325,4 +325,71 @@ theorem infra_83_pairMS2_limit_local (P : SingleModelData K)
   exact ⟨FX, FY, hiso, fun I _ _ => ⟨fun x => (FX.limit I).joint x,
     fun x => (FY.limit I).joint x⟩⟩
 
+/-- **`X_k ≅ F(J_k)` sends coordinates to skeleton points**: the `τ`-isomorphism of the
+`X`-piece onto `F(J_k)` maps the hull element of the `a`-th `J`-coordinate to the skeleton
+point of an injectively chosen `j a ∈ J_k`. -/
+theorem infra_83_pairMS2_X_pieces_coord (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) :
+    ∃ (c : (m : ℕ) → 0 < m → Hull83.TpColorB (LS83.pairLangM3 P.E Pr.n) 3 m)
+      (hc : ∀ (n : ℕ) (κ : Cardinal.{u}),
+        Hull83.Joint (Hull83.TpSampleB (fun N _ => pairMAdmittedS2 P.E Pr.n N) 3) n c κ),
+      (∀ {m m' : ℕ} (hm' : 0 < m') (hm : 0 < m) (f : Fin m' ↪o Fin m),
+        c m' hm' = Hull83.tpResB 3 f (c m hm)) ∧
+      ∀ k : ℕ,
+        ∃ (J : Type u) (_ : LinearOrder J) (_ : Nonempty J) (H : Set J) (_ : Nonempty H)
+          (ε : (Hull83.subHullModel ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+            ((LS83.pairInlR P.E).comp (LS83.lsInl K))
+            ((Hull83.witB hc k).v ∘ Prod.map id (fun _ : Fin 1 => (0 : Fin 3)))).carrier ↪[K.τ]
+            (P.E.obj H).carrier) (jH : Fin (k + 1) → H),
+          Function.Bijective ε ∧ Function.Injective jH ∧
+          ∀ x a, Hull83.subHullEmb ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+              ((LS83.pairInlR P.E).comp (LS83.lsInl K))
+              ((Hull83.witB hc k).v ∘ Prod.map id (fun _ : Fin 1 => (0 : Fin 3))) x =
+              (Hull83.witB hc k).v (a, 0) →
+            ε x = P.E.skeleton (jH a) := by
+  obtain ⟨c, hc, hcoh, hθ⟩ := infra_83_pairMS2_coherent_colors P Pr
+  refine ⟨c, hc, hcoh, fun k => ?_⟩
+  obtain ⟨J, Jp, i1, i2, i3, i4, emb, g, hX, hch, hcx, hτf, hτr⟩ := (Hull83.witB hc k).mem.1.2
+  have hpt : ∀ p : Fin (k + 1) × Fin 1, ∃ j, P.E.skeleton (emb j) =
+      g ((Hull83.witB hc k).v (p.1, 0)) := fun p =>
+    (hcx _).1 ((thetaM_zero _ _ _).1 (Hull83.witB_realize hc hθ k p.1 0))
+  choose j hj using hpt
+  obtain ⟨T, hne, hset⟩ : ∃ (T : Set (P.E.obj Jp).carrier) (_ : Nonempty (Lab83.chart emb T)),
+      g '' Set.range (@Hull83.hullVal _ _ (((psiM P.E Pr.n).comp (chiM P.E Pr.n)).reduct _) _
+        ((Hull83.witB hc k).v ∘ Prod.map id (fun _ : Fin 1 => (0 : Fin 3)))) =
+        Set.range (P.E.map (Lab83.chartEmb emb T)) := by
+    obtain ⟨hne, hset⟩ := xHull_eq_chart P.E Pr.n emb g hX hch _ j hj
+    exact ⟨_, hne, hset⟩
+  let f := (sampleEmb P.E Pr.n g hτf hτr).comp
+    (Hull83.subHullEmb ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+      ((LS83.pairInlR P.E).comp (LS83.lsInl K))
+      ((Hull83.witB hc k).v ∘ Prod.map id (fun _ : Fin 1 => (0 : Fin 3))))
+  have hrange : Set.range f = Set.range (P.E.map (Lab83.chartEmb emb T)) := by
+    rw [← hset]
+    ext y
+    constructor
+    · rintro ⟨x, rfl⟩
+      exact ⟨_, ⟨x, rfl⟩, rfl⟩
+    · rintro ⟨_, ⟨x, rfl⟩, rfl⟩
+      exact ⟨x, rfl⟩
+  obtain ⟨ε, hbij, hε⟩ := emb_equiv_of_range f _ hrange
+  have hmem : ∀ a : Fin (k + 1), j (a, 0) ∈ Lab83.chart emb T := fun a => by
+    have h1 : P.E.skeleton (emb (j (a, 0))) ∈ Set.range (P.E.map (Lab83.chartEmb emb T)) := by
+      rw [← hset, hj (a, 0)]
+      exact ⟨_, ⟨Quotient.mk _ (Term.var (a, 0)), rfl⟩, rfl⟩
+    obtain ⟨y, hy⟩ := Lab83.skeleton_mem_range (E := P.E) (Lab83.chartEmb emb T) h1
+    have : y.1 = j (a, 0) := emb.injective hy
+    exact this ▸ y.2
+  refine ⟨J, i1, i2, _, hne, ε, fun a => ⟨j (a, 0), hmem a⟩, hbij, ?_, ?_⟩
+  · intro a b hab
+    have h2 : j (a, 0) = j (b, 0) := congrArg Subtype.val hab
+    have h3 := (hj (a, 0)).symm.trans ((congrArg (fun z => P.E.skeleton (emb z)) h2).trans (hj (b, 0)))
+    exact (Hull83.witB hc k).inj 0 (g.injective h3)
+  · intro x a hx
+    apply (P.E.map (Lab83.chartEmb emb T)).injective
+    rw [hε x, P.E.skeleton_natural]
+    show g _ = _
+    rw [hx]
+    exact (hj (a, 0)).symm
+
 end AEC
