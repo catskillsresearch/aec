@@ -253,4 +253,46 @@ theorem infra_83_conclusion_of_realizing_onto_values (P : SingleModelData K)
   exact ⟨realEq, hr, infra_83_dominated_of_realizes_onto' P Pr (hT0 hI) (incl I (Tail.mem hT hI))
     (fun j : ULift.{u} (Fin Pr.n) => mk I (Tail.mem hT hI) j.down) realEq hr honto⟩
 
+/-- **Realizing the prescribed type on a cofinal class of levels suffices (proved).** If above
+every eligible level there is an eligible level `μ` at which the values on all well-orders of
+size `μ` realize `p`, then the values on all well-orders of eligible size do: embed `I` as the
+left summand of `I ⊕ₗ μ.ord.ToType` (size `μ`) and use `infra_83_values_realize_down`. -/
+theorem infra_83_values_realize_of_cofinal (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme)
+    (X Y : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
+      P.scheme.Object #I hI)
+    (incl : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
+      SystemArrow K oneVertexShape (P.scheme.asSystem hI (X I hI))
+        (P.scheme.asSystem hI (Y I hI)))
+    (mk : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
+      Fin Pr.n → Occurrence K oneVertexShape (P.scheme.asSystem hI (Y I hI)))
+    (harr : ∀ (I J : Type u) [LinearOrder I] [Nonempty I] [LinearOrder J] [Nonempty J]
+      (f : I ↪o J) (hI : #I ∈ P.eligible) (hJ : #J ∈ P.eligible),
+      ∃ (onX : SystemArrow K oneVertexShape (P.scheme.asSystem hI (X I hI))
+          (P.scheme.asSystem hJ (X J hJ)))
+        (onY : SystemArrow K oneVertexShape (P.scheme.asSystem hI (Y I hI))
+          (P.scheme.asSystem hJ (Y J hJ))),
+        SystemArrow.comp (incl I hI) onY = SystemArrow.comp onX (incl J hJ) ∧
+        ∀ i, (⟨(mk I hI i).1, onY.onVertex (mk I hI i).1 (mk I hI i).2⟩ :
+          Occurrence K oneVertexShape (P.scheme.asSystem hJ (Y J hJ))) = mk J hJ i)
+    (hcof : ∀ κ : Cardinal.{u}, κ ∈ P.eligible → ∃ μ, κ ≤ μ ∧ ∃ hμ : μ ∈ P.eligible,
+      ∀ (J : Type u) [LinearOrder J] [WellFoundedLT J] [Nonempty J] (hJ : #J ∈ P.eligible),
+        #J = μ →
+        ∃ realEq : ULift.{u} (Fin Pr.n) ≃ (Pr.assign hJ (X J hJ)).idx,
+          SameGaloisType
+            (asTuple (incl J hJ) trivial (fun j : ULift.{u} (Fin Pr.n) => mk J hJ j.down))
+            (Pr.assign hJ (X J hJ)) realEq (Equiv.refl _))
+    (I : Type u) [LinearOrder I] [WellFoundedLT I] [Nonempty I] (hI : #I ∈ P.eligible) :
+    ∃ realEq : ULift.{u} (Fin Pr.n) ≃ (Pr.assign hI (X I hI)).idx,
+      SameGaloisType (asTuple (incl I hI) trivial (fun j : ULift.{u} (Fin Pr.n) => mk I hI j.down))
+        (Pr.assign hI (X I hI)) realEq (Equiv.refl _) := by
+  obtain ⟨μ, hle, hμ, H⟩ := hcof #I hI
+  have hcard : #(I ⊕ₗ μ.ord.ToType) = μ := by
+    show #(I ⊕ μ.ord.ToType) = μ
+    rw [Cardinal.mk_sum, Cardinal.lift_id, Cardinal.lift_id, Cardinal.mk_ord_toType]
+    exact Cardinal.add_eq_right (P.aleph0_le hμ) hle
+  have hJ : #(I ⊕ₗ μ.ord.ToType) ∈ P.eligible := by rw [hcard]; exact hμ
+  exact infra_83_values_realize_down P Pr X Y incl mk harr I (I ⊕ₗ μ.ord.ToType)
+    (sumLexEmbedLeftIncl I _) hI hJ (H _ hJ hcard)
+
 end AEC

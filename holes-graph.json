@@ -5049,7 +5049,7 @@
    "file": "AEC/Section8/Lemma83Single.lean",
    "status": "open",
    "blocker": null,
-   "detail": "Cycle 101 split ('Bounded horizontal arity'). | Cycle 109: reduced (infra_83_marked_of_sub) to embedding the template value Y_I over X_I into a Lemma 8.2(1) marked pair over X_I with b_I going to its mark. | Cycle 109: realizes descends along pair arrows across levels (infra_83_realizes_descend); remaining: a pair arrow from the template value into a realizing pair (e.g. into a value at a larger level known to realize, or into a sample-derived pair)."
+   "detail": "Cycle 101 split ('Bounded horizontal arity'). | Cycle 109: reduced (infra_83_marked_of_sub) to embedding the template value Y_I over X_I into a Lemma 8.2(1) marked pair over X_I with b_I going to its mark. | Cycle 109: realizes descends along pair arrows across levels (infra_83_realizes_descend); remaining: a pair arrow from the template value into a realizing pair (e.g. into a value at a larger level known to realize, or into a sample-derived pair). | Cycle 109: reduced to realizing on a cofinal class of levels (infra_83_values_realize_of_cofinal); the paper's argument (colors record the mark's type over finite parts + Lemma 6.11 / retractions) is the remaining new math."
   },
   {
    "id": "infra_83_all_dominated",
@@ -6391,6 +6391,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 109: proved (with infra_83_dominated_of_realizes_onto', TupleOver.reidx83, infra_83_sgt_reidx). Open inputs: (R) infra_83_bounded_arity_free; (O) one route to infra_83_all_dominated (the paper's route is Lemma 7.6 isolation + Prop 7.5 constructive primeness, which gives domination directly and can be fed to infra_83_conclusion_of_marked_values instead)."
+  },
+  {
+   "id": "infra_83_values_realize_of_cofinal",
+   "label": "Lemma 8.3 proof (P.scheme): template values realize p on all eligible well-orders once they do on all well-orders of a cofinal class of eligible levels",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83Assembly.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 109: proved (I embeds as left summand of I ⊕ₗ μ.ord.ToType; infra_83_values_realize_down)."
   }
  ],
  "edges": [
@@ -11886,8 +11895,13 @@
    "from": "infra_83_conclusion_of_realizing_onto_values",
    "to": "infra_83_lemma_8_3_full_single",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_values_realize_of_cofinal",
+   "to": "infra_83_bounded_arity_free",
+   "kind": "hard"
   }
  ],
- "doneCount": 647,
+ "doneCount": 648,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
