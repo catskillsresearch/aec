@@ -6868,6 +6868,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 149: proved."
+  },
+  {
+   "id": "infra_83_good_codes_of_match_ret",
+   "label": "With the eval law, surjective eX and bijective codes, codes cover every X_I-match, so at least #X_I codes send matched Y_I into matched X_I given only the Y_I-match (with ret) and the sort intersection",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83RetGood.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 152: proved."
   }
  ],
  "edges": [
@@ -12648,8 +12657,13 @@
    "from": "infra_83_ret_good_in",
    "to": "infra_83_pairMS3_rebase",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_good_codes_of_match_ret",
+   "to": "infra_83_pairMS3_rebase",
+   "kind": "hard"
   }
  ],
- "doneCount": 698,
+ "doneCount": 699,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
