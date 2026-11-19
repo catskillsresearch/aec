@@ -612,4 +612,230 @@ theorem infra_78_matrix_limit_step_def77 (σ : Cardinal.{u}) (hσ : ℵ₀ ≤ �
 
 end LimitAssemblyDef77
 
+
+section LimitCoconeDef77
+variable {P : SingleModelData K} {ρ κ : Cardinal.{u}} {hκ : κ ∈ P.eligible}
+
+/-- **Invariant (5) at a limit for any covering cocone, under Definition 7.7 (proved, cycle
+93).** As `infra_78_limit_inv5_cocone`, with the cofinality hypothesis replaced by the per-stage
+seed and Definition 7.7 for `pA` at `κ` (as `infra_78_matrix_limit_step_def77`). -/
+theorem infra_78_limit_inv5_cocone_def77 (σ : Cardinal.{u}) (hσ : ℵ₀ ≤ σ)
+    (hrec : κ ∈ recursionClosedLevels P σ) (hσSucc : Order.succ σ ≤ κ)
+    {δ : (Order.succ ρ).ord.ToType}
+    (hδ : Order.IsSuccLimit δ) (X Y : Set.Iio δ → P.scheme.Object κ hκ)
+    (pair : ∀ j, SystemArrow K oneVertexShape (P.scheme.asSystem hκ (X j))
+      (P.scheme.asSystem hκ (Y j)))
+    (sX : ∀ {a b : Set.Iio δ}, a ≤ b →
+      SystemArrow K oneVertexShape (P.scheme.asSystem hκ (X a)) (P.scheme.asSystem hκ (X b)))
+    (hXt : ∀ {a b c : Set.Iio δ} (h₁ : a ≤ b) (h₂ : b ≤ c),
+      sX (h₁.trans h₂) = SystemArrow.comp (sX h₁) (sX h₂))
+    (Xb : P.scheme.Object κ hκ)
+    (g : ∀ j, SystemArrow K oneVertexShape (P.scheme.asSystem hκ Xb) (P.scheme.asSystem hκ (X j)))
+    (hg : ∀ {a b : Set.Iio δ} (h : a ≤ b), SystemArrow.comp (g a) (sX h) = g b)
+    {uIdx : Type u} (b : ∀ j, uIdx → Occurrence K oneVertexShape (P.scheme.asSystem hκ (Y j)))
+    (hidx : #uIdx ≤ σ)
+    {ν : Cardinal.{u}} {hν : ν ∈ P.eligible} {A : P.scheme.Object ν hν}
+    (pA : TupleOver K oneVertexShape P.scheme hν A) (hνκ : ν ≤ κ) (hpA : #pA.idx < ν)
+    (ι0 : SystemArrow K oneVertexShape (P.scheme.asSystem hν A) (P.scheme.asSystem hκ Xb))
+    (eA : pA.idx ≃ uIdx)
+    (hseed : ∀ j, IsTiedFreeMixed (SystemArrow.comp ι0 (g j)) pA
+      (infra_78_markTuple (pair j) (b j)) eA)
+    (hD : ∀ (C : SameLevelChain P hκ)
+      (gA : SystemArrow K oneVertexShape (P.scheme.asSystem hν A)
+        (P.scheme.asSystem hκ (C.obj 0 C.hlim.1)))
+      (_hgA : P.scheme.permitted (X := A) (Y := C.obj 0 C.hlim.1) gA)
+      (bU : TupleOver K oneVertexShape P.scheme hκ C.unionObj) (e : pA.idx ≃ bU.idx),
+      bU.ν = κ →
+      IsTiedFreeMixed gA pA (bU.restrict (C.toUnion 0 C.hlim.1) (C.toUnion_arrow 0 C.hlim.1)) e →
+      (∀ (i : Ordinal.{u}) (hi : i < C.δ),
+        IsTiedFree (C.le C.hlim.1 hi (bot_le : (0 : Ordinal.{u}) ≤ i))
+          (bU.restrict (C.toUnion 0 C.hlim.1) (C.toUnion_arrow 0 C.hlim.1))
+          (bU.restrict (C.toUnion i hi) (C.toUnion_arrow i hi)) (Equiv.refl _)) →
+      IsTiedFree (C.toUnion 0 C.hlim.1)
+        (bU.restrict (C.toUnion 0 C.hlim.1) (C.toUnion_arrow 0 C.hlim.1)) bU (Equiv.refl _))
+    (h5 : ∀ j, IsTiedFree (g j) ((infra_78_markTuple (pair j) (b j)).restrict (g j) trivial)
+      (infra_78_markTuple (pair j) (b j)) (Equiv.refl _))
+    (Xδ Yδ : P.scheme.Object κ hκ)
+    (lX : ∀ j, SystemArrow K oneVertexShape (P.scheme.asSystem hκ (X j)) (P.scheme.asSystem hκ Xδ))
+    (lY : ∀ j, SystemArrow K oneVertexShape (P.scheme.asSystem hκ (Y j)) (P.scheme.asSystem hκ Yδ))
+    (pδ : SystemArrow K oneVertexShape (P.scheme.asSystem hκ Xδ) (P.scheme.asSystem hκ Yδ))
+    (hcX : ∀ {a c : Set.Iio δ} (h : a ≤ c), SystemArrow.comp (sX h) (lX c) = lX a)
+    (hsq : ∀ j, SystemArrow.comp (pair j) (lY j) = SystemArrow.comp (lX j) pδ)
+    (hcovX : ∀ x : (Xδ.model).carrier, ∃ j y, (lX j).onVertex PUnit.unit y = x)
+    (gδ : SystemArrow K oneVertexShape (P.scheme.asSystem hκ Xb) (P.scheme.asSystem hκ Xδ))
+    (hgδ : ∀ j, SystemArrow.comp (g j) (lX j) = gδ)
+    (bδ : uIdx → Occurrence K oneVertexShape (P.scheme.asSystem hκ Yδ))
+    (hbδ : ∀ j k, bδ k = pushOcc (lY j) (b j k)) :
+    IsTiedFree gδ ((infra_78_markTuple pδ bδ).restrict gδ trivial)
+      (infra_78_markTuple pδ bδ) (Equiv.refl _) := by
+  classical
+  let C := infra_78_partialChain hδ X sX hXt Xδ lX hcX hcovX
+  let j0 : Set.Iio δ := ⟨infra_78_stg δ 0 C.hlim.1, infra_78_stg_lt δ 0 C.hlim.1⟩
+  obtain rfl : SystemArrow.comp (g j0) (lX j0) = gδ := hgδ j0
+  have hqκ : #uIdx < κ := hidx.trans_lt (Order.succ_le_iff.1 hσSucc)
+  let p : TupleOver K oneVertexShape P.scheme hκ C.unionObj := infra_78_markTuple pδ bδ
+  have hsqx : ∀ j (x : (X j).model.carrier),
+      (lY j).onVertex PUnit.unit ((pair j).onVertex PUnit.unit x) =
+        pδ.onVertex PUnit.unit ((lX j).onVertex PUnit.unit x) := fun j x =>
+    DFunLike.congr_fun (congrArg (fun e => e.onVertex PUnit.unit) (hsq j)) x
+  have hAll : ∀ (i : Ordinal.{u}) (hi : i < C.δ),
+      IsTiedFree
+        (SystemArrow.comp (g j0) (C.le C.hlim.1 hi (bot_le : (0 : Ordinal.{u}) ≤ i)))
+        ((p.restrict (C.toUnion i hi) (C.toUnion_arrow i hi)).restrict
+          (SystemArrow.comp (g j0) (C.le C.hlim.1 hi (bot_le : (0 : Ordinal.{u}) ≤ i)))
+          (P.scheme.comp (g j0) (C.le C.hlim.1 hi (bot_le : (0 : Ordinal.{u}) ≤ i)) trivial
+            (C.le_arrow C.hlim.1 hi (bot_le : (0 : Ordinal.{u}) ≤ i))))
+        (p.restrict (C.toUnion i hi) (C.toUnion_arrow i hi)) (Equiv.refl _) := by
+    intro i hi
+    let ji : Set.Iio δ := ⟨infra_78_stg δ i hi, infra_78_stg_lt δ i hi⟩
+    have e1 : SystemArrow.comp (g j0) (C.le C.hlim.1 hi (bot_le : (0 : Ordinal.{u}) ≤ i)) =
+        g ji := hg _
+    have hR : infra_78_HostRel (infra_78_markTuple (pair ji) (b ji))
+        (p.restrict (lX ji) trivial) (lY ji) (Equiv.refl _) :=
+      ⟨fun v x => by cases v; exact hsqx ji x, fun k => hbδ ji k⟩
+    have hR' : infra_78_HostRel ((infra_78_markTuple (pair ji) (b ji)).restrict (g ji) trivial)
+        ((p.restrict (lX ji) trivial).restrict (g ji) trivial) (lY ji) (Equiv.refl _) :=
+      ⟨fun v x => by cases v; exact hsqx ji _, fun k => hbδ ji k⟩
+    have h1 := (infra_78_tiedFree_host_target (g ji)
+      ((infra_78_markTuple (pair ji) (b ji)).restrict (g ji) trivial) trivial hR rfl rfl hqκ
+      (Equiv.refl _) (Equiv.refl _) (fun _ => rfl)).1 (h5 ji)
+    have h2 := infra_78_tiedFree_host_source (g ji) trivial hR' rfl rfl hqκ
+      (p.restrict (lX ji) trivial) (Equiv.refl _) (Equiv.refl _) (fun _ => rfl) h1
+    exact infra_78_tiedFree_congr_arrow trivial trivial (p.restrict (lX ji) trivial) e1.symm h2
+  have hR0 : infra_78_HostRel (infra_78_markTuple (pair j0) (b j0))
+      (p.restrict (lX j0) trivial) (lY j0) (Equiv.refl _) :=
+    ⟨fun v x => by cases v; exact hsqx j0 x, fun k => hbδ j0 k⟩
+  have hR0' : infra_78_HostRel ((infra_78_markTuple (pair j0) (b j0)).restrict (g j0) trivial)
+      ((p.restrict (lX j0) trivial).restrict (g j0) trivial) (lY j0) (Equiv.refl _) :=
+    ⟨fun v x => by cases v; exact hsqx j0 _, fun k => hbδ j0 k⟩
+  have h01 := (infra_78_tiedFree_host_target (g j0)
+    ((infra_78_markTuple (pair j0) (b j0)).restrict (g j0) trivial) trivial hR0 rfl rfl hqκ
+    (Equiv.refl _) (Equiv.refl _) (fun _ => rfl)).1 (h5 j0)
+  have h0 := infra_78_tiedFree_host_source (g j0) trivial hR0' rfl rfl hqκ
+    (p.restrict (lX j0) trivial) (Equiv.refl _) (Equiv.refl _) (fun _ => rfl) h01
+  have hS0 := infra_78_sameGalois_of_hostRel (P := P) trivial trivial hR0
+  have hmix : IsTiedFreeMixed (SystemArrow.comp ι0 (g j0)) pA
+      (p.restrict (lX j0) trivial) eA :=
+    infra_79_tiedFreeMixed_right_congr (qB := infra_78_markTuple (pair j0) (b j0))
+      (qB' := p.restrict (lX j0) trivial) (SystemArrow.comp ι0 (g j0)) eA (Equiv.refl _)
+      (hseed j0) hS0 hpA hνκ hνκ
+  have hstage := infra_78_chain_stage_free P σ hσ hκ hrec hσSucc C p rfl hidx Xb (g j0) trivial
+    h0 hAll
+  exact infra_78_general_limit_invariant C p Xb (g j0) trivial hAll
+    ⟨0, C.hlim.1, hD C (SystemArrow.comp ι0 (g j0)) trivial p eA rfl hmix hstage⟩
+
+end LimitCoconeDef77
+
+
+section SeedInv5Def77
+variable {P : SingleModelData K} {κ : Cardinal.{u}} {hκ : κ ∈ P.eligible}
+variable (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : ℵ₀ ≤ σ)
+  {μ : Cardinal.{u}} (hμT : μ ∈ infra_73_tailSet P σ) {uIdx cIdx L : Type u}
+  {ρ : Cardinal.{u}} (hρκ : Order.succ ρ < μ)
+  (Xb : P.scheme.Object μ (Tail.mem (infra_73_tail P σ hσ) hμT)) {ℓ : Cardinal.{u}}
+  (hℓel : ℓ ∈ P.eligible)
+  (cand : (Order.succ ρ).ord.ToType →
+    Infra78Stage P (Tail.mem (infra_73_tail P σ hσ) hμT) (Infra78MarkData μ uIdx) →
+    L → cIdx → μ.ord.ToType)
+  (s0 : Infra78Stage P (Tail.mem (infra_73_tail P σ hσ) hμT) (Infra78MarkData μ uIdx))
+  (e0 : Infra78MarkData μ uIdx)
+
+include hρκ in
+/-- **Invariant (5) at every stage under Definition 7.7 (proved, cycle 93).** As
+`infra_78_rc_inv5_all`, with the cofinality hypothesis replaced by: every stage satisfying (5)
+carries the seed (its mark is the mixed tied free lift of `pA` along `A → X_b → X_k`; in the
+assembly this is `infra_78_stage_transport` + `infra_78_tiedFreeMixed_trans`), and Definition 7.7
+for `pA` at the level `μ`. Limits use `infra_78_limit_inv5_cocone_def77`. -/
+theorem infra_78_rc_inv5_all_def77 (hidx : #(uIdx ⊕ cIdx) ≤ σ)
+    {ν : Cardinal.{u}} {hν : ν ∈ P.eligible} {A : P.scheme.Object ν hν}
+    (pA : TupleOver K oneVertexShape P.scheme hν A) (hνκ : ν ≤ μ) (hpA : #pA.idx < ν)
+    (ι0 : SystemArrow K oneVertexShape (P.scheme.asSystem hν A) (P.scheme.asSystem (Tail.mem (infra_73_tail P σ hσ) hμT) Xb))
+    (eA : pA.idx ≃ uIdx)
+    (hseed : ∀ (k : (Order.succ ρ).ord.ToType)
+      (h : infra_78_StageInv5 Xb (infra_78_rcObj Xb hℓel cand s0 e0 k)),
+      IsTiedFreeMixed (SystemArrow.comp ι0 (infra_78_toArr h.1)) pA
+        (infra_78_markTuple (infra_78_toArr (infra_78_rcObj Xb hℓel cand s0 e0 k).hp)
+          (infra_78_stageMark (infra_78_rcObj Xb hℓel cand s0 e0 k))) eA)
+    (hD : ∀ (C : SameLevelChain P (Tail.mem (infra_73_tail P σ hσ) hμT))
+      (gA : SystemArrow K oneVertexShape (P.scheme.asSystem hν A)
+        (P.scheme.asSystem (Tail.mem (infra_73_tail P σ hσ) hμT) (C.obj 0 C.hlim.1)))
+      (_hgA : P.scheme.permitted (X := A) (Y := C.obj 0 C.hlim.1) gA)
+      (bU : TupleOver K oneVertexShape P.scheme (Tail.mem (infra_73_tail P σ hσ) hμT) C.unionObj) (e : pA.idx ≃ bU.idx),
+      bU.ν = μ →
+      IsTiedFreeMixed gA pA (bU.restrict (C.toUnion 0 C.hlim.1) (C.toUnion_arrow 0 C.hlim.1)) e →
+      (∀ (i : Ordinal.{u}) (hi : i < C.δ),
+        IsTiedFree (C.le C.hlim.1 hi (bot_le : (0 : Ordinal.{u}) ≤ i))
+          (bU.restrict (C.toUnion 0 C.hlim.1) (C.toUnion_arrow 0 C.hlim.1))
+          (bU.restrict (C.toUnion i hi) (C.toUnion_arrow i hi)) (Equiv.refl _)) →
+      IsTiedFree (C.toUnion 0 C.hlim.1)
+        (bU.restrict (C.toUnion 0 C.hlim.1) (C.toUnion_arrow 0 C.hlim.1)) bU (Equiv.refl _))
+    (h5seed : infra_78_StageInv5 Xb s0) (k : (Order.succ ρ).ord.ToType) :
+    infra_78_StageInv5 Xb (infra_78_rcObj Xb hℓel cand s0 e0 k) := by
+  have hsop := infra_78_succOp_stageArr Xb (infra_78_rcl ρ hℓel) cand
+  obtain ⟨hA, -, -⟩ := infra_78_pairChain_laws hρκ s0 (infra_78_succOp Xb (infra_78_rcl ρ hℓel) cand)
+    (infra_78_limMarkE e0) hsop
+  have hM := infra_78_pairMatrix_compLaw hρκ s0 (infra_78_succOp Xb (infra_78_rcl ρ hℓel) cand)
+    (infra_78_limMarkE e0) hsop
+  have hCont := infra_78_pairMatrix_contAtLimits hρκ s0
+    (infra_78_succOp Xb (infra_78_rcl ρ hℓel) cand) (infra_78_limMarkE e0) hsop
+  have hu : #uIdx ≤ σ := (Cardinal.mk_le_of_injective Sum.inl_injective).trans hidx
+  induction k using WellFoundedLT.induction with
+  | _ k IH =>
+  rcases infra_78_stage_trichotomy k with hmin | ⟨β, hβ⟩ | hk
+  · have h : infra_78_rcObj Xb hℓel cand s0 e0 k = s0 := infra_78_pairMatrix_min s0 _ _ hmin
+    rw [h]; exact h5seed
+  · obtain ⟨-, -, -, -, -, -, h5, -⟩ := infra_78_opMatrix_succ P σ hσ hμT hρκ Xb
+      (infra_78_rcl ρ hℓel) cand hidx s0 (infra_78_limMarkE e0) hβ (IH β hβ.lt)
+    exact h5
+  -- limit stage
+  have hsX : ∀ {i j : (Order.succ ρ).ord.ToType} (h : i ≤ j) x,
+      ((infra_78_rcMatrix hρκ Xb hℓel cand s0 e0).stepX h).onVertex PUnit.unit x =
+        (infra_78_rcMap Xb hℓel cand s0 e0 i j).1 x := fun h x =>
+    infra_78_pairMatrix_stepX_apply hρκ s0 _ _ hsop h x
+  have hsY : ∀ {i j : (Order.succ ρ).ord.ToType} (h : i ≤ j) x,
+      ((infra_78_rcMatrix hρκ Xb hℓel cand s0 e0).stepY h).onVertex PUnit.unit x =
+        (infra_78_rcMap Xb hℓel cand s0 e0 i j).2 x := fun h x =>
+    infra_78_pairMatrix_stepY_apply hρκ s0 _ _ hsop h x
+  have IH' : ∀ j : Set.Iio k, infra_78_StageInv5 Xb (infra_78_rcObj Xb hℓel cand s0 e0 j.1) := fun j => IH j.1 j.2
+  have hcoh := infra_78_opMatrix_coherent hρκ Xb (infra_78_rcl ρ hℓel) cand s0 e0
+  obtain ⟨j0, hj0⟩ := not_isMin_iff.1 hk.not_isMin
+  have hgk : infra_78_IsArr Xb (infra_78_rcObj Xb hℓel cand s0 e0 k).X (infra_78_rcObj Xb hℓel cand s0 e0 k).e.g := by
+    have e := (hcoh j0 k hj0.le).1
+    have h := infra_78_isArr_comp (IH j0 hj0).1 (hA j0 k hj0.le).1
+    change infra_78_IsArr Xb (infra_78_rcObj Xb hℓel cand s0 e0 k).X ((infra_78_rcMap Xb hℓel cand s0 e0 j0 k).1 ∘ (infra_78_rcObj Xb hℓel cand s0 e0 j0).e.g) at h
+    rw [← e] at h
+    exact h
+  refine ⟨hgk, ?_⟩
+  exact infra_78_limit_inv5_cocone_def77 σ hσ hμT.1 (infra_73_tail_succ hμT) hk
+    (fun j => (infra_78_rcObj Xb hℓel cand s0 e0 j.1).X) (fun j => (infra_78_rcObj Xb hℓel cand s0 e0 j.1).Y) (fun j => infra_78_toArr (infra_78_rcObj Xb hℓel cand s0 e0 j.1).hp)
+    (fun {a b} h => (infra_78_rcMatrix hρκ Xb hℓel cand s0 e0).stepX (show a.1 ≤ b.1 from h))
+    (fun h₁ h₂ => hM.1 h₁ h₂) Xb
+    (fun j => infra_78_toArr (IH' j).1)
+    (fun {a b} h => infra_78_arrow_ext fun x =>
+      ((hsX (show a.1 ≤ b.1 from h) _).trans ((congrArg _ (infra_78_toArr_apply _ x)).trans
+        (congrFun (hcoh a.1 b.1 h).1 x).symm)).trans (infra_78_toArr_apply _ x).symm)
+    (fun j => infra_78_stageMark (infra_78_rcObj Xb hℓel cand s0 e0 j.1)) hu
+    pA hνκ hpA ι0 eA (fun j => hseed j.1 (IH' j)) hD
+    (fun j => (IH' j).2)
+    (infra_78_rcObj Xb hℓel cand s0 e0 k).X (infra_78_rcObj Xb hℓel cand s0 e0 k).Y (fun j => (infra_78_rcMatrix hρκ Xb hℓel cand s0 e0).stepX j.2.le) (fun j => (infra_78_rcMatrix hρκ Xb hℓel cand s0 e0).stepY j.2.le)
+    (infra_78_toArr (infra_78_rcObj Xb hℓel cand s0 e0 k).hp)
+    (fun {a c'} h => (hM.1 (show a.1 ≤ c'.1 from h) c'.2.le).symm)
+    (fun j => (infra_78_rcMatrix hρκ Xb hℓel cand s0 e0).comm j.2.le)
+    (fun x => by
+      obtain ⟨j, hj, y, hy⟩ := hCont.1 k hk x
+      exact ⟨⟨j, hj⟩, y, hy⟩)
+    (infra_78_toArr hgk)
+    (fun j => infra_78_arrow_ext fun x =>
+      ((hsX j.2.le _).trans ((congrArg _ (infra_78_toArr_apply _ x)).trans
+        (congrFun (hcoh j.1 k j.2.le).1 x).symm)).trans (infra_78_toArr_apply _ x).symm)
+    (infra_78_stageMark (infra_78_rcObj Xb hℓel cand s0 e0 k))
+    (fun j u => by
+      show (⟨PUnit.unit, (infra_78_rcObj Xb hℓel cand s0 e0 k).e.b u⟩ : Occurrence K oneVertexShape _) =
+        ⟨PUnit.unit, ((infra_78_rcMatrix hρκ Xb hℓel cand s0 e0).stepY j.2.le).onVertex PUnit.unit ((infra_78_rcObj Xb hℓel cand s0 e0 j.1).e.b u)⟩
+      rw [(hcoh j.1 k j.2.le).2]
+      exact congrArg (fun y => (⟨PUnit.unit, y⟩ : Occurrence K oneVertexShape
+        (P.scheme.asSystem _ (infra_78_rcObj Xb hℓel cand s0 e0 k).Y))) (hsY j.2.le _).symm)
+
+end SeedInv5Def77
+
 end AEC
