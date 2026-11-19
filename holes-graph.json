@@ -9013,9 +9013,9 @@
    "label": "fid_46_packaging",
    "section": 4,
    "file": "AEC/Section4/BlockInterchange.lean",
-   "status": "open",
+   "status": "done",
    "blocker": null,
-   "detail": "FIDELITY GAP (audit Nov 19): lemma_4_6: board notes the DisjointBlockSwap/OrderIso packaging is degenerate (orderIso_swaps_blocks_empty); the done proof goes through the English pipeline (BlockRegions/LexTree). Verify the registered lemma_4_6 statement is the English one, not the degenerate packaging.",
+   "detail": "FIDELITY GAP (audit Nov 19): lemma_4_6: board notes the DisjointBlockSwap/OrderIso packaging is degenerate (orderIso_swaps_blocks_empty); the done proof goes through the English pipeline (BlockRegions/LexTree). Verify the registered lemma_4_6 statement is the English one, not the degenerate packaging. | VERIFIED Nov 19: registered lemma_4_6 (BlockInterchange.lean:805) is the English form: BlockRegions = monotone region key (convex regions), each region exactly its two blocks (region_blocks), one block entirely before the other (blocks_ordered, firstOnRight), first family avoids R.second, second avoids R.first, conclusion SameNaturalDiagram after interchange. The degenerate DisjointBlockSwap packaging is not the registered statement. No gap.",
    "path": "main"
   }
  ],
@@ -15494,6 +15494,6 @@
    "kind": "hard"
   }
  ],
- "doneCount": 820,
+ "doneCount": 821,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

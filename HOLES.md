@@ -142,7 +142,7 @@ Rule (Lars): Lean statements must match the paper text 100%. Scope: paper-number
 | `fid_105_clause2` | `theorem_10_5` | theorem_10_5: clause (2)'s preservation under strong maps is omitted from the statement. |
 | `fid_106_freelift` | `proposition_10_6` | proposition_10_6: the free-lift clauses for p^B along (mixed) pointed arrows are not yet stated. |
 | `fid_108_clause3` | `lemma_10_8` | lemma_10_8: clause 3 (the prescription recurs at arbitrarily large single-model levels) is not stated. |
-| `fid_46_packaging` | `lemma_4_6` | lemma_4_6: board notes the DisjointBlockSwap/OrderIso packaging is degenerate (orderIso_swaps_blocks_empty); the done proof goes through the English pipeline (BlockRegions/LexTree). Verify the registered lemma_4_6 statement is the English one, not the degenerate packaging. |
+| `fid_46_packaging` | `lemma_4_6` | **Verified, no gap (Nov 19):** registered statement uses `BlockRegions` (convex regions, two adjacent blocks each) = English. Original concern: lemma_4_6: board notes the DisjointBlockSwap/OrderIso packaging is degenerate (orderIso_swaps_blocks_empty); the done proof goes through the English pipeline (BlockRegions/LexTree). Verify the registered lemma_4_6 statement is the English one, not the degenerate packaging. |
 
 Checked and matching the text: `theorem_1_2` (via `IsUniformThreshold`: for infinite λ, μ(λ) ≥ λ, every K with LS(K) ≤ λ, categorical at one κ ≥ μ(λ) ⇒ at all κ' ≥ μ(λ)), `theorem_1_3` (`CategoricalUnbounded K → CategoricalOnTail K`). The untied 6.11/6.12/6.13/6.17 wrappers are degenerate but are not the registered nodes (the registered nodes are the tied, faithful forms).
 
