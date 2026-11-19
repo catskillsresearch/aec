@@ -7993,6 +7993,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 272: proved."
+  },
+  {
+   "id": "infra_83_full_single_of_template_list_piece_arrows",
+   "label": "Lemma 8.3 (full_single) from realization of the template mark + for every template piece system and n, piece-arrow data for (mark, nestedList n) into a marked sample pair (piece Y_u over X_I with preimage d, h over toA, marks to N.b∘tau, >= #I good Cor 6.16 indices); this is the planned tip infra_83_dominated_of_list_piece_arrows",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PieceMatch.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 273: proved."
   }
  ],
  "edges": [
@@ -14398,8 +14407,13 @@
    "from": "infra_83_tuple_match_of_piece_arrow",
    "to": "infra_83_lemma_8_3_full_single",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_full_single_of_template_list_piece_arrows",
+   "to": "infra_83_lemma_8_3_full_single",
+   "kind": "hard"
   }
  ],
- "doneCount": 819,
+ "doneCount": 820,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

@@ -4375,4 +4375,75 @@ theorem infra_83_tuple_match_of_piece_arrow (P : SingleModelData K)
     exact infra_83_sgt_of_piece_arrow P inclu incl' j hj toA N.incl h hh d hd
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+set_option maxHeartbeats 3200000 in
+/-- **`full_single` from realization + piece arrows for the template's nested lists (proved
+reduction; `infra_83_dominated_of_list_piece_arrows`).** As
+`infra_83_full_single_of_template_list_matches`, with each list match supplied by piece-arrow
+data into a marked sample pair (`infra_83_tuple_match_of_piece_arrow`): for every template piece
+system and `n`, a piece `Y_u` of `Y_I` over `X_I` holding a preimage `d` of
+`(mk_I, nestedList n)`, an arrow `h : Y_u → N.Y` over `toA : X_I → N.X` carrying the mark part to
+`N.b ∘ τ`, and at least `#I` Cor 6.16 indices whose retractions send `h(d)` into `toA[X_I]`. -/
+theorem infra_83_full_single_of_template_list_piece_arrows (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) :
+    ∃ (X Y : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
+        P.scheme.Object #I hI)
+      (incl : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
+        SystemArrow K oneVertexShape (P.scheme.asSystem hI (X I hI))
+          (P.scheme.asSystem hI (Y I hI)))
+      (mk : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
+        Fin Pr.n → Occurrence K oneVertexShape (P.scheme.asSystem hI (Y I hI))),
+      (∀ (I : Type u) [LinearOrder I] [WellFoundedLT I] [Nonempty I]
+          (hI : #I ∈ infra_78_closedTail P ∩ infra_615_closed P),
+          (∃ realEq : ULift.{u} (Fin Pr.n) ≃ (Pr.assign hI.2.1 (X I hI.2.1)).idx,
+            SameGaloisType (asTuple (incl I hI.2.1) trivial
+              (fun a : ULift.{u} (Fin Pr.n) => mk I hI.2.1 a.down))
+              (Pr.assign hI.2.1 (X I hI.2.1)) realEq (Equiv.refl _)) ∧
+          ∀ (D : ℕ → Set I) (Piece : Finset I → K.τ.Substructure (Y I hI.2.1).model.carrier),
+            Monotone D → (∀ z, ∃ n, z ∈ D n) → (∀ n, #(D n) < #I) →
+            Monotone Piece → (∀ J, #(Piece J) ≤ ls K) →
+            (∀ J, K.Strong (M := subM83 (Piece J)) (N := (Y I hI.2.1).model) (Piece J).subtype) →
+            (∀ y, ∃ J, y ∈ Piece J) →
+            ∀ n, ∃ (N : MarkedPair K oneVertexShape P.scheme Pr) (hlC : N.μ ∈ infra_615_closed P)
+              (_ : N.μ ∈ infra_78_closedTail P) (_ : #I ≤ N.μ)
+              (toA : SystemArrow K oneVertexShape (P.scheme.asSystem hI.2.1 (X I hI.2.1))
+                (P.scheme.asSystem hlC.1 N.X))
+              (R : ApproximateRetraction K oneVertexShape P.scheme N.hμ N.X N.Y N.incl)
+              (τ : ULift.{u} (Fin Pr.n) ≃ N.bIdx) (Yu : P.scheme.Object #I hI.2.1)
+              (inclu : SystemArrow K oneVertexShape (P.scheme.asSystem hI.2.1 (X I hI.2.1))
+                (P.scheme.asSystem hI.2.1 Yu))
+              (j : SystemArrow K oneVertexShape (P.scheme.asSystem hI.2.1 Yu)
+                (P.scheme.asSystem hI.2.1 (Y I hI.2.1)))
+              (h : SystemArrow K oneVertexShape (P.scheme.asSystem hI.2.1 Yu)
+                (P.scheme.asSystem hlC.1 N.Y))
+              (d : ULift.{u} (Fin Pr.n) ⊕
+                  nestedList83 D (fun J => (Piece J : Set (Y I hI.2.1).model.carrier)) n →
+                Occurrence K oneVertexShape (P.scheme.asSystem hI.2.1 Yu)),
+              SystemArrow.comp inclu j = incl I hI.2.1 ∧
+              SystemArrow.comp inclu h = SystemArrow.comp toA N.incl ∧
+              (∀ s, j.mapOcc (d s) = seqJoint
+                (fun a : ULift.{u} (Fin Pr.n) => mk I hI.2.1 a.down)
+                (fun k => (Y I hI.2.1).occ k.1) s) ∧
+              (∀ a, h.mapOcc (d (Sum.inl a)) = N.b (τ a)) ∧
+              #I ≤ #{i : R.index // ∀ s, ∃ y, toA.onVertex (d s).1 y =
+                (R.retr i).onVertex (d s).1 (h.onVertex (d s).1 (d s).2)}) →
+      Lemma83Conclusion P.scheme Pr := by
+  obtain ⟨X, Y, incl, mk, hred⟩ := infra_83_full_single_of_template_list_matches P Pr
+  refine ⟨X, Y, incl, mk, fun hS => hred fun I _ _ _ hI => ⟨(hS I hI).1, ?_⟩⟩
+  intro D Piece hDm hDc hDk hPm hPk hPS hPc n
+  obtain ⟨N, hlC, hlT, hνl, toA, R, τ, Yu, inclu, j, h, d, hj, hh, hjd, hb, hcount⟩ :=
+    (hS I hI).2 D Piece hDm hDc hDk hPm hPk hPS hPc n
+  obtain ⟨hcard, -, -⟩ := infra_83_nested_lists (P.aleph0_lt hI.2.1) (P.ls_lt hI.2.1) D hDm hDc
+    hDk (fun J => (Piece J : Set (Y I hI.2.1).model.carrier)) hPk
+  obtain ⟨ι, r, hι, hal, dU, himg, hExt, hIso⟩ := infra_83_tuple_match_of_piece_arrow P Pr hI.2
+    (incl I hI.2.1) (fun a : ULift.{u} (Fin Pr.n) => mk I hI.2.1 a.down)
+    (fun k : nestedList83 D (fun J => (Piece J : Set (Y I hI.2.1).model.carrier)) n =>
+      (Y I hI.2.1).occ k.1) (hcard n) N hlC hνl toA R τ Yu inclu j h d hj hh hjd hb hcount
+  exact ⟨N.μ, hlC, hlT, hνl, N.X, N.Y, toA, trivial, N.incl, trivial, ι, r, hι, hal, dU, himg,
+    hExt, hIso⟩
+end
+
 end AEC
