@@ -6094,6 +6094,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 107: orderPieces83Hom (and app lemma); tool for comparing F∘H with F(J_I) in the limit."
+  },
+  {
+   "id": "infra_83_orderPieces_iso_limit",
+   "label": "F faithful on order embeddings; F(order iso) surjective; natural order isos give strong bijective maps of EM values of F-along-order functors",
+   "section": 8,
+   "file": "Lemma83SampleLikeY.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 107: infra_83_map_faithful, infra_83_map_iso_surjective, infra_83_orderPieces_iso_limit."
   }
  ],
  "edges": [
@@ -11369,8 +11378,18 @@
    "from": "infra_83_orderPieces_hom",
    "to": "infra_83_Y_hull_eq_FZ",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_orderPieces_iso_limit",
+   "to": "infra_83_X_hull_eq_FJ",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_83_orderPieces_iso_limit",
+   "to": "infra_83_Y_hull_eq_FZ",
+   "kind": "hard"
   }
  ],
- "doneCount": 610,
+ "doneCount": 611,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

@@ -1690,4 +1690,46 @@ theorem infra_83_orderPieces_hom_app (E : OrderPresentation K) {H H' : ℕ → T
     (orderPieces83Hom E (hid := hid) (hcomp := hcomp) (hid' := hid') (hcomp' := hcomp') g hg).app k x =
       E.map (g k) x := rfl
 
+
+/-- **`F` is faithful on order embeddings**: `F(h₁) = F(h₂)` pointwise forces `h₁ = h₂`. -/
+theorem infra_83_map_faithful (E : OrderPresentation K) {A B : Type u} [LinearOrder A]
+    [Nonempty A] [LinearOrder B] [Nonempty B] (h₁ h₂ : A ↪o B)
+    (h : ∀ x, E.map h₁ x = E.map h₂ x) : h₁ = h₂ := by
+  ext p
+  apply E.skeleton.injective
+  rw [← E.skeleton_natural, ← E.skeleton_natural, h]
+
+/-- `F` of an order isomorphism is surjective. -/
+theorem infra_83_map_iso_surjective (E : OrderPresentation K) {A B : Type u} [LinearOrder A]
+    [Nonempty A] [LinearOrder B] [Nonempty B] (o : A ≃o B) :
+    Function.Surjective (E.map o.toOrderEmbedding) := fun y => by
+  refine ⟨E.map o.symm.toOrderEmbedding y, ?_⟩
+  have h1 : o.symm.toOrderEmbedding.trans o.toOrderEmbedding = (OrderIso.refl B).toOrderEmbedding := by
+    ext b; simp
+  rw [← Language.Embedding.comp_apply, ← E.map_comp, h1, E.map_id]
+  rfl
+
+/-- **Natural order isomorphisms identify the EM values**: if each `g k` is an order
+isomorphism, the induced map of EM values of `k ↦ F(H k)` and `k ↦ F(H' k)` is strong and
+bijective at every `I`. -/
+theorem infra_83_orderPieces_iso_limit (E : OrderPresentation K) {H H' : ℕ → Type u}
+    [∀ k, LinearOrder (H k)] [∀ k, Nonempty (H k)] [∀ k, LinearOrder (H' k)] [∀ k, Nonempty (H' k)]
+    {h : ∀ {k l : ℕ}, (Fin (k + 1) ↪o Fin (l + 1)) → H k ↪o H l}
+    {hid : ∀ k (p : H k), h (idEmb (α := Fin (k + 1))) p = p}
+    {hcomp : ∀ {k l m : ℕ} (e : Fin (k + 1) ↪o Fin (l + 1)) (f : Fin (l + 1) ↪o Fin (m + 1))
+      (p : H k), h (e.trans f) p = h f (h e p)}
+    {h' : ∀ {k l : ℕ}, (Fin (k + 1) ↪o Fin (l + 1)) → H' k ↪o H' l}
+    {hid' : ∀ k (p : H' k), h' (idEmb (α := Fin (k + 1))) p = p}
+    {hcomp' : ∀ {k l m : ℕ} (e : Fin (k + 1) ↪o Fin (l + 1)) (f : Fin (l + 1) ↪o Fin (m + 1))
+      (p : H' k), h' (e.trans f) p = h' f (h' e p)}
+    (g : ∀ k, H k ≃o H' k)
+    (hg : ∀ {k l : ℕ} (e : Fin (k + 1) ↪o Fin (l + 1)) (p : H k), g l (h e p) = h' e (g k p))
+    (I : Type u) [LinearOrder I] [Nonempty I] :
+    Function.Bijective ((orderPieces83Hom E (hid := hid) (hcomp := hcomp) (hid' := hid')
+      (hcomp' := hcomp') (fun k => (g k).toOrderEmbedding) hg).limMap I) ∧
+    K.Strong ((orderPieces83Hom E (hid := hid) (hcomp := hcomp) (hid' := hid')
+      (hcomp' := hcomp') (fun k => (g k).toOrderEmbedding) hg).limMap I) :=
+  ⟨EM83.PiecesHom.limMap_bijective _ I (fun k => infra_83_map_iso_surjective E (g k)),
+    EM83.PiecesHom.limMap_strong _ I⟩
+
 end AEC
