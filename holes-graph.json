@@ -7110,7 +7110,7 @@
    "file": "AEC/Section8/Lemma83TupleDominated.lean",
    "status": "open",
    "blocker": null,
-   "detail": "Open (cycle 174 correction). | Cycles 207-208: domination localized (proved): infra_83_dominated_of_local_arrows (per-c arrows into isolating pairs at the same level) and infra_83_dominated_of_piece_isolation (isolation of tp(d/X) on a piece X <= Y_u <= Y holding a preimage of (b, c); pieces exist by infra_83_piece_with_tuple). Remaining: the isolation on the piece for entries of unbounded width (Prop 7.5 constructive primeness over nested bounded-width lists)."
+   "detail": "Open (cycle 174 correction). | Cycles 207-208: domination localized (proved): infra_83_dominated_of_local_arrows (per-c arrows into isolating pairs at the same level) and infra_83_dominated_of_piece_isolation (isolation of tp(d/X) on a piece X <= Y_u <= Y holding a preimage of (b, c); pieces exist by infra_83_piece_with_tuple). Remaining: the isolation on the piece for entries of unbounded width (Prop 7.5 constructive primeness over nested bounded-width lists). | Cycles 209, 211-212: marked from pieces (infra_83_marked_of_pieces); the prescribed-type clause and relative isolation are local to pieces holding the list (infra_83_realizes_piece_iff, infra_83_relIso_piece_iff). So arity removal may be done on the LS piece of X_I + (b, c) (infra_83_piece_for_list)."
   },
   {
    "id": "infra_83_sgt_of_piece_arrow",
