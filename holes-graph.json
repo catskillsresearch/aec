@@ -3934,6 +3934,15 @@
    "status": "done",
    "blocker": null,
    "detail": "PROVED cycle 93 (axioms clean): Def 7.7 on a cofinal T within infra_78_closedTail gives the hypothesis of infra_78_general_closed. Theorem 7.13 (2) (infra_713_continuity) produces T = infra_712_levels P, which is within infra_78_closedTail."
+  },
+  {
+   "id": "infra_78_general_of_closed_def77",
+   "label": "General Prop 7.8 for marks with closed Def 7.7 levels",
+   "section": 7,
+   "file": "AEC/Section7/Prop78General.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "PROVED cycle 93 (axioms clean): infra_78_general_statement conclusion for a bounded mark whose Def 7.7 tail T lies within infra_78_closedTail (as produced by Theorem 7.13 (2))."
   }
  ],
  "edges": [
@@ -7794,8 +7803,18 @@
    "from": "infra_78_def77_meet_of_closed",
    "to": "infra_78_def77_tail_meet",
    "kind": "soft"
+  },
+  {
+   "from": "infra_78_general_closed",
+   "to": "infra_78_general_of_closed_def77",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_78_def77_meet_of_closed",
+   "to": "infra_78_general_of_closed_def77",
+   "kind": "hard"
   }
  ],
- "doneCount": 382,
+ "doneCount": 383,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

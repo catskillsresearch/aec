@@ -1186,4 +1186,26 @@ theorem infra_78_def77_meet_of_closed {P : SingleModelData K} {μ : Cardinal.{u}
   obtain ⟨κ, hle, hκT⟩ := hT.2 (max x μ)
   exact ⟨κ, (le_max_left _ _).trans hle, hTC hκT, H κ hκT ((le_max_right _ _).trans hle)⟩
 
+/-- **General Prop 7.8 for a mark whose Definition 7.7 levels are closed (proved, cycle 93).**
+The `infra_78_general_statement` conclusion for a bounded mark `|p| ≤ θ` satisfying Definition 7.7
+on a tail `T ⊆ infra_78_closedTail P` ("every sufficiently closed eligible level"). -/
+theorem infra_78_general_of_closed_def77 (P : SingleModelData K) (μ : Cardinal.{u})
+    (hμ : μ ∈ infra_78_closedTail P)
+    (X : P.scheme.Object μ (Tail.mem (infra_78_closedTail_tail P) hμ))
+    (p : TupleOver K oneVertexShape P.scheme (Tail.mem (infra_78_closedTail_tail P) hμ) X)
+    (θ : Cardinal.{u}) (hidxθ : #p.idx ≤ θ) (T : Set Cardinal.{u}) (hT : Tail P.eligible T)
+    (hTC : T ⊆ infra_78_closedTail P)
+    (H : ∀ μ' (hμ' : μ' ∈ T), μ ≤ μ' → infra_78_def77_at p μ' (Tail.mem hT hμ'))
+    (hθ : aleph0 ≤ θ) (hθμ : θ < μ) :
+    ∃ (U : P.scheme.Object μ (Tail.mem (infra_78_closedTail_tail P) hμ))
+      (f : SystemArrow K oneVertexShape (P.scheme.asSystem _ X) (P.scheme.asSystem _ U))
+      (hf : P.scheme.permitted (X := X) (Y := U) f)
+      (b : p.idx → Occurrence K oneVertexShape (P.scheme.asSystem _ U)),
+      SameGaloisType p (asTuple f hf b) (Equiv.refl p.idx) (Equiv.refl p.idx) ∧
+      ∀ {cIdx : Type u} (c : cIdx → Occurrence K oneVertexShape (P.scheme.asSystem _ U)),
+        #cIdx ≤ θ →
+        IsRelativelyIsolated (uIdx := p.idx) (cIdx := cIdx)
+          (asTuple f hf (seqJoint b c)) (Equiv.refl (p.idx ⊕ cIdx)) :=
+  infra_78_general_closed P μ hμ X p θ hidxθ (infra_78_def77_meet_of_closed p T hT hTC H) hθ hθμ
+
 end AEC
