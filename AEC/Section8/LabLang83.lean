@@ -153,6 +153,35 @@ theorem closure_skeleton_eq {J Jp : Type u} [LinearOrder J] [Nonempty J] [Linear
     rw [← hp]
     exact Substructure.fun_mem _ a _ fun k => Substructure.subset_closure ⟨p k, rfl⟩
 
+/-- **Labels are natural under `E(f)`**: `labFun a (E(f) ∘ x) = E(f) (labFun a x)`. -/
+theorem labFun_map {J Jp : Type u} [LinearOrder J] [Nonempty J] [LinearOrder Jp]
+    [Nonempty Jp] (f : J ↪o Jp) {n : ℕ} (a : (labLang E).Functions n)
+    (x : Fin n → (E.obj J).carrier) :
+    labFun a (fun k => E.map f (x k)) = E.map f (labFun a x) := by
+  classical
+  by_cases h : ∃ p : Fin n → J, StrictMono p ∧ ∀ k, E.skeleton (p k) = x k
+  · have h' : ∃ p : Fin n → Jp, StrictMono p ∧ ∀ k, E.skeleton (p k) = E.map f (x k) :=
+      ⟨f ∘ h.choose, f.strictMono.comp h.choose_spec.1, fun k => by
+        rw [← h.choose_spec.2 k, E.skeleton_natural]; rfl⟩
+    have hc : h'.choose = f ∘ h.choose := funext fun k => E.skeleton.injective (by
+      rw [h'.choose_spec.2 k, ← h.choose_spec.2 k, E.skeleton_natural]; rfl)
+    unfold labFun
+    rw [dif_pos h', dif_pos h, E.realize_map]
+    congr 1
+    exact SupportTerm.ext_of_label_eq rfl fun k => by simp [hc]
+  · have h' : ¬ ∃ p : Fin n → Jp, StrictMono p ∧ ∀ k, E.skeleton (p k) = E.map f (x k) := by
+      rintro ⟨p, hp, hpx⟩
+      have hmem : ∀ k, p k ∈ Set.range f := fun k => skeleton_mem_range f ⟨_, (hpx k).symm⟩
+      choose q hq using hmem
+      apply h
+      refine ⟨q, fun k l hkl => ?_, fun k => (E.map f).injective ?_⟩
+      · have := hp hkl
+        rw [← hq k, ← hq l] at this
+        exact f.lt_iff_lt.mp this
+      · rw [E.skeleton_natural, hq k, hpx k]
+    unfold labFun
+    rw [dif_neg h', dif_neg h]
+
 section Transport
 
 variable {N : Type u} (e : (E.obj I).carrier → N)
