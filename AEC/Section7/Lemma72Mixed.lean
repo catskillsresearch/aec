@@ -140,6 +140,44 @@ theorem infra_72_tied_unique_mixed
     (P.scheme.diagram_symm p.host pB1.host _ _ d1) d2
   exact infra_73_diagramEq_of_eq d (fun t => by cases t <;> rfl) (fun t => by cases t <;> rfl)
 
+/-- **Mixed tied freeness transfers along equal Galois types over `B` (proved; step (d) of
+`infra_72_mixed_level`).** If `qB` is a mixed tied-free extension of `q` and `q''` has the same
+Galois type as `qB` over `B` (identity on indices), then `q''` is a mixed tied-free extension of
+`q` as well. -/
+theorem infra_72_tiedFreeMixed_of_sameGalois
+    {P : SingleModelData K} {ν μ : Cardinal.{u}} {hν : ν ∈ P.eligible} {hμ : μ ∈ P.eligible}
+    (hνμ : ν ≤ μ)
+    {A : P.scheme.Object ν hν} {B : P.scheme.Object μ hμ}
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hν A) (P.scheme.asSystem hμ B))
+    (q : TupleOver K oneVertexShape P.scheme hν A)
+    (qB q'' : TupleOver K oneVertexShape P.scheme hμ B)
+    {ι0 : Type u} (eB : q.idx ≃ ι0) (eq'' : q''.idx ≃ ι0) (eqB : qB.idx ≃ ι0)
+    (hBν : qB.ν = μ) (hν'' : q''.ν = μ) (hidx : #ι0 < ν)
+    (hT : IsTiedFreeMixed f q qB (eB.trans eqB.symm))
+    (hSame : SameGaloisType qB q'' eqB eq'') :
+    IsTiedFreeMixed f q q'' (eB.trans eq''.symm) := by
+  intro seq ι Z Z0 hlong hιτ hιν hmove
+  have d1 := hT seq Z Z0 hlong hιτ hιν hmove
+  have hs : #(ι0 ⊕ ι) < ν := by
+    rw [mk_sum, lift_id, lift_id]
+    exact add_lt_of_lt (P.aleph0_le hν) hidx hιν
+  have d2 := infra_78_diagramEq_of_sameGalois hSame Z
+    (by rw [hBν]; exact hs.trans_le hνμ) (by rw [hν'']; exact hs.trans_le hνμ)
+  have d1' := infra_73_diagramEq_of_eq d1 (fun _ => rfl)
+    (ys' := fun t => alignJoint eqB (typeJoint (p := qB) Z) (Sum.map (eB) id t))
+    (fun t => by
+      cases t with
+      | inl k =>
+        simp only [infra_612_anchored, alignJoint, typeJoint, Sum.map_inl, Equiv.trans_apply]
+      | inr j => rfl)
+  have d2' := infra_73_scheme_comp d2 (Sum.map eB id)
+  have d := P.scheme.diagram_trans q.host qB.host q''.host _ _ _ d1' d2'
+  exact infra_73_diagramEq_of_eq d (fun _ => rfl) (fun t => by
+    cases t with
+    | inl k =>
+      simp only [infra_612_anchored, alignJoint, typeJoint, Sum.map_inl, Equiv.trans_apply]
+    | inr j => rfl)
+
 /-- **English Lemma 7.2, clause 2 at mixed levels (open).** -/
 theorem infra_72_mixed_level
     (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : ℵ₀ ≤ σ)

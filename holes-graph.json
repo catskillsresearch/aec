@@ -4402,6 +4402,15 @@
    "status": "done",
    "blocker": null,
    "detail": "DONE cycle 96. Port of infra_73_tied_unique; needs mu in recursionClosedLevels (testing over B via infra_73_differing_test). Axioms clean."
+  },
+  {
+   "id": "infra_72_tiedFreeMixed_of_sameGalois",
+   "label": "Lemma 7.2 mixed, step (d): mixed tied freeness transfers along equal types over B",
+   "section": 8,
+   "file": "AEC/Section7/Lemma72Mixed.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "DONE cycle 96. If qB is mixed tied free over q and q'' has the same Galois type as qB over B, q'' is mixed tied free. Axioms clean."
   }
  ],
  "edges": [
@@ -8587,8 +8596,13 @@
    "from": "infra_72_tied_unique_mixed",
    "to": "infra_72_mixed_level",
    "kind": "hard"
+  },
+  {
+   "from": "infra_72_tiedFreeMixed_of_sameGalois",
+   "to": "infra_72_mixed_level",
+   "kind": "hard"
   }
  ],
- "doneCount": 433,
+ "doneCount": 434,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
