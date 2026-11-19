@@ -2,6 +2,7 @@ module
 
 public import AEC.Section8.Lemma83Isolation
 public import AEC.Section8.Lemma83TupleDominated
+public import AEC.Section8.Lemma83SampleLike
 
 @[expose] public section
 
@@ -277,6 +278,50 @@ theorem infra_83_tuple_count_of_piece_count (P : SingleModelData K) {ν l : Card
   obtain ⟨v, x⟩ := d s
   cases v
   exact hi x
+end
+
+
+section
+variable {K : AbstractElementaryClass.{u}}
+open FirstOrder.Language
+
+/-- **The sample identification is a `τ`-isomorphism (proved).** In a sample-like structure
+(`XSampleLike`: `g : N ≃ F(Jp)` preserving the `τ`-functions and relations of the reduct), `g`
+is an isomorphism of `τ`-structures from the `τ`-reduct of `N` onto `F(Jp)`. -/
+def infra_83_sample_tauEquiv (E : OrderPresentation K) (n : ℕ) {N : Type u}
+    [(LS83.pairLangM3 E n).Structure N] {Jp : Type u} [LinearOrder Jp] [Nonempty Jp]
+    (g : N ≃ (E.obj Jp).carrier)
+    (hfun : ∀ {k} (f : K.τ.Functions k) (x : Fin k → N),
+      g (@Structure.funMap _ _ ((tauRed E n).reduct N) k f x) = Structure.funMap f (g ∘ x))
+    (hrel : ∀ {k} (r : K.τ.Relations k) (x : Fin k → N),
+      (@Structure.RelMap _ _ ((tauRed E n).reduct N) k r x ↔ Structure.RelMap r (g ∘ x))) :
+    @Language.Equiv K.τ N (E.obj Jp).carrier ((tauRed E n).reduct N) _ :=
+  letI := (tauRed E n).reduct N
+  { toEquiv := g
+    map_fun' := fun f x => hfun f x
+    map_rel' := fun r x => (hrel r x).symm }
+
+/-- **`X_H` into the sample's `X` along an order map (proved).** For a sample-like structure with
+`g : N ≃ F(Jp)` and `X = g⁻¹[F(emb)[F(J)]]`, every order embedding `e : J₀ ↪o J` gives a
+`τ`-embedding `F(J₀) → N` (into the `τ`-reduct) with image inside the sample's `X`: the paper's
+"F of that order map embeds `X_H = F(J_H)` into `X = F(J)`". -/
+theorem infra_83_sample_X_embedding (E : OrderPresentation K) (n : ℕ) {N : Type u}
+    [(LS83.pairLangM3 E n).Structure N] {J Jp J0 : Type u} [LinearOrder J] [Nonempty J]
+    [LinearOrder Jp] [Nonempty Jp] [LinearOrder J0] [Nonempty J0]
+    (emb : J ↪o Jp) (g : N ≃ (E.obj Jp).carrier)
+    (hfun : ∀ {k} (f : K.τ.Functions k) (x : Fin k → N),
+      g (@Structure.funMap _ _ ((tauRed E n).reduct N) k f x) = Structure.funMap f (g ∘ x))
+    (hrel : ∀ {k} (r : K.τ.Relations k) (x : Fin k → N),
+      (@Structure.RelMap _ _ ((tauRed E n).reduct N) k r x ↔ Structure.RelMap r (g ∘ x)))
+    (e : J0 ↪o J) :
+    ∃ φ : @Language.Embedding K.τ (E.obj J0).carrier N _ ((tauRed E n).reduct N),
+      ∀ x, g (φ x) = E.map emb (E.map e x) := by
+  letI := (tauRed E n).reduct N
+  let G := infra_83_sample_tauEquiv E n g hfun hrel
+  refine ⟨G.symm.toEmbedding.comp ((E.map emb).comp (E.map e)), fun x => ?_⟩
+  show G (G.symm _) = _
+  rw [Language.Equiv.apply_symm_apply]
+  rfl
 end
 
 end AEC

@@ -7147,6 +7147,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 178: proved."
+  },
+  {
+   "id": "infra_83_sample_X_embedding",
+   "label": "In a sample-like structure (g : N = F(Jp), X = g^-1 F(emb)[F(J)]), every order embedding e : J0 -> J gives a tau-embedding F(J0) -> N with image in X (g o phi = F(emb) o F(e)); g is a tau-isomorphism (infra_83_sample_tauEquiv)",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PieceMatch.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 179: proved."
   }
  ],
  "edges": [
@@ -13087,8 +13096,13 @@
    "from": "infra_83_tuple_count_of_piece_count",
    "to": "infra_83_bounded_list_match",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_sample_X_embedding",
+   "to": "infra_83_XH_sort",
+   "kind": "hard"
   }
  ],
- "doneCount": 725,
+ "doneCount": 726,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
