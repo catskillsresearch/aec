@@ -5896,6 +5896,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 106: PieceChart, pairMS2_X_coord_of, infra_83_pairMS2_X_charts_coherent. Not yet: the charts of non-coordinate elements (terms) along piece maps, and the monotonicity of j_k (not recorded by the colors; needs an order relation on chart points)."
+  },
+  {
+   "id": "infra_83_pairMS2_Y_charts_coherent",
+   "label": "Lemma 8.3 proof: coherent coordinate charts of the Y-pieces (Z-coordinates), as for X",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83SampleLikeY.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 106: pairMS2_Y_coord_of, infra_83_pairMS2_Y_charts_coherent."
   }
  ],
  "edges": [
@@ -11036,8 +11045,13 @@
    "from": "infra_83_pairMS2_X_charts_coherent",
    "to": "infra_83_X_hull_eq_FJ",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_pairMS2_Y_charts_coherent",
+   "to": "infra_83_Y_hull_eq_FZ",
+   "kind": "hard"
   }
  ],
- "doneCount": 588,
+ "doneCount": 589,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
