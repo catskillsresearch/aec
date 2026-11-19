@@ -605,6 +605,7 @@ Lean: imports `Section5.Results` and `Section6.Results`. Soft paper chain after 
 | `infra_83_rep_language` | Lemma 8.3 proof: representation-position functions and pair languages pairLangR/R2/R3 | [`PairLangR83.lean`](AEC/Section8/PairLangR83.lean) (**done**, cycle 105) |
 | `infra_83_pairR_samples` | Lemma 8.3 proof: samples with representation positions; X-closed sets meet X in F(J_S) | [`Lemma83PairSamplesR.lean`](AEC/Section8/Lemma83PairSamplesR.lean) (**done**, cycle 105) |
 | `infra_83_pairR_template` | Lemma 8.3 proof: template with representation positions; strong natural X→Y→L | [`Lemma83PairTemplateR.lean`](AEC/Section8/Lemma83PairTemplateR.lean) (**done**, cycle 105) |
+| `infra_83_sample_X_hull_eq_FJ` | Lemma 8.3 proof: sample X-language hull of chart points = F(J_H) | [`LabRepHull83.lean`](AEC/Section8/LabRepHull83.lean) (**done**, cycle 105) |
 | `infra_72_mixed_level` | Lemma 7.2 last sentence (A at a smaller level than B), stated with sorry (audit) | [`Lemma72Mixed.lean`](AEC/Section7/Lemma72Mixed.lean) (open, cycle 96) |
 | `infra_82_tiedFreeMixed_base_equiv` | Mixed tied freeness under a reindexed change of base tuple | [`TiedAlong.lean`](AEC/Section8/TiedAlong.lean) (**done**, cycle 97) |
 | `infra_82_mark_tied_along_single` | Lemma 8.2(4) for `P.scheme`: tied freeness of the mark along arrows (Def 8.1 tied, cycle 97 ruling) | [`TiedAlong.lean`](AEC/Section8/TiedAlong.lean) (**done**, cycle 97) |

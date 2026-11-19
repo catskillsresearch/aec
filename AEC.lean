@@ -241,6 +241,7 @@ public import AEC.Section8.LabRep83
 public import AEC.Section8.PairLangR83
 public import AEC.Section8.Lemma83PairSamplesR
 public import AEC.Section8.Lemma83PairTemplateR
+public import AEC.Section8.LabRepHull83
 public import AEC.Section8.Lemma84Single
 public import AEC.Section8.Results
 public import AEC.Section8.StationaryPrescription
