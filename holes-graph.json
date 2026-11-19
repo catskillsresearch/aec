@@ -4249,6 +4249,33 @@
    "status": "done",
    "blocker": null,
    "detail": "DONE cycle 96. Under Pr.CommutesWithIso (now positional, via arity), every structural automorphism e of a marked pair's base keeps tp(b/X) position by position: hypothesis (b) of infra_82_orbit_criterion_single. Realization + CommutesWithIso + restriction along e + infra_612_galois_trans_last_base twice. Axioms clean."
+  },
+  {
+   "id": "infra_82_base_homogeneity_single",
+   "label": "Lemma 8.2(4) for P.scheme: bounded diagram homogeneity in the base",
+   "section": 8,
+   "file": "AEC/Section8/PairOrbitSingle.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "DONE cycle 96. Same-level marked arrow f : M -> N, pair automorphism alpha of M, bounded Z in M.X: an automorphism e of N.X with e(f Z) = f(alpha Z). diagram_preserved + diagram_iso (Def 5.2(3) homogeneity). Axioms clean."
+  },
+  {
+   "id": "infra_82_marked_arrow_ext_single",
+   "label": "Lemma 8.2(4) for P.scheme: marked arrows extend tp(b,t/X)",
+   "section": 8,
+   "file": "AEC/Section8/PairOrbitSingle.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "DONE cycle 96. tp(b,t/M.X) = restriction along f.onX of tp(b', f t/N.X), marks matched by markMap: the hExt hypothesis of infra_72_over_B_isolation. Axioms clean."
+  },
+  {
+   "id": "infra_82_orbit_diagram_single",
+   "label": "Lemma 8.2(4) for P.scheme: diagram transport (b', f t1, f Z) ~ (b', f t2, f alpha Z)",
+   "section": 8,
+   "file": "AEC/Section8/PairOrbitSingle.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "DONE cycle 96. Images of one list of M.Y under f.onY, alpha.onY. Axioms clean."
   }
  ],
  "edges": [
@@ -8349,8 +8376,23 @@
    "from": "infra_82_mark_type_auto_single",
    "to": "infra_82_orbit_preservation_single",
    "kind": "hard"
+  },
+  {
+   "from": "infra_82_base_homogeneity_single",
+   "to": "infra_82_orbit_base_auto_single",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_82_marked_arrow_ext_single",
+   "to": "infra_82_orbit_base_auto_single",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_82_orbit_diagram_single",
+   "to": "infra_82_orbit_base_auto_single",
+   "kind": "hard"
   }
  ],
- "doneCount": 419,
+ "doneCount": 422,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

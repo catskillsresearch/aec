@@ -162,4 +162,106 @@ theorem infra_82_base_homogeneity_single {P : SingleModelData K}
     (fun j => f.onX.mapOcc (Z j)) (fun j => f.onX.mapOcc (α.onX.mapOcc (Z j))) hγN).mp d
   exact ⟨g, hg, fun j => (hmap j).symm⟩
 
+/-- **A marked arrow extends the joint type of marks and a tuple (P.scheme).** For a marked arrow
+`f : M → N` and a tuple `t` of `M.Y`, `tp(b, t/M.X)` is the restriction along `f.onX` of
+`tp(b′, f t/N.X)`, the marks matched by `f.markMap`. This is the extension hypothesis of the
+over-`B` isolation of Lemma 7.2 (`infra_72_over_B_isolation`). -/
+theorem infra_82_marked_arrow_ext_single {P : SingleModelData K}
+    {Pr : StationaryPrescription K oneVertexShape P.scheme}
+    {M N : MarkedPair K oneVertexShape P.scheme Pr}
+    (f : MarkedArrow K oneVertexShape P.scheme Pr M N) {ι : Type u}
+    (t : ι → Occurrence K oneVertexShape (P.scheme.asSystem M.hμ M.Y)) :
+    SameGaloisType (asTuple M.incl M.incl_arrow (seqJoint M.b t))
+      ((asTuple N.incl N.incl_arrow (seqJoint N.b (fun i => f.onY.mapOcc (t i)))).restrict
+        f.onX trivial)
+      (Equiv.sumCongr f.markMap (Equiv.refl ι)) (Equiv.refl _) := by
+  refine ⟨N.μ, N.hμ, N.Y, f.onY, SystemArrow.refl _, trivial, trivial, fun v => ?_, fun i => ?_⟩
+  · have h := congrArg (fun g => SystemArrow.onVertex g v) f.comm
+    change (f.onY.onVertex v).comp (M.incl.onVertex v) =
+      (Language.Embedding.refl K.τ _).comp ((N.incl.onVertex v).comp (f.onX.onVertex v))
+    rw [Language.Embedding.refl_comp]
+    exact h
+  · rcases i with j | i
+    · have h := f.preserves_mark (f.markMap.symm j)
+      rw [Equiv.apply_symm_apply] at h
+      change (⟨(M.b (f.markMap.symm j)).1,
+        f.onY.onVertex (M.b (f.markMap.symm j)).1 (M.b (f.markMap.symm j)).2⟩ :
+          Occurrence K oneVertexShape (P.scheme.asSystem N.hμ N.Y)) =
+        ⟨(N.b j).1, (Language.Embedding.refl K.τ _) (N.b j).2⟩
+      rw [h]
+      rfl
+    · rfl
+
+/-- **Diagram transport for Lemma 8.2(4) (P.scheme).** For a same-level marked arrow `f : M → N`,
+a pair automorphism `α` of `M` fixing the marks positionwise and taking `t₁` to `t₂`, and a list
+`Z` of `M.X`, the lists `(b′, f t₁, f Z)` and `(b′, f t₂, f (α Z))` of `N.Y` have the same diagram
+(both are images of one list of `M.Y` under arrows; `diagram_preserved`). -/
+theorem infra_82_orbit_diagram_single {P : SingleModelData K}
+    {Pr : StationaryPrescription K oneVertexShape P.scheme}
+    {M N : MarkedPair K oneVertexShape P.scheme Pr} (hlev : M.μ = N.μ)
+    (f : MarkedArrow K oneVertexShape P.scheme Pr M N)
+    (α : MarkedArrow K oneVertexShape P.scheme Pr M M) (hαb : α.markMap = Equiv.refl _)
+    {ι γ : Type u} (t₁ t₂ : ι → Occurrence K oneVertexShape (P.scheme.asSystem M.hμ M.Y))
+    (hα : ∀ i, α.onY.mapOcc (t₁ i) = t₂ i)
+    (Z : γ → Occurrence K oneVertexShape (P.scheme.asSystem M.hμ M.X))
+    (hb : #((N.bIdx ⊕ ι) ⊕ γ) < M.μ) :
+    P.scheme.DiagramEq (X := N.Y) (Y := N.Y)
+      (seqJoint (seqJoint N.b (fun i => f.onY.mapOcc (t₁ i)))
+        (fun j => N.incl.mapOcc (f.onX.mapOcc (Z j))))
+      (seqJoint (seqJoint N.b (fun i => f.onY.mapOcc (t₂ i)))
+        (fun j => N.incl.mapOcc (f.onX.mapOcc (α.onX.mapOcc (Z j))))) := by
+  have hbN : #((N.bIdx ⊕ ι) ⊕ γ) < N.μ := hlev ▸ hb
+  have hcommf : ∀ x : Occurrence K oneVertexShape (P.scheme.asSystem M.hμ M.X),
+      f.onY.mapOcc (M.incl.mapOcc x) = N.incl.mapOcc (f.onX.mapOcc x) := fun x =>
+    congrArg (Sigma.mk x.1) (congrArg (fun g => SystemArrow.onVertex g x.1 x.2) f.comm)
+  have hcommα : ∀ x : Occurrence K oneVertexShape (P.scheme.asSystem M.hμ M.X),
+      α.onY.mapOcc (M.incl.mapOcc x) = M.incl.mapOcc (α.onX.mapOcc x) := fun x =>
+    congrArg (Sigma.mk x.1) (congrArg (fun g => SystemArrow.onVertex g x.1 x.2) α.comm)
+  have hmarkf : ∀ j, f.onY.mapOcc (M.b (f.markMap.symm j)) = N.b j := fun j => by
+    have h := f.preserves_mark (f.markMap.symm j)
+    rw [Equiv.apply_symm_apply] at h
+    exact h
+  have hmarkα : ∀ k, α.onY.mapOcc (M.b k) = M.b k := fun k => by
+    have h := α.preserves_mark k
+    rw [hαb] at h
+    exact h
+  let L : (N.bIdx ⊕ ι) ⊕ γ → Occurrence K oneVertexShape (P.scheme.asSystem M.hμ M.Y) :=
+    seqJoint (seqJoint (fun j => M.b (f.markMap.symm j)) t₁) (fun j => M.incl.mapOcc (Z j))
+  let L' : (N.bIdx ⊕ ι) ⊕ γ → Occurrence K oneVertexShape (P.scheme.asSystem M.hμ M.Y) :=
+    seqJoint (seqJoint (fun j => M.b (f.markMap.symm j)) t₂)
+      (fun j => M.incl.mapOcc (α.onX.mapOcc (Z j)))
+  have d1 := P.scheme.diagram_preserved M.Y N.Y f.onY trivial L hb hbN
+  have d2 := P.scheme.diagram_preserved M.Y M.Y α.onY trivial L hb hb
+  have d3 := P.scheme.diagram_preserved M.Y N.Y f.onY trivial L' hb hbN
+  have e1 : (fun x => (⟨(L x).1, f.onY.onVertex (L x).1 (L x).2⟩ :
+      Occurrence K oneVertexShape (P.scheme.asSystem N.hμ N.Y))) =
+      seqJoint (seqJoint N.b (fun i => f.onY.mapOcc (t₁ i)))
+        (fun j => N.incl.mapOcc (f.onX.mapOcc (Z j))) := by
+    funext x
+    rcases x with (j | i) | j
+    · exact hmarkf j
+    · rfl
+    · exact hcommf (Z j)
+  have e2 : (fun x => (⟨(L x).1, α.onY.onVertex (L x).1 (L x).2⟩ :
+      Occurrence K oneVertexShape (P.scheme.asSystem M.hμ M.Y))) = L' := by
+    funext x
+    rcases x with (j | i) | j
+    · exact hmarkα _
+    · exact hα i
+    · exact hcommα (Z j)
+  have e3 : (fun x => (⟨(L' x).1, f.onY.onVertex (L' x).1 (L' x).2⟩ :
+      Occurrence K oneVertexShape (P.scheme.asSystem N.hμ N.Y))) =
+      seqJoint (seqJoint N.b (fun i => f.onY.mapOcc (t₂ i)))
+        (fun j => N.incl.mapOcc (f.onX.mapOcc (α.onX.mapOcc (Z j)))) := by
+    funext x
+    rcases x with (j | i) | j
+    · exact hmarkf j
+    · rfl
+    · exact hcommf _
+  rw [e1] at d1
+  rw [e2] at d2
+  rw [e3] at d3
+  exact P.scheme.diagram_trans _ _ _ _ _ _
+    (P.scheme.diagram_trans _ _ _ _ _ _ (P.scheme.diagram_symm _ _ _ _ d1) d2) d3
+
 end AEC
