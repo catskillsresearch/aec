@@ -456,6 +456,8 @@ Lean: imports `Section5.Results` and `Section6.Results`. Soft paper chain after 
 | `infra_82_base_homogeneity_cross_single` | Lemma 8.2(5) for `P.scheme`: homogeneity between two bases | [`PairOrbitSingle.lean`](AEC/Section8/PairOrbitSingle.lean) (**done**, cycle 96) |
 | `infra_82_orbit_diagram_cross_single` | Lemma 8.2(5) for `P.scheme`: diagram transport between two pairs | [`PairOrbitSingle.lean`](AEC/Section8/PairOrbitSingle.lean) (**done**, cycle 96) |
 | `infra_82_comparison_single` | Lemma 8.2(5) for `P.scheme`: comparisons preserved and reflected | `AEC/Section8/Results.lean` (open, cycle 96) |
+| `infra_82_mark_type_iso_single` | Lemma 8.2(5) for `P.scheme`: base isomorphisms carry the mark type | [`PairOrbitSingle.lean`](AEC/Section8/PairOrbitSingle.lean) (**done**, cycle 96) |
+| `infra_72_mixed_level` | Lemma 7.2 last sentence (A at a smaller level than B), not yet formalized (audit) | `AEC/Section7/Results.lean` (open, cycle 96) |
 | `infra_82_mark_tied_along_single` | Lemma 8.2(4) for `P.scheme`: tied freeness of the mark along arrows (Def 8.1 reading; ruling needed) | `AEC/Section8/PairOrbitSingle.lean` (open, cycle 96) |
 | `infra_82_orbit_tail_single` | Lemma 8.2(4) for `P.scheme`: diagonal closure (via `infra_615_closed`) | [`PairOrbitSingle.lean`](AEC/Section8/PairOrbitSingle.lean) (**done**, cycle 96) |
 | `infra_82_pointed_all` | Lemma 8.2(3) for `P.scheme` at every level | [`PairPointedSingle.lean`](AEC/Section8/PairPointedSingle.lean) (**done**, cycle 96) |
