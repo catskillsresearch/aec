@@ -7210,6 +7210,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 185: proved."
+  },
+  {
+   "id": "infra_83_piece_arrow_factor",
+   "label": "Piece arrow h by factoring: a strong tau-embedding gY : Y_u -> F(Jp) with image in F[M.Y] factors as F o h for a scheme arrow h : Y_u -> M.Y (strongness by AEC coherence)",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PieceMatch.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 186: proved."
   }
  ],
  "edges": [
@@ -13185,8 +13194,13 @@
    "from": "infra_83_toA_arrow",
    "to": "infra_83_bounded_list_match",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_piece_arrow_factor",
+   "to": "infra_83_bounded_list_match",
+   "kind": "hard"
   }
  ],
- "doneCount": 732,
+ "doneCount": 733,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

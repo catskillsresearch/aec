@@ -484,4 +484,45 @@ theorem infra_83_toA_arrow (P : SingleModelData K)
     fun x => hφF (ψ x)⟩
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+/-- **The piece arrow `h` by factoring through the sample's `F` (proved).** If the piece `Y_u`
+(a scheme object) maps by a strong `τ`-embedding `gY` into `F(Jp)` with image inside the copy
+`F[M.Y]` of the sample's `Y` (e.g. `gY = F(e) ∘ ψ_Y` from the pair square), then there is a scheme
+arrow `h : Y_u → M.Y` with `F ∘ h = gY`; strongness of `h` is AEC coherence. -/
+theorem infra_83_piece_arrow_factor (P : SingleModelData K)
+    {Pr : StationaryPrescription K oneVertexShape P.scheme} {M : MarkedPair K oneVertexShape P.scheme Pr}
+    {ν : Cardinal.{u}} {hν : ν ∈ P.eligible} (Yu : P.scheme.Object ν hν)
+    {Jp : Type u} [LinearOrder Jp] [Nonempty Jp]
+    (F : Language.Embedding K.τ ((P.scheme.asSystem M.hμ M.Y).obj PUnit.unit).carrier
+      (P.E.obj Jp).carrier) (hsF : K.Strong F)
+    (gY : Language.Embedding K.τ ((P.scheme.asSystem hν Yu).obj PUnit.unit).carrier
+      (P.E.obj Jp).carrier) (hgY : K.Strong gY)
+    (hr : ∀ x, gY x ∈ Set.range F) :
+    ∃ h : SystemArrow K oneVertexShape (P.scheme.asSystem hν Yu) (P.scheme.asSystem M.hμ M.Y),
+      ∀ x, F (h.onVertex PUnit.unit x) = gY x := by
+  classical
+  choose h0 hh0 using hr
+  let hE : Language.Embedding K.τ ((P.scheme.asSystem hν Yu).obj PUnit.unit).carrier
+      ((P.scheme.asSystem M.hμ M.Y).obj PUnit.unit).carrier :=
+    { toFun := h0
+      inj' := fun a b hab => gY.injective (by rw [← hh0 a, ← hh0 b, hab])
+      map_fun' := fun {n} f x => F.injective (by
+        rw [hh0, gY.map_fun, F.map_fun]
+        congr 1
+        funext i
+        exact (hh0 (x i)).symm)
+      map_rel' := fun {n} r x => by
+        rw [← F.map_rel, ← gY.map_rel]
+        have : (F ∘ (h0 ∘ x)) = gY ∘ x := funext fun i => hh0 (x i)
+        rw [this] }
+  have hcomp : F.comp hE = gY := by
+    ext x
+    exact hh0 x
+  have hsh : K.Strong hE := K.coherence hE gY F hgY hsF hcomp
+  exact ⟨⟨fun _ => hE, fun _ => hsh, fun h => h.elim⟩, fun x => hh0 x⟩
+end
+
 end AEC
