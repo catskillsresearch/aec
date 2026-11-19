@@ -7489,6 +7489,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 216: proved."
+  },
+  {
+   "id": "infra_83_piece_of_suborder",
+   "label": "A piece Y_u = F(Z_u) from a sub-order: if Y' is identified with F(Z) by a tau-iso phi, sZ : Z0 <-o Z with |F(Z0)| = nu, and phi o incl' lands in F(sZ)[F(Z0)], then there is a piece X' <= Y_u <= Y' with a strong psiY : Y_u -> F(Z0) and phi o j = F(sZ) o psiY",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PieceMatch.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 217: proved."
   }
  ],
  "edges": [
@@ -13619,8 +13628,13 @@
    "from": "infra_83_retSample_Y_link",
    "to": "infra_83_XH_sort",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_piece_of_suborder",
+   "to": "infra_83_XH_sort",
+   "kind": "hard"
   }
  ],
- "doneCount": 763,
+ "doneCount": 764,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

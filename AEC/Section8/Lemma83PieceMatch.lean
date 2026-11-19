@@ -1706,4 +1706,81 @@ theorem infra_83_retSample_Y_link (P : SingleModelData K)
   exact ⟨M, Jp, i3, i4, g, F, fun f x hx => hY f x hx⟩
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+open FirstOrder.Language
+
+set_option maxHeartbeats 1600000 in
+/-- **A piece `Y_u ≅ F(Z_u)` from a sub-order (proved).** Paper (Lemma 8.3: `Y_H ≅ F(Z_H)`): let
+`Y'` be identified with `F(Z)` by a `τ`-isomorphism `φ` (as the template values are,
+`infra_83_Y_hull_eq_FZ`), let `s_Z : Z₀ ↪o Z` with `|F(Z₀)| = ν`, and suppose `φ ∘ incl'` lands in
+`F(s_Z)[F(Z₀)]`. Then there is a scheme piece `X' ≤ Y_u ≤ Y'` (`inclu ; j = incl'`) with a strong
+identification `ψY : Y_u → F(Z₀)` such that `φ ∘ j = F(s_Z) ∘ ψY`: input (ii) of the piece
+clauses. -/
+theorem infra_83_piece_of_suborder (P : SingleModelData K) {ν : Cardinal.{u}}
+    {hν : ν ∈ P.eligible} {X' Y' : P.scheme.Object ν hν}
+    (incl' : SystemArrow K oneVertexShape (P.scheme.asSystem hν X') (P.scheme.asSystem hν Y'))
+    {Z Z0 : Type u} [LinearOrder Z] [Nonempty Z] [LinearOrder Z0] [Nonempty Z0]
+    (φ : ((P.scheme.asSystem hν Y').obj PUnit.unit).carrier ≃[K.τ] (P.E.obj Z).carrier)
+    (sZ : Z0 ↪o Z) (hc : Model.card (P.E.obj Z0) = ν)
+    (hsub : ∀ x, φ (incl'.onVertex PUnit.unit x) ∈ Set.range (P.E.map sZ)) :
+    ∃ (Yu : P.scheme.Object ν hν)
+      (inclu : SystemArrow K oneVertexShape (P.scheme.asSystem hν X') (P.scheme.asSystem hν Yu))
+      (j : SystemArrow K oneVertexShape (P.scheme.asSystem hν Yu) (P.scheme.asSystem hν Y'))
+      (ψY : Language.Embedding K.τ ((P.scheme.asSystem hν Yu).obj PUnit.unit).carrier
+        (P.E.obj Z0).carrier),
+      K.Strong ψY ∧ SystemArrow.comp inclu j = incl' ∧
+      ∀ y, φ (j.onVertex PUnit.unit y) = P.E.map sZ (ψY y) := by
+  classical
+  let Yu : SMObject K ν := SMObject.ofModel (P.E.obj Z0) (P.hE Z0) hc
+  let e := SMObject.ofModelEquiv (P.E.obj Z0) (P.hE Z0) hc
+  let ψY : Language.Embedding K.τ Yu.model.carrier (P.E.obj Z0).carrier := e.symm.toEmbedding
+  have hψ : K.Strong ψY := strong_of_equiv K e.symm Yu.mem
+  let f : Language.Embedding K.τ Yu.model.carrier
+      ((P.scheme.asSystem hν Y').obj PUnit.unit).carrier :=
+    φ.symm.toEmbedding.comp ((P.E.map sZ).comp ψY)
+  have hf : K.Strong f :=
+    K.strong_trans _ _ (K.strong_trans _ _ hψ (P.E.map_strong sZ)) (strong_of_equiv K φ.symm (P.hE Z))
+  have hfφ : ∀ y, φ (f y) = P.E.map sZ (ψY y) := fun y => φ.apply_symm_apply _
+  have hcov : ∀ x, ∃ y, f y = incl'.onVertex PUnit.unit x := by
+    intro x
+    obtain ⟨z, hz⟩ := hsub x
+    refine ⟨e z, φ.injective ?_⟩
+    rw [hfφ]
+    show P.E.map sZ (e.symm (e z)) = _
+    rw [e.symm_apply_apply, hz]
+  choose h0 hh0' using hcov
+  let gY := incl'.onVertex PUnit.unit
+  have hh0 : ∀ x, f (h0 x) = gY x := hh0'
+  have hgY : K.Strong gY := incl'.onVertex_strong PUnit.unit
+  let hE : Language.Embedding K.τ ((P.scheme.asSystem hν X').obj PUnit.unit).carrier
+      Yu.model.carrier :=
+    { toFun := h0
+      inj' := fun a b hab => gY.injective (by rw [← hh0 a, ← hh0 b, hab])
+      map_fun' := fun {n} g x => f.injective (by
+        rw [hh0, f.map_fun]
+        show gY (Structure.funMap g x) = _
+        rw [gY.map_fun]
+        congr 1
+        funext i
+        exact (hh0 (x i)).symm)
+      map_rel' := fun {n} r x => by
+        rw [← f.map_rel]
+        have : (f ∘ (h0 ∘ x)) = gY ∘ x := funext fun i => hh0 (x i)
+        rw [this]
+        exact gY.map_rel r x }
+  have hcomp : f.comp hE = gY := by
+    ext x
+    exact hh0 x
+  have hsh : K.Strong hE := K.coherence hE gY f hgY hf hcomp
+  refine ⟨Yu, ⟨fun _ => hE, fun _ => hsh, fun h => h.elim⟩,
+    ⟨fun _ => f, fun _ => hf, fun h => h.elim⟩, ψY, hψ, ?_, hfφ⟩
+  apply SystemArrow.ext
+  intro v
+  cases v
+  ext x
+  exact hh0 x
+end
+
 end AEC
