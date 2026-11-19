@@ -106,7 +106,7 @@ theorem infra_82_pair_extend_same_level (P : SingleModelData K)
   obtain ⟨h, hh, hcomp, hv⟩ := infra_79_primeness_same_level hμ X (asTuple incl hincl b) hfinB
     Y incl hincl b hdom (SameGaloisType.refl _) Y' (SystemArrow.comp e incl') hg
     (fun j => b' (τ j)) hGal
-  refine ⟨⟨e, h, he, hh, hcomp, fun i => ⟨τ i, ?_⟩⟩, rfl⟩
+  refine ⟨⟨e, h, he, hh, hcomp, τ, fun i => ?_⟩, rfl⟩
   show (⟨(b i).1, h.onVertex (b i).1 (b i).2⟩ : Occurrence K oneVertexShape
     (P.scheme.asSystem hμ' Y')) = b' (τ i)
   have h1 : h.onVertex (b i).1 (b i).2 = (b' (τ i)).2 := hv i

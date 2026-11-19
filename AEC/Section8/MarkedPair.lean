@@ -26,7 +26,11 @@ structure MarkedPair (K : AbstractElementaryClass.{u}) (S : SystemShape.{u})
     SameGaloisType (asTuple incl incl_arrow b) (P.assign hμ X) e (Equiv.refl _)
   dominated : AllDominated incl incl_arrow bIdx b
 
-/-- An arrow of marked pairs is a commuting pair of arrows carrying the mark to the mark. -/
+/-- An arrow of marked pairs is a commuting pair of arrows carrying the mark to the mark.
+English (Definition 8.1): "An arrow is a commuting pair of componentwise strong embeddings taking
+the mark to the mark." The mark is a tuple, so the arrow carries it entrywise: `markMap` matches
+the list positions (cycle 95; it was setwise `∀ i, ∃ j`, which is weaker than the English when
+mark values repeat). -/
 structure MarkedArrow (K : AbstractElementaryClass.{u}) (S : SystemShape.{u})
     (W : WorkingScheme K S) (P : StationaryPrescription K S W)
     (M N : MarkedPair K S W P) where
@@ -35,9 +39,10 @@ structure MarkedArrow (K : AbstractElementaryClass.{u}) (S : SystemShape.{u})
   onX_arrow : W.permitted (X := M.X) (Y := N.X) onX
   onY_arrow : W.permitted (X := M.Y) (Y := N.Y) onY
   comm : SystemArrow.comp M.incl onY = SystemArrow.comp onX N.incl
+  markMap : M.bIdx ≃ N.bIdx
   preserves_mark : ∀ i,
-    ∃ j, (⟨(M.b i).1, onY.onVertex (M.b i).1 (M.b i).2⟩ :
-      Occurrence K S (W.asSystem N.hμ N.Y)) = N.b j
+    (⟨(M.b i).1, onY.onVertex (M.b i).1 (M.b i).2⟩ :
+      Occurrence K S (W.asSystem N.hμ N.Y)) = N.b (markMap i)
 
 end
 end AEC

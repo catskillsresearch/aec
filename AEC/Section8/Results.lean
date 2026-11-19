@@ -67,7 +67,9 @@ t and t′ in the respective pair structures, such an extension can take t to t�
 takes the indicated base entries to their counterparts and transports tp(t, b/X) to
 tp(t′, b′/X′)." Hypotheses are the Section 8 conventions: the working package (Definition 5.2,
 `IsWorkingPackage`) and arrows = componentwise strong embeddings (`Section8Arrows`); an
-isomorphism is a vertexwise bijective arrow. Further English clauses, also stated: "Same-level arrows preserve bounded
+isomorphism is a vertexwise bijective arrow. The prescription is assumed to commute with
+isomorphisms (`StationaryPrescription.CommutesWithIso`, Definition 8.1). In clause (3) the marks
+are matched by list position along `σ` (a `MarkedArrow` carries `markMap`). Further English clauses, also stated: "Same-level arrows preserve bounded
 pair orbits. Moreover, comparisons of bounded pair tuples are preserved and reflected when two
 pairs at one common small level are mapped to two pairs at a common larger eligible level. All
 tuple lengths and the bounds needed for the comparison are strictly below the smaller level."
@@ -75,7 +77,8 @@ tuple lengths and the bounds needed for the comparison are strictly below the sm
 preceding two Sections", which Lean has only for `SingleModelData`; tracked on `lemma_8_2`. -/
 theorem lemma_8_2 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
     (W : WorkingScheme K S) (P : StationaryPrescription K S W)
-    (_hpack : IsWorkingPackage W) (_harr : Section8Arrows W) :
+    (_hpack : IsWorkingPackage W) (_harr : Section8Arrows W)
+    (_hiso : P.CommutesWithIso) :
     ∃ T, ∃ hT : Tail W.eligible T,
       -- marked pairs exist over every object
       (∀ μ (hμ : μ ∈ T) (X : W.Object μ (Tail.mem hT hμ)),
@@ -90,23 +93,22 @@ theorem lemma_8_2 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
         W.permitted (X := M.X) (Y := N.X) e →
         ∃ arr : MarkedArrow K S W P M N, arr.onX = e ∧
           ∀ v, Function.Bijective (arr.onY.onVertex v)) ∧
-      -- pointed form: the extension can take `t` to `t′` iff `e` matches the base entries and
-      -- transports `tp(t, b/X)` to `tp(t′, b′/X′)`
+      -- pointed form: an extension matching the marks along `σ` (list positions) can take `t`
+      -- to `t′` iff `e` matches the base entries and transports `tp(t, b/X)` to `tp(t′, b′/X′)`
       (∀ (M N : MarkedPair K S W P)
         (e : SystemArrow K S (W.asSystem M.hμ M.X) (W.asSystem N.hμ N.X)),
         M.μ ∈ T → N.μ ∈ T →
         (∀ v, Function.Bijective (e.onVertex v)) →
-        ∀ (he : W.permitted (X := M.X) (Y := N.X) e)
+        ∀ (he : W.permitted (X := M.X) (Y := N.X) e) (σ : M.bIdx ≃ N.bIdx)
           {ι : Type u} (t : ι → Occurrence K S (W.asSystem M.hμ M.Y))
           (t' : ι → Occurrence K S (W.asSystem N.hμ N.Y)), #ι < M.μ →
-          ((∃ arr : MarkedArrow K S W P M N, arr.onX = e ∧
+          ((∃ arr : MarkedArrow K S W P M N, arr.onX = e ∧ arr.markMap = σ ∧
               (∀ v, Function.Bijective (arr.onY.onVertex v)) ∧
               ∀ i, arr.onY.mapOcc (t i) = t' i) ↔
             ((∀ i (x : Occurrence K S (W.asSystem M.hμ M.X)), t i = M.incl.mapOcc x →
                 t' i = N.incl.mapOcc (e.mapOcc x)) ∧
-              ∃ σ : M.bIdx ≃ N.bIdx,
-                SameGaloisType (asTuple M.incl M.incl_arrow (Sum.elim t M.b))
-                  (markedJointOver M N e he σ t') (Equiv.refl _) (Equiv.refl _)))) ∧
+              SameGaloisType (asTuple M.incl M.incl_arrow (Sum.elim t M.b))
+                (markedJointOver M N e he σ t') (Equiv.refl _) (Equiv.refl _)))) ∧
       -- same-level arrows preserve bounded pair orbits
       (∀ (M N : MarkedPair K S W P) (f : MarkedArrow K S W P M N), M.μ ∈ T → M.μ = N.μ →
         ∀ {ι : Type u} (t₁ t₂ : ι → Occurrence K S (W.asSystem M.hμ M.Y)), #ι < M.μ →
@@ -133,7 +135,8 @@ arrows (also between levels); and every marked pair at a tail level is isomorphi
 bijective marked arrow) to the value of that size. Hypotheses: the Section 8 conventions. -/
 theorem lemma_8_3 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
     (W : WorkingScheme K S) (P : StationaryPrescription K S W)
-    (_hpack : IsWorkingPackage W) (_harr : Section8Arrows W) :
+    (_hpack : IsWorkingPackage W) (_harr : Section8Arrows W)
+    (_hiso : P.CommutesWithIso) :
     ∃ F : TermTemplate K S.doubled, ∃ T, ∃ _hT : Tail W.eligible T,
       ∃ val : (I : Type u) → [LinearOrder I] → [WellFoundedLT I] → [Nonempty I] →
           #I ∈ T → MarkedPair K S W P,
@@ -173,7 +176,8 @@ read in `T` by `uT`, `cT` and in `T′` by `iso.onY ≫ uT'`, `cT'`. `k` is chos
 objects (uniformity). Hypotheses: the Section 8 conventions. -/
 theorem lemma_8_4 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
     (W : WorkingScheme K S) (P : StationaryPrescription K S W)
-    (_hpack : IsWorkingPackage W) (_harr : Section8Arrows W) :
+    (_hpack : IsWorkingPackage W) (_harr : Section8Arrows W)
+    (_hiso : P.CommutesWithIso) :
     ∃ T, ∃ hT : Tail W.eligible T, ∃ k : Cardinal.{u} → Cardinal.{u} → Cardinal.{u},
       ∀ ν, ν ∈ T → ∀ σ, σ < ν → k ν σ < ν ∧
         ∀ μ (hμ : μ ∈ T), ν < μ →
@@ -239,7 +243,8 @@ with a cocone of marked arrows, and every cocone of marked arrows into a marked 
 or larger level of the tail factors through `U`. Hypotheses: the Section 8 conventions. -/
 theorem lemma_8_5 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
     (W : WorkingScheme K S) (P : StationaryPrescription K S W)
-    (_hpack : IsWorkingPackage W) (_harr : Section8Arrows W) :
+    (_hpack : IsWorkingPackage W) (_harr : Section8Arrows W)
+    (_hiso : P.CommutesWithIso) :
     ∃ T, ∃ _hT : Tail W.eligible T,
       ∀ μ, μ ∈ T → ∀ (index : Type u) [LinearOrder index] [Nonempty index]
         (M : index → MarkedPair K S W P),

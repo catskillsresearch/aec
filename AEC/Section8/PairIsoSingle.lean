@@ -250,7 +250,7 @@ theorem infra_82_iso_single (P : SingleModelData K)
   obtain ⟨φ, hφ, hcomp, hv⟩ :=
     (H μ hMT X Y incl hincl b hidxB hBlt hdom).2 Y' (SystemArrow.comp e incl') hg
       (fun j => b' (τ j)) hdom2 hGal
-  refine ⟨⟨e, φ, he, trivial, hcomp, fun i => ⟨τ i, ?_⟩⟩, rfl,
+  refine ⟨⟨e, φ, he, trivial, hcomp, τ, fun i => ?_⟩, rfl,
     P.scheme.isStructIso_bijective _ _ φ hφ⟩
   show (⟨(b i).1, φ.onVertex (b i).1 (b i).2⟩ : Occurrence K oneVertexShape
     (P.scheme.asSystem hμ Y')) = b' (τ i)

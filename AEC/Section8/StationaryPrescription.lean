@@ -26,5 +26,21 @@ structure StationaryPrescription (K : AbstractElementaryClass.{u}) (S : SystemSh
     ∃ e : (assign hμ X).idx ≃ (assign hν Y).idx,
       IsFreeLift (assign hμ X) (assign hν Y) f hf e
 
+/-- **Definition 8.1, "commutes with isomorphisms"** (cycle 95; a hypothesis predicate on the
+prescription, not a field). English: "A stationary finite prescription for C assigns to every
+object X a type pX of a finite tuple, with specified component sorts. The assignment commutes with
+isomorphisms, and, for every arrow X → X′, including an arrow between eligible levels, pX′ is the
+free extension of pX, after identifying the base by that arrow." For a structural isomorphism
+`e : X ≅ X′` (a vertexwise bijective permitted arrow at one level), `p_{X′}` read back along `e`
+has the type of `p_X`. -/
+def StationaryPrescription.CommutesWithIso {K : AbstractElementaryClass.{u}}
+    {S : SystemShape.{u}} {W : WorkingScheme K S} (Pr : StationaryPrescription K S W) : Prop :=
+  ∀ {μ : Cardinal.{u}} {hμ : μ ∈ W.eligible} (X X' : W.Object μ hμ)
+    (e : SystemArrow K S (W.asSystem hμ X) (W.asSystem hμ X'))
+    (he : W.permitted (X := X) (Y := X') e),
+    (∀ v, Function.Bijective (e.onVertex v)) →
+    ∃ κ : (Pr.assign hμ X).idx ≃ (Pr.assign hμ X').idx,
+      SameGaloisType (Pr.assign hμ X) ((Pr.assign hμ X').restrict e he) κ (Equiv.refl _)
+
 end
 end AEC
