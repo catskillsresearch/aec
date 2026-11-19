@@ -365,6 +365,143 @@ theorem infra_72_tiedFree_restrict_factor {P : SingleModelData K} {ν μ : Cardi
   have T := hT seq (pushParams j Z) Z0 hlong hι hιν hmv'
   exact infra_73_diagramEq_of_eq T (fun _ => rfl) (fun t => by cases t <;> rfl)
 
+/-- Galois-type equality passes to marginals taken along a common index split. -/
+theorem infra_72_sgt_marginal {P : SingleModelData K} {ν : Cardinal.{u}} {hν : ν ∈ P.eligible}
+    {A : P.scheme.Object ν hν} {t1 t2 : TupleOver K oneVertexShape P.scheme hν A} {ι : Type u}
+    {e1 : t1.idx ≃ ι} {e2 : t2.idx ≃ ι} (h : SameGaloisType t1 t2 e1 e2)
+    {uIdx cIdx : Type u} (E : ι ≃ uIdx ⊕ cIdx) :
+    SameGaloisType (t1.marginal (e1.trans E)) (t2.marginal (e2.trans E))
+      (Equiv.refl uIdx) (Equiv.refl uIdx) := by
+  rcases h with ⟨ρ, hρ, top, f1, f2, hf1, hf2, hc, hv⟩
+  exact ⟨ρ, hρ, top, f1, f2, hf1, hf2, hc, fun i => hv (E.symm (Sum.inl i))⟩
+
+/-- Restricting both sides of a Galois-type equality along one permitted arrow. -/
+theorem infra_72_sgt_restrict {P : SingleModelData K} {ν μ : Cardinal.{u}}
+    {hν : ν ∈ P.eligible} {hμ : μ ∈ P.eligible}
+    {A : P.scheme.Object ν hν} {B : P.scheme.Object μ hμ}
+    (g : SystemArrow K oneVertexShape (P.scheme.asSystem hν A) (P.scheme.asSystem hμ B))
+    (hg : P.scheme.permitted (X := A) (Y := B) g)
+    {t1 t2 : TupleOver K oneVertexShape P.scheme hμ B} {ι : Type u}
+    {e1 : t1.idx ≃ ι} {e2 : t2.idx ≃ ι} (h : SameGaloisType t1 t2 e1 e2) :
+    SameGaloisType (t1.restrict g hg) (t2.restrict g hg) e1 e2 := by
+  rcases h with ⟨ρ, hρ, top, f1, f2, hf1, hf2, hc, hv⟩
+  refine ⟨ρ, hρ, top, f1, f2, hf1, hf2, fun v => ?_, hv⟩
+  change (f1.onVertex v).comp ((t1.incl.onVertex v).comp (g.onVertex v)) =
+    (f2.onVertex v).comp ((t2.incl.onVertex v).comp (g.onVertex v))
+  have h := congrArg (fun k => FirstOrder.Language.Embedding.comp k (g.onVertex v)) (hc v)
+  simp only [FirstOrder.Language.Embedding.comp_assoc] at h ⊢
+  exact h
+
+/-- `hExt` along `f` read along a factorization `A → B₀ → B`. -/
+theorem infra_72_ext_factor {P : SingleModelData K} {ν μ : Cardinal.{u}}
+    {hν : ν ∈ P.eligible} {hμ : μ ∈ P.eligible}
+    {A B₀ : P.scheme.Object ν hν} {B : P.scheme.Object μ hμ}
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hν A) (P.scheme.asSystem hμ B))
+    (hf : P.scheme.permitted (X := A) (Y := B) f)
+    (f₀ : SystemArrow K oneVertexShape (P.scheme.asSystem hν A) (P.scheme.asSystem hν B₀))
+    (hf₀ : P.scheme.permitted (X := A) (Y := B₀) f₀)
+    (j : SystemArrow K oneVertexShape (P.scheme.asSystem hν B₀) (P.scheme.asSystem hμ B))
+    (hj : P.scheme.permitted (X := B₀) (Y := B) j)
+    (hcomp : ∀ a, j.onVertex PUnit.unit (f₀.onVertex PUnit.unit a) = f.onVertex PUnit.unit a)
+    (q : TupleOver K oneVertexShape P.scheme hν A)
+    (qB : TupleOver K oneVertexShape P.scheme hμ B) (eB : q.idx ≃ qB.idx)
+    (hExt : SameGaloisType q (qB.restrict f hf) eB (Equiv.refl qB.idx)) :
+    SameGaloisType q ((qB.restrict j hj).restrict f₀ hf₀) eB (Equiv.refl qB.idx) := by
+  rcases hExt with ⟨ρ, hρ, top, f1, f2, hf1, hf2, hc, hv⟩
+  refine ⟨ρ, hρ, top, f1, f2, hf1, hf2, fun v => ?_, hv⟩
+  cases v
+  ext a
+  have h := DFunLike.congr_fun (hc PUnit.unit) a
+  change f1.onVertex _ (q.incl.onVertex _ a) =
+    f2.onVertex _ (qB.incl.onVertex _ (j.onVertex _ (f₀.onVertex _ a)))
+  rw [hcomp]
+  exact h
+
+set_option maxHeartbeats 3200000 in
+/-- **Mixed Lemma 7.2 tied step (proved; mixed `infra_73_tied_of_isolated`), bounds at the level
+`ν` of `A` only.** If `q` over `A` is relatively isolated over `u`, `qB` over `B` extends `q`, and
+the `u`-marginal of `qB` is a mixed tied-free extension, then `qB` is a mixed tied-free extension
+of `q`. Per query `Z` of `B`: a level-`ν` hull `A → B₀ → B` containing `Z`
+(`infra_72_level_hull`), `qB` read over `B₀` and realized at level `ν`, the same-level
+`infra_73_tied_of_isolated` at `ν`, and the answer carried back along `B₀ → B`. -/
+theorem infra_72_tied_of_isolated_mixed
+    (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : ℵ₀ ≤ σ)
+    {ν μ : Cardinal.{u}} (hν : ν ∈ P.eligible) (hμ : μ ∈ P.eligible) (hνμ : ν ≤ μ)
+    (hrec : ν ∈ recursionClosedLevels P σ) (hσSucc : Order.succ σ ≤ ν)
+    {A : P.scheme.Object ν hν} {B : P.scheme.Object μ hμ}
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hν A) (P.scheme.asSystem hμ B))
+    (hf : P.scheme.permitted (X := A) (Y := B) f)
+    (q : TupleOver K oneVertexShape P.scheme hν A)
+    (qB : TupleOver K oneVertexShape P.scheme hμ B)
+    (eB : q.idx ≃ qB.idx)
+    {uIdx cIdx : Type u} (e : q.idx ≃ uIdx ⊕ cIdx)
+    (hqν : q.ν = ν) (hBν : μ ≤ qB.ν)
+    (hidx : #q.idx ≤ σ) (hidxν : #q.idx < ν)
+    (hIso : IsRelativelyIsolated q e)
+    (hExt : SameGaloisType q (qB.restrict f hf) eB (Equiv.refl qB.idx))
+    (hMargTied : IsTiedFreeMixed f (q.marginal e) (qB.marginal (eB.symm.trans e))
+      (Equiv.refl uIdx)) :
+    IsTiedFreeMixed f q qB eB := by
+  classical
+  intro seq ι Z Z0 hlong hι hιν hmv
+  have hσlt : σ < ν := (Order.lt_succ σ).trans_le hσSucc
+  obtain ⟨B₀, f₀, j, Z₁, hcomp, hZ⟩ := infra_72_level_hull f Z hιν
+  have hqBidx : #qB.idx < ν := by rw [← Cardinal.mk_congr eB]; exact hidxν
+  obtain ⟨r', e', hr'ν, hR⟩ := infra_78_same_level_realization (qB.restrict j trivial) hqBidx
+  have hExt0 := infra_72_ext_factor f hf f₀ trivial j trivial hcomp q qB eB hExt
+  have hRr := infra_72_sgt_restrict f₀ trivial hR
+  have hExt' := infra_612_galois_trans_last_base hExt0 hRr σ hσ hσlt hidx hr'ν
+  have huidx : #uIdx ≤ #q.idx :=
+    Cardinal.mk_le_of_injective (f := fun i : uIdx => e.symm (Sum.inl i))
+      (fun a b h => Sum.inl.inj (e.symm.injective h))
+  have huν : #uIdx < ν := huidx.trans_lt hidxν
+  have hM1 := infra_72_tiedFree_restrict_factor hνμ f f₀ j trivial hcomp (q.marginal e)
+    (qB.marginal (eB.symm.trans e)) (Equiv.refl uIdx) huν hMargTied
+  have hSame := infra_72_sgt_marginal hR (eB.symm.trans e)
+  have hMT : IsTiedFree f₀ (q.marginal e) (r'.marginal ((eB.trans e'.symm).symm.trans e))
+      (Equiv.refl uIdx) :=
+    infra_72_tiedFreeMixed_of_sameGalois le_rfl f₀ (q.marginal e)
+      ((qB.restrict j trivial).marginal ((Equiv.refl _).trans (eB.symm.trans e)))
+      (r'.marginal ((eB.trans e'.symm).symm.trans e))
+      (Equiv.refl uIdx) (Equiv.refl uIdx) (Equiv.refl uIdx)
+      ((hνμ.trans hBν)) hr'ν.ge huν hM1 hSame
+  have hT0 := infra_73_tied_of_isolated P σ hσ hν hrec hσSucc f₀ trivial q r'
+    (eB.trans e'.symm) e hqν hr'ν hidx hidxν hIso hExt' hMT
+  have hcard : #(q.idx ⊕ ι) < ν := by
+    rw [mk_sum, lift_id, lift_id]
+    exact add_lt_of_lt (P.aleph0_le hν) hidxν hιν
+  have hmv0 : infra_73_isMove f₀ seq Z₁ Z0 := by
+    intro i
+    have hp := P.scheme.diagram_preserved B₀ B j trivial
+      (seqJoint (fun k => ⟨(seq.family i k).1, f₀.onVertex (seq.family i k).1
+        (seq.family i k).2⟩) Z₁) hcard (hcard.trans_le hνμ)
+    have hp' := infra_73_diagramEq_of_eq hp (fun _ => rfl)
+      (ys' := seqJoint (fun k => ⟨(seq.family i k).1, f.onVertex (seq.family i k).1
+        (seq.family i k).2⟩) Z) (fun t => by
+          rcases t with k | k
+          · exact Sigma.ext rfl (heq_of_eq (hcomp (seq.family i k).2))
+          · exact (hZ k).symm)
+    exact P.scheme.diagram_trans _ _ _ _ _ _ (hmv i) (P.scheme.diagram_symm _ _ _ _ hp')
+  have ans := hT0 seq Z₁ Z0 hlong hι hιν hmv0
+  have hb : #(qB.idx ⊕ ι) < ν := by
+    rw [mk_sum, lift_id, lift_id]
+    exact add_lt_of_lt (P.aleph0_le hν) hqBidx hιν
+  have d := infra_78_diagramEq_of_sameGalois hR Z₁
+    (hb.trans_le (hνμ.trans hBν)) (by rw [hr'ν]; exact hb)
+  have d1 := infra_73_scheme_comp d (Sum.map eB id)
+  have d2 := infra_73_diagramEq_of_eq d1
+    (xs' := infra_612_anchored eB qB.incl qB.val Z)
+    (ys' := infra_612_anchored (eB.trans e'.symm) r'.incl r'.val Z₁)
+    (fun t => by
+      rcases t with k | k
+      · rfl
+      · show _ = (⟨(Z k).1, qB.incl.onVertex (Z k).1 (Z k).2⟩ :
+          Occurrence K oneVertexShape (P.scheme.asSystem qB.hν qB.host))
+        rw [hZ k]
+        rfl)
+    (fun t => by cases t <;> rfl)
+  exact P.scheme.diagram_trans _ _ _ _ _ _ ans (P.scheme.diagram_symm _ _ _ _ d2)
+
 /-- **English Lemma 7.2, clause 2 at mixed levels (open).** -/
 theorem infra_72_mixed_level
     (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : ℵ₀ ≤ σ)

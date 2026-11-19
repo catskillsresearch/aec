@@ -4447,6 +4447,15 @@
    "status": "done",
    "blocker": null,
    "detail": "DONE cycle 97. Axioms clean."
+  },
+  {
+   "id": "infra_72_tied_of_isolated_mixed",
+   "label": "Lemma 7.2 mixed tied step (mixed infra_73_tied_of_isolated), bounds at nu only",
+   "section": 8,
+   "file": "AEC/Section7/Lemma72Mixed.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "DONE cycle 97: per query a level-nu hull A -> B0 -> B, qB read over B0 and realized at nu, same-level infra_73_tied_of_isolated at nu, answer carried back. Helpers infra_72_sgt_marginal, infra_72_sgt_restrict, infra_72_ext_factor. Axioms clean."
   }
  ],
  "edges": [
@@ -8657,8 +8666,13 @@
    "from": "infra_72_tiedFree_restrict_factor",
    "to": "infra_72_mixed_level",
    "kind": "hard"
+  },
+  {
+   "from": "infra_72_tied_of_isolated_mixed",
+   "to": "infra_72_mixed_level",
+   "kind": "hard"
   }
  ],
- "doneCount": 440,
+ "doneCount": 441,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
