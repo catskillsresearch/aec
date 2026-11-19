@@ -31,6 +31,11 @@ def chartYM (E : OrderPresentation K) (n : ℕ) {N : Type u} [(LS83.pairLangM3 E
     (x : N) : Prop :=
   Structure.RelMap (L := LS83.pairLangM3 E n) (Sum.inr (Sum.inl ⟨⟨1⟩, rfl⟩)) ![x]
 
+/-- `Y`-chart order in a `pairLangM3`-structure. -/
+def chartLtYM (E : OrderPresentation K) (n : ℕ) {N : Type u} [(LS83.pairLangM3 E n).Structure N]
+    (x y : N) : Prop :=
+  Structure.RelMap (L := LS83.pairLangM3 E n) (Sum.inr (Sum.inr ⟨⟨1⟩, rfl⟩)) ![x, y]
+
 /-- **Sample-like structures, `Y`-side data.** -/
 def YSampleLike (E : OrderPresentation K) (n : ℕ) (N : Type u)
     [(LS83.pairLangM3 E n).Structure N] : Prop :=
@@ -47,8 +52,10 @@ def YSampleLike (E : OrderPresentation K) (n : ℕ) (N : Type u)
     (∀ x, chartXM E n x → g x ∈ Set.range e₀) ∧
     (∀ {k} (f : K.τ.Functions k) (x : Fin k → N),
       g (@Structure.funMap _ _ ((tauRed E n).reduct N) k f x) = Structure.funMap f (g ∘ x)) ∧
-    ∀ {k} (r : K.τ.Relations k) (x : Fin k → N),
-      (@Structure.RelMap _ _ ((tauRed E n).reduct N) k r x ↔ Structure.RelMap r (g ∘ x))
+    (∀ {k} (r : K.τ.Relations k) (x : Fin k → N),
+      (@Structure.RelMap _ _ ((tauRed E n).reduct N) k r x ↔ Structure.RelMap r (g ∘ x))) ∧
+    ∀ x y, chartLtYM E n x y ↔
+      ∃ z z', z < z' ∧ e₀ (E.skeleton z) = g x ∧ e₀ (E.skeleton z') = g y
 
 /-- **`Y_H ≅ F(Z_H)` in a sample-like structure** (set level, through `g`). -/
 theorem yHull_eq_chart (E : OrderPresentation K) (n : ℕ) {N : Type u}
@@ -107,6 +114,32 @@ theorem thetaM_one' (E : OrderPresentation K) (n : ℕ) {N : Type u}
     (thetaM E n 1).Realize (fun _ => x) ↔ chartYM E n x :=
   thetaM_one E n x
 
+/-- The pair formulas: increasing `J`-coordinates are in `X`-chart order, increasing
+`Z`-coordinates in `Y`-chart order. -/
+def rhoM (E : OrderPresentation K) (n : ℕ) : Fin 3 → (LS83.pairLangM3 E n).Formula (Fin 2) :=
+  ![Relations.formula₂ (Sum.inr (Sum.inr ⟨⟨0⟩, rfl⟩)) (Term.var 0) (Term.var 1),
+    Relations.formula₂ (Sum.inr (Sum.inr ⟨⟨1⟩, rfl⟩)) (Term.var 0) (Term.var 1), ⊤]
+
+theorem rhoM_zero (E : OrderPresentation K) (n : ℕ) {N : Type u}
+    [(LS83.pairLangM3 E n).Structure N] (x y : N) :
+    (rhoM E n 0).Realize ![x, y] ↔ chartLtXM E n x y := by
+  simp only [rhoM, Matrix.cons_val_zero, chartLtXM]
+  show Structure.RelMap _ _ ↔ _
+  apply iff_of_eq
+  congr 1
+  funext i
+  fin_cases i <;> rfl
+
+theorem rhoM_one (E : OrderPresentation K) (n : ℕ) {N : Type u}
+    [(LS83.pairLangM3 E n).Structure N] (x y : N) :
+    (rhoM E n 1).Realize ![x, y] ↔ chartLtYM E n x y := by
+  simp only [rhoM, Matrix.cons_val_one, chartLtYM]
+  show Structure.RelMap _ _ ↔ _
+  apply iff_of_eq
+  congr 1
+  funext i
+  fin_cases i <;> rfl
+
 /-- The admitted class with both `X`- and `Y`-side sample data. -/
 abbrev pairMAdmittedS2 (E : OrderPresentation K) (n : ℕ) (N : Type u)
     [(LS83.pairLangM3 E n).Structure N] : Prop :=
@@ -120,9 +153,11 @@ theorem infra_83_pairMS2_coherent_colors (P : SingleModelData K)
         Hull83.Joint (Hull83.TpSampleB (fun N _ => pairMAdmittedS2 P.E Pr.n N) 3) n c κ) ∧
       (∀ {m m' : ℕ} (hm' : 0 < m') (hm : 0 < m) (f : Fin m' ↪o Fin m),
         c m' hm' = Hull83.tpResB 3 f (c m hm)) ∧
-      ∀ (m : ℕ) (hm : 0 < m) (a : Fin m) (i : Fin 3),
-        (thetaM P.E Pr.n i).relabel (fun _ => (a, i)) ∈ c m hm := by
-  refine Hull83.tpB_coherent_colors_formula (thetaM P.E Pr.n) fun κ => ?_
+      (∀ (m : ℕ) (hm : 0 < m) (a : Fin m) (i : Fin 3),
+        (thetaM P.E Pr.n i).relabel (fun _ => (a, i)) ∈ c m hm) ∧
+      ∀ (m : ℕ) (hm : 0 < m) (a b : Fin m), a < b → ∀ i : Fin 3,
+        (rhoM P.E Pr.n i).relabel ![(a, i), (b, i)] ∈ c m hm := by
+  refine Hull83.tpB_coherent_colors_formula2 (thetaM P.E Pr.n) (rhoM P.E Pr.n) fun κ => ?_
   obtain ⟨μ, hθ, -, J, i1, i2, -, hJ, M, -, eX, -, -, ι, Jplus, i3, i4, emb, strip, hstrip, -,
     F, -, hF, s₀, hcl, hred, hX, hchX, hY, hchY, -⟩ :=
     infra_83_pairR_samples P Pr (κ := ℵ₀) le_rfl κ
@@ -144,12 +179,14 @@ theorem infra_83_pairMS2_coherent_colors (P : SingleModelData K)
     ⟨⟨hcl, J, Jplus, i1, i2, i3, i4, emb, Equiv.refl _, fun f x hx => hX f x hx,
       fun T _ hT => hchX T hT, fun x => Iff.rfl,
       fun f x => congrArg (fun s' => @Structure.funMap _ _ s' _ f x) hred,
-      fun r x => Iff.of_eq (congrArg (fun s' => @Structure.RelMap _ _ s' _ r x) hred)⟩,
+      fun r x => Iff.of_eq (congrArg (fun s' => @Structure.RelMap _ _ s' _ r x) hred),
+      fun x y => Iff.rfl⟩,
      J, Jplus, i1, i2, i3, i4, e₀, Equiv.refl _, ?_, ?_, fun x => Iff.rfl, ?_,
       fun f x => congrArg (fun s' => @Structure.funMap _ _ s' _ f x) hred,
-      fun r x => Iff.of_eq (congrArg (fun s' => @Structure.RelMap _ _ s' _ r x) hred)⟩,
+      fun r x => Iff.of_eq (congrArg (fun s' => @Structure.RelMap _ _ s' _ r x) hred),
+      fun x y => Iff.rfl⟩,
     hJ ▸ hθ, jzwBundle (fun j => P.E.skeleton (emb j)) (fun j => F (ι (P.E.skeleton j)))
-      (fun j => P.E.skeleton (e j).1), fun i => ?_, fun a i => ?_⟩
+      (fun j => P.E.skeleton (e j).1), fun i => ?_, fun a i => ?_, fun a b hab i => ?_⟩
   · intro k f x hx
     have hx' : ∀ i, x i ∈ Set.range F := fun i => by
       obtain ⟨y, hy⟩ := hx i
@@ -177,6 +214,14 @@ theorem infra_83_pairMS2_coherent_colors (P : SingleModelData K)
     · exact (thetaM_one _ _ _).2
         (show ∃ z, F (ι (P.E.skeleton z)) = F (ι (P.E.skeleton a)) from ⟨a, rfl⟩)
     · simp [thetaM]
+  · fin_cases i
+    · exact (rhoM_zero _ _ _ _).2 (show ∃ j j', j < j' ∧ P.E.skeleton (emb j) =
+        P.E.skeleton (emb a) ∧ P.E.skeleton (emb j') = P.E.skeleton (emb b) from
+        ⟨a, b, hab, rfl, rfl⟩)
+    · exact (rhoM_one _ _ _ _).2 (show ∃ z z', z < z' ∧ F (ι (P.E.skeleton z)) =
+        F (ι (P.E.skeleton a)) ∧ F (ι (P.E.skeleton z')) = F (ι (P.E.skeleton b)) from
+        ⟨a, b, hab, rfl, rfl⟩)
+    · simp [rhoM]
 
 /-- **`X_k ≅ F(J_k)` and `Y_k ≅ F(Z_k)`** for the template pieces over `X`- and
 `Y`-sample-like structures: bijective `τ`-embeddings onto `F` of the charts. -/
@@ -198,9 +243,9 @@ theorem infra_83_pairMS2_pieces_iso (P : SingleModelData K)
             ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K)))
             ((Hull83.witB hc k).v ∘ Prod.map id (fun i : Fin 2 => i.castSucc))).carrier ↪[K.τ]
             (P.E.obj H).carrier), Function.Bijective ε) := by
-  obtain ⟨c, hc, hcoh, hθ⟩ := infra_83_pairMS2_coherent_colors P Pr
+  obtain ⟨c, hc, hcoh, hθ, hρ⟩ := infra_83_pairMS2_coherent_colors P Pr
   refine ⟨c, hc, hcoh, fun k => ⟨?_, ?_⟩⟩
-  · obtain ⟨J, Jp, i1, i2, i3, i4, emb, g, hX, hch, hcx, hτf, hτr⟩ := (Hull83.witB hc k).mem.1.2
+  · obtain ⟨J, Jp, i1, i2, i3, i4, emb, g, hX, hch, hcx, hτf, hτr, -⟩ := (Hull83.witB hc k).mem.1.2
     have hpt : ∀ p : Fin (k + 1) × Fin 1, ∃ j, P.E.skeleton (emb j) =
         g ((Hull83.witB hc k).v (p.1, 0)) := fun p =>
       (hcx _).1 ((thetaM_zero _ _ _).1 (Hull83.witB_realize hc hθ k p.1 0))
@@ -225,7 +270,7 @@ theorem infra_83_pairMS2_pieces_iso (P : SingleModelData K)
         exact ⟨x, rfl⟩
     obtain ⟨ε, hbij, -⟩ := emb_equiv_of_range f _ hrange
     exact ⟨J, i1, i2, _, hne, ε, hbij⟩
-  · obtain ⟨Z, Jp, i1, i2, i3, i4, e₀, g, hY, hch, hcy, hXY, hτf, hτr⟩ := (Hull83.witB hc k).mem.2
+  · obtain ⟨Z, Jp, i1, i2, i3, i4, e₀, g, hY, hch, hcy, hXY, hτf, hτr, -⟩ := (Hull83.witB hc k).mem.2
     have hv : ∀ p : Fin (k + 1) × Fin 2,
         g (((Hull83.witB hc k).v ∘ Prod.map id (fun i : Fin 2 => i.castSucc)) p) ∈
           Set.range e₀ := by
@@ -347,9 +392,9 @@ theorem infra_83_pairMS2_X_pieces_coord (P : SingleModelData K)
               ((Hull83.witB hc k).v ∘ Prod.map id (fun _ : Fin 1 => (0 : Fin 3))) x =
               (Hull83.witB hc k).v (a, 0) →
             ε x = P.E.skeleton (jH a) := by
-  obtain ⟨c, hc, hcoh, hθ⟩ := infra_83_pairMS2_coherent_colors P Pr
+  obtain ⟨c, hc, hcoh, hθ, hρ⟩ := infra_83_pairMS2_coherent_colors P Pr
   refine ⟨c, hc, hcoh, fun k => ?_⟩
-  obtain ⟨J, Jp, i1, i2, i3, i4, emb, g, hX, hch, hcx, hτf, hτr⟩ := (Hull83.witB hc k).mem.1.2
+  obtain ⟨J, Jp, i1, i2, i3, i4, emb, g, hX, hch, hcx, hτf, hτr, -⟩ := (Hull83.witB hc k).mem.1.2
   have hpt : ∀ p : Fin (k + 1) × Fin 1, ∃ j, P.E.skeleton (emb j) =
       g ((Hull83.witB hc k).v (p.1, 0)) := fun p =>
     (hcx _).1 ((thetaM_zero _ _ _).1 (Hull83.witB_realize hc hθ k p.1 0))
@@ -411,7 +456,7 @@ theorem pairMS2_X_coord_of (P : SingleModelData K)
               ((Hull83.witB hc k).v ∘ Prod.map id (fun _ : Fin 1 => (0 : Fin 3))) x =
               (Hull83.witB hc k).v (a, 0) →
             ε x = P.E.skeleton (jH a) := by
-  obtain ⟨J, Jp, i1, i2, i3, i4, emb, g, hX, hch, hcx, hτf, hτr⟩ := (Hull83.witB hc k).mem.1.2
+  obtain ⟨J, Jp, i1, i2, i3, i4, emb, g, hX, hch, hcx, hτf, hτr, -⟩ := (Hull83.witB hc k).mem.1.2
   have hpt : ∀ p : Fin (k + 1) × Fin 1, ∃ j, P.E.skeleton (emb j) =
       g ((Hull83.witB hc k).v (p.1, 0)) := fun p =>
     (hcx _).1 ((thetaM_zero _ _ _).1 (Hull83.witB_realize hc hθ k p.1 0))
@@ -476,9 +521,9 @@ theorem infra_83_pairMS2_Y_pieces_coord (P : SingleModelData K)
               ((Hull83.witB hc k).v ∘ Prod.map id (fun i : Fin 2 => i.castSucc)) x =
               (Hull83.witB hc k).v (a, 1) →
             ε x = P.E.skeleton (zH a) := by
-  obtain ⟨c, hc, hcoh, hθ⟩ := infra_83_pairMS2_coherent_colors P Pr
+  obtain ⟨c, hc, hcoh, hθ, hρ⟩ := infra_83_pairMS2_coherent_colors P Pr
   refine ⟨c, hc, hcoh, fun k => ?_⟩
-  obtain ⟨Z, Jp, i1, i2, i3, i4, e₀, g, hY, hch, hcy, hXY, hτf, hτr⟩ := (Hull83.witB hc k).mem.2
+  obtain ⟨Z, Jp, i1, i2, i3, i4, e₀, g, hY, hch, hcy, hXY, hτf, hτr, -⟩ := (Hull83.witB hc k).mem.2
   have hv : ∀ p : Fin (k + 1) × Fin 2,
       g (((Hull83.witB hc k).v ∘ Prod.map id (fun i : Fin 2 => i.castSucc)) p) ∈
         Set.range e₀ := by
@@ -551,7 +596,7 @@ theorem pairMS2_Y_coord_of (P : SingleModelData K)
               ((Hull83.witB hc k).v ∘ Prod.map id (fun i : Fin 2 => i.castSucc)) x =
               (Hull83.witB hc k).v (a, 1) →
             ε x = P.E.skeleton (zH a) := by
-  obtain ⟨Z, Jp, i1, i2, i3, i4, e₀, g, hY, hch, hcy, hXY, hτf, hτr⟩ := (Hull83.witB hc k).mem.2
+  obtain ⟨Z, Jp, i1, i2, i3, i4, e₀, g, hY, hch, hcy, hXY, hτf, hτr, -⟩ := (Hull83.witB hc k).mem.2
   have hv : ∀ p : Fin (k + 1) × Fin 2,
       g (((Hull83.witB hc k).v ∘ Prod.map id (fun i : Fin 2 => i.castSucc)) p) ∈
         Set.range e₀ := by
@@ -645,7 +690,7 @@ theorem infra_83_pairMS2_X_charts_coherent (P : SingleModelData K)
         (ch l).ε ((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
           ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3))
           hXs).map e x) = P.E.skeleton ((ch l).j (e a)) := by
-  obtain ⟨c, hc, hcoh, hθ⟩ := infra_83_pairMS2_coherent_colors P Pr
+  obtain ⟨c, hc, hcoh, hθ, hρ⟩ := infra_83_pairMS2_coherent_colors P Pr
   have hXs : Hull83.SubHullStrong ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
       ((LS83.pairInlR P.E).comp (LS83.lsInl K)) (fun N _ => pairMAdmittedS2 P.E Pr.n N) :=
     fun M _ hM => pairM_subHullStrongX P.E Pr.n M hM.1.1
@@ -681,7 +726,7 @@ theorem infra_83_pairMS2_Y_charts_coherent (P : SingleModelData K)
         (ch l).ε ((Hull83.subLangPieces (psiM P.E Pr.n)
           ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh
           (fun i : Fin 2 => i.castSucc) hYs).map e x) = P.E.skeleton ((ch l).j (e a)) := by
-  obtain ⟨c, hc, hcoh, hθ⟩ := infra_83_pairMS2_coherent_colors P Pr
+  obtain ⟨c, hc, hcoh, hθ, hρ⟩ := infra_83_pairMS2_coherent_colors P Pr
   have hYs : Hull83.SubHullStrong (psiM P.E Pr.n)
       ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K)))
       (fun N _ => pairMAdmittedS2 P.E Pr.n N) :=

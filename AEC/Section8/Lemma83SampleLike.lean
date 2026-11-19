@@ -48,8 +48,10 @@ def XSampleLike (E : OrderPresentation K) (n : ℕ) (N : Type u)
     (∀ x, chartXM E n x ↔ ∃ j, E.skeleton (emb j) = g x) ∧
     (∀ {k} (f : K.τ.Functions k) (x : Fin k → N),
       g (@Structure.funMap _ _ ((tauRed E n).reduct N) k f x) = Structure.funMap f (g ∘ x)) ∧
-    ∀ {k} (r : K.τ.Relations k) (x : Fin k → N),
-      (@Structure.RelMap _ _ ((tauRed E n).reduct N) k r x ↔ Structure.RelMap r (g ∘ x))
+    (∀ {k} (r : K.τ.Relations k) (x : Fin k → N),
+      (@Structure.RelMap _ _ ((tauRed E n).reduct N) k r x ↔ Structure.RelMap r (g ∘ x))) ∧
+    ∀ x y, chartLtXM E n x y ↔
+      ∃ j j', j < j' ∧ E.skeleton (emb j) = g x ∧ E.skeleton (emb j') = g y
 
 /-- **`X_H = F(J_H)` in a sample-like structure**: the `X`-language hull of chart points is
 (through `g`) exactly `F` of its chart. -/
@@ -163,7 +165,8 @@ theorem infra_83_pairMS_coherent_colors (P : SingleModelData K)
     ⟨hcl, J, Jplus, i1, i2, i3, i4, emb, Equiv.refl _, fun f x hx => hX f x hx,
       fun T _ hT => hchX T hT, fun x => Iff.rfl,
       fun f x => congrArg (fun s' => @Structure.funMap _ _ s' _ f x) hred,
-      fun r x => Iff.of_eq (congrArg (fun s' => @Structure.RelMap _ _ s' _ r x) hred)⟩,
+      fun r x => Iff.of_eq (congrArg (fun s' => @Structure.RelMap _ _ s' _ r x) hred),
+      fun x y => Iff.rfl⟩,
     hJ ▸ hθ, jzwBundle (fun j => P.E.skeleton (emb j)) (fun j => F (ι (P.E.skeleton j)))
       (fun j => P.E.skeleton (e j).1), fun i => ?_, fun a i => ?_⟩
   · fin_cases i
@@ -256,7 +259,7 @@ theorem infra_83_pairMS_X_pieces_iso (P : SingleModelData K)
             ((Hull83.witB hc k).v ∘ Prod.map id (fun _ : Fin 1 => (0 : Fin 3))) x) := by
   obtain ⟨c, hc, hcoh, hθ⟩ := infra_83_pairMS_coherent_colors P Pr
   refine ⟨c, hc, hcoh, fun k => ?_⟩
-  obtain ⟨J, Jp, i1, i2, i3, i4, emb, g, hX, hch, hcx, hτf, hτr⟩ := (Hull83.witB hc k).mem.2
+  obtain ⟨J, Jp, i1, i2, i3, i4, emb, g, hX, hch, hcx, hτf, hτr, -⟩ := (Hull83.witB hc k).mem.2
   have hpt : ∀ p : Fin (k + 1) × Fin 1, ∃ j, P.E.skeleton (emb j) =
       g ((Hull83.witB hc k).v (p.1, 0)) := fun p =>
     (hcx _).1 ((thetaM_zero _ _ _).1 (Hull83.witB_realize hc hθ k p.1 0))

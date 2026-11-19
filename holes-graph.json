@@ -5950,6 +5950,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 106: EM83.PiecesHom.limMap_bijective; limit clauses added to infra_83_pairMS2_X/Y_chart_pieces. Remaining for F_X(I) ≅ F(J_I): identify F_X^c(I) with F(J_I), i.e. θ_e = E.map of order embeddings H_k → H_l."
+  },
+  {
+   "id": "infra_83_chart_order_colors",
+   "label": "Lemma 8.3 proof: chart-order clauses in the X/Y sample-like classes (chartLt_X, chartLt_Y name the chart orders through g) and coherent colors recording two-variable formulas on increasing coordinate pairs; the pairMS2 colors record that increasing J- (Z-) coordinates are in chart order",
+   "section": 8,
+   "file": "AEC/Section8/HullColorsFormula83.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 107: TpSampleBF2, tpB_coherent_colors_formula2, witB_realize2 (HullColorsFormula83); chartLtYM, rhoM, rhoM_zero, rhoM_one; order clauses added to XSampleLike / YSampleLike (concrete samples satisfy them by Iff.rfl); infra_83_pairMS2_coherent_colors now also records rhoM."
   }
  ],
  "edges": [
@@ -11125,8 +11134,18 @@
    "from": "infra_83_pairMS2_chart_limits",
    "to": "infra_83_Y_hull_eq_FZ",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_chart_order_colors",
+   "to": "infra_83_X_hull_eq_FJ",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_83_chart_order_colors",
+   "to": "infra_83_Y_hull_eq_FZ",
+   "kind": "hard"
   }
  ],
- "doneCount": 594,
+ "doneCount": 595,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
