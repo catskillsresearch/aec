@@ -1491,4 +1491,36 @@ theorem infra_83_piece_for_list (P : SingleModelData K) {ν : Cardinal.{u}} {hν
   exact ⟨Yu, inclu, j, m, d, hj, hjd, hm⟩
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+/-- **The prescribed-type clause is local to pieces (proved).** For a piece `X ≤ Y₀ ≤ Y`
+(`incl0 ; j0 = incl`) holding a preimage `b₀` of the mark `b`, the mark realizes the prescribed
+type over `X` in `Y` iff `b₀` does in `Y₀` (`infra_83_realizes_push`, `infra_83_realizes_pull`). -/
+theorem infra_83_realizes_piece_iff (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) {μ : Cardinal.{u}}
+    {hμ : μ ∈ P.eligible} {X Y Y0 : P.scheme.Object μ hμ}
+    (incl : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ Y))
+    (incl0 : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ Y0))
+    (j0 : SystemArrow K oneVertexShape (P.scheme.asSystem hμ Y0) (P.scheme.asSystem hμ Y))
+    {bIdx : Type u} (b : bIdx → Occurrence K oneVertexShape (P.scheme.asSystem hμ Y))
+    (b0 : bIdx → Occurrence K oneVertexShape (P.scheme.asSystem hμ Y0))
+    (hj0 : SystemArrow.comp incl0 j0 = incl) (hb0 : ∀ i, j0.mapOcc (b0 i) = b i)
+    (realEq : bIdx ≃ (Pr.assign hμ X).idx) :
+    SameGaloisType (asTuple incl trivial b) (Pr.assign hμ X) realEq (Equiv.refl _) ↔
+      SameGaloisType (asTuple incl0 trivial b0) (Pr.assign hμ X) realEq (Equiv.refl _) := by
+  have hx : (fun i => j0.mapOcc (b0 i)) = b := funext hb0
+  constructor
+  · intro H
+    have H' : SameGaloisType (asTuple (SystemArrow.comp incl0 j0) trivial
+        (fun i => j0.mapOcc (b0 i))) (Pr.assign hμ X) realEq (Equiv.refl _) := by
+      rw [hx, hj0]; exact H
+    exact infra_83_realizes_pull P Pr incl0 trivial j0 b0 realEq H'
+  · intro H
+    have H' := infra_83_realizes_push P Pr incl0 trivial j0 b0 realEq H
+    rw [hx, hj0] at H'
+    exact H'
+end
+
 end AEC
