@@ -6921,7 +6921,7 @@
    "file": "AEC/Section8/Lemma83RetGood.lean",
    "status": "open",
    "blocker": null,
-   "detail": "Open (cycle 154 plan). | Target interface fixed (cycle 169): the hmatch hypothesis of infra_83_marked_of_marked_matches."
+   "detail": "Open (cycle 154 plan). | Target interface fixed (cycle 169): the hmatch hypothesis of infra_83_marked_of_marked_matches. | Cycles 170-172: count clause supplied from a piece match: infra_83_retained_of_match_ret (YI = hull of one bounded list) gives >= #X_I retained indices with r_i(onY x) in onX[X_I]; infra_83_marked_of_marked_matches_card consumes 'nu <= #good'. Remaining for each bounded c: (i) the piece match mY (order map of the positions of u and r_i(u) into the bounded-arity sample, extended by OrderSat83.extend_orderEmbedding_linear), (ii) toA : X' -> N.X as a SystemArrow from the template value's X_H (infra_83_XH_sort at template level), (iii) the Galois-type identification tp(b,c/X') = tp(u*/N.X)|toA from matched hull diagrams, (iv) hmeet on the piece (infra_83_XH_sort_sample)."
   },
   {
    "id": "infra_83_XH_sort_sample",
