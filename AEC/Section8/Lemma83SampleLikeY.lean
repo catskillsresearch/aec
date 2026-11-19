@@ -303,4 +303,26 @@ theorem infra_83_pairMS2_template (P : SingleModelData K)
       ηXY.limMap_natural f, ηYL.limMap_natural f⟩, fun k => ?_⟩
   exact hiso k
 
+/-- **Local form of the limit pieces**: in the pair template over `X`- and `Y`-sample-like
+structures, every element of the limit value `F_X(I)` (resp. `F_Y(I)`) is the image under a
+canonical map of an element of a finite-support piece, and every finite piece is
+`τ`-isomorphic to `F(J_k)` (resp. `F(Z_k)`). (The global identification `F_X(I) ≅ F(J_I)`,
+coherent along the piece maps, is the open tip `infra_83_X_hull_eq_FJ`.) -/
+theorem infra_83_pairMS2_limit_local (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) :
+    ∃ (FX FY : EM83.FinPieces K),
+      (∀ k : ℕ,
+        (∃ (J : Type u) (_ : LinearOrder J) (_ : Nonempty J) (H : Set J) (_ : Nonempty H)
+          (ε : (FX.obj k).carrier ↪[K.τ] (P.E.obj H).carrier), Function.Bijective ε) ∧
+        (∃ (Z : Type u) (_ : LinearOrder Z) (_ : Nonempty Z) (H : Set Z) (_ : Nonempty H)
+          (ε : (FY.obj k).carrier ↪[K.τ] (P.E.obj H).carrier), Function.Bijective ε)) ∧
+      ∀ (I : Type u) [LinearOrder I] [Nonempty I],
+        (∀ x : (FX.limit I).obj.carrier, ∃ (s : (FX.system I).ι) (y : (FX.obj s.1.card.pred).carrier),
+          (FX.limit I).canon s y = x) ∧
+        (∀ x : (FY.limit I).obj.carrier, ∃ (s : (FY.system I).ι) (y : (FY.obj s.1.card.pred).carrier),
+          (FY.limit I).canon s y = x) := by
+  obtain ⟨FX, FY, -, -, -, -, -, -, -, hiso⟩ := infra_83_pairMS2_template P Pr
+  exact ⟨FX, FY, hiso, fun I _ _ => ⟨fun x => (FX.limit I).joint x,
+    fun x => (FY.limit I).joint x⟩⟩
+
 end AEC
