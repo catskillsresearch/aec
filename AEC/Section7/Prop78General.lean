@@ -326,4 +326,122 @@ theorem infra_78_matrix_limit_step_gen (σ : Cardinal.{u}) (hσ : ℵ₀ ≤ σ)
 
 end LimitAssemblyGen
 
+/-- Restricting twice is restricting along the composite. -/
+theorem infra_78_restrict_restrict_eq {P : SingleModelData K} {μ : Cardinal.{u}}
+    {hμ : μ ∈ P.eligible} {X A B : P.scheme.Object μ hμ}
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ A))
+    (hf : P.scheme.permitted (X := X) (Y := A) f)
+    (g : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ B))
+    (hg : P.scheme.permitted (X := A) (Y := B) g)
+    (q : TupleOver K oneVertexShape P.scheme hμ B)
+    (h : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ B))
+    (hh : P.scheme.permitted (X := X) (Y := B) h) (heq : SystemArrow.comp f g = h) :
+    (q.restrict g hg).restrict f hf = q.restrict h hh := by
+  subst heq
+  simp only [TupleOver.restrict, SystemArrow.comp_assoc]
+
+/-- Transport of tied freeness along equalities of the tuples (with matching identifications). -/
+theorem infra_78_tiedFree_congr {P : SingleModelData K} {μ : Cardinal.{u}}
+    {hμ : μ ∈ P.eligible} {X A : P.scheme.Object μ hμ}
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ A))
+    {qX qX' : TupleOver K oneVertexShape P.scheme hμ X}
+    {qA qA' : TupleOver K oneVertexShape P.scheme hμ A}
+    (hX : qX = qX') (hA : qA = qA') (e : qX.idx ≃ qA.idx) (e' : qX'.idx ≃ qA'.idx)
+    (he : HEq e e') (H : IsTiedFree f qX qA e) : IsTiedFree f qX' qA' e' := by
+  subst hX; subst hA; cases he; exact H
+
+/-- **Stage freeness from base freeness (proved, cycle 93).** On a same-level chain, if the
+mark `b` over the union has every stage restriction tied free from a base `X_b → X_0` (and the
+stage-`0` restriction along `X_b → X_0` itself), then every stage restriction is tied free from
+`X_0` (cancellation, `infra_78_tiedFree_cancel`). This is the stage hypothesis of Definition 7.7
+(`SatisfiesContinuityTied`) obtained from invariant (5) of the Prop 7.8 matrix. -/
+theorem infra_78_chain_stage_free
+    (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : ℵ₀ ≤ σ)
+    {κ : Cardinal.{u}} (hκ : κ ∈ P.eligible)
+    (hrec : κ ∈ recursionClosedLevels P σ) (hσSucc : Order.succ σ ≤ κ)
+    (C : SameLevelChain P hκ) (b : TupleOver K oneVertexShape P.scheme hκ C.unionObj)
+    (hbν : b.ν = κ) (hidx : #b.idx ≤ σ)
+    (Xb : P.scheme.Object κ hκ)
+    (g0 : SystemArrow K oneVertexShape (P.scheme.asSystem hκ Xb)
+      (P.scheme.asSystem hκ (C.obj 0 C.hlim.1)))
+    (hg0 : P.scheme.permitted (X := Xb) (Y := C.obj 0 C.hlim.1) g0)
+    (h0 : IsTiedFree g0
+      ((b.restrict (C.toUnion 0 C.hlim.1) (C.toUnion_arrow 0 C.hlim.1)).restrict g0 hg0)
+      (b.restrict (C.toUnion 0 C.hlim.1) (C.toUnion_arrow 0 C.hlim.1)) (Equiv.refl _))
+    (hAll : ∀ (i : Ordinal.{u}) (hi : i < C.δ),
+      IsTiedFree
+        (SystemArrow.comp g0 (C.le C.hlim.1 hi (bot_le : (0 : Ordinal.{u}) ≤ i)))
+        ((b.restrict (C.toUnion i hi) (C.toUnion_arrow i hi)).restrict
+          (SystemArrow.comp g0 (C.le C.hlim.1 hi (bot_le : (0 : Ordinal.{u}) ≤ i)))
+          (P.scheme.comp g0 (C.le C.hlim.1 hi (bot_le : (0 : Ordinal.{u}) ≤ i)) hg0
+            (C.le_arrow C.hlim.1 hi (bot_le : (0 : Ordinal.{u}) ≤ i))))
+        (b.restrict (C.toUnion i hi) (C.toUnion_arrow i hi)) (Equiv.refl _)) :
+    ∀ (i : Ordinal.{u}) (hi : i < C.δ),
+      IsTiedFree (C.le C.hlim.1 hi (bot_le : (0 : Ordinal.{u}) ≤ i))
+        (b.restrict (C.toUnion 0 C.hlim.1) (C.toUnion_arrow 0 C.hlim.1))
+        (b.restrict (C.toUnion i hi) (C.toUnion_arrow i hi)) (Equiv.refl _) := by
+  intro i hi
+  have hle := C.le_arrow C.hlim.1 hi (bot_le : (0 : Ordinal.{u}) ≤ i)
+  have hE : (b.restrict (C.toUnion i hi) (C.toUnion_arrow i hi)).restrict
+      (C.le C.hlim.1 hi (bot_le : (0 : Ordinal.{u}) ≤ i)) hle =
+      b.restrict (C.toUnion 0 C.hlim.1) (C.toUnion_arrow 0 C.hlim.1) :=
+    infra_78_restrict_restrict_eq _ _ _ _ _ _ _ (C.toUnion_comp C.hlim.1 hi bot_le)
+  have hE2 := infra_78_restrict_restrict_eq g0 hg0
+    (C.le C.hlim.1 hi (bot_le : (0 : Ordinal.{u}) ≤ i)) hle
+    (b.restrict (C.toUnion i hi) (C.toUnion_arrow i hi))
+    (SystemArrow.comp g0 (C.le C.hlim.1 hi (bot_le : (0 : Ordinal.{u}) ≤ i)))
+    (P.scheme.comp g0 _ hg0 hle) rfl
+  have hc := infra_78_tiedFree_cancel P σ hσ hκ hrec hσSucc g0 hg0
+    (C.le C.hlim.1 hi (bot_le : (0 : Ordinal.{u}) ≤ i)) hle
+    (b.restrict (C.toUnion i hi) (C.toUnion_arrow i hi)) hbν hidx
+    (infra_78_tiedFree_congr g0 (congrArg (TupleOver.restrict g0 hg0) hE.symm) hE.symm
+      _ _ HEq.rfl h0)
+    (infra_78_tiedFree_congr _ hE2.symm rfl _ _ HEq.rfl (hAll i hi))
+  exact infra_78_tiedFree_congr _ hE rfl _ _ HEq.rfl hc
+
+/-- **Definition 7.7 gives the continuity oracle (proved, cycle 93).** For a mark `p` satisfying
+Definition 7.7 (`SatisfiesContinuityTied`), there is a tail `T` such that at every recursion
+level `κ ∈ T` above `|p|`'s level: for every same-level chain at `κ` and every bounded
+realization `b` over its union whose stage-`0` restriction is the (mixed) tied free lift of `p`
+along a base embedding `A → X₀`, if every stage restriction is tied free from a base `X_b → X₀`
+(and so is the stage-`0` restriction), then `b` is tied free from `X₀` over the union. Stage
+freeness from `X₀` comes from cancellation (`infra_78_chain_stage_free`). This discharges the
+`hF` hypothesis of `infra_78_matrix_limit_step_gen` (with `i = 0`) once the matrix supplies the
+stage-`0` seed. -/
+theorem infra_78_hF_of_def77 (P : SingleModelData K) {μ : Cardinal.{u}} {hμ : μ ∈ P.eligible}
+    {A : P.scheme.Object μ hμ} (p : TupleOver K oneVertexShape P.scheme hμ A)
+    (hp : SatisfiesContinuityTied p) :
+    ∃ T, ∃ hT : Tail P.eligible T, ∀ κ (hκT : κ ∈ T), μ ≤ κ →
+      ∀ (σ : Cardinal.{u}), ℵ₀ ≤ σ → κ ∈ recursionClosedLevels P σ → Order.succ σ ≤ κ →
+      ∀ (C : SameLevelChain P (Tail.mem hT hκT))
+        (b : TupleOver K oneVertexShape P.scheme (Tail.mem hT hκT) C.unionObj),
+        b.ν = κ → #b.idx ≤ σ →
+      ∀ (Xb : P.scheme.Object κ (Tail.mem hT hκT))
+        (g0 : SystemArrow K oneVertexShape (P.scheme.asSystem (Tail.mem hT hκT) Xb)
+          (P.scheme.asSystem (Tail.mem hT hκT) (C.obj 0 C.hlim.1)))
+        (hg0 : P.scheme.permitted (X := Xb) (Y := C.obj 0 C.hlim.1) g0)
+        (gA : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A)
+          (P.scheme.asSystem (Tail.mem hT hκT) (C.obj 0 C.hlim.1)))
+        (hgA : P.scheme.permitted (X := A) (Y := C.obj 0 C.hlim.1) gA)
+        (e : p.idx ≃ b.idx),
+        IsTiedFreeMixed gA p (b.restrict (C.toUnion 0 C.hlim.1) (C.toUnion_arrow 0 C.hlim.1)) e →
+        IsTiedFree g0
+          ((b.restrict (C.toUnion 0 C.hlim.1) (C.toUnion_arrow 0 C.hlim.1)).restrict g0 hg0)
+          (b.restrict (C.toUnion 0 C.hlim.1) (C.toUnion_arrow 0 C.hlim.1)) (Equiv.refl _) →
+        (∀ (i : Ordinal.{u}) (hi : i < C.δ),
+          IsTiedFree
+            (SystemArrow.comp g0 (C.le C.hlim.1 hi (bot_le : (0 : Ordinal.{u}) ≤ i)))
+            ((b.restrict (C.toUnion i hi) (C.toUnion_arrow i hi)).restrict
+              (SystemArrow.comp g0 (C.le C.hlim.1 hi (bot_le : (0 : Ordinal.{u}) ≤ i)))
+              (P.scheme.comp g0 (C.le C.hlim.1 hi (bot_le : (0 : Ordinal.{u}) ≤ i)) hg0
+                (C.le_arrow C.hlim.1 hi (bot_le : (0 : Ordinal.{u}) ≤ i))))
+            (b.restrict (C.toUnion i hi) (C.toUnion_arrow i hi)) (Equiv.refl _)) →
+        IsTiedFree (C.toUnion 0 C.hlim.1)
+          (b.restrict (C.toUnion 0 C.hlim.1) (C.toUnion_arrow 0 C.hlim.1)) b (Equiv.refl _) := by
+  obtain ⟨T, hT, H⟩ := hp
+  refine ⟨T, hT, ?_⟩
+  intro κ hκT hμκ σ hσ hrec hσSucc C b hbν hidx Xb g0 hg0 gA hgA e hmix h0 hAll
+  exact H κ hκT hμκ C gA hgA b e hbν hmix
+    (infra_78_chain_stage_free P σ hσ (Tail.mem hT hκT) hrec hσSucc C b hbν hidx Xb g0 hg0 h0 hAll)
+
 end AEC
