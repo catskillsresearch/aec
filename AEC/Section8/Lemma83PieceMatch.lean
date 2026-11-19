@@ -3042,4 +3042,127 @@ theorem infra_83_template_arrow_of_chain_inv (P : SingleModelData K) {μ : Cardi
     · exact heq_of_eq (hg₀m i)
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+set_option maxHeartbeats 1600000 in
+/-- **Prop 7.5(1) along one chosen tower (proved): constructive primeness needs isolation only
+on the stages of a single exhausting tower.** If `Y` is exhausted by a countable tower of small
+strong submodels `j n : M n → Y` (with `b` inside `M 0`) and, for every `n`, the joint tuple
+`(b, M n)` is isolated relative to `b` over `X`, then `Y` maps over `X` into every `N`
+realizing `tp(b/X)`, sending `b` to `b'`. This is `infra_75_embed` with `AllDominated` replaced
+by isolation on the stages of the given tower — the paper's arity removal: choose the stages as
+nested lists of bounded per-entry width, whose isolation comes from bounded-arity matches. -/
+theorem infra_83_embed_of_tower
+    {P : SingleModelData K} {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
+    (X Y N : P.scheme.Object μ hμ)
+    (incl : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ Y))
+    (hincl : P.scheme.permitted (X := X) (Y := Y) incl)
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ N))
+    (hf : P.scheme.permitted (X := X) (Y := N) f)
+    {bIdx : Type u}
+    (b : bIdx → Occurrence K oneVertexShape (P.scheme.asSystem hμ Y))
+    (b' : bIdx → Occurrence K oneVertexShape (P.scheme.asSystem hμ N))
+    (hb : #bIdx < μ)
+    (hGalB : SameGaloisType (asTuple incl hincl b) (asTuple f hf b')
+      (Equiv.refl bIdx) (Equiv.refl bIdx))
+    (M : ℕ → Model K.τ) (j : ∀ n, Language.Embedding K.τ (M n).carrier Y.model.carrier)
+    (hj : ∀ n, K.Strong (j n)) (hMc : ∀ n, Model.card (M n) < μ)
+    (hmono : ∀ n x, ∃ y, j (n + 1) y = j n x) (hcov : ∀ y, ∃ n x, j n x = y)
+    (hd : ∀ i, ∃ x, j 0 x = (b i).2)
+    (hIsoT : ∀ n, IsRelativelyIsolated (uIdx := bIdx) (cIdx := (M n).carrier)
+      (asTuple incl hincl (seqJoint b (fun x => Y.occ (j n x))))
+      (Equiv.refl (bIdx ⊕ (M n).carrier))) :
+    ∃ g : SystemArrow K oneVertexShape (P.scheme.asSystem hμ Y) (P.scheme.asSystem hμ N),
+      P.scheme.permitted (X := Y) (Y := N) g ∧
+      SystemArrow.comp incl g = f ∧
+      ∀ i, g.onVertex (b i).1 (b i).2 = (b' i).2 := by
+  classical
+  choose ιS hιS using hmono
+  have hIso0 := hIsoT 0
+  obtain ⟨h0, hh0, hGal0⟩ :=
+    infra_75_stage0 hμ incl hincl f hf b b' hGalB (j 0) (hj 0) (hMc 0) hb hIso0
+  let Stage (n : ℕ) :=
+    { p : Language.Embedding K.τ (M n).carrier N.model.carrier //
+      K.Strong p ∧
+      SameGaloisType
+        (asTuple incl hincl (seqJoint b (fun x => Y.occ (j n x))))
+        (asTuple f hf (seqJoint b' (fun x => N.occ (p x))))
+        (Equiv.refl (bIdx ⊕ (M n).carrier)) (Equiv.refl (bIdx ⊕ (M n).carrier)) }
+  have hstep : ∀ n (prev : Stage n), ∃ s : Stage (n + 1), ∀ x, s.1 (ιS n x) = prev.1 x := by
+    intro n prev
+    have hIso := hIsoT (n + 1)
+    have hγ : #(bIdx ⊕ (M n).carrier) < μ :=
+      infra_75_sum_lt (P.aleph0_le hμ) hb (by simpa [Model.card] using hMc n)
+    obtain ⟨h', hh', hGal', hext⟩ :=
+      infra_75_tower_step hμ incl hincl f hf b b' hGalB (j n) (hj n) (j (n + 1)) (hj (n + 1))
+        (hMc n) (hMc (n + 1)) (ιS n) (hιS n) prev.1 hγ hb prev.2.2 hIso
+    exact ⟨⟨h', hh', hGal'⟩, hext⟩
+  let seq : ∀ n, Stage n := fun n =>
+    Nat.rec (motive := fun n => Stage n) ⟨h0, hh0, hGal0⟩
+      (fun n prev => Classical.choose (hstep n prev)) n
+  have hseq : ∀ n x, (seq (n + 1)).1 (ιS n x) = (seq n).1 x :=
+    fun n => Classical.choose_spec (hstep n (seq n))
+  have hcoh : ∀ n x y, j (n + 1) y = j n x → (seq (n + 1)).1 y = (seq n).1 x := by
+    intro n x y hxy
+    have hy : y = ιS n x := (j (n + 1)).injective (hxy.trans (hιS n x).symm)
+    rw [hy]
+    exact hseq n x
+  obtain ⟨F, hF, hFj⟩ := exists_strong_of_nat_exhaustion Y.mem N.mem M j hj
+    (fun n x => ⟨ιS n x, hιS n x⟩) hcov (fun n => (seq n).1) (fun n => (seq n).2.1) hcoh
+  refine ⟨oneVertexArrow F hF, trivial, ?_, ?_⟩
+  · apply SystemArrow.ext
+    intro v
+    ext a
+    have hv : v = PUnit.unit := Subsingleton.elim _ _
+    have hunit : incl.onVertex v a = incl.onVertex PUnit.unit a :=
+      infra_75_onVertex_eq_unit incl hv a
+    have funit : f.onVertex v a = f.onVertex PUnit.unit a :=
+      infra_75_onVertex_eq_unit f hv a
+    obtain ⟨n, x, hx⟩ := hcov (incl.onVertex PUnit.unit a)
+    have hidx : #(bIdx ⊕ (M n).carrier) < μ :=
+      infra_75_sum_lt (P.aleph0_le hμ) hb (by simpa [Model.card] using hMc n)
+    have hi : (seqJoint b (fun y => Y.occ (j n y)) (Sum.inr x)).2 =
+        incl.onVertex PUnit.unit a := by
+      have hseq : (seqJoint b (fun y => Y.occ (j n y)) (Sum.inr x)).2 = j n x := rfl
+      exact hseq.trans hx
+    have hfix := infra_75_fixes_carrier incl hincl f hf
+      (seqJoint b (fun y => Y.occ (j n y)))
+      (seqJoint b' (fun y => N.occ ((seq n).1 y))) (seq n).2.2 (i := Sum.inr x) hi
+    have hFx : F (j n x) = (seq n).1 x := hFj n x
+    change F (incl.onVertex v a) = f.onVertex v a
+    rw [hunit, funit, ← hx, hFx]
+    exact hfix
+  · intro i
+    obtain ⟨x, hx⟩ := hd i
+    have hidx : #(bIdx ⊕ (M 0).carrier) < μ :=
+      infra_75_sum_lt (P.aleph0_le hμ) hb (by simpa [Model.card] using hMc 0)
+    have hij : (seqJoint b (fun y => Y.occ (j 0 y)) (Sum.inl i)).2 =
+        (seqJoint b (fun y => Y.occ (j 0 y)) (Sum.inr x)).2 := by
+      have hL : (seqJoint b (fun y => Y.occ (j 0 y)) (Sum.inl i)).2 = (b i).2 := rfl
+      have hR : (seqJoint b (fun y => Y.occ (j 0 y)) (Sum.inr x)).2 = j 0 x := rfl
+      exact hL.trans ((hx.symm).trans hR.symm)
+    have heq := infra_75_preserves_eq incl hincl f hf
+      (seqJoint b (fun y => Y.occ (j 0 y)))
+      (seqJoint b' (fun y => N.occ ((seq 0).1 y))) (seq 0).2.2 hidx hij
+    have hFx : F (j 0 x) = (seq 0).1 x := hFj 0 x
+    change (oneVertexArrow (hM := Y.mem) (hN := N.mem) F hF).onVertex (b i).1 (b i).2 = (b' i).2
+    have hv : (b i).1 = PUnit.unit := Subsingleton.elim _ _
+    have hcar := infra_75_onVertex_eq_unit
+      (oneVertexArrow (hM := Y.mem) (hN := N.mem) F hF) hv (b i).2
+    rw [hcar]
+    change F (b i).2 = (b' i).2
+    have hbcar : (b i).2 = j 0 x := hx.symm
+    rw [hbcar, hFx]
+    have hb' : (seqJoint b' (fun y => N.occ ((seq 0).1 y)) (Sum.inl i)).2 = (b' i).2 := by
+      simp [seqJoint]
+    have himg : (seqJoint b' (fun y => N.occ ((seq 0).1 y)) (Sum.inr x)).2 = (seq 0).1 x := by
+      have hocc : (N.occ ((seq 0).1 x)).2 = (seq 0).1 x := rfl
+      simp [seqJoint, hocc]
+      rfl
+    rw [← himg, ← hb', heq]
+
+end
+
 end AEC

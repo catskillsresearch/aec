@@ -7750,6 +7750,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 245: proved."
+  },
+  {
+   "id": "infra_83_embed_of_tower",
+   "label": "Prop 7.5(1) along one chosen tower: if Y is exhausted by a countable tower of small strong submodels M n (b in M 0) and each (b, M n) is isolated relative to b over X, Y maps over X into every N realizing tp(b/X) sending b to b'; infra_75_embed with AllDominated replaced by isolation on the given stages (the paper's arity removal with bounded-width stages)",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PieceMatch.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 246: proved."
   }
  ],
  "edges": [
@@ -14025,8 +14034,13 @@
    "from": "infra_83_template_arrow_of_chain_inv",
    "to": "infra_83_arity_removal",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_embed_of_tower",
+   "to": "infra_83_arity_removal",
+   "kind": "hard"
   }
  ],
- "doneCount": 792,
+ "doneCount": 793,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
