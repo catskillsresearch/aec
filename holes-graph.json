@@ -7534,6 +7534,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 221: proved."
+  },
+  {
+   "id": "infra_83_finite_support",
+   "label": "Finite supports in F(Z): every element of an order presentation value F(Z) has a finite support s, lying in F(S) for every nonempty S containing s (realize_surjective, realize_map); supplies the support sets of piece_of_support",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PieceMatch.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 222: proved."
   }
  ],
  "edges": [
@@ -13689,8 +13698,13 @@
    "from": "infra_83_piece_of_support",
    "to": "infra_83_XH_sort",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_finite_support",
+   "to": "infra_83_XH_sort",
+   "kind": "hard"
   }
  ],
- "doneCount": 768,
+ "doneCount": 769,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

@@ -1936,4 +1936,29 @@ theorem infra_83_piece_of_support (P : SingleModelData K) {ν : Cardinal.{u}}
   exact ⟨y, φ.injective (by rw [hφ, hz])⟩
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+/-- **Finite supports in `F(Z)` (proved).** Every element of an order presentation value `F(Z)`
+has a finite support `s ⊆ Z`: it lies in `F(S)` (image under `F(S ↪ Z)`) for every nonempty
+`S ⊇ s` (`realize_surjective`, `realize_map`). This supplies the support sets of
+`infra_83_piece_of_support` for a bounded list (union of the supports of its entries and of
+`J_I`'s image). -/
+theorem infra_83_finite_support (E : OrderPresentation K) {Z : Type u} [LinearOrder Z]
+    [Nonempty Z] (x : (E.obj Z).carrier) :
+    ∃ s : Finset Z, ∀ (S : Set Z) [Nonempty S], (↑s : Set Z) ⊆ S →
+      x ∈ Set.range (E.map (OrderEmbedding.subtype (fun z => z ∈ S))) := by
+  classical
+  obtain ⟨t, rfl⟩ := E.realize_surjective x
+  refine ⟨Finset.univ.image t.pos, fun S _ hS => ?_⟩
+  have hmem : ∀ a, t.pos a ∈ S := fun a =>
+    hS (Finset.mem_coe.mpr (Finset.mem_image_of_mem _ (Finset.mem_univ a)))
+  let t' : SupportTerm E.lab E.arity S :=
+    ⟨t.label, fun a => ⟨t.pos a, hmem a⟩, fun a b hab => t.increasing hab⟩
+  refine ⟨E.realize t', ?_⟩
+  rw [E.realize_map]
+  rfl
+end
+
 end AEC
