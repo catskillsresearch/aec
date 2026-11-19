@@ -386,7 +386,9 @@ theorem infra_78_recursion_outputs (hidx : #(uIdx ⊕ cIdx) ≤ σ)
 include hρκ in
 /-- **Failing-list property at every stage** of the recursion matrix with the concrete update and
 the `S`-part candidates: `infra_78_opMatrix_failing_list` with its hypotheses ((5) at the stage,
-an `S`-list) discharged by `infra_78_rc_inv5_all` and `infra_78_rc_S_nonempty`. -/
+an `S`-list) discharged by the hypothesis `h5all` ((5) at every stage: `infra_78_rc_inv5_all`
+for marks shorter than every limit cofinality, `infra_78_rc_inv5_all_def77` under Definition 7.7)
+and `infra_78_rc_S_nonempty`. -/
 theorem infra_78_rc_failing_list {cIdx : Type u} (hidx : #(uIdx ⊕ cIdx) ≤ σ)
     (s0 : Infra78Stage P (Tail.mem (infra_73_tail P σ hσ) hμT) (Infra78MarkData μ uIdx))
     (e0 : Infra78MarkData μ uIdx) (h5seed : infra_78_StageInv5 Xb s0)
