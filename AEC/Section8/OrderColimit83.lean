@@ -1,0 +1,180 @@
+module
+
+public import AEC.Section8.Lemma83SampleLikeY
+
+@[expose] public section
+
+/-!
+# Lemma 8.3: directed colimits of chart orders
+
+For a functor of linear orders indexed by the nonempty finite subsets of `I` (along `⊆`),
+the directed colimit `J_I` is a linear order with compatible order embeddings
+`ι_s : G s ↪o J_I` covering it. Applied to the chart orders of the `X`/`Y`-pieces this gives
+`F_X(I) ≅ F(J_I)` and `F_Y(I) ≅ F(Z_I)`.
+-/
+
+universe u
+
+open Cardinal FirstOrder FirstOrder.Language
+
+namespace AEC
+
+namespace OCol83
+
+variable {I : Type u} [LinearOrder I]
+
+/-- Nonempty finite supports. -/
+abbrev Idx (I : Type u) [LinearOrder I] := {s : Finset I // s.Nonempty}
+
+/-- Union of supports. -/
+def up (s t : Idx I) : Idx I := ⟨s.1 ∪ t.1, s.2.mono Finset.subset_union_left⟩
+
+variable {G : Idx I → Type u} [∀ s, LinearOrder (G s)]
+  (φ : ∀ {s t : Idx I}, s.1 ⊆ t.1 → G s ↪o G t)
+
+theorem le_iff_push (hcomp : ∀ {s t u : Idx I} (h1 : s.1 ⊆ t.1) (h2 : t.1 ⊆ u.1) (x : G s),
+      φ (h1.trans h2) x = φ h2 (φ h1 x))
+    {s t u w : Idx I} (hs : s.1 ⊆ u.1) (ht : t.1 ⊆ u.1) (huw : u.1 ⊆ w.1) (a : G s) (b : G t) :
+    φ (hs.trans huw) a ≤ φ (ht.trans huw) b ↔ φ hs a ≤ φ ht b := by
+  rw [hcomp hs huw, hcomp ht huw]
+  exact (φ huw).le_iff_le
+
+theorem le_indep (hcomp : ∀ {s t u : Idx I} (h1 : s.1 ⊆ t.1) (h2 : t.1 ⊆ u.1) (x : G s),
+      φ (h1.trans h2) x = φ h2 (φ h1 x))
+    {s t u u' : Idx I} (hs : s.1 ⊆ u.1) (ht : t.1 ⊆ u.1) (hs' : s.1 ⊆ u'.1) (ht' : t.1 ⊆ u'.1)
+    (a : G s) (b : G t) : φ hs a ≤ φ ht b ↔ φ hs' a ≤ φ ht' b :=
+  (le_iff_push φ hcomp (w := up u u') hs ht Finset.subset_union_left a b).symm.trans
+    (le_iff_push φ hcomp (w := up u u') hs' ht' Finset.subset_union_right a b)
+
+theorem eq_indep (hcomp : ∀ {s t u : Idx I} (h1 : s.1 ⊆ t.1) (h2 : t.1 ⊆ u.1) (x : G s),
+      φ (h1.trans h2) x = φ h2 (φ h1 x))
+    {s t u u' : Idx I} (hs : s.1 ⊆ u.1) (ht : t.1 ⊆ u.1) (hs' : s.1 ⊆ u'.1) (ht' : t.1 ⊆ u'.1)
+    (a : G s) (b : G t) : φ hs a = φ ht b ↔ φ hs' a = φ ht' b := by
+  rw [le_antisymm_iff, le_antisymm_iff, le_indep φ hcomp hs ht hs' ht',
+    le_indep φ hcomp ht hs ht' hs']
+
+/-- Canonical comparison at the union of the supports. -/
+def leS (a b : Σ s, G s) : Prop :=
+  φ (t := up a.1 b.1) Finset.subset_union_left a.2 ≤
+    φ (t := up a.1 b.1) Finset.subset_union_right b.2
+
+/-- Canonical identification at the union of the supports. -/
+def eqS (a b : Σ s, G s) : Prop :=
+  φ (t := up a.1 b.1) Finset.subset_union_left a.2 =
+    φ (t := up a.1 b.1) Finset.subset_union_right b.2
+
+variable (hcomp : ∀ {s t u : Idx I} (h1 : s.1 ⊆ t.1) (h2 : t.1 ⊆ u.1) (x : G s),
+      φ (h1.trans h2) x = φ h2 (φ h1 x))
+include hcomp
+
+theorem leS_iff {a b : Σ s, G s} {u : Idx I} (ha : a.1.1 ⊆ u.1) (hb : b.1.1 ⊆ u.1) :
+    leS φ a b ↔ φ ha a.2 ≤ φ hb b.2 :=
+  le_indep φ hcomp _ _ ha hb a.2 b.2
+
+theorem eqS_iff {a b : Σ s, G s} {u : Idx I} (ha : a.1.1 ⊆ u.1) (hb : b.1.1 ⊆ u.1) :
+    eqS φ a b ↔ φ ha a.2 = φ hb b.2 :=
+  eq_indep φ hcomp _ _ ha hb a.2 b.2
+
+/-- The colimit setoid. -/
+def setoid : Setoid (Σ s, G s) where
+  r := eqS φ
+  iseqv := by
+    refine ⟨fun a => rfl, fun {a b} h => ?_, fun {a b c} hab hbc => ?_⟩
+    · exact ((eqS_iff φ hcomp (u := up a.1 b.1) Finset.subset_union_right
+        Finset.subset_union_left).2 ((eqS_iff φ hcomp _ _).1 h).symm)
+    · let w : Idx I := up (up a.1 b.1) c.1
+      have ha : a.1.1 ⊆ w.1 := fun x hx => by simp [w, up, hx]
+      have hb : b.1.1 ⊆ w.1 := fun x hx => by simp [w, up, hx]
+      have hc : c.1.1 ⊆ w.1 := fun x hx => by simp [w, up, hx]
+      exact (eqS_iff φ hcomp ha hc).2 (((eqS_iff φ hcomp ha hb).1 hab).trans
+        ((eqS_iff φ hcomp hb hc).1 hbc))
+
+
+/-- **The directed colimit `J_I` of the orders.** -/
+def Col : Type u := Quotient (setoid φ hcomp)
+
+/-- The colimit order. -/
+def leC : Col φ hcomp → Col φ hcomp → Prop :=
+  Quotient.lift₂ (leS φ) fun a b a' b' haa hbb => by
+    let w : Idx I := up (up a.1 b.1) (up a'.1 b'.1)
+    have ha : a.1.1 ⊆ w.1 := fun x hx => by simp [w, up, hx]
+    have hb : b.1.1 ⊆ w.1 := fun x hx => by simp [w, up, hx]
+    have ha' : a'.1.1 ⊆ w.1 := fun x hx => by simp [w, up, hx]
+    have hb' : b'.1.1 ⊆ w.1 := fun x hx => by simp [w, up, hx]
+    have e1 := (eqS_iff φ hcomp ha ha').1 haa
+    have e2 := (eqS_iff φ hcomp hb hb').1 hbb
+    apply propext
+    rw [leS_iff φ hcomp ha hb, leS_iff φ hcomp ha' hb', e1, e2]
+
+noncomputable instance instLinearOrderCol : LinearOrder (Col φ hcomp) :=
+  { le := leC φ hcomp
+    le_refl := fun x => Quotient.inductionOn x fun a => le_refl _
+    le_trans := fun x y z => Quotient.inductionOn₃ x y z fun a b c hab hbc => by
+      let w : Idx I := up (up a.1 b.1) c.1
+      have ha : a.1.1 ⊆ w.1 := fun x hx => by simp [w, up, hx]
+      have hb : b.1.1 ⊆ w.1 := fun x hx => by simp [w, up, hx]
+      have hc : c.1.1 ⊆ w.1 := fun x hx => by simp [w, up, hx]
+      exact (leS_iff φ hcomp ha hc).2 (((leS_iff φ hcomp ha hb).1 hab).trans
+        ((leS_iff φ hcomp hb hc).1 hbc))
+    le_antisymm := fun x y => Quotient.inductionOn₂ x y fun a b hab hba =>
+      Quotient.sound (le_antisymm hab ((leS_iff φ hcomp (u := up a.1 b.1)
+        Finset.subset_union_right Finset.subset_union_left).1 hba))
+    le_total := fun x y => Quotient.inductionOn₂ x y fun a b =>
+      (le_total (φ (t := up a.1 b.1) Finset.subset_union_left a.2)
+        (φ (t := up a.1 b.1) Finset.subset_union_right b.2)).imp id
+        (fun h => (leS_iff φ hcomp (u := up a.1 b.1) Finset.subset_union_right
+          Finset.subset_union_left).2 h)
+    toDecidableLE := Classical.decRel _ }
+
+instance instNonemptyCol [Nonempty I] [∀ s, Nonempty (G s)] : Nonempty (Col φ hcomp) :=
+  let s0 : Idx I := ⟨{Classical.arbitrary I}, Finset.singleton_nonempty _⟩
+  ⟨Quotient.mk _ ⟨s0, Classical.arbitrary _⟩⟩
+
+variable (hid : ∀ (s : Idx I) (x : G s), φ (Finset.Subset.refl s.1) x = x)
+include hid
+
+/-- The colimit injections `ι_s : G s ↪o J_I`. -/
+noncomputable def iota (s : Idx I) : G s ↪o Col φ hcomp :=
+  OrderEmbedding.ofMapLEIff (fun x => Quotient.mk (setoid φ hcomp) ⟨s, x⟩) fun x y => by
+    show leS φ ⟨s, x⟩ ⟨s, y⟩ ↔ x ≤ y
+    rw [leS_iff φ hcomp (u := s) (Finset.Subset.refl _) (Finset.Subset.refl _), hid, hid]
+
+theorem iota_comp {s t : Idx I} (hst : s.1 ⊆ t.1) (x : G s) :
+    iota φ hcomp hid t (φ hst x) = iota φ hcomp hid s x :=
+  Quotient.sound ((eqS_iff φ hcomp (u := t) (Finset.Subset.refl _) hst).2 (hid t _))
+
+/-- **Compatibility of the colimit injections.** -/
+theorem iota_compat {s t : Idx I} (hst : s.1 ⊆ t.1) :
+    (φ hst).trans (iota φ hcomp hid t) = iota φ hcomp hid s := by
+  ext x
+  exact iota_comp φ hcomp hid hst x
+
+theorem iota_surj (j : Col φ hcomp) : ∃ s x, iota φ hcomp hid s x = j :=
+  Quotient.inductionOn j fun a => ⟨a.1, a.2, rfl⟩
+
+/-- **Finitely many points of `J_I` lie in one `ι_u`.** -/
+theorem exists_common [Nonempty I] {m : ℕ} (j : Fin m → Col φ hcomp) :
+    ∃ (u : Idx I) (x : Fin m → G u), ∀ i, iota φ hcomp hid u (x i) = j i := by
+  classical
+  choose s x hx using fun i => iota_surj φ hcomp hid (j i)
+  let s0 : Idx I := ⟨{Classical.arbitrary I}, Finset.singleton_nonempty _⟩
+  let u : Idx I := ⟨(Finset.univ.sup fun i => (s i).1) ∪ s0.1, s0.2.mono Finset.subset_union_right⟩
+  have hsub : ∀ i, (s i).1 ⊆ u.1 := fun i y hy =>
+    Finset.mem_union_left _ (Finset.mem_sup.2 ⟨i, Finset.mem_univ _, hy⟩)
+  exact ⟨u, fun i => φ (hsub i) (x i), fun i => (iota_comp φ hcomp hid (hsub i) (x i)).trans (hx i)⟩
+
+/-- **The colimit injections cover `F(J_I)`.** -/
+theorem cover {K : AbstractElementaryClass.{u}} (E : OrderPresentation K) [Nonempty I]
+    [∀ s, Nonempty (G s)] (y : (E.obj (Col φ hcomp)).carrier) :
+    ∃ s z, E.map (iota φ hcomp hid s) z = y := by
+  obtain ⟨n, a, p, -, rfl⟩ := Lab83.exists_label_value (E := E) y
+  obtain ⟨u, x, hx⟩ := exists_common φ hcomp hid p
+  refine ⟨u, Lab83.labFun a (fun k => E.skeleton (x k)), ?_⟩
+  rw [← Lab83.labFun_map]
+  congr 1
+  funext k
+  rw [E.skeleton_natural, hx]
+
+end OCol83
+
+end AEC

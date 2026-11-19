@@ -6148,6 +6148,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 107: reduces infra_83_Y_hull_eq_FZ to constructing Z_I with a covering cocone."
+  },
+  {
+   "id": "infra_83_order_colimit",
+   "label": "Directed colimit J_I of a functor of linear orders over finite supports of I: linear order, compatible order embeddings ι_s, F(ι_s) cover F(J_I)",
+   "section": 8,
+   "file": "OrderColimit83.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 107: OCol83.Col / instLinearOrderCol / iota / iota_compat / exists_common / cover."
   }
  ],
  "edges": [
@@ -11473,8 +11482,18 @@
    "from": "infra_83_pairMS2_Y_limit_of_cocone",
    "to": "infra_83_Y_hull_eq_FZ",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_order_colimit",
+   "to": "infra_83_X_hull_eq_FJ",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_83_order_colimit",
+   "to": "infra_83_Y_hull_eq_FZ",
+   "kind": "hard"
   }
  ],
- "doneCount": 616,
+ "doneCount": 617,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
