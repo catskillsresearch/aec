@@ -682,12 +682,33 @@ theorem pairMS2_Y_coord_of (P : SingleModelData K)
             ((Hull83.witB hc k).v ∘ Prod.map id (fun i : Fin 2 => i.castSucc))).carrier ↪[K.τ]
             (P.E.obj H).carrier) (zH : Fin (k + 1) → H),
           Function.Bijective ε ∧ Function.Injective zH ∧ StrictMono zH ∧
-          ∀ x a, Hull83.subHullEmb (psiM P.E Pr.n)
+          (∀ x a, Hull83.subHullEmb (psiM P.E Pr.n)
               ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K)))
               ((Hull83.witB hc k).v ∘ Prod.map id (fun i : Fin 2 => i.castSucc)) x =
               (Hull83.witB hc k).v (a, 1) →
-            ε x = P.E.skeleton (zH a) := by
-  obtain ⟨Z, Jp, i1, i2, i3, i4, e₀, g, hY, hch, hcy, hXY, hτf, hτr, hlt, -⟩ := (Hull83.witB hc k).mem.2
+            ε x = P.E.skeleton (zH a)) ∧
+          (∀ x, (∃ p, ε x = P.E.skeleton p) ↔ chartYM (N := (Hull83.witB hc k).M) P.E Pr.n (Hull83.subHullEmb (psiM P.E Pr.n)
+              ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K)))
+              ((Hull83.witB hc k).v ∘ Prod.map id (fun i : Fin 2 => i.castSucc)) x : (Hull83.witB hc k).M)) ∧
+          (∀ x x' p p', ε x = P.E.skeleton p → ε x' = P.E.skeleton p' →
+            (p < p' ↔ chartLtYM (N := (Hull83.witB hc k).M) P.E Pr.n (Hull83.subHullEmb (psiM P.E Pr.n)
+              ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K)))
+              ((Hull83.witB hc k).v ∘ Prod.map id (fun i : Fin 2 => i.castSucc)) x : (Hull83.witB hc k).M) (Hull83.subHullEmb (psiM P.E Pr.n)
+              ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K)))
+              ((Hull83.witB hc k).v ∘ Prod.map id (fun i : Fin 2 => i.castSucc)) x' : (Hull83.witB hc k).M))) ∧
+          ∀ {m} (a : (Lab83.labLang P.E).Functions m) (xs : Fin m → (Hull83.subHullModel (psiM P.E Pr.n)
+            ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K)))
+            ((Hull83.witB hc k).v ∘ Prod.map id (fun i : Fin 2 => i.castSucc))).carrier) (x : (Hull83.subHullModel (psiM P.E Pr.n)
+            ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K)))
+            ((Hull83.witB hc k).v ∘ Prod.map id (fun i : Fin 2 => i.castSucc))).carrier),
+            (Hull83.subHullEmb (psiM P.E Pr.n)
+              ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K)))
+              ((Hull83.witB hc k).v ∘ Prod.map id (fun i : Fin 2 => i.castSucc)) x : (Hull83.witB hc k).M) = yFun (N := (Hull83.witB hc k).M) P.E Pr.n (Sum.inr (Sum.inl (Sum.inl a)))
+              (fun i => (Hull83.subHullEmb (psiM P.E Pr.n)
+              ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K)))
+              ((Hull83.witB hc k).v ∘ Prod.map id (fun i : Fin 2 => i.castSucc)) (xs i) : (Hull83.witB hc k).M)) →
+            ε x = Lab83.labFun a (fun i => ε (xs i)) := by
+  obtain ⟨Z, Jp, i1, i2, i3, i4, e₀, g, hY, hch, hcy, hXY, hτf, hτr, hlt, hlab⟩ := (Hull83.witB hc k).mem.2
   have hv : ∀ p : Fin (k + 1) × Fin 2,
       g (((Hull83.witB hc k).v ∘ Prod.map id (fun i : Fin 2 => i.castSucc)) p) ∈
         Set.range e₀ := by
@@ -728,7 +749,7 @@ theorem pairMS2_Y_coord_of (P : SingleModelData K)
     obtain ⟨w, hw⟩ := Lab83.skeleton_mem_range (E := P.E)
       (OrderEmbedding.subtype (fun z => z ∈ Lab83.chartT e₀ T)) ⟨y, hy'⟩
     exact hw ▸ w.2
-  refine ⟨Z, i1, i2, _, hne, ε, fun a => ⟨z a, hmem a⟩, hbij, ?_, ?_, ?_⟩
+  refine ⟨Z, i1, i2, _, hne, ε, fun a => ⟨z a, hmem a⟩, hbij, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · intro a b hab
     have h2 : z a = z b := congrArg Subtype.val hab
     have h3 := (hz a).symm.trans ((congrArg (fun w => e₀ (P.E.skeleton w)) h2).trans (hz b))
@@ -748,9 +769,56 @@ theorem pairMS2_Y_coord_of (P : SingleModelData K)
     refine h4.trans ?_
     rw [P.E.skeleton_natural]
     exact (congrArg g hx).trans (hz a).symm
+  · intro x
+    constructor
+    · rintro ⟨p, hp⟩
+      have h1 : e₀ (P.E.map (OrderEmbedding.subtype (fun z => z ∈ Lab83.chartT e₀ T)) (ε x)) = g (Hull83.subHullEmb (psiM P.E Pr.n)
+              ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K)))
+              ((Hull83.witB hc k).v ∘ Prod.map id (fun i : Fin 2 => i.castSucc)) x : (Hull83.witB hc k).M) := hε x
+      rw [hp, P.E.skeleton_natural] at h1
+      exact (hcy _).2 ⟨p.1, h1⟩
+    · intro hx
+      obtain ⟨z0, hz0⟩ := (hcy _).1 hx
+      have h1 : e₀ (P.E.skeleton z0) ∈ Set.range h := by
+        rw [← hrange, hz0]
+        exact ⟨x, rfl⟩
+      obtain ⟨y, hy⟩ := h1
+      have hy' : P.E.map (OrderEmbedding.subtype (fun z => z ∈ Lab83.chartT e₀ T)) y = P.E.skeleton z0 := e₀.injective hy
+      obtain ⟨w, hw⟩ := Lab83.skeleton_mem_range (E := P.E) (OrderEmbedding.subtype (fun z => z ∈ Lab83.chartT e₀ T)) ⟨y, hy'⟩
+      refine ⟨w, (P.E.map (OrderEmbedding.subtype (fun z => z ∈ Lab83.chartT e₀ T))).injective (e₀.injective ?_)⟩
+      refine (show h (ε x) = f x from hε x).trans ?_
+      rw [P.E.skeleton_natural, hw]
+      exact hz0.symm
+  · intro x x' p p' hp hp'
+    have h1 : e₀ (P.E.map (OrderEmbedding.subtype (fun z => z ∈ Lab83.chartT e₀ T)) (ε x)) = g (Hull83.subHullEmb (psiM P.E Pr.n)
+              ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K)))
+              ((Hull83.witB hc k).v ∘ Prod.map id (fun i : Fin 2 => i.castSucc)) x : (Hull83.witB hc k).M) := hε x
+    rw [hp, P.E.skeleton_natural] at h1
+    have h2 : e₀ (P.E.map (OrderEmbedding.subtype (fun z => z ∈ Lab83.chartT e₀ T)) (ε x')) = g (Hull83.subHullEmb (psiM P.E Pr.n)
+              ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K)))
+              ((Hull83.witB hc k).v ∘ Prod.map id (fun i : Fin 2 => i.castSucc)) x' : (Hull83.witB hc k).M) := hε x'
+    rw [hp', P.E.skeleton_natural] at h2
+    constructor
+    · intro hpp
+      exact (hlt _ _).2 ⟨p.1, p'.1, hpp, h1, h2⟩
+    · intro hl
+      obtain ⟨z1, z2, h12, e1, e2⟩ := (hlt _ _).1 hl
+      have f1 : z1 = p.1 := P.E.skeleton.injective (e₀.injective (e1.trans h1.symm))
+      have f2 : z2 = p'.1 := P.E.skeleton.injective (e₀.injective (e2.trans h2.symm))
+      show p.1 < p'.1
+      rw [← f1, ← f2]
+      exact h12
+  · intro m a xs x hx
+    have hmemz : ∀ i, g (Hull83.subHullEmb (psiM P.E Pr.n)
+              ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K)))
+              ((Hull83.witB hc k).v ∘ Prod.map id (fun i : Fin 2 => i.castSucc)) (xs i) : (Hull83.witB hc k).M) = e₀ (P.E.map (OrderEmbedding.subtype (fun z => z ∈ Lab83.chartT e₀ T)) (ε (xs i))) :=
+      fun i => (hε (xs i)).symm
+    apply (P.E.map (OrderEmbedding.subtype (fun z => z ∈ Lab83.chartT e₀ T))).injective
+    apply e₀.injective
+    rw [← Lab83.labFun_map]
+    refine (show h (ε x) = f x from hε x).trans ?_
+    exact (congrArg g hx).trans (hlab a _ _ hmemz)
 
-/-- A chart of a finite piece `A` over `k + 1` coordinates: a `τ`-isomorphism onto `F(H)` for
-some `H ⊆ J`, with an injective, strictly increasing coordinate map into `H`. -/
 structure PieceChart (E : OrderPresentation K) (A : Model K.τ) (k : ℕ) where
   J : Type u
   [lo : LinearOrder J]
@@ -835,8 +903,8 @@ theorem infra_83_pairMS2_Y_charts_coherent (P : SingleModelData K)
   choose Z lo ne H hne ε zH hb hi hmo hcoord using hk
   refine ⟨c, hc, hcoh, hYs, fun k =>
     { J := Z k, lo := lo k, ne := ne k, H := H k, hne := hne k, ε := ε k, bij := hb k,
-      j := zH k, inj := hi k, mono := hmo k }, fun {k l} e x a hx => ⟨hcoord k x a hx, ?_⟩⟩
-  exact hcoord l _ (e a)
+      j := zH k, inj := hi k, mono := hmo k }, fun {k l} e x a hx => ⟨(hcoord k).1 x a hx, ?_⟩⟩
+  exact (hcoord l).1 _ (e a)
     (Hull83.subLangPieces_coord _ _ hc hcoh _ hYs e x a 1 hx)
 
 /-- **Transported piece maps of the `X`-charts form a functor**: with

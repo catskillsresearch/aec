@@ -6031,6 +6031,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 107: label clause added to YSampleLike; concrete samples satisfy it via Lab83.labT_apply."
+  },
+  {
+   "id": "infra_83_pairMS2_Y_coord_charts",
+   "label": "Lemma 8.3 proof: Y-piece charts characterize skeleton points, chart order and labels",
+   "section": 8,
+   "file": "Lemma83SampleLikeY.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 107: pairMS2_Y_coord_of now also gives skeleton ↔ chartYM, p<p' ↔ chartLtYM, and label commutation ε(lab a xs) = labFun a (ε∘xs)."
   }
  ],
  "edges": [
@@ -11266,8 +11275,13 @@
    "from": "infra_83_Y_label_clause",
    "to": "infra_83_Y_hull_eq_FZ",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_pairMS2_Y_coord_charts",
+   "to": "infra_83_Y_hull_eq_FZ",
+   "kind": "hard"
   }
  ],
- "doneCount": 603,
+ "doneCount": 604,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
