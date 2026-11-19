@@ -17,7 +17,7 @@ every object `X` is the base of a marked pair `X ≤ Y` (with `e = id`): Theorem
 
 universe u
 
-open Cardinal
+open Cardinal FirstOrder
 namespace AEC
 
 variable {K : AbstractElementaryClass.{u}}
@@ -145,5 +145,29 @@ theorem infra_82_lemma_8_2_single (P : SingleModelData K)
     rw [← h1, ← h2]
     exact Cardinal.mk_congr (Equiv.ofBijective _ (hbij PUnit.unit))
   exact infra_82_pair_extend_same_level P Pr M N hlev e he
+
+/-- **Lean `lemma_8_3` statement for the Prop 5.6 scheme (proved, cycle 94).** With `F` the
+scheme's template (`P.template`, the order presentation `E`): for `#I = μ` on the Theorem 7.9 tail,
+the marked pair over the coded copy of `E(I)` (`infra_82_marked_pair_exists`) has its upper object
+isomorphic to `E(I)`, by categoricity at the level (`SingleModelData.categorical`). Audit note: the
+Lean `lemma_8_3` only asks for `F(I) ≅ M.Y`; the English template also presents the base and the
+mark, and every marked pair is a value. -/
+theorem infra_83_lemma_8_3_single (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) :
+    ∃ F : TermTemplate K oneVertexShape, ∃ T, ∃ hT : Tail P.scheme.eligible T,
+      ∀ μ (hμ : μ ∈ T) (I : Type u) [LinearOrder I] [Nonempty I],
+        #I = μ →
+        ∃ M : MarkedPair K oneVertexShape P.scheme Pr, M.μ = μ ∧
+          ∀ v, Nonempty (((F.present I).obj v).carrier ≃[K.τ]
+            ((P.scheme.asSystem M.hμ M.Y).obj v).carrier) := by
+  obtain ⟨T, hT, H⟩ := infra_82_marked_pair_exists P Pr
+  refine ⟨P.template, T, hT, fun μ hμ I _ _ hI => ?_⟩
+  have hμe : μ ∈ P.eligible := Tail.mem hT hμ
+  have hcI : Model.card (P.E.obj I) = μ := SingleModelData.card_obj_eq hμe I hI
+  let X : SMObject K μ := SMObject.ofModel (P.E.obj I) (P.hE I) hcI
+  obtain ⟨M, hMμ, -⟩ := H μ hμ X
+  refine ⟨M, hMμ, fun v => ?_⟩
+  have hcat := SingleModelData.categorical (P := P) hμe
+  exact hcat.unique_model (P.E.obj I) M.Y.model (P.hE I) M.Y.mem hcI (M.Y.card.trans hMμ)
 
 end AEC

@@ -661,7 +661,7 @@
    "file": "AEC/Section8/Results.lean",
    "status": "blocked",
    "blocker": null,
-   "detail": "Blocked: stated for an arbitrary WorkingScheme W with no IsWorkingPackage/categoricity hypotheses (underhypothesized vs the English, which uses saturation/exhaustion). Proof path needs proposition_7_8 (blocked on infra_78_mixed_level_isolation) and a general-scheme version of the Section 6-7 same-level machinery, which exists only for SingleModelData. Large missing development."
+   "detail": "Blocked: stated for an arbitrary WorkingScheme W with no IsWorkingPackage/categoricity hypotheses (underhypothesized vs the English, which uses saturation/exhaustion). Proof path needs proposition_7_8 (blocked on infra_78_mixed_level_isolation) and a general-scheme version of the Section 6-7 same-level machinery, which exists only for SingleModelData. Large missing development. | Cycle 94: the Lean statement is proved for W := P.scheme (infra_83_lemma_8_3_single, via categoricity). Remaining: arbitrary WorkingScheme (underhypothesized) and the English clauses the Lean statement omits."
   },
   {
    "id": "lemma_8_4",
@@ -4060,6 +4060,15 @@
    "status": "done",
    "blocker": null,
    "detail": "PROVED cycle 94 (axioms clean). Not lemma_8_2 itself: that is stated for an arbitrary WorkingScheme (Section 8 is applied to the derived schemes C^b, so specializing to P.scheme would narrow it). Audit note: the Lean lemma_8_2 asks only for a MarkedArrow extending e, while the English asks for an isomorphism of pairs plus the pointed iff clause, orbit preservation and mixed reflection."
+  },
+  {
+   "id": "infra_83_lemma_8_3_single",
+   "label": "Lean lemma_8_3 statement for the Prop 5.6 scheme",
+   "section": 8,
+   "file": "AEC/Section8/MarkedPairExists.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "PROVED cycle 94 (axioms clean): F := P.template; marked pair over the coded E(I) (infra_82_marked_pair_exists); M.Y ≅ E(I) by SingleModelData.categorical. Not lemma_8_3 itself (arbitrary WorkingScheme). Audit note: Lean lemma_8_3 only asks F(I) ≅ M.Y for some marked pair M; the English template presents the whole pair (X, Y, b) and every marked pair at such a level is isomorphic to a value."
   }
  ],
  "edges": [
@@ -8015,8 +8024,18 @@
    "from": "infra_82_pair_extend",
    "to": "infra_82_lemma_8_2_single",
    "kind": "hard"
+  },
+  {
+   "from": "infra_82_marked_pair_exists",
+   "to": "infra_83_lemma_8_3_single",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_83_lemma_8_3_single",
+   "to": "lemma_8_3",
+   "kind": "hard"
   }
  ],
- "doneCount": 402,
+ "doneCount": 403,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

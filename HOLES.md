@@ -433,6 +433,7 @@ Lean: imports `Section5.Results` and `Section6.Results`. Soft paper chain after 
 | `infra_82_marked_pair_exists` | Lemma 8.2 (1), Prop 5.6 scheme: every object sits in a marked pair | [`MarkedPairExists.lean`](AEC/Section8/MarkedPairExists.lean) (**done**, cycle 94) |
 | `infra_82_pair_extend` | Lemma 8.2 (2), Prop 5.6 scheme: base embedding extends to a marked-pair arrow | [`MarkedPairExists.lean`](AEC/Section8/MarkedPairExists.lean) (**done**, cycle 94: `infra_82_pair_extend_same_level`) |
 | `infra_82_lemma_8_2_single` | Lean `lemma_8_2` statement for `W := P.scheme` | [`MarkedPairExists.lean`](AEC/Section8/MarkedPairExists.lean) (**done**, cycle 94; `lemma_8_2` itself, over an arbitrary scheme, stays open) |
+| `infra_83_lemma_8_3_single` | Lean `lemma_8_3` statement for `W := P.scheme` | [`MarkedPairExists.lean`](AEC/Section8/MarkedPairExists.lean) (**done**, cycle 94, categoricity; `lemma_8_3` itself stays open) |
 | `lemma_8_3` | Lemma 8.3 | `AEC/Section8/Results.lean:48` |
 | `lemma_8_4` | Lemma 8.4 | `AEC/Section8/Results.lean:65` |
 | `lemma_8_5` | Lemma 8.5 | `AEC/Section8/Results.lean:76` |
