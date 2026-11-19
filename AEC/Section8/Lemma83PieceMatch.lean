@@ -3962,4 +3962,28 @@ theorem infra_83_pieces_transport {M N : Model K.τ} {Z : Type u} {lam : Cardina
     simp
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+/-- **Bounded-list data for a template model (proved).** If `N ≃ F.limit I` for finite pieces
+`F` with every `F.obj k` of size `≤ lam`, `#I = μ ≥ ℵ₀` and `cf μ = ℵ₀`, then `N` carries all
+the piece and exhaustion data of `infra_83_dominated_of_bounded_lists_at` over the index set
+`I`: an exhaustion `D n` of `I` with `#(D n) < μ` and monotone strong covering pieces of size
+`≤ lam`. Only the isolation of the nested lists remains as input there. -/
+theorem infra_83_template_list_data (F : EM83.FinPieces K) (I : Type u) [LinearOrder I]
+    [Nonempty I] {N : Model K.τ} (eq : (F.limit I).obj.carrier ≃[K.τ] N.carrier)
+    {μ lam : Cardinal.{u}} (hI : #I = μ) (hμ : ℵ₀ ≤ μ) (hcof : Ordinal.cof μ.ord = ℵ₀)
+    (hF : ∀ k, #(F.obj k).carrier ≤ lam) :
+    ∃ (D : ℕ → Set I) (Piece : Finset I → K.τ.Substructure N.carrier),
+      Monotone D ∧ (∀ z, ∃ n, z ∈ D n) ∧ (∀ n, #(D n) < μ) ∧
+      Monotone Piece ∧ (∀ J, #(Piece J) ≤ lam) ∧
+      (∀ J, K.Strong (M := subM83 (Piece J)) (N := N) (Piece J).subtype) ∧
+      ∀ y, ∃ J, y ∈ Piece J := by
+  obtain ⟨D, hDk, hDs, hDc⟩ := exists_countable_set_exhaustion (X := I) hI hμ hcof
+  obtain ⟨P0, hm, hk, hs, hc⟩ := infra_83_finPieces_pieces F I hF
+  obtain ⟨P1, hm', hk', hs', hc'⟩ := infra_83_pieces_transport eq P0 hm hk hs hc
+  exact ⟨D, P1, monotone_nat_of_le_succ hDs, hDc, hDk, hm', hk', hs', hc'⟩
+end
+
 end AEC
