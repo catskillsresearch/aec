@@ -106,11 +106,10 @@ isomorphism test (clause 3). -/
 theorem infra_82_comparison_preservation_single (P : SingleModelData K)
     (Pr : StationaryPrescription K oneVertexShape P.scheme) (hiso : Pr.CommutesWithIso)
     (hTA : Pr.TiedAlong) :
-    ∃ T, ∃ _hT : Tail P.scheme.eligible T,
       ∀ (M₁ M₂ N₁ N₂ : MarkedPair K oneVertexShape P.scheme Pr)
         (f₁ : MarkedArrow K oneVertexShape P.scheme Pr M₁ N₁)
         (f₂ : MarkedArrow K oneVertexShape P.scheme Pr M₂ N₂),
-        M₁.μ ∈ T → M₁.μ = M₂.μ → N₁.μ ∈ T → N₁.μ = N₂.μ → M₁.μ < N₁.μ →
+        M₁.μ ∈ infra_615_closed P → M₁.μ = M₂.μ → N₁.μ ∈ infra_615_closed P → N₁.μ = N₂.μ → M₁.μ < N₁.μ →
         ∀ {ι : Type u} (t₁ : ι → Occurrence K oneVertexShape (P.scheme.asSystem M₁.hμ M₁.Y))
           (t₂ : ι → Occurrence K oneVertexShape (P.scheme.asSystem M₂.hμ M₂.Y)), #ι < M₁.μ →
           ∀ σ : M₁.bIdx ≃ M₂.bIdx,
@@ -118,8 +117,7 @@ theorem infra_82_comparison_preservation_single (P : SingleModelData K)
             PairOrbitEq N₁ N₂ (f₁.markMap.symm.trans (σ.trans f₂.markMap))
               (fun i => f₁.onY.mapOcc (t₁ i)) (fun i => f₂.onY.mapOcc (t₂ i)) := by
   classical
-  refine ⟨infra_615_closed P, infra_615_tail P,
-    fun M₁ M₂ N₁ N₂ f₁ f₂ hM hMM hNT hNN hlt ι t₁ t₂ hι σ hO => ?_⟩
+  intro M₁ M₂ N₁ N₂ f₁ f₂ hM hMM hNT hNN hlt ι t₁ t₂ hι σ hO
   obtain ⟨α, hασ, -, -, hαt⟩ := hO
   subst hασ
   obtain ⟨γ, Z, hγ, HZ⟩ := M₁.dominated ι t₁ hι

@@ -455,7 +455,7 @@ Lean: imports `Section5.Results` and `Section6.Results`. Soft paper chain after 
 | `infra_82_orbit_preservation_of_tied_single` | Lemma 8.2(4) for `P.scheme` given tied mark freeness (tail `infra_615_closed`) | [`PairOrbitSingle.lean`](AEC/Section8/PairOrbitSingle.lean) (**done**, cycle 96) |
 | `infra_82_base_homogeneity_cross_single` | Lemma 8.2(5) for `P.scheme`: homogeneity between two bases | [`PairOrbitSingle.lean`](AEC/Section8/PairOrbitSingle.lean) (**done**, cycle 96) |
 | `infra_82_orbit_diagram_cross_single` | Lemma 8.2(5) for `P.scheme`: diagram transport between two pairs | [`PairOrbitSingle.lean`](AEC/Section8/PairOrbitSingle.lean) (**done**, cycle 96) |
-| `infra_82_comparison_single` | Lemma 8.2(5) for `P.scheme`: comparisons preserved and reflected | `AEC/Section8/Results.lean` (open, cycle 96) |
+| `infra_82_comparison_single` | Lemma 8.2(5) for `P.scheme`: comparisons preserved and reflected | [`ReflectSingle.lean`](AEC/Section8/ReflectSingle.lean) (**done**, cycle 99) |
 | `infra_82_mark_type_iso_single` | Lemma 8.2(5) for `P.scheme`: base isomorphisms carry the mark type | [`PairOrbitSingle.lean`](AEC/Section8/PairOrbitSingle.lean) (**done**, cycle 96) |
 | `infra_72_ext_align_mixed` | Lemma 7.2 mixed, step (b): `hExt` alignment across levels | [`Lemma72Mixed.lean`](AEC/Section7/Lemma72Mixed.lean) (**done**, cycle 96) |
 | `infra_72_tied_move_mixed` | Lemma 7.2 mixed: tied moves across levels | [`Lemma72Mixed.lean`](AEC/Section7/Lemma72Mixed.lean) (**done**, cycle 96) |
@@ -472,11 +472,14 @@ Lean: imports `Section5.Results` and `Section6.Results`. Soft paper chain after 
 | `infra_82_mark_transport_cross_single` | Mark transport between pairs at a larger level (with `infra_82_markedComp`) | [`ComparisonSingle.lean`](AEC/Section8/ComparisonSingle.lean) (**done**, cycle 98) |
 | `infra_82_comparison_preservation_single` | Lemma 8.2(5) for P.scheme, preservation direction | [`ComparisonSingle.lean`](AEC/Section8/ComparisonSingle.lean) (**done**, cycle 98) |
 | `infra_82_mark_reflect_single` | Lemma 8.2(5) reflection: mark marginal transported to the small level | [`ComparisonSingle.lean`](AEC/Section8/ComparisonSingle.lean) (**done**, cycle 98) |
-| `infra_82_reflect_small_realization` | 8.2(5) reflection: realize the transported approximation list inside the small base | [`ComparisonSingle.lean`](AEC/Section8/ComparisonSingle.lean) (open, cycle 98) |
-| `infra_82_reflect_type_transport` | 8.2(5) reflection: small isomorphism transports the joint type | [`ComparisonSingle.lean`](AEC/Section8/ComparisonSingle.lean) (open, cycle 98) |
+| `infra_82_reflect_small_realization` | 8.2(5) reflection: realize the transported approximation list inside the small base | [`ReflectSingle.lean`](AEC/Section8/ReflectSingle.lean) (**done**, cycle 99) |
+| `infra_82_reflect_type_transport` | 8.2(5) reflection: small isomorphism transports the joint type | [`ReflectSingle.lean`](AEC/Section8/ReflectSingle.lean) (**done**, cycle 99) |
 | `infra_82_saturate_inside` | Saturation realized inside the object (8.2(5) reflection) | [`ReflectSingle.lean`](AEC/Section8/ReflectSingle.lean) (**done**, cycle 99) |
 | `infra_82_isolated_fixing_iso` | Isolated types invariant under base self-arrows fixing the fragment | [`ReflectSingle.lean`](AEC/Section8/ReflectSingle.lean) (**done**, cycle 99) |
 | `infra_82_reflect_realize_single` | 8.2(5) reflection core: large-base lists realized in the small pair with the same joint diagram | [`ReflectSingle.lean`](AEC/Section8/ReflectSingle.lean) (**done**, cycle 99) |
+| `infra_82_comparison_reflection_single` | 8.2(5) reflection for P.scheme (N-orbit equality implies M-orbit equality) | [`ReflectSingle.lean`](AEC/Section8/ReflectSingle.lean) (**done**, cycle 99) |
+| `infra_82_diagram_iso_cross` | Cross-system diagram_iso at equal levels (bijective permitted iso matching lists) | [`ReflectSingle.lean`](AEC/Section8/ReflectSingle.lean) (**done**, cycle 99) |
+| `infra_82_diag_eq_transfer` | Equal entries transfer along DiagramEq at equal levels | [`ReflectSingle.lean`](AEC/Section8/ReflectSingle.lean) (**done**, cycle 99) |
 | `infra_72_mixed_level` | Lemma 7.2 last sentence (A at a smaller level than B), stated with sorry (audit) | [`Lemma72Mixed.lean`](AEC/Section7/Lemma72Mixed.lean) (open, cycle 96) |
 | `infra_82_tiedFreeMixed_base_equiv` | Mixed tied freeness under a reindexed change of base tuple | [`TiedAlong.lean`](AEC/Section8/TiedAlong.lean) (**done**, cycle 97) |
 | `infra_82_mark_tied_along_single` | Lemma 8.2(4) for `P.scheme`: tied freeness of the mark along arrows (Def 8.1 tied, cycle 97 ruling) | [`TiedAlong.lean`](AEC/Section8/TiedAlong.lean) (**done**, cycle 97) |
