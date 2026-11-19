@@ -199,6 +199,12 @@ theorem labT_mem_range_map (he : Function.Injective e) {J : Type u} [LinearOrder
     exact ⟨w, by simp only [Function.comp_apply, hw]⟩
   · exact hx _
 
+/-- The transported-label structure. -/
+@[instance_reducible]
+noncomputable def labTStr : (labLang E).Structure N where
+  funMap := fun a x => labT e a x
+  RelMap := fun r => PEmpty.elim r
+
 end Transport
 
 section Restricted

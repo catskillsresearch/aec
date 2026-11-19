@@ -139,5 +139,52 @@ theorem pairLang2_functions_le : max ℵ₀ #(Σ i, (pairLang2 E).Functions i) �
   rw [mk_sum, lift_id, lift_id]
   exact (add_le_add hp hlab).trans (by rw [add_eq_max hall, max_self])
 
+
+/-- **The three-copy pair language** (`X`-sort labels restricted to `X`, `Y`-sort labels
+transported along `Y ≅ F(Z)`, full labels for the `L`-sort). -/
+abbrev pairLang3 : Language.{u, u} := (pairLang2 E).sum (Lab83.labLang E)
+
+/-- The inclusion of the LS language into `pairLang3`. -/
+abbrev pairInl3 : lsLang K →ᴸ pairLang3 E :=
+  (LHom.sumInl : pairLang2 E →ᴸ pairLang3 E).comp (pairInl2 E)
+
+/-- **Hulls are strong in `pairLang3`** for structures with LS-closed reduct. -/
+theorem hullStrong_pair3 :
+    HullStrong ((pairInl3 E).comp (lsInl K))
+      (fun N _ => @LSClosed K N ((pairInl3 E).reduct N)) :=
+  hullStrong_exp _
+
+/-- **`pairLang3` has at most `LS(K)` function symbols.** -/
+theorem pairLang3_functions_le : max ℵ₀ #(Σ i, (pairLang3 E).Functions i) ≤ ls K := by
+  have hall : ℵ₀ ≤ ls K := (isLSBound_ls K).1
+  have hp : #(Σ i, (pairLang2 E).Functions i) ≤ ls K :=
+    le_trans (le_max_right _ _) (pairLang2_functions_le E)
+  have hlab : #(Σ i, (Lab83.labLang E).Functions i) ≤ ls K := by
+    refine (mk_le_of_injective (f := fun a : (Σ i, (Lab83.labLang E).Functions i) => a.2.1)
+      ?_).trans (E.lab_small.trans E.ell_eq.le)
+    rintro ⟨n, a, ha⟩ ⟨m, b, hb⟩ h
+    simp only at h
+    subst h
+    subst ha
+    subst hb
+    rfl
+  have hsum : #(Σ i, (pairLang3 E).Functions i) ≤
+      #((Σ i, (pairLang2 E).Functions i) ⊕ (Σ i, (Lab83.labLang E).Functions i)) :=
+    mk_le_of_injective (f := fun a => match a with
+      | ⟨i, Sum.inl f⟩ => Sum.inl ⟨i, f⟩
+      | ⟨i, Sum.inr f⟩ => Sum.inr ⟨i, f⟩) (by
+        rintro ⟨i, f | f⟩ ⟨j, g | g⟩ h
+        · simp only [Sum.inl.injEq, Sigma.mk.inj_iff] at h
+          obtain ⟨rfl, h⟩ := h
+          rw [eq_of_heq h]
+        · simp at h
+        · simp at h
+        · simp only [Sum.inr.injEq, Sigma.mk.inj_iff] at h
+          obtain ⟨rfl, h⟩ := h
+          rw [eq_of_heq h])
+  refine max_le hall (hsum.trans ?_)
+  rw [mk_sum, lift_id, lift_id]
+  exact (add_le_add hp hlab).trans (by rw [add_eq_max hall, max_self])
+
 end LS83
 end AEC

@@ -235,6 +235,8 @@ public import AEC.Section8.Lemma83PairSamples
 public import AEC.Section8.HullSubBundle83
 public import AEC.Section8.Lemma83PairTemplate
 public import AEC.Section8.HullSubMix83
+public import AEC.Section8.Lemma83PairSamples3
+public import AEC.Section8.Lemma83PairTemplate3
 public import AEC.Section8.Lemma84Single
 public import AEC.Section8.Results
 public import AEC.Section8.StationaryPrescription
