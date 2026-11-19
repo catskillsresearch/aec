@@ -984,11 +984,16 @@ theorem infra_83_mix_pair_into_sample {L₁ L₂ L : FirstOrder.Language.{u, u}}
         ↪[K.τ] (Hull83.subModel' ψ₂ (χ.comp φ₀) M).carrier),
       K.Strong onX ∧ K.Strong onY ∧
       (∀ x, onY ((Hull83.subLangMixHom χ ψ₂ φ₀ hc hcoh σ τ hPX hPY).limMap I x) = onX x) ∧
-      ∀ (s : {s : Finset I // s.Nonempty}) p,
+      (∀ (s : {s : Finset I // s.Nonempty}) p,
         onY (((Hull83.subLangPieces ψ₂ (χ.comp φ₀) hc hcoh σ hPY).limit I).canon s
           (Quotient.mk _ (FirstOrder.Language.Term.var p))) =
           (Hull83.bundleOf base s.1 (Nat.succ_pred_eq_of_pos (Finset.card_pos.mpr s.2)).symm ∘
-            Prod.map id σ) p := by
+            Prod.map id σ) p) ∧
+      ∀ (s : {s : Finset I // s.Nonempty}) p,
+        onX (((Hull83.subLangPieces (ψ₂.comp χ) φ₀ hc hcoh (σ ∘ τ) hPX).limit I).canon s
+          (Quotient.mk _ (FirstOrder.Language.Term.var p))) =
+          (Hull83.bundleOf base s.1 (Nat.succ_pred_eq_of_pos (Finset.card_pos.mpr s.2)).symm ∘
+            Prod.map id (σ ∘ τ)) p := by
   classical
   let FX := Hull83.subLangPieces (ψ₂.comp χ) φ₀ hc hcoh (σ ∘ τ) hPX
   let FY := Hull83.subLangPieces ψ₂ (χ.comp φ₀) hc hcoh σ hPY
@@ -1086,12 +1091,14 @@ theorem infra_83_mix_pair_into_sample {L₁ L₂ L : FirstOrder.Language.{u, u}}
     fun s x => infra_83_mix_hullVal_match χ ψ₂ ((Hull83.witB hc s.1.card.pred).v ∘ Prod.map id σ)
       (Hull83.bundleOf base s.1 (hs s) ∘ Prod.map id σ) (Prod.map id τ)
       (Hull83.tpCode_reduct' ψ₂ (hσ s)) (Hull83.tpCode_reduct' (ψ₂.comp χ) (hστ s)) x
-  obtain ⟨onX, onY, h1, h2, -, hYc, hcomm⟩ := infra_83_pair_limit_desc
+  obtain ⟨onX, onY, h1, h2, hXc, hYc, hcomm⟩ := infra_83_pair_limit_desc
     (Hull83.subLangMixHom χ ψ₂ φ₀ hc hcoh σ τ hPX hPY) I hMX hMK
     ιXY gX gY hgX hgY
     hcX hcY hsq
   exact ⟨onX, onY, h1, h2, fun x => hcomm x, fun s p =>
-    (congrFun (congrArg (⇑) (hYc s)) (Quotient.mk _ (FirstOrder.Language.Term.var p))).trans rfl⟩
+    (congrFun (congrArg (⇑) (hYc s)) (Quotient.mk _ (FirstOrder.Language.Term.var p))).trans rfl,
+    fun s p =>
+    (congrFun (congrArg (⇑) (hXc s)) (Quotient.mk _ (FirstOrder.Language.Term.var p))).trans rfl⟩
 
 /-- **The mixed sublanguage template pair maps into a homogeneous sample along an order
 embedding (proved).** `infra_83_mix_pair_into_sample` for the bundles `base ∘ e` of a bundled
@@ -1117,11 +1124,16 @@ theorem infra_83_mix_pair_into_sample_along {L₁ L₂ L : FirstOrder.Language.{
         ↪[K.τ] (Hull83.subModel' ψ₂ (χ.comp φ₀) M).carrier),
       K.Strong onX ∧ K.Strong onY ∧
       (∀ x, onY ((Hull83.subLangMixHom χ ψ₂ φ₀ hc hcoh σ τ hPX hPY).limMap I x) = onX x) ∧
-      ∀ (s : {s : Finset I // s.Nonempty}) p,
+      (∀ (s : {s : Finset I // s.Nonempty}) p,
         onY (((Hull83.subLangPieces ψ₂ (χ.comp φ₀) hc hcoh σ hPY).limit I).canon s
           (Quotient.mk _ (FirstOrder.Language.Term.var p))) =
           (Hull83.bundleOf (fun i => base (e i)) s.1 (Nat.succ_pred_eq_of_pos (Finset.card_pos.mpr s.2)).symm ∘
-            Prod.map id σ) p :=
+            Prod.map id σ) p) ∧
+      ∀ (s : {s : Finset I // s.Nonempty}) p,
+        onX (((Hull83.subLangPieces (ψ₂.comp χ) φ₀ hc hcoh (σ ∘ τ) hPX).limit I).canon s
+          (Quotient.mk _ (FirstOrder.Language.Term.var p))) =
+          (Hull83.bundleOf (fun i => base (e i)) s.1 (Nat.succ_pred_eq_of_pos (Finset.card_pos.mpr s.2)).symm ∘
+            Prod.map id (σ ∘ τ)) p :=
   infra_83_mix_pair_into_sample χ ψ₂ φ₀ hc hcoh σ τ hPX hPY hPM hMK (fun i => base (e i))
     (infra_83_sample_tp_orderMap base hcol hhom e)
 
@@ -1163,11 +1175,16 @@ theorem infra_83_mix_pair_into_saturated_sample {L₁ L₂ L : FirstOrder.Langua
         ↪[K.τ] (Hull83.subModel' ψ₂ (χ.comp φ₀) M).carrier),
       K.Strong onX ∧ K.Strong onY ∧
       (∀ x, onY ((Hull83.subLangMixHom χ ψ₂ φ₀ hc hcoh σ τ hPX hPY).limMap I x) = onX x) ∧
-      ∀ (s : {s : Finset I // s.Nonempty}) p,
+      (∀ (s : {s : Finset I // s.Nonempty}) p,
         onY (((Hull83.subLangPieces ψ₂ (χ.comp φ₀) hc hcoh σ hPY).limit I).canon s
           (Quotient.mk _ (FirstOrder.Language.Term.var p))) =
           (Hull83.bundleOf (fun i => base (e i)) s.1 (Nat.succ_pred_eq_of_pos (Finset.card_pos.mpr s.2)).symm ∘
-            Prod.map id σ) p  := by
+            Prod.map id σ) p) ∧
+      ∀ (s : {s : Finset I // s.Nonempty}) p,
+        onX (((Hull83.subLangPieces (ψ₂.comp χ) φ₀ hc hcoh (σ ∘ τ) hPX).limit I).canon s
+          (Quotient.mk _ (FirstOrder.Language.Term.var p))) =
+          (Hull83.bundleOf (fun i => base (e i)) s.1 (Nat.succ_pred_eq_of_pos (Finset.card_pos.mpr s.2)).symm ∘
+            Prod.map id (σ ∘ τ)) p  := by
   obtain ⟨e⟩ := infra_83_wellOrder_into_saturated hκ hsat hI
   exact ⟨e, infra_83_mix_pair_into_sample_along χ ψ₂ φ₀ hc hcoh σ τ hPX hPY hPM hMK base hcol
     hhom e⟩
