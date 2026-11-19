@@ -7660,6 +7660,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 235: proved."
+  },
+  {
+   "id": "infra_83_arrow_of_cover",
+   "label": "Compatible strong embeddings on a strong directed cover of M (images covering M) glue to one strong f : M -> N extending them (via Lemma 2.1 limit in K, M identified with the limit); the union step of the nested-list arity removal",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PieceMatch.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 236: proved."
   }
  ],
  "edges": [
@@ -13885,8 +13894,13 @@
    "from": "infra_83_template_arrow_of_dominated",
    "to": "infra_83_arity_removal",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_arrow_of_cover",
+   "to": "infra_83_arity_removal",
+   "kind": "hard"
   }
  ],
- "doneCount": 782,
+ "doneCount": 783,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

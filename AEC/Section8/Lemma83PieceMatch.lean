@@ -2453,4 +2453,48 @@ theorem infra_83_template_arrow_of_dominated {P : SingleModelData K} {μ : Cardi
   · exact heq_of_eq (hb i)
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+/-- **Arrow out of a model from compatible arrows on a strong directed cover (proved).** If `M`
+is covered by the images of a directed system of strong substructures `e i : S_i → M`, then
+compatible strong embeddings `g i : S_i → N` glue to one strong `f : M → N` with
+`f ∘ e i = g i`. This is the "union of the nested-list arrows is an arrow `Y_H → V`" step of the
+paper's arity removal (Lemma 8.3 / Prop 7.5): it uses Lemma 2.1's limit in `K`
+(`directLimit_in_class`) and identifies `M` with that limit. -/
+theorem infra_83_arrow_of_cover (S : DirectedSystem K.τ)
+    (hmem : ∀ i, K.Mem (S.obj i))
+    (hstrong : ∀ {i j} (hij : S.rel i j), K.Strong (S.map hij))
+    {M N : Model K.τ} (hM : K.Mem M) (hN : K.Mem N)
+    (e : ∀ i, Language.Embedding K.τ (S.obj i).carrier M.carrier)
+    (he : ∀ i, K.Strong (e i))
+    (hecomp : ∀ {i j} (hij : S.rel i j), (e j).comp (S.map hij) = e i)
+    (hcover : ∀ x : M.carrier, ∃ i, ∃ y, e i y = x)
+    (g : ∀ i, Language.Embedding K.τ (S.obj i).carrier N.carrier)
+    (hg : ∀ i, K.Strong (g i))
+    (hgcomp : ∀ {i j} (hij : S.rel i j), (g j).comp (S.map hij) = g i) :
+    ∃ f : Language.Embedding K.τ M.carrier N.carrier, K.Strong f ∧ ∀ i, f.comp (e i) = g i := by
+  obtain ⟨L, -, -, huniv⟩ := directLimit_in_class K S hmem hstrong
+  obtain ⟨φ, -, hφc⟩ := huniv M e hM he hecomp
+  obtain ⟨ψ, hψ, hψc⟩ := huniv N g hN hg hgcomp
+  have hφi : ∀ i y, φ (L.canon i y) = e i y := fun i y =>
+    congrFun (congrArg DFunLike.coe (hφc i)) y
+  have hsurj : Function.Surjective φ := by
+    intro x
+    obtain ⟨i, y, rfl⟩ := hcover x
+    exact ⟨L.canon i y, hφi i y⟩
+  let eq := embeddingEquivOfSurjective φ hsurj
+  refine ⟨ψ.comp eq.symm.toEmbedding,
+    K.strong_trans eq.symm.toEmbedding ψ (strong_of_equiv K eq.symm hM) hψ, fun i => ?_⟩
+  ext y
+  have h1 : eq.symm (e i y) = L.canon i y := by
+    have h0 : eq (L.canon i y) = e i y := hφi i y
+    rw [← h0]
+    exact eq.left_inv (L.canon i y)
+  simp only [Language.Embedding.comp_apply, Language.Equiv.coe_toEmbedding]
+  rw [h1]
+  exact congrFun (congrArg DFunLike.coe (hψc i)) y
+end
+
 end AEC
