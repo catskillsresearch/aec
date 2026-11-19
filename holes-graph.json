@@ -6778,6 +6778,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 140: proved."
+  },
+  {
+   "id": "infra_83_ret_term_fix_card",
+   "label": "With #index infinite, the codes c_i fixing F(x) for all x in a finite A ⊆ J have full cardinality #index (toward #I ≤ #{good i}).",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83Isolation.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 141: proved."
   }
  ],
  "edges": [
@@ -12498,8 +12507,13 @@
    "from": "infra_83_ret_term_fix_finite",
    "to": "infra_83_ret_admission",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_ret_term_fix_card",
+   "to": "infra_83_ret_admission",
+   "kind": "hard"
   }
  ],
- "doneCount": 688,
+ "doneCount": 689,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
