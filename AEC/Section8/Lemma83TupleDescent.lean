@@ -1,6 +1,7 @@
 module
 
 public import AEC.Section6.DescentRetractionTied
+public import AEC.Section8.MarkedPair
 
 @[expose] public section
 
@@ -119,6 +120,36 @@ theorem infra_83_tied_from_retractions_tuple
     exact Subtype.ext (e.injective (congrArg Subtype.val h))
   exact infra_611_tied_mixed P σ hσ hν hrecν hσSuccν hμ hrecμ hνμ toA htoA q rfl hidx I χ
     le_rfl hχν (by rw [hκcard]; exact hlen) (by rw [hκcard]; exact hκν) hmaj
+
+
+set_option maxHeartbeats 3200000 in
+/-- **(7) in a marked sample pair (proved).** For a marked pair `N` at a closed level `μ` with
+its Cor 6.16 family `R`, an arrow `toA : A' → N.X` from a closed level `ν ≤ μ`, a tuple `d` of
+`N.Y` with `|d| < ν`, and `ν` distinguished retraction indices whose images of `d` lie in
+`toA[A']` (the matched positions of `r_i(u)` in the paper), `tp(d/N.X)` is tied free over its
+restriction to `A'`. -/
+theorem infra_83_tied_from_marked_retractions (P : SingleModelData K)
+    {Pr : StationaryPrescription K oneVertexShape P.scheme}
+    (N : MarkedPair K oneVertexShape P.scheme Pr) (hμC : N.μ ∈ infra_615_closed P)
+    {ν : Cardinal.{u}} (hνC : ν ∈ infra_615_closed P) (hνμ : ν ≤ N.μ)
+    (R : ApproximateRetraction K oneVertexShape P.scheme N.hμ N.X N.Y N.incl)
+    (A' : P.scheme.Object ν hνC.1)
+    (toA : SystemArrow K oneVertexShape (P.scheme.asSystem hνC.1 A')
+      (P.scheme.asSystem hμC.1 N.X))
+    (htoA : P.scheme.permitted (X := A') (Y := N.X) toA)
+    {dIdx : Type u}
+    (d : dIdx → Occurrence K oneVertexShape (P.scheme.asSystem hμC.1 N.Y))
+    (hd : #dIdx < ν) (S : Set R.index) (hS : #S = ν)
+    (himg : ∀ i ∈ S, ∀ j, ∃ y, toA.onVertex (d j).1 y =
+      (R.retr i).onVertex (d j).1 (d j).2) :
+    IsTiedFreeMixed toA ((asTuple N.incl N.incl_arrow d).restrict toA htoA)
+      (asTuple N.incl N.incl_arrow d) (Equiv.refl _) := by
+  refine infra_83_tied_from_retractions_tuple P hνC hμC hνμ N.X N.Y A' toA htoA N.incl
+    N.incl_arrow (fun i : S => R.retr i.1) hS (fun a => ?_) d hd (fun i j => himg i.1 i.2 j)
+  haveI := R.almost_id a
+  exact Finite.of_injective (β := {i : R.index // (R.retr i).onVertex a.1
+    (N.incl.onVertex a.1 a.2) ≠ a.2}) (fun i => ⟨i.1.1, i.2⟩)
+    (fun x y h => Subtype.ext (Subtype.ext (congrArg Subtype.val h :)))
 
 end
 end AEC

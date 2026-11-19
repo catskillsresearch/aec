@@ -6976,6 +6976,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 160: proved."
+  },
+  {
+   "id": "infra_83_tied_from_marked_retractions",
+   "label": "(7) in a marked sample pair: nu distinguished Cor 6.16 retraction indices whose images of a tuple d of N.Y lie in toA[A'] give tp(d/N.X) tied free over its restriction to A'",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83TupleDescent.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 161: proved."
   }
  ],
  "edges": [
@@ -12821,8 +12830,13 @@
    "from": "infra_83_tied_from_retractions_tuple",
    "to": "infra_83_bounded_arity_free",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_tied_from_marked_retractions",
+   "to": "infra_83_bounded_arity_free",
+   "kind": "hard"
   }
  ],
- "doneCount": 707,
+ "doneCount": 708,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
