@@ -1515,6 +1515,80 @@ theorem infra_612_tied_assoc_copies
     pq qr j'₁ j'₂ epq eqr _ _ hPQ h₁' hQR h₂' hνpq hνqr hj₁ hj₂
   exact h
 
+/-- **A level copy of a tied free lift is a tied free lift (proved, cycle 93).** If `qB` over `B`
+(any eligible level) is a tied free lift of `q` along `f`, and `qB'` is a copy of `qB` at the level
+`μ'` of `B`, then `qB'` is a tied free lift of `q` (same majority diagrams, via Theorem 6.6 for the
+copy and an index bijection). -/
+theorem infra_612_tiedFreeMixed_copy {P : SingleModelData K} {ν μ' : Cardinal.{u}}
+    {hν : ν ∈ P.eligible} {hμ' : μ' ∈ P.eligible}
+    {A : P.scheme.Object ν hν} {B : P.scheme.Object μ' hμ'}
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hν A) (P.scheme.asSystem hμ' B))
+    (q : TupleOver K oneVertexShape P.scheme hν A)
+    (qB qB' : TupleOver K oneVertexShape P.scheme hμ' B)
+    (eB : q.idx ≃ qB.idx) (r : qB'.idx ≃ qB.idx)
+    (hR : SameGaloisType qB qB' (Equiv.refl qB.idx) r)
+    (hνμ' : ν ≤ μ') (hq : #qB.idx < μ')
+    (h : IsTiedFreeMixed f q qB eB) :
+    IsTiedFreeMixed f q qB' (eB.trans r.symm) := by
+  intro seq ι Z Z0 h1 h2 h3 hmove
+  have D1 := h seq Z Z0 h1 h2 h3 hmove
+  have D2 := infra_612_dEq_of_sameGalois hR Z hq (h3.trans_le hνμ')
+  have D3 := infra_612_dEq_comp D2 (Sum.map eB id)
+    (xs' := infra_612_anchored eB qB.incl qB.val Z)
+    (ys' := infra_612_anchored (eB.trans r.symm) qB'.incl qB'.val Z)
+    (by rintro (a | b) <;> rfl) (by rintro (a | b) <;> rfl)
+  exact P.scheme.diagram_trans _ _ _ _ _ _ D1 D3
+
+/-- **Base change for the actual types (proved, cycle 93 audit).** Prop 6.12: "Furthermore
+(p ⊗ q)^B = p^B ⊗ q^B." The joint `p ⊗ q` is a `μ`-type and the lifts `p^B`, `q^B` are
+`μ'`-types (Cor 6.7); the two sides `(p ⊗ q)^B` and `p^B ⊗ q^B` may be realized at any eligible
+level and are compared on any level-`μ'` copies. Copies of a tied free lift are tied free lifts
+(`infra_612_tiedFreeMixed_copy`), copies of a product are products
+(`infra_612_isProductTied_copy`); then `infra_612_tied_base_change_level_joints`. -/
+theorem infra_612_tied_base_change_copies
+    (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ)
+    {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
+    (hrec : μ ∈ recursionClosedLevels P σ) (hσμ : Order.succ σ ≤ μ)
+    {A : P.scheme.Object μ hμ}
+    (p q : TupleOver K oneVertexShape P.scheme hμ A)
+    (hνp : p.ν = μ) (hνq : q.ν = μ) (hpσ : #p.idx ≤ σ) (hqσ : #q.idx ≤ σ)
+    {μ' : Cardinal.{u}} (hμ' : μ' ∈ P.eligible)
+    (hrec' : μ' ∈ recursionClosedLevels P σ) (hσμ' : Order.succ σ ≤ μ') (hμμ' : μ ≤ μ')
+    (B : P.scheme.Object μ' hμ')
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ' B))
+    (hf : P.scheme.permitted (X := A) (Y := B) f)
+    (joint : TupleOver K oneVertexShape P.scheme hμ A) (e : p.idx ⊕ q.idx ≃ joint.idx)
+    (pB qB jB jB' : TupleOver K oneVertexShape P.scheme hμ' B)
+    (eP : p.idx ≃ pB.idx) (eQ : q.idx ≃ qB.idx) (eJ : joint.idx ≃ jB.idx)
+    (e' : pB.idx ⊕ qB.idx ≃ jB'.idx)
+    (hprod : IsProductTied p q joint e)
+    (hP : IsTiedFreeMixed f p pB eP) (hQ : IsTiedFreeMixed f q qB eQ)
+    (hJ : IsTiedFreeMixed f joint jB eJ)
+    (hprodB : IsProductTied pB qB jB' e')
+    (hjν : joint.ν = μ) (hpB : pB.ν = μ') (hqB : qB.ν = μ')
+    (jC jC' : TupleOver K oneVertexShape P.scheme hμ' B)
+    (rC : jC.idx ≃ jB.idx) (rC' : jC'.idx ≃ jB'.idx)
+    (hRC : SameGaloisType jB jC (Equiv.refl jB.idx) rC)
+    (hRC' : SameGaloisType jB' jC' (Equiv.refl jB'.idx) rC')
+    (hjC : jC.ν = μ') (hjC' : jC'.ν = μ') :
+    SameGaloisType jC jC' ((rC.trans eJ.symm).trans e.symm)
+      ((rC'.trans e'.symm).trans (Equiv.sumCongr eP.symm eQ.symm)) := by
+  have hσlt' : σ < μ' := (Order.lt_succ σ).trans_le hσμ'
+  have hsum2 : ∀ {U V : Type u}, #U ≤ σ → #V ≤ σ → #(U ⊕ V) ≤ σ := fun hU hV => by
+    rw [Cardinal.mk_sum, Cardinal.lift_id, Cardinal.lift_id]
+    exact Cardinal.add_le_of_le hσ hU hV
+  have hjBσ : #jB.idx ≤ σ :=
+    (Cardinal.mk_congr (e.trans eJ)).symm.trans_le (hsum2 hpσ hqσ)
+  have hpBσ : #pB.idx ≤ σ := (Cardinal.mk_congr eP).symm.trans_le hpσ
+  have hqBσ : #qB.idx ≤ σ := (Cardinal.mk_congr eQ).symm.trans_le hqσ
+  have hJC := infra_612_tiedFreeMixed_copy f joint jB jC eJ rC hRC hμμ'
+    (hjBσ.trans_lt hσlt') hJ
+  have hprodC := infra_612_isProductTied_copy P σ hσ hμ' hrec' hσμ' pB qB hpB hqB hpBσ hqBσ
+    jB' e' hprodB jC' rC' hRC' hjC'
+  exact infra_612_tied_base_change_level_joints P σ hσ hμ hrec hσμ p q hνp hνq hpσ hqσ hμ'
+    hrec' hσμ' hμμ' B f hf joint e pB qB jC jC' eP eQ (eJ.trans rC.symm) (e'.trans rC'.symm)
+    hprod hP hQ hJC hprodC hjν hjC hjC'
+
 theorem infra_612_card_sigma_fin {n : ℕ} (α : Fin n → Type u) {σ : Cardinal.{u}}
     (hσ : ℵ₀ ≤ σ) (h : ∀ i, #(α i) ≤ σ) : #(Σ i, α i) ≤ σ := by
   rw [Cardinal.mk_sigma]
@@ -2062,6 +2136,37 @@ theorem infra_612_tied_finite_proj_level
     (by rintro (u | d) <;> rfl) (by rintro (u | d) <;> rfl)
   exact P.scheme.diagram_trans _ _ _ _ _ _ D1' (P.scheme.diagram_symm _ _ _ _ D2)
 
+/-- **A level copy of a finite product (partial products `μ`-types) is one (proved, cycle 93).**
+If `j` (any eligible level) is `b 0 ⊗ ⋯ ⊗ b (n-1)` with every partial product a `μ`-type, so is
+any level-`μ` copy `j'` of `j` (only the last binary step changes:
+`infra_612_isProductTied_copy`). -/
+theorem infra_612_finiteLevel_copy
+    (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ)
+    {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
+    (hrec : μ ∈ recursionClosedLevels P σ) (hσμ : Order.succ σ ≤ μ)
+    {A : P.scheme.Object μ hμ} :
+    ∀ (n : ℕ) (b : Fin n → TupleOver K oneVertexShape P.scheme hμ A),
+      (∀ i, (b i).ν = μ ∧ #(b i).idx ≤ σ) →
+      ∀ (j : TupleOver K oneVertexShape P.scheme hμ A) (E : (Σ i, (b i).idx) ≃ j.idx),
+      IsFiniteProductTiedLevel n b j E →
+      ∀ (j' : TupleOver K oneVertexShape P.scheme hμ A) (r : j'.idx ≃ j.idx),
+      SameGaloisType j j' (Equiv.refl j.idx) r → j'.ν = μ →
+      IsFiniteProductTiedLevel n b j' (E.trans r.symm)
+  | 0, _, _, _, _, h, _, r, _, _ => by
+      haveI : IsEmpty _ := h
+      exact r.isEmpty
+  | n + 1, b, hb, j, E, h, j', r, hR, hj' => by
+      obtain ⟨left, El, hlν, hL, e, hprod, hE1, hE2⟩ := h
+      have hlσ : #left.idx ≤ σ := (Cardinal.mk_congr El).symm.trans_le
+        (infra_612_card_sigma_fin _ hσ (fun i => (hb i.castSucc).2))
+      refine ⟨left, El, hlν, hL, e.trans r.symm, ?_, ?_, ?_⟩
+      · exact infra_612_isProductTied_copy P σ hσ hμ hrec hσμ left (b (Fin.last n)) hlν
+          (hb _).1 hlσ (hb _).2 j e hprod j' r hR hj'
+      · intro i k
+        simp only [Equiv.trans_apply, hE1 i k]
+      · intro k
+        simp only [Equiv.trans_apply, hE2 k]
+
 /-- **Proposition 6.12** (Products of bounded types). For bounded types `p(x)`, `q(y)` over
 `A`, realize `p` in an extension `B ≥ A` and then realize `q^B` (the free lift) in a further
 extension; the joint type `p ⊗ q` of `(x, y)` over `A` (`IsProductTied`):
@@ -2078,18 +2183,25 @@ extension; the joint type `p ⊗ q` of `(x, y)` over `A` (`IsProductTied`):
 4. associates: `(p ⊗ q) ⊗ r = p ⊗ (q ⊗ r)` (with `Equiv.sumAssoc`), for the actual `μ`-types
    (intermediate products `μ`-types, triple products on level-`μ` copies; English "Finite
    products associate"; proved, `infra_612_tied_assoc_copies`, cycle 93);
-5. finite products (`IsFiniteProductTied`) are permutation invariant;
-6. finite products commute with coordinate projections (sub-lists of factors);
-7. base change: for `A → B`, `(p ⊗ q)^B = p_B ⊗ q^B` (free lifts tied, `IsTiedFreeMixed`).
+5. finite products are permutation invariant, for the actual `μ`-types (every partial product a
+   `μ`-type, `IsFiniteProductTiedLevel`; products on level-`μ` copies; English "Finite products
+   associate, are permutation invariant, and commute with coordinate projections"; proved,
+   `infra_612_finiteLevel_copy` + `infra_612_tied_finite_perm_level`, cycle 93);
+6. finite products commute with coordinate projections (sub-lists of factors), same reading
+   (proved, `infra_612_finiteLevel_copy` + `infra_612_tied_finite_proj_level`, cycle 93);
+7. base change: for `A → B`, `(p ⊗ q)^B = p^B ⊗ q^B` (free lifts tied, `IsTiedFreeMixed`), for the
+   actual types (`p ⊗ q` a `μ`-type, `p^B`, `q^B` `μ'`-types, both sides on level-`μ'` copies;
+   English "Furthermore (p ⊗ q)^B = p^B ⊗ q^B"; proved, `infra_612_tied_base_change_copies`,
+   cycle 93).
 
 "Across eligible levels": realizations and the base change target may sit at any eligible level
 of the tail at or above that of `A` (all arities are bounded at the level of `A`).
 Packaging as Theorem 6.10: a tail of recursion-closed levels `μ ≥ σ⁺`, factors of size `≤ σ`
 realized at the level of `A`.
 
-**Status:** clauses 1–4 proved (`infra_612_tied_exists`, `infra_612_tied_indep_copies`,
-`infra_612_tied_symm_copies`, `infra_612_tied_assoc_copies`); clauses 5–7 are `sorry`, tracked as
-`infra_612_tied_finite` (5 and 6), `infra_612_tied_base_change`. -/
+**Status:** all clauses proved (cycle 93; clauses 2–7 restated to the actual-`μ`-type copy
+form, Cor 6.7). Copies exist (`infra_78_same_level_realization`), so no clause is vacuous; the
+at-level `*_level_joints` / `*_level` lemmas are the corollaries for joints already at level. -/
 theorem proposition_6_12 {K : AbstractElementaryClass.{u}}
     (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : aleph0 ≤ σ) :
     ∃ T, ∃ hT : Tail P.eligible T,
@@ -2131,20 +2243,33 @@ theorem proposition_6_12 {K : AbstractElementaryClass.{u}}
               ((r₁.trans e₁.symm).trans ((Equiv.sumCongr epq.symm (Equiv.refl _)).trans
                 (Equiv.sumAssoc _ _ _)))
               ((r₂.trans e₂.symm).trans (Equiv.sumCongr (Equiv.refl _) eqr.symm))) ∧
-        -- 5. permutation invariance of finite products
+        -- 5. permutation invariance of finite products, for the actual `μ`-types: every partial
+        -- product is a `μ`-type (`IsFiniteProductTiedLevel`), the products are compared on
+        -- level-`μ` copies (cycle 93 audit)
         (∀ (n : ℕ) (b : Fin n → TO), (∀ i, (b i).ν = μ ∧ #(b i).idx ≤ σ) →
           ∀ (π : Equiv.Perm (Fin n)) (j₁ j₂ : TO)
             (E₁ : (Σ i, (b i).idx) ≃ j₁.idx) (E₂ : (Σ i, (b (π i)).idx) ≃ j₂.idx),
-            IsFiniteProductTied n b j₁ E₁ → IsFiniteProductTied n (fun i => b (π i)) j₂ E₂ →
-            SameGaloisType j₁ j₂ E₁.symm (E₂.symm.trans (Equiv.sigmaCongrLeft (β := fun i => (b i).idx) π))) ∧
-        -- 6. finite products commute with coordinate projections
+            IsFiniteProductTiedLevel n b j₁ E₁ →
+            IsFiniteProductTiedLevel n (fun i => b (π i)) j₂ E₂ →
+            ∀ (j'₁ j'₂ : TO) (r₁ : j'₁.idx ≃ j₁.idx) (r₂ : j'₂.idx ≃ j₂.idx),
+            SameGaloisType j₁ j'₁ (Equiv.refl j₁.idx) r₁ →
+            SameGaloisType j₂ j'₂ (Equiv.refl j₂.idx) r₂ → j'₁.ν = μ → j'₂.ν = μ →
+            SameGaloisType j'₁ j'₂ (r₁.trans E₁.symm)
+              ((r₂.trans E₂.symm).trans (Equiv.sigmaCongrLeft (β := fun i => (b i).idx) π))) ∧
+        -- 6. finite products commute with coordinate projections (same reading)
         (∀ (n m : ℕ) (b : Fin n → TO), (∀ i, (b i).ν = μ ∧ #(b i).idx ≤ σ) →
           ∀ (s : Fin m ↪ Fin n) (j j' : TO)
             (E : (Σ i, (b i).idx) ≃ j.idx) (E' : (Σ i, (b (s i)).idx) ≃ j'.idx),
-            IsFiniteProductTied n b j E → IsFiniteProductTied m (fun i => b (s i)) j' E' →
-            SameGaloisType (j.reindex (fun t : (Σ i, (b (s i)).idx) => E ⟨s t.1, t.2⟩)) j'
-              (Equiv.refl _) E'.symm) ∧
-        -- 7. base change `(p ⊗ q)^B = p_B ⊗ q^B`
+            IsFiniteProductTiedLevel n b j E →
+            IsFiniteProductTiedLevel m (fun i => b (s i)) j' E' →
+            ∀ (jc jc' : TO) (r : jc.idx ≃ j.idx) (r' : jc'.idx ≃ j'.idx),
+            SameGaloisType j jc (Equiv.refl j.idx) r →
+            SameGaloisType j' jc' (Equiv.refl j'.idx) r' → jc.ν = μ → jc'.ν = μ →
+            SameGaloisType
+              (jc.reindex (fun t : (Σ i, (b (s i)).idx) => r.symm (E ⟨s t.1, t.2⟩))) jc'
+              (Equiv.refl _) (r'.trans E'.symm)) ∧
+        -- 7. base change `(p ⊗ q)^B = p^B ⊗ q^B`, for the actual types: `p ⊗ q` a `μ`-type,
+        -- `p^B`, `q^B` `μ'`-types, both sides compared on level-`μ'` copies (cycle 93 audit)
         (∀ μ' (hμ' : μ' ∈ T), μ ≤ μ' →
           ∀ (B : P.scheme.Object μ' (Tail.mem hT hμ'))
             (f : SystemArrow K oneVertexShape (P.scheme.asSystem _ A) (P.scheme.asSystem _ B))
@@ -2157,8 +2282,13 @@ theorem proposition_6_12 {K : AbstractElementaryClass.{u}}
             IsTiedFreeMixed f p pB eP → IsTiedFreeMixed f q qB eQ →
             IsTiedFreeMixed f joint jB eJ →
             IsProductTied pB qB jB' e' →
-            SameGaloisType jB jB' (eJ.symm.trans e.symm)
-              (e'.symm.trans (Equiv.sumCongr eP.symm eQ.symm))) := by
+            joint.ν = μ → pB.ν = μ' → qB.ν = μ' →
+            ∀ (jC jC' : TupleOver K oneVertexShape P.scheme (Tail.mem hT hμ') B)
+              (rC : jC.idx ≃ jB.idx) (rC' : jC'.idx ≃ jB'.idx),
+            SameGaloisType jB jC (Equiv.refl jB.idx) rC →
+            SameGaloisType jB' jC' (Equiv.refl jB'.idx) rC' → jC.ν = μ' → jC'.ν = μ' →
+            SameGaloisType jC jC' ((rC.trans eJ.symm).trans e.symm)
+              ((rC'.trans e'.symm).trans (Equiv.sumCongr eP.symm eQ.symm))) := by
   let T : Set Cardinal.{u} :=
     {μ | μ ∈ recursionClosedLevels P σ ∧ Order.succ σ ≤ μ}
   have hT : Tail P.eligible T := by
@@ -2178,9 +2308,25 @@ theorem proposition_6_12 {K : AbstractElementaryClass.{u}}
           hj₁ hj₂ =>
         infra_612_tied_assoc_copies P σ hσ (Tail.mem hT hμ) hμ.1 hμ.2 p q r hνp hνq hνr hpσ hqσ
           hrσ pq qr j₁ j₂ epq eqr e₁ e₂ hPQ h₁ hQR h₂ hνpq hνqr j'₁ j'₂ r₁ r₂ hR₁ hR₂ hj₁ hj₂,
-      ?_⟩⟩
-  -- clauses 5–7: open sub-tips (see the module docstring)
-  sorry
+      fun n b hb π j₁ j₂ E₁ E₂ h₁ h₂ j'₁ j'₂ r₁ r₂ hR₁ hR₂ hj₁ hj₂ =>
+        infra_612_tied_finite_perm_level P σ hσ (Tail.mem hT hμ) hμ.1 hμ.2 n b hb π j'₁ j'₂
+          (E₁.trans r₁.symm) (E₂.trans r₂.symm)
+          (infra_612_finiteLevel_copy P σ hσ (Tail.mem hT hμ) hμ.1 hμ.2 n b hb j₁ E₁ h₁
+            j'₁ r₁ hR₁ hj₁)
+          (infra_612_finiteLevel_copy P σ hσ (Tail.mem hT hμ) hμ.1 hμ.2 n (fun i => b (π i))
+            (fun i => hb (π i)) j₂ E₂ h₂ j'₂ r₂ hR₂ hj₂) hj₁ hj₂,
+      fun n m b hb sf j j' E E' h h' jc jc' r r' hR hR' hjc hjc' =>
+        infra_612_tied_finite_proj_level P σ hσ (Tail.mem hT hμ) hμ.1 hμ.2 n m b hb sf jc jc'
+          (E.trans r.symm) (E'.trans r'.symm)
+          (infra_612_finiteLevel_copy P σ hσ (Tail.mem hT hμ) hμ.1 hμ.2 n b hb j E h
+            jc r hR hjc)
+          (infra_612_finiteLevel_copy P σ hσ (Tail.mem hT hμ) hμ.1 hμ.2 m (fun i => b (sf i))
+            (fun i => hb (sf i)) j' E' h' jc' r' hR' hjc') hjc hjc',
+      fun μ' hμ' hμμ' B f hf joint e pB qB jB jB' eP eQ eJ e' hprod hP hQ hJ hprodB hjν hpB hqB
+          jC jC' rC rC' hRC hRC' hjC hjC' =>
+        infra_612_tied_base_change_copies P σ hσ (Tail.mem hT hμ) hμ.1 hμ.2 p q hνp hνq hpσ hqσ
+          (Tail.mem hT hμ') hμ'.1 hμ'.2 hμμ' B f hf joint e pB qB jB jB' eP eQ eJ e' hprod hP hQ
+          hJ hprodB hjν hpB hqB jC jC' rC rC' hRC hRC' hjC hjC'⟩⟩
 
 /-- **Copies persist over a later base (Prop 7.8 closure requirement 2 at limits; proved).**
 If `q` over `X_i = B` is tied free from an earlier `X_j = X` along `X → A → B` (as local

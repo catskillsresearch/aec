@@ -4,7 +4,7 @@ Inventory of Lean `sorry` holes in this repository, ordered **prove-first**: Lay
 are holes with no remaining unfinished prerequisites; later layers wait on earlier
 ones. Apex theorems 1.2 and 1.3 are **last**.
 
-**Count:** 40 `sorry`, 0 `admit`.
+**Count:** 39 `sorry`, 0 `admit`.
 Sections **2**, **3**, **4**, and **13** have no holes.
 
 **Dependency basis:** paper/logical order from `dependencies.mermaid`
@@ -84,7 +84,7 @@ flowchart TD
     S5["Section 5: Prop 5.6–5.8"]
   end
   subgraph L2 [L2]
-    S6["Section 6: 7 holes"]
+    S6["Section 6: 0 sorry"]
   end
   subgraph L3to6 [L3–L6]
     S7["Section 7"]
@@ -305,7 +305,7 @@ Waits on Section 5 working package. Lean: later Results import this module.
 | `lemma_6_11` | Lemma 6.11 | `AEC/Section6/AverageDescentTied.lean` (**done**; no `sorry`. Restated to the full English `ν ≤ μ` with tied conclusion `IsTiedFreeMixed`; `ν = μ` by `infra_611_tied`, `ν < μ` by `infra_611_tied_mixed`. Old degenerate wrapper renamed `lemma_6_11_untied`) |
 | `infra_611_tied` | Lemma 6.11 same level (tied) | `AEC/Section7/TiedLocalCharacter.lean` (**done**; no `sorry`) |
 | `infra_611_tied_mixed` | Lemma 6.11 mixed `ν < μ` (tied) | `AEC/Section6/AverageDescentTied.lean` (**done**; no `sorry`: level-`ν` realization of `q ↾ A`, its mixed tied free lift, Theorem 6.6 at `μ`) |
-| `proposition_6_12` | Proposition 6.12 | `AEC/Section6/ProductTied.lean` (**restated to the full English** with tied products `IsProductTied`/`IsFiniteProductTied`: existence, independence, symmetry, associativity, permutation invariance, projections, base change, across levels; (1) existence proved (`infra_612_tied_exists`); (2)–(7) `sorry`, **blocked** on sub-tips. Old degenerate wrapper renamed `proposition_6_12_untied`) |
+| `proposition_6_12` | Proposition 6.12 | `AEC/Section6/ProductTied.lean` (**restated to the full English** with tied products `IsProductTied`/`IsFiniteProductTied`: existence, independence, symmetry, associativity, permutation invariance, projections, base change, across levels; **done** cycle 93, sorry-free: (2)–(7) restated to the actual-μ-type copy form per Cor 6.7 and proved. Old degenerate wrapper renamed `proposition_6_12_untied`) |
 | `infra_612_tied_exists` | Prop 6.12 (1) existence | `AEC/Section6/ProductTied.lean` (**done**; no `sorry`) |
 | `infra_612_tied_independence` | Prop 6.12 (2) independence | `AEC/Section6/ProductTied.lean` (**done** cycle 93: clause 2 restated to the English actual-μ-type form (Cor 6.7) — any μ-level copies of two products have one Galois type — and proved by `infra_612_tied_indep_copies`; the old common-top form was stronger than the English) |
 | `infra_612_tied_indep_level_joints` | Prop 6.12 (2), joints at A's level, x/y any level | `AEC/Section6/ProductTied.lean` (**done**; no `sorry`) |
@@ -320,10 +320,10 @@ Waits on Section 5 working package. Lean: later Results import this module.
 | `infra_612_tied_symm_level_joints` | Prop 6.12 (3) symmetry, joints at A's level | `AEC/Section6/ProductTied.lean` (**done**; no `sorry`) |
 | `infra_612_tied_assoc` | Prop 6.12 (4) associativity | `AEC/Section6/ProductTied.lean` (**done** cycle 93: restated to the actual-μ-type copy form, `infra_612_tied_assoc_copies` via `infra_612_isProductTied_copy`; at-level case is a corollary) |
 | `infra_612_tied_assoc_level_joints` | Prop 6.12 (4) associativity, products at A's level | `AEC/Section6/ProductTied.lean` (**done**; no `sorry`) |
-| `infra_612_tied_finite` | Prop 6.12 (5,6) finite products | `AEC/Section6/ProductTied.lean` (**open** cycle 93, unblocked; products at A's level done) |
+| `infra_612_tied_finite` | Prop 6.12 (5,6) finite products | `AEC/Section6/ProductTied.lean` (**done** cycle 93: restated to the actual-μ-type copy form, partial products μ-types; `infra_612_finiteLevel_copy`) |
 | `infra_612_tied_finite_perm_level` | Prop 6.12 (5) permutation invariance, products at A's level | `AEC/Section6/ProductTied.lean` (**done**; no `sorry`) |
 | `infra_612_tied_finite_proj_level` | Prop 6.12 (6) projections, products at A's level | `AEC/Section6/ProductTied.lean` (**done**; no `sorry`) |
-| `infra_612_tied_base_change` | Prop 6.12 (7) base change | `AEC/Section6/ProductTied.lean` (**blocked** on independence; joints at base levels done) |
+| `infra_612_tied_base_change` | Prop 6.12 (7) base change | `AEC/Section6/ProductTied.lean` (**done** cycle 93: restated to the actual-type copy form, `infra_612_tied_base_change_copies` via `infra_612_tiedFreeMixed_copy`) |
 | `infra_612_tied_base_change_level_joints` | Prop 6.12 (7) base change, joints at base levels | `AEC/Section6/ProductTied.lean` (**done**; no `sorry`) |
 | `proposition_6_13` | Proposition 6.13 | `AEC/Section6/LocalCharacterTied.lean` (**done**, honest tied restatement: local character `infra_78_tied_local` and continuity `infra_78_tied_continuity` with `IsTiedFree`; no `sorry`. Old untied wrapper renamed `proposition_6_13_untied` in `Section6/Results.lean`, degenerate) |
 | `infra_78_tiedFree_trans` | Transitivity of tied freeness | `AEC/Section7/TiedLocalCharacter.lean` (**done**; no `sorry`) |
@@ -375,7 +375,7 @@ Lean: imports `AEC.Section6.Results`.
 | `infra_75_eval_product` | 7.5(3) (i)-(iii): x has tied product with (b,Z) over X, every bounded test Z | **done** (cycle 80: `infra_75_eval_product` via `infra_75_product_extend`; level-μ amalgam + Lemma 7.2 tied, no large amalgam) |
 | `infra_75_eval_project` | 7.5(3) (iv): symmetry + projection give free evaluation | **done** (cycle 79: `infra_75_eval_project` via `infra_75_eval_one`; symmetry at arity `infra_75_wide P σ`; the level 7.5(3) statements now also assume closure at that arity) |
 | `infra_75_free_eval_glue` | free evaluation from the two steps | **done** (`infra_75_free_eval_of_parts`) |
-| `infra_75_product_free` | Prop 7.5(3) tied: product with `b` + all-dominated `Y` ⇒ `tp(x/Y)` free from `X` | **blocked** on `infra_612_tied_symmetry`, `infra_612_tied_finite` |
+| `infra_75_product_free` | Prop 7.5(3) tied: product with `b` + all-dominated `Y` ⇒ `tp(x/Y)` free from `X` | **open** (cycle 93: 6.12 closed) |
 | `infra_711_induction` | Lemma 7.11 induction assembly | [`Lemma711Induction.lean`](AEC/Section7/Lemma711Induction.lean) (**done**, cycle 75; `lemma_7_11` from `infra_711_successor_statement`; first stage via `infra_711_tiedFree_of_bijective`, limit via tied 6.13) |
 | `lemma_7_12` | Lemma 7.12 | `AEC/Section7/Results.lean` (**done**, cycle 89: sorry-free, axioms propext / Classical.choice / Quot.sound; restated cycle 76 to the tied notions: `ProductIndependentTied`, `TiedListWitnessingChain`) |
 | `lemma_7_12_existence` | Lemma 7.12(1) | done (cycle 87/88): lemma_7_12_existence + lemma_7_12_existence_tail (tail infra_712_levels) |

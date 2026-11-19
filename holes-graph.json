@@ -1,6 +1,6 @@
 {
- "updated": "2026-11-18 cycle 93 (assoc copies)",
- "sorryCount": 40,
+ "updated": "2026-11-18 cycle 93 (Prop 6.12 closed)",
+ "sorryCount": 39,
  "legend": {
   "open": "No unfinished required proof-deps — try next",
   "blocked": "Waiting on incomplete required proof-deps",
@@ -495,9 +495,9 @@
    "label": "Prop 6.12",
    "section": 6,
    "file": "AEC/Section6/ProductTied.lean",
-   "status": "blocked",
-   "blocker": "infra_612_tied_finite",
-   "detail": "Restated to the full English (grokbot_02): proposition_6_12 in AEC/Section6/ProductTied.lean (moved out of Section6/Results.lean: uses Section 7 tied infra; old degenerate wrapper renamed proposition_6_12_untied). IsProductTied p q joint e: x realizes p (SameGaloisType, host at any eligible level), y is a tied free lift (IsTiedFreeMixed x.incl q y ey), joint = tp(x.join y / A). IsFiniteProductTied: iterated, with explicit coordinate map E. Clauses: (1) existence PROVED (infra_612_tied_exists); (2) independence of all choices; (3) symmetry (sumComm); (4) associativity (sumAssoc; finite association by induction); (5) permutation invariance of finite products (sigmaCongrLeft); (6) commuting with coordinate projections (reindex along s : Fin m ↪ Fin n); (7) base change (p⊗q)^B = p_B ⊗ q^B for A -> B at mu' >= mu in the tail. Across eligible levels via arbitrary host levels. Clauses 2-7 are sorry: sub-tips infra_612_tied_independence, infra_612_tied_symmetry, infra_612_tied_assoc, infra_612_tied_finite, infra_612_tied_base_change. | Cycle 93: clause 2 restated to the English actual-mu-type (copy) form and proved; clauses 3-7 remain (one sorry). | Cycle 93: clause 3 restated (copy form) and proved; clauses 4-7 remain. | Cycle 93: clauses 1-4 proved (2-4 restated to the actual-mu-type copy form); clauses 5-7 open (infra_612_tied_finite, infra_612_tied_base_change)."
+   "status": "done",
+   "blocker": null,
+   "detail": "Restated to the full English (grokbot_02): proposition_6_12 in AEC/Section6/ProductTied.lean (moved out of Section6/Results.lean: uses Section 7 tied infra; old degenerate wrapper renamed proposition_6_12_untied). IsProductTied p q joint e: x realizes p (SameGaloisType, host at any eligible level), y is a tied free lift (IsTiedFreeMixed x.incl q y ey), joint = tp(x.join y / A). IsFiniteProductTied: iterated, with explicit coordinate map E. Clauses: (1) existence PROVED (infra_612_tied_exists); (2) independence of all choices; (3) symmetry (sumComm); (4) associativity (sumAssoc; finite association by induction); (5) permutation invariance of finite products (sigmaCongrLeft); (6) commuting with coordinate projections (reindex along s : Fin m ↪ Fin n); (7) base change (p⊗q)^B = p_B ⊗ q^B for A -> B at mu' >= mu in the tail. Across eligible levels via arbitrary host levels. Clauses 2-7 are sorry: sub-tips infra_612_tied_independence, infra_612_tied_symmetry, infra_612_tied_assoc, infra_612_tied_finite, infra_612_tied_base_change. | Cycle 93: clause 2 restated to the English actual-mu-type (copy) form and proved; clauses 3-7 remain (one sorry). | Cycle 93: clause 3 restated (copy form) and proved; clauses 4-7 remain. | Cycle 93: clauses 1-4 proved (2-4 restated to the actual-mu-type copy form); clauses 5-7 open (infra_612_tied_finite, infra_612_tied_base_change). | DONE cycle 93: all clauses proved, sorry-free; clauses 2-7 restated to the actual-mu-type copy form (Cor 6.7: 'Types of tuples of length less than ν over A obtained in a larger object are actual ν-types'), each no weaker than the English and non-vacuous (copies exist)."
   },
   {
    "id": "infra_613_freeFrom_trans",
@@ -2085,9 +2085,9 @@
    "label": "Prop 6.12 (5,6) finite products: permutation invariance and projections (tied)",
    "section": 6,
    "file": "AEC/Section6/ProductTied.lean",
-   "status": "open",
+   "status": "done",
    "blocker": null,
-   "detail": "Open (full clauses 5, 6: partial products and joints at any levels). Proved when every partial product and both joints sit at A's level: infra_612_tied_finite_perm_level, infra_612_tied_finite_proj_level. IsFiniteProductTied: permutation invariance (sigmaCongrLeft) and commuting with coordinate projections (reindex along s : Fin m ↪ Fin n). | Cycle 93: unblocked (infra_612_tied_assoc done). Same audit as clauses 2-4 applies: restate to level-mu copies of joints."
+   "detail": "Open (full clauses 5, 6: partial products and joints at any levels). Proved when every partial product and both joints sit at A's level: infra_612_tied_finite_perm_level, infra_612_tied_finite_proj_level. IsFiniteProductTied: permutation invariance (sigmaCongrLeft) and commuting with coordinate projections (reindex along s : Fin m ↪ Fin n). | Cycle 93: unblocked (infra_612_tied_assoc done). Same audit as clauses 2-4 applies: restate to level-mu copies of joints. | DONE cycle 93 (audit): English 'Finite products associate, are permutation invariant, and commute with coordinate projections', read with Cor 6.7. Clauses 5, 6 restated: every partial product a mu-type (IsFiniteProductTiedLevel), the finite products (any levels) compared on level-mu copies; proved by infra_612_finiteLevel_copy + infra_612_tied_finite_perm_level / infra_612_tied_finite_proj_level."
   },
   {
    "id": "infra_612_tied_finite_perm_level",
@@ -2112,9 +2112,9 @@
    "label": "Prop 6.12 (7) base change (p⊗q)^B = p_B⊗q^B (tied)",
    "section": 6,
    "file": "AEC/Section6/ProductTied.lean",
-   "status": "open",
+   "status": "done",
    "blocker": null,
-   "detail": "Blocked (full clause 7). Base change (p ⊗ q)^B = p_B ⊗ q^B for f : A -> B, mu <= mu' in the tail, joints at ANY eligible levels. Case joint.nu = mu, jB.nu = jB'.nu = mu' DONE as infra_612_tied_base_change_level_joints (realizations/free lifts at any levels). Remaining: off-level joints, same gap as infra_612_tied_independence (infra_612_galois_trans_cross_level). | Cycle 93: unblocked from infra_612_tied_independence. Same audit applies: the Lean clause compares off-level joints by a single common top, stronger than the English actual-mu-type reading (Cor 6.7); next step is the copy-form restatement, proved from the *_level_joints case plus copies (needs a core/diagram argument as in infra_612_tied_indep_copies, not cross-level transitivity)."
+   "detail": "Blocked (full clause 7). Base change (p ⊗ q)^B = p_B ⊗ q^B for f : A -> B, mu <= mu' in the tail, joints at ANY eligible levels. Case joint.nu = mu, jB.nu = jB'.nu = mu' DONE as infra_612_tied_base_change_level_joints (realizations/free lifts at any levels). Remaining: off-level joints, same gap as infra_612_tied_independence (infra_612_galois_trans_cross_level). | Cycle 93: unblocked from infra_612_tied_independence. Same audit applies: the Lean clause compares off-level joints by a single common top, stronger than the English actual-mu-type reading (Cor 6.7); next step is the copy-form restatement, proved from the *_level_joints case plus copies (needs a core/diagram argument as in infra_612_tied_indep_copies, not cross-level transitivity). | DONE cycle 93 (audit): English 'Furthermore (p ⊗ q)^B = p^B ⊗ q^B' + 'These assertions hold across eligible levels', read with Cor 6.7. Clause 7 restated: p⊗q a mu-type (joint.nu = mu), p^B, q^B mu'-types, (p⊗q)^B and p^B⊗q^B (any levels) compared on level-mu' copies; proved by infra_612_tied_base_change_copies. At-level corollary infra_612_tied_base_change_level_joints. Copies exist (infra_78_same_level_realization), tied free lifts at level mu' exist (infra_610_tied_free_lift)."
   },
   {
    "id": "infra_612_tied_indep_same_level",
@@ -2941,9 +2941,9 @@
    "label": "Prop 7.5(3) tied: product with b over X + all-dominated Y gives tp(x/Y) free from X",
    "section": 7,
    "file": null,
-   "status": "blocked",
-   "blocker": "infra_612_tied_symmetry, infra_612_tied_finite (projection)",
-   "detail": "Blocked (cycle 73; the demoted clause 3 of Proposition 7.5, now tracked). Statement: at sufficiently closed mu, incl : X -> Y permitted, finite b in Y, AllDominated incl b; x over Y with x.nu = mu, bounded; IsProductTied (x restricted to X) (b hosted with x over X) (joint (x, b) over X) refl  ==>  IsTiedFree incl (x.restrict incl) x refl. English proof: symmetry of products and the definition give W >= X containing x with b free from X; type-identifying amalgamation; Lemma 7.2 for every bounded c in Y; symmetry and projection; testing theorem (infra_78_tiedFree_of_upTo)."
+   "status": "open",
+   "blocker": null,
+   "detail": "Blocked (cycle 73; the demoted clause 3 of Proposition 7.5, now tracked). Statement: at sufficiently closed mu, incl : X -> Y permitted, finite b in Y, AllDominated incl b; x over Y with x.nu = mu, bounded; IsProductTied (x restricted to X) (b hosted with x over X) (joint (x, b) over X) refl  ==>  IsTiedFree incl (x.restrict incl) x refl. English proof: symmetry of products and the definition give W >= X containing x with b free from X; type-identifying amalgamation; Lemma 7.2 for every bounded c in Y; symmetry and projection; testing theorem (infra_78_tiedFree_of_upTo). | Cycle 93: unblocked (infra_612_tied_symmetry, infra_612_tied_finite done; proposition_6_12 closed). Note the copy-form reading of 6.12: use the at-level corollaries or level-mu copies."
   },
   {
    "id": "infra_711_successor",
@@ -3700,6 +3700,33 @@
    "status": "done",
    "blocker": null,
    "detail": "PROVED cycle 93 (axioms clean): copies are products (infra_612_isProductTied_copy), then infra_612_tied_assoc_level_joints."
+  },
+  {
+   "id": "infra_612_tiedFreeMixed_copy",
+   "label": "A level copy of a tied free lift is a tied free lift",
+   "section": 6,
+   "file": "AEC/Section6/ProductTied.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "PROVED cycle 93 (axioms clean): DiagramEq of the copy via infra_612_dEq_of_sameGalois, reindexed along Sum.map eB id (bijective) with infra_612_dEq_comp, then diagram_trans."
+  },
+  {
+   "id": "infra_612_tied_base_change_copies",
+   "label": "Base change for level-mu' copies",
+   "section": 6,
+   "file": "AEC/Section6/ProductTied.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "PROVED cycle 93 (axioms clean): copies of the lift are tied free lifts (infra_612_tiedFreeMixed_copy), copies of the B-product are products (infra_612_isProductTied_copy over B), then infra_612_tied_base_change_level_joints."
+  },
+  {
+   "id": "infra_612_finiteLevel_copy",
+   "label": "A level-mu copy of a finite product (partial products mu-types) is one",
+   "section": 6,
+   "file": "AEC/Section6/ProductTied.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "PROVED cycle 93 (axioms clean): only the last binary step changes, infra_612_isProductTied_copy."
   }
  ],
  "edges": [
@@ -7379,8 +7406,38 @@
    "from": "infra_612_tied_assoc_copies",
    "to": "infra_612_tied_assoc",
    "kind": "hard"
+  },
+  {
+   "from": "infra_612_tiedFreeMixed_copy",
+   "to": "infra_612_tied_base_change_copies",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_612_isProductTied_copy",
+   "to": "infra_612_tied_base_change_copies",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_612_tied_base_change_level_joints",
+   "to": "infra_612_tied_base_change_copies",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_612_tied_base_change_copies",
+   "to": "infra_612_tied_base_change",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_612_isProductTied_copy",
+   "to": "infra_612_finiteLevel_copy",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_612_finiteLevel_copy",
+   "to": "infra_612_tied_finite",
+   "kind": "hard"
   }
  ],
- "doneCount": 354,
+ "doneCount": 360,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
