@@ -6885,7 +6885,7 @@
    "file": "AEC/Section8/Lemma83RetGood.lean",
    "status": "open",
    "blocker": null,
-   "detail": "Open (cycle 152): split off from infra_83_ret_admission, whose ret-evaluation half is closed by RetSampleLike. Needed: chart of the Y_I-hull ∩ X-copy = J-chart of X_I (xHull_eq_chart gives X_I-hull = F(J_H); XSampleLike chart clause gives T ∩ X = F(chart T))."
+   "detail": "Open (cycle 152): split off from infra_83_ret_admission, whose ret-evaluation half is closed by RetSampleLike. Needed: chart of the Y_I-hull ∩ X-copy = J-chart of X_I (xHull_eq_chart gives X_I-hull = F(J_H); XSampleLike chart clause gives T ∩ X = F(chart T)). | Cycle 153: reduced (infra_83_meet_of_chart) to: the X-skeleton points in the matched Y_I-hull (its X-chart) lie in the matched X_I-image, i.e. the colors must record that Y-hull X-chart points are J-coordinates of the tuple."
   },
   {
    "id": "infra_83_meet_of_subset",
