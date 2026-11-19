@@ -4986,7 +4986,7 @@
    "file": "AEC/Section8/TermGen84Single.lean",
    "status": "open",
    "blocker": null,
-   "detail": "Cycle 101: the remaining input for a segment-compatible chart (infra_84_segment_chart_of_diagramEq). Lists have length #U = nu < mu but are not bounded at the source level, so diagram_preserved does not apply; needs saturation/model-homogeneity of P.scheme objects over small submodels."
+   "detail": "Cycle 101: the remaining input for a segment-compatible chart (infra_84_segment_chart_of_diagramEq). Lists have length #U = nu < mu but are not bounded at the source level, so diagram_preserved does not apply; needs saturation/model-homogeneity of P.scheme objects over small submodels. | Cycle 101 truth check: not needed on the paper's route and truth undetermined. The English presents the pair by template functoriality ('Present (A, U, b) as F^b(H)... Append a universal strip to H... to obtain H''), i.e. U_H -> U_{H'} is F^b(H <= H'), which is clause (2) of the faithful Lemma 8.3 (infra_83_lemma_8_3_full_single); no homogeneity over small submodels is used. In P.scheme the condition is equivalent (diagramEq_iff_equiv) to an automorphism of B carrying one copy to the other, and follows from amalgamation of B with itself over the small model (StableDiagram.same_of_amalgam); amalgamation over a nu-model inside mu-models is not available from the closed-level results (they amalgamate over E(I) with #I = mu only). Off-path; rerouted through infra_83_lemma_8_3_full_single."
   },
   {
    "id": "infra_84_segment_chart_of_diagramEq",
@@ -9513,11 +9513,6 @@
   },
   {
    "from": "infra_84_layout_agree_presented",
-   "to": "infra_84_layout_amalgam",
-   "kind": "hard"
-  },
-  {
-   "from": "infra_84_segment_model_homogeneity",
    "to": "infra_84_layout_amalgam",
    "kind": "hard"
   },

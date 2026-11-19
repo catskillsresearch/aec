@@ -525,7 +525,7 @@ Lean: imports `Section5.Results` and `Section6.Results`. Soft paper chain after 
 | `infra_84_layout_agree_single` | Lemma 8.4 (P.scheme): layout extensions have the same placed comparison over the presented pair | [`TermGen84Single.lean`](AEC/Section8/TermGen84Single.lean) (**done**, cycle 101) |
 | `infra_84_layout_agree_presented` | Lemma 8.4 (P.scheme): two-segment chart of the layout object with placed agreement | [`TermGen84Single.lean`](AEC/Section8/TermGen84Single.lean) (**done**, cycle 101) |
 | `infra_84_segment_chart_of_diagramEq` | Lemma 8.4 (P.scheme): segment-compatible chart from a diagram condition | [`TermGen84Single.lean`](AEC/Section8/TermGen84Single.lean) (**done**, cycle 101) |
-| `infra_84_segment_model_homogeneity` | Lemma 8.4 (P.scheme): small submodel copies in a level-mu object have the same diagram | [`TermGen84Single.lean`](AEC/Section8/TermGen84Single.lean) (open, cycle 101) |
+| `infra_84_segment_model_homogeneity` | Lemma 8.4 (P.scheme): small submodel copies in a level-mu object have the same diagram | [`TermGen84Single.lean`](AEC/Section8/TermGen84Single.lean) (open, off-path: rerouted via faithful 8.3 clause (2), cycle 101) |
 | `infra_72_mixed_level` | Lemma 7.2 last sentence (A at a smaller level than B), stated with sorry (audit) | [`Lemma72Mixed.lean`](AEC/Section7/Lemma72Mixed.lean) (open, cycle 96) |
 | `infra_82_tiedFreeMixed_base_equiv` | Mixed tied freeness under a reindexed change of base tuple | [`TiedAlong.lean`](AEC/Section8/TiedAlong.lean) (**done**, cycle 97) |
 | `infra_82_mark_tied_along_single` | Lemma 8.2(4) for `P.scheme`: tied freeness of the mark along arrows (Def 8.1 tied, cycle 97 ruling) | [`TiedAlong.lean`](AEC/Section8/TiedAlong.lean) (**done**, cycle 97) |
