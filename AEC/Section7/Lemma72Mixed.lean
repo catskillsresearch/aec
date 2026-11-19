@@ -269,6 +269,67 @@ theorem infra_72_marginal_over_A_mixed
       (Equiv.refl (q.marginal e).idx)) hE) hfin
   exact SameGaloisType.symm hfin'
 
+/-- **A level-`ν` hull between `A` and `B` containing a small list (proved; toward the mixed
+`infra_73_tied_answer`).** For `f : A → B` with `A` at level `ν` and a list `Z` of `B` of size
+`< ν`, there is an object `B₀` at level `ν` with `A → B₀ → B` factoring `f` and `Z` coming from
+`B₀` (strong hull of size exactly `ν`, as in `infra_78_same_level_realization`). This replaces the
+structural isomorphism `A ≅ B` of the same-level proof: the same-level `infra_73_tied_answer` can
+be run at level `ν` over `A → B₀`. -/
+theorem infra_72_level_hull {P : SingleModelData K} {ν μ : Cardinal.{u}}
+    {hν : ν ∈ P.eligible} {hμ : μ ∈ P.eligible}
+    {A : P.scheme.Object ν hν} {B : P.scheme.Object μ hμ}
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hν A) (P.scheme.asSystem hμ B))
+    {ι : Type u} (Z : ι → Occurrence K oneVertexShape (P.scheme.asSystem hμ B))
+    (hι : #ι < ν) :
+    ∃ (B₀ : P.scheme.Object ν hν)
+      (f₀ : SystemArrow K oneVertexShape (P.scheme.asSystem hν A) (P.scheme.asSystem hν B₀))
+      (j : SystemArrow K oneVertexShape (P.scheme.asSystem hν B₀) (P.scheme.asSystem hμ B))
+      (Z₀ : ι → Occurrence K oneVertexShape (P.scheme.asSystem hν B₀)),
+      (∀ a, j.onVertex PUnit.unit (f₀.onVertex PUnit.unit a) = f.onVertex PUnit.unit a) ∧
+      ∀ k, Z k = ⟨(Z₀ k).1, j.onVertex (Z₀ k).1 (Z₀ k).2⟩ := by
+  classical
+  have hνinf : ℵ₀ ≤ ν := P.aleph0_le hν
+  let N : Model K.τ := B.model
+  have hN : K.Mem N := B.mem
+  let i : Language.Embedding K.τ A.model.carrier N.carrier := f.onVertex PUnit.unit
+  have hi : K.Strong i := f.onVertex_strong PUnit.unit
+  let x : ι → N.carrier := fun k => B.val (Z k)
+  have hνN : ν ≤ Model.card N := by
+    have h1 : #A.model.carrier ≤ #N.carrier := Cardinal.mk_le_of_injective i.injective
+    have h2 : #A.model.carrier = ν := A.card
+    change ν ≤ #N.carrier
+    rw [← h2]; exact h1
+  have hS : #↥(Set.range i ∪ Set.range x) ≤ ν := by
+    refine (mk_union_le _ _).trans ?_
+    have h := add_le_add ((mk_range_le (f := i)).trans (le_of_eq A.card))
+      ((mk_range_le (f := x)).trans hι.le)
+    rwa [add_eq_self hνinf] at h
+  obtain ⟨M, j, hM, hj, hcM, hcov⟩ :=
+    exists_strong_hull_exact_card K ν (P.ls_lt hν).le hνinf N hN hνN _ hS
+  have himgA : ∀ a, ∃ t, j t = i a := fun a => hcov _ (Or.inl ⟨a, rfl⟩)
+  have himgX : ∀ k, ∃ t, j t = x k := fun k => hcov _ (Or.inr ⟨k, rfl⟩)
+  let i' : Language.Embedding K.τ A.model.carrier M.carrier := factorEmbedding i j himgA
+  have hi' : K.Strong i' := strong_factorEmbedding i j hi hj himgA
+  choose y hy using himgX
+  let B₀ : SMObject K ν := SMObject.ofModel M hM hcM
+  let eB : M.carrier ≃[K.τ] B₀.model.carrier := SMObject.ofModelEquiv M hM hcM
+  have heB : K.Strong eB.toEmbedding := strong_of_equiv K eB hM
+  have heBs : K.Strong eB.symm.toEmbedding := strong_of_equiv K eB.symm B₀.mem
+  let inclB : Language.Embedding K.τ A.model.carrier B₀.model.carrier := eB.toEmbedding.comp i'
+  have hinclB : K.Strong inclB := K.strong_trans i' eB.toEmbedding hi' heB
+  let back : Language.Embedding K.τ B₀.model.carrier N.carrier := j.comp eB.symm.toEmbedding
+  have hback : K.Strong back := K.strong_trans eB.symm.toEmbedding j heBs hj
+  refine ⟨B₀, oneVertexArrow inclB hinclB, oneVertexArrow back hback,
+    fun k => B₀.occ (eB (y k)), ?_, ?_⟩
+  · intro a
+    change j (eB.symm (eB (i' a))) = i a
+    rw [eB.symm_apply_apply]
+    exact factorEmbedding_apply i j himgA a
+  · intro k
+    change Z k = B.occ (j (eB.symm (eB (y k))))
+    rw [eB.symm_apply_apply, hy k]
+    rfl
+
 /-- **English Lemma 7.2, clause 2 at mixed levels (open).** -/
 theorem infra_72_mixed_level
     (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : ℵ₀ ≤ σ)
