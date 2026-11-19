@@ -67,7 +67,7 @@ theorem infra_83_pair3_samples (P : SingleModelData K)
             Lab83.labR (Set.range (P.E.map emb)) a x) := by
   classical
   obtain ⟨μ, h1, h2, J, i1, i2, h4, hJ, M, h8, eX, h9, sX, hZ, Jplus, i3, i4, emb, strip, hs, hc,
-    F, sF, hF, s₀, hcl, hred, hX, hY, hlab, hfull, hlabR⟩ := infra_83_pair2_samples P Pr hκ θ
+    F, sF, hF, s₀, hcl, hred, hX, hY, hlab, hfull, hlabR, -⟩ := infra_83_pair2_samples P Pr hκ θ
   obtain ⟨ι⟩ := hZ J hJ
   have hinj : Function.Injective (fun y => F (ι y)) := F.injective.comp ι.injective
   refine ⟨μ, h1, h2, J, i1, i2, h4, hJ, M, h8, eX, h9, sX, ι, Jplus, i3, i4, emb, strip, hs, hc,

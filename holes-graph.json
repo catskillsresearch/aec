@@ -6705,7 +6705,7 @@
    "file": "AEC/Section8/Lemma83Isolation.lean",
    "status": "open",
    "blocker": null,
-   "detail": "Cycle 131 (found): pairMAdmittedS2 = pairMAdmitted + XSampleLike + YSampleLike records LS-closure, sort closure, chart and the sort-intersection clause for closed sets, but not that ret is a retraction family of a marked pair; infra_83_ret_samples has the eval law only for the constructed samples. Needed for the paper's (7) via colors. | Cycle 135: infra_83_ret_samples strengthened: retraction codes are a bijection onto the sample base E(J) (covers the matched base; infra_83_card_codes)."
+   "detail": "Cycle 131 (found): pairMAdmittedS2 = pairMAdmitted + XSampleLike + YSampleLike records LS-closure, sort closure, chart and the sort-intersection clause for closed sets, but not that ret is a retraction family of a marked pair; infra_83_ret_samples has the eval law only for the constructed samples. Needed for the paper's (7) via colors. | Cycle 135: infra_83_ret_samples strengthened: retraction codes are a bijection onto the sample base E(J) (covers the matched base; infra_83_card_codes). | Cycle 136: infra_83_pair2_samples now also carries the Cor 6.16 family R, bijective codes and the eval law ret(code_i, F y) = F(incl(r_i y)) in its pair-language structure."
   },
   {
    "id": "infra_83_hull_emb_const",

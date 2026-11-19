@@ -87,10 +87,16 @@ theorem infra_83_pair2_samples (P : SingleModelData K)
             (Sum.inr ⟨t.label, rfl⟩) (fun k => P.E.skeleton (t.pos k)) = P.E.realize t) ∧
         (∀ {n} (a : (Lab83.labLang P.E).Functions n) (x : Fin n → (P.E.obj Jplus).carrier),
           @Language.Structure.funMap _ _ s₀ n (Sum.inr a) x =
-            Lab83.labR (Set.range (P.E.map emb)) a x) := by
+            Lab83.labR (Set.range (P.E.map emb)) a x) ∧
+        ∃ (R : ApproximateRetraction K oneVertexShape P.scheme M.hμ M.X M.Y M.incl)
+          (code : R.index → (P.E.obj J).carrier), Function.Bijective code ∧
+          ∀ (i : R.index) (y : ((P.scheme.asSystem M.hμ M.Y).obj PUnit.unit).carrier),
+            @Language.Structure.funMap _ _ s₀ 2 (Sum.inl (Sum.inr PUnit.unit))
+              ![P.E.map emb (code i), F y] =
+              F (M.incl.onVertex PUnit.unit ((R.retr i).onVertex PUnit.unit y)) := by
   classical
   obtain ⟨μ, h1, h2, J, i1, i2, h4, hJ, M, h8, eX, h9, sX, hZ, Jplus, i3, i4, emb, strip, hs, hc,
-    F, sF, hF, R, code, str, g, -, hcl, hred, hX, hY, -⟩ := infra_83_ret_samples P Pr hκ θ
+    F, sF, hF, R, code, str, g, hcode, hcl, hred, hX, hY, hev⟩ := infra_83_ret_samples P Pr hκ θ
   let X : Set (P.E.obj Jplus).carrier := Set.range (P.E.map emb)
   have hXY : X ⊆ Set.range F := by
     rintro _ ⟨z, rfl⟩
@@ -105,7 +111,7 @@ theorem infra_83_pair2_samples (P : SingleModelData K)
       (fun a x hx => Lab83.labR_mem hlabX le_rfl a x hx) f x hx,
     fun f x hx => LS83.pair_closed P.E (LS83.retExp str g) (Lab83.labRStr X) hY
       (fun a x hx => Lab83.labR_mem hlabX hXY a x hx) f x hx, fun x => ?_, fun t => ?_,
-    fun a x => rfl⟩
+    fun a x => rfl, R, code, hcode, fun i y => hev i y⟩
   · obtain ⟨n, a, p, hp, hv⟩ := Lab83.map_label_value (E := P.E) emb x
     refine ⟨n, a, p, hp, ?_⟩
     show Lab83.labR X a _ = _
