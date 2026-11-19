@@ -45,7 +45,7 @@ theorem infra_83_ret_samples (P : SingleModelData K)
       ∃ (R : ApproximateRetraction K oneVertexShape P.scheme M.hμ M.X M.Y M.incl)
         (code : R.index → (P.E.obj J).carrier) (str : (LS83.lsLang K).Structure (P.E.obj Jplus).carrier)
         (g : (P.E.obj Jplus).carrier → (P.E.obj Jplus).carrier → (P.E.obj Jplus).carrier),
-        Function.Injective code ∧
+        Function.Bijective code ∧
         @LS83.LSClosed K _ str ∧
         @Language.LHom.reduct _ _ (LS83.lsInl K) _ str = (P.E.obj Jplus).str ∧
         (∀ {n} (f : (LS83.retLang K).Functions n) (x : Fin n → (P.E.obj Jplus).carrier),
@@ -65,9 +65,9 @@ theorem infra_83_ret_samples (P : SingleModelData K)
   obtain ⟨R⟩ := infra_83_samples_retractions P Pr M hM615
   have hcJ : Model.card (P.E.obj J) = μ := SingleModelData.card_obj_eq h3.1.1 J hJ
   have hRc : #R.index = μ := R.index_card.trans h8
-  obtain ⟨code⟩ : Nonempty (R.index ↪ (P.E.obj J).carrier) := by
-    rw [← Cardinal.le_def]
-    exact hRc.le.trans hcJ.ge
+  obtain ⟨codeE⟩ : Nonempty (R.index ≃ (P.E.obj J).carrier) :=
+    Cardinal.eq.mp (hRc.trans hcJ.symm)
+  let code : R.index ↪ (P.E.obj J).carrier := codeE.toEmbedding
   let jX : (P.E.obj J).carrier → (P.E.obj Jplus).carrier := P.E.map emb
   let ev : R.index → ((P.scheme.asSystem M.hμ M.Y).obj PUnit.unit).carrier →
       (P.E.obj Jplus).carrier := fun i y =>
@@ -97,7 +97,7 @@ theorem infra_83_ret_samples (P : SingleModelData K)
     · exact ha
   refine ⟨μ, h1, h2, J, i1, i2, h4, hJ, M, h8, eX, h9, sX, hZ, Jplus, i3, i4, emb, strip, hstrip,
     hconv, F, sF, hF, R,
-    code, str, g, code.injective, hcl, hred, fun f x hx => LS83.retExp_closed str g hX hgX f x hx,
+    code, str, g, codeE.bijective, hcl, hred, fun f x hx => LS83.retExp_closed str g hX hgX f x hx,
     fun f x hx => LS83.retExp_closed str g hY hgY f x hx, fun i y => ?_⟩
   have h : (∃ i', jX (code i') = jX (code i)) ∧ (∃ y', F y' = F y) := ⟨⟨i, rfl⟩, ⟨y, rfl⟩⟩
   have key : g (jX (code i)) (F y) = ev h.1.choose h.2.choose := dif_pos h
