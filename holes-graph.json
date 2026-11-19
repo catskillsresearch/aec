@@ -7246,6 +7246,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 189: proved."
+  },
+  {
+   "id": "infra_83_mark_clause",
+   "label": "Mark clause of one bounded-list match: if h reads the template mark positions as the sample mark values (F(h(m k)) = F(markY M k)), then with the sample's position identification tau, h carries the mark part to M.b o tau",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PieceMatch.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 190: proved."
   }
  ],
  "edges": [
@@ -13241,8 +13250,13 @@
    "from": "infra_83_piece_count",
    "to": "infra_83_bounded_list_match",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_mark_clause",
+   "to": "infra_83_bounded_list_match",
+   "kind": "hard"
   }
  ],
- "doneCount": 736,
+ "doneCount": 737,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

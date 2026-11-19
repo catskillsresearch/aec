@@ -3,6 +3,7 @@ module
 public import AEC.Section8.Lemma83Isolation
 public import AEC.Section8.Lemma83TupleDominated
 public import AEC.Section8.Lemma83SampleLike
+public import AEC.Section8.Lemma83MarkValues
 
 @[expose] public section
 
@@ -647,6 +648,32 @@ theorem infra_83_piece_count (P : SingleModelData K)
   have hcard : #((P.scheme.asSystem hν X').obj PUnit.unit).carrier = ν := X'.card
   rw [hcard] at H
   exact infra_83_tuple_count_of_piece_count P toA h R.retr d H
+end
+
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+/-- **The mark clause of one bounded-list match (proved).** If the piece arrow `h` reads the
+template mark positions `m k` as the sample's mark values (`F (h (m k)) = F (markY M k)`, as
+matches carry the mark constants, `infra_83_hull_emb_const`), then with the position
+identification `τ` of the sample mark, `h` carries the mark part to `M.b ∘ τ`: the clause
+`h.mapOcc (d (inl a)) = N.b (τ a)` of `infra_83_marked_of_piece_arrows`. -/
+theorem infra_83_mark_clause (P : SingleModelData K)
+    {Pr : StationaryPrescription K oneVertexShape P.scheme} {M : MarkedPair K oneVertexShape P.scheme Pr}
+    {ν : Cardinal.{u}} {hν : ν ∈ P.eligible} {Yu : P.scheme.Object ν hν} {Jp : Type u}
+    [LinearOrder Jp] [Nonempty Jp]
+    (F : ((P.scheme.asSystem M.hμ M.Y).obj PUnit.unit).carrier → (P.E.obj Jp).carrier)
+    (hFi : Function.Injective F)
+    (h : SystemArrow K oneVertexShape (P.scheme.asSystem hν Yu) (P.scheme.asSystem M.hμ M.Y))
+    (m : Fin Pr.n → ((P.scheme.asSystem hν Yu).obj PUnit.unit).carrier)
+    (hm : ∀ k, F (h.onVertex PUnit.unit (m k)) = F (markY M k)) :
+    ∃ τ : ULift.{u} (Fin Pr.n) ≃ M.bIdx, ∀ a : ULift.{u} (Fin Pr.n),
+      h.mapOcc ⟨PUnit.unit, m a.down⟩ = M.b (τ a) := by
+  refine ⟨Equiv.ulift.trans ((Pr.arity M.hμ M.X).symm.trans M.realEq.symm), fun a => ?_⟩
+  apply Sigma.ext
+  · exact Subsingleton.elim _ _
+  · exact heq_of_eq (hFi (hm a.down))
 end
 
 end AEC
