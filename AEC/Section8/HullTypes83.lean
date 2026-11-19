@@ -254,5 +254,52 @@ theorem coherent_colors_demand {C : ℕ → Type u} {P : ColorSample C → Prop}
   obtain ⟨S, ⟨hS, hsz⟩, hκ, hhom⟩ := hc n κ
   exact ⟨S, hS, hκ, hκ.trans hsz, hhom⟩
 
+theorem tpSampleB_mono {P Q : ∀ (M : Type u) [L.Structure M], Prop} {r : ℕ}
+    (hPQ : ∀ (M : Type u) [L.Structure M], P M → Q M) {S : ColorSample (TpColorB L r)}
+    (hS : TpSampleB P r S) : TpSampleB Q r S := by
+  obtain ⟨M, inst, hP, base, hinj, hcol⟩ := hS
+  exact ⟨M, inst, hPQ M hP, base, hinj, hcol⟩
+
+/-- Bundled samples whose ambient structure meets a demand `sat` at least the sample size
+(the order saturation of the ambient chart orders). -/
+def TpSampleD (P : ∀ (M : Type u) [L.Structure M], Prop)
+    (sat : ∀ (M : Type u) [L.Structure M], Cardinal.{u}) (r : ℕ)
+    (S : ColorSample (TpColorB L r)) : Prop :=
+  TpSampleB (fun M _ => P M ∧ #S.α ≤ sat M) r S
+
+/-- **Coherent bundled types under the joint size/saturation demand.** -/
+theorem tpB_coherent_colors_demand {P : ∀ (M : Type u) [L.Structure M], Prop}
+    (sat : ∀ (M : Type u) [L.Structure M], Cardinal.{u}) {r : ℕ}
+    (hlarge : ∀ κ : Cardinal.{u}, ∃ (α : Type u) (_ : LinearOrder α) (M : Type u)
+      (_ : L.Structure M), P M ∧ κ ≤ #α ∧ κ ≤ sat M ∧
+      ∃ base : α → Fin r → M, ∀ i, Function.Injective fun a => base a i) :
+    ∃ c : (m : ℕ) → 0 < m → TpColorB L r m,
+      (∀ (n : ℕ) (κ : Cardinal.{u}), ∃ S : ColorSample (TpColorB L r),
+        TpSampleD P sat r S ∧ κ ≤ #S.α ∧ Homog S n c) ∧
+      ∀ {m m' : ℕ} (hm' : 0 < m') (hm : 0 < m) (f : Fin m' ↪o Fin m),
+        c m' hm' = tpResB r f (c m hm) := by
+  have hres : ∀ S (H : Set S.α), TpSampleD P sat r S → TpSampleD P sat r (S.restrict H) :=
+    fun S H hS => tpSampleB_mono (fun M _ h => ⟨h.1, (Cardinal.mk_set_le H).trans h.2⟩)
+      (tpSampleB_restrict S H hS)
+  have hlarge' : ∀ κ : Cardinal.{u}, ∃ S, TpSampleD P sat r S ∧ κ ≤ #S.α := by
+    intro κ
+    obtain ⟨α, lin, M, inst, hP, hκ, hsat, base, hinj⟩ := hlarge κ
+    obtain ⟨H, hH⟩ := Cardinal.le_mk_iff_exists_set.mp hκ
+    let base' : ↥H → Fin r → M := fun a => base a.1
+    refine ⟨⟨↥H, fun m s => if h : s.card = m then tpCode (bundleOf base' s h) else ∅⟩,
+      ⟨M, inst, ⟨hP, ?_⟩, base', fun i => (hinj i).comp Subtype.val_injective,
+        fun m s h => by simp [h]⟩, ?_⟩
+    · show #↥H ≤ _
+      rw [hH]; exact hsat
+    · show κ ≤ #↥H
+      rw [hH]
+  obtain ⟨c, hc⟩ := coherent_colors (P := TpSampleD P sat r) hres hlarge'
+  have hcB : ∀ (n : ℕ) (κ : Cardinal.{u}), Joint (TpSampleB P r) n c κ := fun n κ => by
+    obtain ⟨S, hS, hκ, hhom⟩ := hc n κ
+    exact ⟨S, tpSampleB_mono (fun M _ h => h.1) hS, hκ, hhom⟩
+  exact ⟨c, hc, fun hm' hm f =>
+    coherent_colors_compat (P := TpSampleB P r) (fun f c => tpResB r f c)
+      (fun S hS _ _ f s hs => tpSampleB_compat S hS f s hs) hcB hm' hm f⟩
+
 end Hull83
 end AEC

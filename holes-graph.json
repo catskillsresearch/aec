@@ -5121,7 +5121,7 @@
    "file": "AEC/Section8/HullExtract83.lean",
    "status": "open",
    "blocker": null,
-   "detail": "Cycle 102 split of infra_83_hull_extraction: instantiate Hull83.coherent_colors. | Cycle 102: largeness input done (infra_83_large_saturated_samples); remaining: the fixed finitary expansion and its finite-hull colors with a set-sized palette, closed under thinning. | Cycle 102 design note: either (A) present the marked-pair samples as models of an expanded AEC K^b (then Section 2's colorTower/emOrderPresentation apply verbatim, but all AEC axioms for K^b must be proved), or (B) colors = FamilyCode-style hull codes of the pair (X ≤ Y ≤ L, mark, retractions) in a ColorSample family, with sub-tuple restriction maps for infra_83_color_coherence. | Cycle 103: route B chosen, coloring layer done generically (infra_83_type_colors, any expanded language L). Remaining: the expanded term language of the pair samples (old template labels, coordinate/representation functions, retractions) with the sample structures and their largeness, and folding the order-saturation demand into the admitted class P."
+   "detail": "Cycle 102 split of infra_83_hull_extraction: instantiate Hull83.coherent_colors. | Cycle 102: largeness input done (infra_83_large_saturated_samples); remaining: the fixed finitary expansion and its finite-hull colors with a set-sized palette, closed under thinning. | Cycle 102 design note: either (A) present the marked-pair samples as models of an expanded AEC K^b (then Section 2's colorTower/emOrderPresentation apply verbatim, but all AEC axioms for K^b must be proved), or (B) colors = FamilyCode-style hull codes of the pair (X ≤ Y ≤ L, mark, retractions) in a ColorSample family, with sub-tuple restriction maps for infra_83_color_coherence. | Cycle 103: route B chosen, coloring layer done generically (infra_83_type_colors, any expanded language L). Remaining: the expanded term language of the pair samples (old template labels, coordinate/representation functions, retractions) with the sample structures and their largeness, and folding the order-saturation demand into the admitted class P. | Cycle 103 status: generic layers complete (type colors, bundles, joint size/saturation demand, hulls, pieces, sort maps, presentation). Remaining = the concrete instance: expanded pair language L (K.tau + old template labels + coordinate/representation functions + retractions + vertex LS witness enumerations), admitted class P of sample structures from infra_83_large_saturated_samples, proof of HullStrong for P, and the bundle (one sequence per sort J, W, Z + retraction index)."
   },
   {
    "id": "infra_83_template_from_colors",
@@ -5382,7 +5382,7 @@
    "file": "AEC/Section8/HullTypes83.lean",
    "status": "done",
    "blocker": null,
-   "detail": "Cycle 103: Hull83.coherent_colors_demand: for a thinning-closed family with a thinning-monotone invariant sat (ambient order saturation) and samples large in both, the extracted colors keep homogeneous samples with size >= kappa and sat >= kappa. Axioms clean."
+   "detail": "Cycle 103: Hull83.coherent_colors_demand: for a thinning-closed family with a thinning-monotone invariant sat (ambient order saturation) and samples large in both, the extracted colors keep homogeneous samples with size >= kappa and sat >= kappa. Axioms clean. | Cycle 103: + bundled instance tpB_coherent_colors_demand (TpSampleD: ambient demand sat M >= sample size, thinning-closed; colors coherent under tpResB). Axioms clean."
   }
  ],
  "edges": [
