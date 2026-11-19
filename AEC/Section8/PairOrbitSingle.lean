@@ -393,4 +393,103 @@ theorem infra_82_orbit_preservation_of_tied_single (P : SingleModelData K)
   obtain ⟨ρ, hρ, top, g1, g2, -, -, hc, hv⟩ := hW.2 q' _ rfl hmarg hdiag
   exact ⟨ρ, hρ, top, g1, g2, hc, fun k => hv (Sum.inl k), fun i => hv (Sum.inr i)⟩
 
+/-- **Bounded diagram homogeneity between two bases (P.scheme; toward Lemma 8.2(5)).** For marked
+arrows `f₁ : M₁ → N₁`, `f₂ : M₂ → N₂` (any levels, `N₁`, `N₂` at one level) and a marked arrow
+`α : M₁ → M₂`, every list `Z` of `M₁.X` bounded at the levels gives a structural isomorphism
+`e : N₁.X ≅ N₂.X` with `e (f₁ Z) = f₂ (α Z)` (`diagram_preserved` across levels, then
+`diagram_iso` at the level of the `N`s). -/
+theorem infra_82_base_homogeneity_cross_single {P : SingleModelData K}
+    {Pr : StationaryPrescription K oneVertexShape P.scheme}
+    {M₁ M₂ N₁ N₂ : MarkedPair K oneVertexShape P.scheme Pr} (hN : N₁.μ = N₂.μ)
+    (f₁ : MarkedArrow K oneVertexShape P.scheme Pr M₁ N₁)
+    (f₂ : MarkedArrow K oneVertexShape P.scheme Pr M₂ N₂)
+    (α : MarkedArrow K oneVertexShape P.scheme Pr M₁ M₂)
+    {γ : Type u} (Z : γ → Occurrence K oneVertexShape (P.scheme.asSystem M₁.hμ M₁.X))
+    (hγ₁ : #γ < M₁.μ) (hγ₂ : #γ < M₂.μ) (hγN : #γ < N₁.μ) :
+    ∃ e : SystemArrow K oneVertexShape (P.scheme.asSystem N₁.hμ N₁.X)
+        (P.scheme.asSystem N₂.hμ N₂.X),
+      (∀ v, Function.Bijective (e.onVertex v)) ∧
+      ∀ j, e.mapOcc (f₁.onX.mapOcc (Z j)) = f₂.onX.mapOcc (α.onX.mapOcc (Z j)) := by
+  have hγN₂ : #γ < N₂.μ := hN ▸ hγN
+  have d1 := P.scheme.diagram_preserved M₁.X N₁.X f₁.onX trivial Z hγ₁ hγN
+  have d2 := P.scheme.diagram_preserved M₁.X M₂.X α.onX trivial Z hγ₁ hγ₂
+  have d3 := P.scheme.diagram_preserved M₂.X N₂.X f₂.onX trivial
+    (fun j => α.onX.mapOcc (Z j)) hγ₂ hγN₂
+  have d := P.scheme.diagram_trans _ _ _ _ _ _
+    (P.scheme.diagram_trans _ _ _ _ _ _ (P.scheme.diagram_symm _ _ _ _ d1) d2) d3
+  obtain ⟨μ₁, hμ₁, X₁, Y₁, i₁, hi₁, bI₁, b₁, r₁, d₁⟩ := N₁
+  obtain ⟨μ₂, hμ₂, X₂, Y₂, i₂, hi₂, bI₂, b₂, r₂, d₂'⟩ := N₂
+  change μ₁ = μ₂ at hN
+  subst hN
+  obtain ⟨g, hg, hmap⟩ := (P.scheme.diagram_iso X₁ X₂
+    (fun j => f₁.onX.mapOcc (Z j)) (fun j => f₂.onX.mapOcc (α.onX.mapOcc (Z j))) hγN).mp d
+  exact ⟨g, hg, fun j => (hmap j).symm⟩
+
+/-- **Diagram transport between two pairs (P.scheme; toward Lemma 8.2(5)).** For marked arrows
+`f₁ : M₁ → N₁`, `f₂ : M₂ → N₂` and `α : M₁ → M₂` taking `t₁` to `t₂`, and a list `Z` of `M₁.X`,
+the lists `(b₁′ ∘ f₁.markMap, f₁ t₁, f₁ Z)` of `N₁.Y` and
+`(b₂′ ∘ f₂.markMap ∘ α.markMap, f₂ t₂, f₂ (α Z))` of `N₂.Y` have the same diagram. -/
+theorem infra_82_orbit_diagram_cross_single {P : SingleModelData K}
+    {Pr : StationaryPrescription K oneVertexShape P.scheme}
+    {M₁ M₂ N₁ N₂ : MarkedPair K oneVertexShape P.scheme Pr}
+    (f₁ : MarkedArrow K oneVertexShape P.scheme Pr M₁ N₁)
+    (f₂ : MarkedArrow K oneVertexShape P.scheme Pr M₂ N₂)
+    (α : MarkedArrow K oneVertexShape P.scheme Pr M₁ M₂)
+    {ι γ : Type u} (t₁ : ι → Occurrence K oneVertexShape (P.scheme.asSystem M₁.hμ M₁.Y))
+    (t₂ : ι → Occurrence K oneVertexShape (P.scheme.asSystem M₂.hμ M₂.Y))
+    (hα : ∀ i, α.onY.mapOcc (t₁ i) = t₂ i)
+    (Z : γ → Occurrence K oneVertexShape (P.scheme.asSystem M₁.hμ M₁.X))
+    (hb₁ : #((M₁.bIdx ⊕ ι) ⊕ γ) < M₁.μ) (hb₂ : #((M₁.bIdx ⊕ ι) ⊕ γ) < M₂.μ)
+    (hbN₁ : #((M₁.bIdx ⊕ ι) ⊕ γ) < N₁.μ) (hbN₂ : #((M₁.bIdx ⊕ ι) ⊕ γ) < N₂.μ) :
+    P.scheme.DiagramEq (X := N₁.Y) (Y := N₂.Y)
+      (seqJoint (seqJoint (fun k => N₁.b (f₁.markMap k)) (fun i => f₁.onY.mapOcc (t₁ i)))
+        (fun j => N₁.incl.mapOcc (f₁.onX.mapOcc (Z j))))
+      (seqJoint (seqJoint (fun k => N₂.b (f₂.markMap (α.markMap k)))
+          (fun i => f₂.onY.mapOcc (t₂ i)))
+        (fun j => N₂.incl.mapOcc (f₂.onX.mapOcc (α.onX.mapOcc (Z j))))) := by
+  have hcomm : ∀ {A B : MarkedPair K oneVertexShape P.scheme Pr}
+      (g : MarkedArrow K oneVertexShape P.scheme Pr A B)
+      (x : Occurrence K oneVertexShape (P.scheme.asSystem A.hμ A.X)),
+      g.onY.mapOcc (A.incl.mapOcc x) = B.incl.mapOcc (g.onX.mapOcc x) := fun g x =>
+    congrArg (Sigma.mk x.1) (congrArg (fun h => SystemArrow.onVertex h x.1 x.2) g.comm)
+  let L : (M₁.bIdx ⊕ ι) ⊕ γ → Occurrence K oneVertexShape (P.scheme.asSystem M₁.hμ M₁.Y) :=
+    seqJoint (seqJoint M₁.b t₁) (fun j => M₁.incl.mapOcc (Z j))
+  let L' : (M₁.bIdx ⊕ ι) ⊕ γ → Occurrence K oneVertexShape (P.scheme.asSystem M₂.hμ M₂.Y) :=
+    seqJoint (seqJoint (fun k => M₂.b (α.markMap k)) t₂)
+      (fun j => M₂.incl.mapOcc (α.onX.mapOcc (Z j)))
+  have d1 := P.scheme.diagram_preserved M₁.Y N₁.Y f₁.onY trivial L hb₁ hbN₁
+  have d2 := P.scheme.diagram_preserved M₁.Y M₂.Y α.onY trivial L hb₁ hb₂
+  have d3 := P.scheme.diagram_preserved M₂.Y N₂.Y f₂.onY trivial L' hb₂ hbN₂
+  have e1 : (fun x => (⟨(L x).1, f₁.onY.onVertex (L x).1 (L x).2⟩ :
+      Occurrence K oneVertexShape (P.scheme.asSystem N₁.hμ N₁.Y))) =
+      seqJoint (seqJoint (fun k => N₁.b (f₁.markMap k)) (fun i => f₁.onY.mapOcc (t₁ i)))
+        (fun j => N₁.incl.mapOcc (f₁.onX.mapOcc (Z j))) := by
+    funext x
+    rcases x with (k | i) | j
+    · exact f₁.preserves_mark k
+    · rfl
+    · exact hcomm f₁ (Z j)
+  have e2 : (fun x => (⟨(L x).1, α.onY.onVertex (L x).1 (L x).2⟩ :
+      Occurrence K oneVertexShape (P.scheme.asSystem M₂.hμ M₂.Y))) = L' := by
+    funext x
+    rcases x with (k | i) | j
+    · exact α.preserves_mark k
+    · exact hα i
+    · exact hcomm α (Z j)
+  have e3 : (fun x => (⟨(L' x).1, f₂.onY.onVertex (L' x).1 (L' x).2⟩ :
+      Occurrence K oneVertexShape (P.scheme.asSystem N₂.hμ N₂.Y))) =
+      seqJoint (seqJoint (fun k => N₂.b (f₂.markMap (α.markMap k)))
+          (fun i => f₂.onY.mapOcc (t₂ i)))
+        (fun j => N₂.incl.mapOcc (f₂.onX.mapOcc (α.onX.mapOcc (Z j)))) := by
+    funext x
+    rcases x with (k | i) | j
+    · exact f₂.preserves_mark _
+    · rfl
+    · exact hcomm f₂ _
+  rw [e1] at d1
+  rw [e2] at d2
+  rw [e3] at d3
+  exact P.scheme.diagram_trans _ _ _ _ _ _
+    (P.scheme.diagram_trans _ _ _ _ _ _ (P.scheme.diagram_symm _ _ _ _ d1) d2) d3
+
 end AEC

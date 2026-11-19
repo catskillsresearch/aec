@@ -4330,6 +4330,33 @@
    "status": "open",
    "blocker": null,
    "detail": "Cycle 96. Remaining content of infra_84_single: tests mixing U and C. Paper proof: present (A,U,b) as F^b(H); include questioned C-tuples in V <= C at level nu; universal strip H' (presentation-invariant), Corollary 6.7 embeds AH' into C; joint diagrams of U and AH' in T are those of the natural layout UH cup AH' inside UH' (Lemma 7.2: U-tuples with b isolated over A, b/AH' prescribed free extension); mixed saturation; Lemma 6.4 lifts to placed comparisons; Proposition 6.3 bound depending on arity and template only. Needs: universal-strip embedding for the pair template, Lemma 6.4/Prop 6.3 for the two-segment layout."
+  },
+  {
+   "id": "infra_82_comparison_single",
+   "label": "Lemma 8.2(5) for P.scheme: comparisons preserved and reflected (small level to larger level)",
+   "section": 8,
+   "file": "AEC/Section8/Results.lean",
+   "status": "open",
+   "blocker": null,
+   "detail": "Cycle 96. English 8.2: comparisons preserved and reflected from a common small level to a common larger level. Preservation route mirrors clause (4): cross homogeneity (infra_82_base_homogeneity_cross_single), cross diagram transport (infra_82_orbit_diagram_cross_single), mixed over-B isolation, positional mark matching between two pairs (needs the realizing equivalence as data, see the markMap/list-position finding), tied mark freeness (infra_82_mark_tied_along_single). Reflection: paper 'let a large pair isomorphism match the two images ... approximation list'."
+  },
+  {
+   "id": "infra_82_base_homogeneity_cross_single",
+   "label": "Lemma 8.2(5) for P.scheme: bounded diagram homogeneity between two bases",
+   "section": 8,
+   "file": "AEC/Section8/PairOrbitSingle.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "DONE cycle 96. f1 : M1 -> N1, f2 : M2 -> N2 (N1, N2 one level), alpha : M1 -> M2, bounded Z: structural iso e : N1.X = N2.X with e(f1 Z) = f2(alpha Z). Axioms clean."
+  },
+  {
+   "id": "infra_82_orbit_diagram_cross_single",
+   "label": "Lemma 8.2(5) for P.scheme: diagram transport between two pairs",
+   "section": 8,
+   "file": "AEC/Section8/PairOrbitSingle.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "DONE cycle 96. (b1' o f1.markMap, f1 t1, f1 Z) and (b2' o f2.markMap o alpha.markMap, f2 t2, f2 alpha Z) have the same diagram. Axioms clean."
   }
  ],
  "edges": [
@@ -8470,8 +8497,23 @@
    "from": "infra_84_layout_testing_single",
    "to": "infra_84_single",
    "kind": "hard"
+  },
+  {
+   "from": "infra_82_comparison_single",
+   "to": "lemma_8_2",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_82_base_homogeneity_cross_single",
+   "to": "infra_82_comparison_single",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_82_orbit_diagram_cross_single",
+   "to": "infra_82_comparison_single",
+   "kind": "hard"
   }
  ],
- "doneCount": 427,
+ "doneCount": 429,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
