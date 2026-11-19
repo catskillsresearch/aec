@@ -134,4 +134,32 @@ theorem infra_82_mark_type_auto_single {P : SingleModelData K}
   erw [hidx i] at h
   exact h
 
+/-- **Bounded diagram homogeneity in the base (P.scheme).** For a same-level marked arrow
+`f : M → N` and a pair automorphism `α` of `M`, every bounded list `Z` of `M.X` gives an
+automorphism `e` of `N.X` with `e (f Z) = f (α Z)`. English (Definition 5.2(3)): "At each level,
+two bounded lists have the same diagram if and only if a structural isomorphism between their
+objects takes one list to the other" (`diagram_iso`); the two lists have the same diagram by
+preservation under the arrows `f.onX` and `α.onX` (`diagram_preserved`). -/
+theorem infra_82_base_homogeneity_single {P : SingleModelData K}
+    {Pr : StationaryPrescription K oneVertexShape P.scheme}
+    (M N : MarkedPair K oneVertexShape P.scheme Pr) (hlev : M.μ = N.μ)
+    (f : MarkedArrow K oneVertexShape P.scheme Pr M N)
+    (α : MarkedArrow K oneVertexShape P.scheme Pr M M)
+    {γ : Type u} (Z : γ → Occurrence K oneVertexShape (P.scheme.asSystem M.hμ M.X))
+    (hγ : #γ < M.μ) :
+    ∃ e : SystemArrow K oneVertexShape (P.scheme.asSystem N.hμ N.X)
+        (P.scheme.asSystem N.hμ N.X),
+      (∀ v, Function.Bijective (e.onVertex v)) ∧
+      ∀ j, e.mapOcc (f.onX.mapOcc (Z j)) = f.onX.mapOcc (α.onX.mapOcc (Z j)) := by
+  have hγN : #γ < N.μ := hlev ▸ hγ
+  have d1 := P.scheme.diagram_preserved M.X N.X f.onX trivial Z hγ hγN
+  have d2 := P.scheme.diagram_preserved M.X M.X α.onX trivial Z hγ hγ
+  have d3 := P.scheme.diagram_preserved M.X N.X f.onX trivial
+    (fun j => α.onX.mapOcc (Z j)) hγ hγN
+  have d := P.scheme.diagram_trans _ _ _ _ _ _
+    (P.scheme.diagram_trans _ _ _ _ _ _ (P.scheme.diagram_symm _ _ _ _ d1) d2) d3
+  obtain ⟨g, hg, hmap⟩ := (P.scheme.diagram_iso N.X N.X
+    (fun j => f.onX.mapOcc (Z j)) (fun j => f.onX.mapOcc (α.onX.mapOcc (Z j))) hγN).mp d
+  exact ⟨g, hg, fun j => (hmap j).symm⟩
+
 end AEC
