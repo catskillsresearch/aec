@@ -614,6 +614,7 @@ Lean: imports `Section5.Results` and `Section6.Results`. Soft paper chain after 
 | `infra_83_mark_values` | Lemma 8.3 proof: sample mark values in Y, Y closed under mark constants | [`Lemma83MarkValues.lean`](AEC/Section8/Lemma83MarkValues.lean) (**done**, cycle 105) |
 | `infra_83_pairM_template` | Lemma 8.3 proof: template with mark constants and chart relations; strong natural X→Y→L | [`Lemma83PairTemplateM.lean`](AEC/Section8/Lemma83PairTemplateM.lean) (**done**, cycle 105) |
 | `infra_83_pairM_colors_demand` | Lemma 8.3 proof: marked template colors under the joint demand | [`Lemma83PairDemandM.lean`](AEC/Section8/Lemma83PairDemandM.lean) (**done**, cycle 105) |
+| `infra_83_colors_formula` | Lemma 8.3 proof: colors recording coordinate formulas (witness coordinates are chart points) | [`HullColorsFormula83.lean`](AEC/Section8/HullColorsFormula83.lean) (**done**, cycle 106) |
 | `infra_72_mixed_level` | Lemma 7.2 last sentence (A at a smaller level than B), stated with sorry (audit) | [`Lemma72Mixed.lean`](AEC/Section7/Lemma72Mixed.lean) (open, cycle 96) |
 | `infra_82_tiedFreeMixed_base_equiv` | Mixed tied freeness under a reindexed change of base tuple | [`TiedAlong.lean`](AEC/Section8/TiedAlong.lean) (**done**, cycle 97) |
 | `infra_82_mark_tied_along_single` | Lemma 8.2(4) for `P.scheme`: tied freeness of the mark along arrows (Def 8.1 tied, cycle 97 ruling) | [`TiedAlong.lean`](AEC/Section8/TiedAlong.lean) (**done**, cycle 97) |

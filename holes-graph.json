@@ -5797,6 +5797,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 105: chartXM, chartLtXM, chartSatM, infra_83_pairM_colors_demand."
+  },
+  {
+   "id": "infra_83_colors_formula",
+   "label": "Lemma 8.3 proof: coherent colors recording prescribed coordinate formulas; witness bundles satisfy them",
+   "section": 8,
+   "file": "AEC/Section8/HullColorsFormula83.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 106: Hull83.TpSampleBF, tpSampleBF_reindex, tpB_coherent_colors_formula, witB_realize."
   }
  ],
  "edges": [
@@ -10852,8 +10861,18 @@
    "from": "infra_83_pairM_colors_demand",
    "to": "infra_83_pair_sample_family",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_colors_formula",
+   "to": "infra_83_X_hull_eq_FJ",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_83_colors_formula",
+   "to": "infra_83_Y_hull_eq_FZ",
+   "kind": "hard"
   }
  ],
- "doneCount": 577,
+ "doneCount": 578,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
