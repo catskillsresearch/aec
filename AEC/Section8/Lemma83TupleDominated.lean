@@ -390,5 +390,56 @@ theorem infra_83_realizes_of_match (P : SingleModelData K)
     ℵ₀ le_rfl hlt hfin rfl
   exact ⟨_, SameGaloisType.unswap_refl SB.symm⟩
 
+
+set_option maxHeartbeats 3200000 in
+/-- **A template-side pair is marked from bounded matches into marked sample pairs (proved).**
+Under the hypotheses of `infra_83_dominated_of_marked_matches`, also `b` realizes `p_{X'}`: apply
+the match to the empty tuple and use `infra_83_realizes_of_match` with the sample's realization. -/
+theorem infra_83_marked_of_marked_matches (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) {ν : Cardinal.{u}}
+    (hνC : ν ∈ infra_615_closed P) (hνT : ν ∈ infra_78_closedTail P)
+    {X' Y' : P.scheme.Object ν hνC.1}
+    (incl' : SystemArrow K oneVertexShape (P.scheme.asSystem hνC.1 X')
+      (P.scheme.asSystem hνC.1 Y'))
+    (hincl' : P.scheme.permitted (X := X') (Y := Y') incl')
+    {bIdx : Type u} [Finite bIdx]
+    (b : bIdx → Occurrence K oneVertexShape (P.scheme.asSystem hνC.1 Y'))
+    (hmatch : ∀ (cIdx : Type u) (c : cIdx → Occurrence K oneVertexShape (P.scheme.asSystem hνC.1 Y')),
+      #cIdx < ν →
+      ∃ (N : MarkedPair K oneVertexShape P.scheme Pr) (hlC : N.μ ∈ infra_615_closed P)
+        (_ : N.μ ∈ infra_78_closedTail P) (_ : ν ≤ N.μ)
+        (toA : SystemArrow K oneVertexShape (P.scheme.asSystem hνC.1 X')
+          (P.scheme.asSystem hlC.1 N.X))
+        (htoA : P.scheme.permitted (X := X') (Y := N.X) toA)
+        (R : ApproximateRetraction K oneVertexShape P.scheme N.hμ N.X N.Y N.incl)
+        (S : Set R.index) (_ : #S = ν) (τ : bIdx ≃ N.bIdx)
+        (cU : cIdx → Occurrence K oneVertexShape (P.scheme.asSystem hlC.1 N.Y)),
+        (∀ i ∈ S, ∀ s, ∃ y, toA.onVertex (seqJoint (fun a => N.b (τ a)) cU s).1 y =
+          (R.retr i).onVertex (seqJoint (fun a => N.b (τ a)) cU s).1
+            (seqJoint (fun a => N.b (τ a)) cU s).2) ∧
+        SameGaloisType (asTuple incl' hincl' (seqJoint b c))
+          ((asTuple N.incl N.incl_arrow (seqJoint (fun a => N.b (τ a)) cU)).restrict toA htoA)
+          (Equiv.refl _) (Equiv.refl _)) :
+    (∃ realEq : bIdx ≃ (Pr.assign hνC.1 X').idx,
+      SameGaloisType (asTuple incl' trivial b) (Pr.assign hνC.1 X') realEq (Equiv.refl _)) ∧
+    AllDominated incl' hincl' bIdx b := by
+  refine ⟨?_, infra_83_dominated_of_marked_matches P Pr hνC hνT incl' hincl' b hmatch⟩
+  have h0 : #PEmpty.{u + 1} < ν := by
+    rw [Cardinal.mk_eq_zero]; exact (P.aleph0_lt hνC.1).trans' Cardinal.aleph0_pos
+  obtain ⟨N, hlC, -, -, toA, htoA, -, -, -, τ, cU, -, hExt⟩ :=
+    hmatch PEmpty (fun x => x.elim) h0
+  have hD : SameGaloisType (asTuple incl' trivial b)
+      ((asTuple N.incl trivial N.b).restrict toA trivial) τ (Equiv.refl _) := by
+    obtain ⟨ρ, hρ, top, f1, f2, hf1, hf2, hc, hv⟩ := hExt
+    refine ⟨ρ, hρ, top, f1, f2, hf1, hf2, hc, fun j => ?_⟩
+    obtain ⟨k, rfl⟩ := τ.surjective j
+    have h2 := hv (Sum.inl k)
+    have hk : τ.symm (τ k) = k := τ.symm_apply_apply k
+    refine Eq.trans ?_ h2
+    show (⟨(b (τ.symm (τ k))).1, f1.onVertex _ (b (τ.symm (τ k))).2⟩ :
+      Occurrence K oneVertexShape (P.scheme.asSystem hρ top)) = ⟨(b k).1, f1.onVertex _ (b k).2⟩
+    rw [hk]
+  exact infra_83_realizes_of_match P Pr incl' N.incl toA b N.b τ hD N.realEq N.realizes
+
 end
 end AEC
