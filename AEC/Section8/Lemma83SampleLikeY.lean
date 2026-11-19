@@ -1768,4 +1768,28 @@ theorem infra_83_orderPieces_cocone (E : OrderPresentation K) {H : ℕ → Type 
       show (E.map (ι t)).comp (E.map (h (placeSucc hst s.2 t.2))) = E.map (ι s)
       rw [← E.map_comp, hι])
 
+
+/-- **Covering cocones identify the EM value of `F ∘ H` with `F(J)`**: if moreover the images
+`F(ι_s)` cover `F(J)`, the induced strong embedding is bijective. -/
+theorem infra_83_orderPieces_cocone_bij (E : OrderPresentation K) {H : ℕ → Type u}
+    [∀ k, LinearOrder (H k)] [∀ k, Nonempty (H k)]
+    {h : ∀ {k l : ℕ}, (Fin (k + 1) ↪o Fin (l + 1)) → H k ↪o H l}
+    {hid : ∀ k (p : H k), h (idEmb (α := Fin (k + 1))) p = p}
+    {hcomp : ∀ {k l m : ℕ} (e : Fin (k + 1) ↪o Fin (l + 1)) (f : Fin (l + 1) ↪o Fin (m + 1))
+      (p : H k), h (e.trans f) p = h f (h e p)}
+    (I : Type u) [LinearOrder I] [Nonempty I] (J : Type u) [LinearOrder J] [Nonempty J]
+    (ι : ∀ s : ((orderPieces83 E H h hid hcomp).system I).ι, H s.1.card.pred ↪o J)
+    (hι : ∀ {s t : ((orderPieces83 E H h hid hcomp).system I).ι}
+      (hst : ((orderPieces83 E H h hid hcomp).system I).rel s t),
+      (h (placeSucc hst s.2 t.2)).trans (ι t) = ι s)
+    (hcov : ∀ y : (E.obj J).carrier, ∃ s z, E.map (ι s) z = y) :
+    ∃ m : ((orderPieces83 E H h hid hcomp).limit I).obj.carrier ↪[K.τ] (E.obj J).carrier,
+      K.Strong m ∧ Function.Bijective m ∧
+        ∀ s, m.comp (((orderPieces83 E H h hid hcomp).limit I).canon s) = E.map (ι s) := by
+  obtain ⟨m, hm, hc⟩ := infra_83_orderPieces_cocone E I J ι hι
+  refine ⟨m, hm, ⟨m.injective, fun y => ?_⟩, hc⟩
+  obtain ⟨s, z, rfl⟩ := hcov y
+  exact ⟨((orderPieces83 E H h hid hcomp).limit I).canon s z, by
+    rw [← hc s]; rfl⟩
+
 end AEC

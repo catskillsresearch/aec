@@ -6121,6 +6121,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 107: map half of (F∘H)(I) ≅ F(J_I); remaining: J_I as directed colimit of orders and surjectivity via sub_cover."
+  },
+  {
+   "id": "infra_83_orderPieces_cocone_bij",
+   "label": "Covering order cocones make (F∘H)(I) → F(J) a strong bijection",
+   "section": 8,
+   "file": "Lemma83SampleLikeY.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 107: remaining for X/Y tips: build J_I (directed colimit of the chart orders H_k over finite s ⊆ I) with ι_s and prove the cover hypothesis from sub_cover."
   }
  ],
  "edges": [
@@ -11426,8 +11435,18 @@
    "from": "infra_83_orderPieces_cocone",
    "to": "infra_83_Y_hull_eq_FZ",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_orderPieces_cocone_bij",
+   "to": "infra_83_X_hull_eq_FJ",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_83_orderPieces_cocone_bij",
+   "to": "infra_83_Y_hull_eq_FZ",
+   "kind": "hard"
   }
  ],
- "doneCount": 613,
+ "doneCount": 614,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
