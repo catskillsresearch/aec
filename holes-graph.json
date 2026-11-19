@@ -3645,7 +3645,7 @@
    "file": "AEC/Section7/Theorem713.lean",
    "status": "blocked",
    "blocker": "infra_78_general",
-   "detail": "OPEN (cycle 93; Lean statement infra_79_general_statement, sorry'd theorem infra_79_general). English: 'More generally this holds for a bounded marginal satisfying Definition 7.7.' Hypothesis SatisfiesContinuityTied p, #p.idx < mu, at infra_712_levels; existence of an all-dominated realization + same-level primeness. Proof: as infra_79_existence_of_parts, with the general Prop 7.8. | Cycle 93 (end): bounded descent (infra_79_descent_bounded) and identification (infra_79_identify_bounded) DONE. Remaining: bounded lift_isolate (needs general Prop 7.8 at lambda for the lifted mark: infra_78_general_of_closed_def77 + transfer of Def 7.7 to the mixed tied free lift), bounded retraction pair (infra_79_retraction_pair_statement uses a finite mark), bounded existence_at/primeness; all behind infra_78_general / infra_78_def77_tail_meet. | Primeness clause DONE (infra_79_general_primeness); only the existence clause remains (bounded lift_isolate + retraction pair + existence_at)."
+   "detail": "OPEN (cycle 93; Lean statement infra_79_general_statement, sorry'd theorem infra_79_general). English: 'More generally this holds for a bounded marginal satisfying Definition 7.7.' Hypothesis SatisfiesContinuityTied p, #p.idx < mu, at infra_712_levels; existence of an all-dominated realization + same-level primeness. Proof: as infra_79_existence_of_parts, with the general Prop 7.8. | Cycle 93 (end): bounded descent (infra_79_descent_bounded) and identification (infra_79_identify_bounded) DONE. Remaining: bounded lift_isolate (needs general Prop 7.8 at lambda for the lifted mark: infra_78_general_of_closed_def77 + transfer of Def 7.7 to the mixed tied free lift), bounded retraction pair (infra_79_retraction_pair_statement uses a finite mark), bounded existence_at/primeness; all behind infra_78_general / infra_78_def77_tail_meet. | Primeness clause DONE (infra_79_general_primeness); only the existence clause remains (bounded lift_isolate + retraction pair + existence_at). | Bounded retraction pair DONE (infra_79_retraction_pair_bounded). Existence clause remaining: bounded lift_isolate (Prop 7.8 at lambda for the mixed tied free lift of p: needs Def 7.7 for the lifted mark at closed levels, i.e. infra_78_general_of_closed_def77 + a Def 7.7 transfer along the lift) and the bounded existence_at assembly."
   },
   {
    "id": "infra_78_general",
@@ -3979,6 +3979,15 @@
    "status": "done",
    "blocker": null,
    "detail": "PROVED cycle 93 (axioms clean): the second conjunct of infra_79_general_statement for every mark |p| < mu (no Def 7.7 needed)."
+  },
+  {
+   "id": "infra_79_retraction_pair_bounded",
+   "label": "Thm 7.9 retraction pair for a bounded mark",
+   "section": 7,
+   "file": "AEC/Section7/Prop78General.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "PROVED cycle 93 (axioms clean): infra_79_retraction_pair with the finite mark replaced by |bU| <= nu (statement infra_79_retraction_pair_bounded_statement)."
   }
  ],
  "edges": [
@@ -7869,8 +7878,13 @@
    "from": "infra_79_general_primeness",
    "to": "infra_79_general",
    "kind": "hard"
+  },
+  {
+   "from": "infra_79_retraction_pair_bounded",
+   "to": "infra_79_general",
+   "kind": "hard"
   }
  ],
- "doneCount": 387,
+ "doneCount": 388,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
