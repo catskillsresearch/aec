@@ -514,6 +514,8 @@ Lean: imports `Section5.Results` and `Section6.Results`. Soft paper chain after 
 | `infra_84_generator_transfer_iff` | Lemma 8.4 (P.scheme): bounded generator tests iff all tests over the generated sub-presentation | [`TermGen84Single.lean`](AEC/Section8/TermGen84Single.lean) (**done**, cycle 101) |
 | `infra_84_range_map_subset` | Order presentations: images of E(A) lie in the generated sub-presentation | [`TermGen84Single.lean`](AEC/Section8/TermGen84Single.lean) (**done**, cycle 101) |
 | `infra_84_two_segment_generated` | Lemma 8.4 (P.scheme): both segments lie in the jointly generated sub-presentation | [`TermGen84Single.lean`](AEC/Section8/TermGen84Single.lean) (**done**, cycle 101) |
+| `infra_84_pair_bounded_generation` | Lemma 8.4 (P.scheme): bounded generation in the two-segment presentation | [`TermGen84Single.lean`](AEC/Section8/TermGen84Single.lean) (**done**, cycle 101) |
+| `infra_84_pair_generator_tests_agree` | Lemma 8.4 (P.scheme): bounded generator tests over the segments give full placed agreement | [`TermGen84Single.lean`](AEC/Section8/TermGen84Single.lean) (**done**, cycle 101) |
 | `infra_72_mixed_level` | Lemma 7.2 last sentence (A at a smaller level than B), stated with sorry (audit) | [`Lemma72Mixed.lean`](AEC/Section7/Lemma72Mixed.lean) (open, cycle 96) |
 | `infra_82_tiedFreeMixed_base_equiv` | Mixed tied freeness under a reindexed change of base tuple | [`TiedAlong.lean`](AEC/Section8/TiedAlong.lean) (**done**, cycle 97) |
 | `infra_82_mark_tied_along_single` | Lemma 8.2(4) for `P.scheme`: tied freeness of the mark along arrows (Def 8.1 tied, cycle 97 ruling) | [`TiedAlong.lean`](AEC/Section8/TiedAlong.lean) (**done**, cycle 97) |
