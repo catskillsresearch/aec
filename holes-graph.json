@@ -5338,6 +5338,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 103: TpWitB, tpWitB_nonempty, witB, tpPieceB_tp, tpFinPiecesB : FinPieces K (HullStrong now quantifies over finite variable types), exists_tpFinPiecesB. Axioms clean."
+  },
+  {
+   "id": "infra_83_bundled_presentation",
+   "label": "Lemma 8.3 proof: enumeration data and EM order presentation for bundled hull pieces",
+   "section": 8,
+   "file": "AEC/Section8/HullBundle83.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 103: card_bundle_terms_le, tpEnumB (+_surj), tpPieceEnumB (skeleton = first entry of the first bundle, distinct by injectivity of the first sort sequence; needs r > 0), tpPresentationB := EM83.presentation. Axioms clean."
   }
  ],
  "edges": [
@@ -10043,8 +10052,13 @@
    "from": "infra_83_bundled_finpieces",
    "to": "infra_83_pair_pieces",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_bundled_presentation",
+   "to": "infra_83_template_from_colors",
+   "kind": "hard"
   }
  ],
- "doneCount": 529,
+ "doneCount": 530,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

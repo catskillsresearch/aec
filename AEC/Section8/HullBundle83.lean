@@ -103,5 +103,80 @@ theorem exists_tpFinPiecesB (hP : HullStrong φ P)
 
 end Pieces
 
+/-- Bundled terms are few when the function symbols are. -/
+theorem card_bundle_terms_le (r : ℕ) (hL : max ℵ₀ #(Σ i, L.Functions i) ≤ ls K) :
+    #(Σ n, L.Term (Fin n × Fin r)) ≤ ls K := by
+  have hω : ℵ₀ ≤ ls K := le_trans (le_max_left _ _) hL
+  let f : (Σ n, L.Term (Fin n × Fin r)) → ℕ × (Σ k, L.Term (Fin k)) := fun a =>
+    (a.1, ⟨a.1 * r, Term.relabelEquiv finProdFinEquiv a.2⟩)
+  have hf : Function.Injective f := by
+    rintro ⟨n, t⟩ ⟨n', t'⟩ h
+    simp only [f, Prod.mk.injEq] at h
+    obtain ⟨rfl, h2⟩ := h
+    have := eq_of_heq (Sigma.mk.inj_iff.mp h2).2
+    rw [(Term.relabelEquiv finProdFinEquiv).injective this]
+  calc #(Σ n, L.Term (Fin n × Fin r)) ≤ #(ℕ × (Σ k, L.Term (Fin k))) := mk_le_of_injective hf
+    _ = ℵ₀ * #(Σ k, L.Term (Fin k)) := by rw [mk_prod, mk_nat]; simp
+    _ ≤ ls K * ls K := mul_le_mul' hω (card_terms_le hL)
+    _ = ls K := mul_eq_self hω
+
+section Enum
+
+variable {P : ∀ (M : Type u) [L.Structure M], Prop} {r : ℕ}
+  {c : (m : ℕ) → 0 < m → TpColorB L r m}
+  (hc : ∀ (n : ℕ) (κ : Cardinal.{u}), Joint (TpSampleB P r) n c κ)
+  (hcoh : ∀ {m m' : ℕ} (hm' : 0 < m') (hm : 0 < m) (f : Fin m' ↪o Fin m),
+    c m' hm' = tpResB r f (c m hm))
+  (hr : 0 < r)
+
+/-- The term enumeration of the bundled hull pieces. -/
+noncomputable def tpEnumB (k : ℕ) (a : Σ n, L.Term (Fin n × Fin r)) :
+    Hull (L := L) (witB hc k).v :=
+  if h : a.1 = k + 1 then Quotient.mk _ (a.2.relabel (Prod.map (Fin.cast h) id))
+  else Quotient.mk _ (Term.var (0, ⟨0, hr⟩))
+
+theorem tpEnumB_surj (k : ℕ) : Function.Surjective (tpEnumB hc hr k) := by
+  intro x
+  induction x using Quotient.ind with
+  | _ t =>
+    refine ⟨⟨k + 1, t⟩, ?_⟩
+    simp only [tpEnumB, dite_true]
+    congr 1
+    have : (Prod.map (Fin.cast (rfl : k + 1 = k + 1)) id : Fin (k + 1) × Fin r → _) = id := by
+      funext p; rfl
+    rw [this]
+    exact Term.relabel_id t
+
+include hcoh in
+/-- **Enumeration data** for the bundled hull pieces (skeleton: the first entry of the first
+bundle), so the generic EM presentation applies. -/
+noncomputable def tpPieceEnumB (φ : K.τ →ᴸ L) (hP : HullStrong φ P)
+    (hL : max ℵ₀ #(Σ i, L.Functions i) ≤ ls K) :
+    EM83.PieceEnum (tpFinPiecesB (hc := hc) (hcoh := hcoh) (φ := φ) hP) where
+  Lab := Σ n, L.Term (Fin n × Fin r)
+  lab_small := card_bundle_terms_le r hL
+  enum k := tpEnumB hc hr k
+  surj k := tpEnumB_surj hc hr k
+  skelLab := ⟨1, Term.var (0, ⟨0, hr⟩)⟩
+  skel_distinct {l} e e' hne heq := by
+    have h2 : hullVal (witB hc l).v (hullMap (L := L) (Prod.map (⇑e) id) (tpPieceB_tp hc hcoh e)
+        (Quotient.mk _ ((Term.var (0, ⟨0, hr⟩) : L.Term (Fin 1 × Fin r)).relabel
+          (Prod.map (Fin.cast rfl) id)))) =
+        hullVal (witB hc l).v (hullMap (L := L) (Prod.map (⇑e') id) (tpPieceB_tp hc hcoh e')
+        (Quotient.mk _ ((Term.var (0, ⟨0, hr⟩) : L.Term (Fin 1 × Fin r)).relabel
+          (Prod.map (Fin.cast rfl) id)))) :=
+      congrArg (hullVal (L := L) (witB hc l).v) heq
+    rw [hullMap_mk, hullMap_mk, hullVal_mk, hullVal_mk] at h2
+    simp only [Term.realize_relabel, Term.realize_var, Function.comp_apply, Prod.map] at h2
+    exact hne (by simpa using (witB hc l).inj ⟨0, hr⟩ h2)
+
+include hcoh in
+/-- The EM order presentation of the bundled hull pieces. -/
+noncomputable def tpPresentationB (φ : K.τ →ᴸ L) (hP : HullStrong φ P)
+    (hL : max ℵ₀ #(Σ i, L.Functions i) ≤ ls K) : OrderPresentation K :=
+  EM83.presentation (tpPieceEnumB hc hcoh hr φ hP hL)
+
+end Enum
+
 end Hull83
 end AEC

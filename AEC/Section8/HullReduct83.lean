@@ -121,9 +121,9 @@ noncomputable def tpFinPieces (hP : HullStrong φ P) : EM83.FinPieces K where
 
 end Pieces
 
-theorem hullMap_mk {M N : Type u} [L.Structure M] [L.Structure N] {m m' : ℕ}
-    {v' : Fin m' → N} {v : Fin m → M} (g : Fin m' → Fin m)
-    (h : tpCode (L := L) v' = tpCode (v ∘ g)) (t : L.Term (Fin m')) :
+theorem hullMap_mk {M N : Type u} [L.Structure M] [L.Structure N] {ι ι' : Type}
+    {v' : ι' → N} {v : ι → M} (g : ι' → ι)
+    (h : tpCode (L := L) v' = tpCode (v ∘ g)) (t : L.Term ι') :
     hullMap g h (Quotient.mk (hullSetoid v') t) = Quotient.mk (hullSetoid v) (t.relabel g) := rfl
 
 /-- Terms in finitely many variables are few when the function symbols are. -/
