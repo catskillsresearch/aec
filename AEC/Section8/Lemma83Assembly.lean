@@ -150,4 +150,42 @@ theorem infra_83_conclusion_of_marked_values_assign (P : SingleModelData K)
   show mk J _ _ = mk J _ (Pr.arity _ _ ((Pr.arity _ _).symm _))
   rw [Equiv.apply_symm_apply]
 
+/-- **Realizing the prescribed type propagates down the template (proved).** For pair-template
+data whose order embeddings act by commuting arrows preserving the marks (as in
+`infra_83_pair_template_clauses`), if the value at `J` realizes `p_{X_J}` then so does the value
+at every `I` with an order embedding `I ↪o J` (`infra_83_realizes_descend`, across levels). So
+`infra_83_bounded_arity_free` only needs the values on a cofinal class of levels. -/
+theorem infra_83_values_realize_down (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme)
+    (X Y : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
+      P.scheme.Object #I hI)
+    (incl : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
+      SystemArrow K oneVertexShape (P.scheme.asSystem hI (X I hI))
+        (P.scheme.asSystem hI (Y I hI)))
+    (mk : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
+      Fin Pr.n → Occurrence K oneVertexShape (P.scheme.asSystem hI (Y I hI)))
+    (harr : ∀ (I J : Type u) [LinearOrder I] [Nonempty I] [LinearOrder J] [Nonempty J]
+      (f : I ↪o J) (hI : #I ∈ P.eligible) (hJ : #J ∈ P.eligible),
+      ∃ (onX : SystemArrow K oneVertexShape (P.scheme.asSystem hI (X I hI))
+          (P.scheme.asSystem hJ (X J hJ)))
+        (onY : SystemArrow K oneVertexShape (P.scheme.asSystem hI (Y I hI))
+          (P.scheme.asSystem hJ (Y J hJ))),
+        SystemArrow.comp (incl I hI) onY = SystemArrow.comp onX (incl J hJ) ∧
+        ∀ i, (⟨(mk I hI i).1, onY.onVertex (mk I hI i).1 (mk I hI i).2⟩ :
+          Occurrence K oneVertexShape (P.scheme.asSystem hJ (Y J hJ))) = mk J hJ i)
+    (I J : Type u) [LinearOrder I] [Nonempty I] [LinearOrder J] [Nonempty J] (f : I ↪o J)
+    (hI : #I ∈ P.eligible) (hJ : #J ∈ P.eligible)
+    (hJr : ∃ realEq : ULift.{u} (Fin Pr.n) ≃ (Pr.assign hJ (X J hJ)).idx,
+      SameGaloisType (asTuple (incl J hJ) trivial (fun j : ULift.{u} (Fin Pr.n) => mk J hJ j.down))
+        (Pr.assign hJ (X J hJ)) realEq (Equiv.refl _)) :
+    ∃ realEq : ULift.{u} (Fin Pr.n) ≃ (Pr.assign hI (X I hI)).idx,
+      SameGaloisType (asTuple (incl I hI) trivial (fun j : ULift.{u} (Fin Pr.n) => mk I hI j.down))
+        (Pr.assign hI (X I hI)) realEq (Equiv.refl _) := by
+  obtain ⟨onX, onY, hc, hm⟩ := harr I J f hI hJ
+  obtain ⟨realEq', hr'⟩ := hJr
+  exact infra_83_realizes_descend P Pr (incl I hI) (incl J hJ) onX onY hc
+    (fun j : ULift.{u} (Fin Pr.n) => mk I hI j.down)
+    (fun j : ULift.{u} (Fin Pr.n) => mk J hJ j.down) (Equiv.refl _) (fun j => hm j.down)
+    realEq' hr'
+
 end AEC

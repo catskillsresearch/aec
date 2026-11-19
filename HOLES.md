@@ -537,6 +537,7 @@ Lean: imports `Section5.Results` and `Section6.Results`. Soft paper chain after 
 | `infra_83_conclusion_of_marked_values` | Lemma 8.3 proof (P.scheme): faithful conclusion from a pair template whose values are marked pairs (clauses (1)-(3), realEq) | [`Lemma83Assembly.lean`](AEC/Section8/Lemma83Assembly.lean) (**done**, cycle 109) |
 | `infra_83_dominated_of_realizes_onto` | Lemma 8.3 proof (P.scheme): realizing mark + onto prime arrow over X gives all-domination | [`MarkedPairTransport.lean`](AEC/Section8/MarkedPairTransport.lean) (**done**, cycle 109) |
 | `infra_83_realizes_descend` | Lemma 8.3 proof (P.scheme): realizing the prescribed type descends along pair arrows, across levels | [`MarkedPairTransport.lean`](AEC/Section8/MarkedPairTransport.lean) (**done**, cycle 109) |
+| `infra_83_values_realize_down` | Lemma 8.3 proof (P.scheme): realizing p propagates down the pair template along order embeddings | [`Lemma83Assembly.lean`](AEC/Section8/Lemma83Assembly.lean) (**done**, cycle 109) |
 | `infra_83_samples_core` | Lemma 8.3 proof (P.scheme): sample pair with base E(J) embedded into E(J + W) over the base | [`Lemma83Samples.lean`](AEC/Section8/Lemma83Samples.lean) (**done**, cycle 101) |
 | `infra_83_samples_order_exists` | Lemma 8.3 proof (P.scheme): the W of the samples exists | [`Lemma83Samples.lean`](AEC/Section8/Lemma83Samples.lean) (**done**, cycle 101) |
 | `infra_83_samples_retractions` | Lemma 8.3 proof (P.scheme): retraction family of the samples | [`Lemma83Samples.lean`](AEC/Section8/Lemma83Samples.lean) (**done**, cycle 101) |

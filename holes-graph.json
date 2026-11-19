@@ -6373,6 +6373,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 109: proved. With infra_83_dominated_of_realizes_onto this reduces bounded_arity_free to mapping the template value (X_I, Y_I, mk_I) by a pair arrow into some pair whose mark realizes the prescribed type."
+  },
+  {
+   "id": "infra_83_values_realize_down",
+   "label": "Lemma 8.3 proof (P.scheme): for the pair template, realizing p propagates from the value at J to the value at every I embedding into J (across levels)",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83Assembly.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 109: proved via infra_83_realizes_descend. bounded_arity_free only needs a cofinal class of levels."
   }
  ],
  "edges": [
@@ -11858,8 +11867,13 @@
    "from": "infra_83_realizes_descend",
    "to": "infra_83_bounded_arity_free",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_values_realize_down",
+   "to": "infra_83_bounded_arity_free",
+   "kind": "hard"
   }
  ],
- "doneCount": 645,
+ "doneCount": 646,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
