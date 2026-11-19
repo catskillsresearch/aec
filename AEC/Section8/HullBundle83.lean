@@ -178,5 +178,62 @@ noncomputable def tpPresentationB (φ : K.τ →ᴸ L) (hP : HullStrong φ P)
 
 end Enum
 
+/-- Equal types stay equal after relabelling the variables. -/
+theorem tpCode_comp {M N : Type u} [L.Structure M] [L.Structure N] {ι ι' : Type}
+    {v : ι → M} {w : ι → N} (h : tpCode (L := L) v = tpCode w) (g : ι' → ι) :
+    tpCode (L := L) (v ∘ g) = tpCode (w ∘ g) := by
+  ext θ
+  have := congrArg (fun c : Set (L.Formula ι) => θ.relabel g ∈ c) h
+  simp only [tpCode, Set.mem_setOf_eq, Formula.realize_relabel] at this
+  exact Iff.of_eq this
+
+section SubBundle
+
+variable {P : ∀ (M : Type u) [L.Structure M], Prop} {r : ℕ}
+  {c : (m : ℕ) → 0 < m → TpColorB L r m}
+  (hc : ∀ (n : ℕ) (κ : Cardinal.{u}), Joint (TpSampleB P r) n c κ)
+  (hcoh : ∀ {m m' : ℕ} (hm' : 0 < m') (hm : 0 < m) (f : Fin m' ↪o Fin m),
+    c m' hm' = tpResB r f (c m hm))
+  {r₀ : ℕ} (σ : Fin r₀ → Fin r) (φ : K.τ →ᴸ L)
+
+include hcoh in
+theorem subBundle_tp {k l : ℕ} (e : Fin (k + 1) ↪o Fin (l + 1)) :
+    tpCode (L := L) ((witB hc k).v ∘ Prod.map id σ) =
+      tpCode (((witB hc l).v ∘ Prod.map id σ) ∘ Prod.map e id) :=
+  tpCode_comp (tpPieceB_tp hc hcoh e) (Prod.map id σ)
+
+include hcoh in
+/-- **Sub-bundle pieces**: the hulls of the selected sort coordinates `σ` of each bundle
+(e.g. the `J`-coordinates, giving `X_H = F(J_H)`). -/
+noncomputable def subBundlePieces (hP : HullStrong φ P) : EM83.FinPieces K where
+  obj k := red φ (Hull (L := L) ((witB hc k).v ∘ Prod.map id σ))
+  mem k := K.strong_mem_dom _ (hP _ (witB hc k).mem ((witB hc k).v ∘ Prod.map id σ))
+  map e := redEmb φ (hullMapEmb (Prod.map e id) (subBundle_tp hc hcoh σ e))
+  map_refl k := by
+    ext x
+    exact hullMap_id _ (subBundle_tp hc hcoh σ (k := k) (l := k) idEmb) x
+  map_trans e f := by
+    ext x
+    exact (hullMap_comp (Prod.map e id) (Prod.map f id) (subBundle_tp hc hcoh σ e)
+      (subBundle_tp hc hcoh σ f) (subBundle_tp hc hcoh σ (e.trans f)) x).symm
+  strong e := hullMap_strong hP (witB hc _).mem (witB hc _).mem _ (subBundle_tp hc hcoh σ e)
+
+include hcoh in
+/-- **Sub-bundle inclusion** into the full bundled pieces: strong and natural. -/
+noncomputable def subBundleHom (hP : HullStrong φ P) :
+    EM83.PiecesHom (subBundlePieces hc hcoh σ φ hP) (tpFinPiecesB (hc := hc) (hcoh := hcoh) (φ := φ) hP) where
+  app k := redEmb φ (hullMapEmb (v' := (witB hc k).v ∘ Prod.map id σ) (Prod.map id σ) rfl)
+  strong k := hullMap_strong hP (witB hc k).mem (witB hc k).mem _ rfl
+  natural {k l} e := by
+    ext x
+    exact (hullMap_comp (Prod.map e id) (Prod.map id σ) (subBundle_tp hc hcoh σ e) rfl
+        (subBundle_tp hc hcoh σ e)
+        (show Hull (L := L) ((witB hc k).v ∘ Prod.map id σ) from x)).trans
+      (hullMap_comp (Prod.map id σ) (Prod.map e id) rfl (tpPieceB_tp hc hcoh e)
+        (subBundle_tp hc hcoh σ e)
+        (show Hull (L := L) ((witB hc k).v ∘ Prod.map id σ) from x)).symm
+
+end SubBundle
+
 end Hull83
 end AEC

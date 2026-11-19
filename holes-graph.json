@@ -5347,6 +5347,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 103: card_bundle_terms_le, tpEnumB (+_surj), tpPieceEnumB (skeleton = first entry of the first bundle, distinct by injectivity of the first sort sequence; needs r > 0), tpPresentationB := EM83.presentation. Axioms clean."
+  },
+  {
+   "id": "infra_83_subbundle_hom",
+   "label": "Lemma 8.3 proof: hulls of selected sort coordinates (X_H from the J-coordinates) with strong natural inclusion into the bundled pieces",
+   "section": 8,
+   "file": "AEC/Section8/HullBundle83.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 103: tpCode_comp, subBundle_tp, subBundlePieces : FinPieces K (hulls of v o Prod.map id sigma), subBundleHom : PiecesHom (strong, natural). Combined with infra_83_sort_pieces_hom (sublanguages) this gives the sort maps X -> Y -> L once the concrete pair language is fixed. Axioms clean."
   }
  ],
  "edges": [
@@ -10057,8 +10066,13 @@
    "from": "infra_83_bundled_presentation",
    "to": "infra_83_template_from_colors",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_subbundle_hom",
+   "to": "infra_83_pair_pieces",
+   "kind": "hard"
   }
  ],
- "doneCount": 530,
+ "doneCount": 531,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
