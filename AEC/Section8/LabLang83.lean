@@ -1,6 +1,7 @@
 module
 
 public import AEC.Section2.OrderPresentation
+public import Mathlib.ModelTheory.Substructures
 
 /-!
 # Lemma 8.3: the old template labels as function symbols
@@ -130,6 +131,27 @@ theorem labFun_mem_range {J Jp : Type u} [LinearOrder J] [Nonempty J] [LinearOrd
     congr 1
     exact SupportTerm.ext_of_label_eq rfl fun k => by simp [hq]
   · exact hx _
+
+/-- **The `J`-skeleton generates exactly the image of `E(J)`** in the label language on
+`E(J⁺)`: the closure of `{skeleton (f j)}` under the label symbols is `range E(f)`. -/
+theorem closure_skeleton_eq {J Jp : Type u} [LinearOrder J] [Nonempty J] [LinearOrder Jp]
+    [Nonempty Jp] (f : J ↪o Jp) :
+    ((@Substructure.closure (labLang E) (E.obj Jp).carrier labStr
+      (Set.range fun j => E.skeleton (f j)) : @Substructure (labLang E) _ labStr) :
+        Set (E.obj Jp).carrier) = Set.range (E.map f) := by
+  letI := (labStr : (labLang E).Structure (E.obj Jp).carrier)
+  apply le_antisymm
+  · let S : (labLang E).Substructure (E.obj Jp).carrier :=
+      { carrier := Set.range (E.map f)
+        fun_mem := fun a x hx => labFun_mem_range f a x hx }
+    have : Set.range (fun j => E.skeleton (f j)) ⊆ (S : Set _) := by
+      rintro _ ⟨j, rfl⟩
+      exact ⟨E.skeleton j, E.skeleton_natural f j⟩
+    exact Substructure.closure_le.mpr this
+  · rintro _ ⟨x, rfl⟩
+    obtain ⟨n, a, p, -, hp⟩ := map_label_value (E := E) f x
+    rw [← hp]
+    exact Substructure.fun_mem _ a _ fun k => Substructure.subset_closure ⟨p k, rfl⟩
 
 end Lab83
 end AEC
