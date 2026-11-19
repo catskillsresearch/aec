@@ -1819,4 +1819,37 @@ theorem infra_83_dominated_of_primeness (P : SingleModelData K) :
     ((Cardinal.lt_aleph0_of_finite _).trans (P.aleph0_lt (Tail.mem hT hμ))) hD
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+set_option maxHeartbeats 1600000 in
+/-- **Arity removal via constructive primeness at a closed level (proved reduction).** Level-wise
+form of `infra_83_dominated_of_primeness` on the Lemma 8.3 tail
+(`infra_78_closedTail P ∩ infra_615_closed P`), using the Theorem 7.9 existence clause at that
+level (`infra_79_existence_at`). -/
+theorem infra_83_dominated_of_primeness_at (P : SingleModelData K) {μ : Cardinal.{u}}
+    (hμ : μ ∈ infra_78_closedTail P ∩ infra_615_closed P) {X Y : P.scheme.Object μ hμ.1.1}
+    (incl : SystemArrow K oneVertexShape (P.scheme.asSystem _ X) (P.scheme.asSystem _ Y))
+    {bIdx : Type u} [Finite bIdx]
+    (b : bIdx → Occurrence K oneVertexShape (P.scheme.asSystem _ Y))
+    (H : ∀ (V : P.scheme.Object μ hμ.1.1)
+      (inclV : SystemArrow K oneVertexShape (P.scheme.asSystem _ X) (P.scheme.asSystem _ V))
+      (b' : bIdx → Occurrence K oneVertexShape (P.scheme.asSystem _ V)),
+      AllDominated inclV trivial bIdx b' →
+      SameGaloisType (asTuple incl trivial b) (asTuple inclV trivial b')
+        (Equiv.refl bIdx) (Equiv.refl bIdx) →
+      ∃ h : SystemArrow K oneVertexShape (P.scheme.asSystem _ Y) (P.scheme.asSystem _ V),
+        SystemArrow.comp incl h = inclV ∧ ∀ i, h.mapOcc (b i) = b' i) :
+    AllDominated incl trivial bIdx b := by
+  obtain ⟨V, f, hf, b', hD, hS⟩ := infra_79_existence_at P
+    ⟨infra_79_tail P, infra_79_retraction_pair P⟩ hμ X (asTuple incl trivial b)
+    (inferInstanceAs (Finite bIdx))
+  obtain ⟨h, hh, hb⟩ := H V f b' hD hS
+  have hb' : b' = fun i => h.mapOcc (b i) := (funext hb).symm
+  subst hb' hh
+  exact infra_83_dominated_pull P incl trivial h b
+    ((Cardinal.lt_aleph0_of_finite _).trans (P.aleph0_lt hμ.1.1)) hD
+end
+
 end AEC
