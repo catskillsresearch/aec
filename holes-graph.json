@@ -2421,7 +2421,7 @@
    "status": "open",
    "blocker": null,
    "hypothesis_only": true,
-   "detail": "Open (board-only; PAPER HYPOTHESIS, not a theorem of the paper). Prop 7.8's 'more general' form assumes the bounded mark b satisfies Definition 7.7 (continuity of the marked marginal over chain unions). Proved instances: |b| < cf delta, in particular all finite marks (infra_78_limit_invariant5, via Prop 6.13). For |b| >= cf delta the paper gives no proof ('This will let us identify exactly where the proof for a finite mark must be supplemented for a long independent list'). Not on the path of the Lean proposition_7_8 (Finite p.idx). To be formalized as an explicit hypothesis if the bounded-mark generalization of Prop 7.8 / Theorem 7.9 is ever stated; do not try to prove it unconditionally. | Cycle 93: not needed by Thm 7.13(3) (Def 7.7 for product-independent lists is 7.13(2), proved)."
+   "detail": "Open (board-only; PAPER HYPOTHESIS, not a theorem of the paper). Prop 7.8's 'more general' form assumes the bounded mark b satisfies Definition 7.7 (continuity of the marked marginal over chain unions). Proved instances: |b| < cf delta, in particular all finite marks (infra_78_limit_invariant5, via Prop 6.13). For |b| >= cf delta the paper gives no proof ('This will let us identify exactly where the proof for a finite mark must be supplemented for a long independent list'). Not on the path of the Lean proposition_7_8 (Finite p.idx). To be formalized as an explicit hypothesis if the bounded-mark generalization of Prop 7.8 / Theorem 7.9 is ever stated; do not try to prove it unconditionally. | Cycle 93: not needed by Thm 7.13(3) (Def 7.7 for product-independent lists is 7.13(2), proved). | Cycle 94: formalized as the explicit hypothesis SatisfiesContinuityTied p of infra_78_general and infra_79_general (both proved); Thm 7.13(3) gets it from 7.13(2). The hard edge to infra_713_realize is historical (realize is proved without assuming it)."
   },
   {
    "id": "infra_78_matrix_recursion",
@@ -4042,6 +4042,15 @@
    "status": "done",
    "blocker": null,
    "detail": "PROVED cycle 94 (axioms clean): for SingleModelData and any StationaryPrescription, on infra_78_closedTail ∩ infra_615_closed, infra_79_existence_at gives an all-dominated realization of the prescribed (finite) mark; e = id. Covers the first clause of lemma_8_2 for P.scheme; lemma_8_2 itself stays blocked (arbitrary WorkingScheme statement; pair isomorphism clause)."
+  },
+  {
+   "id": "infra_82_pair_extend",
+   "label": "Lemma 8.2 (2) for the Prop 5.6 scheme: a base isomorphism extends to a marked-pair arrow",
+   "section": 8,
+   "file": null,
+   "status": "open",
+   "blocker": null,
+   "detail": "OPEN (cycle 94). English: 'An isomorphism e : X ≅ X′ extends to an isomorphism (X,Y,b) ≅ (X′,Y′,b′)'; proof: existence by Thm 7.9, extension by Prop 7.5 back-and-forth / primeness. Plan (same level, M.μ = N.μ, subst): apply infra_79_primeness_same_level to the tuple asTuple M.incl M.b (finite via Pr.arity), SameGaloisType.refl, M.dominated, N := N.Y, g := e ≫ N.incl, b'' := N.b ∘ τ; the Galois hypothesis is the chain M.realizes → Pr.along e (SameGaloisType part of IsFreeLift; not vacuous) → N.realizes restricted along e (restriction lemma for SameGaloisType: compose the commuting square with e) with infra_612_galois_trans_mid_any (finite marks, ℵ₀ bound). Cross-level e (M.μ ≠ N.μ) needs a cast or the mixed form. Note the Lean lemma_8_2 asks only for a MarkedArrow (not an isomorphism); the iso form would need Prop 7.5 back-and-forth."
   }
  ],
  "edges": [
@@ -7980,6 +7989,11 @@
   },
   {
    "from": "infra_82_marked_pair_exists",
+   "to": "lemma_8_2",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_82_pair_extend",
    "to": "lemma_8_2",
    "kind": "hard"
   }
