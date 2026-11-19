@@ -107,4 +107,223 @@ theorem infra_78_general_limit_invariant {P : SingleModelData K} {μ : Cardinal.
     (C.toUnion i hi) (C.toUnion_arrow i hi) p (hAll i hi) hF
   exact infra_78_tiedFree_congr_arrow _ _ p (infra_613_cocone_arrow C g hi) htrans
 
+/-- **Transitivity of tied freeness, general top (proved, cycle 93).** As
+`infra_78_tiedFree_trans`, with the middle tuple `Q` over `A` arbitrary and the top `r` over `B`
+any tied free lift of `Q` (index bijection `er`), not necessarily a tuple restricting to `Q`. -/
+theorem infra_78_tiedFree_trans_gen
+    {P : SingleModelData K} {μ : Cardinal.{u}} {hμ : μ ∈ P.eligible}
+    {X A B : P.scheme.Object μ hμ}
+    (g : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ A))
+    (hg : P.scheme.permitted (X := X) (Y := A) g)
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ B))
+    (hf : P.scheme.permitted (X := A) (Y := B) f)
+    (Q : TupleOver K oneVertexShape P.scheme hμ A)
+    (r : TupleOver K oneVertexShape P.scheme hμ B) (er : Q.idx ≃ r.idx)
+    (hXA : IsTiedFree g (Q.restrict g hg) Q (Equiv.refl _))
+    (hAB : IsTiedFree f Q r er) :
+    IsTiedFree (SystemArrow.comp g f) (Q.restrict g hg) r er := by
+  classical
+  intro seq ι Z Z0 hκ hι hιμ hmove
+  let b : ApproximationSequence Q :=
+    { τ := #ι
+      κIndex := seq.κIndex
+      family := fun j k => pushOcc g (seq.family j k)
+      concat_bounded := seq.concat_bounded
+      few_exceptions := fun {β} W hW => by
+        have hWτ : #β ≤ seq.τ := hW.trans hι
+        obtain ⟨W0, hW0⟩ := infra_610_move_query g hg seq W hWτ (hW.trans_lt hιμ)
+        have ht := hXA seq W W0 hκ hWτ (hW.trans_lt hιμ) hW0
+        refine le_trans ?_ (seq.few_exceptions W0 hWτ)
+        refine Cardinal.mk_le_of_injective (f := fun j => ⟨j.1, fun hgood => j.2 ?_⟩)
+          (by
+            intro j₁ j₂ hj
+            apply Subtype.ext
+            have := congrArg Subtype.val hj
+            exact this)
+        have e1 := P.scheme.diagram_symm _ _ _ _ ht
+        have e2 := P.scheme.diagram_trans _ _ _ _ _ _ e1 hgood
+        have e3 := P.scheme.diagram_trans _ _ _ _ _ _ e2 (hW0 j.1)
+        erw [infra_78_anchored_refl Q W] at e3
+        exact e3 }
+  have hκb : b.τ + ℵ₀ < #b.κIndex := (add_le_add hι le_rfl).trans_lt hκ
+  have hιb : #ι ≤ b.τ := le_rfl
+  obtain ⟨Z1, hZ1⟩ := infra_610_move_query f hf b Z hιb hιμ
+  have hq := hAB b Z Z1 hκb hιb hιμ hZ1
+  have hcι : ℵ₀ ≤ #ι + ℵ₀ := le_add_self
+  obtain ⟨k, hk1, hk2⟩ := infra_78_exists_outside_two
+    {k | ¬ P.scheme.DiagramEq (X := Q.host) (Y := X)
+      (typeJoint (p := Q.restrict g hg) Z0)
+      (seqJoint (seq.family k) Z0)}
+    {k | ¬ P.scheme.DiagramEq (X := Q.host) (Y := A)
+      (typeJoint (p := Q) Z1) (seqJoint (b.family k) Z1)}
+    hcι (seq.few_exceptions Z0 hι) (b.few_exceptions Z1 hιb) hκb
+  simp only [Set.mem_ofPred_eq, not_not] at hk1 hk2
+  have a1 := P.scheme.diagram_trans _ _ _ _ _ _ hk1 (hmove k)
+  have a2 := P.scheme.diagram_trans _ _ _ _ _ _ a1 (P.scheme.diagram_symm _ _ _ _ (hZ1 k))
+  have a3 := P.scheme.diagram_trans _ _ _ _ _ _ a2 (P.scheme.diagram_symm _ _ _ _ hk2)
+  exact P.scheme.diagram_trans _ _ _ _ _ _ a3 hq
+
+/-- **Cancellation of tied freeness (proved, cycle 93).** For `X → A → B` at one level, if
+`q ↾ A` is tied free from `X` and `q` is tied free from `X` (along `X → B`), then `q` is tied
+free from `A`. Proof: the tied free lift `r` of `q ↾ A` is tied free from `X` (transitivity),
+so `r` and `q` have the same type over `B` (uniqueness, `infra_73_tied_unique`), and the tied
+freeness of `r` transfers to `q` (Theorem 6.6 diagrams). -/
+theorem infra_78_tiedFree_cancel
+    (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : ℵ₀ ≤ σ)
+    {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
+    (hrec : μ ∈ recursionClosedLevels P σ) (hσSucc : Order.succ σ ≤ μ)
+    {X A B : P.scheme.Object μ hμ}
+    (g : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ A))
+    (hg : P.scheme.permitted (X := X) (Y := A) g)
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ B))
+    (hf : P.scheme.permitted (X := A) (Y := B) f)
+    (q : TupleOver K oneVertexShape P.scheme hμ B) (hqν : q.ν = μ) (hidx : #q.idx ≤ σ)
+    (hXA : IsTiedFree g ((q.restrict f hf).restrict g hg) (q.restrict f hf) (Equiv.refl _))
+    (hXB : IsTiedFree (SystemArrow.comp g f) ((q.restrict f hf).restrict g hg) q
+      (Equiv.refl _)) :
+    IsTiedFree f (q.restrict f hf) q (Equiv.refl _) := by
+  have hσlt : σ < μ := (Order.lt_succ σ).trans_le hσSucc
+  obtain ⟨r, er, hrν, -, hTr⟩ :=
+    infra_610_tied_free_lift P σ hσ hμ hrec hσSucc f hf (q.restrict f hf) hqν hidx
+  have hXr := infra_78_tiedFree_trans_gen g hg f hf (q.restrict f hf) r er hXA hTr
+  have hU := infra_73_tied_unique P σ hσ hμ hrec hσSucc (SystemArrow.comp g f)
+    (P.scheme.comp g f hg hf) ((q.restrict f hf).restrict g hg) hqν hidx r q er (Equiv.refl _)
+    hrν hqν hXr hXB
+  intro seq ι Z Z0 h1 h2 h3 hmove
+  have D1 := hTr seq Z Z0 h1 h2 h3 hmove
+  have D2 := infra_612_dEq_of_sameGalois hU Z (hidx.trans_lt hσlt) h3
+  have D3 : P.scheme.DiagramEq (X := r.host) (Y := q.host)
+      (infra_612_anchored er r.incl r.val Z)
+      (infra_612_anchored (Equiv.refl q.idx) q.incl q.val Z) :=
+    infra_73_diagramEq_of_eq D2 (fun t => by cases t <;> rfl) (fun t => by cases t <;> rfl)
+  exact P.scheme.diagram_trans _ _ _ _ _ _ D1 D3
+
+section LimitAssemblyGen
+variable {P : SingleModelData K} {ρ κ : Cardinal.{u}} {hκ : κ ∈ P.eligible}
+
+/-- **Prop 7.8 matrix limit step for bounded marks (proved, cycle 93).** As
+`infra_78_matrix_limit_step`, with the cofinality hypothesis `|b| < cf δ` replaced by the
+continuity of the mark along same-level chains at `κ` (`hF`: if every stage restriction is tied
+free from the base, the mark over the union is tied free from some stage). For `|b| < cf δ`, `hF`
+is local character (`infra_78_tied_local`); for a bounded mark satisfying Definition 7.7 it is
+Definition 7.7 at stage `0` (tracked: `infra_78_general_small_cof`). -/
+theorem infra_78_matrix_limit_step_gen (σ : Cardinal.{u}) (hσ : ℵ₀ ≤ σ)
+    (hrec : κ ∈ recursionClosedLevels P σ) (hσSucc : Order.succ σ ≤ κ)
+    (hρκ : Order.succ ρ < κ) {δ : (Order.succ ρ).ord.ToType}
+    (hδ : Order.IsSuccLimit δ) (X Y : Set.Iio δ → P.scheme.Object κ hκ)
+    (pair : ∀ j, SystemArrow K oneVertexShape (P.scheme.asSystem hκ (X j))
+      (P.scheme.asSystem hκ (Y j)))
+    (sX : ∀ {a b : Set.Iio δ}, a ≤ b →
+      SystemArrow K oneVertexShape (P.scheme.asSystem hκ (X a)) (P.scheme.asSystem hκ (X b)))
+    (sY : ∀ {a b : Set.Iio δ}, a ≤ b →
+      SystemArrow K oneVertexShape (P.scheme.asSystem hκ (Y a)) (P.scheme.asSystem hκ (Y b)))
+    (hXr : ∀ a, sX (le_refl a) = SystemArrow.refl _)
+    (hYr : ∀ a, sY (le_refl a) = SystemArrow.refl _)
+    (hXt : ∀ {a b c : Set.Iio δ} (h₁ : a ≤ b) (h₂ : b ≤ c),
+      sX (h₁.trans h₂) = SystemArrow.comp (sX h₁) (sX h₂))
+    (hYt : ∀ {a b c : Set.Iio δ} (h₁ : a ≤ b) (h₂ : b ≤ c),
+      sY (h₁.trans h₂) = SystemArrow.comp (sY h₁) (sY h₂))
+    (hcomm : ∀ {a b : Set.Iio δ} (h : a ≤ b),
+      SystemArrow.comp (pair a) (sY h) = SystemArrow.comp (sX h) (pair b))
+    (Xb : P.scheme.Object κ hκ)
+    (g : ∀ j, SystemArrow K oneVertexShape (P.scheme.asSystem hκ Xb) (P.scheme.asSystem hκ (X j)))
+    (hg : ∀ {a b : Set.Iio δ} (h : a ≤ b), SystemArrow.comp (g a) (sX h) = g b)
+    {uIdx : Type u} (b : ∀ j, uIdx → Occurrence K oneVertexShape (P.scheme.asSystem hκ (Y j)))
+    (hb : ∀ {a c : Set.Iio δ} (h : a ≤ c) k, b c k = pushOcc (sY h) (b a k))
+    (hidx : #uIdx ≤ σ)
+    (hF : ∀ (C : SameLevelChain P hκ) {Y' : P.scheme.Object κ hκ}
+      (pr : SystemArrow K oneVertexShape (P.scheme.asSystem hκ C.unionObj)
+        (P.scheme.asSystem hκ Y'))
+      (bb : uIdx → Occurrence K oneVertexShape (P.scheme.asSystem hκ Y'))
+      (g0 : SystemArrow K oneVertexShape (P.scheme.asSystem hκ Xb)
+        (P.scheme.asSystem hκ (C.obj 0 C.hlim.1))),
+      (∀ (i : Ordinal.{u}) (hi : i < C.δ),
+        IsTiedFree
+          (SystemArrow.comp g0 (C.le C.hlim.1 hi (bot_le : (0 : Ordinal.{u}) ≤ i)))
+          (((infra_78_markTuple pr bb).restrict (C.toUnion i hi) (C.toUnion_arrow i hi)).restrict
+            (SystemArrow.comp g0 (C.le C.hlim.1 hi (bot_le : (0 : Ordinal.{u}) ≤ i)))
+            (P.scheme.comp g0 (C.le C.hlim.1 hi (bot_le : (0 : Ordinal.{u}) ≤ i)) trivial
+              (C.le_arrow C.hlim.1 hi (bot_le : (0 : Ordinal.{u}) ≤ i))))
+          ((infra_78_markTuple pr bb).restrict (C.toUnion i hi) (C.toUnion_arrow i hi))
+          (Equiv.refl _)) →
+      ∃ i : Ordinal.{u}, ∃ hi : i < C.δ,
+        IsTiedFree (C.toUnion i hi)
+          ((infra_78_markTuple pr bb).restrict (C.toUnion i hi) (C.toUnion_arrow i hi))
+          (infra_78_markTuple pr bb) (Equiv.refl _))
+    (h5 : ∀ j, IsTiedFree (g j) ((infra_78_markTuple (pair j) (b j)).restrict (g j) trivial)
+      (infra_78_markTuple (pair j) (b j)) (Equiv.refl _)) :
+    ∃ (Xδ Yδ : P.scheme.Object κ hκ)
+      (lX : ∀ j, SystemArrow K oneVertexShape (P.scheme.asSystem hκ (X j))
+        (P.scheme.asSystem hκ Xδ))
+      (lY : ∀ j, SystemArrow K oneVertexShape (P.scheme.asSystem hκ (Y j))
+        (P.scheme.asSystem hκ Yδ))
+      (pδ : SystemArrow K oneVertexShape (P.scheme.asSystem hκ Xδ) (P.scheme.asSystem hκ Yδ))
+      (gδ : SystemArrow K oneVertexShape (P.scheme.asSystem hκ Xb) (P.scheme.asSystem hκ Xδ))
+      (bδ : uIdx → Occurrence K oneVertexShape (P.scheme.asSystem hκ Yδ)),
+      (∀ {a c : Set.Iio δ} (h : a ≤ c), SystemArrow.comp (sX h) (lX c) = lX a) ∧
+      (∀ {a c : Set.Iio δ} (h : a ≤ c), SystemArrow.comp (sY h) (lY c) = lY a) ∧
+      (∀ j, SystemArrow.comp (pair j) (lY j) = SystemArrow.comp (lX j) pδ) ∧
+      (∀ x : (Xδ.model).carrier, ∃ j y, (lX j).onVertex PUnit.unit y = x) ∧
+      (∀ x : (Yδ.model).carrier, ∃ j y, (lY j).onVertex PUnit.unit y = x) ∧
+      (∀ j, SystemArrow.comp (g j) (lX j) = gδ) ∧
+      (∀ j k, bδ k = pushOcc (lY j) (b j k)) ∧
+      IsTiedFree gδ ((infra_78_markTuple pδ bδ).restrict gδ trivial)
+        (infra_78_markTuple pδ bδ) (Equiv.refl _) := by
+  classical
+  obtain ⟨Xδ, Yδ, lX, lY, pδ, -, -, -, hcX, hcY, hsq, hcovX, hcovY⟩ :=
+    infra_78_limit_pair hρκ hδ X Y pair sX sY hXr hYr hXt hYt hcomm
+  let C := infra_78_partialChain hδ X sX hXt Xδ lX hcX hcovX
+  let j0 : Set.Iio δ := ⟨infra_78_stg δ 0 C.hlim.1, infra_78_stg_lt δ 0 C.hlim.1⟩
+  let gδ := SystemArrow.comp (g j0) (lX j0)
+  let bδ : uIdx → Occurrence K oneVertexShape (P.scheme.asSystem hκ Yδ) :=
+    fun k => pushOcc (lY j0) (b j0 k)
+  have hgδ : ∀ j, SystemArrow.comp (g j) (lX j) = gδ := by
+    intro j
+    rcases le_total j j0 with h | h
+    · show _ = SystemArrow.comp (g j0) (lX j0)
+      rw [← hcX h, ← SystemArrow.comp_assoc, hg h]
+    · show _ = SystemArrow.comp (g j0) (lX j0)
+      rw [← hcX h, ← SystemArrow.comp_assoc, hg h]
+  have hbδ : ∀ j k, bδ k = pushOcc (lY j) (b j k) := by
+    intro j k
+    rcases le_total j j0 with h | h
+    · show pushOcc (lY j0) (b j0 k) = _
+      rw [hb h k, ← pushOcc_comp, hcY h]
+    · show pushOcc (lY j0) (b j0 k) = _
+      rw [hb h k, ← pushOcc_comp, hcY h]
+  refine ⟨Xδ, Yδ, lX, lY, pδ, gδ, bδ, hcX, hcY, hsq, hcovX, hcovY, hgδ, hbδ, ?_⟩
+  have hqκ : #uIdx < κ := hidx.trans_lt (Order.succ_le_iff.1 hσSucc)
+  let p : TupleOver K oneVertexShape P.scheme hκ C.unionObj := infra_78_markTuple pδ bδ
+  have hsqx : ∀ j (x : (X j).model.carrier),
+      (lY j).onVertex PUnit.unit ((pair j).onVertex PUnit.unit x) =
+        pδ.onVertex PUnit.unit ((lX j).onVertex PUnit.unit x) := fun j x =>
+    DFunLike.congr_fun (congrArg (fun e => e.onVertex PUnit.unit) (hsq j)) x
+  have hAll : ∀ (i : Ordinal.{u}) (hi : i < C.δ),
+      IsTiedFree
+        (SystemArrow.comp (g j0) (C.le C.hlim.1 hi (bot_le : (0 : Ordinal.{u}) ≤ i)))
+        ((p.restrict (C.toUnion i hi) (C.toUnion_arrow i hi)).restrict
+          (SystemArrow.comp (g j0) (C.le C.hlim.1 hi (bot_le : (0 : Ordinal.{u}) ≤ i)))
+          (P.scheme.comp (g j0) (C.le C.hlim.1 hi (bot_le : (0 : Ordinal.{u}) ≤ i)) trivial
+            (C.le_arrow C.hlim.1 hi (bot_le : (0 : Ordinal.{u}) ≤ i))))
+        (p.restrict (C.toUnion i hi) (C.toUnion_arrow i hi)) (Equiv.refl _) := by
+    intro i hi
+    let ji : Set.Iio δ := ⟨infra_78_stg δ i hi, infra_78_stg_lt δ i hi⟩
+    have e1 : SystemArrow.comp (g j0) (C.le C.hlim.1 hi (bot_le : (0 : Ordinal.{u}) ≤ i)) =
+        g ji := hg _
+    have hR : infra_78_HostRel (infra_78_markTuple (pair ji) (b ji))
+        (p.restrict (lX ji) trivial) (lY ji) (Equiv.refl _) :=
+      ⟨fun v x => by cases v; exact hsqx ji x, fun k => hbδ ji k⟩
+    have hR' : infra_78_HostRel ((infra_78_markTuple (pair ji) (b ji)).restrict (g ji) trivial)
+        ((p.restrict (lX ji) trivial).restrict (g ji) trivial) (lY ji) (Equiv.refl _) :=
+      ⟨fun v x => by cases v; exact hsqx ji _, fun k => hbδ ji k⟩
+    have h1 := (infra_78_tiedFree_host_target (g ji)
+      ((infra_78_markTuple (pair ji) (b ji)).restrict (g ji) trivial) trivial hR rfl rfl hqκ
+      (Equiv.refl _) (Equiv.refl _) (fun _ => rfl)).1 (h5 ji)
+    have h2 := infra_78_tiedFree_host_source (g ji) trivial hR' rfl rfl hqκ
+      (p.restrict (lX ji) trivial) (Equiv.refl _) (Equiv.refl _) (fun _ => rfl) h1
+    exact infra_78_tiedFree_congr_arrow trivial trivial (p.restrict (lX ji) trivial) e1.symm h2
+  exact infra_78_general_limit_invariant C p Xb (g j0) trivial hAll (hF C pδ bδ (g j0) hAll)
+
+end LimitAssemblyGen
+
 end AEC
