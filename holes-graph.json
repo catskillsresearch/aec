@@ -5968,6 +5968,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 107: pairMS2_X_coord_of / pairMS2_Y_coord_of give StrictMono from the recorded chart-order formulas; PieceChart has field mono."
+  },
+  {
+   "id": "infra_83_pieces_rel_natural",
+   "label": "Lemma 8.3 proof: template piece maps preserve and reflect every full-language relation of hull elements (in the witness samples)",
+   "section": 8,
+   "file": "AEC/Section8/HullSubBundle83.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 107: Hull83.subLangPieces_rel (generic). Used to transport chart and chart-order relations along F_X(e), F_Y(e)."
   }
  ],
  "edges": [
@@ -11163,8 +11172,18 @@
    "from": "infra_83_chart_coords_increasing",
    "to": "infra_83_Y_hull_eq_FZ",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_pieces_rel_natural",
+   "to": "infra_83_X_hull_eq_FJ",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_83_pieces_rel_natural",
+   "to": "infra_83_Y_hull_eq_FZ",
+   "kind": "hard"
   }
  ],
- "doneCount": 596,
+ "doneCount": 597,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

@@ -134,6 +134,36 @@ theorem subLangPieces_coord (hP₀ : SubHullStrong ψ φ₀ P) {k l : ℕ}
   subst h1
   rfl
 
+include hcoh in
+/-- **Piece maps preserve the full-language relations** of the hull elements (in the witness
+samples): the types of the bundles agree along `e`. -/
+theorem subLangPieces_rel (hP₀ : SubHullStrong ψ φ₀ P) {k l : ℕ}
+    (e : Fin (k + 1) ↪o Fin (l + 1)) {n : ℕ} (R : L.Relations n)
+    (xs : Fin n → ((subLangPieces ψ φ₀ hc hcoh σ hP₀).obj k).carrier) :
+    @Structure.RelMap L (witB hc k).M _ n R
+        (fun i => (subHullEmb ψ φ₀ ((witB hc k).v ∘ Prod.map id σ) (xs i) : (witB hc k).M)) ↔
+      @Structure.RelMap L (witB hc l).M _ n R
+        (fun i => (subHullEmb ψ φ₀ ((witB hc l).v ∘ Prod.map id σ)
+          ((subLangPieces ψ φ₀ hc hcoh σ hP₀).map e (xs i)) : (witB hc l).M)) := by
+  have hrep : ∀ i, ∃ t, @Quotient.mk _ (@hullSetoid L₀ _ (ψ.reduct _) _
+      ((witB hc k).v ∘ Prod.map id σ)) t = xs i := fun i => Quotient.exists_rep (xs i)
+  choose t ht using hrep
+  have hx : xs = fun i => @Quotient.mk _ (@hullSetoid L₀ _ (ψ.reduct _) _
+      ((witB hc k).v ∘ Prod.map id σ)) (t i) := funext fun i => (ht i).symm
+  subst hx
+  have hφ := congrArg (fun c => (R.formula fun i => ψ.onTerm (t i)) ∈ c)
+    (subBundle_tp hc hcoh σ e)
+  simp only [tpCode, Set.mem_setOf_eq, Formula.realize_rel] at hφ
+  refine (iff_of_eq (congrArg (@Structure.RelMap L (witB hc k).M _ n R)
+    (funext fun i => ?_))).trans ((Iff.of_eq hφ).trans
+      (iff_of_eq (congrArg (@Structure.RelMap L (witB hc l).M _ n R) (funext fun i => ?_))))
+  · exact (hullVal_subToHull ψ ((witB hc k).v ∘ Prod.map id σ)
+      (@Quotient.mk _ (@hullSetoid L₀ _ (ψ.reduct _) _ ((witB hc k).v ∘ Prod.map id σ)) (t i))).symm
+  · rw [← Term.realize_relabel, ← onTerm_relabel]
+    exact hullVal_subToHull ψ ((witB hc l).v ∘ Prod.map id σ)
+      (@Quotient.mk _ (@hullSetoid L₀ _ (ψ.reduct _) _ ((witB hc l).v ∘ Prod.map id σ))
+        ((t i).relabel (Prod.map e id)))
+
 end SubLangBundle
 
 end Hull83
