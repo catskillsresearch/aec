@@ -5356,6 +5356,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 103: tpCode_comp, subBundle_tp, subBundlePieces : FinPieces K (hulls of v o Prod.map id sigma), subBundleHom : PiecesHom (strong, natural). Combined with infra_83_sort_pieces_hom (sublanguages) this gives the sort maps X -> Y -> L once the concrete pair language is fixed. Axioms clean."
+  },
+  {
+   "id": "infra_83_pieces_hom_comp",
+   "label": "Lemma 8.3 proof: composition of piece transformations and of the induced template maps (sort chain X -> Y -> L)",
+   "section": 8,
+   "file": "AEC/Section8/HullBundle83.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 103: EM83.PiecesHom.comp (strong, natural), PiecesHom.limMap_comp (limMap of composite = composite of limMaps, via limMap_canon on joint elements). Axioms clean."
   }
  ],
  "edges": [
@@ -10071,8 +10080,13 @@
    "from": "infra_83_subbundle_hom",
    "to": "infra_83_pair_pieces",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_pieces_hom_comp",
+   "to": "infra_83_pair_pieces",
+   "kind": "hard"
   }
  ],
- "doneCount": 531,
+ "doneCount": 532,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

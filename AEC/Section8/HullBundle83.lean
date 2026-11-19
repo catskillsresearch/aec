@@ -236,4 +236,38 @@ noncomputable def subBundleHom (hP : HullStrong φ P) :
 end SubBundle
 
 end Hull83
+
+namespace EM83
+
+open FirstOrder
+
+variable {F G H : FinPieces K}
+
+/-- Composition of piece transformations (the sort chain `X → Y → L`). -/
+noncomputable def PiecesHom.comp (η' : PiecesHom G H) (η : PiecesHom F G) : PiecesHom F H where
+  app k := (η'.app k).comp (η.app k)
+  strong k := K.strong_trans _ _ (η.strong k) (η'.strong k)
+  natural {k l} e := by
+    ext x
+    have h1 := congrFun (congrArg (⇑) (η.natural e)) x
+    have h2 := congrFun (congrArg (⇑) (η'.natural e)) (η.app k x)
+    simp only [Language.Embedding.comp_apply] at h1 h2 ⊢
+    rw [h1, h2]
+
+/-- The induced map of a composite is the composite of the induced maps. -/
+theorem PiecesHom.limMap_comp (η' : PiecesHom G H) (η : PiecesHom F G) (I : Type u)
+    [LinearOrder I] [Nonempty I] :
+    (η'.comp η).limMap I = (η'.limMap I).comp (η.limMap I) := by
+  ext x
+  obtain ⟨s, y, rfl⟩ := (F.limit I).joint x
+  have h1 := congrFun (congrArg (⇑) ((η'.comp η).limMap_canon I s)) y
+  have h2 := congrFun (congrArg (⇑) (η.limMap_canon I s)) y
+  have h3 := congrFun (congrArg (⇑) (η'.limMap_canon I s)) (η.app s.1.card.pred y)
+  simp only [Language.Embedding.comp_apply, PiecesHom.cocone] at h1 h2 h3 ⊢
+  rw [h1, h2]
+  erw [h3]
+  rfl
+
+end EM83
+
 end AEC

@@ -565,6 +565,7 @@ Lean: imports `Section5.Results` and `Section6.Results`. Soft paper chain after 
 | `infra_83_bundled_finpieces` | Lemma 8.3 proof: finite pieces of `K` from bundled samples | [`HullBundle83.lean`](AEC/Section8/HullBundle83.lean) (**done**, cycle 103) |
 | `infra_83_bundled_presentation` | Lemma 8.3 proof: EM order presentation of bundled hull pieces | [`HullBundle83.lean`](AEC/Section8/HullBundle83.lean) (**done**, cycle 103) |
 | `infra_83_subbundle_hom` | Lemma 8.3 proof: hulls of selected sort coordinates, strong natural inclusion | [`HullBundle83.lean`](AEC/Section8/HullBundle83.lean) (**done**, cycle 103) |
+| `infra_83_pieces_hom_comp` | Lemma 8.3 proof: composition of piece transformations and induced template maps | [`HullBundle83.lean`](AEC/Section8/HullBundle83.lean) (**done**, cycle 103) |
 | `infra_72_mixed_level` | Lemma 7.2 last sentence (A at a smaller level than B), stated with sorry (audit) | [`Lemma72Mixed.lean`](AEC/Section7/Lemma72Mixed.lean) (open, cycle 96) |
 | `infra_82_tiedFreeMixed_base_equiv` | Mixed tied freeness under a reindexed change of base tuple | [`TiedAlong.lean`](AEC/Section8/TiedAlong.lean) (**done**, cycle 97) |
 | `infra_82_mark_tied_along_single` | Lemma 8.2(4) for `P.scheme`: tied freeness of the mark along arrows (Def 8.1 tied, cycle 97 ruling) | [`TiedAlong.lean`](AEC/Section8/TiedAlong.lean) (**done**, cycle 97) |
