@@ -416,4 +416,33 @@ theorem infra_84_agree_of_amalgam [CategoricalUnbounded K] {E : OrderPresentatio
       d₀ d₁ hd (Subtype.val : ↥Y → (E.obj I).carrier) hρinf (hαχ hY) ht₀ ht₁)).mono
     Set.subset_union_left
 
+/-- **Tests from equal Galois types (Theorem 6.6 form).** English (Lemma 8.4 proof): "Lemma 7.2
+determines its joint type", and candidates of the same type over the layout agree on every test
+over it. Lean form, at a vertex `v`: if two tuples over a base `A` (realized at `v` by `x₁`, `x₂`)
+have the same Galois type, then they have equal diagrams together with every bounded parameter list
+of `A` at `v` (pushed into the two hosts), including parameters that are mixed terms. -/
+theorem infra_84_tests_of_sameGaloisType {S : SystemShape.{u}} {W : WorkingScheme K S}
+    {μ : Cardinal.{u}} {hμ : μ ∈ W.eligible} {base : W.Object μ hμ} {idx : Type u}
+    (t1 t2 : TupleOver K S W hμ base) (e1 : t1.idx ≃ idx) (e2 : t2.idx ≃ idx)
+    (h : SameGaloisType t1 t2 e1 e2) (D : StableDiagram K) (v : S.Vertex)
+    (x₁ : idx → ((W.asSystem t1.hν t1.host).obj v).carrier)
+    (x₂ : idx → ((W.asSystem t2.hν t2.host).obj v).carrier)
+    (hx₁ : ∀ i, t1.val (e1.symm i) = ⟨v, x₁ i⟩) (hx₂ : ∀ i, t2.val (e2.symm i) = ⟨v, x₂ i⟩)
+    {β : Type u} (p : β → ((W.asSystem hμ base).obj v).carrier) {ρ : Cardinal.{u}}
+    (hρinf : aleph0 ≤ ρ) (hj : #(idx ⊕ β) ≤ ρ)
+    (ht₁ : D.t ρ ≤ Model.card ((W.asSystem t1.hν t1.host).obj v))
+    (ht₂ : D.t ρ ≤ Model.card ((W.asSystem t2.hν t2.host).obj v)) :
+    D.same hj ((W.asSystem t1.hν t1.host).inK v) ((W.asSystem t2.hν t2.host).inK v) ht₁ ht₂
+      (Sum.elim x₁ (fun b => t1.incl.onVertex v (p b)))
+      (Sum.elim x₂ (fun b => t2.incl.onVertex v (p b))) := by
+  obtain ⟨ρ', hρ', top, f1, f2, -, -, hcomm, hval⟩ := h
+  refine D.same_of_amalgam ((W.asSystem t1.hν t1.host).inK v)
+    ((W.asSystem t2.hν t2.host).inK v) ((W.asSystem hρ' top).inK v) (f1.onVertex v)
+    (f2.onVertex v) (f1.onVertex_strong v) (f2.onVertex_strong v) _ _ ?_ hρinf hj ht₁ ht₂
+  rintro (i | b)
+  · have := hval i
+    rw [hx₁ i, hx₂ i] at this
+    exact eq_of_heq (Sigma.mk.inj this).2
+  · exact congrArg (fun φ => φ (p b)) (congrArg DFunLike.coe (hcomm v))
+
 end AEC

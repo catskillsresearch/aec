@@ -4942,6 +4942,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 101: infra_84_mixed_tests_of_amalgam + infra_84_agreeOn_of_generator_tests."
+  },
+  {
+   "id": "infra_84_tests_of_sameGaloisType",
+   "label": "Lemma 8.4: equal Galois types over a base give equal diagrams with every bounded base parameter list (any working scheme, at a vertex)",
+   "section": 8,
+   "file": "AEC/Section8/TermGen84Single.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 101: Theorem 6.6 amalgam -> StableDiagram.same_of_amalgam; links infra_84_layout_type_determined (Lemma 7.2) to mixed-term tests."
   }
  ],
  "edges": [
@@ -9432,8 +9441,13 @@
    "from": "infra_84_agree_of_amalgam",
    "to": "infra_84_layout_amalgam",
    "kind": "hard"
+  },
+  {
+   "from": "infra_84_tests_of_sameGaloisType",
+   "to": "infra_84_layout_amalgam",
+   "kind": "hard"
   }
  ],
- "doneCount": 493,
+ "doneCount": 494,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
