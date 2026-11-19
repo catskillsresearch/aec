@@ -1792,4 +1792,73 @@ theorem infra_83_orderPieces_cocone_bij (E : OrderPresentation K) {H : ℕ → T
   exact ⟨((orderPieces83 E H h hid hcomp).limit I).canon s z, by
     rw [← hc s]; rfl⟩
 
+
+/-- **`F_X(I) ≅ F(J)` from a covering cocone of the chart orders**: for the `X`-pieces with
+their chart functor `H`, any covering cocone of order embeddings `H_(|s|-1) ↪o J` yields a
+strong bijective `τ`-embedding `F_X(I) → F(J)`. -/
+theorem infra_83_pairMS2_X_limit_of_cocone (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) :
+    ∃ (c : (m : ℕ) → 0 < m → Hull83.TpColorB (LS83.pairLangM3 P.E Pr.n) 3 m)
+      (hc : ∀ (n : ℕ) (κ : Cardinal.{u}),
+        Hull83.Joint (Hull83.TpSampleB (fun N _ => pairMAdmittedS2 P.E Pr.n N) 3) n c κ)
+      (hcoh : ∀ {m m' : ℕ} (hm' : 0 < m') (hm : 0 < m) (f : Fin m' ↪o Fin m),
+        c m' hm' = Hull83.tpResB 3 f (c m hm))
+      (hXs : Hull83.SubHullStrong ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) (fun N _ => pairMAdmittedS2 P.E Pr.n N))
+      (ch : ∀ k, PieceChart P.E ((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).obj k) k)
+      (h : ∀ {k l : ℕ}, (Fin (k + 1) ↪o Fin (l + 1)) → (ch k).H ↪o (ch l).H)
+      (hid : ∀ k (p : (ch k).H), h (idEmb (α := Fin (k + 1))) p = p)
+      (hcomp : ∀ {k l m : ℕ} (e : Fin (k + 1) ↪o Fin (l + 1)) (f : Fin (l + 1) ↪o Fin (m + 1))
+        (p : (ch k).H), h (e.trans f) p = h f (h e p)),
+      ∀ (I : Type u) [LinearOrder I] [Nonempty I] (J : Type u) [LinearOrder J] [Nonempty J]
+        (ι : ∀ s : ((orderPieces83 P.E (fun k => (ch k).H) h hid hcomp).system I).ι,
+          (ch s.1.card.pred).H ↪o J),
+        (∀ {s t : ((orderPieces83 P.E (fun k => (ch k).H) h hid hcomp).system I).ι}
+          (hst : ((orderPieces83 P.E (fun k => (ch k).H) h hid hcomp).system I).rel s t),
+          (h (placeSucc hst s.2 t.2)).trans (ι t) = ι s) →
+        (∀ y : (P.E.obj J).carrier, ∃ s z, P.E.map (ι s) z = y) →
+        ∃ m : (((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).limit I).obj.carrier ↪[K.τ] (P.E.obj J).carrier),
+          K.Strong m ∧ Function.Bijective m := by
+  obtain ⟨c, hc, hcoh, hXs, ch, h, hid, hcomp, η, -, -, hlim⟩ := infra_83_pairMS2_X_F_pieces P Pr
+  refine ⟨c, hc, hcoh, hXs, ch, h, hid, hcomp, fun I _ _ J _ _ ι hι hcov => ?_⟩
+  obtain ⟨m, hm, hbij, -⟩ := infra_83_orderPieces_cocone_bij P.E I J ι hι hcov
+  exact ⟨m.comp (η.limMap I), K.strong_trans _ _ (hlim I).2 hm, hbij.comp (hlim I).1⟩
+
+
+/-- **`F_Y(I) ≅ F(J)` from a covering cocone of the chart orders**: for the `Y`-pieces with
+their chart functor `H`, any covering cocone of order embeddings `H_(|s|-1) ↪o J` yields a
+strong bijective `τ`-embedding `F_Y(I) → F(J)`. -/
+theorem infra_83_pairMS2_Y_limit_of_cocone (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) :
+    ∃ (c : (m : ℕ) → 0 < m → Hull83.TpColorB (LS83.pairLangM3 P.E Pr.n) 3 m)
+      (hc : ∀ (n : ℕ) (κ : Cardinal.{u}),
+        Hull83.Joint (Hull83.TpSampleB (fun N _ => pairMAdmittedS2 P.E Pr.n N) 3) n c κ)
+      (hcoh : ∀ {m m' : ℕ} (hm' : 0 < m') (hm : 0 < m) (f : Fin m' ↪o Fin m),
+        c m' hm' = Hull83.tpResB 3 f (c m hm))
+      (hXs : Hull83.SubHullStrong (psiM P.E Pr.n)
+        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) (fun N _ => pairMAdmittedS2 P.E Pr.n N))
+      (ch : ∀ k, PieceChart P.E ((Hull83.subLangPieces (psiM P.E Pr.n)
+        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs).obj k) k)
+      (h : ∀ {k l : ℕ}, (Fin (k + 1) ↪o Fin (l + 1)) → (ch k).H ↪o (ch l).H)
+      (hid : ∀ k (p : (ch k).H), h (idEmb (α := Fin (k + 1))) p = p)
+      (hcomp : ∀ {k l m : ℕ} (e : Fin (k + 1) ↪o Fin (l + 1)) (f : Fin (l + 1) ↪o Fin (m + 1))
+        (p : (ch k).H), h (e.trans f) p = h f (h e p)),
+      ∀ (I : Type u) [LinearOrder I] [Nonempty I] (J : Type u) [LinearOrder J] [Nonempty J]
+        (ι : ∀ s : ((orderPieces83 P.E (fun k => (ch k).H) h hid hcomp).system I).ι,
+          (ch s.1.card.pred).H ↪o J),
+        (∀ {s t : ((orderPieces83 P.E (fun k => (ch k).H) h hid hcomp).system I).ι}
+          (hst : ((orderPieces83 P.E (fun k => (ch k).H) h hid hcomp).system I).rel s t),
+          (h (placeSucc hst s.2 t.2)).trans (ι t) = ι s) →
+        (∀ y : (P.E.obj J).carrier, ∃ s z, P.E.map (ι s) z = y) →
+        ∃ m : (((Hull83.subLangPieces (psiM P.E Pr.n)
+        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs).limit I).obj.carrier ↪[K.τ] (P.E.obj J).carrier),
+          K.Strong m ∧ Function.Bijective m := by
+  obtain ⟨c, hc, hcoh, hXs, ch, h, hid, hcomp, η, -, -, hlim⟩ := infra_83_pairMS2_Y_F_pieces P Pr
+  refine ⟨c, hc, hcoh, hXs, ch, h, hid, hcomp, fun I _ _ J _ _ ι hι hcov => ?_⟩
+  obtain ⟨m, hm, hbij, -⟩ := infra_83_orderPieces_cocone_bij P.E I J ι hι hcov
+  exact ⟨m.comp (η.limMap I), K.strong_trans _ _ (hlim I).2 hm, hbij.comp (hlim I).1⟩
+
+
 end AEC

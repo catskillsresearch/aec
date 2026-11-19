@@ -6130,6 +6130,24 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 107: remaining for X/Y tips: build J_I (directed colimit of the chart orders H_k over finite s ⊆ I) with ι_s and prove the cover hypothesis from sub_cover."
+  },
+  {
+   "id": "infra_83_pairMS2_X_limit_of_cocone",
+   "label": "F_X(I) ≅ F(J) (strong bijective) from any covering cocone of the X-chart orders",
+   "section": 8,
+   "file": "Lemma83SampleLikeY.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 107: reduces infra_83_X_hull_eq_FJ to constructing J_I with a covering cocone (directed colimit of the H_k)."
+  },
+  {
+   "id": "infra_83_pairMS2_Y_limit_of_cocone",
+   "label": "F_Y(I) ≅ F(J) (strong bijective) from any covering cocone of the Y-chart orders",
+   "section": 8,
+   "file": "Lemma83SampleLikeY.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 107: reduces infra_83_Y_hull_eq_FZ to constructing Z_I with a covering cocone."
   }
  ],
  "edges": [
@@ -11445,8 +11463,18 @@
    "from": "infra_83_orderPieces_cocone_bij",
    "to": "infra_83_Y_hull_eq_FZ",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_pairMS2_X_limit_of_cocone",
+   "to": "infra_83_X_hull_eq_FJ",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_83_pairMS2_Y_limit_of_cocone",
+   "to": "infra_83_Y_hull_eq_FZ",
+   "kind": "hard"
   }
  ],
- "doneCount": 614,
+ "doneCount": 616,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
