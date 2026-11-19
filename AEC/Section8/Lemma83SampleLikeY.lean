@@ -1560,4 +1560,92 @@ theorem infra_83_pairMS2_Y_chart_functor (P : SingleModelData K)
     exact P.E.skeleton.injective (h1.symm.trans h2)
 
 
+
+/-- **`F` along a functor of orders**: given orders `H k` and order embeddings
+`h e : H k ↪o H l`, functorial in `e`, the piece functor `k ↦ F(H k)`, `e ↦ F(h e)`. -/
+noncomputable def orderPieces83 (E : OrderPresentation K) (H : ℕ → Type u)
+    [∀ k, LinearOrder (H k)] [∀ k, Nonempty (H k)]
+    (h : ∀ {k l : ℕ}, (Fin (k + 1) ↪o Fin (l + 1)) → H k ↪o H l)
+    (hid : ∀ k (p : H k), h (idEmb (α := Fin (k + 1))) p = p)
+    (hcomp : ∀ {k l m : ℕ} (e : Fin (k + 1) ↪o Fin (l + 1)) (f : Fin (l + 1) ↪o Fin (m + 1))
+      (p : H k), h (e.trans f) p = h f (h e p)) : EM83.FinPieces K where
+  obj k := E.obj (H k)
+  mem k := K.strong_mem_dom _ (E.map_strong (OrderIso.refl (H k)).toOrderEmbedding)
+  map e := E.map (h e)
+  map_refl k := by
+    have : h (idEmb (α := Fin (k + 1))) = (OrderIso.refl (H k)).toOrderEmbedding := by
+      ext p; exact hid k p
+    rw [this, E.map_id]
+  map_trans e f := by
+    have : h (e.trans f) = (h e).trans (h f) := by
+      ext p; exact hcomp e f p
+    rw [this, E.map_comp]
+  strong e := E.map_strong _
+
+/-- **`F_X ≅ F ∘ H`**: the `X`-pieces are naturally isomorphic (componentwise the charts
+`ε_k`) to the piece functor `k ↦ F(H_k)`, `e ↦ F(h_e)` of a functor of orders; hence each
+`F_X(I)` is strongly and bijectively identified with the EM value of `F ∘ H` at `I`. -/
+theorem infra_83_pairMS2_X_F_pieces (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) :
+    ∃ (c : (m : ℕ) → 0 < m → Hull83.TpColorB (LS83.pairLangM3 P.E Pr.n) 3 m)
+      (hc : ∀ (n : ℕ) (κ : Cardinal.{u}),
+        Hull83.Joint (Hull83.TpSampleB (fun N _ => pairMAdmittedS2 P.E Pr.n N) 3) n c κ)
+      (hcoh : ∀ {m m' : ℕ} (hm' : 0 < m') (hm : 0 < m) (f : Fin m' ↪o Fin m),
+        c m' hm' = Hull83.tpResB 3 f (c m hm))
+      (hXs : Hull83.SubHullStrong ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) (fun N _ => pairMAdmittedS2 P.E Pr.n N))
+      (ch : ∀ k, PieceChart P.E ((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).obj k) k)
+      (h : ∀ {k l : ℕ}, (Fin (k + 1) ↪o Fin (l + 1)) → (ch k).H ↪o (ch l).H)
+      (hid : ∀ k (p : (ch k).H), h (idEmb (α := Fin (k + 1))) p = p)
+      (hcomp : ∀ {k l m : ℕ} (e : Fin (k + 1) ↪o Fin (l + 1)) (f : Fin (l + 1) ↪o Fin (m + 1))
+        (p : (ch k).H), h (e.trans f) p = h f (h e p))
+      (η : EM83.PiecesHom (Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs) (orderPieces83 P.E (fun k => (ch k).H) h hid hcomp)),
+      (∀ k x, η.app k x = (ch k).ε x) ∧ (∀ k, Function.Bijective (η.app k)) ∧
+      ∀ (I : Type u) [LinearOrder I] [Nonempty I],
+        Function.Bijective (η.limMap I) ∧ K.Strong (η.limMap I) := by
+  obtain ⟨c, hc, hcoh, hXs, ch, h, hnat, hid, hcomp⟩ := infra_83_pairMS2_X_chart_functor P Pr
+  refine ⟨c, hc, hcoh, hXs, ch, h, hid, hcomp,
+    { app := fun k => (ch k).ε
+      strong := fun k => strong_of_equiv K (embeddingEquivOfSurjective (ch k).ε (ch k).bij.2)
+        ((Hull83.subLangPieces _ _ hc hcoh _ hXs).mem k)
+      natural := fun e => by ext x; exact hnat e x }, fun _ _ => rfl, fun k => (ch k).bij,
+    fun I _ _ => ⟨EM83.PiecesHom.limMap_bijective _ I (fun k => (ch k).bij.2),
+      EM83.PiecesHom.limMap_strong _ I⟩⟩
+
+
+/-- **`F_Y ≅ F ∘ H`**: the `Y`-pieces are naturally isomorphic (componentwise the charts
+`ε_k`) to the piece functor `k ↦ F(H_k)`, `e ↦ F(h_e)` of a functor of orders; hence each
+`F_Y(I)` is strongly and bijectively identified with the EM value of `F ∘ H` at `I`. -/
+theorem infra_83_pairMS2_Y_F_pieces (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) :
+    ∃ (c : (m : ℕ) → 0 < m → Hull83.TpColorB (LS83.pairLangM3 P.E Pr.n) 3 m)
+      (hc : ∀ (n : ℕ) (κ : Cardinal.{u}),
+        Hull83.Joint (Hull83.TpSampleB (fun N _ => pairMAdmittedS2 P.E Pr.n N) 3) n c κ)
+      (hcoh : ∀ {m m' : ℕ} (hm' : 0 < m') (hm : 0 < m) (f : Fin m' ↪o Fin m),
+        c m' hm' = Hull83.tpResB 3 f (c m hm))
+      (hXs : Hull83.SubHullStrong (psiM P.E Pr.n)
+        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) (fun N _ => pairMAdmittedS2 P.E Pr.n N))
+      (ch : ∀ k, PieceChart P.E ((Hull83.subLangPieces (psiM P.E Pr.n)
+        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs).obj k) k)
+      (h : ∀ {k l : ℕ}, (Fin (k + 1) ↪o Fin (l + 1)) → (ch k).H ↪o (ch l).H)
+      (hid : ∀ k (p : (ch k).H), h (idEmb (α := Fin (k + 1))) p = p)
+      (hcomp : ∀ {k l m : ℕ} (e : Fin (k + 1) ↪o Fin (l + 1)) (f : Fin (l + 1) ↪o Fin (m + 1))
+        (p : (ch k).H), h (e.trans f) p = h f (h e p))
+      (η : EM83.PiecesHom (Hull83.subLangPieces (psiM P.E Pr.n)
+        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs) (orderPieces83 P.E (fun k => (ch k).H) h hid hcomp)),
+      (∀ k x, η.app k x = (ch k).ε x) ∧ (∀ k, Function.Bijective (η.app k)) ∧
+      ∀ (I : Type u) [LinearOrder I] [Nonempty I],
+        Function.Bijective (η.limMap I) ∧ K.Strong (η.limMap I) := by
+  obtain ⟨c, hc, hcoh, hXs, ch, h, hnat, hid, hcomp⟩ := infra_83_pairMS2_Y_chart_functor P Pr
+  refine ⟨c, hc, hcoh, hXs, ch, h, hid, hcomp,
+    { app := fun k => (ch k).ε
+      strong := fun k => strong_of_equiv K (embeddingEquivOfSurjective (ch k).ε (ch k).bij.2)
+        ((Hull83.subLangPieces _ _ hc hcoh _ hXs).mem k)
+      natural := fun e => by ext x; exact hnat e x }, fun _ _ => rfl, fun k => (ch k).bij,
+    fun I _ _ => ⟨EM83.PiecesHom.limMap_bijective _ I (fun k => (ch k).bij.2),
+      EM83.PiecesHom.limMap_strong _ I⟩⟩
+
+
 end AEC

@@ -6067,6 +6067,24 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 107: chosen h_e with ε_l ∘ F_Y(e) = F(h_e) ∘ ε_k are functorial."
+  },
+  {
+   "id": "infra_83_pairMS2_X_F_pieces",
+   "label": "F_X ≅ F∘H: X-pieces naturally iso to k ↦ F(H_k), e ↦ F(h_e); F_X(I) ≅ (F∘H)(I) strong bijective",
+   "section": 8,
+   "file": "Lemma83SampleLikeY.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 107: orderPieces83 (F along a functor of orders) and the natural iso from the X-pieces; remaining for X_hull_eq_FJ: (F∘H)(I) ≅ F(J_I) with J_I the direct limit of the H_k."
+  },
+  {
+   "id": "infra_83_pairMS2_Y_F_pieces",
+   "label": "F_Y ≅ F∘H: Y-pieces naturally iso to k ↦ F(H_k), e ↦ F(h_e); F_Y(I) ≅ (F∘H)(I) strong bijective",
+   "section": 8,
+   "file": "Lemma83SampleLikeY.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 107: Y analogue via orderPieces83."
   }
  ],
  "edges": [
@@ -11322,8 +11340,18 @@
    "from": "infra_83_pairMS2_Y_chart_functor",
    "to": "infra_83_Y_hull_eq_FZ",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_pairMS2_X_F_pieces",
+   "to": "infra_83_X_hull_eq_FJ",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_83_pairMS2_Y_F_pieces",
+   "to": "infra_83_Y_hull_eq_FZ",
+   "kind": "hard"
   }
  ],
- "doneCount": 607,
+ "doneCount": 609,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
