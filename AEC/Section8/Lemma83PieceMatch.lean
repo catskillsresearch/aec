@@ -4094,4 +4094,26 @@ theorem infra_83_pair_values_small (P : SingleModelData K)
   exact ⟨onX, onY, h1, h2, h3, h4, h5, fun i => (h4 _).trans (congrArg _ (hb I J f i))⟩
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+/-- **Bounded-list data at an eligible level (proved).** At an eligible `#I`, a model
+`N ≃ F.limit I` whose finite pieces have size `≤ ls K` carries an exhaustion `D n` of `I`
+(`#(D n) < #I`) and monotone strong covering finite-support pieces of size `≤ ls K < #I`: every
+input of `infra_83_dominated_of_bounded_lists_at` except the isolation of the nested lists
+(with `infra_83_pair_values_small` this applies to the template `Y_I`). -/
+theorem infra_83_eligible_list_data (P : SingleModelData K) (F : EM83.FinPieces K)
+    (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible) {N : Model K.τ}
+    (eq : (F.limit I).obj.carrier ≃[K.τ] N.carrier) (hF : ∀ k, #(F.obj k).carrier ≤ ls K) :
+    ∃ (D : ℕ → Set I) (Piece : Finset I → K.τ.Substructure N.carrier),
+      ls K < #I ∧ Monotone D ∧ (∀ z, ∃ n, z ∈ D n) ∧ (∀ n, #(D n) < #I) ∧
+      Monotone Piece ∧ (∀ J, #(Piece J) ≤ ls K) ∧
+      (∀ J, K.Strong (M := subM83 (Piece J)) (N := N) (Piece J).subtype) ∧
+      ∀ y, ∃ J, y ∈ Piece J := by
+  obtain ⟨D, Piece, h1, h2, h3, h4, h5, h6, h7⟩ := infra_83_template_list_data F I eq rfl
+    (P.aleph0_le hI) hI.1.working.countableCof hF
+  exact ⟨D, Piece, P.ls_lt hI, h1, h2, h3, h4, h5, h6, h7⟩
+end
+
 end AEC

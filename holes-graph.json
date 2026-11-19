@@ -7948,6 +7948,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 267: proved."
+  },
+  {
+   "id": "infra_83_eligible_list_data",
+   "label": "At an eligible #I, a model N ≃ F.limit I with finite pieces of size <= ls K carries an exhaustion D n of I (|D n| < #I) and monotone strong covering finite-support pieces of size <= ls K < #I: every input of dominated_of_bounded_lists_at except list isolation",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PieceMatch.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 268: proved."
   }
  ],
  "edges": [
@@ -14333,8 +14342,13 @@
    "from": "infra_83_pair_values_small",
    "to": "infra_83_arity_removal",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_eligible_list_data",
+   "to": "infra_83_arity_removal",
+   "kind": "hard"
   }
  ],
- "doneCount": 814,
+ "doneCount": 815,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
