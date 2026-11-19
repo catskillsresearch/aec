@@ -483,4 +483,39 @@ theorem infra_84_layout_testing_single_presented (P : SingleModelData K) {ν : C
   exact infra_84_same_relevel_single P hν hB₀ hB₁ hc₀ hc₁ (le_max_left _ _) hj'
     (le_max_right _ _) hρ'inf hcan hρ' hc0 hc1 ht₀' ht₁' _ _ hS
 
+/-- **Bridge: `P.scheme` diagrams are canonical-bound `D`-diagrams.** For lists bounded at both
+levels, `P.scheme.DiagramEq` is `P.D.SameD` of the underlying values in the two models
+(`diagramEq_iff_sameD`). Used to pass layout tests between `P.scheme` objects and the presented
+layout `P.E(I₁ ⊕ₗ I₂)`. -/
+theorem infra_84_scheme_diagramEq_iff_sameD (P : SingleModelData K) {ν μ : Cardinal.{u}}
+    {hν : ν ∈ P.eligible} {hμ : μ ∈ P.eligible}
+    (X : P.scheme.Object ν hν) (Y : P.scheme.Object μ hμ) {α : Type u}
+    (xs : α → Occurrence K oneVertexShape (P.scheme.asSystem hν X))
+    (ys : α → Occurrence K oneVertexShape (P.scheme.asSystem hμ Y))
+    (hαν : #α < ν) (hαμ : #α < μ) :
+    P.scheme.DiagramEq (X := X) (Y := Y) xs ys ↔
+      P.D.SameD X.model Y.model (fun i => SMObject.val X (xs i)) (fun i => SMObject.val Y (ys i)) :=
+  SingleModelData.diagramEq_iff_sameD hν hμ X Y _ _ hαν hαμ
+
+/-- **Layout (8): a bounded test in `T` as a `D`-diagram in a level-`ν` model over `A`.**
+Combining `infra_84_local_realization_single` with the bridge: a list `L` of size `< ν` in `T`
+(level `μ ≥ ν`) over `A` is the image of a list `L₀` of a level-`ν` object `B₀` over `A` inside
+`T`, and `L₀`, `L` have the same canonical-bound `D`-diagram in the models `B₀`, `T`. -/
+theorem infra_84_local_realization_sameD (P : SingleModelData K) {ν μ : Cardinal.{u}}
+    {hν : ν ∈ P.eligible} {hμ : μ ∈ P.eligible} (hνμ : ν ≤ μ)
+    (A : P.scheme.Object ν hν) (Tt : P.scheme.Object μ hμ)
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hν A) (P.scheme.asSystem hμ Tt))
+    {κ : Type u} (L : κ → Occurrence K oneVertexShape (P.scheme.asSystem hμ Tt)) (hκ : #κ < ν) :
+    ∃ (B₀ : P.scheme.Object ν hν)
+      (f₀ : SystemArrow K oneVertexShape (P.scheme.asSystem hν A) (P.scheme.asSystem hν B₀))
+      (j : SystemArrow K oneVertexShape (P.scheme.asSystem hν B₀) (P.scheme.asSystem hμ Tt))
+      (L₀ : κ → Occurrence K oneVertexShape (P.scheme.asSystem hν B₀)),
+      (∀ a, j.onVertex PUnit.unit (f₀.onVertex PUnit.unit a) = f.onVertex PUnit.unit a) ∧
+      (∀ k, L k = j.mapOcc (L₀ k)) ∧
+      P.D.SameD (SMObject.model B₀) (SMObject.model Tt) (fun k => SMObject.val B₀ (L₀ k))
+        (fun k => SMObject.val Tt (L k)) := by
+  obtain ⟨B₀, f₀, j, L₀, h1, h2, h3⟩ := infra_84_local_realization_single P hνμ A Tt f L hκ
+  exact ⟨B₀, f₀, j, L₀, h1, h2,
+    (infra_84_scheme_diagramEq_iff_sameD P B₀ Tt L₀ L hκ (hκ.trans_le hνμ)).mp h3⟩
+
 end AEC

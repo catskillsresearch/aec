@@ -4753,6 +4753,24 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 100: infra_84_layout_testing_presented at P's data, converted to canonical-bound SameD (the form of diagramEq_iff_sameD). Remaining for infra_84_layout_amalgam: steps (i) present U_{H'} as P.E(I1 +lex I2) inside the level-nu realization (lemma_8_3 single), (ii) realize questioned candidate tests over the layout in level-nu strong extensions B0, B1 with the T, T' diagrams (strip_realize + local_realization + layout_diagrams + diagramEq_iff_sameD), (iv) read witness parts into U and C. Axioms clean."
+  },
+  {
+   "id": "infra_84_scheme_diagramEq_iff_sameD",
+   "label": "Bridge: P.scheme DiagramEq = canonical-bound D-diagrams of values",
+   "section": 8,
+   "file": "AEC/Section8/Layout84Single.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 100: diagramEq_iff_sameD. Axioms clean."
+  },
+  {
+   "id": "infra_84_local_realization_sameD",
+   "label": "Layout (8): a bounded test in T as a D-diagram in a level-nu model over A",
+   "section": 8,
+   "file": "AEC/Section8/Layout84Single.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 100: local_realization + bridge; part of assembly step (ii). Axioms clean."
   }
  ],
  "edges": [
@@ -9133,8 +9151,18 @@
    "from": "infra_84_layout_testing_single_presented",
    "to": "infra_84_layout_amalgam",
    "kind": "hard"
+  },
+  {
+   "from": "infra_84_scheme_diagramEq_iff_sameD",
+   "to": "infra_84_layout_amalgam",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_84_local_realization_sameD",
+   "to": "infra_84_layout_amalgam",
+   "kind": "hard"
   }
  ],
- "doneCount": 473,
+ "doneCount": 475,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
