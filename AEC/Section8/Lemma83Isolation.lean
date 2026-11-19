@@ -2,6 +2,7 @@ module
 
 public import AEC.Section8.Lemma83Assembly
 public import AEC.Section7.TiedDescent
+public import AEC.Section6.DescentRetractionTied
 
 @[expose] public section
 
@@ -109,5 +110,68 @@ theorem infra_83_dominated_descend_pair (P : SingleModelData K) {μ : Cardinal.{
     (asTuple incl trivial (seqJoint b c))
     (asTuple incl' trivial (seqJoint b' (fun j => onY.mapOcc (c j)))) (Equiv.refl _)
     (Equiv.refl (bIdx ⊕ cIdx)) rfl rfl (le_max_right _ _) hSGT (htied cIdx c hc) hIso
+
+/-- At one level, mixed tied freeness is tied freeness (the two definitions coincide). -/
+theorem infra_83_tiedFree_of_mixed {P : SingleModelData K} {μ : Cardinal.{u}}
+    {hμ : μ ∈ P.eligible} {A B : P.scheme.Object μ hμ}
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hμ B))
+    (q : TupleOver K oneVertexShape P.scheme hμ A)
+    (qB : TupleOver K oneVertexShape P.scheme hμ B) (e : q.idx ≃ qB.idx)
+    (h : IsTiedFreeMixed f q qB e) : IsTiedFree f q qB e := h
+
+/-- **All-domination of a pair from a retraction family on an all-dominated pair (Lemma 8.3,
+"bounded horizontal arity" (7) + "the actual sample pair is all-dominated").** At a level `μ`
+closed for Corollary 6.15/6.16 and for Lemma 7.6 below `μ`, let `(onX, onY) : (X ≤ Y) → (X' ≤ Y')`
+be an arrow of pairs carrying `b` to the mark `b'`, with `Y'` all-dominated over `X' + b'`, and
+let `r_i : Y' → X'` (`|ι| = μ`) be retractions each moving any point of `X'` at only finitely many
+indices and mapping the image of `Y` into the image of `X`. Then every bounded tuple from `Y`
+has a tied-free lift (Lemma 6.17, giving (7)), so by Lemma 7.6 `Y` is all-dominated over `X + b`. -/
+theorem infra_83_dominated_of_retraction_pair (P : SingleModelData K) {μ : Cardinal.{u}}
+    (hμC : μ ∈ infra_615_closed P)
+    (hlev : ∀ σ : Cardinal.{u}, ℵ₀ ≤ σ → σ < μ →
+      μ ∈ infra_73_tailSet P (infra_76_sigma2 P σ))
+    {X Y X' Y' : P.scheme.Object μ hμC.1}
+    (incl : SystemArrow K oneVertexShape (P.scheme.asSystem hμC.1 X)
+      (P.scheme.asSystem hμC.1 Y))
+    (incl' : SystemArrow K oneVertexShape (P.scheme.asSystem hμC.1 X')
+      (P.scheme.asSystem hμC.1 Y'))
+    (onX : SystemArrow K oneVertexShape (P.scheme.asSystem hμC.1 X)
+      (P.scheme.asSystem hμC.1 X'))
+    (onY : SystemArrow K oneVertexShape (P.scheme.asSystem hμC.1 Y)
+      (P.scheme.asSystem hμC.1 Y'))
+    (hcomm : SystemArrow.comp incl onY = SystemArrow.comp onX incl')
+    {ι : Type u}
+    (r : ι → SystemArrow K oneVertexShape (P.scheme.asSystem hμC.1 Y')
+      (P.scheme.asSystem hμC.1 X'))
+    (hιcard : #ι = μ)
+    (halmost : ∀ a : Occurrence K oneVertexShape (P.scheme.asSystem hμC.1 X'),
+      Finite {i : ι // (r i).onVertex a.1 (incl'.onVertex a.1 a.2) ≠ a.2})
+    (himg : ∀ i (x : Y.model.carrier),
+      ∃ y : X.model.carrier,
+        onX.onVertex PUnit.unit y = (r i).onVertex PUnit.unit (onY.onVertex PUnit.unit x))
+    {bIdx : Type u} (b : bIdx → Occurrence K oneVertexShape (P.scheme.asSystem hμC.1 Y))
+    (b' : bIdx → Occurrence K oneVertexShape (P.scheme.asSystem hμC.1 Y'))
+    (hb : ∀ i, onY.mapOcc (b i) = b' i) (hbμ : #bIdx < μ)
+    (hdom : AllDominated incl' trivial bIdx b') :
+    AllDominated incl trivial bIdx b := by
+  refine infra_83_dominated_descend_pair P hμC.1 hlev incl incl' onX onY hcomm b b' hb hbμ hdom
+    (fun cIdx c hc => ?_)
+  have hsq : ∀ v, (incl'.onVertex v).comp (onX.onVertex v) =
+      (onY.onVertex v).comp (incl.onVertex v) := fun v =>
+    (congrArg (fun φ : SystemArrow K oneVertexShape _ _ => φ.onVertex v) hcomm).symm
+  have hsum : #(bIdx ⊕ cIdx) < μ := by
+    rw [Cardinal.mk_sum, Cardinal.lift_id, Cardinal.lift_id]
+    exact Cardinal.add_lt_of_lt (P.aleph0_lt hμC.1).le hbμ hc
+  have H := infra_617_tied_from_retractions P hμC hμC le_rfl X' Y' X Y onX onY incl' incl
+    trivial trivial trivial trivial hsq r hιcard halmost himg (seqJoint b c) hsum
+  have hx : (fun j => (⟨(seqJoint b c j).1, onY.onVertex (seqJoint b c j).1 (seqJoint b c j).2⟩ :
+      Occurrence K oneVertexShape (P.scheme.asSystem hμC.1 Y'))) =
+      seqJoint b' (fun j => onY.mapOcc (c j)) := by
+    funext s
+    rcases s with i | j
+    · exact hb i
+    · rfl
+  rw [hx] at H
+  exact infra_83_tiedFree_of_mixed _ _ _ _ H
 
 end AEC
