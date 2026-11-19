@@ -343,4 +343,40 @@ theorem infra_84_layout_type_determined
   have d := P.scheme.diagram_trans _ _ _ _ _ _ (P.scheme.diagram_symm _ _ _ _ d₁') d₂'
   exact hiso.2 qB₂ (eB₂.symm.trans e) hB₂ν hmarg d
 
+/-- **Placed comparisons over the two-segment layout (8) (Lemma 6.5 at the layout level).**
+English (Lemma 8.4 proof): "Apply Lemma 6.4 to lift its comparisons to a placed comparison over
+(8). ... Proposition 6.3 gives a bound depending on the candidate arity and the fixed template."
+For the well-ordered two-segment presentation `E(I₁ ⊕ₗ I₂)` of size `ν` at a closed level `ν`, and
+candidates `d₀ ∈ B₀`, `d₁ ∈ B₁` (strong extensions of size `ν`) of length at most `σ < ν`: lifting
+placements exist, and two lifted placements agree everywhere iff the candidates agree on all
+parameter sets from the layout of size at most `g(σ) + LS(K)`. -/
+theorem infra_84_two_segment_placed_comparison (K : AbstractElementaryClass.{u})
+    [CategoricalUnbounded K] (E : OrderPresentation K) (D : StableDiagram K)
+    (g : Cardinal.{u} → Cardinal.{u}) {ν : Cardinal.{u}} (hL : ClosedLevel K E D g ν)
+    (I₁ I₂ : Type u) [LinearOrder I₁] [WellFoundedLT I₁] [LinearOrder I₂] [WellFoundedLT I₂]
+    [Nonempty I₁] (hI : #(Lex (I₁ ⊕ I₂)) = ν)
+    {B₀ B₁ : Model K.τ}
+    (incl₀ : Language.Embedding K.τ (E.obj (Lex (I₁ ⊕ I₂))).carrier B₀.carrier)
+    (incl₁ : Language.Embedding K.τ (E.obj (Lex (I₁ ⊕ I₂))).carrier B₁.carrier)
+    (hB₀ : K.Mem B₀) (hB₁ : K.Mem B₁) (hs₀ : K.Strong incl₀) (hs₁ : K.Strong incl₁)
+    (hc₀ : Model.card B₀ = ν) (hc₁ : Model.card B₁ = ν)
+    {α : Type u} {σ : Cardinal.{u}} (hσinf : aleph0 ≤ σ) (hσ : σ < ν) (hα : #α ≤ σ)
+    (d₀ : α → B₀.carrier) (d₁ : α → B₁.carrier) :
+    (∃ P₀ : Placement E.lab E.arity (Lex (I₁ ⊕ I₂)) α, P₀.LiftsBounded E D hB₀ incl₀ d₀ ν) ∧
+    (∀ P₀ P₁ : Placement E.lab E.arity (Lex (I₁ ⊕ I₂)) α,
+      P₀.LiftsBounded E D hB₀ incl₀ d₀ ν →
+      P₁.LiftsBounded E D hB₁ incl₁ d₁ ν →
+      (P₀.AgreeOn E D P₁ Set.univ ↔
+        ∀ {β : Type u}, #β ≤ g σ + ls K → ∀ (ρ : Cardinal.{u}),
+          aleph0 ≤ ρ → ρ < ν → ∀ (p : β → (E.obj (Lex (I₁ ⊕ I₂))).carrier)
+            (hj : #(α ⊕ β) ≤ ρ)
+            (ht₀ : D.t ρ ≤ Model.card B₀) (ht₁ : D.t ρ ≤ Model.card B₁),
+          D.same hj hB₀ hB₁ ht₀ ht₁
+            (Sum.elim d₀ (fun b => incl₀ (p b)))
+            (Sum.elim d₁ (fun b => incl₁ (p b))))) := by
+  have : Nonempty (Lex (I₁ ⊕ I₂)) := ⟨toLex (Sum.inl (Classical.arbitrary I₁))⟩
+  obtain ⟨h1, _, h3⟩ := lemma_6_5 K E D g hL hI incl₀ incl₁ hB₀ hB₁ hs₀ hs₁ hc₀ hc₁ hσinf hσ hα
+    d₀ d₁
+  exact ⟨h1, h3⟩
+
 end AEC

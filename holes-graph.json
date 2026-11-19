@@ -4626,7 +4626,7 @@
    "file": "AEC/Section8/Lemma84Single.lean",
    "status": "open",
    "blocker": null,
-   "detail": "Cycle 99 split of infra_84_U_part_bound. Needed input for infra_84_testing_of_common_base: D at level mu with dT : D -> T, dT' : D -> T', j jointly surjective from U-and-C occurrences, uT = dT o j and uT' o iso = dT' o j. Paper: (A,U,b) = F^b(H), universal strip H' in C (Cor 6.7), joint diagrams of U and AH' equal those of the natural layout UH cup AH' inside UH' (Lemma 7.2 with b isolated over A, b/AH' prescribed free), Lemma 6.4 / Prop 6.3. Caveat: T and T' need not literally share D; the paper only matches bounded joint diagrams, so the realistic Lean target is a diagram-level version (bounded tests of U,C in T and in T' agree with those of a fixed layout)."
+   "detail": "Cycle 99 split of infra_84_U_part_bound. Needed input for infra_84_testing_of_common_base: D at level mu with dT : D -> T, dT' : D -> T', j jointly surjective from U-and-C occurrences, uT = dT o j and uT' o iso = dT' o j. Paper: (A,U,b) = F^b(H), universal strip H' in C (Cor 6.7), joint diagrams of U and AH' equal those of the natural layout UH cup AH' inside UH' (Lemma 7.2 with b isolated over A, b/AH' prescribed free), Lemma 6.4 / Prop 6.3. Caveat: T and T' need not literally share D; the paper only matches bounded joint diagrams, so the realistic Lean target is a diagram-level version (bounded tests of U,C in T and in T' agree with those of a fixed layout). | Cycle 100: retargeted to the diagram-level version (English layout (8): 'The joint bounded diagrams of U and A_{H'} inside T are the diagrams of the natural layout U_H cup A_{H'} inside U_{H'}.'). Proved pieces: infra_84_layout_diagrams_of_type / infra_84_layout_diagrams_single (bounded joint diagrams of U+b and C agree in T, T'), infra_84_layout_type_determined (Lemma 7.2 step), infra_84_strip_realize_single (Cor 6.7 strip, diagram level), infra_84_local_realization_single (local realization at level nu), infra_84_layout_one_ambient, infra_84_two_segment_tester (Prop 6.3), infra_84_two_segment_placement (Lemma 6.4), infra_84_two_segment_placed_comparison (Lemma 6.5), infra_84_two_segment_witness. Remaining assembly: (i) present U_{H'} = E(I1 +lex I2) at level nu via lemma_8_3 for P.scheme with A_{H'} as the second segment (P.scheme objects vs E-presented models bridge); (ii) realize a questioned candidate test over the layout inside a level-nu strong extension B0 of E(I1 +lex I2) with the same diagram as in T (strip_realize + local_realization + layout_diagrams); (iii) Lemma 6.5 iff in both directions to transfer the g(sigma)+LS agreement to all bounded parameters; (iv) read the witness parts back into U and C (two_segment_witness, strip). infra_84_testing_of_common_base kept as is (valid reduction; the diagram route goes through Lemma 6.5 at level nu, not through a shared D)."
   },
   {
    "id": "infra_84_layout_diagrams_of_type",
@@ -4708,6 +4708,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 100: English 'each bounded tuple of U, together with b, is isolated over A, whereas the marginal of b over A_{H'} is the prescribed free extension. Lemma 7.2 determines its joint type.' Two extensions over B (level mu >= nu) with tied-free mark marginals have the same type: infra_72_mixed_level_closed (isolation) + infra_72_tied_unique_mixed_rec (marginals) + infra_72_ext_align_mixed (fragment diagrams). Uses recursion closure at mu as the closed helper does (paper-exact infra_72_mixed_level still open). Axioms clean."
+  },
+  {
+   "id": "infra_84_two_segment_placed_comparison",
+   "label": "Lemma 6.5 over the two-segment layout (8): lifted placements agree iff candidates agree on layout parameter sets <= g(sigma)+LS",
+   "section": 8,
+   "file": "AEC/Section8/Layout84Single.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 100: specialization of lemma_6_5 (placedComparisons) to E(I1 +lex I2) of size nu at a closed level nu. Axioms clean."
   }
  ],
  "edges": [
@@ -9063,8 +9072,13 @@
    "from": "infra_84_layout_type_determined",
    "to": "infra_84_layout_amalgam",
    "kind": "hard"
+  },
+  {
+   "from": "infra_84_two_segment_placed_comparison",
+   "to": "infra_84_layout_amalgam",
+   "kind": "hard"
   }
  ],
- "doneCount": 468,
+ "doneCount": 469,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
