@@ -6553,6 +6553,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 117: proved."
+  },
+  {
+   "id": "infra_83_piece_matches",
+   "label": "Compatible partial matches of the template pieces into a homogeneous bundled sample",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83Isolation.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 118: proved (piece_into_sample + hull_match_compat + bundleOf_placeSucc)."
   }
  ],
  "edges": [
@@ -12138,8 +12147,13 @@
    "from": "infra_83_bundleOf_placeSucc",
    "to": "infra_83_bounded_arity_free",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_piece_matches",
+   "to": "infra_83_bounded_arity_free",
+   "kind": "hard"
   }
  ],
- "doneCount": 665,
+ "doneCount": 666,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
