@@ -7921,6 +7921,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 264: proved."
+  },
+  {
+   "id": "infra_83_hull_card_le_finite",
+   "label": "For a finite tuple the term hull has at most max aleph0 #(Σ L.Functions) elements",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PieceMatch.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 265: proved."
   }
  ],
  "edges": [
@@ -14291,8 +14300,13 @@
    "from": "infra_83_hull_card_le",
    "to": "infra_83_arity_removal",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_hull_card_le_finite",
+   "to": "infra_83_arity_removal",
+   "kind": "hard"
   }
  ],
- "doneCount": 811,
+ "doneCount": 812,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

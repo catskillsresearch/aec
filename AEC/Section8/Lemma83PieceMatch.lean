@@ -3998,4 +3998,24 @@ theorem infra_83_hull_card_le {L : FirstOrder.Language.{u, u}} {M : Type u} [L.S
   (Cardinal.mk_le_of_surjective Quotient.mk_surjective).trans FirstOrder.Language.Term.card_le
 end
 
+
+section
+
+/-- **Size of a finite term hull (proved).** For a finite tuple, the term hull has at most
+`max ℵ₀ #(Σ i, L.Functions i)` elements. -/
+theorem infra_83_hull_card_le_finite {L : FirstOrder.Language.{u, u}} {M : Type u}
+    [L.Structure M] {ι : Type} [Finite ι] (v : ι → M) :
+    #(Hull83.Hull (L := L) v) ≤ max ℵ₀ #(Σ i, L.Functions i) := by
+  refine (infra_83_hull_card_le v).trans (max_le (le_max_left _ _) ?_)
+  rw [Cardinal.mk_sum]
+  have h1 : Cardinal.lift.{u} #ι ≤ max ℵ₀ #(Σ i, L.Functions i) :=
+    ((Cardinal.lift_lt_aleph0.mpr (Cardinal.lt_aleph0_of_finite ι)).le).trans (le_max_left _ _)
+  have h2 : Cardinal.lift.{0} #(Σ i, L.Functions i) ≤ max ℵ₀ #(Σ i, L.Functions i) := by
+    rw [Cardinal.lift_uzero]
+    exact le_max_right _ _
+  calc Cardinal.lift.{u} #ι + Cardinal.lift.{0} #(Σ i, L.Functions i)
+      ≤ max ℵ₀ #(Σ i, L.Functions i) + max ℵ₀ #(Σ i, L.Functions i) := add_le_add h1 h2
+    _ = max ℵ₀ #(Σ i, L.Functions i) := Cardinal.add_eq_self (le_max_left _ _)
+end
+
 end AEC
