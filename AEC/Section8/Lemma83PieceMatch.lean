@@ -1716,8 +1716,8 @@ set_option maxHeartbeats 1600000 in
 `Y'` be identified with `F(Z)` by a `τ`-isomorphism `φ` (as the template values are,
 `infra_83_Y_hull_eq_FZ`), let `s_Z : Z₀ ↪o Z` with `|F(Z₀)| = ν`, and suppose `φ ∘ incl'` lands in
 `F(s_Z)[F(Z₀)]`. Then there is a scheme piece `X' ≤ Y_u ≤ Y'` (`inclu ; j = incl'`) with a strong
-identification `ψY : Y_u → F(Z₀)` such that `φ ∘ j = F(s_Z) ∘ ψY`: input (ii) of the piece
-clauses. -/
+identification `ψY : Y_u → F(Z₀)` (onto) such that `φ ∘ j = F(s_Z) ∘ ψY`: input (ii) of the
+piece clauses. -/
 theorem infra_83_piece_of_suborder (P : SingleModelData K) {ν : Cardinal.{u}}
     {hν : ν ∈ P.eligible} {X' Y' : P.scheme.Object ν hν}
     (incl' : SystemArrow K oneVertexShape (P.scheme.asSystem hν X') (P.scheme.asSystem hν Y'))
@@ -1730,7 +1730,7 @@ theorem infra_83_piece_of_suborder (P : SingleModelData K) {ν : Cardinal.{u}}
       (j : SystemArrow K oneVertexShape (P.scheme.asSystem hν Yu) (P.scheme.asSystem hν Y'))
       (ψY : Language.Embedding K.τ ((P.scheme.asSystem hν Yu).obj PUnit.unit).carrier
         (P.E.obj Z0).carrier),
-      K.Strong ψY ∧ SystemArrow.comp inclu j = incl' ∧
+      K.Strong ψY ∧ Function.Surjective ψY ∧ SystemArrow.comp inclu j = incl' ∧
       ∀ y, φ (j.onVertex PUnit.unit y) = P.E.map sZ (ψY y) := by
   classical
   let Yu : SMObject K ν := SMObject.ofModel (P.E.obj Z0) (P.hE Z0) hc
@@ -1775,7 +1775,8 @@ theorem infra_83_piece_of_suborder (P : SingleModelData K) {ν : Cardinal.{u}}
     exact hh0 x
   have hsh : K.Strong hE := K.coherence hE gY f hgY hf hcomp
   refine ⟨Yu, ⟨fun _ => hE, fun _ => hsh, fun h => h.elim⟩,
-    ⟨fun _ => f, fun _ => hf, fun h => h.elim⟩, ψY, hψ, ?_, hfφ⟩
+    ⟨fun _ => f, fun _ => hf, fun h => h.elim⟩, ψY, hψ,
+    fun z => ⟨e z, e.symm_apply_apply z⟩, ?_, hfφ⟩
   apply SystemArrow.ext
   intro v
   cases v
@@ -1897,6 +1898,42 @@ theorem infra_83_full_single_of_primeness (P : SingleModelData K)
   obtain ⟨⟨realEq, hr⟩, hprime⟩ := hS I hI
   exact ⟨ULift.{u} (Fin Pr.n), Equiv.refl _, realEq, hr,
     infra_83_dominated_of_primeness_at P hI (incl I hI.2.1) _ hprime⟩
+end
+
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+/-- **A piece `Y_u ≅ F(Z_u)` on a support set holding given points (proved).** For `Y'`
+identified with `F(Z)` by `φ`, a support set `S ⊆ Z` with `#S = ν` (a level), `φ ∘ incl'` landing in
+`F(S)`, and points `w` of `Y'` whose `φ`-images lie in `F(S)` (their supports are in `S`), there is a
+piece `X' ≤ Y_u ≤ Y'` with a strong onto `ψY : Y_u → F(S)`, `φ ∘ j = F(S ↪ Z) ∘ ψY`, holding every
+`w i` (`infra_83_piece_of_suborder`, `card_obj_eq`). -/
+theorem infra_83_piece_of_support (P : SingleModelData K) {ν : Cardinal.{u}}
+    {hν : ν ∈ P.eligible} {X' Y' : P.scheme.Object ν hν}
+    (incl' : SystemArrow K oneVertexShape (P.scheme.asSystem hν X') (P.scheme.asSystem hν Y'))
+    {Z : Type u} [LinearOrder Z] [Nonempty Z]
+    (φ : ((P.scheme.asSystem hν Y').obj PUnit.unit).carrier ≃[K.τ] (P.E.obj Z).carrier)
+    (S : Set Z) [Nonempty S] (hS : #S = ν)
+    (hsub : ∀ x, φ (incl'.onVertex PUnit.unit x) ∈
+      Set.range (P.E.map (OrderEmbedding.subtype (fun z => z ∈ S))))
+    {ι : Type u} (w : ι → ((P.scheme.asSystem hν Y').obj PUnit.unit).carrier)
+    (hw : ∀ i, φ (w i) ∈ Set.range (P.E.map (OrderEmbedding.subtype (fun z => z ∈ S)))) :
+    ∃ (Yu : P.scheme.Object ν hν)
+      (inclu : SystemArrow K oneVertexShape (P.scheme.asSystem hν X') (P.scheme.asSystem hν Yu))
+      (j : SystemArrow K oneVertexShape (P.scheme.asSystem hν Yu) (P.scheme.asSystem hν Y'))
+      (ψY : Language.Embedding K.τ ((P.scheme.asSystem hν Yu).obj PUnit.unit).carrier
+        (P.E.obj S).carrier),
+      K.Strong ψY ∧ SystemArrow.comp inclu j = incl' ∧
+      (∀ y, φ (j.onVertex PUnit.unit y) =
+        P.E.map (OrderEmbedding.subtype (fun z => z ∈ S)) (ψY y)) ∧
+      ∀ i, ∃ y, j.onVertex PUnit.unit y = w i := by
+  obtain ⟨Yu, inclu, j, ψY, hψ, hsurj, hj, hφ⟩ := infra_83_piece_of_suborder P incl' φ
+    (OrderEmbedding.subtype (fun z => z ∈ S)) (SingleModelData.card_obj_eq hν S hS) hsub
+  refine ⟨Yu, inclu, j, ψY, hψ, hj, hφ, fun i => ?_⟩
+  obtain ⟨z, hz⟩ := hw i
+  obtain ⟨y, rfl⟩ := hsurj z
+  exact ⟨y, φ.injective (by rw [hφ, hz])⟩
 end
 
 end AEC

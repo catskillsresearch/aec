@@ -7525,6 +7525,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 220: proved."
+  },
+  {
+   "id": "infra_83_piece_of_support",
+   "label": "A piece Y_u = F(S) on a support set holding given points: for Y' identified with F(Z), S in Z with #S = nu, phi o incl' landing in F(S), and points w with phi-images in F(S), a piece X' <= Y_u <= Y' with strong psiY : Y_u -> F(S), phi o j = F(S -> Z) o psiY, holding every w i (piece_of_suborder now also gives psiY onto)",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PieceMatch.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 221: proved."
   }
  ],
  "edges": [
@@ -13675,8 +13684,13 @@
    "from": "infra_83_full_single_of_primeness",
    "to": "infra_83_lemma_8_3_full_single",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_piece_of_support",
+   "to": "infra_83_XH_sort",
+   "kind": "hard"
   }
  ],
- "doneCount": 767,
+ "doneCount": 768,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
