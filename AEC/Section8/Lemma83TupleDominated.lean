@@ -5,6 +5,7 @@ public import AEC.Section8.Lemma83Isolation
 public import AEC.Section7.IsolationTransfer
 public import AEC.Section7.Prop78General
 public import AEC.Section7.SeedStage
+public import AEC.Section8.PairIsoSingle
 
 @[expose] public section
 
@@ -305,6 +306,51 @@ theorem infra_83_dominated_of_matched_tuples (P : SingleModelData K) {ν : Cardi
     exact Cardinal.add_lt_of_lt hν0 ((Cardinal.lt_aleph0_of_finite bIdx).trans_le hν0) hc
   exact infra_83_isolation_of_matched_tuple P hνC hlC hνT hlT hνl A U X' Y' toA htoA incl hincl
     incl' hincl' r hιcard halmost (seqJoint b c) dU hd himg hExt hIso
+
+
+set_option maxHeartbeats 3200000 in
+/-- **All-domination from bounded matches into marked sample pairs (proved).** As
+`infra_83_dominated_of_matched_tuples`, with each match landing in a marked pair `N` (closed level
+`≥ ν`) with its Cor 6.16 family `R`: `ν` distinguished retraction indices send `u* = (N.b ∘ τ, c*)`
+into `toA[X']`, and `u*` is identified with `(b, c)` over `X'`. Isolation of `tp(u*/N.X)` relative
+to the mark is read off from the all-domination of `N` (reindexed along `τ`). -/
+theorem infra_83_dominated_of_marked_matches (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) {ν : Cardinal.{u}}
+    (hνC : ν ∈ infra_615_closed P) (hνT : ν ∈ infra_78_closedTail P)
+    {X' Y' : P.scheme.Object ν hνC.1}
+    (incl' : SystemArrow K oneVertexShape (P.scheme.asSystem hνC.1 X')
+      (P.scheme.asSystem hνC.1 Y'))
+    (hincl' : P.scheme.permitted (X := X') (Y := Y') incl')
+    {bIdx : Type u} [Finite bIdx]
+    (b : bIdx → Occurrence K oneVertexShape (P.scheme.asSystem hνC.1 Y'))
+    (hmatch : ∀ (cIdx : Type u) (c : cIdx → Occurrence K oneVertexShape (P.scheme.asSystem hνC.1 Y')),
+      #cIdx < ν →
+      ∃ (N : MarkedPair K oneVertexShape P.scheme Pr) (hlC : N.μ ∈ infra_615_closed P)
+        (_ : N.μ ∈ infra_78_closedTail P) (_ : ν ≤ N.μ)
+        (toA : SystemArrow K oneVertexShape (P.scheme.asSystem hνC.1 X')
+          (P.scheme.asSystem hlC.1 N.X))
+        (htoA : P.scheme.permitted (X := X') (Y := N.X) toA)
+        (R : ApproximateRetraction K oneVertexShape P.scheme N.hμ N.X N.Y N.incl)
+        (S : Set R.index) (_ : #S = ν) (τ : bIdx ≃ N.bIdx)
+        (cU : cIdx → Occurrence K oneVertexShape (P.scheme.asSystem hlC.1 N.Y)),
+        (∀ i ∈ S, ∀ s, ∃ y, toA.onVertex (seqJoint (fun a => N.b (τ a)) cU s).1 y =
+          (R.retr i).onVertex (seqJoint (fun a => N.b (τ a)) cU s).1
+            (seqJoint (fun a => N.b (τ a)) cU s).2) ∧
+        SameGaloisType (asTuple incl' hincl' (seqJoint b c))
+          ((asTuple N.incl N.incl_arrow (seqJoint (fun a => N.b (τ a)) cU)).restrict toA htoA)
+          (Equiv.refl _) (Equiv.refl _)) :
+    AllDominated incl' hincl' bIdx b := by
+  refine infra_83_dominated_of_matched_tuples P hνC hνT incl' hincl' b (fun cIdx c hc => ?_)
+  obtain ⟨N, hlC, hlT, hνl, toA, htoA, R, S, hS, τ, cU, himg, hExt⟩ := hmatch cIdx c hc
+  have hIso := infra_82_isolated_reindex_mark N.incl τ N.b cU
+    (N.dominated cIdx cU (hc.trans_le hνl))
+  refine ⟨N.μ, hlC, hlT, hνl, N.X, N.Y, toA, htoA, N.incl, N.incl_arrow, S,
+    fun i => R.retr i.1, hS, fun a => ?_, seqJoint (fun a => N.b (τ a)) cU,
+    fun i s => himg i.1 i.2 s, hExt, hIso⟩
+  haveI := R.almost_id a
+  exact Finite.of_injective (β := {i : R.index // (R.retr i).onVertex a.1
+    (N.incl.onVertex a.1 a.2) ≠ a.2}) (fun i => ⟨i.1.1, i.2⟩)
+    (fun x y h => Subtype.ext (Subtype.ext (congrArg Subtype.val h :)))
 
 end
 end AEC

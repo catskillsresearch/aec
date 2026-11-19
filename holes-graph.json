@@ -7030,6 +7030,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 166: proved."
+  },
+  {
+   "id": "infra_83_dominated_of_marked_matches",
+   "label": "All-domination of Y' over X'+b from per-bounded-tuple matches into marked sample pairs with Cor 6.16 families (nu indices sending u*=(N.b o tau, c*) into toA[X'], u* identified with (b,c) over X'); isolation from N.dominated",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83TupleDominated.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 167: proved."
   }
  ],
  "edges": [
@@ -12905,8 +12914,13 @@
    "from": "infra_83_dominated_of_matched_tuples",
    "to": "infra_83_all_dominated",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_dominated_of_marked_matches",
+   "to": "infra_83_all_dominated",
+   "kind": "hard"
   }
  ],
- "doneCount": 713,
+ "doneCount": 714,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
