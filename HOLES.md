@@ -458,6 +458,8 @@ Lean: imports `Section5.Results` and `Section6.Results`. Soft paper chain after 
 | `infra_82_pointed_all` | Lemma 8.2(3) for `P.scheme` at every level | [`PairPointedSingle.lean`](AEC/Section8/PairPointedSingle.lean) (**done**, cycle 96) |
 | `infra_84_base_testing_single` | Lemma 8.4 for `P.scheme`: one-base testing bound | [`Lemma84Single.lean`](AEC/Section8/Lemma84Single.lean) (**done**, cycle 96) |
 | `infra_84_diagonal_tail` | Lemma 8.4 uniformity: diagonal recursion tail | [`Lemma84Single.lean`](AEC/Section8/Lemma84Single.lean) (**done**, cycle 96) |
+| `infra_84_C_tests_single` | Lemma 8.4 for `P.scheme`: tests from C alone, uniform k(σ) | [`Lemma84Single.lean`](AEC/Section8/Lemma84Single.lean) (**done**, cycle 96) |
+| `infra_84_layout_testing_single` | Lemma 8.4 for `P.scheme`: joint tests with U (natural layout (8)) | `AEC/Section8/Lemma84Single.lean` (open, cycle 96) |
 | `infra_84_single` | `Lemma84Conclusion P.scheme Pr` (uniform testing bound; no both_off) | `AEC/Section8/Results.lean` (open, cycle 96) |
 | `lemma_8_3` | Lemma 8.3 | `AEC/Section8/Results.lean:142` (restated, cycle 95) |
 | `lemma_8_4` | Lemma 8.4 | `AEC/Section8/Results.lean:242` (restated, cycle 95; conclusion `Lemma84Conclusion`) |

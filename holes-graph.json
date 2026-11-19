@@ -4203,7 +4203,7 @@
    "file": "AEC/Section8/Results.lean",
    "status": "open",
    "blocker": null,
-   "detail": "Cycle 96. lemma_8_4's conclusion factored into def Lemma84Conclusion W P (statement unchanged); the P.scheme tip is Lemma84Conclusion P.scheme Pr. All hosts (C, T, T') sit at the level mu, so no both_off comparison is involved; the open content is the uniform testing bound k(sigma) (Prop 7.3 / Thm 6.6 machinery) for P.scheme. DiagramEq for P.scheme is SameD in the big presentations (not finitary), so no locality shortcut."
+   "detail": "Cycle 96. lemma_8_4's conclusion factored into def Lemma84Conclusion W P (statement unchanged); the P.scheme tip is Lemma84Conclusion P.scheme Pr. All hosts (C, T, T') sit at the level mu, so no both_off comparison is involved; the open content is the uniform testing bound k(sigma) (Prop 7.3 / Thm 6.6 machinery) for P.scheme. DiagramEq for P.scheme is SameD in the big presentations (not finitary), so no locality shortcut. | Cycle 96: U-free part proved (infra_84_C_tests_single, infra_84_base_testing_single, infra_84_diagonal_tail); joint U-C tests tracked as infra_84_layout_testing_single."
   },
   {
    "id": "infra_82_orbit_criterion_single",
@@ -4312,6 +4312,24 @@
    "status": "done",
    "blocker": null,
    "detail": "DONE cycle 96. infra_82_pointed_single's statement at every level (the tail was not used); infra_82_pointed_single now derives from it. Axioms clean."
+  },
+  {
+   "id": "infra_84_C_tests_single",
+   "label": "Lemma 8.4 for P.scheme: tests from C alone, uniform k(sigma)",
+   "section": 8,
+   "file": "AEC/Section8/Lemma84Single.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "DONE cycle 96. On infra_615_closed, sigma < nu < mu, k(sigma) = g(max sigma aleph0) + LS(K) < nu: comparisons of v, v' (length <= sigma) on tests from C of size <= k(sigma) determine those of size < mu. The U-free part of 8.4's testing property. Axioms clean."
+  },
+  {
+   "id": "infra_84_layout_testing_single",
+   "label": "Lemma 8.4 for P.scheme: joint tests with U (natural layout (8))",
+   "section": 8,
+   "file": "AEC/Section8/Lemma84Single.lean",
+   "status": "open",
+   "blocker": null,
+   "detail": "Cycle 96. Remaining content of infra_84_single: tests mixing U and C. Paper proof: present (A,U,b) as F^b(H); include questioned C-tuples in V <= C at level nu; universal strip H' (presentation-invariant), Corollary 6.7 embeds AH' into C; joint diagrams of U and AH' in T are those of the natural layout UH cup AH' inside UH' (Lemma 7.2: U-tuples with b isolated over A, b/AH' prescribed free extension); mixed saturation; Lemma 6.4 lifts to placed comparisons; Proposition 6.3 bound depending on arity and template only. Needs: universal-strip embedding for the pair template, Lemma 6.4/Prop 6.3 for the two-segment layout."
   }
  ],
  "edges": [
@@ -8442,8 +8460,18 @@
    "from": "infra_82_orbit_tail_single",
    "to": "infra_82_orbit_preservation_single",
    "kind": "hard"
+  },
+  {
+   "from": "infra_84_C_tests_single",
+   "to": "infra_84_single",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_84_layout_testing_single",
+   "to": "infra_84_single",
+   "kind": "hard"
   }
  ],
- "doneCount": 426,
+ "doneCount": 427,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

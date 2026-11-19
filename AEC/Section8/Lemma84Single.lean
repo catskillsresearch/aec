@@ -167,4 +167,53 @@ theorem infra_84_diagonal_tail (P : SingleModelData K) :
   exact (h1.trans (h2.trans h3)).trans_lt
     (h4.trans_le (infra_84_diagTower_le_iSup t g b _ _))
 
+/-- **Lemma 8.4 for P.scheme, tests from `C` alone (uniform bound).** On the diagonal tail
+`infra_615_closed`, for `σ < ν < μ` with `ν` eligible, put `k(σ) = g(σ + ℵ₀) + LS(K) < ν`. For
+`C ≤ T, T′` at level `μ` and `v ∈ T`, `v′ ∈ T′` of length at most `σ`: if their comparisons on all
+tests from `C` of size at most `k(σ)` agree, they agree on all tests from `C` of size `< ν` (indeed
+`< μ`). This is the `U`-free part of the testing property of Lemma 8.4; the joint tests with `U`
+need the natural layout (8) of the paper (Lemma 6.4, Proposition 6.3). -/
+theorem infra_84_C_tests_single (P : SingleModelData K) {ν μ σ : Cardinal.{u}}
+    (hν : ν ∈ P.eligible) (hμT : μ ∈ infra_615_closed P) (hσν : σ < ν) (hνμ : ν < μ) :
+    P.g (max σ ℵ₀) + ls K < ν ∧
+    ∀ (C Tt Tt' : P.scheme.Object μ hμT.1)
+      (cT : SystemArrow K oneVertexShape (P.scheme.asSystem hμT.1 C) (P.scheme.asSystem hμT.1 Tt))
+      (cT' : SystemArrow K oneVertexShape (P.scheme.asSystem hμT.1 C)
+        (P.scheme.asSystem hμT.1 Tt'))
+      {α : Type u} (v : α → Occurrence K oneVertexShape (P.scheme.asSystem hμT.1 Tt))
+      (v' : α → Occurrence K oneVertexShape (P.scheme.asSystem hμT.1 Tt')), #α ≤ σ →
+      (∀ {ιC : Type u} (ZC : ιC → Occurrence K oneVertexShape (P.scheme.asSystem hμT.1 C)),
+        #ιC ≤ P.g (max σ ℵ₀) + ls K →
+        P.scheme.DiagramEq (X := Tt) (Y := Tt')
+          (Sum.elim v (fun i => cT.mapOcc (ZC i))) (Sum.elim v' (fun i => cT'.mapOcc (ZC i)))) →
+      ∀ {ιC : Type u} (ZC : ιC → Occurrence K oneVertexShape (P.scheme.asSystem hμT.1 C)),
+        #ιC < μ →
+        P.scheme.DiagramEq (X := Tt) (Y := Tt')
+          (Sum.elim v (fun i => cT.mapOcc (ZC i))) (Sum.elim v' (fun i => cT'.mapOcc (ZC i))) := by
+  set σ' := max σ ℵ₀ with hσ'
+  have hσ'ν : σ' < ν := max_lt hσν (P.aleph0_lt hν)
+  have hσ'μ : σ' < μ := hσ'ν.trans hνμ
+  refine ⟨?_, ?_⟩
+  · have hg : P.g σ' < ν := (hν.1.closed P.g (Set.mem_insert_of_mem _ rfl)).below σ'
+      (le_max_right _ _) hσ'ν
+    exact add_lt_of_lt (P.aleph0_le hν) hg hν.2
+  intro C Tt Tt' cT cT' α v v' hα hsmall ιC ZC hZ
+  have hrec : μ ∈ recursionClosedLevels P σ' :=
+    ⟨hμT.1, fun β₀ hβ => hμT.2 σ' (le_max_right _ _) hσ'μ β₀ hβ⟩
+  let q : TupleOver K oneVertexShape P.scheme hμT.1 C := ⟨μ, hμT.1, Tt, cT, trivial, α, v⟩
+  let q' : TupleOver K oneVertexShape P.scheme hμT.1 C := ⟨μ, hμT.1, Tt', cT', trivial, α, v'⟩
+  have key : ∀ {β : Type u} (xs xs' : β → Occurrence K oneVertexShape
+      (P.scheme.asSystem hμT.1 Tt)) (ys ys' : β → Occurrence K oneVertexShape
+      (P.scheme.asSystem hμT.1 Tt')), xs = xs' → ys = ys' →
+      P.scheme.DiagramEq (X := Tt) (Y := Tt') xs ys →
+      P.scheme.DiagramEq (X := Tt) (Y := Tt') xs' ys' := by
+    intro _ _ _ _ _ h1 h2 h; subst h1 h2; exact h
+  have H := infra_84_base_testing_single P σ' (le_max_right _ _) hμT.1 hrec
+    (Order.succ_le_of_lt hσ'μ) q q' (Equiv.refl α) (Equiv.refl α) rfl rfl
+    (hα.trans (le_max_left _ _)) (fun {β} Z hβ => key _ _ _ _
+      (by funext x; rcases x with i | j <;> rfl) (by funext x; rcases x with i | j <;> rfl)
+      (hsmall Z hβ)) ZC hZ
+  exact key _ _ _ _ (by funext x; rcases x with i | j <;> rfl)
+    (by funext x; rcases x with i | j <;> rfl) H
+
 end AEC
