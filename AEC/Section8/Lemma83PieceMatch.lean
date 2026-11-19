@@ -3536,4 +3536,124 @@ theorem infra_83_list_realizations {P : SingleModelData K} {μ : Cardinal.{u}}
     fun n => Classical.choose_spec (hstep n (seq n))⟩
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+set_option maxHeartbeats 3200000 in
+/-- **Prop 7.5(1) from nested isolated lists and witness models (proved): the list-based
+tower.** Let `Y` be covered by a directed family `𝒮` of strong substructures ("witness
+models"), each contained in one of the nested small lists `s n` of `Y` (entries of `s n`
+reappear in `s (n+1)`), with every `(b, s n)` isolated relative to `b` over `X`. Then `Y` maps
+over `X` into every `N` realizing `tp(b/X)` by `b'`, sending `b` to `b'`. The map is defined
+element-wise from the consistent realizations of `infra_83_list_realizations`; its restriction
+to each witness model is strong (`infra_83_witness_strong`), and the pieces glue strongly by
+`infra_83_arrow_of_substructure_cover`. Unlike `infra_83_embed_of_tower`, isolation is required
+only for the lists, which may be chosen of bounded per-entry width. -/
+theorem infra_83_embed_of_lists {P : SingleModelData K} {μ : Cardinal.{u}}
+    (hμ : μ ∈ P.eligible) (X Y N : P.scheme.Object μ hμ)
+    (incl : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ Y))
+    (hincl : P.scheme.permitted (X := X) (Y := Y) incl)
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ N))
+    (hf : P.scheme.permitted (X := X) (Y := N) f)
+    {bIdx : Type u}
+    (b : bIdx → Occurrence K oneVertexShape (P.scheme.asSystem hμ Y))
+    (b' : bIdx → Occurrence K oneVertexShape (P.scheme.asSystem hμ N))
+    (hb : #bIdx < μ)
+    (hGalB : SameGaloisType (asTuple incl hincl b) (asTuple f hf b')
+      (Equiv.refl bIdx) (Equiv.refl bIdx))
+    {δ : ℕ → Type u} (s : ∀ n, δ n → Y.model.carrier) (hδ : ∀ n, #(δ n) < μ)
+    (hnest : ∀ n k, ∃ k', s (n + 1) k' = s n k)
+    (hIso : ∀ n, IsRelativelyIsolated (uIdx := bIdx) (cIdx := δ n)
+      (asTuple incl hincl (seqJoint b (fun k => Y.occ (s n k))))
+      (Equiv.refl (bIdx ⊕ δ n)))
+    (𝒮 : Set (K.τ.Substructure Y.model.carrier)) (hne : 𝒮.Nonempty)
+    (hdir : ∀ A ∈ 𝒮, ∀ B ∈ 𝒮, ∃ C ∈ 𝒮, A ≤ C ∧ B ≤ C)
+    (hS : ∀ A ∈ 𝒮, K.Strong (M := subM83 A) (N := Y.model) A.subtype)
+    (hcover : ∀ y : Y.model.carrier, ∃ A ∈ 𝒮, y ∈ A)
+    (hlist : ∀ A ∈ 𝒮, ∃ n, ∀ y ∈ A, ∃ k, s n k = y) :
+    ∃ g : SystemArrow K oneVertexShape (P.scheme.asSystem hμ Y) (P.scheme.asSystem hμ N),
+      P.scheme.permitted (X := Y) (Y := N) g ∧
+      SystemArrow.comp incl g = f ∧
+      ∀ i, g.onVertex (b i).1 (b i).2 = (b' i).2 := by
+  classical
+  obtain ⟨s', hG, hcons⟩ := infra_83_list_realizations hμ incl hincl f hf b b' hb hGalB s hδ hIso
+  have hcard : ∀ n, #(bIdx ⊕ δ n) < μ := fun n => infra_75_sum_lt (P.aleph0_le hμ) hb (hδ n)
+  have hpush : ∀ d n k, ∃ k'', s (n + d) k'' = s n k ∧ s' (n + d) k'' = s' n k := by
+    intro d
+    induction d with
+    | zero => intro n k; exact ⟨k, rfl, rfl⟩
+    | succ d ih =>
+      intro n k
+      obtain ⟨k1, h1, h1'⟩ := ih n k
+      obtain ⟨k2, h2⟩ := hnest (n + d) k1
+      exact ⟨k2, h2.trans h1, (hcons (n + d) k1 k2 h2).trans h1'⟩
+  have hle : ∀ n d k k', s n k = s (n + d) k' → s' n k = s' (n + d) k' := by
+    intro n d k k' hEq
+    obtain ⟨k'', h1, h1'⟩ := hpush d n k
+    have := infra_75_preserves_eq incl hincl f hf
+      (seqJoint b (fun k => Y.occ (s (n + d) k))) (seqJoint b' (fun k => N.occ (s' (n + d) k)))
+      (hG (n + d)) (hcard (n + d)) (i := Sum.inr k'') (j := Sum.inr k') (h1.trans hEq)
+    exact h1'.symm.trans this
+  have hwd : ∀ n k m k', s n k = s m k' → s' n k = s' m k' := by
+    intro n k m k' hEq
+    rcases le_total n m with hnm | hmn
+    · obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le hnm
+      exact hle n d k k' hEq
+    · obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le hmn
+      exact (hle m d k' k hEq.symm).symm
+  have hGA : ∀ A ∈ 𝒮, ∃ G : Language.Embedding K.τ A N.model.carrier,
+      K.Strong (M := subM83 A) (N := N.model) G ∧
+      ∀ (a : A) n k, s n k = (a : Y.model.carrier) → G a = s' n k := by
+    intro A hA
+    obtain ⟨n, hn⟩ := hlist A hA
+    let φ : A → δ n := fun a => Classical.choose (hn a.1 a.2)
+    have hφ : ∀ a : A, s n (φ a) = A.subtype a := fun a => Classical.choose_spec (hn a.1 a.2)
+    obtain ⟨G, hGs, hGv⟩ := infra_83_witness_strong (W := subM83 A) incl hincl f hf b b' (s n)
+      (s' n) (hG n) A.subtype (hS A hA) φ hφ
+    exact ⟨G, hGs, fun a m k hk => (hGv a).trans (hwd n (φ a) m k ((hφ a).trans hk.symm))⟩
+  choose gA hgA hgAv using hGA
+  obtain ⟨Fm, hFm, hFmc⟩ := infra_83_arrow_of_substructure_cover Y.mem N.mem 𝒮 hne hdir hS
+    hcover gA hgA (fun A hA B hB h => by
+      ext a
+      obtain ⟨n, hn⟩ := hlist A hA
+      obtain ⟨k, hk⟩ := hn a.1 a.2
+      rw [Language.Embedding.comp_apply, hgAv A hA a n k hk, hgAv B hB _ n k hk])
+  have hval : ∀ n k, Fm (s n k) = s' n k := by
+    intro n k
+    obtain ⟨A, hA, hy⟩ := hcover (s n k)
+    have := congrFun (congrArg DFunLike.coe (hFmc A hA)) ⟨s n k, hy⟩
+    rw [Language.Embedding.comp_apply] at this
+    exact this.trans (hgAv A hA ⟨s n k, hy⟩ n k rfl)
+  have hin : ∀ y, ∃ n k, s n k = y := by
+    intro y
+    obtain ⟨A, hA, hy⟩ := hcover y
+    obtain ⟨n, hn⟩ := hlist A hA
+    obtain ⟨k, hk⟩ := hn y hy
+    exact ⟨n, k, hk⟩
+  refine ⟨oneVertexArrow (hM := Y.mem) (hN := N.mem) Fm hFm, trivial, ?_, fun i => ?_⟩
+  · apply SystemArrow.ext
+    intro v
+    ext a
+    have hv : v = PUnit.unit := Subsingleton.elim _ _
+    have hunit : incl.onVertex v a = incl.onVertex PUnit.unit a :=
+      infra_75_onVertex_eq_unit incl hv a
+    have funit : f.onVertex v a = f.onVertex PUnit.unit a :=
+      infra_75_onVertex_eq_unit f hv a
+    obtain ⟨n, k, hk⟩ := hin (incl.onVertex PUnit.unit a)
+    have hfix := infra_75_fixes_carrier incl hincl f hf
+      (seqJoint b (fun k => Y.occ (s n k))) (seqJoint b' (fun k => N.occ (s' n k))) (hG n)
+      (i := Sum.inr k) hk
+    change Fm (incl.onVertex v a) = f.onVertex v a
+    rw [hunit, funit, ← hk, hval]
+    exact hfix
+  · change Fm (b i).2 = (b' i).2
+    obtain ⟨n, k, hk⟩ := hin (b i).2
+    have heq := infra_75_preserves_eq incl hincl f hf
+      (seqJoint b (fun k => Y.occ (s n k))) (seqJoint b' (fun k => N.occ (s' n k))) (hG n)
+      (hcard n) (i := Sum.inr k) (j := Sum.inl i) hk
+    rw [← hk, hval]
+    exact heq
+end
+
 end AEC

@@ -7831,6 +7831,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 254: proved."
+  },
+  {
+   "id": "infra_83_embed_of_lists",
+   "label": "List-based tower (Prop 7.5(1) without strong-submodel stages): if Y is covered by a directed family of strong witness substructures each inside one of nested small lists s n, and every (b, s n) is isolated relative to b over X, then Y maps over X into every N realizing tp(b/X), b to b' (element-wise map from consistent realizations; strong on each witness via the Galois amalgam; glued by arrow_of_substructure_cover)",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PieceMatch.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 255: proved."
   }
  ],
  "edges": [
@@ -14151,8 +14160,13 @@
    "from": "infra_83_list_realizations",
    "to": "infra_83_arity_removal",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_embed_of_lists",
+   "to": "infra_83_arity_removal",
+   "kind": "hard"
   }
  ],
- "doneCount": 801,
+ "doneCount": 802,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
