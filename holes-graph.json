@@ -7390,6 +7390,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 205: proved."
+  },
+  {
+   "id": "infra_83_mark_positions",
+   "label": "Mark positions of a piece tuple: every tuple d of a one-vertex piece indexed by Fin n + cIdx has d (inl a) = <*, m a> with m k := (d (inl k)).2 (hdm of the piece data)",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PieceMatch.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 206: proved."
   }
  ],
  "edges": [
@@ -13465,8 +13474,13 @@
    "from": "infra_83_piece_with_tuple",
    "to": "infra_83_XH_sort",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_mark_positions",
+   "to": "infra_83_XH_sort",
+   "kind": "hard"
   }
  ],
- "doneCount": 752,
+ "doneCount": 753,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

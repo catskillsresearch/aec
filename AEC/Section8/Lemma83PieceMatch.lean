@@ -1337,4 +1337,22 @@ theorem infra_83_piece_with_tuple (P : SingleModelData K) {ν : Cardinal.{u}} {h
   · exact heq_of_eq (hy i)
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+/-- **Mark positions of a piece tuple (proved).** Every tuple `d` of a one-vertex piece indexed by
+`Fin n ⊕ cIdx` has its mark part at positions `m k := (d (inl k)).2`, i.e.
+`d (inl a) = ⟨*, m a⟩`: the clause `hdm` of `infra_83_marked_of_piece_data`. -/
+theorem infra_83_mark_positions (P : SingleModelData K) {ν : Cardinal.{u}} {hν : ν ∈ P.eligible}
+    {Yu : P.scheme.Object ν hν} {n : ℕ} {cIdx : Type u}
+    (d : ULift.{u} (Fin n) ⊕ cIdx → Occurrence K oneVertexShape (P.scheme.asSystem hν Yu)) :
+    ∃ m : Fin n → ((P.scheme.asSystem hν Yu).obj PUnit.unit).carrier,
+      ∀ a : ULift.{u} (Fin n), d (Sum.inl a) = ⟨PUnit.unit, m a.down⟩ := by
+  refine ⟨fun k => (d (Sum.inl ⟨k⟩)).2, fun a => ?_⟩
+  apply Sigma.ext
+  · exact Subsingleton.elim _ _
+  · rfl
+end
+
 end AEC
