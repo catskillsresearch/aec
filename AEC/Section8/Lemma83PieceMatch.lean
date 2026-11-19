@@ -1355,4 +1355,34 @@ theorem infra_83_mark_positions (P : SingleModelData K) {ν : Cardinal.{u}} {hν
   · rfl
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+/-- **All-domination from per-list arrows into isolating pairs (proved).** Local form of
+`infra_83_dominated_pull` for `infra_83_arity_removal`: if for every bounded `c` there is an arrow
+`h_c : Y → Y'_c` (depending on `c`) such that `tp(h_c(b), h_c(c) / X)` is isolated relative to
+`h_c(b)` in `Y'_c` over the pushed inclusion, then `Y` is all-dominated over `X + b`. -/
+theorem infra_83_dominated_of_local_arrows (P : SingleModelData K) {μ : Cardinal.{u}}
+    {hμ : μ ∈ P.eligible} {X Y : P.scheme.Object μ hμ}
+    (incl : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ Y))
+    (hincl : P.scheme.permitted (X := X) (Y := Y) incl)
+    {bIdx : Type u} (b : bIdx → Occurrence K oneVertexShape (P.scheme.asSystem hμ Y))
+    (hb : #bIdx < μ)
+    (hloc : ∀ (cIdx : Type u) (c : cIdx → Occurrence K oneVertexShape (P.scheme.asSystem hμ Y)),
+      #cIdx < μ →
+      ∃ (Y' : P.scheme.Object μ hμ)
+        (h : SystemArrow K oneVertexShape (P.scheme.asSystem hμ Y) (P.scheme.asSystem hμ Y')),
+        IsRelativelyIsolated (uIdx := bIdx) (cIdx := cIdx)
+          (asTuple (SystemArrow.comp incl h) trivial (fun s => h.mapOcc (seqJoint b c s)))
+          (Equiv.refl _)) :
+    AllDominated incl hincl bIdx b := by
+  intro cIdx c hc
+  have hcard : #(bIdx ⊕ cIdx) < μ := by
+    rw [Cardinal.mk_sum, Cardinal.lift_id, Cardinal.lift_id]
+    exact Cardinal.add_lt_of_lt (P.aleph0_lt hμ).le hb hc
+  obtain ⟨Y', h, H⟩ := hloc cIdx c hc
+  exact infra_83_relIso_pull P incl hincl h (seqJoint b c) (Equiv.refl _) hcard H
+end
+
 end AEC
