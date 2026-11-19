@@ -2318,4 +2318,22 @@ theorem infra_83_full_single_of_realization_target (P : SingleModelData K)
     ((Cardinal.lt_aleph0_of_finite _).trans (P.aleph0_lt hI.2.1)) hD
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+/-- **All-domination is invariant under relabelling the mark (proved).** If `b` is all-dominated
+over `X`, so is `b ∘ τ` for any bijection `τ` of index types (via
+`infra_82_isolated_reindex_mark`). Needed to pass between the prescription's index type and the
+template's `ULift (Fin n)` when feeding Theorem 7.9 existence into
+`infra_83_full_single_of_realization_target`. -/
+theorem infra_83_dominated_reindex {P : SingleModelData K} {μ : Cardinal.{u}}
+    {hμ : μ ∈ P.eligible} {X Y : P.scheme.Object μ hμ}
+    (incl : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ Y))
+    {α β : Type u} (τ : α ≃ β) (b : β → Occurrence K oneVertexShape (P.scheme.asSystem hμ Y))
+    (hD : AllDominated incl trivial β b) :
+    AllDominated incl trivial α (fun a => b (τ a)) :=
+  fun cIdx c hc => infra_82_isolated_reindex_mark incl τ b c (hD cIdx c hc)
+end
+
 end AEC
