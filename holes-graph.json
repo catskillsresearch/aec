@@ -5905,6 +5905,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 106: pairMS2_Y_coord_of, infra_83_pairMS2_Y_charts_coherent."
+  },
+  {
+   "id": "infra_83_pairMS2_X_chart_maps",
+   "label": "Lemma 8.3 proof: transported X-piece maps θ_e = ε_l ∘ F_X(e) ∘ ε_k⁻¹ : F(H_k) → F(H_l) are injective, send skeleton(j_k a) to skeleton(j_l(e a)), and form a functor (θ_id = id, θ_{e≫f} = θ_f ∘ θ_e)",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83SampleLikeY.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 106: infra_83_pairMS2_X_chart_maps. Remaining for F_X(I) ≅ F(J_I): θ_e = E.map of an order embedding H_k → H_l (needs the order of chart points recorded by the colors and the term structure matched), then the limit."
   }
  ],
  "edges": [
@@ -11050,8 +11059,13 @@
    "from": "infra_83_pairMS2_Y_charts_coherent",
    "to": "infra_83_Y_hull_eq_FZ",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_pairMS2_X_chart_maps",
+   "to": "infra_83_X_hull_eq_FJ",
+   "kind": "hard"
   }
  ],
- "doneCount": 589,
+ "doneCount": 590,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

@@ -694,4 +694,57 @@ theorem infra_83_pairMS2_Y_charts_coherent (P : SingleModelData K)
   exact hcoord l _ (e a)
     (Hull83.subLangPieces_coord _ _ hc hcoh _ hYs e x a 1 hx)
 
+/-- **Transported piece maps of the `X`-charts form a functor**: with
+`θ_e := ε_l ∘ F_X(e) ∘ ε_k⁻¹ : F(H_k) → F(H_l)`, each `θ_e` is injective and sends the skeleton
+point of `j_k a` to that of `j_l (e a)`, `θ_id = id`, and `θ_{e ≫ f} = θ_f ∘ θ_e`. -/
+theorem infra_83_pairMS2_X_chart_maps (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) :
+    ∃ (c : (m : ℕ) → 0 < m → Hull83.TpColorB (LS83.pairLangM3 P.E Pr.n) 3 m)
+      (hc : ∀ (n : ℕ) (κ : Cardinal.{u}),
+        Hull83.Joint (Hull83.TpSampleB (fun N _ => pairMAdmittedS2 P.E Pr.n N) 3) n c κ)
+      (hcoh : ∀ {m m' : ℕ} (hm' : 0 < m') (hm : 0 < m) (f : Fin m' ↪o Fin m),
+        c m' hm' = Hull83.tpResB 3 f (c m hm))
+      (hXs : Hull83.SubHullStrong ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) (fun N _ => pairMAdmittedS2 P.E Pr.n N))
+      (ch : ∀ k, PieceChart P.E ((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3))
+        hXs).obj k) k)
+      (θ : ∀ {k l : ℕ}, (Fin (k + 1) ↪o Fin (l + 1)) →
+        (P.E.obj (ch k).H).carrier → (P.E.obj (ch l).H).carrier),
+      (∀ {k l : ℕ} (e : Fin (k + 1) ↪o Fin (l + 1)), Function.Injective (θ e)) ∧
+      (∀ {k l : ℕ} (e : Fin (k + 1) ↪o Fin (l + 1)) (a : Fin (k + 1)),
+        θ e (P.E.skeleton ((ch k).j a)) = P.E.skeleton ((ch l).j (e a))) ∧
+      (∀ (k : ℕ) (y : (P.E.obj (ch k).H).carrier), θ (idEmb (α := Fin (k + 1))) y = y) ∧
+      ∀ {k l m : ℕ} (e : Fin (k + 1) ↪o Fin (l + 1)) (f : Fin (l + 1) ↪o Fin (m + 1))
+        (y : (P.E.obj (ch k).H).carrier), θ (e.trans f) y = θ f (θ e y) := by
+  obtain ⟨c, hc, hcoh, hXs, ch, hch⟩ := infra_83_pairMS2_X_charts_coherent P Pr
+  let FX := Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+    ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs
+  let inv : ∀ k, (P.E.obj (ch k).H).carrier → (FX.obj k).carrier := fun k =>
+    Function.surjInv (ch k).bij.2
+  have hinvR : ∀ k y, (ch k).ε (inv k y) = y := fun k => Function.surjInv_eq (ch k).bij.2
+  have hinvL : ∀ k x, inv k ((ch k).ε x) = x := fun k x => (ch k).bij.1 (hinvR k _)
+  refine ⟨c, hc, hcoh, hXs, ch, fun {k l} e y => (ch l).ε (FX.map e (inv k y)),
+    fun {k l} e y y' h => ?_, fun {k l} e a => ?_, fun k y => ?_, fun {k l m} e f y => ?_⟩
+  · have := FX.map e |>.injective ((ch l).bij.1 h)
+    exact (hinvR k y).symm.trans ((congrArg (ch k).ε this).trans (hinvR k y'))
+  · obtain ⟨x, hx⟩ := (ch k).bij.2 (P.E.skeleton ((ch k).j a))
+    have hcx : Hull83.subHullEmb ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K))
+        ((Hull83.witB hc k).v ∘ Prod.map id (fun _ : Fin 1 => (0 : Fin 3)))
+        (@Quotient.mk _ (@Hull83.hullSetoid _ _ (((psiM P.E Pr.n).comp (chiM P.E Pr.n)).reduct _) _
+          ((Hull83.witB hc k).v ∘ Prod.map id (fun _ : Fin 1 => (0 : Fin 3)))) (Term.var (a, 0))) =
+        (Hull83.witB hc k).v (a, 0) := rfl
+    have h1 := (hch e _ a hcx).1
+    show (ch l).ε (FX.map e (inv k _)) = _
+    rw [← h1]; erw [hinvL]
+    exact (hch e _ a hcx).2
+  · show (ch k).ε (FX.map _ (inv k y)) = y
+    rw [FX.map_refl]
+    exact hinvR k y
+  · show (ch m).ε (FX.map (e.trans f) (inv k y)) =
+      (ch m).ε (FX.map f (inv l ((ch l).ε (FX.map e (inv k y)))))
+    rw [hinvL, FX.map_trans]
+    rfl
+
 end AEC
