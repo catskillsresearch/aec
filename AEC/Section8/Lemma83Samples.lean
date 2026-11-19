@@ -1,0 +1,113 @@
+module
+
+public import AEC.Section8.Layout84Single
+
+@[expose] public section
+
+/-!
+# Lemma 8.3 for the Prop 5.6 scheme: the samples (cycle 101)
+
+English (Lemma 8.3 proof, "The samples and their language"): "Let F be the template of C. At
+arbitrarily high closed input levels choose a pair X = F(J) ≤ Y, Y ≃ F(Z), with Y all-dominated
+over X + b. ... Proposition 6.15, in its presentation-invariant form, puts Y over X into
+L = F(J + W)."
+-/
+
+universe u
+
+open Cardinal FirstOrder
+
+namespace AEC
+
+variable {K : AbstractElementaryClass.{u}}
+
+/-- The first-segment order embedding `J ↪o J +lex W`. -/
+def infra_83_inlLex (J W : Type u) [LinearOrder J] [LinearOrder W] : J ↪o Lex (J ⊕ W) :=
+  OrderEmbedding.ofStrictMono (fun j => toLex (Sum.inl j)) (fun _ _ h => by simpa using h)
+
+/-- **The samples of the Lemma 8.3 proof (P.scheme), core form.** On a tail of eligible levels:
+for every well-order `J` of the level size `μ` and every order `W` such that `P.E(J +lex W)` has a
+categoricity cardinality at least `t(μ)`, there is a marked pair `M` at level `μ` whose base is
+`P.E(J)` (a bijective strong map `eX`), whose extension `Y` is a copy of `P.E(Z)` for every `Z`
+of size `μ`, and whose extension embeds strongly into `L = P.E(J +lex W)` over the base (the
+inclusion followed by the embedding is `P.E(J ↪ J + W)`). The marked pair is all-dominated over
+`X + b` by definition. -/
+theorem infra_83_samples_core (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) :
+    ∃ T, ∃ _hT : Tail P.scheme.eligible T,
+      ∀ μ (_ : μ ∈ T) (J : Type u) [LinearOrder J] [WellFoundedLT J] [Nonempty J]
+        (_ : #J = μ) (W : Type u) [LinearOrder W] [Nonempty W]
+        (_ : Categorical K (Model.card (P.E.obj (Lex (J ⊕ W)))))
+        (_ : P.D.t μ ≤ Model.card (P.E.obj (Lex (J ⊕ W)))),
+        ∃ M : MarkedPair K oneVertexShape P.scheme Pr, M.μ = μ ∧
+          ∃ eX : Language.Embedding K.τ (P.E.obj J).carrier
+              ((P.scheme.asSystem M.hμ M.X).obj PUnit.unit).carrier,
+            Function.Bijective eX ∧ K.Strong eX ∧
+            (∀ (Z : Type u) [LinearOrder Z] [Nonempty Z], #Z = μ →
+              Nonempty ((P.E.obj Z).carrier ≃[K.τ]
+                ((P.scheme.asSystem M.hμ M.Y).obj PUnit.unit).carrier)) ∧
+            ∃ F : Language.Embedding K.τ ((P.scheme.asSystem M.hμ M.Y).obj PUnit.unit).carrier
+                (P.E.obj (Lex (J ⊕ W))).carrier,
+              K.Strong F ∧
+                ∀ x, F (M.incl.onVertex PUnit.unit (eX x)) = P.E.map (infra_83_inlLex J W) x := by
+  classical
+  have := P.D.categoricalUnbounded
+  obtain ⟨T, hT, H⟩ := infra_82_marked_pair_exists P Pr
+  refine ⟨T, hT, fun μ hμ J _ _ _ hJ W _ _ hcat hWc => ?_⟩
+  have hμe : μ ∈ P.eligible := Tail.mem hT hμ
+  have hcJ : Model.card (P.E.obj J) = μ := SingleModelData.card_obj_eq hμe J hJ
+  let X0 : SMObject K μ := SMObject.ofModel (P.E.obj J) (P.hE J) hcJ
+  obtain ⟨M, hM, e, -, hbij⟩ := H μ hμ X0
+  let φ := SMObject.ofModelEquiv (P.E.obj J) (P.hE J) hcJ
+  let eX : Language.Embedding K.τ (P.E.obj J).carrier
+      ((P.scheme.asSystem M.hμ M.X).obj PUnit.unit).carrier :=
+    (e.onVertex PUnit.unit).comp φ.toEmbedding
+  have heX : Function.Bijective eX := (hbij PUnit.unit).comp φ.bijective
+  have hsX : K.Strong eX :=
+    K.strong_trans _ _ (strong_of_equiv K φ (P.hE J)) (e.onVertex_strong PUnit.unit)
+  have hcY : Model.card ((P.scheme.asSystem M.hμ M.Y).obj PUnit.unit) = μ :=
+    (SMObject.card M.Y).trans hM
+  refine ⟨M, hM, eX, heX, hsX, fun Z _ _ hZ => ?_, ?_⟩
+  · have hcat' := SingleModelData.categorical (P := P) hμe
+    exact hcat'.unique_model (P.E.obj Z) _ (P.hE Z) ((P.scheme.asSystem M.hμ M.Y).inK PUnit.unit)
+      (SingleModelData.card_obj_eq hμe Z hZ) hcY
+  · have hL := infra_84_closedLevel_single P hμe
+    let incl := (M.incl.onVertex PUnit.unit).comp eX
+    have hstrong : K.Strong incl := K.strong_trans _ _ hsX (M.incl.onVertex_strong PUnit.unit)
+    have hIμ : ∀ ρ, aleph0 ≤ ρ → ρ < μ → P.D.t ρ ≤ Model.card (P.E.obj J) :=
+      fun ρ h1 h2 => (hL.t_lt h1 h2).le.trans hcJ.ge
+    have hz := liftsTuple_of_base (hB := (P.scheme.asSystem M.hμ M.Y).inK PUnit.unit)
+      (μ := μ) (D := P.D) hstrong hIμ (infra_83_inlLex J W) (PEmpty.elim : PEmpty.{u+1} → _)
+    obtain ⟨F, hF, hFi, -⟩ := exists_strong_embedding_over hL hJ hstrong hcY
+      (infra_83_inlLex J W) hcat hWc _ (by rw [Cardinal.mk_eq_zero]; exact lt_of_lt_of_le Cardinal.aleph0_pos (P.aleph0_le hμe)) _ hz
+    exact ⟨F, hF, hFi⟩
+
+/-- **The hypotheses on `W` in `infra_83_samples_core` are satisfiable.** For a well-order `J` of
+an eligible size `μ`, some `W` makes `P.E(J +lex W)` of a categoricity cardinality at least
+`t(μ)` (unbounded categoricity). -/
+theorem infra_83_samples_order_exists (P : SingleModelData K) {μ : Cardinal.{u}}
+    (hμe : μ ∈ P.eligible) (J : Type u) [LinearOrder J] [Nonempty J] (hJ : #J = μ) :
+    ∃ (W : Type u) (_ : LinearOrder W) (_ : Nonempty W),
+      Categorical K (Model.card (P.E.obj (Lex (J ⊕ W)))) ∧
+        P.D.t μ ≤ Model.card (P.E.obj (Lex (J ⊕ W))) := by
+  have := P.D.categoricalUnbounded
+  have hL := infra_84_closedLevel_single P hμe
+  obtain ⟨κ, hκ, hcat⟩ := CategoricalUnbounded.unbounded (K := K) (max μ (P.D.t μ))
+  have hμκ : μ ≤ κ := (le_max_left _ _).trans hκ
+  have htκ : P.D.t μ ≤ κ := (le_max_right _ _).trans hκ
+  have hκinf : aleph0 ≤ κ := hL.inf.trans hμκ
+  have : Nonempty κ.ord.ToType := by
+    rw [← Cardinal.mk_ne_zero_iff, mk_ord_toType]
+    exact (lt_of_lt_of_le Cardinal.aleph0_pos hκinf).ne'
+  have hsum : #(Lex (J ⊕ κ.ord.ToType)) = κ := by
+    change #(J ⊕ κ.ord.ToType) = κ
+    rw [mk_sum, lift_id, lift_id, hJ, mk_ord_toType]
+    exact add_eq_right hκinf hμκ
+  have : Nonempty (Lex (J ⊕ κ.ord.ToType)) := ⟨toLex (Sum.inl (Classical.arbitrary J))⟩
+  have hc : Model.card (P.E.obj (Lex (J ⊕ κ.ord.ToType))) = κ :=
+    orderPresentation_obj_card P.E hsum (hL.ls_lt.le.trans hμκ) hκinf
+  refine ⟨κ.ord.ToType, inferInstance, inferInstance, ?_, ?_⟩
+  · rw [hc]; exact hcat
+  · rw [hc]; exact htκ
+
+end AEC

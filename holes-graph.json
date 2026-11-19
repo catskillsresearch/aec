@@ -5059,6 +5059,24 @@
    "status": "open",
    "blocker": null,
    "detail": "Cycle 101 split ('The actual sample pair is all-dominated' / 'Removing the arity restriction')."
+  },
+  {
+   "id": "infra_83_samples_core",
+   "label": "Lemma 8.3 proof (P.scheme): sample marked pair with base P.E(J), Y ~ P.E(Z), Y strongly into L = P.E(J +lex W) over the base",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83Samples.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 101: infra_82_marked_pair_exists + exists_strong_embedding_over (closed-level embedding over E(J)) with empty tuple; W hypotheses satisfiable (infra_83_samples_order_exists). Padding/density of J, Z, W not yet included (part of infra_83_samples)."
+  },
+  {
+   "id": "infra_83_samples_order_exists",
+   "label": "Lemma 8.3 proof (P.scheme): some W gives P.E(J +lex W) a categorical size >= t(mu)",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83Samples.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 101: unbounded categoricity + orderPresentation_obj_card."
   }
  ],
  "edges": [
@@ -9609,8 +9627,18 @@
    "from": "infra_83_all_dominated",
    "to": "infra_83_lemma_8_3_full_single",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_samples_core",
+   "to": "infra_83_samples",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_83_samples_order_exists",
+   "to": "infra_83_samples_core",
+   "kind": "hard"
   }
  ],
- "doneCount": 500,
+ "doneCount": 502,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
