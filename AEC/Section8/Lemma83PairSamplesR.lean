@@ -111,3 +111,132 @@ theorem infra_83_pairR_samples (P : SingleModelData K)
         (fun _ => z) (fun _ => hz)) x hx k)
 
 end AEC
+
+namespace AEC
+
+variable {K : AbstractElementaryClass.{u}}
+
+/-- **Ret-terms send `Y` into `X`.** Under the evaluation law of a Cor 6.16 family, every
+ret-term `ret(c_i, y)` with `y ∈ F(Y)` lies in the `X`-copy `F(J)` of the sample. -/
+theorem infra_83_ret_term_into_X (P : SingleModelData K)
+    {Pr : StationaryPrescription K oneVertexShape P.scheme}
+    {J Jplus : Type u} [LinearOrder J] [Nonempty J] [LinearOrder Jplus] [Nonempty Jplus]
+    {M : MarkedPair K oneVertexShape P.scheme Pr}
+    (eX : (P.E.obj J).carrier → ((P.scheme.asSystem M.hμ M.X).obj PUnit.unit).carrier)
+    (hsurj : Function.Surjective eX) (emb : J ↪o Jplus)
+    (F : ((P.scheme.asSystem M.hμ M.Y).obj PUnit.unit).carrier → (P.E.obj Jplus).carrier)
+    (hF : ∀ x, F (M.incl.onVertex PUnit.unit (eX x)) = P.E.map emb x)
+    (R : ApproximateRetraction K oneVertexShape P.scheme M.hμ M.X M.Y M.incl)
+    (code : R.index → (P.E.obj J).carrier)
+    (G : (P.E.obj Jplus).carrier → (P.E.obj Jplus).carrier → (P.E.obj Jplus).carrier)
+    (heval : ∀ i y, G (P.E.map emb (code i)) (F y) =
+      F (M.incl.onVertex PUnit.unit ((R.retr i).onVertex PUnit.unit y)))
+    (i : R.index) (y : ((P.scheme.asSystem M.hμ M.Y).obj PUnit.unit).carrier) :
+    G (P.E.map emb (code i)) (F y) ∈ Set.range (P.E.map emb) := by
+  obtain ⟨z, hz⟩ := hsurj ((R.retr i).onVertex PUnit.unit y)
+  exact ⟨z, by rw [heval, ← hz, hF]⟩
+
+/-- **Ret-terms fix `X` almost everywhere.** Under the evaluation law of a Cor 6.16 family,
+for each `x ∈ J` only finitely many codes `c_i` move `F(x)`: `ret(c_i, F x) = F x` otherwise. -/
+theorem infra_83_ret_term_almost_id (P : SingleModelData K)
+    {Pr : StationaryPrescription K oneVertexShape P.scheme}
+    {J Jplus : Type u} [LinearOrder J] [Nonempty J] [LinearOrder Jplus] [Nonempty Jplus]
+    {M : MarkedPair K oneVertexShape P.scheme Pr}
+    (eX : (P.E.obj J).carrier → ((P.scheme.asSystem M.hμ M.X).obj PUnit.unit).carrier)
+    (emb : J ↪o Jplus)
+    (F : ((P.scheme.asSystem M.hμ M.Y).obj PUnit.unit).carrier → (P.E.obj Jplus).carrier)
+    (hF : ∀ x, F (M.incl.onVertex PUnit.unit (eX x)) = P.E.map emb x)
+    (R : ApproximateRetraction K oneVertexShape P.scheme M.hμ M.X M.Y M.incl)
+    (code : R.index → (P.E.obj J).carrier)
+    (G : (P.E.obj Jplus).carrier → (P.E.obj Jplus).carrier → (P.E.obj Jplus).carrier)
+    (heval : ∀ i y, G (P.E.map emb (code i)) (F y) =
+      F (M.incl.onVertex PUnit.unit ((R.retr i).onVertex PUnit.unit y)))
+    (x : (P.E.obj J).carrier) :
+    Finite {i : R.index //
+      G (P.E.map emb (code i)) (P.E.map emb x) ≠ P.E.map emb x} := by
+  haveI := R.almost_id ⟨_, eX x⟩
+  refine Finite.of_injective (β := {i : R.index // (R.retr i).onVertex PUnit.unit
+    (M.incl.onVertex PUnit.unit (eX x)) ≠ eX x}) (fun i => ⟨i.1, fun he => i.2 (by
+      have := heval i.1 (M.incl.onVertex PUnit.unit (eX x))
+      rw [hF x, he, hF x] at this
+      exact this)⟩) ?_
+  · intro a b hab
+    exact Subtype.ext (congrArg Subtype.val hab :)
+
+
+/-- **Ret-terms fix finite parts of `X` almost everywhere.** For a finite `A ⊆ J`, only finitely
+many codes `c_i` move some `F(x)`, `x ∈ A`. -/
+theorem infra_83_ret_term_fix_finite (P : SingleModelData K)
+    {Pr : StationaryPrescription K oneVertexShape P.scheme}
+    {J Jplus : Type u} [LinearOrder J] [Nonempty J] [LinearOrder Jplus] [Nonempty Jplus]
+    {M : MarkedPair K oneVertexShape P.scheme Pr}
+    (eX : (P.E.obj J).carrier → ((P.scheme.asSystem M.hμ M.X).obj PUnit.unit).carrier)
+    (emb : J ↪o Jplus)
+    (F : ((P.scheme.asSystem M.hμ M.Y).obj PUnit.unit).carrier → (P.E.obj Jplus).carrier)
+    (hF : ∀ x, F (M.incl.onVertex PUnit.unit (eX x)) = P.E.map emb x)
+    (R : ApproximateRetraction K oneVertexShape P.scheme M.hμ M.X M.Y M.incl)
+    (code : R.index → (P.E.obj J).carrier)
+    (G : (P.E.obj Jplus).carrier → (P.E.obj Jplus).carrier → (P.E.obj Jplus).carrier)
+    (heval : ∀ i y, G (P.E.map emb (code i)) (F y) =
+      F (M.incl.onVertex PUnit.unit ((R.retr i).onVertex PUnit.unit y)))
+    (A : Finset (P.E.obj J).carrier) :
+    {i : R.index | ∃ x ∈ A, G (P.E.map emb (code i)) (P.E.map emb x) ≠ P.E.map emb x}.Finite := by
+  have : {i : R.index | ∃ x ∈ A, G (P.E.map emb (code i)) (P.E.map emb x) ≠ P.E.map emb x} =
+      ⋃ x ∈ (A : Set (P.E.obj J).carrier),
+        {i : R.index | G (P.E.map emb (code i)) (P.E.map emb x) ≠ P.E.map emb x} := by
+    ext i; simp
+  rw [this]
+  refine A.finite_toSet.biUnion fun x _ => ?_
+  haveI := infra_83_ret_term_almost_id P eX emb F hF R code G heval x
+  exact Set.toFinite _
+
+
+/-- **Many codes fix a finite part of `X`.** If the Cor 6.16 index set is infinite, the codes
+`c_i` with `ret(c_i, F x) = F x` for all `x ∈ A` (finite) have full cardinality `#index`. -/
+theorem infra_83_ret_term_fix_card (P : SingleModelData K)
+    {Pr : StationaryPrescription K oneVertexShape P.scheme}
+    {J Jplus : Type u} [LinearOrder J] [Nonempty J] [LinearOrder Jplus] [Nonempty Jplus]
+    {M : MarkedPair K oneVertexShape P.scheme Pr}
+    (eX : (P.E.obj J).carrier → ((P.scheme.asSystem M.hμ M.X).obj PUnit.unit).carrier)
+    (emb : J ↪o Jplus)
+    (F : ((P.scheme.asSystem M.hμ M.Y).obj PUnit.unit).carrier → (P.E.obj Jplus).carrier)
+    (hF : ∀ x, F (M.incl.onVertex PUnit.unit (eX x)) = P.E.map emb x)
+    (R : ApproximateRetraction K oneVertexShape P.scheme M.hμ M.X M.Y M.incl)
+    (code : R.index → (P.E.obj J).carrier)
+    (G : (P.E.obj Jplus).carrier → (P.E.obj Jplus).carrier → (P.E.obj Jplus).carrier)
+    (heval : ∀ i y, G (P.E.map emb (code i)) (F y) =
+      F (M.incl.onVertex PUnit.unit ((R.retr i).onVertex PUnit.unit y)))
+    (hinf : ℵ₀ ≤ #R.index) (A : Finset (P.E.obj J).carrier) :
+    #{i : R.index | ∀ x ∈ A, G (P.E.map emb (code i)) (P.E.map emb x) = P.E.map emb x} =
+      #R.index := by
+  have hfin := infra_83_ret_term_fix_finite P eX emb F hF R code G heval A
+  have hc : {i : R.index | ∀ x ∈ A, G (P.E.map emb (code i)) (P.E.map emb x) = P.E.map emb x} =
+      {i : R.index | ∃ x ∈ A, G (P.E.map emb (code i)) (P.E.map emb x) ≠ P.E.map emb x}ᶜ := by
+    ext i; simp
+  rw [hc]
+  haveI : Infinite R.index := Cardinal.infinite_iff.mpr hinf
+  exact Cardinal.mk_compl_of_infinite _ ((Cardinal.lt_aleph0_iff_set_finite.mpr hfin).trans_le hinf)
+
+
+/-- **`μ` codes fix a finite part of `X`.** For a marked pair of infinite size `μ`, the codes
+fixing `F(x)` for all `x` in a finite `A ⊆ J` number exactly `μ`. -/
+theorem infra_83_ret_term_fix_card_mu (P : SingleModelData K)
+    {Pr : StationaryPrescription K oneVertexShape P.scheme}
+    {J Jplus : Type u} [LinearOrder J] [Nonempty J] [LinearOrder Jplus] [Nonempty Jplus]
+    {M : MarkedPair K oneVertexShape P.scheme Pr}
+    (eX : (P.E.obj J).carrier → ((P.scheme.asSystem M.hμ M.X).obj PUnit.unit).carrier)
+    (emb : J ↪o Jplus)
+    (F : ((P.scheme.asSystem M.hμ M.Y).obj PUnit.unit).carrier → (P.E.obj Jplus).carrier)
+    (hF : ∀ x, F (M.incl.onVertex PUnit.unit (eX x)) = P.E.map emb x)
+    (R : ApproximateRetraction K oneVertexShape P.scheme M.hμ M.X M.Y M.incl)
+    (code : R.index → (P.E.obj J).carrier)
+    (G : (P.E.obj Jplus).carrier → (P.E.obj Jplus).carrier → (P.E.obj Jplus).carrier)
+    (heval : ∀ i y, G (P.E.map emb (code i)) (F y) =
+      F (M.incl.onVertex PUnit.unit ((R.retr i).onVertex PUnit.unit y)))
+    (hinf : ℵ₀ ≤ M.μ) (A : Finset (P.E.obj J).carrier) :
+    #{i : R.index | ∀ x ∈ A, G (P.E.map emb (code i)) (P.E.map emb x) = P.E.map emb x} =
+      M.μ := by
+  rw [infra_83_ret_term_fix_card P eX emb F hF R code G heval (by rw [R.index_card]; exact hinf) A,
+    R.index_card]
+
+end AEC
