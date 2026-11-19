@@ -5923,6 +5923,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 106: infra_83_pairMS2_Y_chart_maps. | Cycle 106: strengthened - each θ_e is a τ-embedding F(H_k) ↪ F(H_l). | Cycle 106: θ_e strong in K."
+  },
+  {
+   "id": "infra_83_pairMS2_X_chart_pieces",
+   "label": "Lemma 8.3 proof: X-pieces naturally isomorphic (strong natural PiecesHom, bijective in each arity) to chart pieces k ↦ F(H_k) with transported maps θ_e",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83SampleLikeY.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 106: infra_83_pairMS2_X_chart_pieces (θ_e natural: θ_e ∘ ε_k = ε_l ∘ F_X(e), added to infra_83_pairMS2_X_chart_maps). Remaining for F_X(I) ≅ F(J_I): θ_e = E.map of an order embedding H_k → H_l, then limits."
   }
  ],
  "edges": [
@@ -11078,8 +11087,13 @@
    "from": "infra_83_pairMS2_Y_chart_maps",
    "to": "infra_83_Y_hull_eq_FZ",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_pairMS2_X_chart_pieces",
+   "to": "infra_83_X_hull_eq_FJ",
+   "kind": "hard"
   }
  ],
- "doneCount": 591,
+ "doneCount": 592,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
