@@ -1596,4 +1596,39 @@ theorem infra_83_dominated_iff_pieces (P : SingleModelData K) {μ : Cardinal.{u}
     exact ⟨Yu, inclu, j, d, hj, hjd, H cIdx c hc Yu inclu j d hj hjd⟩
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+/-- **Marked pairs checked on one piece holding the mark (proved).** For any piece
+`X ≤ Y₀ ≤ Y` holding a preimage `b₀` of the mark `b`, `(X ≤ Y, b)` is marked (realizes the
+prescribed type, all-dominated over `X + b`) iff `b₀` realizes the type in `Y₀` and every bounded
+`c` of `Y` has its `(b, c)` type isolated on every piece holding a preimage
+(`infra_83_realizes_piece_iff`, `infra_83_dominated_iff_pieces`). -/
+theorem infra_83_marked_iff_pieces (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) {μ : Cardinal.{u}}
+    {hμ : μ ∈ P.eligible} {X Y Y0 : P.scheme.Object μ hμ}
+    (incl : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ Y))
+    (incl0 : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ Y0))
+    (j0 : SystemArrow K oneVertexShape (P.scheme.asSystem hμ Y0) (P.scheme.asSystem hμ Y))
+    {bIdx : Type u} (b : bIdx → Occurrence K oneVertexShape (P.scheme.asSystem hμ Y))
+    (b0 : bIdx → Occurrence K oneVertexShape (P.scheme.asSystem hμ Y0))
+    (hj0 : SystemArrow.comp incl0 j0 = incl) (hb0 : ∀ i, j0.mapOcc (b0 i) = b i)
+    (hb : #bIdx < μ) (realEq : bIdx ≃ (Pr.assign hμ X).idx) :
+    (SameGaloisType (asTuple incl trivial b) (Pr.assign hμ X) realEq (Equiv.refl _) ∧
+      AllDominated incl trivial bIdx b) ↔
+    (SameGaloisType (asTuple incl0 trivial b0) (Pr.assign hμ X) realEq (Equiv.refl _) ∧
+      ∀ (cIdx : Type u) (c : cIdx → Occurrence K oneVertexShape (P.scheme.asSystem hμ Y)),
+        #cIdx < μ →
+        ∀ (Yu : P.scheme.Object μ hμ)
+          (inclu : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ Yu))
+          (j : SystemArrow K oneVertexShape (P.scheme.asSystem hμ Yu) (P.scheme.asSystem hμ Y))
+          (d : bIdx ⊕ cIdx → Occurrence K oneVertexShape (P.scheme.asSystem hμ Yu)),
+          SystemArrow.comp inclu j = incl → (∀ s, j.mapOcc (d s) = seqJoint b c s) →
+          IsRelativelyIsolated (uIdx := bIdx) (cIdx := cIdx) (asTuple inclu trivial d)
+            (Equiv.refl _)) := by
+  rw [infra_83_realizes_piece_iff P Pr incl incl0 j0 b b0 hj0 hb0 realEq,
+    infra_83_dominated_iff_pieces P incl b hb]
+end
+
 end AEC
