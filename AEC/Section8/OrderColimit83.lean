@@ -251,7 +251,8 @@ theorem infra_83_pairMS2_X_hull_eq_FJ (P : SingleModelData K)
         ∃ (J : Type u) (_ : LinearOrder J) (_ : Nonempty J)
           (m : (((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
         ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).limit I).obj.carrier ↪[K.τ] (P.E.obj J).carrier)),
-          K.Strong m ∧ Function.Bijective m ∧ Nonempty (I ↪o J) := by
+          K.Strong m ∧ Function.Bijective m ∧ Nonempty (I ↪o J) ∧
+          #J ≤ #(Finset I) * ls K := by
   obtain ⟨c, hc, hcoh, hXs, ch, h, hid, hcomp, hjc, hL⟩ := infra_83_pairMS2_X_limit_of_cocone P Pr
   refine ⟨c, hc, hcoh, hXs, fun I _ _ => ?_⟩
   let φ : ∀ {s t : OCol83.Idx I}, s.1 ⊆ t.1 → (ch s.1.card.pred).H ↪o (ch t.1.card.pred).H :=
@@ -275,7 +276,19 @@ theorem infra_83_pairMS2_X_hull_eq_FJ (P : SingleModelData K)
       show h (placeSucc hst s.2 t.2) _ = _
       rw [hjc, OCol83.pos_place])
     (fun s i i' hi hi' hii' => (ch s.1.card.pred).mono (OCol83.pos_strictMono s i i' hi hi' hii'))
-  exact ⟨OCol83.Col φ hcφ, inferInstance, inferInstance, m, hm, hb, ⟨g⟩⟩
+  have hpc : ∀ k, #((ch k).H) ≤ ls K := by
+    intro k
+    have hsurj : Function.Surjective (fun t : (LS83.pairLangR P.E).Term (Fin (k + 1) × Fin 1) =>
+        (Quotient.mk _ t : ((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).obj k).carrier)) := fun x => Quotient.exists_rep x
+    refine P.E.card_lower.trans ?_
+    refine (Cardinal.mk_congr (Equiv.ofBijective _ (ch k).bij)).symm.le.trans ?_
+    exact (Cardinal.mk_le_of_surjective hsurj).trans
+      ((Cardinal.mk_le_of_injective (sigma_mk_injective (β := fun n => (LS83.pairLangR P.E).Term (Fin n × Fin 1)) (i := k + 1))).trans
+        (Hull83.card_bundle_terms_le 1 (LS83.pairLangR_functions_le P.E)))
+  have hcard := OCol83.card_col_le φ hcφ (ls K) (fun s => hpc s.1.card.pred)
+  exact ⟨OCol83.Col φ hcφ, inferInstance, inferInstance, m, hm, hb, ⟨g⟩,
+    hcard.trans (mul_le_mul_left (Cardinal.mk_subtype_le _) _)⟩
 
 /-- **`F_Y(I) ≅ F(Z_I)`**: in the pair template over `X`- and `Y`-sample-like structures, the
 EM value of the `Y`-pieces at every `I` is strongly and bijectively `τ`-isomorphic to `F(Z_I)`,
@@ -294,7 +307,8 @@ theorem infra_83_pairMS2_Y_hull_eq_FZ (P : SingleModelData K)
         ∃ (J : Type u) (_ : LinearOrder J) (_ : Nonempty J)
           (m : (((Hull83.subLangPieces (psiM P.E Pr.n)
         ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs).limit I).obj.carrier ↪[K.τ] (P.E.obj J).carrier)),
-          K.Strong m ∧ Function.Bijective m ∧ Nonempty (I ↪o J) := by
+          K.Strong m ∧ Function.Bijective m ∧ Nonempty (I ↪o J) ∧
+          #J ≤ #(Finset I) * ls K := by
   obtain ⟨c, hc, hcoh, hXs, ch, h, hid, hcomp, hjc, hL⟩ := infra_83_pairMS2_Y_limit_of_cocone P Pr
   refine ⟨c, hc, hcoh, hXs, fun I _ _ => ?_⟩
   let φ : ∀ {s t : OCol83.Idx I}, s.1 ⊆ t.1 → (ch s.1.card.pred).H ↪o (ch t.1.card.pred).H :=
@@ -318,6 +332,18 @@ theorem infra_83_pairMS2_Y_hull_eq_FZ (P : SingleModelData K)
       show h (placeSucc hst s.2 t.2) _ = _
       rw [hjc, OCol83.pos_place])
     (fun s i i' hi hi' hii' => (ch s.1.card.pred).mono (OCol83.pos_strictMono s i i' hi hi' hii'))
-  exact ⟨OCol83.Col φ hcφ, inferInstance, inferInstance, m, hm, hb, ⟨g⟩⟩
+  have hpc : ∀ k, #((ch k).H) ≤ ls K := by
+    intro k
+    have hsurj : Function.Surjective (fun t : (LS83.pairLangM2 P.E Pr.n).Term (Fin (k + 1) × Fin 2) =>
+        (Quotient.mk _ t : ((Hull83.subLangPieces (psiM P.E Pr.n)
+        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs).obj k).carrier)) := fun x => Quotient.exists_rep x
+    refine P.E.card_lower.trans ?_
+    refine (Cardinal.mk_congr (Equiv.ofBijective _ (ch k).bij)).symm.le.trans ?_
+    exact (Cardinal.mk_le_of_surjective hsurj).trans
+      ((Cardinal.mk_le_of_injective (sigma_mk_injective (β := fun n => (LS83.pairLangM2 P.E Pr.n).Term (Fin n × Fin 2)) (i := k + 1))).trans
+        (Hull83.card_bundle_terms_le 2 (LS83.pairLangM2_functions_le P.E Pr.n)))
+  have hcard := OCol83.card_col_le φ hcφ (ls K) (fun s => hpc s.1.card.pred)
+  exact ⟨OCol83.Col φ hcφ, inferInstance, inferInstance, m, hm, hb, ⟨g⟩,
+    hcard.trans (mul_le_mul_left (Cardinal.mk_subtype_le _) _)⟩
 
 end AEC

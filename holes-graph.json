@@ -6202,6 +6202,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 107: OCol83.pos/pos_place/pos_strictMono; coordinate clause threaded through F_pieces and limit_of_cocone."
+  },
+  {
+   "id": "infra_83_hull_eq_card",
+   "label": "Chart colimit orders have #I ≤ #J_I ≤ #(Finset I)·LS(K) (so #J_I = #I on levels ≥ LS(K))",
+   "section": 8,
+   "file": "OrderColimit83.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 107: piece size ≤ LS(K) via term counting; card_col_le; I ↪o J_I."
   }
  ],
  "edges": [
@@ -11572,8 +11581,18 @@
    "from": "infra_83_hull_eq_coord_embedding",
    "to": "infra_83_Y_hull_eq_FZ",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_hull_eq_card",
+   "to": "infra_83_X_hull_eq_FJ",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_83_hull_eq_card",
+   "to": "infra_83_Y_hull_eq_FZ",
+   "kind": "hard"
   }
  ],
- "doneCount": 622,
+ "doneCount": 623,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
