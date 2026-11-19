@@ -7957,6 +7957,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 268: proved."
+  },
+  {
+   "id": "infra_83_pair_template_clauses_small",
+   "label": "pair_template_clauses plus finite pieces FY of size <= ls K with Y_I ≅ FY.limit I at every eligible #I (feeds eligible_list_data for the template Y_I)",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PieceMatch.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 269: proved."
   }
  ],
  "edges": [
@@ -14347,8 +14356,13 @@
    "from": "infra_83_eligible_list_data",
    "to": "infra_83_arity_removal",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_pair_template_clauses_small",
+   "to": "infra_83_arity_removal",
+   "kind": "hard"
   }
  ],
- "doneCount": 815,
+ "doneCount": 816,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

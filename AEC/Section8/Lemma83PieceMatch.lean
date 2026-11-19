@@ -4116,4 +4116,56 @@ theorem infra_83_eligible_list_data (P : SingleModelData K) (F : EM83.FinPieces 
   exact ⟨D, Piece, P.ls_lt hI, h1, h2, h3, h4, h5, h6, h7⟩
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+set_option maxHeartbeats 1600000 in
+/-- **Template clauses with small pieces (proved).** `infra_83_pair_template_clauses` plus finite
+pieces `FY` of size `≤ ls K` with `Y_I ≅ FY.limit I` at every eligible `#I`: feeds
+`infra_83_eligible_list_data` for the template `Y_I`. -/
+theorem infra_83_pair_template_clauses_small (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) :
+    ∃ (F : TermTemplate K oneVertexShape.{u}.doubled)
+      (X Y : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible), P.scheme.Object #I hI)
+      (eX : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible) v,
+        ((F.present I).obj (Sum.inl v)).carrier ≃[K.τ] ((P.scheme.asSystem hI (X I hI)).obj v).carrier)
+      (eY : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible) v,
+        ((F.present I).obj (Sum.inr v)).carrier ≃[K.τ] ((P.scheme.asSystem hI (Y I hI)).obj v).carrier)
+      (incl : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
+        SystemArrow K oneVertexShape (P.scheme.asSystem hI (X I hI)) (P.scheme.asSystem hI (Y I hI)))
+      (mk : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
+        Fin Pr.n → Occurrence K oneVertexShape (P.scheme.asSystem hI (Y I hI))),
+      (∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible) v x,
+        (incl I hI).onVertex v (eX I hI v x) =
+          eY I hI v ((F.present I).edge
+            (show (oneVertexShape.{u}).doubled.specified (Sum.inl v) (Sum.inr v) from rfl) x)) ∧
+      (∀ (I J : Type u) [LinearOrder I] [Nonempty I] [LinearOrder J] [Nonempty J] (f : I ↪o J)
+        (hI : #I ∈ P.eligible) (hJ : #J ∈ P.eligible),
+        ∃ (onX : SystemArrow K oneVertexShape (P.scheme.asSystem hI (X I hI)) (P.scheme.asSystem hJ (X J hJ)))
+          (onY : SystemArrow K oneVertexShape (P.scheme.asSystem hI (Y I hI)) (P.scheme.asSystem hJ (Y J hJ))),
+          SystemArrow.comp (incl I hI) onY = SystemArrow.comp onX (incl J hJ) ∧
+          (∀ v x, onX.onVertex v (eX I hI v x) = eX J hJ v ((F.onOrder f).onVertex (Sum.inl v) x)) ∧
+          (∀ v x, onY.onVertex v (eY I hI v x) = eY J hJ v ((F.onOrder f).onVertex (Sum.inr v) x)) ∧
+          ∀ i, (⟨(mk I hI i).1, onY.onVertex (mk I hI i).1 (mk I hI i).2⟩ :
+            Occurrence K oneVertexShape (P.scheme.asSystem hJ (Y J hJ))) = mk J hJ i) ∧
+      ∃ FY : EM83.FinPieces K, (∀ k, #(FY.obj k).carrier ≤ ls K) ∧
+        ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
+          Nonempty ((FY.limit I).obj.carrier ≃[K.τ] (Y I hI).model.carrier) := by
+  obtain ⟨FX, FY, η, b, -, hη, hsm, X, Y, eX, eY, incl, hincl, harr⟩ := infra_83_pair_values_small P Pr
+  refine ⟨pairTemplate83 FX FY η, X, Y, fun I _ _ hI _ => eX I hI, fun I _ _ hI _ => eY I hI,
+    fun I _ _ hI => oneVertexArrow (incl I hI) (hincl I hI).1,
+    fun I _ _ hI i => ⟨PUnit.unit, eY I hI (b I i)⟩, fun I _ _ hI v x => (hincl I hI).2 x,
+    ?_, FY, hsm, fun I _ _ hI => ⟨eY I hI⟩⟩
+  intro I J _ _ _ _ f hI hJ
+  obtain ⟨onX, onY, h1, h2, h3, h4, h5, h6⟩ := harr I J f hI hJ
+  refine ⟨oneVertexArrow onX h1, oneVertexArrow onY h2, ?_, fun v x => h3 x, fun v x => h4 x,
+    fun i => Sigma.ext rfl (heq_of_eq (h6 i))⟩
+  show SystemArrow.mk _ _ _ = SystemArrow.mk _ _ _
+  congr 1
+  funext v
+  ext x
+  exact h5 x
+end
+
 end AEC
