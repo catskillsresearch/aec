@@ -4371,10 +4371,10 @@
    "id": "infra_72_mixed_level",
    "label": "Lemma 7.2 last sentence: clause 2 with A at a smaller eligible level than B",
    "section": 8,
-   "file": "AEC/Section7/Results.lean",
+   "file": "AEC/Section7/Lemma72Mixed.lean",
    "status": "open",
    "blocker": null,
-   "detail": "Cycle 96 audit finding. English Lemma 7.2: 'The second assertion also holds when A is at a smaller eligible level than B, provided (u, c) and the required uniform bounds are below the level of A.' Not formalized: lemma_7_2 / lemma_7_2_tied / infra_72_over_B_isolation are same-level only. Needed for 8.2(5) preservation (mixed over-B isolation with IsTiedFreeMixed marginal). Statement to add: mixed infra_72_over_B_isolation (A at nu <= mu = level of B, pushed fragment isolates qB over B)."
+   "detail": "Statement now in Lean (sorry), cycle 96: infra_72_mixed_level in AEC/Section7/Lemma72Mixed.lean, the mixed-level port of infra_72_over_B_isolation with bounds at the level of A and IsTiedFreeMixed marginal."
   }
  ],
  "edges": [

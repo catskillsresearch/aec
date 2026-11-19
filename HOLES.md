@@ -4,7 +4,7 @@ Inventory of Lean `sorry` holes in this repository, ordered **prove-first**: Lay
 are holes with no remaining unfinished prerequisites; later layers wait on earlier
 ones. Apex theorems 1.2 and 1.3 are **last**.
 
-**Count:** 38 `sorry`, 0 `admit`.
+**Count:** 39 `sorry`, 0 `admit`.
 Sections **2**, **3**, **4**, and **13** have no holes.
 
 **Dependency basis:** paper/logical order from `dependencies.mermaid`
@@ -33,8 +33,8 @@ Section 13 is complete and was never on that chain.
 | 3 | 0 | — |
 | 4 | 0 | — |
 | 5 | 0 | — |
-| 6 | 1 | `AEC/Section6/ProductTied.lean` (1) |
-| 7 | 2 | `AEC/Section7/MixedTiedLift.lean` (1), `AEC/Section7/Theorem713.lean` (1) |
+| 6 | 0 | — |
+| 7 | 2 | `AEC/Section7/Lemma72Mixed.lean` (1), `AEC/Section7/MixedTiedLift.lean` (1) |
 | 8 | 5 | `AEC/Section8/Results.lean` (5) |
 | 9 | 6 | `AEC/Section9/Results.lean` (6) |
 | 10 | 9 | `AEC/Section10/Results.lean` (9) |
@@ -42,7 +42,7 @@ Section 13 is complete and was never on that chain.
 | 12 | 4 | `AEC/Section12/Results.lean` (4) |
 | 13 | 0 | — |
 | 14 | 4 | `AEC/Section14/Results.lean` (4) |
-| **Total** | **40** | |
+| **Total** | **39** | |
 
 The table is the previous `Results.lean` rollup. The live count of declarations using
 `sorry` is **32** (48 at the start of the overnight run). `WorkingScheme.exists_approximationSequence`
@@ -457,7 +457,7 @@ Lean: imports `Section5.Results` and `Section6.Results`. Soft paper chain after 
 | `infra_82_orbit_diagram_cross_single` | Lemma 8.2(5) for `P.scheme`: diagram transport between two pairs | [`PairOrbitSingle.lean`](AEC/Section8/PairOrbitSingle.lean) (**done**, cycle 96) |
 | `infra_82_comparison_single` | Lemma 8.2(5) for `P.scheme`: comparisons preserved and reflected | `AEC/Section8/Results.lean` (open, cycle 96) |
 | `infra_82_mark_type_iso_single` | Lemma 8.2(5) for `P.scheme`: base isomorphisms carry the mark type | [`PairOrbitSingle.lean`](AEC/Section8/PairOrbitSingle.lean) (**done**, cycle 96) |
-| `infra_72_mixed_level` | Lemma 7.2 last sentence (A at a smaller level than B), not yet formalized (audit) | `AEC/Section7/Results.lean` (open, cycle 96) |
+| `infra_72_mixed_level` | Lemma 7.2 last sentence (A at a smaller level than B), stated with sorry (audit) | [`Lemma72Mixed.lean`](AEC/Section7/Lemma72Mixed.lean) (open, cycle 96) |
 | `infra_82_mark_tied_along_single` | Lemma 8.2(4) for `P.scheme`: tied freeness of the mark along arrows (Def 8.1 reading; ruling needed) | `AEC/Section8/PairOrbitSingle.lean` (open, cycle 96) |
 | `infra_82_orbit_tail_single` | Lemma 8.2(4) for `P.scheme`: diagonal closure (via `infra_615_closed`) | [`PairOrbitSingle.lean`](AEC/Section8/PairOrbitSingle.lean) (**done**, cycle 96) |
 | `infra_82_pointed_all` | Lemma 8.2(3) for `P.scheme` at every level | [`PairPointedSingle.lean`](AEC/Section8/PairPointedSingle.lean) (**done**, cycle 96) |
