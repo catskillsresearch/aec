@@ -247,6 +247,38 @@ theorem infra_83_lemma_8_3_weak_single (P : SingleModelData K)
     exact ⟨arr⟩
   · exact h2 I J f hI hJ heq
 
+/-- **Clause (3) of the faithful Lemma 8.3 for any choice of values (P.scheme).** English (Lemma
+8.3): "Every marked pair at a level is isomorphic to a value of this template of that size." For
+any family of marked pairs `val I` of level `#I` on a tail `T` of eligible levels, every marked pair
+at a level of `T` is isomorphic as a marked pair (vertexwise bijective marked arrow) to the value of
+its size: categoricity gives a base isomorphism, and `infra_82_iso_any` extends it to the pairs.
+So clause (3) of `Lemma83Conclusion` holds for whatever template presents the values. -/
+theorem infra_83_clause3_single (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) (T : Set Cardinal.{u})
+    (val : (I : Type u) → [LinearOrder I] → [WellFoundedLT I] → [Nonempty I] →
+        #I ∈ T → MarkedPair K oneVertexShape P.scheme Pr)
+    (hval : ∀ (I : Type u) [LinearOrder I] [WellFoundedLT I] [Nonempty I] (hI : #I ∈ T),
+      (val I hI).μ = #I) :
+    ∀ M : MarkedPair K oneVertexShape P.scheme Pr, M.μ ∈ T →
+      ∃ (I : Type u) (_ : LinearOrder I) (_ : WellFoundedLT I) (_ : Nonempty I)
+        (hI : #I ∈ T), #I = M.μ ∧
+        ∃ arr : MarkedArrow K oneVertexShape P.scheme Pr M (val I hI),
+          (∀ v, Function.Bijective (arr.onX.onVertex v)) ∧
+          ∀ v, Function.Bijective (arr.onY.onVertex v) := by
+  intro M hM
+  have : Nonempty M.μ.ord.ToType := by
+    rw [← Cardinal.mk_ne_zero_iff, mk_ord_toType]
+    exact (lt_of_lt_of_le Cardinal.aleph0_pos (P.aleph0_le M.hμ)).ne'
+  have hI : #M.μ.ord.ToType ∈ T := by rw [mk_ord_toType]; exact hM
+  refine ⟨M.μ.ord.ToType, inferInstance, inferInstance, inferInstance, hI, mk_ord_toType _, ?_⟩
+  have hlev : M.μ = (val _ hI).μ := (hval _ hI).trans (mk_ord_toType _) |>.symm
+  have hcat := SingleModelData.categorical (P := P) M.hμ
+  obtain ⟨E⟩ := hcat.unique_model M.X.model (val _ hI).X.model M.X.mem (val _ hI).X.mem
+    M.X.card ((val _ hI).X.card.trans hlev.symm)
+  obtain ⟨e, he⟩ := infra_83_arrow_of_equiv M.X (val _ hI).X E
+  obtain ⟨arr, harr, hbij⟩ := infra_82_iso_any P Pr M (val _ hI) e he trivial
+  exact ⟨arr, fun v => harr ▸ he v, hbij⟩
+
 /-- **Lemma 8.3 for the Prop 5.6 scheme, faithful form (open).** The restated
 `Lemma83Conclusion` (cycle 101, matching the English: the template values are the marked pairs,
 edge and marks included; order embeddings give the marked arrows `F^b(f)`; every marked pair is
