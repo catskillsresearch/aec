@@ -542,6 +542,7 @@ Lean: imports `Section5.Results` and `Section6.Results`. Soft paper chain after 
 | `infra_83_template_from_colors` | Lemma 8.3 proof: EM-limit pair template from coherent colors | [`HullExtract83.lean`](AEC/Section8/HullExtract83.lean) (open, cycle 102) |
 | `infra_83_order_sat_extension` | Lemma 8.3 proof: order saturation extension lemma | [`OrderSat83.lean`](AEC/Section8/OrderSat83.lean) (**done**, cycle 102) |
 | `infra_83_saturated_orders_exist` | Lemma 8.3 proof: saturated padded dense orders at tail levels | [`OrderSat83.lean`](AEC/Section8/OrderSat83.lean) (open, cycle 102) |
+| `infra_83_color_tower_section2` | Lemma 8.3 reuse check: Section 2 colors as instance of the generic tower | [`HullExtract83Section2.lean`](AEC/Section8/HullExtract83Section2.lean) (**done**, cycle 102) |
 | `infra_72_mixed_level` | Lemma 7.2 last sentence (A at a smaller level than B), stated with sorry (audit) | [`Lemma72Mixed.lean`](AEC/Section7/Lemma72Mixed.lean) (open, cycle 96) |
 | `infra_82_tiedFreeMixed_base_equiv` | Mixed tied freeness under a reindexed change of base tuple | [`TiedAlong.lean`](AEC/Section8/TiedAlong.lean) (**done**, cycle 97) |
 | `infra_82_mark_tied_along_single` | Lemma 8.2(4) for `P.scheme`: tied freeness of the mark along arrows (Def 8.1 tied, cycle 97 ruling) | [`TiedAlong.lean`](AEC/Section8/TiedAlong.lean) (**done**, cycle 97) |
