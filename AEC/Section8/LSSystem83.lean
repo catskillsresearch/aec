@@ -24,7 +24,7 @@ open FirstOrder Cardinal
 
 variable {K : AbstractElementaryClass.{u}}
 
-variable {M : Model K.τ} (hM : K.Mem M)
+variable {M : Model K.τ} (ch : ∀ A : Set M.carrier, ChosenHull K M A)
 
 /-- The nonempty subsets of `s` of strictly smaller cardinality. -/
 def properSubs {α : Type u} [DecidableEq α] (s : Finset α) : Finset (Finset α) :=
@@ -54,7 +54,7 @@ noncomputable def subHullStep (s : {t : Finset α // t.Nonempty})
     (rec : ∀ t : {t : Finset α // t.Nonempty}, t.1.card < s.1.card →
       Σ A : Set M.carrier, ChosenHull K M A) :
     Σ A : Set M.carrier, ChosenHull K M A :=
-  ⟨displayed base s ∪ lowerRanges s rec, chosenHull hM (displayed base s ∪ lowerRanges s rec)⟩
+  ⟨displayed base s ∪ lowerRanges s rec, ch (displayed base s ∪ lowerRanges s rec)⟩
 
 omit [DecidableEq α] in
 theorem cardRel_wf :
@@ -65,83 +65,83 @@ theorem cardRel_wf :
 on the size of the subset. -/
 noncomputable def subHull :
     (s : {t : Finset α // t.Nonempty}) → Σ A : Set M.carrier, ChosenHull K M A :=
-  WellFounded.fix cardRel_wf (subHullStep hM base)
+  WellFounded.fix cardRel_wf (subHullStep ch base)
 
 theorem subHull_eq (s : {t : Finset α // t.Nonempty}) :
-    subHull hM base s =
-      subHullStep hM base s fun t _ => subHull hM base t :=
+    subHull ch base s =
+      subHullStep ch base s fun t _ => subHull ch base t :=
   WellFounded.fix_eq _ _ _
 
 /-- The strong submodel assigned to a nonempty finite set of displayed elements. -/
 noncomputable def subModel (s : {t : Finset α // t.Nonempty}) : Model K.τ :=
-  (subHull hM base s).2.obj
+  (subHull ch base s).2.obj
 
 noncomputable def subIncl (s : {t : Finset α // t.Nonempty}) :
-    Language.Embedding K.τ (subModel hM base s).carrier M.carrier :=
-  (subHull hM base s).2.incl
+    Language.Embedding K.τ (subModel ch base s).carrier M.carrier :=
+  (subHull ch base s).2.incl
 
 theorem subModel_mem (s : {t : Finset α // t.Nonempty}) :
-    K.Mem (subModel hM base s) :=
-  (subHull hM base s).2.mem
+    K.Mem (subModel ch base s) :=
+  (subHull ch base s).2.mem
 
 theorem subIncl_strong (s : {t : Finset α // t.Nonempty}) :
-    K.Strong (subIncl hM base s) :=
-  (subHull hM base s).2.strong
+    K.Strong (subIncl ch base s) :=
+  (subHull ch base s).2.strong
 
 theorem subIncl_covers (s : {t : Finset α // t.Nonempty})
-    {a : M.carrier} (ha : a ∈ (subHull hM base s).1) :
-    ∃ x, subIncl hM base s x = a :=
-  (subHull hM base s).2.covers a ha
+    {a : M.carrier} (ha : a ∈ (subHull ch base s).1) :
+    ∃ x, subIncl ch base s x = a :=
+  (subHull ch base s).2.covers a ha
 
 /-- A smaller hull sits inside a larger one. The two inclusions into `M` determine the
 factor, and coherence makes that factor strong. -/
 noncomputable def subInclFactor
     (t s : {t : Finset α // t.Nonempty})
     (hsub : t.1 ⊆ s.1) (hlt : t.1.card < s.1.card) :
-    Language.Embedding K.τ (subModel hM base t).carrier (subModel hM base s).carrier :=
-  factorEmbedding (subIncl hM base t) (subIncl hM base s) fun x => by
+    Language.Embedding K.τ (subModel ch base t).carrier (subModel ch base s).carrier :=
+  factorEmbedding (subIncl ch base t) (subIncl ch base s) fun x => by
     have htmem : t.1 ∈ properSubs s.1 := mem_properSubs.mpr ⟨hsub, t.2, hlt⟩
-    have hrange : subIncl hM base t x ∈ (subHull hM base s).1 := by
-      rw [subHull_eq hM base s]
+    have hrange : subIncl ch base t x ∈ (subHull ch base s).1 := by
+      rw [subHull_eq ch base s]
       refine Or.inr ?_
       refine Set.mem_iUnion.mpr ?_
       refine ⟨ULift.up ⟨t.1, htmem⟩, ?_⟩
       exact ⟨x, rfl⟩
-    exact subIncl_covers hM base s hrange
+    exact subIncl_covers ch base s hrange
 
 theorem subInclFactor_comp (t s : {t : Finset α // t.Nonempty})
     (hsub : t.1 ⊆ s.1) (hlt : t.1.card < s.1.card) :
-    (subIncl hM base s).comp (subInclFactor hM base t s hsub hlt) = subIncl hM base t :=
+    (subIncl ch base s).comp (subInclFactor ch base t s hsub hlt) = subIncl ch base t :=
   factorEmbedding_comp _ _ _
 
 theorem subInclFactor_strong (t s : {t : Finset α // t.Nonempty})
     (hsub : t.1 ⊆ s.1) (hlt : t.1.card < s.1.card) :
-    K.Strong (subInclFactor hM base t s hsub hlt) :=
-  K.coherence (subInclFactor hM base t s hsub hlt) (subIncl hM base t) (subIncl hM base s)
-    (subIncl_strong hM base t) (subIncl_strong hM base s)
-    (subInclFactor_comp hM base t s hsub hlt)
+    K.Strong (subInclFactor ch base t s hsub hlt) :=
+  K.coherence (subInclFactor ch base t s hsub hlt) (subIncl ch base t) (subIncl ch base s)
+    (subIncl_strong ch base t) (subIncl_strong ch base s)
+    (subInclFactor_comp ch base t s hsub hlt)
 
 /-- Finitely many smaller hulls, each of size at most `LS(K)`, still have size at most `LS(K)`. -/
 theorem subModel_card (s : {t : Finset α // t.Nonempty}) :
-    Model.card (subModel hM base s) ≤ ls K := by
+    Model.card (subModel ch base s) ≤ ls K := by
   refine WellFounded.induction
-    (C := fun s => Model.card (subModel hM base s) ≤ ls K) cardRel_wf s ?_
+    (C := fun s => Model.card (subModel ch base s) ≤ ls K) cardRel_wf s ?_
   intro s ih
   have hall : aleph0 ≤ ls K := (isLSBound_ls K).1
-  have hle : Model.card (subModel hM base s) ≤ mk (subHull hM base s).1 + ls K :=
-    (subHull hM base s).2.card_le
-  have hA : mk (subHull hM base s).1 ≤ ls K := by
-    rw [subHull_eq hM base s]
+  have hle : Model.card (subModel ch base s) ≤ mk (subHull ch base s).1 + ls K :=
+    (subHull ch base s).2.card_le
+  have hA : mk (subHull ch base s).1 ≤ ls K := by
+    rw [subHull_eq ch base s]
     have hset :
-        (subHullStep hM base s (fun t _ => subHull hM base t)).1 =
-          displayed base s ∪ lowerRanges s (fun t _ => subHull hM base t) := rfl
+        (subHullStep ch base s (fun t _ => subHull ch base t)).1 =
+          displayed base s ∪ lowerRanges s (fun t _ => subHull ch base t) := rfl
     rw [hset]
     refine (mk_union_le _ _).trans ?_
     have himg : mk (displayed base s) ≤ ls K := by
       have hfin : (displayed base s).Finite := (s.1.finite_toSet).image base
       exact (mk_le_aleph0_iff.mpr hfin.countable).trans hall
     let recs : ∀ t : {t : Finset α // t.Nonempty}, t.1.card < s.1.card →
-        Σ A : Set M.carrier, ChosenHull K M A := fun t _ => subHull hM base t
+        Σ A : Set M.carrier, ChosenHull K M A := fun t _ => subHull ch base t
     have hpieces : mk (lowerRanges s recs) ≤ ls K := by
       let pieceSet : ULift.{u} ↥(properSubs s.1) → Set M.carrier := fun t =>
         let ht := mem_properSubs.mp t.down.2
@@ -159,34 +159,37 @@ theorem subModel_card (s : {t : Finset α // t.Nonempty}) :
       rw [aleph0_mul_eq hall]
     exact (add_le_add himg hpieces).trans <| by
       rw [add_eq_max hall, max_self]
-  calc Model.card (subModel hM base s)
-      ≤ mk (subHull hM base s).1 + ls K := hle
-    _ = ls K + mk (subHull hM base s).1 := add_comm _ _
-    _ = max (ls K) (mk (subHull hM base s).1) := add_eq_max hall
+  calc Model.card (subModel ch base s)
+      ≤ mk (subHull ch base s).1 + ls K := hle
+    _ = ls K + mk (subHull ch base s).1 := add_comm _ _
+    _ = max (ls K) (mk (subHull ch base s).1) := add_eq_max hall
     _ = ls K := max_eq_left hA
 
+
+theorem mem_of_ch (ch : ∀ A : Set M.carrier, ChosenHull K M A) : K.Mem M :=
+  K.strong_mem_cod _ (ch ∅).strong
 
 section System
 
 variable {α : Type u} [DecidableEq α] (base : α → M.carrier)
 
 theorem subIncl_covers_sub (t s : {t : Finset α // t.Nonempty}) (hts : t.1 ⊆ s.1)
-    (x : (subModel hM base t).carrier) : ∃ y, subIncl hM base s y = subIncl hM base t x := by
+    (x : (subModel ch base t).carrier) : ∃ y, subIncl ch base s y = subIncl ch base t x := by
   by_cases hlt : t.1.card < s.1.card
-  · exact ⟨subInclFactor hM base t s hts hlt x,
-      congrFun (congrArg (⇑) (subInclFactor_comp hM base t s hts hlt)) x⟩
+  · exact ⟨subInclFactor ch base t s hts hlt x,
+      congrFun (congrArg (⇑) (subInclFactor_comp ch base t s hts hlt)) x⟩
   · have hst : t = s := Subtype.ext (Finset.eq_of_subset_of_card_le hts (not_lt.mp hlt))
     subst hst
     exact ⟨x, rfl⟩
 
 /-- The maps of the finite-subset system. -/
 noncomputable def sysMap (t s : {t : Finset α // t.Nonempty}) (hts : t.1 ⊆ s.1) :
-    (subModel hM base t).carrier ↪[K.τ] (subModel hM base s).carrier :=
-  factorEmbedding (subIncl hM base t) (subIncl hM base s) (subIncl_covers_sub hM base t s hts)
+    (subModel ch base t).carrier ↪[K.τ] (subModel ch base s).carrier :=
+  factorEmbedding (subIncl ch base t) (subIncl ch base s) (subIncl_covers_sub ch base t s hts)
 
 theorem sysMap_spec (t s : {t : Finset α // t.Nonempty}) (hts : t.1 ⊆ s.1) (x) :
-    subIncl hM base s (sysMap hM base t s hts x) = subIncl hM base t x :=
-  congrFun (congrArg (⇑) (factorEmbedding_comp _ _ (subIncl_covers_sub hM base t s hts))) x
+    subIncl ch base s (sysMap ch base t s hts x) = subIncl ch base t x :=
+  congrFun (congrArg (⇑) (factorEmbedding_comp _ _ (subIncl_covers_sub ch base t s hts))) x
 
 /-- **The finite-subset LS system** as a directed system of models of `K`. -/
 noncomputable def lsSystem [Nonempty α] : DirectedSystem K.τ where
@@ -197,22 +200,22 @@ noncomputable def lsSystem [Nonempty α] : DirectedSystem K.τ where
   trans h h' := h.trans h'
   directed t s := ⟨⟨t.1 ∪ s.1, t.2.mono Finset.subset_union_left⟩,
     Finset.subset_union_left, Finset.subset_union_right⟩
-  obj t := subModel hM base t
-  map {t s} h := sysMap hM base t s h
+  obj t := subModel ch base t
+  map {t s} h := sysMap ch base t s h
   map_refl t := by
     ext x
-    exact (subIncl hM base t).injective (sysMap_spec hM base t t _ x)
+    exact (subIncl ch base t).injective (sysMap_spec ch base t t _ x)
   map_trans {t s r} h h' := by
     ext x
-    apply (subIncl hM base r).injective
+    apply (subIncl ch base r).injective
     rw [sysMap_spec]
     simp only [Language.Embedding.comp_apply]
     rw [sysMap_spec, sysMap_spec]
 
-theorem lsSystem_strong [Nonempty α] {t s : (lsSystem hM base).ι}
-    (h : (lsSystem hM base).rel t s) : K.Strong ((lsSystem hM base).map h) :=
-  K.coherence _ (subIncl hM base t) (subIncl hM base s) (subIncl_strong hM base t)
-    (subIncl_strong hM base s) (by ext x; exact sysMap_spec hM base t s h x)
+theorem lsSystem_strong [Nonempty α] {t s : (lsSystem ch base).ι}
+    (h : (lsSystem ch base).rel t s) : K.Strong ((lsSystem ch base).map h) :=
+  K.coherence _ (subIncl ch base t) (subIncl ch base s) (subIncl_strong ch base t)
+    (subIncl_strong ch base s) (by ext x; exact sysMap_spec ch base t s h x)
 
 end System
 
@@ -262,27 +265,27 @@ the embedding) the LS hull `N_s` of every nonempty finite set `s` of its element
 embedding is strong.  Closure under LS witness functions is exactly this condition. -/
 theorem strong_of_hull_closed {A : Model K.τ} [Nonempty A.carrier]
     (incl : A.carrier ↪[K.τ] M.carrier)
-    (hcl : ∀ (s : {t : Finset A.carrier // t.Nonempty}) (x : (subModel hM incl s).carrier),
-      ∃ a, incl a = subIncl hM incl s x) :
+    (hcl : ∀ (s : {t : Finset A.carrier // t.Nonempty}) (x : (subModel ch incl s).carrier),
+      ∃ a, incl a = subIncl ch incl s x) :
     K.Strong incl := by
-  let S := lsSystem hM incl
+  let S := lsSystem ch incl
   let g : ∀ s : S.ι, (S.obj s).carrier ↪[K.τ] A.carrier := fun s =>
-    factorEmbedding (subIncl hM incl s) incl (hcl s)
-  have hg : ∀ s, incl.comp (g s) = subIncl hM incl s := fun s =>
+    factorEmbedding (subIncl ch incl s) incl (hcl s)
+  have hg : ∀ s, incl.comp (g s) = subIncl ch incl s := fun s =>
     factorEmbedding_comp _ _ (hcl s)
-  refine strong_of_directed_cover S (fun s => subModel_mem hM incl s)
-    (fun h => lsSystem_strong hM incl h) hM incl g (fun s => by rw [hg]; exact subIncl_strong hM incl s)
+  refine strong_of_directed_cover S (fun s => subModel_mem ch incl s)
+    (fun h => lsSystem_strong ch incl h) (mem_of_ch ch) incl g (fun s => by rw [hg]; exact subIncl_strong ch incl s)
     (fun {s t} hst => ?_) (fun a => ?_)
   · ext x
     apply incl.injective
     have h1 := congrFun (congrArg (⇑) (hg t)) (S.map hst x)
     have h2 := congrFun (congrArg (⇑) (hg s)) x
-    exact h1.trans ((sysMap_spec hM incl s t hst x).trans h2.symm)
+    exact h1.trans ((sysMap_spec ch incl s t hst x).trans h2.symm)
   · let s : S.ι := ⟨{a}, Finset.singleton_nonempty a⟩
-    have hmem : incl a ∈ (subHull hM incl s).1 := by
-      rw [subHull_eq hM incl s]
+    have hmem : incl a ∈ (subHull ch incl s).1 := by
+      rw [subHull_eq ch incl s]
       exact Or.inl ⟨a, Finset.mem_singleton_self a, rfl⟩
-    obtain ⟨x, hx⟩ := subIncl_covers hM incl s hmem
+    obtain ⟨x, hx⟩ := subIncl_covers ch incl s hmem
     refine ⟨s, x, incl.injective ?_⟩
     exact (congrFun (congrArg (⇑) (hg s)) x).trans hx
 

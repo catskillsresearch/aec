@@ -69,7 +69,7 @@ theorem lsLang_card_le : (lsLang K).card ≤ ls K := by
 
 section Pull
 
-variable {M : Model K.τ} (hM : K.Mem M) [DecidableEq M.carrier]
+variable {M : Model K.τ} (ch : ∀ A : Set M.carrier, ChosenHull K M A) [DecidableEq M.carrier]
 variable {A : Model K.τ} (incl : A.carrier ↪[K.τ] M.carrier)
 
 /-- The image in `M` of a nonempty finite set of elements of `A`. -/
@@ -92,52 +92,52 @@ noncomputable def pullSystem [Nonempty A.carrier] : DirectedSystem K.τ where
     classical
     exact ⟨⟨t.1 ∪ s.1, t.2.mono Finset.subset_union_left⟩,
       Finset.subset_union_left, Finset.subset_union_right⟩
-  obj t := subModel hM id (mapS incl t)
-  map {t s} h := sysMap hM id (mapS incl t) (mapS incl s)
+  obj t := subModel ch id (mapS incl t)
+  map {t s} h := sysMap ch id (mapS incl t) (mapS incl s)
     (show (mapS incl t).1 ⊆ (mapS incl s).1 from Finset.map_subset_map.mpr h)
   map_refl t := by
     ext x
-    exact (subIncl hM id _).injective (sysMap_spec hM id _ _ _ x)
+    exact (subIncl ch id _).injective (sysMap_spec ch id _ _ _ x)
   map_trans {t s r} h h' := by
     ext x
-    apply (subIncl hM id (mapS incl r)).injective
+    apply (subIncl ch id (mapS incl r)).injective
     rw [sysMap_spec]
     simp only [Language.Embedding.comp_apply]
     rw [sysMap_spec, sysMap_spec]
 
-theorem pullSystem_strong [Nonempty A.carrier] {t s : (pullSystem hM incl).ι}
-    (h : (pullSystem hM incl).rel t s) : K.Strong ((pullSystem hM incl).map h) :=
-  K.coherence _ (subIncl hM id (mapS incl t)) (subIncl hM id (mapS incl s))
-    (subIncl_strong hM id _) (subIncl_strong hM id _)
-    (by ext x; exact sysMap_spec hM id _ _ (mapS_mono incl h) x)
+theorem pullSystem_strong [Nonempty A.carrier] {t s : (pullSystem ch incl).ι}
+    (h : (pullSystem ch incl).rel t s) : K.Strong ((pullSystem ch incl).map h) :=
+  K.coherence _ (subIncl ch id (mapS incl t)) (subIncl ch id (mapS incl s))
+    (subIncl_strong ch id _) (subIncl_strong ch id _)
+    (by ext x; exact sysMap_spec ch id _ _ (mapS_mono incl h) x)
 
 /-- **Hull-closed submodels are strong** (hulls computed in `M`).  If `A` embedded in `M ∈ K`
 contains the `M`-hull `N_s` of the image of every nonempty finite set of its elements, then
 the embedding is strong. -/
 theorem strong_of_hull_closed' [Nonempty A.carrier]
     (hcl : ∀ (s : {t : Finset A.carrier // t.Nonempty})
-      (x : (subModel hM id (mapS incl s)).carrier),
-      ∃ a, incl a = subIncl hM id (mapS incl s) x) :
+      (x : (subModel ch id (mapS incl s)).carrier),
+      ∃ a, incl a = subIncl ch id (mapS incl s) x) :
     K.Strong incl := by
-  let S := pullSystem hM incl
+  let S := pullSystem ch incl
   let g : ∀ s : S.ι, (S.obj s).carrier ↪[K.τ] A.carrier := fun s =>
-    factorEmbedding (subIncl hM id (mapS incl s)) incl (hcl s)
-  have hg : ∀ s, incl.comp (g s) = subIncl hM id (mapS incl s) := fun s =>
+    factorEmbedding (subIncl ch id (mapS incl s)) incl (hcl s)
+  have hg : ∀ s, incl.comp (g s) = subIncl ch id (mapS incl s) := fun s =>
     factorEmbedding_comp _ _ (hcl s)
-  refine strong_of_directed_cover S (fun s => subModel_mem hM id _)
-    (fun h => pullSystem_strong hM incl h) hM incl g
-    (fun s => by rw [hg]; exact subIncl_strong hM id _) (fun {s t} hst => ?_) (fun a => ?_)
+  refine strong_of_directed_cover S (fun s => subModel_mem ch id _)
+    (fun h => pullSystem_strong ch incl h) (mem_of_ch ch) incl g
+    (fun s => by rw [hg]; exact subIncl_strong ch id _) (fun {s t} hst => ?_) (fun a => ?_)
   · ext x
     apply incl.injective
     have h1 := congrFun (congrArg (⇑) (hg t)) (S.map hst x)
     have h2 := congrFun (congrArg (⇑) (hg s)) x
-    exact h1.trans ((sysMap_spec hM id _ _ (mapS_mono incl hst) x).trans h2.symm)
+    exact h1.trans ((sysMap_spec ch id _ _ (mapS_mono incl hst) x).trans h2.symm)
   · let s : S.ι := ⟨{a}, Finset.singleton_nonempty a⟩
-    have hmem : incl a ∈ (subHull hM id (mapS incl s)).1 := by
-      rw [subHull_eq hM id (mapS incl s)]
+    have hmem : incl a ∈ (subHull ch id (mapS incl s)).1 := by
+      rw [subHull_eq ch id (mapS incl s)]
       refine Or.inl ⟨incl a, ?_, rfl⟩
       exact Finset.mem_map_of_mem _ (Finset.mem_singleton_self a)
-    obtain ⟨x, hx⟩ := subIncl_covers hM id (mapS incl s) hmem
+    obtain ⟨x, hx⟩ := subIncl_covers ch id (mapS incl s) hmem
     refine ⟨s, x, incl.injective ?_⟩
     exact (congrFun (congrArg (⇑) (hg s)) x).trans hx
 
@@ -145,49 +145,49 @@ end Pull
 
 section Witness
 
-variable {M : Model K.τ} (hM : K.Mem M) [DecidableEq M.carrier]
+variable {M : Model K.τ} (ch : ∀ A : Set M.carrier, ChosenHull K M A) [DecidableEq M.carrier]
 
 /-- The finite set of entries of a tuple. -/
 def entries {n : ℕ} (x : Fin (n + 1) → M.carrier) : {t : Finset M.carrier // t.Nonempty} :=
   ⟨Finset.univ.image x, Finset.univ_nonempty.image _⟩
 
 theorem subModel_nonempty (s : {t : Finset M.carrier // t.Nonempty}) :
-    Nonempty (subModel hM id s).carrier := by
+    Nonempty (subModel ch id s).carrier := by
   obtain ⟨a, ha⟩ := s.2
-  have hmem : a ∈ (subHull hM id s).1 := by
-    rw [subHull_eq hM id s]
+  have hmem : a ∈ (subHull ch id s).1 := by
+    rw [subHull_eq ch id s]
     exact Or.inl ⟨a, ha, rfl⟩
-  obtain ⟨x, -⟩ := subIncl_covers hM id s hmem
+  obtain ⟨x, -⟩ := subIncl_covers ch id s hmem
   exact ⟨x⟩
 
 /-- An injection of a hull into `Enum K` (hulls have size at most `LS(K)`). -/
 noncomputable def hullEnum (s : {t : Finset M.carrier // t.Nonempty}) :
-    (subModel hM id s).carrier ↪ Enum K :=
+    (subModel ch id s).carrier ↪ Enum K :=
   Classical.choice <| by
     rw [← Cardinal.le_def, enum_card]
-    exact subModel_card hM id s
+    exact subModel_card ch id s
 
 /-- Enumerate a hull by `Enum K`. -/
 noncomputable def hullPt (s : {t : Finset M.carrier // t.Nonempty}) (η : Enum K) :
-    (subModel hM id s).carrier :=
-  haveI := subModel_nonempty hM s
-  Function.invFun (hullEnum hM s) η
+    (subModel ch id s).carrier :=
+  haveI := subModel_nonempty ch s
+  Function.invFun (hullEnum ch s) η
 
 theorem hullPt_surj (s : {t : Finset M.carrier // t.Nonempty})
-    (y : (subModel hM id s).carrier) : ∃ η, hullPt hM s η = y := by
-  have := subModel_nonempty hM s
-  exact ⟨hullEnum hM s y, Function.leftInverse_invFun (hullEnum hM s).injective y⟩
+    (y : (subModel ch id s).carrier) : ∃ η, hullPt ch s η = y := by
+  have := subModel_nonempty ch s
+  exact ⟨hullEnum ch s y, Function.leftInverse_invFun (hullEnum ch s).injective y⟩
 
 /-- The witness function `η` of arity `n + 1`: the `η`-th element of the hull of the
 entries. -/
 noncomputable def witFun {n : ℕ} (η : Enum K) (x : Fin (n + 1) → M.carrier) : M.carrier :=
-  subIncl hM id (entries x) (hullPt hM (entries x) η)
+  subIncl ch id (entries x) (hullPt ch (entries x) η)
 
 theorem witFun_onto {n : ℕ} (x : Fin (n + 1) → M.carrier) (s : {t : Finset M.carrier // t.Nonempty})
-    (hs : entries x = s) (y : (subModel hM id s).carrier) :
-    ∃ η, witFun hM η x = subIncl hM id s y := by
+    (hs : entries x = s) (y : (subModel ch id s).carrier) :
+    ∃ η, witFun ch η x = subIncl ch id s y := by
   subst hs
-  obtain ⟨η, hη⟩ := hullPt_surj hM (entries x) y
+  obtain ⟨η, hη⟩ := hullPt_surj ch (entries x) y
   exact ⟨η, by rw [witFun, hη]⟩
 
 /-- The witness structure on `M`. -/
@@ -195,16 +195,16 @@ theorem witFun_onto {n : ℕ} (x : Fin (n + 1) → M.carrier) (s : {t : Finset M
 noncomputable def witStr : (lsW K).Structure M.carrier where
   funMap := fun {n} => match n with
     | 0 => fun f => PEmpty.elim f
-    | _ + 1 => fun η x => witFun hM η x
+    | _ + 1 => fun η x => witFun ch η x
   RelMap := fun r => PEmpty.elim r
 
 /-- **Witness-closed submodels are strong.** -/
 theorem strong_of_witness_closed {A : Model K.τ} [Nonempty A.carrier]
     (incl : A.carrier ↪[K.τ] M.carrier)
     (hcl : ∀ (n : ℕ) (η : Enum K) (x : Fin (n + 1) → A.carrier),
-      ∃ a, incl a = witFun hM η (fun i => incl (x i))) :
+      ∃ a, incl a = witFun ch η (fun i => incl (x i))) :
     K.Strong incl := by
-  refine strong_of_hull_closed' hM incl fun t y => ?_
+  refine strong_of_hull_closed' ch incl fun t y => ?_
   obtain ⟨k, hk⟩ : ∃ k, t.1.card = k + 1 :=
     Nat.exists_eq_succ_of_ne_zero ((Finset.card_pos.mpr t.2).ne')
   let x : Fin (k + 1) → A.carrier := fun i => (t.1.equivFin.symm (Fin.cast hk.symm i)).1
@@ -219,7 +219,7 @@ theorem strong_of_witness_closed {A : Model K.τ} [Nonempty A.carrier]
       refine ⟨Fin.cast hk (t.1.equivFin ⟨a, ha⟩), ?_⟩
       simp [x]
       rfl
-  obtain ⟨η, hη⟩ := witFun_onto hM _ _ himg y
+  obtain ⟨η, hη⟩ := witFun_onto ch _ _ himg y
   obtain ⟨a, ha⟩ := hcl k η x
   exact ⟨a, ha.trans hη⟩
 
@@ -245,7 +245,7 @@ def LSClosed (N : Type u) [(lsLang K).Structure N] : Prop :=
 @[instance_reducible]
 noncomputable def lsStr {M : Model K.τ} (hM : K.Mem M) [DecidableEq M.carrier] :
     (lsLang K).Structure M.carrier :=
-  @Language.sumStructure _ _ _ M.str (witStr hM)
+  @Language.sumStructure _ _ _ M.str (witStr (chosenHull hM))
 
 /-- The witness expansion expands `M`: its `τ(K)`-reduct is `M`. -/
 theorem lsStr_reduct {M : Model K.τ} (hM : K.Mem M) [DecidableEq M.carrier] :
@@ -260,7 +260,7 @@ theorem exists_ls_expansion (M : Model K.τ) (hM : K.Mem M) :
   refine ⟨lsStr hM, rfl, hM, fun A hA => ?_⟩
   let _ := lsStr hM
   have : Nonempty (red (lsInl K) A).carrier := hA.to_subtype
-  refine strong_of_witness_closed hM (A := red (lsInl K) A) (redEmb (lsInl K) A.subtype)
+  refine strong_of_witness_closed (chosenHull hM) (A := red (lsInl K) A) (redEmb (lsInl K) A.subtype)
     fun n η x => ?_
   exact ⟨⟨_, A.fun_mem (Sum.inr η : (lsLang K).Functions (n + 1)) (fun i => (x i).1)
     (fun i => (x i).2)⟩, rfl⟩

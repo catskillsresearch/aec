@@ -222,6 +222,7 @@ public import AEC.Section8.HullSub83
 public import AEC.Section8.HullBundle83
 public import AEC.Section8.LSSystem83
 public import AEC.Section8.LSExpansion83
+public import AEC.Section8.LSNested83
 public import AEC.Section8.Lemma84Single
 public import AEC.Section8.Results
 public import AEC.Section8.StationaryPrescription
