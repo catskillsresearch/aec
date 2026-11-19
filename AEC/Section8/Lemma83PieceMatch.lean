@@ -2123,4 +2123,48 @@ theorem infra_83_piece_meet_of_chart (P : SingleModelData K)
       (infra_83_chart_sub_of_points P.E emb e0 (inclu.onVertex PUnit.unit) gY ψ hψ hX _ hpts))
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+set_option maxHeartbeats 1600000 in
+/-- **All-domination is constructive primeness (proved characterization).** On the Theorem 7.9
+tail, for a finite mark `b`, `Y` is all-dominated over `X + b` iff `Y` maps over `X`, carrying `b`
+to `b'`, into every all-dominated `V` over `X + b'` with `tp(b'/X) = tp(b/X)` (Theorem 7.9
+primeness for `→`, existence + `infra_83_dominated_pull` for `←`). So
+`infra_83_full_single_of_primeness` loses nothing: the remaining content of arity removal is
+exactly this primeness of the template values. -/
+theorem infra_83_dominated_iff_primeness (P : SingleModelData K) :
+    ∃ T, ∃ hT : Tail P.eligible T,
+      ∀ μ (hμ : μ ∈ T) (X Y : P.scheme.Object μ (Tail.mem hT hμ))
+        (incl : SystemArrow K oneVertexShape (P.scheme.asSystem _ X) (P.scheme.asSystem _ Y))
+        {bIdx : Type u} [Finite bIdx]
+        (b : bIdx → Occurrence K oneVertexShape (P.scheme.asSystem _ Y)),
+        AllDominated incl trivial bIdx b ↔
+        (∀ (V : P.scheme.Object μ (Tail.mem hT hμ))
+          (inclV : SystemArrow K oneVertexShape (P.scheme.asSystem _ X) (P.scheme.asSystem _ V))
+          (b' : bIdx → Occurrence K oneVertexShape (P.scheme.asSystem _ V)),
+          AllDominated inclV trivial bIdx b' →
+          SameGaloisType (asTuple incl trivial b) (asTuple inclV trivial b')
+            (Equiv.refl bIdx) (Equiv.refl bIdx) →
+          ∃ h : SystemArrow K oneVertexShape (P.scheme.asSystem _ Y) (P.scheme.asSystem _ V),
+            SystemArrow.comp incl h = inclV ∧ ∀ i, h.mapOcc (b i) = b' i) := by
+  obtain ⟨T, hT, H79⟩ := theorem_7_9 P
+  refine ⟨T, hT, fun μ hμ X Y incl bIdx _ b => ⟨fun hD V inclV b' _ hS => ?_, fun H => ?_⟩⟩
+  · obtain ⟨-, hprime⟩ := (H79 μ hμ X (asTuple incl trivial b)).1 (inferInstanceAs (Finite bIdx))
+    obtain ⟨h, -, hh, hb⟩ := hprime Y incl trivial b hD (SameGaloisType.refl _) μ
+      (Tail.mem hT hμ) V inclV trivial b' le_rfl hS
+    refine ⟨h, hh, fun i => ?_⟩
+    apply Sigma.ext
+    · exact Subsingleton.elim _ _
+    · exact heq_of_eq (hb i)
+  · obtain ⟨⟨V, f, hf, b', hD, hS⟩, -⟩ :=
+      (H79 μ hμ X (asTuple incl trivial b)).1 (inferInstanceAs (Finite bIdx))
+    obtain ⟨h, hh, hb⟩ := H V f b' hD hS
+    have hb' : b' = fun i => h.mapOcc (b i) := (funext hb).symm
+    subst hb' hh
+    exact infra_83_dominated_pull P incl trivial h b
+      ((Cardinal.lt_aleph0_of_finite _).trans (P.aleph0_lt (Tail.mem hT hμ))) hD
+end
+
 end AEC
