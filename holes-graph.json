@@ -7012,6 +7012,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 164: proved."
+  },
+  {
+   "id": "infra_83_isolation_of_matched_tuple",
+   "label": "Bounded-arity step for one matched tuple: X_H -> X by toA, u in Y_H identified with u* in the sample (Galois type over X_H), only retraction images of u* in toA[X_H], tp(u*/X) isolated rel b* => tp(u/X_H) isolated rel b (tuple (7) + left congr + mixed Lemma 7.6); no arrow of Y_H",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83TupleDominated.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 165: proved."
   }
  ],
  "edges": [
@@ -12877,8 +12886,13 @@
    "from": "infra_83_marked_of_sample_tuples",
    "to": "infra_83_bounded_arity_free",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_isolation_of_matched_tuple",
+   "to": "infra_83_bounded_arity_free",
+   "kind": "hard"
   }
  ],
- "doneCount": 711,
+ "doneCount": 712,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

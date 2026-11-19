@@ -4,6 +4,7 @@ public import AEC.Section8.Lemma83TupleDescent
 public import AEC.Section8.Lemma83Isolation
 public import AEC.Section7.IsolationTransfer
 public import AEC.Section7.Prop78General
+public import AEC.Section7.SeedStage
 
 @[expose] public section
 
@@ -201,6 +202,61 @@ theorem infra_83_marked_of_sample_tuples (P : SingleModelData K)
   exact infra_83_descent_of_tuple_retractions P hνC hlC hνT hlT hνl NX NY X Y onX onY nincl incl
     trivial trivial trivial trivial hsq r hιcard halmost huν b nb (fun k => (hb k).symm) himg
     (fun c hJ => hd _ c (hJ.trans_le hνl))
+
+
+set_option maxHeartbeats 3200000 in
+/-- **The bounded-arity step of Lemma 8.3 for one matched tuple (proved).** Paper (proof of
+Lemma 8.3, "Bounded horizontal arity"): `X_H` embeds into the sample's `X` by `toA`, the tested
+list `u = (b, c)` of `Y_H` is identified with `u* = dU` of the sample (`tp(u/X_H) = tp(u*/X)`
+restricted along `toA`: `hExt`), only the retraction images of `u*` are placed in `toA[X_H]`
+(`himg`; (7) via Lemma 6.11), and `tp(u*/X)` is isolated relative to `b*` (all-domination of the
+sample). Then Lemma 7.6 (mixed) gives that `tp(u/X_H)` is isolated relative to `b`. No arrow of
+the whole of `Y_H` into the sample is used. -/
+theorem infra_83_isolation_of_matched_tuple (P : SingleModelData K) {ν l : Cardinal.{u}}
+    (hνC : ν ∈ infra_615_closed P) (hlC : l ∈ infra_615_closed P)
+    (hνT : ν ∈ infra_78_closedTail P) (hlT : l ∈ infra_78_closedTail P) (hνl : ν ≤ l)
+    (A U : P.scheme.Object l hlC.1) (A' Y' : P.scheme.Object ν hνC.1)
+    (toA : SystemArrow K oneVertexShape (P.scheme.asSystem hνC.1 A') (P.scheme.asSystem hlC.1 A))
+    (htoA : P.scheme.permitted (X := A') (Y := A) toA)
+    (incl : SystemArrow K oneVertexShape (P.scheme.asSystem hlC.1 A) (P.scheme.asSystem hlC.1 U))
+    (hincl : P.scheme.permitted (X := A) (Y := U) incl)
+    (incl' : SystemArrow K oneVertexShape (P.scheme.asSystem hνC.1 A')
+      (P.scheme.asSystem hνC.1 Y'))
+    (hincl' : P.scheme.permitted (X := A') (Y := Y') incl')
+    {ι : Type u} (r : ι → SystemArrow K oneVertexShape
+      (P.scheme.asSystem hlC.1 U) (P.scheme.asSystem hlC.1 A))
+    (hιcard : #ι = ν)
+    (halmost : ∀ a : Occurrence K oneVertexShape (P.scheme.asSystem hlC.1 A),
+      Finite {i : ι // (r i).onVertex a.1 (incl.onVertex a.1 a.2) ≠ a.2})
+    {uIdx cIdx : Type u}
+    (d' : uIdx ⊕ cIdx → Occurrence K oneVertexShape (P.scheme.asSystem hνC.1 Y'))
+    (dU : uIdx ⊕ cIdx → Occurrence K oneVertexShape (P.scheme.asSystem hlC.1 U))
+    (hd : #(uIdx ⊕ cIdx) < ν)
+    (himg : ∀ i s, ∃ y, toA.onVertex (dU s).1 y = (r i).onVertex (dU s).1 (dU s).2)
+    (hExt : SameGaloisType (asTuple incl' hincl' d')
+      ((asTuple incl hincl dU).restrict toA htoA) (Equiv.refl _) (Equiv.refl _))
+    (hIso : IsRelativelyIsolated (uIdx := uIdx) (cIdx := cIdx) (asTuple incl hincl dU)
+      (Equiv.refl _)) :
+    IsRelativelyIsolated (uIdx := uIdx) (cIdx := cIdx) (asTuple incl' hincl' d')
+      (Equiv.refl _) := by
+  classical
+  have hν0 : ℵ₀ ≤ ν := P.aleph0_le hνC.1
+  let σ : Cardinal.{u} := max ℵ₀ #(uIdx ⊕ cIdx)
+  have hσ : ℵ₀ ≤ σ := le_max_left _ _
+  have hσν : σ < ν := max_lt (P.aleph0_lt hνC.1) hd
+  have hT0 := infra_83_tied_from_retractions_tuple P hνC hlC hνl A U A' toA htoA incl hincl r
+    hιcard halmost dU hd himg
+  have hT := infra_78_tiedFreeMixed_left_congr toA
+    (q := (asTuple incl hincl dU).restrict toA htoA) (q' := asTuple incl' hincl' d')
+    (Equiv.refl _) (Equiv.refl _) hT0 (fun {β} Z hβ => by
+      have hsz : #((uIdx ⊕ cIdx) ⊕ β) < ν := by
+        rw [Cardinal.mk_sum, Cardinal.lift_id, Cardinal.lift_id]
+        exact Cardinal.add_lt_of_lt hν0 hd hβ
+      have D := infra_78_diagramEq_of_sameGalois hExt Z hsz (hsz.trans_le hνl)
+      exact infra_73_diagramEq_of_eq D (by rintro (k | x) <;> rfl) (by rintro (k | x) <;> rfl))
+  exact infra_78_tied_descent_mixed P σ hσ hνC.1 (infra_79_closedTail_sigma2 hνT hσ hσν)
+    (hlT.2.1 σ hσ (hσν.trans_le hνl)) hνl toA htoA (asTuple incl' hincl' d')
+    (asTuple incl hincl dU) (Equiv.refl _) (Equiv.refl _) rfl rfl (le_max_right _ _) hExt hT hIso
 
 end
 end AEC
