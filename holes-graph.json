@@ -5959,6 +5959,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 107: TpSampleBF2, tpB_coherent_colors_formula2, witB_realize2 (HullColorsFormula83); chartLtYM, rhoM, rhoM_zero, rhoM_one; order clauses added to XSampleLike / YSampleLike (concrete samples satisfy them by Iff.rfl); infra_83_pairMS2_coherent_colors now also records rhoM."
+  },
+  {
+   "id": "infra_83_chart_coords_increasing",
+   "label": "Lemma 8.3 proof: the coordinate maps j_k : Fin (k+1) → H_k (X) and z_k (Y) of the piece charts are strictly increasing (PieceChart.mono)",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83SampleLikeY.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 107: pairMS2_X_coord_of / pairMS2_Y_coord_of give StrictMono from the recorded chart-order formulas; PieceChart has field mono."
   }
  ],
  "edges": [
@@ -11144,8 +11153,18 @@
    "from": "infra_83_chart_order_colors",
    "to": "infra_83_Y_hull_eq_FZ",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_chart_coords_increasing",
+   "to": "infra_83_X_hull_eq_FJ",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_83_chart_coords_increasing",
+   "to": "infra_83_Y_hull_eq_FZ",
+   "kind": "hard"
   }
  ],
- "doneCount": 595,
+ "doneCount": 596,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
