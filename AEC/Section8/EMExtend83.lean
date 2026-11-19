@@ -372,6 +372,15 @@ theorem limMap_canon (I : Type u) [LinearOrder I] [Nonempty I] (s : (F.system I)
     (η.cocone_strong I) (fun h => η.cocone_compat I h))).2 s
 
 
+/-- A componentwise surjective (hence bijective) `PiecesHom` induces bijective maps of the EM
+values. -/
+theorem limMap_bijective (I : Type u) [LinearOrder I] [Nonempty I]
+    (h : ∀ k, Function.Surjective (η.app k)) : Function.Bijective (η.limMap I) := by
+  refine ⟨(η.limMap I).injective, fun y => ?_⟩
+  obtain ⟨s, z, rfl⟩ := (G.limit I).joint y
+  obtain ⟨x, rfl⟩ := h _ z
+  exact ⟨(F.limit I).canon s x, congrFun (congrArg (⇑) (η.limMap_canon I s)) x⟩
+
 /-- The induced maps are natural in the index order: `η_J ∘ F(f) = G(f) ∘ η_I`. -/
 theorem limMap_natural {I J : Type u} [LinearOrder I] [LinearOrder J] [Nonempty I] [Nonempty J]
     (f : I ↪o J) :

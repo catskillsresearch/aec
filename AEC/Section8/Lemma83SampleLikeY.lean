@@ -836,7 +836,8 @@ theorem infra_83_pairMS2_Y_chart_maps (P : SingleModelData K)
 
 /-- **The `X`-pieces are naturally isomorphic to chart pieces `k ↦ F(H_k)`**: a piece functor
 `F_X^c` with values `F(H_k)` and a strong natural `PiecesHom F_X → F_X^c` that is bijective in
-every arity (componentwise the charts `ε_k`). -/
+every arity (componentwise the charts `ε_k`); hence the induced maps of EM values
+`F_X(I) → F_X^c(I)` are strong and bijective. -/
 theorem infra_83_pairMS2_X_chart_pieces (P : SingleModelData K)
     (Pr : StationaryPrescription K oneVertexShape P.scheme) :
     ∃ (c : (m : ℕ) → 0 < m → Hull83.TpColorB (LS83.pairLangM3 P.E Pr.n) 3 m)
@@ -853,7 +854,9 @@ theorem infra_83_pairMS2_X_chart_pieces (P : SingleModelData K)
       (η : EM83.PiecesHom (Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
         ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3))
         hXs) FXc),
-      (∀ k, FXc.obj k = P.E.obj (ch k).H) ∧ ∀ k, Function.Bijective (η.app k) := by
+      (∀ k, FXc.obj k = P.E.obj (ch k).H) ∧ (∀ k, Function.Bijective (η.app k)) ∧
+      ∀ (I : Type u) [LinearOrder I] [Nonempty I],
+        Function.Bijective (η.limMap I) ∧ K.Strong (η.limMap I) := by
   obtain ⟨c, hc, hcoh, hXs, ch, θ, -, hs, hnat, -, hid, hcomp⟩ :=
     infra_83_pairMS2_X_chart_maps P Pr
   let FXc : EM83.FinPieces K :=
@@ -867,11 +870,14 @@ theorem infra_83_pairMS2_X_chart_pieces (P : SingleModelData K)
     { app := fun k => (ch k).ε
       strong := fun k => strong_of_equiv K (embeddingEquivOfSurjective (ch k).ε (ch k).bij.2)
         ((Hull83.subLangPieces _ _ hc hcoh _ hXs).mem k)
-      natural := fun e => by ext x; exact (hnat e x).symm }, fun _ => rfl, fun k => (ch k).bij⟩
+      natural := fun e => by ext x; exact (hnat e x).symm }, fun _ => rfl, fun k => (ch k).bij,
+    fun I _ _ => ⟨EM83.PiecesHom.limMap_bijective _ I (fun k => (ch k).bij.2),
+      EM83.PiecesHom.limMap_strong _ I⟩⟩
 
 /-- **The `Y`-pieces are naturally isomorphic to chart pieces `k ↦ F(H_k)`**: a piece functor
 `F_Y^c` with values `F(H_k)` and a strong natural `PiecesHom F_Y → F_Y^c` that is bijective in
-every arity (componentwise the charts `ε_k`). -/
+every arity (componentwise the charts `ε_k`); hence the induced maps of EM values
+`F_Y(I) → F_Y^c(I)` are strong and bijective. -/
 theorem infra_83_pairMS2_Y_chart_pieces (P : SingleModelData K)
     (Pr : StationaryPrescription K oneVertexShape P.scheme) :
     ∃ (c : (m : ℕ) → 0 < m → Hull83.TpColorB (LS83.pairLangM3 P.E Pr.n) 3 m)
@@ -889,7 +895,9 @@ theorem infra_83_pairMS2_Y_chart_pieces (P : SingleModelData K)
       (η : EM83.PiecesHom (Hull83.subLangPieces (psiM P.E Pr.n)
         ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh
         (fun i : Fin 2 => i.castSucc) hXs) FXc),
-      (∀ k, FXc.obj k = P.E.obj (ch k).H) ∧ ∀ k, Function.Bijective (η.app k) := by
+      (∀ k, FXc.obj k = P.E.obj (ch k).H) ∧ (∀ k, Function.Bijective (η.app k)) ∧
+      ∀ (I : Type u) [LinearOrder I] [Nonempty I],
+        Function.Bijective (η.limMap I) ∧ K.Strong (η.limMap I) := by
   obtain ⟨c, hc, hcoh, hXs, ch, θ, -, hs, hnat, -, hid, hcomp⟩ :=
     infra_83_pairMS2_Y_chart_maps P Pr
   let FXc : EM83.FinPieces K :=
@@ -903,6 +911,8 @@ theorem infra_83_pairMS2_Y_chart_pieces (P : SingleModelData K)
     { app := fun k => (ch k).ε
       strong := fun k => strong_of_equiv K (embeddingEquivOfSurjective (ch k).ε (ch k).bij.2)
         ((Hull83.subLangPieces _ _ hc hcoh _ hXs).mem k)
-      natural := fun e => by ext x; exact (hnat e x).symm }, fun _ => rfl, fun k => (ch k).bij⟩
+      natural := fun e => by ext x; exact (hnat e x).symm }, fun _ => rfl, fun k => (ch k).bij,
+    fun I _ _ => ⟨EM83.PiecesHom.limMap_bijective _ I (fun k => (ch k).bij.2),
+      EM83.PiecesHom.limMap_strong _ I⟩⟩
 
 end AEC

@@ -5941,6 +5941,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 106: infra_83_pairMS2_Y_chart_pieces. Remaining for F_Y(I) ≅ F(Z_I): θ_e = E.map of an order embedding, then limits."
+  },
+  {
+   "id": "infra_83_pairMS2_chart_limits",
+   "label": "Lemma 8.3 proof: EM values of the X- and Y-pieces are strongly and bijectively mapped onto the EM values of the chart pieces (F_X(I) ≅ F_X^c(I), F_Y(I) ≅ F_Y^c(I)); generic PiecesHom.limMap_bijective",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83SampleLikeY.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 106: EM83.PiecesHom.limMap_bijective; limit clauses added to infra_83_pairMS2_X/Y_chart_pieces. Remaining for F_X(I) ≅ F(J_I): identify F_X^c(I) with F(J_I), i.e. θ_e = E.map of order embeddings H_k → H_l."
   }
  ],
  "edges": [
@@ -11106,8 +11115,18 @@
    "from": "infra_83_pairMS2_Y_chart_pieces",
    "to": "infra_83_Y_hull_eq_FZ",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_pairMS2_chart_limits",
+   "to": "infra_83_X_hull_eq_FJ",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_83_pairMS2_chart_limits",
+   "to": "infra_83_Y_hull_eq_FZ",
+   "kind": "hard"
   }
  ],
- "doneCount": 593,
+ "doneCount": 594,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
