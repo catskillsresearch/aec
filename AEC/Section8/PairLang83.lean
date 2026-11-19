@@ -94,5 +94,50 @@ theorem hull_strong_in_closed_pair {N : Type u} [(pairLang E).Structure N]
   refine ⟨factorEmbedding _ j himg, ?_, hcomp⟩
   exact K.coherence _ _ j (hullStrong_pair E N hN v) hj hcomp
 
+/-- The pair language with a second label copy for the `Y`-sort. -/
+abbrev pairLang2 : Language.{u, u} := (pairLang E).sum (Lab83.labLang E)
+
+/-- The inclusion of the LS language into `pairLang2`. -/
+abbrev pairInl2 : lsLang K →ᴸ pairLang2 E :=
+  (LHom.sumInl : pairLang E →ᴸ pairLang2 E).comp (pairInl E)
+
+/-- **Hulls are strong in `pairLang2`** for structures with LS-closed reduct. -/
+theorem hullStrong_pair2 :
+    HullStrong ((pairInl2 E).comp (lsInl K))
+      (fun N _ => @LSClosed K N ((pairInl2 E).reduct N)) :=
+  hullStrong_exp _
+
+/-- **`pairLang2` has at most `LS(K)` function symbols.** -/
+theorem pairLang2_functions_le : max ℵ₀ #(Σ i, (pairLang2 E).Functions i) ≤ ls K := by
+  have hall : ℵ₀ ≤ ls K := (isLSBound_ls K).1
+  have hp : #(Σ i, (pairLang E).Functions i) ≤ ls K :=
+    le_trans (le_max_right _ _) (pairLang_functions_le E)
+  have hlab : #(Σ i, (Lab83.labLang E).Functions i) ≤ ls K := by
+    refine (mk_le_of_injective (f := fun a : (Σ i, (Lab83.labLang E).Functions i) => a.2.1)
+      ?_).trans (E.lab_small.trans E.ell_eq.le)
+    rintro ⟨n, a, ha⟩ ⟨m, b, hb⟩ h
+    simp only at h
+    subst h
+    subst ha
+    subst hb
+    rfl
+  have hsum : #(Σ i, (pairLang2 E).Functions i) ≤
+      #((Σ i, (pairLang E).Functions i) ⊕ (Σ i, (Lab83.labLang E).Functions i)) :=
+    mk_le_of_injective (f := fun a => match a with
+      | ⟨i, Sum.inl f⟩ => Sum.inl ⟨i, f⟩
+      | ⟨i, Sum.inr f⟩ => Sum.inr ⟨i, f⟩) (by
+        rintro ⟨i, f | f⟩ ⟨j, g | g⟩ h
+        · simp only [Sum.inl.injEq, Sigma.mk.inj_iff] at h
+          obtain ⟨rfl, h⟩ := h
+          rw [eq_of_heq h]
+        · simp at h
+        · simp at h
+        · simp only [Sum.inr.injEq, Sigma.mk.inj_iff] at h
+          obtain ⟨rfl, h⟩ := h
+          rw [eq_of_heq h])
+  refine max_le hall (hsum.trans ?_)
+  rw [mk_sum, lift_id, lift_id]
+  exact (add_le_add hp hlab).trans (by rw [add_eq_max hall, max_self])
+
 end LS83
 end AEC
