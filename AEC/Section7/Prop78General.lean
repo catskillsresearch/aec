@@ -838,4 +838,57 @@ theorem infra_78_rc_inv5_all_def77 (hidx : #(uIdx ⊕ cIdx) ≤ σ)
 
 end SeedInv5Def77
 
+section StageSeedDef77
+variable {P : SingleModelData K} {ρ κ : Cardinal.{u}} {hκ : κ ∈ P.eligible} {uIdx cIdx L : Type u}
+variable (hρκ : Order.succ ρ < κ) {ℓ : Cardinal.{u}} (hℓel : ℓ ∈ P.eligible)
+  (cand : (Order.succ ρ).ord.ToType → Infra78Stage P hκ (Infra78MarkData κ uIdx) →
+    L → cIdx → κ.ord.ToType)
+  (s0 : Infra78Stage P hκ (Infra78MarkData κ uIdx)) (e0 : Infra78MarkData κ uIdx)
+
+include hρκ in
+/-- **Every stage carries the seed (proved, cycle 93).** In the recursion matrix whose seed stage
+has the identity base map, if the seed mark is the mixed tied free lift of its restriction along
+`ι0 : A → X_0` and that restriction answers small tests as `pA` (`hDp`), then at every stage `k`
+satisfying invariant (5) the stage mark is the mixed tied free lift of `pA` along `A → X_0 → X_k`
+(`infra_78_stage_transport`, mixed transitivity `infra_78_tiedFreeMixed_trans`, and
+`infra_78_tiedFreeMixed_left_congr`). This discharges the seed hypothesis of
+`infra_78_rc_inv5_all_def77`. -/
+theorem infra_78_rc_stage_seed {ν : Cardinal.{u}} {hν : ν ∈ P.eligible}
+    {A : P.scheme.Object ν hν} (pA : TupleOver K oneVertexShape P.scheme hν A)
+    (eA : pA.idx ≃ uIdx)
+    (ι0 : SystemArrow K oneVertexShape (P.scheme.asSystem hν A) (P.scheme.asSystem hκ s0.X))
+    (hg0 : s0.e.g = id) (hidx : #uIdx < ν) (hνκ : ν ≤ κ)
+    (H0 : IsTiedFreeMixed ι0
+      ((infra_78_markTuple (infra_78_toArr s0.hp) (infra_78_stageMark s0)).restrict ι0 trivial)
+      (infra_78_markTuple (infra_78_toArr s0.hp) (infra_78_stageMark s0)) (Equiv.refl _))
+    (hDp : ∀ {β : Type u} (Z : β → Occurrence K oneVertexShape (P.scheme.asSystem hν A)),
+      #β < ν →
+      P.scheme.DiagramEq (X := pA.host) (Y := s0.Y) (typeJoint (p := pA) Z)
+        (fun s => typeJoint (p := (infra_78_markTuple (infra_78_toArr s0.hp)
+          (infra_78_stageMark s0)).restrict ι0 trivial) Z (Sum.map eA id s)))
+    {i0 : (Order.succ ρ).ord.ToType} (hmin : IsMin i0) (k : (Order.succ ρ).ord.ToType)
+    (h : infra_78_StageInv5 s0.X (infra_78_rcObj s0.X hℓel cand s0 e0 k)) :
+    IsTiedFreeMixed (SystemArrow.comp ι0 (infra_78_toArr h.1)) pA
+      (infra_78_markTuple (infra_78_toArr (infra_78_rcObj s0.X hℓel cand s0 e0 k).hp)
+        (infra_78_stageMark (infra_78_rcObj s0.X hℓel cand s0 e0 k))) eA := by
+  obtain ⟨-, -, F1, F2⟩ := infra_78_stage_transport hρκ s0.X hℓel cand s0 e0 ι0 hg0 hidx hνκ H0
+    hmin k (infra_78_toArr h.1) (fun x => infra_78_toArr_apply h.1 x)
+  have hT := infra_78_tiedFreeMixed_trans ι0 trivial (infra_78_toArr h.1) trivial _ hνκ F1 h.2
+  let q := infra_78_markTuple (infra_78_toArr (infra_78_rcObj s0.X hℓel cand s0 e0 k).hp)
+    (infra_78_stageMark (infra_78_rcObj s0.X hℓel cand s0 e0 k))
+  have hD' : ∀ {β : Type u} (Z : β → Occurrence K oneVertexShape (P.scheme.asSystem hν A)),
+      #β < ν →
+      P.scheme.DiagramEq (X := pA.host) (Y := q.host) (typeJoint (p := pA) Z)
+        (fun s => typeJoint (p := q.restrict (SystemArrow.comp ι0 (infra_78_toArr h.1)) trivial)
+          Z (Sum.map eA id s)) := by
+    intro β Z hβ
+    refine P.scheme.diagram_trans _ _ _ _ _ _ (hDp Z hβ) ?_
+    exact infra_612_dEq_comp (F2 Z hβ) (Sum.map eA id) (fun _ => rfl)
+      (fun c => by rcases c with u | j <;> rfl)
+  exact infra_78_tiedFreeMixed_left_congr
+    (q := q.restrict (SystemArrow.comp ι0 (infra_78_toArr h.1)) trivial) (q' := pA) (qB := q)
+    _ (Equiv.refl _) eA hT (fun Z hβ => hD' Z hβ)
+
+end StageSeedDef77
+
 end AEC
