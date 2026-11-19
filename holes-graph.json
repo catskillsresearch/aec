@@ -5571,7 +5571,7 @@
    "file": "AEC/Section8/PairLang83.lean",
    "status": "done",
    "blocker": null,
-   "detail": "Cycle 104: LS83.pairLang, pairInl, hullStrong_pair, pair_closed, pairLang_functions_le (#lab ≤ ell = LS(K)). Axioms clean."
+   "detail": "Cycle 104: LS83.pairLang, pairInl, hullStrong_pair, pair_closed, pairLang_functions_le (#lab ≤ ell = LS(K)). Axioms clean. | Cycle 104: + LS83.hull_strong_in_closed_pair (pair-language hulls of tuples from a closed strong sort, e.g. X_H ⊆ X, are strong in the sort)."
   },
   {
    "id": "infra_83_pair_samples_X",
