@@ -586,6 +586,8 @@ Lean: imports `Section5.Results` and `Section6.Results`. Soft paper chain after 
 | `infra_83_ret_symbol` | Lemma 8.3 proof: retraction-evaluation symbol in the LS language | [`LSRet83.lean`](AEC/Section8/LSRet83.lean) (**done**, cycle 104) |
 | `infra_83_ret_interpretation` | Lemma 8.3 proof: interpret ret by the samples' approximate retraction family | [`Lemma83RetSamples.lean`](AEC/Section8/Lemma83RetSamples.lean) (**done**, cycle 104) |
 | `infra_83_ret_template` | Lemma 8.3 proof: X → Y → L template of the retraction-expanded samples | [`Lemma83RetSamples.lean`](AEC/Section8/Lemma83RetSamples.lean) (**done**, cycle 104) |
+| `infra_83_label_symbols` | Lemma 8.3 proof: old template labels as function symbols; skeleton generates E(I) | [`LabLang83.lean`](AEC/Section8/LabLang83.lean) (**done**, cycle 104) |
+| `infra_83_label_sort_match` | Lemma 8.3 proof: hull of the J-skeleton in the labelled pair language is X | [`LabLang83.lean`](AEC/Section8/LabLang83.lean) (open, cycle 104) |
 | `infra_72_mixed_level` | Lemma 7.2 last sentence (A at a smaller level than B), stated with sorry (audit) | [`Lemma72Mixed.lean`](AEC/Section7/Lemma72Mixed.lean) (open, cycle 96) |
 | `infra_82_tiedFreeMixed_base_equiv` | Mixed tied freeness under a reindexed change of base tuple | [`TiedAlong.lean`](AEC/Section8/TiedAlong.lean) (**done**, cycle 97) |
 | `infra_82_mark_tied_along_single` | Lemma 8.2(4) for `P.scheme`: tied freeness of the mark along arrows (Def 8.1 tied, cycle 97 ruling) | [`TiedAlong.lean`](AEC/Section8/TiedAlong.lean) (**done**, cycle 97) |

@@ -5545,6 +5545,24 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 104: infra_83_ret_coherent_colors (r = 3, admitted = LS-closed lsLang-reduct, samples from infra_83_ret_samples) and infra_83_ret_template (subSubBundleHom/subBundleHom with hullStrong_ret, tpPresentationB with retLang_functions_le). Not yet: the mark as designated terms, saturation demand, F_X(J) ≅ X and F_Y(Z) ≅ Y for actual samples. Axioms clean."
+  },
+  {
+   "id": "infra_83_label_symbols",
+   "label": "Lemma 8.3 proof: old template labels as function symbols (labLang E) interpreted on E(I); labels realize support terms on the skeleton, so the skeleton generates E(I)",
+   "section": 8,
+   "file": "AEC/Section8/LabLang83.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 104: Lab83.labLang, labFun/labStr, labFun_skeleton, exists_label_value. Next (infra_83_label_sort_match): add labLang to the pair language on L = E(J⁺) and show the hull of the J-skeleton is exactly X = range E(emb) (realize_map), giving F_X(J) ≅ X. Axioms clean."
+  },
+  {
+   "id": "infra_83_label_sort_match",
+   "label": "Lemma 8.3 proof: in the pair language with labels, the hull of the J-skeleton (resp. J,Z-skeletons) in L = E(J⁺) is X (resp. contains Y's generators), giving F_X(J) ≅ X",
+   "section": 8,
+   "file": "AEC/Section8/LabLang83.lean",
+   "status": "open",
+   "blocker": null,
+   "detail": "Cycle 104 split: needs labLang summed into retLang with the LS closure argument, realize_map for E(emb), and the skeleton hull computation."
   }
  ],
  "edges": [
@@ -10390,8 +10408,23 @@
    "from": "infra_83_ret_template",
    "to": "infra_83_pair_pieces",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_label_symbols",
+   "to": "infra_83_pair_sample_family",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_83_label_symbols",
+   "to": "infra_83_template_from_colors",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_83_label_sort_match",
+   "to": "infra_83_template_from_colors",
+   "kind": "hard"
   }
  ],
- "doneCount": 552,
+ "doneCount": 553,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
