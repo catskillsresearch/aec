@@ -6318,7 +6318,7 @@
    "file": "AEC/Section8/OrderColimit83.lean",
    "status": "done",
    "blocker": null,
-   "detail": "Cycle 108: infra_83_pair_values (one color family; via joint, value_pair, value_arrow). Remaining for faithful 8.3: marks (realized Galois type = P.assign, AllDominated), markMap preservation, clause (3)."
+   "detail": "Cycle 108: infra_83_pair_values (one color family; via joint, value_pair, value_arrow). Remaining for faithful 8.3: marks (realized Galois type = P.assign, AllDominated), markMap preservation, clause (3). | Cycle 108 (later): marks added — mark tuples b_I in F_Y(I) fixed by F_Y(f), and the Y-arrows carry eY(b_I) to eY(b_J) (preserves_mark with markMap = id on Fin n)."
   }
  ],
  "edges": [

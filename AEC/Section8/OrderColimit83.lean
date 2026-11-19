@@ -1337,11 +1337,15 @@ theorem pairTemplate83_edge (FX FY : EM83.FinPieces K) (η : EM83.PiecesHom FX F
 template `F_X → F_Y` (strong inclusion `η`) has, at every `I` of eligible size, values that are
 scheme objects `X_I ⊆ Y_I` at level `|I|` (`τ`-isomorphisms `e_X`, `e_Y` carrying `η_I` to the
 inclusion), and every order embedding `f : I ↪o J` gives strong arrows `X_I → X_J`, `Y_I → Y_J`
-equal to `F_X(f)`, `F_Y(f)` under the isomorphisms and commuting with the inclusions. (The mark,
-its realized type and domination are the remaining parts of the marked pairs.) -/
+equal to `F_X(f)`, `F_Y(f)` under the isomorphisms and commuting with the inclusions. The mark
+constants give mark tuples `b_I` in `F_Y(I)` fixed by `F_Y(f)`, so the `Y`-arrows carry the
+transported marks to the marks. (The realized type of the mark and domination remain.) -/
 theorem infra_83_pair_values (P : SingleModelData K)
     (Pr : StationaryPrescription K oneVertexShape P.scheme) :
-    ∃ (FX FY : EM83.FinPieces K) (η : EM83.PiecesHom FX FY),
+    ∃ (FX FY : EM83.FinPieces K) (η : EM83.PiecesHom FX FY)
+      (b : ∀ (I : Type u) [LinearOrder I] [Nonempty I], Fin Pr.n → (FY.limit I).obj.carrier),
+      (∀ (I J : Type u) [LinearOrder I] [Nonempty I] [LinearOrder J] [Nonempty J] (f : I ↪o J)
+        (i : Fin Pr.n), EM83.gEmMap (F := FY) f (b I i) = b J i) ∧
       (∀ (I : Type u) [LinearOrder I] [Nonempty I], K.Strong (η.limMap I)) ∧
       ∃ (X Y : ∀ (I : Type u) [LinearOrder I] [Nonempty I], #I ∈ P.eligible → SMObject K #I)
         (eX : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
@@ -1359,7 +1363,8 @@ theorem infra_83_pair_values (P : SingleModelData K)
             K.Strong onX ∧ K.Strong onY ∧
             (∀ a, onX (eX I hI a) = eX J hJ (EM83.gEmMap (F := FX) f a)) ∧
             (∀ b, onY (eY I hI b) = eY J hJ (EM83.gEmMap (F := FY) f b)) ∧
-            ∀ x, onY (incl I hI x) = incl J hJ (onX x) := by
+            (∀ x, onY (incl I hI x) = incl J hJ (onX x)) ∧
+            ∀ i, onY (eY I hI (b I i)) = eY J hJ (b J i) := by
   obtain ⟨c, hc, hcoh, hXs, hYs, ηXY, FL, ηYL, E, hE, hstr, hnat, hXb, hYb⟩ := infra_83_pairMS2_joint P Pr
   obtain ⟨chX, hX', hidX, hcompX, mX, hvX, hmX, -, -, -, gX, -, -, -, hcX⟩ := hXb
   obtain ⟨chY, hY', hidY, hcompY, mY, hvY, hmY, -, -, -, gY, -, -, -, hcY⟩ := hYb
@@ -1367,12 +1372,15 @@ theorem infra_83_pair_values (P : SingleModelData K)
     fun I _ _ hI => infra_83_value_pair P hI rfl (gX I) (hcX I) (gY I) (hcY I) _ _
       (EM83.FinPieces.limit_spec _ I).1 (ηXY.limMap I) (hstr I).1 (mX I) (hmX I).2 (mY I) (hmY I).2
   choose X Y eX eY incl hincl using key
-  refine ⟨_, _, ηXY, fun I _ _ => (hstr I).1, X, Y, eX, eY, incl, hincl, ?_⟩
+  obtain ⟨b, -, hb, -⟩ := infra_83_pairMS2_Y_marks_c P Pr c hc hcoh hYs
+  refine ⟨_, _, ηXY, b, fun I J _ _ _ _ f i => hb I J f i, fun I _ _ => (hstr I).1, X, Y, eX, eY,
+    incl, hincl, ?_⟩
   intro I J _ _ _ _ f hI hJ
-  exact infra_83_value_arrow (X I hI).mem (Y I hI).mem (EM83.FinPieces.limit_spec _ J).1
+  obtain ⟨onX, onY, h1, h2, h3, h4, h5⟩ := infra_83_value_arrow (X I hI).mem (Y I hI).mem (EM83.FinPieces.limit_spec _ J).1
     (EM83.FinPieces.limit_spec _ J).1 (ηXY.limMap I) (ηXY.limMap J) (eX I hI) (eY I hI)
     (eX J hJ) (eY J hJ) (incl I hI) (incl J hJ) (hincl I hI).2 (hincl J hJ).2
     (EM83.gEmMap f) (EM83.gEmMap f) (EM83.gEmMap_strong f) (EM83.gEmMap_strong f)
     (fun a => congrFun (congrArg (⇑) ((hnat f).1)) a)
+  exact ⟨onX, onY, h1, h2, h3, h4, h5, fun i => (h4 _).trans (congrArg _ (hb I J f i))⟩
 
 end AEC
