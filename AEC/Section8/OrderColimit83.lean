@@ -1203,4 +1203,38 @@ theorem infra_83_value_object (P : SingleModelData K) {μ : Cardinal.{u}} (hμ :
   exact ⟨SMObject.ofModel (P.E.obj J) (P.hE J) hc,
     ⟨(SMObject.ofModelEquiv (P.E.obj J) (P.hE J) hc).comp (embeddingEquivOfSurjective m hm.2)⟩⟩
 
+/-- **The template inclusion as an inclusion of scheme objects**: at an eligible level
+`μ = |I|`, values `A ≅ F(J)`, `B ≅ F(Z)` (with `J`, `Z` as for `J_I`, `Z_I`) and a strong
+`η : A → B` (the template map `F_X(I) → F_Y(I)`) give scheme objects `X`, `Y` at level `μ` with
+`τ`-isomorphisms `e_X`, `e_Y` and a strong embedding `incl : X → Y` with `incl ∘ e_X = e_Y ∘ η`
+(the underlying data of the pair `X ⊆ Y` of a value of Lemma 8.3). -/
+theorem infra_83_value_pair (P : SingleModelData K) {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
+    {I J Z : Type u} [LinearOrder I] [Nonempty I] [LinearOrder J] [Nonempty J]
+    [LinearOrder Z] [Nonempty Z] (hI : #I = μ)
+    (gJ : I ↪o J) (hJ : #J ≤ #(Finset I) * ls K) (gZ : I ↪o Z) (hZ : #Z ≤ #(Finset I) * ls K)
+    (A B : Model K.τ) (hB : K.Mem B)
+    (η : A.carrier ↪[K.τ] B.carrier) (hη : K.Strong η)
+    (mX : A.carrier ↪[K.τ] (P.E.obj J).carrier) (hmX : Function.Bijective mX)
+    (mY : B.carrier ↪[K.τ] (P.E.obj Z).carrier) (hmY : Function.Bijective mY) :
+    ∃ (X Y : SMObject K μ) (eX : A.carrier ≃[K.τ] X.model.carrier)
+      (eY : B.carrier ≃[K.τ] Y.model.carrier) (incl : X.model.carrier ↪[K.τ] Y.model.carrier),
+      K.Strong incl ∧ ∀ a, incl (eX a) = eY (η a) := by
+  have cJ : #J = #I := infra_83_colim_card_eq (K := K) (hI ▸ SingleModelData.aleph0_le hμ)
+    (hI ▸ (SingleModelData.ls_lt hμ).le) gJ.toEmbedding hJ
+  have cZ : #Z = #I := infra_83_colim_card_eq (K := K) (hI ▸ SingleModelData.aleph0_le hμ)
+    (hI ▸ (SingleModelData.ls_lt hμ).le) gZ.toEmbedding hZ
+  have hcJ := SingleModelData.card_obj_eq hμ J (cJ.trans hI)
+  have hcZ := SingleModelData.card_obj_eq hμ Z (cZ.trans hI)
+  let X := SMObject.ofModel (P.E.obj J) (P.hE J) hcJ
+  let Y := SMObject.ofModel (P.E.obj Z) (P.hE Z) hcZ
+  let eX : A.carrier ≃[K.τ] X.model.carrier :=
+    (SMObject.ofModelEquiv (P.E.obj J) (P.hE J) hcJ).comp (embeddingEquivOfSurjective mX hmX.2)
+  let eY : B.carrier ≃[K.τ] Y.model.carrier :=
+    (SMObject.ofModelEquiv (P.E.obj Z) (P.hE Z) hcZ).comp (embeddingEquivOfSurjective mY hmY.2)
+  refine ⟨X, Y, eX, eY, (eY.toEmbedding.comp η).comp eX.symm.toEmbedding, ?_, fun a => ?_⟩
+  · exact K.strong_trans _ _ (strong_of_equiv K (M := X.model) (N := A) eX.symm X.mem)
+      (K.strong_trans _ _ hη (strong_of_equiv K (M := B) (N := Y.model) eY hB))
+  · show eY (η (eX.symm (eX a))) = eY (η a)
+    rw [Language.Equiv.symm_apply_apply]
+
 end AEC
