@@ -4132,6 +4132,15 @@
    "status": "done",
    "blocker": null,
    "detail": "DONE cycle 95. infra_82_iso_single: on the Proposition 7.5 tail (sigma = aleph0), every bijective base arrow e : M.X -> N.X of marked pairs for W := P.scheme extends to a MarkedArrow with onX = e and onY vertexwise bijective (restated lemma_8_2 clause (2) for the Prop 5.6 scheme). New sorry-free helpers: infra_82_inverse_arrow (AEC coherence), infra_82_isolated_base_iso (relative isolation along a two-sided base iso), infra_82_isolated_reindex_mark (mark reindexing), infra_82_systemArrow_ext, infra_82_restrict_incl_eq; then proposition_7_5 clause 2. Axioms: propext, Classical.choice, Quot.sound."
+  },
+  {
+   "id": "infra_82_pointed_single",
+   "label": "Lemma 8.2(3) pointed iff for P.scheme",
+   "section": 8,
+   "file": "AEC/Section8/PairIsoSingle.lean",
+   "status": "open",
+   "blocker": null,
+   "detail": "Next tip (cycle 95). Restated lemma_8_2 clause (3) for W := P.scheme. (<-) route: Prop 7.5(2) with the enlarged mark (b, t): needs AllDominated over X + (b,t) from AllDominated over X + b (re-association lemma like infra_82_isolated_reindex_mark) and #(bIdx ⊕ ι) ≤ σ. Obstacle: proposition_7_5's tail depends on σ (infra_75_tailSet: σ-recursion-closed and succ σ ≤ μ), while the English clause is for all bounded lengths (< the level) on one tail; needs a diagonal tail (levels σ-recursion-closed for every σ < μ) or a ruling to make clause (3) σ-indexed. (->) route: comm gives the base-entry clause; the mark matching σ : M.bIdx ≃ N.bIdx needs a bijection compatible with arr (marks may repeat values; choose via the realizes/along equivalences and the type's equality pattern)."
   }
  ],
  "edges": [
@@ -8155,6 +8164,11 @@
   },
   {
    "from": "infra_82_iso_single",
+   "to": "lemma_8_2",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_82_pointed_single",
    "to": "lemma_8_2",
    "kind": "hard"
   }
