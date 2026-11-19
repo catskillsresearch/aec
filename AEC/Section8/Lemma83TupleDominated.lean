@@ -3,6 +3,7 @@ module
 public import AEC.Section8.Lemma83TupleDescent
 public import AEC.Section8.Lemma83Isolation
 public import AEC.Section7.IsolationTransfer
+public import AEC.Section7.Prop78General
 
 @[expose] public section
 
@@ -80,6 +81,79 @@ theorem infra_83_dominated_of_tuple_retractions (P : SingleModelData K) {μ : Ca
     (fun k => rfl) hsum le_rfl le_rfl H
   rw [hx] at H2
   exact infra_83_tiedFree_of_mixed _ _ _ _ H2
+
+
+set_option maxHeartbeats 3200000 in
+/-- **Theorem 7.9 descent step from tuple retraction images (proved).** As
+`infra_79_descent_bounded` (level-`l` pair `A ≤ U`, level-`ν` pair `A' ≤ U'`, `ν ≤ l`, commuting
+square, `ν` retractions `r_i : U → A` almost fixing `A`, isolation of every `tp(b, c/A)` relative
+to `b`), but with the whole-object hypothesis `r_i[toU[U']] ⊆ toA[A']` replaced by: for every
+bounded tuple `c` of `U'`, the retraction images of `toU(b', c)` lie in `toA[A']`. -/
+theorem infra_83_descent_of_tuple_retractions (P : SingleModelData K) {ν l : Cardinal.{u}}
+    (hνC : ν ∈ infra_615_closed P) (hlC : l ∈ infra_615_closed P)
+    (hνT : ν ∈ infra_78_closedTail P) (hlT : l ∈ infra_78_closedTail P) (hνl : ν ≤ l)
+    (A U : P.scheme.Object l hlC.1) (A' U' : P.scheme.Object ν hνC.1)
+    (toA : SystemArrow K oneVertexShape (P.scheme.asSystem hνC.1 A') (P.scheme.asSystem hlC.1 A))
+    (toU : SystemArrow K oneVertexShape (P.scheme.asSystem hνC.1 U') (P.scheme.asSystem hlC.1 U))
+    (incl : SystemArrow K oneVertexShape (P.scheme.asSystem hlC.1 A) (P.scheme.asSystem hlC.1 U))
+    (incl' : SystemArrow K oneVertexShape (P.scheme.asSystem hνC.1 A')
+      (P.scheme.asSystem hνC.1 U'))
+    (htoA : P.scheme.permitted (X := A') (Y := A) toA)
+    (htoU : P.scheme.permitted (X := U') (Y := U) toU)
+    (hincl : P.scheme.permitted (X := A) (Y := U) incl)
+    (hincl' : P.scheme.permitted (X := A') (Y := U') incl')
+    (hsq : ∀ v, (incl.onVertex v).comp (toA.onVertex v) =
+      (toU.onVertex v).comp (incl'.onVertex v))
+    {ι : Type u} (r : ι → SystemArrow K oneVertexShape
+      (P.scheme.asSystem hlC.1 U) (P.scheme.asSystem hlC.1 A))
+    (hιcard : #ι = ν)
+    (halmost : ∀ a : Occurrence K oneVertexShape (P.scheme.asSystem hlC.1 A),
+      Finite {i : ι // (r i).onVertex a.1 (incl.onVertex a.1 a.2) ≠ a.2})
+    {uIdx : Type u} (huν : #uIdx < ν)
+    (b' : uIdx → Occurrence K oneVertexShape (P.scheme.asSystem hνC.1 U'))
+    (bU : uIdx → Occurrence K oneVertexShape (P.scheme.asSystem hlC.1 U))
+    (hbU : ∀ k, bU k = ⟨(b' k).1, toU.onVertex (b' k).1 (b' k).2⟩)
+    (himg : ∀ (cIdx : Type u) (c : cIdx → Occurrence K oneVertexShape (P.scheme.asSystem hνC.1 U')),
+      #cIdx < ν → ∀ i (s : uIdx ⊕ cIdx), ∃ y,
+        toA.onVertex (seqJoint b' c s).1 y =
+          (r i).onVertex (seqJoint b' c s).1 (toU.onVertex (seqJoint b' c s).1 (seqJoint b' c s).2))
+    (hiso : ∀ {J : Type u} (c : J → Occurrence K oneVertexShape (P.scheme.asSystem hlC.1 U)),
+      #J < ν →
+      IsRelativelyIsolated (uIdx := uIdx) (cIdx := J)
+        (asTuple incl hincl (seqJoint bU c)) (Equiv.refl (uIdx ⊕ J))) :
+    AllDominated incl' hincl' uIdx b' := by
+  classical
+  intro cIdx c hc
+  have hν0 : ℵ₀ ≤ ν := P.aleph0_le hνC.1
+  let d : uIdx ⊕ cIdx → Occurrence K oneVertexShape (P.scheme.asSystem hνC.1 U') := seqJoint b' c
+  have hd : #(uIdx ⊕ cIdx) < ν := by
+    rw [Cardinal.mk_sum, Cardinal.lift_id, Cardinal.lift_id]
+    exact Cardinal.add_lt_of_lt hν0 huν hc
+  let σ : Cardinal.{u} := max ℵ₀ #(uIdx ⊕ cIdx)
+  have hσ : ℵ₀ ≤ σ := le_max_left _ _
+  have hσν : σ < ν := max_lt (P.aleph0_lt hνC.1) hd
+  let dU : uIdx ⊕ cIdx → Occurrence K oneVertexShape (P.scheme.asSystem hlC.1 U) :=
+    fun j => ⟨(d j).1, toU.onVertex (d j).1 (d j).2⟩
+  have hT0 := infra_83_tied_from_retractions_tuple P hνC hlC hνl A U A' toA htoA incl hincl r
+    hιcard halmost dU hd (fun i s => himg cIdx c hc i s)
+  have hT := infra_78_tiedFreeMixed_host_transfer toA (asTuple incl' hincl' d)
+    ((asTuple incl hincl dU).restrict toA htoA) (asTuple incl hincl dU) (Equiv.refl _)
+    toU htoU (Equiv.refl _)
+    (fun x => (congrArg (fun φ => φ x) (hsq PUnit.unit)).symm)
+    (fun k => rfl) hd le_rfl hνl hT0
+  have hS := infra_617_same_galois A U A' U' toA toU incl incl' htoA htoU hincl hincl' hsq d
+  let c' : cIdx → Occurrence K oneVertexShape (P.scheme.asSystem hlC.1 U) :=
+    fun j => ⟨(c j).1, toU.onVertex (c j).1 (c j).2⟩
+  have hfun : dU = seqJoint bU c' := by
+    funext j
+    rcases j with k | j
+    · exact (hbU k).symm
+    · rfl
+  have hI := hiso c' hc
+  rw [← hfun] at hI
+  exact infra_78_tied_descent_mixed P σ hσ hνC.1 (infra_79_closedTail_sigma2 hνT hσ hσν)
+    (hlT.2.1 σ hσ (hσν.trans_le hνl)) hνl toA htoA (asTuple incl' hincl' d)
+    (asTuple incl hincl _) (Equiv.refl _) (Equiv.refl _) rfl rfl (le_max_right _ _) hS hT hI
 
 end
 end AEC

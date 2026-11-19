@@ -6994,6 +6994,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 162: proved."
+  },
+  {
+   "id": "infra_83_descent_of_tuple_retractions",
+   "label": "Thm 7.9 descent step (mixed levels nu<=l, bounded mark) with the whole-object image hypothesis replaced by retraction images of each bounded tuple toU(b',c) only",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83TupleDominated.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 163: proved."
   }
  ],
  "edges": [
@@ -12849,8 +12858,13 @@
    "from": "infra_83_dominated_of_tuple_retractions",
    "to": "infra_83_all_dominated",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_descent_of_tuple_retractions",
+   "to": "infra_83_all_dominated",
+   "kind": "hard"
   }
  ],
- "doneCount": 709,
+ "doneCount": 710,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
