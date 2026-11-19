@@ -4123,6 +4123,15 @@
    "status": "blocked",
    "blocker": null,
    "detail": "Clause (5) of the restated lemma_8_2: PairOrbitEq between two pairs at a common small level iff between their images at a common larger level. For W := P.scheme the larger-level comparison has both hosts large: the both_off obstruction. Tracked separately per ruling."
+  },
+  {
+   "id": "infra_82_iso_single",
+   "label": "Lemma 8.2(2) pair iso for P.scheme",
+   "section": 8,
+   "file": "AEC/Section8/MarkedPairExists.lean",
+   "status": "open",
+   "blocker": null,
+   "detail": "Next tip (cycle 95). Restated lemma_8_2 clause (2) for W := P.scheme: a bijective base arrow e : M.X -> N.X extends to a MarkedArrow with onY vertexwise bijective. Route: levels equal (cardinality); build the inverse arrow e^-1 (permitted is True); prove AllDominated / IsRelativelyIsolated invariance under a base isomorphism (transport tests through e^-1, restrict-compose identity; two-sided, no one-way diagram_restrict converse); reindex N's mark along tau (as in infra_82_pair_extend_same_level); apply proposition_7_5 clause 2 (sigma := aleph0, intersect its tail) for the structural iso phi; IsStructIso -> bijective; mark preservation via the oneVertexShape occurrence trick. Clause (1) for P.scheme is already infra_82_marked_pair_exists (identical shape). Clause (3) then needs the pointed version (Prop 7.5 b&f with extra tuple), clause (4) the same; clause (5) is infra_82_mixed_reflection (both_off)."
   }
  ],
  "edges": [
@@ -8142,6 +8151,11 @@
   {
    "from": "infra_8_general_calculus",
    "to": "lemma_8_5",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_82_iso_single",
+   "to": "lemma_8_2",
    "kind": "hard"
   }
  ],
