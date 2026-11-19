@@ -4420,6 +4420,15 @@
    "status": "done",
    "blocker": null,
    "detail": "DONE cycle 97. Axioms clean."
+  },
+  {
+   "id": "infra_72_marginal_over_A_mixed",
+   "label": "Lemma 7.2 mixed, step (a): same u-marginal over A",
+   "section": 8,
+   "file": "AEC/Section7/Lemma72Mixed.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "DONE cycle 97 with bounds at the level nu of A only: competitor marginal realized at nu (infra_78_same_level_realization), bounded tests compared there (infra_78_sameGalois_of_diagramEq), carried back by infra_612_galois_trans_last_base. Axioms clean."
   }
  ],
  "edges": [
@@ -8615,8 +8624,13 @@
    "from": "infra_82_tiedFreeMixed_base_equiv",
    "to": "infra_82_mark_tied_along_single",
    "kind": "hard"
+  },
+  {
+   "from": "infra_72_marginal_over_A_mixed",
+   "to": "infra_72_mixed_level",
+   "kind": "hard"
   }
  ],
- "doneCount": 437,
+ "doneCount": 438,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

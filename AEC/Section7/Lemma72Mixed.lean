@@ -2,6 +2,7 @@ module
 
 public import AEC.Section7.IsolationBound
 public import AEC.Section7.MixedLevel
+public import AEC.Section7.Theorem79
 
 @[expose] public section
 
@@ -177,6 +178,96 @@ theorem infra_72_tiedFreeMixed_of_sameGalois
     | inl k =>
       simp only [infra_612_anchored, alignJoint, typeJoint, Sum.map_inl, Equiv.trans_apply]
     | inr j => rfl)
+
+set_option maxHeartbeats 3200000 in
+/-- **Same `u`-marginal over `A` (proved; step (a) of `infra_72_mixed_level`).** If the
+`u`-marginal of `qB` is a mixed tied-free extension of that of `q` and a competitor `q''` over `B`
+has the same `u`-marginal type over `B`, then `q''` read over `A` has the same `u`-marginal type
+as `q` over `A`. Only the bounds at the level `ν` of `A` are used: the competitor's marginal is
+first realized at level `ν` (`infra_78_same_level_realization`), the bounded tests are compared
+there (`infra_78_sameGalois_of_diagramEq`), and the result is carried back. -/
+theorem infra_72_marginal_over_A_mixed
+    (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : ℵ₀ ≤ σ)
+    {ν μ : Cardinal.{u}} (hν : ν ∈ P.eligible) (hμ : μ ∈ P.eligible) (hνμ : ν ≤ μ)
+    (hrec : ν ∈ recursionClosedLevels P σ) (hσSucc : Order.succ σ ≤ ν)
+    {A : P.scheme.Object ν hν} {B : P.scheme.Object μ hμ}
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hν A) (P.scheme.asSystem hμ B))
+    (hf : P.scheme.permitted (X := A) (Y := B) f)
+    (q : TupleOver K oneVertexShape P.scheme hν A)
+    (qB q'' : TupleOver K oneVertexShape P.scheme hμ B)
+    (eB : q.idx ≃ qB.idx)
+    {uIdx cIdx : Type u} (e : q.idx ≃ uIdx ⊕ cIdx) (e'' : q''.idx ≃ uIdx ⊕ cIdx)
+    (hqν : q.ν = ν) (hBν : μ ≤ qB.ν) (hν'' : μ ≤ q''.ν)
+    (hidx : #q.idx ≤ σ)
+    (hMargTied : IsTiedFreeMixed f (q.marginal e) (qB.marginal (eB.symm.trans e))
+      (Equiv.refl uIdx))
+    (hMargB : SameGaloisType (qB.marginal (eB.symm.trans e)) (q''.marginal e'')
+      (Equiv.refl uIdx) (Equiv.refl uIdx)) :
+    SameGaloisType (q.marginal e) ((q''.restrict f hf).marginal e'')
+      (Equiv.refl uIdx) (Equiv.refl uIdx) := by
+  classical
+  have hσlt : σ < ν := (Order.lt_succ σ).trans_le hσSucc
+  have huidx : #uIdx ≤ #q.idx :=
+    Cardinal.mk_le_of_injective (f := fun i : uIdx => e.symm (Sum.inl i))
+      (fun a b h => Sum.inl.inj (e.symm.injective h))
+  have huσ : #uIdx ≤ σ := huidx.trans hidx
+  have huν : #uIdx < ν := huσ.trans_lt hσlt
+  let r : TupleOver K oneVertexShape P.scheme hν A := (q''.restrict f hf).marginal e''
+  obtain ⟨r', e', hr'ν, hR⟩ := infra_78_same_level_realization r huν
+  obtain ⟨seqU, -, -, hτU, hlongU⟩ :=
+    infra_73_sequence_rec P σ hσ hν hrec hσSucc (q.marginal e) hqν huσ
+  have hg : P.g σ < ν :=
+    (hν.1.closed P.g (Set.mem_insert_of_mem _ rfl)).below σ hσ hσlt
+  have hD : ∀ {β : Type u} (Y : β → Occurrence K oneVertexShape (P.scheme.asSystem hν A)),
+      #β ≤ P.g σ + ls K →
+      P.scheme.DiagramEq (X := (q.marginal e).host) (Y := r'.host)
+        (alignJoint e'.symm (typeJoint (p := q.marginal e) Y)) (typeJoint (p := r') Y) := by
+    intro β Y hβ
+    have hβν : #β < ν := hβ.trans_lt (add_lt_of_lt (P.aleph0_le hν) hg (P.ls_lt hν))
+    have hcard : #(uIdx ⊕ β) < ν := by
+      rw [mk_sum, lift_id, lift_id]
+      exact add_lt_of_lt (P.aleph0_le hν) huν hβν
+    have hmv : infra_78_isMoveMixed f seqU (pushParams f Y) Y := by
+      intro i
+      have h := P.scheme.diagram_preserved A B f hf (seqJoint (seqU.family i) Y) hcard
+        (hcard.trans_le hνμ)
+      exact infra_73_diagramEq_of_eq h (fun _ => rfl) (fun t => by cases t <;> rfl)
+    have d1 := hMargTied seqU (pushParams f Y) Y hlongU (hβ.trans hτU) hβν hmv
+    have d2 := infra_78_diagramEq_of_sameGalois (P := P) hMargB (pushParams f Y)
+      ((hcard.trans_le hνμ).trans_le hBν) ((hcard.trans_le hνμ).trans_le hν'')
+    have d1' := infra_73_diagramEq_of_eq d1 (fun t => (by cases t <;> rfl :
+        typeJoint (p := q.marginal e) Y t = alignJoint (Equiv.refl uIdx)
+          (typeJoint (p := q.marginal e) Y) t))
+      (fun t => (by cases t <;> rfl :
+        infra_612_anchored (Equiv.refl uIdx) (qB.marginal (eB.symm.trans e)).incl
+          (qB.marginal (eB.symm.trans e)).val (pushParams f Y) t =
+        alignJoint (Equiv.refl uIdx) (typeJoint (p := qB.marginal (eB.symm.trans e))
+          (pushParams f Y)) t))
+    have d := P.scheme.diagram_trans _ _ _ _ _ _ d1' d2
+    have d' := infra_73_diagramEq_of_eq d (fun _ => rfl)
+      (ys' := typeJoint (p := r) Y) (fun t => by cases t <;> rfl)
+    have d3 := infra_78_diagramEq_of_sameGalois hR Y
+      (hcard.trans_le ((hνμ.trans hν'')))
+      (by rw [hr'ν]; exact hcard)
+    have d3' := infra_73_diagramEq_of_eq d3 (xs' := typeJoint (p := r) Y)
+      (fun t => by cases t <;> rfl) (fun _ => rfl)
+    have D := P.scheme.diagram_trans _ _ _ _ _ _ d' d3'
+    have D1 := infra_73_scheme_comp D (Sum.map e' id)
+    exact infra_73_diagramEq_of_eq D1 (fun t => by cases t <;> rfl)
+      (fun t => by cases t <;> simp [alignJoint, typeJoint])
+  have hS := infra_78_sameGalois_of_diagramEq P σ hσ hν hrec hσlt (q.marginal e) r' e'.symm
+    huσ hqν hr'ν hD
+  have h12 := infra_73_sgt_uncommon hR
+  have hfin := infra_612_galois_trans_last_base h12 (SameGaloisType.symm hS) σ hσ hσlt
+    huσ hqν
+  have hE : ((Equiv.refl r.idx).trans e'.symm).trans e'.symm.symm = Equiv.refl r.idx := by
+    ext k
+    simp only [Equiv.trans_apply, Equiv.refl_apply, Equiv.symm_symm, Equiv.apply_symm_apply]
+  have hfin' : SameGaloisType r (q.marginal e) (Equiv.refl r.idx)
+      (Equiv.refl (q.marginal e).idx) := by
+    exact cast (congrArg (fun E => SameGaloisType r (q.marginal e) E
+      (Equiv.refl (q.marginal e).idx)) hE) hfin
+  exact SameGaloisType.symm hfin'
 
 /-- **English Lemma 7.2, clause 2 at mixed levels (open).** -/
 theorem infra_72_mixed_level
