@@ -5238,7 +5238,7 @@
    "file": "AEC/Section8/EMExtend83.lean",
    "status": "open",
    "blocker": null,
-   "detail": "Cycle 102 split of infra_83_template_from_colors; uses infra_83_color_coherence for functoriality."
+   "detail": "Cycle 102 split of infra_83_template_from_colors; uses infra_83_color_coherence for functoriality. | Cycle 103: L-level pieces done generically (infra_83_type_hull_pieces: term hulls of witnesses of the coherent types, L-embeddings along position maps, functorial). Remaining: with L the expanded pair language containing vertex LS witness enumerations, show the tau-reducts of the hulls of the X-, Y-, L-sorts are K-models with strong piece maps (giving three FinPieces with PiecesHom X -> Y -> L), plus PieceEnum data (labels = L-terms in Fin (k+1), #L.Term <= ls K)."
   },
   {
    "id": "infra_83_em_functor_generic",
@@ -5275,6 +5275,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 103: Hull83.TpSample / tpCode / tpRes; tpSample_restrict (thinning), tpSample_large, tpSample_compat; tp_coherent_colors: coherent types at all arities (c m' = tpRes f (c m)) with arbitrarily large homogeneous samples, for any class of L-structures with large members. Axioms clean."
+  },
+  {
+   "id": "infra_83_type_hull_pieces",
+   "label": "Lemma 8.3 proof: term hulls of tuples and the L-level template pieces read off coherent types",
+   "section": 8,
+   "file": "AEC/Section8/HullPieces83.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 103: Hull83.Hull (terms modulo equal value), hullEmb (into the sample), term_eq_iff_of_tp / rel_iff_of_tp, hullMapEmb (L-embedding along any position map g with tp(v') = tp(v o g)), hullMap_id, hullMap_comp, tp_witness, TpWit/wit, tpPiece/tpPieceMap (functorial: tpPieceMap_refl/_trans), tpPieceEmb, tp_pieces_exist. Axioms clean."
   }
  ],
  "edges": [
@@ -9945,8 +9954,13 @@
    "from": "infra_83_type_colors",
    "to": "infra_83_pair_sample_family",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_type_hull_pieces",
+   "to": "infra_83_pair_pieces",
+   "kind": "hard"
   }
  ],
- "doneCount": 522,
+ "doneCount": 523,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
