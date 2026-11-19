@@ -661,7 +661,7 @@
    "file": "AEC/Section8/Results.lean",
    "status": "blocked",
    "blocker": null,
-   "detail": "Cycle 95 restatement to the English: template F^b on SystemShape.doubled, values on well-orders of tail size presented by marked pairs val I, order embeddings give MarkedArrows (also between levels), every marked pair at a tail level is isomorphic (vertexwise bijective MarkedArrow) to the value of its size. Hypotheses: IsWorkingPackage W, Section8Arrows W. Open; needs infra_8_general_calculus. Former weaker statement proved for P.scheme (infra_83_lemma_8_3_single)."
+   "detail": "Cycle 95 restatement to the English: template F^b on SystemShape.doubled, values on well-orders of tail size presented by marked pairs val I, order embeddings give MarkedArrows (also between levels), every marked pair at a tail level is isomorphic (vertexwise bijective MarkedArrow) to the value of its size. Hypotheses: IsWorkingPackage W, Section8Arrows W. Open; needs infra_8_general_calculus. Former weaker statement proved for P.scheme (infra_83_lemma_8_3_single). | Cycle 95 (2): for P.scheme, clauses (1), (3) and same-size (2) proved (infra_83_single_parts); cross-level (2) open (infra_83_order_arrows_mixed). General statement additionally needs infra_8_general_calculus."
   },
   {
    "id": "lemma_8_4",
@@ -4141,6 +4141,33 @@
    "status": "done",
    "blocker": null,
    "detail": "DONE cycle 95. infra_82_pointed_single: restated lemma_8_2 clause (3) for W := P.scheme, both directions, on the Theorem 7.9 tail, for every tuple length #ι < μ (one tail, uniform in the length). Ruling (a): no sigma-dependent tail is needed, since the iso clause of Prop 7.5 (infra_75_iso) holds at every eligible level for any mark of size < μ; all-domination is extended to X + (t, b) by infra_82_allDominated_absorb / infra_82_isolated_absorb. Marks matched by list position (MarkedArrow.markMap = σ, cycle-95 Def 8.1 fix; no non-injective reindexing). Axioms: propext, Classical.choice, Quot.sound."
+  },
+  {
+   "id": "infra_83_single_parts",
+   "label": "Lemma 8.3 for P.scheme: template, values, same-size arrows, pairs are values",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83Single.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "DONE cycle 95. infra_83_single_parts: doubled order-presentation template F^b (infra_83_doubledTemplate), values val I (marked pairs of level #I, both copies ≅ F^b(I) by categoricity), order embeddings between well-orders of one size give MarkedArrows (infra_82_pair_extend_same_level), every marked pair at a tail level is isomorphic to the value of its size (infra_83_arrow_of_equiv + infra_82_iso_any). Axioms clean."
+  },
+  {
+   "id": "infra_83_order_arrows_mixed",
+   "label": "Lemma 8.3(2) cross-level order arrows for P.scheme",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83Single.lean",
+   "status": "open",
+   "blocker": null,
+   "detail": "Open (cycle 95). For I ↪o J with #I < #J: a MarkedArrow val I -> val J. Needs the type of the lifted mark over the base read at the larger level: p_X ~ (p_X').restrict e (free lift; host level of Pr.assign X' unconstrained) ~ (b' over X').restrict e at level #J; the transitivity has the middle and right tuples off the base level (the both_off pattern) unless Pr.assign's host is pinned to the base level or a level-copy route (as in infra_79_primeness_mixed) is used. Then infra_79_primeness_mixed gives the Y-arrow carrying the mark entrywise."
+  },
+  {
+   "id": "infra_82_iso_any",
+   "label": "Lemma 8.2(2) for P.scheme at every eligible level",
+   "section": 8,
+   "file": "AEC/Section8/PairIsoSingle.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "DONE cycle 95. Same as infra_82_iso_single but with infra_75_iso directly, so no tail is needed."
   }
  ],
  "edges": [
@@ -8171,8 +8198,23 @@
    "from": "infra_82_pointed_single",
    "to": "lemma_8_2",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_single_parts",
+   "to": "lemma_8_3",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_83_order_arrows_mixed",
+   "to": "lemma_8_3",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_82_iso_any",
+   "to": "infra_83_single_parts",
+   "kind": "hard"
   }
  ],
- "doneCount": 410,
+ "doneCount": 412,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

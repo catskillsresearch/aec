@@ -263,4 +263,73 @@ theorem infra_82_iso_single (P : SingleModelData K)
   intro h1
   exact congrArg (Sigma.mk PUnit.unit) h1
 
+/-- **Lemma 8.2, clause (2), for the Prop 5.6 scheme, at every level.** On the Proposition 7.5 tail, a bijective
+base arrow `e : M.X → N.X` extends to an isomorphism of marked pairs (`onX = e`, `onY` vertexwise
+bijective). -/
+theorem infra_82_iso_any (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) :
+      ∀ (M N : MarkedPair K oneVertexShape P.scheme Pr)
+        (e : SystemArrow K oneVertexShape (P.scheme.asSystem M.hμ M.X)
+          (P.scheme.asSystem N.hμ N.X)),
+        (∀ v, Function.Bijective (e.onVertex v)) →
+        P.scheme.permitted (X := M.X) (Y := N.X) e →
+        ∃ arr : MarkedArrow K oneVertexShape P.scheme Pr M N, arr.onX = e ∧
+          ∀ v, Function.Bijective (arr.onY.onVertex v) := by
+  classical
+  intro M N e hbij he
+  have hlev : M.μ = N.μ := by
+    have h1 : #M.X.model.carrier = M.μ := M.X.card
+    have h2 : #N.X.model.carrier = N.μ := N.X.card
+    rw [← h1, ← h2]
+    exact Cardinal.mk_congr (Equiv.ofBijective _ (hbij PUnit.unit))
+  obtain ⟨μ, hμ, X, Y, incl, hincl, bIdx, b, ⟨eM, hM⟩, hdom⟩ := M
+  obtain ⟨μ', hμ', X', Y', incl', hincl', bIdx', b', ⟨eN, hN⟩, hdom'⟩ := N
+  simp only at hlev e he hbij ⊢
+  subst hlev
+  obtain ⟨e0, hFL, -⟩ := Pr.along e he
+  have hN' := infra_82_sameGalois_restrict e he hN
+  have hlt : ℵ₀ < μ := P.aleph0_lt hμ
+  have hfinX : Finite (Pr.assign hμ X).idx := Finite.of_equiv _ (Pr.arity hμ X).symm
+  have hidxX : #(Pr.assign hμ X).idx ≤ ℵ₀ := (Cardinal.lt_aleph0_of_finite _).le
+  have S1 := infra_612_galois_trans_last_base (t1 := Pr.assign hμ X)
+    (t2 := (Pr.assign hμ X').restrict e he)
+    (t3 := (asTuple incl' hincl' b').restrict e he) (e12 := e0) (e32 := eN)
+    hFL hN'.symm ℵ₀ le_rfl hlt hidxX rfl
+  have hfinB : Finite bIdx := Finite.of_equiv _ (eM.trans (Pr.arity hμ X)).symm
+  have hidxB : #bIdx ≤ ℵ₀ := (Cardinal.lt_aleph0_of_finite _).le
+  have S2 := infra_612_galois_trans_last_base (t1 := asTuple incl hincl b)
+    (t2 := Pr.assign hμ X) (t3 := (asTuple incl' hincl' b').restrict e he) (e12 := eM)
+    hM (SameGaloisType.swap_refl S1) ℵ₀ le_rfl hlt hidxB rfl
+  set τ : bIdx ≃ bIdx' := eM.trans (e0.trans eN.symm).symm.symm with hτ
+  have hg : P.scheme.permitted (X := X) (Y := Y') (SystemArrow.comp e incl') :=
+    P.scheme.comp e incl' he hincl'
+  have hGal : SameGaloisType (asTuple incl hincl b)
+      (asTuple (SystemArrow.comp e incl') hg (fun j => b' (τ j))) (Equiv.refl _)
+      (Equiv.refl _) := by
+    rcases S2 with ⟨ρ, hρ, top, f1, f2, hf1, hf2, hcomm, hval⟩
+    refine ⟨ρ, hρ, top, f1, f2, hf1, hf2, hcomm, fun j => ?_⟩
+    have := hval (τ j)
+    erw [τ.symm_apply_apply j] at this
+    exact this
+  obtain ⟨g, heg, hge⟩ := infra_82_inverse_arrow e hbij
+  have hdom2 : AllDominated (SystemArrow.comp e incl') hg bIdx (fun j => b' (τ j)) :=
+    fun cIdx c hc => infra_82_isolated_base_iso e g heg hge _ _
+      (infra_82_isolated_reindex_mark incl' τ b' c (hdom' cIdx c hc))
+  have hBlt : #bIdx < μ := lt_of_le_of_lt hidxB hlt
+  obtain ⟨φ, hφ, hcomp, hv⟩ :=
+    infra_75_iso hμ X Y Y' incl hincl (SystemArrow.comp e incl') hg b (fun j => b' (τ j)) hBlt
+      hdom hdom2 hGal
+  refine ⟨⟨e, φ, he, trivial, hcomp, τ, fun i => ?_⟩, rfl,
+    P.scheme.isStructIso_bijective _ _ φ hφ⟩
+  show (⟨(b i).1, φ.onVertex (b i).1 (b i).2⟩ : Occurrence K oneVertexShape
+    (P.scheme.asSystem hμ Y')) = b' (τ i)
+  have h1 : φ.onVertex (b i).1 (b i).2 = (b' (τ i)).2 := hv i
+  revert h1
+  generalize b i = o1
+  generalize b' (τ i) = o2
+  obtain ⟨⟨⟩, x1⟩ := o1
+  obtain ⟨⟨⟩, x2⟩ := o2
+  intro h1
+  exact congrArg (Sigma.mk PUnit.unit) h1
+
 end AEC
