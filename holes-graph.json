@@ -7822,6 +7822,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 253: proved."
+  },
+  {
+   "id": "infra_83_list_realizations",
+   "label": "List-based tower, realizations: for small lists s n of Y with each (b, s n) isolated relative to b over X and N realizing tp(b/X), there are realizations s' n in N matching (b, s n) over X for every n and consistent along entries repeated in s (n+1) (iterated infra_75_place; no strong-submodel stages)",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PieceMatch.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 254: proved."
   }
  ],
  "edges": [
@@ -14137,8 +14146,13 @@
    "from": "infra_83_witness_strong",
    "to": "infra_83_arity_removal",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_list_realizations",
+   "to": "infra_83_arity_removal",
+   "kind": "hard"
   }
  ],
- "doneCount": 800,
+ "doneCount": 801,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

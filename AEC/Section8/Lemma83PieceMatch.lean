@@ -3473,4 +3473,67 @@ theorem infra_83_witness_strong {P : SingleModelData K} {μ : Cardinal.{u}} {hμ
   rw [factorEmbedding_apply, Language.Embedding.comp_apply, ← hφ a, hmap]
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+set_option maxHeartbeats 3200000 in
+/-- **List-based tower, realizations (proved).** Given nested small lists `s n` of `Y` (each
+entry of `s n` reappears in `s (n+1)`) with every `(b, s n)` isolated relative to `b` over
+`X`, and `N` realizing `tp(b/X)` by `b'` over `f`, there are realizations `s' n` in `N` with
+`(b, s n) ~ (b', s' n)` over `X` for every `n`, consistent along the nesting. Each step is
+`infra_75_place` (Prop 7.5's one-list placement) applied to the previous list. No strong
+submodel stages are needed, so the lists may be chosen of bounded per-entry width. -/
+theorem infra_83_list_realizations {P : SingleModelData K} {μ : Cardinal.{u}}
+    (hμ : μ ∈ P.eligible) {X Y N : P.scheme.Object μ hμ}
+    (incl : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ Y))
+    (hincl : P.scheme.permitted (X := X) (Y := Y) incl)
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ N))
+    (hf : P.scheme.permitted (X := X) (Y := N) f)
+    {bIdx : Type u}
+    (b : bIdx → Occurrence K oneVertexShape (P.scheme.asSystem hμ Y))
+    (b' : bIdx → Occurrence K oneVertexShape (P.scheme.asSystem hμ N))
+    (hb : #bIdx < μ)
+    (hGalB : SameGaloisType (asTuple incl hincl b) (asTuple f hf b')
+      (Equiv.refl bIdx) (Equiv.refl bIdx))
+    {δ : ℕ → Type u} (s : ∀ n, δ n → Y.model.carrier) (hδ : ∀ n, #(δ n) < μ)
+    (hIso : ∀ n, IsRelativelyIsolated (uIdx := bIdx) (cIdx := δ n)
+      (asTuple incl hincl (seqJoint b (fun k => Y.occ (s n k))))
+      (Equiv.refl (bIdx ⊕ δ n))) :
+    ∃ s' : ∀ n, δ n → N.model.carrier,
+      (∀ n, SameGaloisType
+        (asTuple incl hincl (seqJoint b (fun k => Y.occ (s n k))))
+        (asTuple f hf (seqJoint b' (fun k => N.occ (s' n k))))
+        (Equiv.refl (bIdx ⊕ δ n)) (Equiv.refl (bIdx ⊕ δ n))) ∧
+      ∀ n k k', s (n + 1) k' = s n k → s' (n + 1) k' = s' n k := by
+  classical
+  let Stage (n : ℕ) :=
+    { p : δ n → N.model.carrier //
+      SameGaloisType
+        (asTuple incl hincl (seqJoint b (fun k => Y.occ (s n k))))
+        (asTuple f hf (seqJoint b' (fun k => N.occ (p k))))
+        (Equiv.refl (bIdx ⊕ δ n)) (Equiv.refl (bIdx ⊕ δ n)) }
+  have h0 : Nonempty (Stage 0) := by
+    have hγ : #(bIdx ⊕ PEmpty.{u + 1}) < μ :=
+      infra_75_sum_lt (P.aleph0_le hμ) hb (by simp; exact (P.aleph0_lt hμ).trans_le' (by simp))
+    obtain ⟨s', hGalS, -⟩ :=
+      infra_75_place hμ incl hincl f hf b b' (fun e : PEmpty.{u + 1} => e.elim)
+        (fun e : PEmpty.{u + 1} => e.elim) (s 0) hγ (hδ 0) hGalB
+        (infra_75_galois_pad_empty incl hincl f hf b b' hGalB) (hIso 0)
+    exact ⟨⟨s', hGalS⟩⟩
+  have hstep : ∀ n (prev : Stage n), ∃ nx : Stage (n + 1),
+      ∀ k k', s (n + 1) k' = s n k → nx.1 k' = prev.1 k := by
+    intro n prev
+    have hγ : #(bIdx ⊕ δ n) < μ := infra_75_sum_lt (P.aleph0_le hμ) hb (hδ n)
+    obtain ⟨s', hGalS, hover, -⟩ :=
+      infra_75_place hμ incl hincl f hf b b' (s n) prev.1 (s (n + 1)) hγ (hδ (n + 1)) hGalB
+        prev.2 (hIso (n + 1))
+    exact ⟨⟨s', hGalS⟩, fun k k' hk => hover k' (Sum.inr k) hk⟩
+  let seq : ∀ n, Stage n := fun n =>
+    Nat.rec (motive := fun n => Stage n) (Classical.choice h0)
+      (fun n prev => Classical.choose (hstep n prev)) n
+  exact ⟨fun n => (seq n).1, fun n => (seq n).2,
+    fun n => Classical.choose_spec (hstep n (seq n))⟩
+end
+
 end AEC
