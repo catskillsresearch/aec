@@ -4861,6 +4861,24 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 101 converse: generator tests -> AgreeOn X (Prop 4.8 style, two hosts)."
+  },
+  {
+   "id": "infra_84_transfer_of_agreeOn_values",
+   "label": "Lemma 8.4 (P.scheme): placed agreement on S transfers to all bounded parameter lists with values in the generated E(S)",
+   "section": 8,
+   "file": "AEC/Section8/TermGen84Single.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 101: value form of the generator->term transfer."
+  },
+  {
+   "id": "infra_84_generator_transfer_iff",
+   "label": "Lemma 8.4 (P.scheme): tests with <= chi parameters from E(X+i0) iff all bounded tests from E(X+i0) (EM-style transfer)",
+   "section": 8,
+   "file": "AEC/Section8/TermGen84Single.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 101: iff combining infra_84_agreeOn_of_generator_tests (now concluding AgreeOn X+i0) and infra_84_transfer_of_agreeOn_values."
   }
  ],
  "edges": [
@@ -9301,8 +9319,18 @@
    "from": "infra_84_agreeOn_of_generator_tests",
    "to": "infra_84_layout_amalgam",
    "kind": "hard"
+  },
+  {
+   "from": "infra_84_transfer_of_agreeOn_values",
+   "to": "infra_84_layout_amalgam",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_84_generator_transfer_iff",
+   "to": "infra_84_layout_amalgam",
+   "kind": "hard"
   }
  ],
- "doneCount": 485,
+ "doneCount": 487,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
