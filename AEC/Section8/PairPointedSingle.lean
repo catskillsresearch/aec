@@ -97,13 +97,11 @@ the marked pairs over `e` matching the marks along `σ` takes `t` to `t′` iff 
 entries and transports `tp(t, b/X)` to `tp(t′, b′/X′)`. The length bound is uniform: every
 `#ι < μ` on one tail (Proposition 7.5(2) at the level, `infra_75_iso`, needs no closure in the
 tuple length). -/
-theorem infra_82_pointed_single (P : SingleModelData K)
+theorem infra_82_pointed_all (P : SingleModelData K)
     (Pr : StationaryPrescription K oneVertexShape P.scheme) :
-    ∃ T, ∃ _hT : Tail P.scheme.eligible T,
       ∀ (M N : MarkedPair K oneVertexShape P.scheme Pr)
         (e : SystemArrow K oneVertexShape (P.scheme.asSystem M.hμ M.X)
           (P.scheme.asSystem N.hμ N.X)),
-        M.μ ∈ T → N.μ ∈ T →
         (∀ v, Function.Bijective (e.onVertex v)) →
         ∀ (he : P.scheme.permitted (X := M.X) (Y := N.X) e) (σ : M.bIdx ≃ N.bIdx)
           {ι : Type u} (t : ι → Occurrence K oneVertexShape (P.scheme.asSystem M.hμ M.Y))
@@ -116,8 +114,8 @@ theorem infra_82_pointed_single (P : SingleModelData K)
               SameGaloisType (asTuple M.incl M.incl_arrow (Sum.elim t M.b))
                 (markedJointOver M N e he σ t') (Equiv.refl _) (Equiv.refl _))) := by
   classical
-  obtain ⟨T, hT, -⟩ := infra_82_marked_pair_exists P Pr
-  refine ⟨T, hT, fun M N e _ _ hbij he σ ι t t' hι => ⟨?_, ?_⟩⟩
+  intro M N e hbij he σ ι t t' hι
+  refine ⟨?_, ?_⟩
   · rintro ⟨arr, hX, hσ, -, hmap⟩
     subst hX hσ
     have hcomm : ∀ v x, arr.onY.onVertex v (M.incl.onVertex v x) =
@@ -181,5 +179,29 @@ theorem infra_82_pointed_single (P : SingleModelData K)
       exact congrArg (Sigma.mk PUnit.unit) h1
     refine ⟨⟨e, φ, he, trivial, hcomp, σ, fun j => hocc _ _ (hv (Sum.inr j))⟩, rfl, rfl,
       P.scheme.isStructIso_bijective _ _ φ hφ, fun i => hocc _ _ (hv (Sum.inl i))⟩
+
+/-- **Lemma 8.2, clause (3) (pointed form), for the Prop 5.6 scheme** on the Theorem 7.9 tail
+(`infra_82_pointed_all` holds at every level). -/
+theorem infra_82_pointed_single (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) :
+    ∃ T, ∃ _hT : Tail P.scheme.eligible T,
+      ∀ (M N : MarkedPair K oneVertexShape P.scheme Pr)
+        (e : SystemArrow K oneVertexShape (P.scheme.asSystem M.hμ M.X)
+          (P.scheme.asSystem N.hμ N.X)),
+        M.μ ∈ T → N.μ ∈ T →
+        (∀ v, Function.Bijective (e.onVertex v)) →
+        ∀ (he : P.scheme.permitted (X := M.X) (Y := N.X) e) (σ : M.bIdx ≃ N.bIdx)
+          {ι : Type u} (t : ι → Occurrence K oneVertexShape (P.scheme.asSystem M.hμ M.Y))
+          (t' : ι → Occurrence K oneVertexShape (P.scheme.asSystem N.hμ N.Y)), #ι < M.μ →
+          ((∃ arr : MarkedArrow K oneVertexShape P.scheme Pr M N, arr.onX = e ∧
+              arr.markMap = σ ∧ (∀ v, Function.Bijective (arr.onY.onVertex v)) ∧
+              ∀ i, arr.onY.mapOcc (t i) = t' i) ↔
+            ((∀ i (x : Occurrence K oneVertexShape (P.scheme.asSystem M.hμ M.X)),
+                t i = M.incl.mapOcc x → t' i = N.incl.mapOcc (e.mapOcc x)) ∧
+              SameGaloisType (asTuple M.incl M.incl_arrow (Sum.elim t M.b))
+                (markedJointOver M N e he σ t') (Equiv.refl _) (Equiv.refl _))) := by
+  obtain ⟨T, hT, -⟩ := infra_82_marked_pair_exists P Pr
+  exact ⟨T, hT, fun M N e _ _ hbij he σ ι t t' hι =>
+    infra_82_pointed_all P Pr M N e hbij he σ t t' hι⟩
 
 end AEC

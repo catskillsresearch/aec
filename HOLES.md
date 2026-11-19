@@ -452,9 +452,10 @@ Lean: imports `Section5.Results` and `Section6.Results`. Soft paper chain after 
 | `infra_82_marked_arrow_ext_single` | Lemma 8.2(4) for `P.scheme`: marked arrows extend tp(b,t/X) | [`PairOrbitSingle.lean`](AEC/Section8/PairOrbitSingle.lean) (**done**, cycle 96) |
 | `infra_82_orbit_diagram_single` | Lemma 8.2(4) for `P.scheme`: diagram transport | [`PairOrbitSingle.lean`](AEC/Section8/PairOrbitSingle.lean) (**done**, cycle 96) |
 | `infra_82_orbit_base_auto_single` | Lemma 8.2(4) for `P.scheme`: the base automorphism | [`PairOrbitSingle.lean`](AEC/Section8/PairOrbitSingle.lean) (**done**, cycle 96) |
-| `infra_82_orbit_preservation_of_tied_single` | Lemma 8.2(4) for `P.scheme` given tied mark freeness and diagonal closure | [`PairOrbitSingle.lean`](AEC/Section8/PairOrbitSingle.lean) (**done**, cycle 96) |
+| `infra_82_orbit_preservation_of_tied_single` | Lemma 8.2(4) for `P.scheme` given tied mark freeness (tail `infra_615_closed`) | [`PairOrbitSingle.lean`](AEC/Section8/PairOrbitSingle.lean) (**done**, cycle 96) |
 | `infra_82_mark_tied_along_single` | Lemma 8.2(4) for `P.scheme`: tied freeness of the mark along arrows (Def 8.1 reading; ruling needed) | `AEC/Section8/PairOrbitSingle.lean` (open, cycle 96) |
-| `infra_82_orbit_tail_single` | Lemma 8.2(4) for `P.scheme`: diagonal closure on the clause-(3) tail | `AEC/Section8/PairOrbitSingle.lean` (open, cycle 96) |
+| `infra_82_orbit_tail_single` | Lemma 8.2(4) for `P.scheme`: diagonal closure (via `infra_615_closed`) | [`PairOrbitSingle.lean`](AEC/Section8/PairOrbitSingle.lean) (**done**, cycle 96) |
+| `infra_82_pointed_all` | Lemma 8.2(3) for `P.scheme` at every level | [`PairPointedSingle.lean`](AEC/Section8/PairPointedSingle.lean) (**done**, cycle 96) |
 | `infra_84_base_testing_single` | Lemma 8.4 for `P.scheme`: one-base testing bound | [`Lemma84Single.lean`](AEC/Section8/Lemma84Single.lean) (**done**, cycle 96) |
 | `infra_84_diagonal_tail` | Lemma 8.4 uniformity: diagonal recursion tail | [`Lemma84Single.lean`](AEC/Section8/Lemma84Single.lean) (**done**, cycle 96) |
 | `infra_84_single` | `Lemma84Conclusion P.scheme Pr` (uniform testing bound; no both_off) | `AEC/Section8/Results.lean` (open, cycle 96) |

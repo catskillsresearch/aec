@@ -4194,7 +4194,7 @@
    "file": "AEC/Section8/Results.lean",
    "status": "open",
    "blocker": null,
-   "detail": "Cycle 96. English (8.2): 'Same-level arrows preserve bounded pair orbits'; orbits are pair isomorphism orbits (line 3173), the base moves. Lean PairOrbitEq M M refl t1 t2 -> PairOrbitEq N N refl (f t1) (f t2) matches (bijective onX allowed; mark fixed entrywise). Proof (paper 3010-3018): Lemma 7.2 free extension of joint types, bounded approximation lists, an automorphism of N.X matching them by bounded diagram homogeneity in C, testing bound, then the pair isomorphism test (clause 3, done for P.scheme as infra_82_pointed_single). Not provided by infra_82_iso_any / infra_75_iso (same base only); no bounded diagram homogeneity lemma exists in Lean yet. | Cycle 96: reduction proved (infra_82_orbit_criterion_single); remaining piece infra_82_orbit_base_auto_single. | Cycle 96: proved given infra_82_mark_tied_along_single and infra_82_orbit_tail_single (infra_82_orbit_preservation_of_tied_single)."
+   "detail": "Cycle 96. English (8.2): 'Same-level arrows preserve bounded pair orbits'; orbits are pair isomorphism orbits (line 3173), the base moves. Lean PairOrbitEq M M refl t1 t2 -> PairOrbitEq N N refl (f t1) (f t2) matches (bijective onX allowed; mark fixed entrywise). Proof (paper 3010-3018): Lemma 7.2 free extension of joint types, bounded approximation lists, an automorphism of N.X matching them by bounded diagram homogeneity in C, testing bound, then the pair isomorphism test (clause 3, done for P.scheme as infra_82_pointed_single). Not provided by infra_82_iso_any / infra_75_iso (same base only); no bounded diagram homogeneity lemma exists in Lean yet. | Cycle 96: reduction proved (infra_82_orbit_criterion_single); remaining piece infra_82_orbit_base_auto_single. | Cycle 96: proved given infra_82_mark_tied_along_single and infra_82_orbit_tail_single (infra_82_orbit_preservation_of_tied_single). | Cycle 96 (later): only infra_82_mark_tied_along_single remains."
   },
   {
    "id": "infra_84_single",
@@ -4284,7 +4284,7 @@
    "file": "AEC/Section8/PairOrbitSingle.lean",
    "status": "done",
    "blocker": null,
-   "detail": "DONE cycle 96. Clause (4) for P.scheme (PairOrbitEq refl -> PairOrbitEq refl along a same-level marked arrow), with two explicit hypotheses tracked separately: (i) IsTiedFreeMixed f.onX of the marks (tp(b'/N.X) in M's positions is the tied free extension of tp(b/M.X)) = infra_82_mark_tied_along_single; (ii) M.mu recursion-closed at every infinite sigma < M.mu, on the clause-(3) tail = infra_82_orbit_tail_single. Proof: all-domination fragment Z of tp(b,t1/M.X); over-B isolation by the pushed fragment (infra_72_over_B_isolation); base automorphism e with e(fZ) = f(alpha Z) (infra_82_base_homogeneity_single); mark type kept (infra_82_mark_type_auto_single); diagram transport; pair isomorphism test (infra_82_pointed_single). Axioms clean."
+   "detail": "DONE cycle 96. Clause (4) for P.scheme (PairOrbitEq refl -> PairOrbitEq refl along a same-level marked arrow), with two explicit hypotheses tracked separately: (i) IsTiedFreeMixed f.onX of the marks (tp(b'/N.X) in M's positions is the tied free extension of tp(b/M.X)) = infra_82_mark_tied_along_single; (ii) M.mu recursion-closed at every infinite sigma < M.mu, on the clause-(3) tail = infra_82_orbit_tail_single. Proof: all-domination fragment Z of tp(b,t1/M.X); over-B isolation by the pushed fragment (infra_72_over_B_isolation); base automorphism e with e(fZ) = f(alpha Z) (infra_82_base_homogeneity_single); mark type kept (infra_82_mark_type_auto_single); diagram transport; pair isomorphism test (infra_82_pointed_single). Axioms clean. | Cycle 96 (later): tail is infra_615_closed; the recursion-closure hypothesis is dropped. Remaining input: infra_82_mark_tied_along_single only."
   },
   {
    "id": "infra_82_mark_tied_along_single",
@@ -4300,9 +4300,18 @@
    "label": "Lemma 8.2(4) for P.scheme: diagonal closure on the clause-(3) tail",
    "section": 8,
    "file": "AEC/Section8/PairOrbitSingle.lean",
-   "status": "open",
+   "status": "done",
    "blocker": null,
-   "detail": "Cycle 96. Needed: unboundedly many levels in the clause-(3) tail (infra_78_closedTail cap infra_615_closed) that are also recursion-closed at every infinite sigma below them (infra_84_diagonal_tail property). A joint countable tower should do."
+   "detail": "DONE cycle 96. Clause (3) holds at every level (infra_82_pointed_all; the tail was unused), and infra_615_closed is exactly the diagonal recursion-closed tail, so infra_82_orbit_preservation_of_tied_single now lives on infra_615_closed with no extra closure hypothesis."
+  },
+  {
+   "id": "infra_82_pointed_all",
+   "label": "Lemma 8.2(3) for P.scheme at every level",
+   "section": 8,
+   "file": "AEC/Section8/PairPointedSingle.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "DONE cycle 96. infra_82_pointed_single's statement at every level (the tail was not used); infra_82_pointed_single now derives from it. Axioms clean."
   }
  ],
  "edges": [
@@ -8435,6 +8444,6 @@
    "kind": "hard"
   }
  ],
- "doneCount": 424,
+ "doneCount": 426,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

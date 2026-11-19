@@ -273,7 +273,7 @@ theorem infra_82_mapOcc_injective {X Y : SystemObject K oneVertexShape}
   rfl
 
 /-- **Lemma 8.2(4) for P.scheme, given tied freeness of the mark along the arrow.** On the
-clause-(3) tail, at a level closed for the profile recursion at every smaller size, a same-level
+tail `infra_615_closed` (closed for the profile recursion at every smaller size), a same-level
 marked arrow `f : M → N` along which `tp(b′/N.X)` (read in `M`'s mark positions through
 `f.markMap`) is the tied free extension of `tp(b/M.X)` preserves bounded pair orbits. English
 (Lemma 8.2 proof): the joint type over the larger base is the free extension (Lemma 7.2, over-`B`
@@ -285,8 +285,7 @@ theorem infra_82_orbit_preservation_of_tied_single (P : SingleModelData K)
     ∃ T, ∃ _hT : Tail P.scheme.eligible T,
       ∀ (M N : MarkedPair K oneVertexShape P.scheme Pr)
         (f : MarkedArrow K oneVertexShape P.scheme Pr M N),
-        N.μ ∈ T → M.μ = N.μ →
-        (∀ σ, ℵ₀ ≤ σ → σ < M.μ → M.μ ∈ recursionClosedLevels P σ) →
+        M.μ ∈ T → M.μ = N.μ →
         IsTiedFreeMixed f.onX (asTuple M.incl M.incl_arrow M.b)
           (⟨N.μ, N.hμ, N.Y, N.incl, trivial, M.bIdx, fun k => N.b (f.markMap k)⟩ :
             TupleOver K oneVertexShape P.scheme N.hμ N.X) (Equiv.refl _) →
@@ -296,8 +295,8 @@ theorem infra_82_orbit_preservation_of_tied_single (P : SingleModelData K)
           PairOrbitEq N N (Equiv.refl _) (fun i => f.onY.mapOcc (t₁ i))
             (fun i => f.onY.mapOcc (t₂ i)) := by
   classical
-  obtain ⟨T, hT, H3⟩ := infra_82_pointed_single P Pr
-  refine ⟨T, hT, fun M N f hN hlev hrecAll hTied ι t₁ t₂ hι hO => ?_⟩
+  refine ⟨infra_615_closed P, infra_615_tail P,
+    fun M N f hM hlev hTied ι t₁ t₂ hι hO => ?_⟩
   obtain ⟨α, hαb, -, -, hαt⟩ := hO
   obtain ⟨γ, Z, hγ, HZ⟩ := M.dominated ι t₁ hι
   obtain ⟨e, hbij, he⟩ := infra_82_base_homogeneity_single M N hlev f α Z hγ
@@ -320,11 +319,12 @@ theorem infra_82_orbit_preservation_of_tied_single (P : SingleModelData K)
   let σ : Cardinal.{u} := max (#(M.bIdx ⊕ ι)) ℵ₀
   have hσ : ℵ₀ ≤ σ := le_max_right _ _
   have hσμ : σ < M.μ := max_lt hbι hμ0
-  have hrec := hrecAll σ hσ hσμ
+  have hrec : M.μ ∈ recursionClosedLevels P σ :=
+    ⟨hM.1, fun β₀ hβ => hM.2 σ hσ hσμ β₀ hβ⟩
   have hσSucc : Order.succ σ ≤ M.μ := Order.succ_le_of_lt hσμ
   have hidx : #(M.bIdx ⊕ ι) ≤ σ := le_max_left _ _
   -- the pair-isomorphism test at `N`
-  refine (fun H => ?_) (H3 N N e hN hN hbij trivial (Equiv.refl _)
+  refine (fun H => ?_) (infra_82_pointed_all P Pr N N e hbij trivial (Equiv.refl _)
     (fun i => f.onY.mapOcc (t₁ i)) (fun i => f.onY.mapOcc (t₂ i)) hιN)
   suffices hG : ∃ (ρ : Cardinal.{u}) (hρ : ρ ∈ P.scheme.eligible) (top : P.scheme.Object ρ hρ)
       (g1 g2 : SystemArrow K oneVertexShape (P.scheme.asSystem N.hμ N.Y)
