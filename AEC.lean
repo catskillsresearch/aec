@@ -198,6 +198,7 @@ public import AEC.Section7.Lemma712Uniqueness
 public import AEC.Section7.Lemma712Common
 public import AEC.Section7.ProductFreeLevel
 public import AEC.Section8.MarkedPair
+public import AEC.Section8.MarkedPairExists
 public import AEC.Section8.Results
 public import AEC.Section8.StationaryPrescription
 public import AEC.Section9.BoundaryMap

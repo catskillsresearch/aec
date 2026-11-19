@@ -430,6 +430,7 @@ Lean: imports `Section5.Results` and `Section6.Results`. Soft paper chain after 
 | Decl | Title | Location |
 |------|-------|----------|
 | `lemma_8_2` | Lemma 8.2 | `AEC/Section8/Results.lean:35` |
+| `infra_82_marked_pair_exists` | Lemma 8.2 (1), Prop 5.6 scheme: every object sits in a marked pair | [`MarkedPairExists.lean`](AEC/Section8/MarkedPairExists.lean) (**done**, cycle 94) |
 | `lemma_8_3` | Lemma 8.3 | `AEC/Section8/Results.lean:48` |
 | `lemma_8_4` | Lemma 8.4 | `AEC/Section8/Results.lean:65` |
 | `lemma_8_5` | Lemma 8.5 | `AEC/Section8/Results.lean:76` |
