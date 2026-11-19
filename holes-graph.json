@@ -7408,6 +7408,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 207: proved."
+  },
+  {
+   "id": "infra_83_dominated_of_piece_isolation",
+   "label": "All-domination from isolation on pieces: if for every bounded c a piece X <= Y_u <= Y holds a preimage d of (b, c) with tp(d/X) in Y_u isolated relative to its b-part, then Y is all-dominated over X + b (relIso_push along j)",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PieceMatch.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 208: proved."
   }
  ],
  "edges": [
@@ -13493,8 +13502,13 @@
    "from": "infra_83_dominated_of_local_arrows",
    "to": "infra_83_arity_removal",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_dominated_of_piece_isolation",
+   "to": "infra_83_arity_removal",
+   "kind": "hard"
   }
  ],
- "doneCount": 754,
+ "doneCount": 755,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

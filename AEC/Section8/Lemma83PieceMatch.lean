@@ -1385,4 +1385,40 @@ theorem infra_83_dominated_of_local_arrows (P : SingleModelData K) {μ : Cardina
   exact infra_83_relIso_pull P incl hincl h (seqJoint b c) (Equiv.refl _) hcard H
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+/-- **All-domination from isolation on pieces (proved).** Localizes Definition 7.4 to pieces: if for
+every bounded `c` there is a piece `X ≤ Y_u ≤ Y` (`inclu ; j = incl`) holding a preimage `d` of
+`(b, c)` such that `tp(d/X)` in `Y_u` is isolated relative to its `b`-part, then `Y` is
+all-dominated over `X + b` (`infra_83_relIso_push` along `j`). With `infra_83_piece_with_tuple`
+the pieces exist; the isolation on the piece is the remaining content of
+`infra_83_arity_removal`. -/
+theorem infra_83_dominated_of_piece_isolation (P : SingleModelData K) {μ : Cardinal.{u}}
+    {hμ : μ ∈ P.eligible} {X Y : P.scheme.Object μ hμ}
+    (incl : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ Y))
+    {bIdx : Type u} (b : bIdx → Occurrence K oneVertexShape (P.scheme.asSystem hμ Y))
+    (hb : #bIdx < μ)
+    (hloc : ∀ (cIdx : Type u) (c : cIdx → Occurrence K oneVertexShape (P.scheme.asSystem hμ Y)),
+      #cIdx < μ →
+      ∃ (Yu : P.scheme.Object μ hμ)
+        (inclu : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ Yu))
+        (j : SystemArrow K oneVertexShape (P.scheme.asSystem hμ Yu) (P.scheme.asSystem hμ Y))
+        (d : bIdx ⊕ cIdx → Occurrence K oneVertexShape (P.scheme.asSystem hμ Yu)),
+        SystemArrow.comp inclu j = incl ∧ (∀ s, j.mapOcc (d s) = seqJoint b c s) ∧
+        IsRelativelyIsolated (uIdx := bIdx) (cIdx := cIdx) (asTuple inclu trivial d)
+          (Equiv.refl _)) :
+    AllDominated incl trivial bIdx b := by
+  intro cIdx c hc
+  have hcard : #(bIdx ⊕ cIdx) < μ := by
+    rw [Cardinal.mk_sum, Cardinal.lift_id, Cardinal.lift_id]
+    exact Cardinal.add_lt_of_lt (P.aleph0_lt hμ).le hb hc
+  obtain ⟨Yu, inclu, j, d, hj, hjd, H⟩ := hloc cIdx c hc
+  have H' := infra_83_relIso_push P inclu trivial j d (Equiv.refl _) hcard H
+  have hx : (fun s => j.mapOcc (d s)) = seqJoint b c := funext hjd
+  rw [hx, hj] at H'
+  exact H'
+end
+
 end AEC
