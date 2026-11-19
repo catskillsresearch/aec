@@ -440,7 +440,9 @@ Lean: imports `Section5.Results` and `Section6.Results`. Soft paper chain after 
 | `infra_82_pointed_single` | Lemma 8.2 clause (3) pointed iff for `P.scheme` | [`PairPointedSingle.lean`](AEC/Section8/PairPointedSingle.lean) (**done**, cycle 95) |
 | `infra_82_iso_any` | Lemma 8.2(2) for `P.scheme` at every level | [`PairIsoSingle.lean`](AEC/Section8/PairIsoSingle.lean) (**done**, cycle 95) |
 | `infra_83_single_parts` | Lemma 8.3 for `P.scheme`: template, values, same-size arrows, pairs are values | [`Lemma83Single.lean`](AEC/Section8/Lemma83Single.lean) (**done**, cycle 95) |
-| `infra_83_order_arrows_mixed` | Lemma 8.3(2) cross-level order arrows for `P.scheme` | `AEC/Section8/Lemma83Single.lean` (open; next tip) |
+| `infra_83_order_arrows_mixed` | Lemma 8.3(2) cross-level order arrows for `P.scheme` | [`Lemma83Single.lean`](AEC/Section8/Lemma83Single.lean) (**done**, cycle 95) |
+| `infra_82_pair_extend_mixed` | Cross-level marked-pair extension for `P.scheme` | [`Lemma83Single.lean`](AEC/Section8/Lemma83Single.lean) (**done**, cycle 95) |
+| `infra_83_lemma_8_3_full_single` | Restated Lemma 8.3 for `P.scheme`, all clauses | [`Lemma83Single.lean`](AEC/Section8/Lemma83Single.lean) (**done**, cycle 95) |
 | `infra_83_lemma_8_3_single` | Lean `lemma_8_3` statement for `W := P.scheme` | [`MarkedPairExists.lean`](AEC/Section8/MarkedPairExists.lean) (**done**, cycle 94, categoricity; `lemma_8_3` itself stays open) |
 | `infra_85_lemma_8_5_single` | Lean `lemma_8_5` statement for `W := P.scheme` | [`MarkedPairExists.lean`](AEC/Section8/MarkedPairExists.lean) (**done**, cycle 94, categoricity + pair extension; audit: Lean 8.5 lacks the chain/union clause, restatement needed) |
 | `lemma_8_3` | Lemma 8.3 | `AEC/Section8/Results.lean:134` (restated, cycle 95) |
