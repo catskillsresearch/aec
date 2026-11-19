@@ -441,5 +441,50 @@ theorem infra_83_marked_of_marked_matches (P : SingleModelData K)
     rw [hk]
   exact infra_83_realizes_of_match P Pr incl' N.incl toA b N.b τ hD N.realEq N.realizes
 
+
+/-- Retaining exactly `ν` indices from a set of at least `ν` good indices. -/
+theorem infra_83_pick_retained {ι : Type u} {ν : Cardinal.{u}} (good : ι → Prop)
+    (h : ν ≤ #{i : ι // good i}) : ∃ S : Set ι, #S = ν ∧ ∀ i ∈ S, good i := by
+  have h' : ν ≤ #({i : ι | good i} : Set ι) := h
+  obtain ⟨S, hS, hcard⟩ := Cardinal.le_mk_iff_exists_subset.mp h'
+  exact ⟨S, hcard, fun i hi => hS hi⟩
+
+set_option maxHeartbeats 3200000 in
+/-- **`infra_83_marked_of_marked_matches` with a count of good retractions (proved).** The match
+only needs at least `ν` indices of the Cor 6.16 family whose images of `u*` lie in `toA[X']`
+(the paper's retained retractions); exactly `ν` of them are then retained. -/
+theorem infra_83_marked_of_marked_matches_card (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) {ν : Cardinal.{u}}
+    (hνC : ν ∈ infra_615_closed P) (hνT : ν ∈ infra_78_closedTail P)
+    {X' Y' : P.scheme.Object ν hνC.1}
+    (incl' : SystemArrow K oneVertexShape (P.scheme.asSystem hνC.1 X')
+      (P.scheme.asSystem hνC.1 Y'))
+    (hincl' : P.scheme.permitted (X := X') (Y := Y') incl')
+    {bIdx : Type u} [Finite bIdx]
+    (b : bIdx → Occurrence K oneVertexShape (P.scheme.asSystem hνC.1 Y'))
+    (hmatch : ∀ (cIdx : Type u) (c : cIdx → Occurrence K oneVertexShape (P.scheme.asSystem hνC.1 Y')),
+      #cIdx < ν →
+      ∃ (N : MarkedPair K oneVertexShape P.scheme Pr) (hlC : N.μ ∈ infra_615_closed P)
+        (_ : N.μ ∈ infra_78_closedTail P) (_ : ν ≤ N.μ)
+        (toA : SystemArrow K oneVertexShape (P.scheme.asSystem hνC.1 X')
+          (P.scheme.asSystem hlC.1 N.X))
+        (htoA : P.scheme.permitted (X := X') (Y := N.X) toA)
+        (R : ApproximateRetraction K oneVertexShape P.scheme N.hμ N.X N.Y N.incl)
+        (τ : bIdx ≃ N.bIdx)
+        (cU : cIdx → Occurrence K oneVertexShape (P.scheme.asSystem hlC.1 N.Y)),
+        ν ≤ #{i : R.index // ∀ s, ∃ y, toA.onVertex (seqJoint (fun a => N.b (τ a)) cU s).1 y =
+          (R.retr i).onVertex (seqJoint (fun a => N.b (τ a)) cU s).1
+            (seqJoint (fun a => N.b (τ a)) cU s).2} ∧
+        SameGaloisType (asTuple incl' hincl' (seqJoint b c))
+          ((asTuple N.incl N.incl_arrow (seqJoint (fun a => N.b (τ a)) cU)).restrict toA htoA)
+          (Equiv.refl _) (Equiv.refl _)) :
+    (∃ realEq : bIdx ≃ (Pr.assign hνC.1 X').idx,
+      SameGaloisType (asTuple incl' trivial b) (Pr.assign hνC.1 X') realEq (Equiv.refl _)) ∧
+    AllDominated incl' hincl' bIdx b := by
+  refine infra_83_marked_of_marked_matches P Pr hνC hνT incl' hincl' b (fun cIdx c hc => ?_)
+  obtain ⟨N, hlC, hlT, hνl, toA, htoA, R, τ, cU, hgood, hExt⟩ := hmatch cIdx c hc
+  obtain ⟨S, hS, hSg⟩ := infra_83_pick_retained _ hgood
+  exact ⟨N, hlC, hlT, hνl, toA, htoA, R, S, hS, τ, cU, hSg, hExt⟩
+
 end
 end AEC
