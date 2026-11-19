@@ -1997,4 +1997,58 @@ theorem infra_83_support_set (E : OrderPresentation K) {Z : Type u} [LinearOrder
   exact hs i S fun z hz => Or.inr (Set.mem_iUnion.mpr ⟨i, hz⟩)
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+/-- **An `F(Z_u)` piece for one bounded list (proved).** For `Y'` identified with `F(Z)` by `φ`,
+a set `T ⊆ Z` with `#T = ν` such that `φ ∘ incl'` lands in `F(T)`, and a tuple `w` of at most `ν`
+occurrences of `Y'` (e.g. `seqJoint b c`), there are `S ⊇ T` with `#S = ν`, a piece
+`X' ≤ Y_u ≤ Y'` with a strong `ψY : Y_u → F(S)`, `φ ∘ j = F(S ↪ Z) ∘ ψY`, and a preimage `d` of
+`w` in `Y_u`: inputs (ii) and the piece clauses for the paper's `Y_H ≅ F(Z_H)`. -/
+theorem infra_83_FZ_piece_for_list (P : SingleModelData K) {ν : Cardinal.{u}}
+    {hν : ν ∈ P.eligible} {X' Y' : P.scheme.Object ν hν}
+    (incl' : SystemArrow K oneVertexShape (P.scheme.asSystem hν X') (P.scheme.asSystem hν Y'))
+    {Z : Type u} [LinearOrder Z] [Nonempty Z]
+    (φ : ((P.scheme.asSystem hν Y').obj PUnit.unit).carrier ≃[K.τ] (P.E.obj Z).carrier)
+    (T : Set Z) [Nonempty T] (hT : #T = ν)
+    (hsub : ∀ x, φ (incl'.onVertex PUnit.unit x) ∈
+      Set.range (P.E.map (OrderEmbedding.subtype (fun z => z ∈ T))))
+    {idx : Type u} (w : idx → Occurrence K oneVertexShape (P.scheme.asSystem hν Y'))
+    (hidx : #idx ≤ ν) :
+    ∃ (S : Set Z) (_ : Nonempty S) (Yu : P.scheme.Object ν hν)
+      (inclu : SystemArrow K oneVertexShape (P.scheme.asSystem hν X') (P.scheme.asSystem hν Yu))
+      (j : SystemArrow K oneVertexShape (P.scheme.asSystem hν Yu) (P.scheme.asSystem hν Y'))
+      (ψY : Language.Embedding K.τ ((P.scheme.asSystem hν Yu).obj PUnit.unit).carrier
+        (P.E.obj S).carrier)
+      (d : idx → Occurrence K oneVertexShape (P.scheme.asSystem hν Yu)),
+      T ⊆ S ∧ K.Strong ψY ∧ SystemArrow.comp inclu j = incl' ∧
+      (∀ y, φ (j.onVertex PUnit.unit y) =
+        P.E.map (OrderEmbedding.subtype (fun z => z ∈ S)) (ψY y)) ∧
+      ∀ i, j.mapOcc (d i) = w i := by
+  obtain ⟨S, hne, hTS, hS, hx⟩ := infra_83_support_set P.E (P.aleph0_le hν) T hT hidx
+    (fun i => φ (w i).2)
+  have hsubS : ∀ x, φ (incl'.onVertex PUnit.unit x) ∈
+      Set.range (P.E.map (OrderEmbedding.subtype (fun z => z ∈ S))) := by
+    intro x
+    obtain ⟨y, hy⟩ := hsub x
+    let ι : T ↪o S := ⟨⟨fun t => ⟨t.1, hTS t.2⟩, by
+      intro a b h; apply Subtype.ext; exact congrArg (fun p : S => (p : Z)) h⟩,
+      Iff.rfl⟩
+    refine ⟨P.E.map ι y, ?_⟩
+    rw [← hy]
+    have : ι.trans (OrderEmbedding.subtype (fun z => z ∈ S)) =
+        OrderEmbedding.subtype (fun z => z ∈ T) := by
+      ext t; rfl
+    rw [← this, P.E.map_comp]
+    rfl
+  obtain ⟨Yu, inclu, j, ψY, hψ, hj, hφ, hcov⟩ :=
+    infra_83_piece_of_support P incl' φ S hS hsubS (fun i => (w i).2) hx
+  choose y hy using hcov
+  refine ⟨S, hne, Yu, inclu, j, ψY, fun i => ⟨PUnit.unit, y i⟩, hTS, hψ, hj, hφ, fun i => ?_⟩
+  apply Sigma.ext
+  · exact Subsingleton.elim _ _
+  · exact heq_of_eq (hy i)
+end
+
 end AEC
