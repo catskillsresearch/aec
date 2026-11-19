@@ -6769,6 +6769,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 139: proved."
+  },
+  {
+   "id": "infra_83_ret_term_fix_finite",
+   "label": "Under the eval law, for finite A ⊆ J only finitely many codes c_i move some F(x), x ∈ A (via infra_83_ret_term_almost_id from Cor 6.16 almost_id).",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83Isolation.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 140: proved."
   }
  ],
  "edges": [
@@ -12484,8 +12493,13 @@
    "from": "infra_83_ret_term_into_X",
    "to": "infra_83_ret_admission",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_ret_term_fix_finite",
+   "to": "infra_83_ret_admission",
+   "kind": "hard"
   }
  ],
- "doneCount": 687,
+ "doneCount": 688,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
