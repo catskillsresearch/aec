@@ -345,4 +345,53 @@ noncomputable def MarkedPair.pullY {P : SingleModelData K}
     (infra_83_marked_of_sub P Pr incl h N.incl hcomm b N.b hb N.realEq N.realizes
       N.dominated).2⟩
 
+/-- **All-domination from the prescribed type and minimality over the prime pair (Lemma 8.3
+support).** At a level of the Lemma 8.2 tail, if the tuple `b` of `X ≤ Y` (indexed by the prescribed
+coordinates) realizes `Pr.assign X`, and every arrow into `Y` over `X` that hits `b` from the
+mark of a pair over `X` is onto, then `Y` is all-dominated over `X + b`: the Theorem 7.9 pair
+`(Y'', b'')` over `X` maps into `Y` over `X` sending `b''` to `b` (primeness), the map is onto,
+and all-domination transports (`infra_83_dominated_push`). -/
+theorem infra_83_dominated_of_realizes_onto (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) {μ : Cardinal.{u}}
+    (hμ : μ ∈ infra_78_closedTail P ∩ infra_615_closed P) {X Y : P.scheme.Object μ hμ.1.1}
+    (incl : SystemArrow K oneVertexShape (P.scheme.asSystem hμ.1.1 X)
+      (P.scheme.asSystem hμ.1.1 Y))
+    (b : (Pr.assign hμ.1.1 X).idx → Occurrence K oneVertexShape (P.scheme.asSystem hμ.1.1 Y))
+    (hr : SameGaloisType (asTuple incl trivial b) (Pr.assign hμ.1.1 X)
+      (Equiv.refl _) (Equiv.refl _))
+    (honto : ∀ (Y'' : P.scheme.Object μ hμ.1.1)
+      (incl'' : SystemArrow K oneVertexShape (P.scheme.asSystem hμ.1.1 X)
+        (P.scheme.asSystem hμ.1.1 Y''))
+      (b'' : (Pr.assign hμ.1.1 X).idx →
+        Occurrence K oneVertexShape (P.scheme.asSystem hμ.1.1 Y''))
+      (h : SystemArrow K oneVertexShape (P.scheme.asSystem hμ.1.1 Y'')
+        (P.scheme.asSystem hμ.1.1 Y)),
+      SystemArrow.comp incl'' h = incl → (∀ i, h.mapOcc (b'' i) = b i) →
+        ∀ v, Function.Surjective (h.onVertex v)) :
+    AllDominated incl trivial (Pr.assign hμ.1.1 X).idx b := by
+  have hfin : Finite (Pr.assign hμ.1.1 X).idx := Finite.of_equiv _ (Pr.arity hμ.1.1 X).symm
+  obtain ⟨Y'', f, hf, b'', hAll, hp⟩ := infra_79_existence_at P
+    ⟨infra_79_tail P, infra_79_retraction_pair P⟩ hμ X (Pr.assign hμ.1.1 X) hfin
+  obtain ⟨h, -, hcomp, hv⟩ := infra_79_primeness_same_level hμ.1.1 X (Pr.assign hμ.1.1 X) hfin
+    Y'' f hf b'' hAll hp Y incl trivial b hr.symm
+  have hb : ∀ i, h.mapOcc (b'' i) = b i := fun i => by
+    have h1 : h.onVertex (b'' i).1 (b'' i).2 = (b i).2 := hv i
+    show (⟨(b'' i).1, h.onVertex (b'' i).1 (b'' i).2⟩ :
+      Occurrence K oneVertexShape (P.scheme.asSystem hμ.1.1 Y)) = b i
+    revert h1
+    generalize b'' i = o1
+    generalize b i = o2
+    obtain ⟨⟨⟩, x1⟩ := o1
+    obtain ⟨⟨⟩, x2⟩ := o2
+    intro h1
+    exact congrArg (Sigma.mk PUnit.unit) h1
+  have hsurj := honto Y'' f b'' h hcomp hb
+  have hfin' : #(Pr.assign hμ.1.1 X).idx < μ :=
+    (Cardinal.lt_aleph0_of_finite _).trans (P.aleph0_lt hμ.1.1)
+  have H := infra_83_dominated_push P f hf h hsurj b'' hfin' hAll
+  have e1 : (fun i => h.mapOcc (b'' i)) = b := funext hb
+  rw [e1] at H
+  subst hcomp
+  exact H
+
 end AEC

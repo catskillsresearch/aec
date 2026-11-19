@@ -5058,7 +5058,7 @@
    "file": "AEC/Section8/Lemma83Single.lean",
    "status": "open",
    "blocker": null,
-   "detail": "Cycle 101 split ('The actual sample pair is all-dominated' / 'Removing the arity restriction'). | Cycle 109: all-domination pulls back to sub-objects containing the mark (infra_83_dominated_pull) and transports along onto arrows (infra_83_dominated_push)."
+   "detail": "Cycle 101 split ('The actual sample pair is all-dominated' / 'Removing the arity restriction'). | Cycle 109: all-domination pulls back to sub-objects containing the mark (infra_83_dominated_pull) and transports along onto arrows (infra_83_dominated_push). | Cycle 109: reduced (infra_83_dominated_of_realizes_onto) to: values realize the prescribed type + the prime-pair arrow Y'' -> Y_I over X_I sending the mark to mk_I is onto."
   },
   {
    "id": "infra_83_samples_core",
@@ -6355,6 +6355,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 109: proved. infra_83_lemma_8_3_full_single now reduces exactly to the marked-pair property of the template values (infra_83_bounded_arity_free, infra_83_all_dominated); realEq := ULift-Fin n ≃ assign via Pr.arity. | Cycle 109: prescribed-index variant infra_83_conclusion_of_marked_values_assign (marks indexed by (Pr.assign X_I).idx, realEq = id, as for Lemma 8.2(1) pairs)."
+  },
+  {
+   "id": "infra_83_dominated_of_realizes_onto",
+   "label": "Lemma 8.3 proof (P.scheme): at a Lemma 8.2 tail level, a realizing tuple b of X <= Y gives all-domination when every arrow into Y over X hitting b from a pair mark is onto (primeness + domination push)",
+   "section": 8,
+   "file": "AEC/Section8/MarkedPairTransport.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 109: proved. Splits infra_83_all_dominated into realizes (infra_83_bounded_arity_free) + onto-ness of the prime arrow into the template value."
   }
  ],
  "edges": [
@@ -11830,8 +11839,13 @@
    "from": "infra_83_conclusion_of_marked_values",
    "to": "infra_83_lemma_8_3_full_single",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_dominated_of_realizes_onto",
+   "to": "infra_83_all_dominated",
+   "kind": "hard"
   }
  ],
- "doneCount": 643,
+ "doneCount": 644,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
