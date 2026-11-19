@@ -7363,6 +7363,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 202: proved."
+  },
+  {
+   "id": "infra_83_expansion_transport",
+   "label": "Transport of a pair-language expansion along a tau-isomorphism: if A0's L-structure has phi-reduct its L'-structure and e : A0 = A as L'-structures, the induced L-structure on A has phi-reduct the L'-structure of A (hAf/hAr of piece_clauses_of_match for scheme values)",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PieceMatch.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 203: proved."
   }
  ],
  "edges": [
@@ -13423,8 +13432,13 @@
    "from": "infra_83_piece_clauses_of_match",
    "to": "infra_83_XH_sort",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_expansion_transport",
+   "to": "infra_83_XH_sort",
+   "kind": "hard"
   }
  ],
- "doneCount": 749,
+ "doneCount": 750,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

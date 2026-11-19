@@ -1212,4 +1212,39 @@ theorem infra_83_piece_clauses_of_match (P : SingleModelData K)
   exact ⟨gY, hgY, hs, hr, hmeet, sB, mY, fun y => by rw [hmY, hgY], hret⟩
 end
 
+
+section
+open FirstOrder.Language
+
+/-- **Transport of a pair-language expansion along a `τ`-isomorphism (proved).** If `A₀` carries an
+`L`-structure whose reduct along `φ : L' →ᴸ L` is its `L'`-structure (as the template's limit
+values do: their `τ`-structure is the reduct of the pair language), and `e : A₀ ≃[L'] A`, then the
+`L`-structure induced on `A` by `e` has `φ`-reduct equal to the `L'`-structure of `A`: the
+hypotheses `hAf`, `hAr` of `infra_83_piece_clauses_of_match` for the scheme value `A`. -/
+theorem infra_83_expansion_transport {L L' : FirstOrder.Language.{u, u}} {A₀ A : Type u}
+    [L.Structure A₀] [L'.Structure A₀] [L'.Structure A] (φ : L' →ᴸ L)
+    (hAf : ∀ {k} (f : L'.Functions k) (x : Fin k → A₀),
+      Structure.funMap f x = Structure.funMap (φ.onFunction f) x)
+    (hAr : ∀ {k} (r : L'.Relations k) (x : Fin k → A₀),
+      Structure.RelMap r x ↔ Structure.RelMap (φ.onRelation r) x)
+    (e : A₀ ≃[L'] A) :
+    letI : L.Structure A := e.toEquiv.inducedStructure
+    (∀ {k} (f : L'.Functions k) (x : Fin k → A),
+      Structure.funMap f x = Structure.funMap (φ.onFunction f) x) ∧
+    (∀ {k} (r : L'.Relations k) (x : Fin k → A),
+      Structure.RelMap r x ↔ Structure.RelMap (φ.onRelation r) x) := by
+  letI : L.Structure A := e.toEquiv.inducedStructure
+  refine ⟨fun {k} f x => ?_, fun {k} r x => ?_⟩
+  · show Structure.funMap f x = e.toEquiv (Structure.funMap (φ.onFunction f) (e.toEquiv.symm ∘ x))
+    rw [← hAf, show e.toEquiv (Structure.funMap f (e.toEquiv.symm ∘ x)) =
+      e (Structure.funMap f (e.symm ∘ x)) from rfl, e.map_fun]
+    congr 1
+    funext i
+    exact (e.apply_symm_apply (x i)).symm
+  · show Structure.RelMap r x ↔ Structure.RelMap (φ.onRelation r) (e.toEquiv.symm ∘ x)
+    rw [← hAr, show (e.toEquiv.symm ∘ x) = (e.symm ∘ x) from rfl, ← e.map_rel]
+    have : (e ∘ (e.symm ∘ x)) = x := funext fun i => e.apply_symm_apply (x i)
+    rw [this]
+end
+
 end AEC
