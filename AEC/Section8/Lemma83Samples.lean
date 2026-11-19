@@ -120,4 +120,37 @@ theorem infra_83_samples_retractions (P : SingleModelData K)
     Nonempty (ApproximateRetraction K oneVertexShape P.scheme M.hμ M.X M.Y M.incl) :=
   corollary_6_16_family P hM M.X M.Y M.incl
 
+/-- **Padded dense orders exist (Lemma 8.3 proof).** English: "We may take J, Z, and a further
+order W, to be padded dense orders. Padding means that the order has a well-ordered subset of its
+own cardinality." Every infinite cardinal `μ` is the size of a dense linear order with a
+well-ordered subset of size `μ` (`μ ×lex ℚ`). -/
+theorem infra_83_padded_dense_exists (μ : Cardinal.{u}) (hμ : aleph0 ≤ μ) :
+    ∃ (J : Type u) (_ : LinearOrder J), DenselyOrdered J ∧ #J = μ ∧
+      ∃ S : Set J, #S = μ ∧ S.WellFoundedOn (· < ·) := by
+  have : DenselyOrdered (ULift.{u} ℚ) :=
+    ⟨fun a b h => by
+      obtain ⟨c, h1, h2⟩ := exists_between (show a.down < b.down from h)
+      exact ⟨⟨c⟩, h1, h2⟩⟩
+  have : NoMaxOrder (ULift.{u} ℚ) :=
+    ⟨fun a => ⟨⟨a.down + 1⟩, show a.down < a.down + 1 by linarith⟩⟩
+  have : NoMinOrder (ULift.{u} ℚ) :=
+    ⟨fun a => ⟨⟨a.down - 1⟩, show a.down - 1 < a.down by linarith⟩⟩
+  let A := μ.ord.ToType
+  have hd : DenselyOrdered (Lex (A × ULift.{u} ℚ)) := inferInstance
+  refine ⟨Lex (A × ULift.{u} ℚ), inferInstance, hd, ?_, ?_⟩
+  · change #(A × ULift.{u} ℚ) = μ
+    rw [mk_prod, lift_id, lift_id, mk_ord_toType, mk_uLift, Cardinal.mk_denumerable, lift_aleph0]
+    exact mul_eq_left hμ hμ aleph0_ne_zero
+  · refine ⟨Set.range (fun a : A => toLex (a, (⟨0⟩ : ULift.{u} ℚ))), ?_, ?_⟩
+    · rw [Cardinal.mk_range_eq _ (fun a b h => by simpa using congrArg (fun x => (ofLex x).1) h),
+        mk_ord_toType]
+    · refine (Set.wellFoundedOn_range).mpr ?_
+      have hwf : WellFounded (fun a b : A => a < b) := wellFounded_lt
+      refine Subrelation.wf ?_ hwf
+      intro a b h
+      change toLex (a, (⟨0⟩ : ULift.{u} ℚ)) < toLex (b, (⟨0⟩ : ULift.{u} ℚ)) at h
+      rcases Prod.Lex.toLex_lt_toLex.mp h with h | ⟨_, h⟩
+      · exact h
+      · exact absurd h (lt_irrefl _)
+
 end AEC
