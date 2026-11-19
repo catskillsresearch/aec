@@ -6702,10 +6702,10 @@
    "id": "infra_83_ret_admission",
    "label": "Lemma 8.3 (P.scheme) gap: the admitted pair samples record that ret evaluates a Cor 6.16 retraction family of the sample's marked pair (the eval law of infra_83_full_single_of_ret_evals) and that Y-hull terms landing in the X sort are X-hull terms (hmeet of infra_83_good_of_closure)",
    "section": 8,
-   "file": "AEC/Section8/Lemma83Isolation.lean",
-   "status": "open",
+   "file": "AEC/Section8/Lemma83RetAdmission.lean",
+   "status": "done",
    "blocker": null,
-   "detail": "Cycle 131 (found): pairMAdmittedS2 = pairMAdmitted + XSampleLike + YSampleLike records LS-closure, sort closure, chart and the sort-intersection clause for closed sets, but not that ret is a retraction family of a marked pair; infra_83_ret_samples has the eval law only for the constructed samples. Needed for the paper's (7) via colors. | Cycle 135: infra_83_ret_samples strengthened: retraction codes are a bijection onto the sample base E(J) (covers the matched base; infra_83_card_codes). | Cycle 136: infra_83_pair2_samples now also carries the Cor 6.16 family R, bijective codes and the eval law ret(code_i, F y) = F(incl(r_i y)) in its pair-language structure. | Cycle 137: infra_83_pair3_samples carries R, bijective codes and the ret eval law in s₀. | Cycle 138: infra_83_pairR_samples carries R, bijective codes and the ret eval law in sR (the structure feeding pairMS2 colors)."
+   "detail": "Cycle 131 (found): pairMAdmittedS2 = pairMAdmitted + XSampleLike + YSampleLike records LS-closure, sort closure, chart and the sort-intersection clause for closed sets, but not that ret is a retraction family of a marked pair; infra_83_ret_samples has the eval law only for the constructed samples. Needed for the paper's (7) via colors. | Cycle 135: infra_83_ret_samples strengthened: retraction codes are a bijection onto the sample base E(J) (covers the matched base; infra_83_card_codes). | Cycle 136: infra_83_pair2_samples now also carries the Cor 6.16 family R, bijective codes and the eval law ret(code_i, F y) = F(incl(r_i y)) in its pair-language structure. | Cycle 137: infra_83_pair3_samples carries R, bijective codes and the ret eval law in s₀. | Cycle 138: infra_83_pairR_samples carries R, bijective codes and the ret eval law in sR (the structure feeding pairMS2 colors). | Cycle 145: closed by RetSampleLike / pairMAdmittedS3 (Lemma83RetAdmission.lean): admitted samples carry a marked pair of infinite size, eX surjective, F injective with F∘incl∘eX = F(emb), a Cor 6.16 family with bijective codes and ret(F(emb)(c_i), F y) = F(incl(r_i y)); infra_83_pairMS3_coherent_colors verifies it on the sR-based str of the pairR samples. Downstream rebase onto pairMS3 colors tracked as infra_83_pairMS3_rebase."
   },
   {
    "id": "infra_83_hull_emb_const",
@@ -6765,7 +6765,7 @@
    "id": "infra_83_ret_term_into_X",
    "label": "Ret-terms ret(c_i, y), y ∈ F(Y), land in the X-copy F(J) under the Cor 6.16 eval law (paper's (7): ret over the J-skeleton lands in X).",
    "section": 8,
-   "file": "AEC/Section8/Lemma83Isolation.lean",
+   "file": "AEC/Section8/Lemma83PairSamplesR.lean",
    "status": "done",
    "blocker": null,
    "detail": "Cycle 139: proved."
@@ -6774,7 +6774,7 @@
    "id": "infra_83_ret_term_fix_finite",
    "label": "Under the eval law, for finite A ⊆ J only finitely many codes c_i move some F(x), x ∈ A (via infra_83_ret_term_almost_id from Cor 6.16 almost_id).",
    "section": 8,
-   "file": "AEC/Section8/Lemma83Isolation.lean",
+   "file": "AEC/Section8/Lemma83PairSamplesR.lean",
    "status": "done",
    "blocker": null,
    "detail": "Cycle 140: proved."
@@ -6783,7 +6783,7 @@
    "id": "infra_83_ret_term_fix_card",
    "label": "With #index infinite, the codes c_i fixing F(x) for all x in a finite A ⊆ J have full cardinality #index (toward #I ≤ #{good i}).",
    "section": 8,
-   "file": "AEC/Section8/Lemma83Isolation.lean",
+   "file": "AEC/Section8/Lemma83PairSamplesR.lean",
    "status": "done",
    "blocker": null,
    "detail": "Cycle 141: proved."
@@ -6792,7 +6792,7 @@
    "id": "infra_83_ret_term_fix_card_mu",
    "label": "For a marked pair of infinite size μ, the codes fixing F(x) on a finite A ⊆ J number exactly μ.",
    "section": 8,
-   "file": "AEC/Section8/Lemma83Isolation.lean",
+   "file": "AEC/Section8/Lemma83PairSamplesR.lean",
    "status": "done",
    "blocker": null,
    "detail": "Cycle 142: proved."
@@ -6801,7 +6801,7 @@
    "id": "infra_83_ret_image_into_X",
    "label": "Set form: ret(c_i, ·) '' F(Y) ⊆ F(J) for every code under the Cor 6.16 eval law.",
    "section": 8,
-   "file": "AEC/Section8/Lemma83Isolation.lean",
+   "file": "AEC/Section8/Lemma83PairSamplesR.lean",
    "status": "done",
    "blocker": null,
    "detail": "Cycle 143: proved."
@@ -6810,10 +6810,28 @@
    "id": "infra_83_ret_good_card_mu",
    "label": "For infinite μ and finite A ⊆ J, exactly μ codes fix F(A) pointwise and send F(Y) into F(J).",
    "section": 8,
-   "file": "AEC/Section8/Lemma83Isolation.lean",
+   "file": "AEC/Section8/Lemma83PairSamplesR.lean",
    "status": "done",
    "blocker": null,
    "detail": "Cycle 144: proved."
+  },
+  {
+   "id": "infra_83_pairMS3_rebase",
+   "label": "Rebase the pairMS2 template chain (joint, pieces_iso, matches) onto the ret-admitted pairMS3 colors so full_single_of_ret_evals can read the eval law from matched samples",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83RetAdmission.lean",
+   "status": "open",
+   "blocker": null,
+   "detail": "Open (cycle 145)."
+  },
+  {
+   "id": "infra_83_pairMS3_coherent_colors",
+   "label": "coherent colors over ret-admitted samples (pairMAdmittedS3)",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83RetAdmission.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 145: proved; witnesses are the pairR samples with the sR-based str, RetSampleLike from the threaded eval law."
   }
  ],
  "edges": [
@@ -12554,8 +12572,28 @@
    "from": "infra_83_ret_good_card_mu",
    "to": "infra_83_ret_admission",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_pairMS3_rebase",
+   "to": "infra_83_bounded_arity_free",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_83_pairMS3_rebase",
+   "to": "infra_83_all_dominated",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_83_ret_admission",
+   "to": "infra_83_pairMS3_rebase",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_83_pairMS3_coherent_colors",
+   "to": "infra_83_pairMS3_rebase",
+   "kind": "hard"
   }
  ],
- "doneCount": 692,
+ "doneCount": 694,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
