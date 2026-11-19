@@ -5229,7 +5229,7 @@
    "file": "AEC/Section8/EMExtend83.lean",
    "status": "open",
    "blocker": null,
-   "detail": "Cycle 102 split of infra_83_template_from_colors: Section 2's emOrderPresentation uses only pieceSucc/arityMapSucc functoriality after emSystem, so it can be restated over FinPieces and instantiated for the pair pieces (X, Y, L components plus natural maps)."
+   "detail": "Cycle 102 split of infra_83_template_from_colors: Section 2's emOrderPresentation uses only pieceSucc/arityMapSucc functoriality after emSystem, so it can be restated over FinPieces and instantiated for the pair pieces (X, Y, L components plus natural maps). | Cycle 102: functor part done (infra_83_em_functor_generic); remaining: labels/realize/skeleton/sub/card bounds (Presentation.lean 832-1528), which read terms from the piece enumerations."
   },
   {
    "id": "infra_83_pair_pieces",
@@ -5239,6 +5239,15 @@
    "status": "open",
    "blocker": null,
    "detail": "Cycle 102 split of infra_83_template_from_colors; uses infra_83_color_coherence for functoriality."
+  },
+  {
+   "id": "infra_83_em_functor_generic",
+   "label": "Lemma 8.3 proof: generic EM values are functorial (E(f) strong, E(id) = id, E(g∘f) = E(g)∘E(f)) for any FinPieces",
+   "section": 8,
+   "file": "AEC/Section8/EMExtend83.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 102: Section 2's emMap/emMap_id/emMap_comp ported to FinPieces (gEmMap, gEmMap_strong, gEmMap_id, gEmMap_comp, gEmMap_canon). Axioms clean."
   }
  ],
  "edges": [
@@ -9889,8 +9898,13 @@
    "from": "infra_83_pair_pieces",
    "to": "infra_83_template_from_colors",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_em_functor_generic",
+   "to": "infra_83_em_extension_generic",
+   "kind": "hard"
   }
  ],
- "doneCount": 517,
+ "doneCount": 518,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
