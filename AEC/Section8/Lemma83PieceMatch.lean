@@ -455,4 +455,33 @@ theorem infra_83_sample_toA (P : SingleModelData K)
   ⟨eX.comp (P.E.map e0), K.strong_trans _ _ (P.E.map_strong e0) hsX, fun x => hF _⟩
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+/-- **`toA` as a scheme arrow (proved).** If the template-side base `X'` (a scheme object at a
+level `ν`) is identified with `F(J₀)` by a strong `τ`-embedding `ψ` (as `X_I ≅ F(J_I)`,
+`infra_83_X_hull_eq_FJ`), then for every order embedding `e₀ : J₀ ↪o J` into the `X`-order of a
+ret-sample there is a scheme arrow `toA : X' → M.X` whose values read in `F(Jp)` are
+`F(emb) (F(e₀) (ψ x))`. -/
+theorem infra_83_toA_arrow (P : SingleModelData K)
+    {Pr : StationaryPrescription K oneVertexShape P.scheme} {M : MarkedPair K oneVertexShape P.scheme Pr}
+    {ν : Cardinal.{u}} {hν : ν ∈ P.eligible} (X' : P.scheme.Object ν hν)
+    {J Jp J0 : Type u} [LinearOrder J] [Nonempty J] [LinearOrder Jp] [Nonempty Jp]
+    [LinearOrder J0] [Nonempty J0] (emb : J ↪o Jp)
+    (eX : Language.Embedding K.τ (P.E.obj J).carrier
+      ((P.scheme.asSystem M.hμ M.X).obj PUnit.unit).carrier)
+    (F : Language.Embedding K.τ ((P.scheme.asSystem M.hμ M.Y).obj PUnit.unit).carrier
+      (P.E.obj Jp).carrier)
+    (hsX : K.Strong eX) (hF : ∀ x, F (M.incl.onVertex PUnit.unit (eX x)) = P.E.map emb x)
+    (ψ : Language.Embedding K.τ ((P.scheme.asSystem hν X').obj PUnit.unit).carrier
+      (P.E.obj J0).carrier) (hψ : K.Strong ψ) (e0 : J0 ↪o J) :
+    ∃ toA : SystemArrow K oneVertexShape (P.scheme.asSystem hν X') (P.scheme.asSystem M.hμ M.X),
+      ∀ x, F (M.incl.onVertex PUnit.unit (toA.onVertex PUnit.unit x)) =
+        P.E.map emb (P.E.map e0 (ψ x)) := by
+  obtain ⟨φ, hφ, hφF⟩ := infra_83_sample_toA P emb eX F hsX hF e0
+  exact ⟨⟨fun _ => φ.comp ψ, fun _ => K.strong_trans _ _ hψ hφ, fun h => h.elim⟩,
+    fun x => hφF (ψ x)⟩
+end
+
 end AEC

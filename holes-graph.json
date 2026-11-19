@@ -7201,6 +7201,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 184: proved."
+  },
+  {
+   "id": "infra_83_toA_arrow",
+   "label": "toA as a scheme arrow: a template-side base X' identified with F(J0) by a strong tau-embedding psi and an order map e0 : J0 -> J into a ret-sample give SystemArrow toA : X' -> M.X with F(incl(toA x)) = F(emb)(F(e0)(psi x))",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PieceMatch.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 185: proved."
   }
  ],
  "edges": [
@@ -13171,8 +13180,13 @@
    "from": "infra_83_sample_toA",
    "to": "infra_83_bounded_list_match",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_toA_arrow",
+   "to": "infra_83_bounded_list_match",
+   "kind": "hard"
   }
  ],
- "doneCount": 731,
+ "doneCount": 732,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
