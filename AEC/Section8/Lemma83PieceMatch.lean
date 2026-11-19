@@ -796,7 +796,7 @@ theorem infra_83_one_match_of_retSample (P : SingleModelData K)
             ν ≤ #{i : R.index // ∀ s, ∃ y, toA.onVertex (d s).1 y =
               (R.retr i).onVertex (d s).1 (h.onVertex (d s).1 (d s).2)} := by
   obtain ⟨M, J, Jp, i1, i2, i3, i4, emb, g, eX, F, R, code, hsurj, -, hsX, hsF, hF, hcode, hμ,
-    -, -, -, hev⟩ := hN
+    -, -, -, hev, -⟩ := hN
   refine ⟨M, J, Jp, i1, i2, i3, i4, emb, F, R,
     fun a b => g (Structure.funMap (retM3 P.E Pr.n) ![g.symm a, g.symm b]), hμ, ?_⟩
   intro J0 _ _ ν hν X' Yu ψ hψ e0 inclu gY hgY hr hX L₀ _ _ mY hmY ret hret hmeet m hm
@@ -1681,6 +1681,29 @@ theorem infra_83_full_single_of_pieces (P : SingleModelData K)
     (Cardinal.lt_aleph0_of_finite _).trans (P.aleph0_lt hI.2.1)
   exact ⟨ULift.{u} (Fin Pr.n), Equiv.refl _, realEq, hr,
     infra_83_dominated_of_piece_isolation P (incl I hI.2.1) _ hb hloc⟩
+end
+
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+/-- **The sample's `F` is linked to its `Y`-copy (proved; class strengthened in cycle 216).** In a
+ret-admitted sample, the copy `F[M.Y]` of the sample's `Y` (read through `g : N ≃ F(Jp)`) is closed
+under the `Y`-language: the closure clause `hT` of `infra_83_piece_clauses_of_match` for the
+`Y`-language reading. Verified on the real samples in `infra_83_pairMS3_coherent_colors`, where the
+`Y`-copy `e₀ = F ∘ ι` has the same range as `F`. -/
+theorem infra_83_retSample_Y_link (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) {N : Type u}
+    [(LS83.pairLangM3 P.E Pr.n).Structure N] (hN : RetSampleLike P Pr N) :
+    ∃ (M : MarkedPair K oneVertexShape P.scheme Pr) (Jp : Type u) (_ : LinearOrder Jp)
+      (_ : Nonempty Jp) (g : N ≃ (P.E.obj Jp).carrier)
+      (F : Language.Embedding K.τ ((P.scheme.asSystem M.hμ M.Y).obj PUnit.unit).carrier
+        (P.E.obj Jp).carrier),
+      ∀ {k} (f : (LS83.pairLangM2 P.E Pr.n).Functions k) (x : Fin k → N),
+        (∀ i, g (x i) ∈ Set.range F) → g (yFun P.E Pr.n f x) ∈ Set.range F := by
+  obtain ⟨M, J, Jp, i1, i2, i3, i4, emb, g, eX, F, R, code, -, -, -, -, -, -, -, -, -, -, -,
+    hY⟩ := hN
+  exact ⟨M, Jp, i3, i4, g, F, fun f x hx => hY f x hx⟩
 end
 
 end AEC

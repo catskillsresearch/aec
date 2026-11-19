@@ -178,10 +178,12 @@ def RetSampleLike (P : SingleModelData K) (Pr : StationaryPrescription K oneVert
       (∀ {k} (f : (LS83.pairLangR P.E).Functions k) (x : Fin k → N), (∀ i, g (x i) ∈ T) →
         g (xFun P.E Pr.n f x) ∈ T) →
       T ∩ Set.range (P.E.map emb) = Set.range (P.E.map (Lab83.chartEmb emb T))) ∧
-    ∀ (i : R.index) (y : ((P.scheme.asSystem M.hμ M.Y).obj PUnit.unit).carrier),
+    (∀ (i : R.index) (y : ((P.scheme.asSystem M.hμ M.Y).obj PUnit.unit).carrier),
       g (Structure.funMap (retM3 P.E Pr.n)
         ![g.symm (P.E.map emb (code i)), g.symm (F y)]) =
-        F (M.incl.onVertex PUnit.unit ((R.retr i).onVertex PUnit.unit y))
+        F (M.incl.onVertex PUnit.unit ((R.retr i).onVertex PUnit.unit y))) ∧
+    ∀ {k} (f : (LS83.pairLangM2 P.E Pr.n).Functions k) (x : Fin k → N),
+      (∀ i, g (x i) ∈ Set.range F) → g (yFun P.E Pr.n f x) ∈ Set.range F
 
 /-- The admitted class with `X`-, `Y`-side sample data and the ret evaluation law. -/
 abbrev pairMAdmittedS3 (P : SingleModelData K)
@@ -262,7 +264,12 @@ theorem infra_83_pairMS3_coherent_colors (P : SingleModelData K)
   · obtain ⟨R, code, hcode, hev⟩ := hret
     exact ⟨M, J, Jplus, i1, i2, i3, i4, emb, Equiv.refl _, eX, F, R, code, hbij.2, F.injective, hsX, hsF,
       hF, hcode, by rw [hM]; exact hμ.le, fun x => Iff.rfl, fun f x hx => hX f x hx,
-      fun T _ hT => hchX T hT, fun i y => hev i y⟩
+      fun T _ hT => hchX T hT, fun i y => hev i y, fun {k} f x hx => by
+        rcases f with f | (f | f)
+        · exact hY (Sum.inl f) x hx
+        · exact hY (Sum.inr f) x hx
+        · exact Mark83.mark_mem (fun i => F (markY M i)) (S := Set.range F)
+            (fun i => Set.mem_range_self _) f x⟩
   · fin_cases i
     · exact P.E.skeleton.injective.comp emb.injective
     · exact F.injective.comp (ι.injective.comp P.E.skeleton.injective)
@@ -306,7 +313,7 @@ theorem infra_83_retSampleLike_good (P : SingleModelData K)
           (fun b => g (Structure.funMap (retM3 P.E Pr.n)
               ![g.symm (P.E.map emb (code i)), g.symm b])) '' Set.range F ⊆
             Set.range (P.E.map emb)} = M.μ := by
-  obtain ⟨M, J, Jp, i1, i2, i3, i4, emb, g, eX, F, R, code, hsurj, hF, -, -, hFX, hcode, hμ, -, -, -, hev⟩ := h
+  obtain ⟨M, J, Jp, i1, i2, i3, i4, emb, g, eX, F, R, code, hsurj, hF, -, -, hFX, hcode, hμ, -, -, -, hev, -⟩ := h
   refine ⟨M, J, Jp, i1, i2, i3, i4, emb, g, eX, F, R, code, hsurj, hF, hFX, hcode, fun A => ?_⟩
   exact infra_83_ret_good_card_mu P eX hsurj emb F hFX R code
     (fun a b => g (Structure.funMap (retM3 P.E Pr.n) ![g.symm a, g.symm b])) hev hμ A
