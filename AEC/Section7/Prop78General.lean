@@ -1593,4 +1593,190 @@ For a bounded mark `|p| ≤ θ` (`ℵ₀ ≤ θ < μ`, `μ ∈ infra_78_closedTa
 theorem infra_78_general (P : SingleModelData K) : infra_78_general_statement P :=
   infra_78_general_of_tail_meet P (infra_78_def77_tail_meet P)
 
+/-- **General mixed–mixed transitivity of tied freeness (cycle 94).** For arbitrary marks
+`p` over `X` (level `ν`), `m` over `A` (level `l`), `r` over `B` (level `μ`), `ν ≤ l ≤ μ`, with
+arbitrary index bijections: if `m` is the mixed tied free lift of `p` along `g` and `r` that of `m`
+along `f`, then `r` is the mixed tied free lift of `p` along `g ≫ f`. Reindexing is along the
+bijection `e1 ⊕ id` only (`diagram_reindex`). -/
+theorem infra_78_tiedFreeMixed_trans_gen2
+    {P : SingleModelData K} {ν l μ : Cardinal.{u}} {hν : ν ∈ P.eligible} {hl : l ∈ P.eligible}
+    {hμ : μ ∈ P.eligible}
+    {X : P.scheme.Object ν hν} {A : P.scheme.Object l hl} {B : P.scheme.Object μ hμ}
+    (g : SystemArrow K oneVertexShape (P.scheme.asSystem hν X) (P.scheme.asSystem hl A))
+    (hg : P.scheme.permitted (X := X) (Y := A) g)
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hl A) (P.scheme.asSystem hμ B))
+    (hf : P.scheme.permitted (X := A) (Y := B) f)
+    (p : TupleOver K oneVertexShape P.scheme hν X) (m : TupleOver K oneVertexShape P.scheme hl A)
+    (r : TupleOver K oneVertexShape P.scheme hμ B) (e1 : p.idx ≃ m.idx) (e2 : m.idx ≃ r.idx)
+    (hνl : ν ≤ l) (hlμ : l ≤ μ)
+    (hXA : IsTiedFreeMixed g p m e1) (hAB : IsTiedFreeMixed f m r e2) :
+    IsTiedFreeMixed (SystemArrow.comp g f) p r (e1.trans e2) := by
+  classical
+  intro seq ι Z Z0 hκ hι hιν hmove
+  let b : ApproximationSequence m :=
+    { τ := #ι
+      κIndex := seq.κIndex
+      family := fun j k => pushOcc g (seq.family j (e1.symm k))
+      concat_bounded := by
+        have h1 : #(seq.κIndex × m.idx) = #(seq.κIndex × p.idx) :=
+          Cardinal.mk_congr (Equiv.prodCongr (Equiv.refl _) e1.symm)
+        rw [h1]
+        exact seq.concat_bounded.trans_le hνl
+      few_exceptions := fun {β} W hW => by
+        have hWτ : #β ≤ seq.τ := hW.trans hι
+        obtain ⟨W0, hW0⟩ := infra_78_move_query_mixed g hg hνl seq W (hW.trans_lt hιν)
+        have ht := hXA seq W W0 hκ hWτ (hW.trans_lt hιν) hW0
+        refine le_trans ?_ (seq.few_exceptions W0 hWτ)
+        refine Cardinal.mk_le_of_injective (f := fun j => ⟨j.1, fun hgood => j.2 ?_⟩)
+          (by
+            intro j₁ j₂ hj
+            apply Subtype.ext
+            have := congrArg Subtype.val hj
+            exact this)
+        have c1 := P.scheme.diagram_symm _ _ _ _ ht
+        have c2 := P.scheme.diagram_trans _ _ _ _ _ _ c1 hgood
+        have c3 := P.scheme.diagram_trans _ _ _ _ _ _ c2 (hW0 j.1)
+        have c4 := (P.scheme.diagram_reindex _ _ (Equiv.sumCongr e1 (Equiv.refl β)) _ _).mp c3
+        refine infra_73_diagramEq_of_eq c4 ?_ ?_
+        · rintro (k | x)
+          · change m.val (e1 (e1.symm k)) = m.val k
+            rw [Equiv.apply_symm_apply]
+          · rfl
+        · rintro (k | x) <;> rfl }
+  have hκb : b.τ + ℵ₀ < #b.κIndex := (add_le_add hι le_rfl).trans_lt hκ
+  have hιb : #ι ≤ b.τ := le_rfl
+  have hιl : #ι < l := hιν.trans_le hνl
+  obtain ⟨Z1, hZ1⟩ := infra_78_move_query_mixed f hf hlμ b Z hιl
+  have hq := hAB b Z Z1 hκb hιb hιl hZ1
+  have hcι : ℵ₀ ≤ #ι + ℵ₀ := le_add_self
+  obtain ⟨k, hk1, hk2⟩ := infra_78_exists_outside_two
+    {k | ¬ P.scheme.DiagramEq (X := p.host) (Y := X)
+      (typeJoint (p := p) Z0) (seqJoint (seq.family k) Z0)}
+    {k | ¬ P.scheme.DiagramEq (X := m.host) (Y := A)
+      (typeJoint (p := m) Z1) (seqJoint (b.family k) Z1)}
+    hcι (seq.few_exceptions Z0 hι) (b.few_exceptions Z1 hιb) hκb
+  simp only [Set.mem_ofPred_eq, not_not] at hk1 hk2
+  have a1 := P.scheme.diagram_trans _ _ _ _ _ _ hk1 (hmove k)
+  have c1 := P.scheme.diagram_trans _ _ _ _ _ _ (P.scheme.diagram_symm _ _ _ _ (hZ1 k))
+    (P.scheme.diagram_trans _ _ _ _ _ _ (P.scheme.diagram_symm _ _ _ _ hk2) hq)
+  have c2 := (P.scheme.diagram_reindex _ _ (Equiv.sumCongr e1.symm (Equiv.refl ι)) _ _).mp c1
+  have c3 : P.scheme.DiagramEq (X := B) (Y := r.host)
+      (seqJoint (fun k' => pushOcc (SystemArrow.comp g f) (seq.family k k')) Z)
+      (infra_612_anchored (e1.trans e2) r.incl r.val Z) := by
+    refine infra_73_diagramEq_of_eq c2 ?_ ?_
+    · rintro (k' | x)
+      · change pushOcc f (pushOcc g (seq.family k (e1.symm (e1 k')))) = _
+        rw [Equiv.symm_apply_apply]
+        rfl
+      · rfl
+    · rintro (k' | x) <;> rfl
+  exact P.scheme.diagram_trans _ _ _ _ _ _ a1 c3
+
+/-- **Definition 7.7 transfers to a mixed tied free lift (proved, cycle 94).** If `p` (level `ν`)
+satisfies Definition 7.7 and `q0` over `B` (level `l ≥ ν`) is its mixed tied free lift along a
+class embedding `ι : X → B`, then `q0` satisfies Definition 7.7 on the same tail: a chain mark
+whose stage-`0` restriction is the mixed tied free lift of `q0` along `B → X₀` is the mixed tied
+free lift of `p` along `X → B → X₀` (`infra_78_tiedFreeMixed_trans_gen2`). -/
+theorem infra_78_def77_transfer_lift {P : SingleModelData K} {ν l : Cardinal.{u}}
+    {hν : ν ∈ P.eligible} {hl : l ∈ P.eligible}
+    {X : P.scheme.Object ν hν} {B : P.scheme.Object l hl}
+    (ι : SystemArrow K oneVertexShape (P.scheme.asSystem hν X) (P.scheme.asSystem hl B))
+    (hι : P.scheme.permitted (X := X) (Y := B) ι)
+    (p : TupleOver K oneVertexShape P.scheme hν X) (q0 : TupleOver K oneVertexShape P.scheme hl B)
+    (e0 : p.idx ≃ q0.idx) (hνl : ν ≤ l) (hT0 : IsTiedFreeMixed ι p q0 e0)
+    (hp : SatisfiesContinuityTied p) : SatisfiesContinuityTied q0 := by
+  obtain ⟨T, hT, hTC, H⟩ := hp
+  refine ⟨T, hT, hTC, fun μ' hμ' hle C g hg b e hbν hmix hst => ?_⟩
+  have hcomp : P.scheme.permitted (X := X) (Y := C.obj 0 C.hlim.1) (SystemArrow.comp ι g) :=
+    P.scheme.comp ι g hι hg
+  have hm := infra_78_tiedFreeMixed_trans_gen2 ι hι g hg p q0
+    (b.restrict (C.toUnion 0 C.hlim.1) (C.toUnion_arrow 0 C.hlim.1)) e0 e hνl hle hT0 hmix
+  exact H μ' hμ' (hνl.trans hle) C (SystemArrow.comp ι g) hcomp b (e0.trans e) hbν hm hst
+
+/-- **Theorem 7.9 lift and isolate for a bounded mark (proved, cycle 94).** As
+`infra_79_lift_isolate` for a mark `|p| ≤ σ < ν` (σ infinite) satisfying Definition 7.7: the
+mixed tied free lift at `σ` (`infra_78_tied_free_lift_mixed`), Definition 7.7 transferred to the
+lift (`infra_78_def77_transfer_lift`), and the general Prop 7.8 at `λ` with `θ = ν`
+(`infra_78_general`). Sub-step of `infra_79_general`. -/
+theorem infra_79_lift_isolate_bounded (P : SingleModelData K) {ν l : Cardinal.{u}}
+    (hν : ν ∈ infra_78_closedTail P) (hl : l ∈ infra_78_closedTail P) (hνl : ν < l)
+    (X : P.scheme.Object ν hν.1) (p : TupleOver K oneVertexShape P.scheme hν.1 X)
+    (hpν : p.ν = ν) (σ : Cardinal.{u}) (hσ : ℵ₀ ≤ σ) (hσν : σ < ν) (hidxσ : #p.idx ≤ σ)
+    (hp : SatisfiesContinuityTied p) :
+    ∃ (B U : P.scheme.Object l hl.1)
+      (ι : SystemArrow K oneVertexShape (P.scheme.asSystem hν.1 X) (P.scheme.asSystem hl.1 B))
+      (f : SystemArrow K oneVertexShape (P.scheme.asSystem hl.1 B) (P.scheme.asSystem hl.1 U))
+      (bU : p.idx → Occurrence K oneVertexShape (P.scheme.asSystem hl.1 U)),
+      (∀ {β : Type u} (Z : β → Occurrence K oneVertexShape (P.scheme.asSystem hν.1 X)), #β < ν →
+        P.scheme.DiagramEq (X := p.host) (Y := U) (typeJoint (p := p) Z)
+          (typeJoint (p := (asTuple f trivial bU).restrict ι trivial) Z)) ∧
+      IsTiedFreeMixed ι ((asTuple f trivial bU).restrict ι trivial) (asTuple f trivial bU)
+        (Equiv.refl _) ∧
+      ∀ {J : Type u} (c : J → Occurrence K oneVertexShape (P.scheme.asSystem hl.1 U)),
+        #J ≤ ν →
+        IsRelativelyIsolated (uIdx := p.idx) (cIdx := J)
+          (asTuple f trivial (seqJoint bU c)) (Equiv.refl (p.idx ⊕ J)) := by
+  classical
+  have hlt : ℵ₀ < ν := P.aleph0_lt hν.1
+  have hν0 : ℵ₀ ≤ ν := hlt.le
+  obtain ⟨B, ⟨ι⟩⟩ := infra_78_presentation_arrow hν.1 hl.1 hνl.le X
+  have hrec : ν ∈ recursionClosedLevels P σ := (hν.2.1 σ hσ hσν).1
+  have hrecl : l ∈ recursionClosedLevels P σ := (hl.2.1 σ hσ (hσν.trans hνl)).1
+  obtain ⟨qB, eB, hqν, hD, hT⟩ := infra_78_tied_free_lift_mixed P σ hσ hν.1 hrec
+    (Order.succ_le_of_lt hσν) hl.1 hrecl hνl.le ι trivial p hpν hidxσ
+  let q0 : TupleOver K oneVertexShape P.scheme hl.1 B :=
+    ⟨qB.ν, qB.hν, qB.host, qB.incl, qB.incl_arrow, p.idx, fun k => qB.val (eB k)⟩
+  have hT0 : IsTiedFreeMixed ι p q0 (Equiv.refl _) := by
+    intro seq ι' Z Z0 hlen hιτ hιν hmove
+    exact infra_73_diagramEq_of_eq (hT seq Z Z0 hlen hιτ hιν hmove) (fun _ => rfl)
+      (by rintro (k | x) <;> rfl)
+  have hD0 : ∀ {β : Type u} (Z : β → Occurrence K oneVertexShape (P.scheme.asSystem hν.1 X)),
+      #β < ν → P.scheme.DiagramEq (X := p.host) (Y := q0.host) (typeJoint (p := p) Z)
+        (typeJoint (p := q0.restrict ι trivial) Z) := fun Z hβ =>
+    infra_73_diagramEq_of_eq (hD Z hβ) (fun _ => rfl) (by
+      rintro (k | x)
+      · change qB.val (eB.symm.symm k) = qB.val (eB k)
+        rfl
+      · rfl)
+  have hq0D : SatisfiesContinuityTied q0 :=
+    infra_78_def77_transfer_lift ι trivial p q0 (Equiv.refl _) hνl.le hT0 hp
+  obtain ⟨U, f, hf, b, hgal, hiso⟩ :=
+    infra_78_general P l hl B q0 ν (hidxσ.trans hσν.le) hq0D hν0 hνl
+  let q : TupleOver K oneVertexShape P.scheme hl.1 B := asTuple f trivial b
+  have hidxν : #p.idx < ν := hidxσ.trans_lt hσν
+  have hq0ν : ν ≤ q0.ν := by
+    change ν ≤ qB.ν
+    rw [hqν]; exact hνl.le
+  have hgal' : SameGaloisType q0 q (Equiv.refl q0.idx) (Equiv.refl q.idx) := hgal
+  have hqν' : ν ≤ q.ν := hνl.le
+  have hTq : IsTiedFreeMixed ι p q ((Equiv.refl p.idx).trans (Equiv.refl q0.idx)) :=
+    infra_79_tiedFreeMixed_right_congr (q := p) (qB := q0) (qB' := q) ι (Equiv.refl p.idx)
+      (Equiv.refl q0.idx) hT0 hgal' hidxν hq0ν hqν'
+  have hseed : ∀ {β : Type u} (Z : β → Occurrence K oneVertexShape (P.scheme.asSystem hν.1 X)),
+      #β < ν → P.scheme.DiagramEq (X := p.host) (Y := U) (typeJoint (p := p) Z)
+        (typeJoint (p := q.restrict ι trivial) Z) := by
+    intro β Z hβ
+    have hsz : #(p.idx ⊕ β) < ν := by
+      rw [Cardinal.mk_sum, Cardinal.lift_id, Cardinal.lift_id]
+      exact Cardinal.add_lt_of_lt hν0 hidxν hβ
+    let Z' : β → Occurrence K oneVertexShape (P.scheme.asSystem hl.1 B) :=
+      fun j => ⟨(Z j).1, ι.onVertex (Z j).1 (Z j).2⟩
+    have D2 := infra_78_diagramEq_of_sameGalois hgal Z' (hsz.trans_le hq0ν)
+      (hsz.trans_le hνl.le)
+    have D2' : P.scheme.DiagramEq (X := q0.host) (Y := U)
+        (typeJoint (p := q0.restrict ι trivial) Z) (typeJoint (p := q.restrict ι trivial) Z) :=
+      infra_73_diagramEq_of_eq D2 (by rintro (k | x) <;> rfl) (by rintro (k | x) <;> rfl)
+    exact P.scheme.diagram_trans _ _ _ _ _ _ (hD0 Z hβ) D2'
+  let qr : TupleOver K oneVertexShape P.scheme hν.1 X := q.restrict ι trivial
+  have hTr : IsTiedFreeMixed ι qr q ((Equiv.refl p.idx).trans
+      ((Equiv.refl p.idx).trans (Equiv.refl q0.idx))) :=
+    infra_78_tiedFreeMixed_left_congr (q := p) (q' := qr) (qB := q) ι
+      ((Equiv.refl p.idx).trans (Equiv.refl q0.idx)) (Equiv.refl p.idx) hTq (fun Z hβ => by
+      refine P.scheme.diagram_symm _ _ _ _ ?_
+      exact infra_73_diagramEq_of_eq (hseed Z hβ) (by rintro (k | x) <;> rfl)
+        (fun _ => rfl))
+  refine ⟨B, U, ι, f, b, hseed, hTr, ?_⟩
+  intro J c hc
+  exact hiso c hc
+
 end AEC
