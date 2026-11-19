@@ -5536,6 +5536,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 104: infra_83_ret_samples — samples X ≤ Y ≤ L with R : ApproximateRetraction (Cor 6.16), injective code : R.index → F(J), LS-closed str with reduct L, g with g(code i, F y) = F(incl(r_i y)), X and Y closed under all retLang functions. Axioms clean."
+  },
+  {
+   "id": "infra_83_ret_template",
+   "label": "Lemma 8.3 proof: X → Y → L template of the retraction-expanded samples (pair language τ + LS witnesses + ret; sorts J, Z, W), strong natural induced maps, presentation with values F_L(I)",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83RetSamples.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 104: infra_83_ret_coherent_colors (r = 3, admitted = LS-closed lsLang-reduct, samples from infra_83_ret_samples) and infra_83_ret_template (subSubBundleHom/subBundleHom with hullStrong_ret, tpPresentationB with retLang_functions_le). Not yet: the mark as designated terms, saturation demand, F_X(J) ≅ X and F_Y(Z) ≅ Y for actual samples. Axioms clean."
   }
  ],
  "edges": [
@@ -10371,8 +10380,18 @@
    "from": "infra_83_ret_interpretation",
    "to": "infra_83_pair_sample_family",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_ret_template",
+   "to": "infra_83_template_from_colors",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_83_ret_template",
+   "to": "infra_83_pair_pieces",
+   "kind": "hard"
   }
  ],
- "doneCount": 551,
+ "doneCount": 552,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

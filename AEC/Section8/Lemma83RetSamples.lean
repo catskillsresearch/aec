@@ -2,6 +2,7 @@ module
 
 public import AEC.Section8.Lemma83ExpSamples
 public import AEC.Section8.LSRet83
+public import AEC.Section8.Lemma83JColors
 
 @[expose] public section
 
@@ -33,8 +34,12 @@ theorem infra_83_ret_samples (P : SingleModelData K)
       ∃ eX : Language.Embedding K.τ (P.E.obj J).carrier
           ((P.scheme.asSystem M.hμ M.X).obj PUnit.unit).carrier,
         Function.Bijective eX ∧ K.Strong eX ∧
+        (∀ (Z : Type u) [LinearOrder Z] [Nonempty Z], #Z = μ →
+          Nonempty ((P.E.obj Z).carrier ≃[K.τ]
+            ((P.scheme.asSystem M.hμ M.Y).obj PUnit.unit).carrier)) ∧
       ∃ (Jplus : Type u) (_ : LinearOrder Jplus) (_ : Nonempty Jplus) (emb : J ↪o Jplus)
-        (F : Language.Embedding K.τ ((P.scheme.asSystem M.hμ M.Y).obj PUnit.unit).carrier
+        (strip : Set Jplus), #strip = μ ∧ IsConvexRegion strip ∧
+      ∃ (F : Language.Embedding K.τ ((P.scheme.asSystem M.hμ M.Y).obj PUnit.unit).carrier
           (P.E.obj Jplus).carrier),
         K.Strong F ∧ (∀ x, F (M.incl.onVertex PUnit.unit (eX x)) = P.E.map emb x) ∧
       ∃ (R : ApproximateRetraction K oneVertexShape P.scheme M.hμ M.X M.Y M.incl)
@@ -53,8 +58,8 @@ theorem infra_83_ret_samples (P : SingleModelData K)
           g (P.E.map emb (code i)) (F y) =
             F (M.incl.onVertex PUnit.unit ((R.retr i).onVertex PUnit.unit y)) := by
   classical
-  obtain ⟨μ, h1, h2, h3, J, i1, i2, h4, -, hJ, -, M, h8, eX, h9, sX, -, Jplus, i3, i4, emb,
-    -, -, -, -, -, -, -, F, sF, hF, str, hred, hcl, hX, hY⟩ :=
+  obtain ⟨μ, h1, h2, h3, J, i1, i2, h4, -, hJ, -, M, h8, eX, h9, sX, hZ, Jplus, i3, i4, emb,
+    strip, -, -, hconv, hstrip, -, -, F, sF, hF, str, hred, hcl, hX, hY⟩ :=
     infra_83_ls_expanded_samples P Pr hκ θ
   have hM615 : M.μ ∈ infra_615_closed P := h8 ▸ h3.2
   obtain ⟨R⟩ := infra_83_samples_retractions P Pr M hM615
@@ -90,7 +95,8 @@ theorem infra_83_ret_samples (P : SingleModelData K)
     split_ifs
     · exact hXY (hev _ _)
     · exact ha
-  refine ⟨μ, h1, h2, J, i1, i2, h4, hJ, M, h8, eX, h9, sX, Jplus, i3, i4, emb, F, sF, hF, R,
+  refine ⟨μ, h1, h2, J, i1, i2, h4, hJ, M, h8, eX, h9, sX, hZ, Jplus, i3, i4, emb, strip, hstrip,
+    hconv, F, sF, hF, R,
     code, str, g, code.injective, hcl, hred, fun f x hx => LS83.retExp_closed str g hX hgX f x hx,
     fun f x hx => LS83.retExp_closed str g hY hgY f x hx, fun i y => ?_⟩
   have h : (∃ i', jX (code i') = jX (code i)) ∧ (∃ y', F y' = F y) := ⟨⟨i, rfl⟩, ⟨y, rfl⟩⟩
