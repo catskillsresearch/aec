@@ -5058,7 +5058,7 @@
    "file": "AEC/Section8/Lemma83Single.lean",
    "status": "open",
    "blocker": null,
-   "detail": "Cycle 101 split ('The actual sample pair is all-dominated' / 'Removing the arity restriction'). | Cycle 109: all-domination pulls back to sub-objects containing the mark (infra_83_dominated_pull) and transports along onto arrows (infra_83_dominated_push). | Cycle 109: reduced (infra_83_dominated_of_realizes_onto) to: values realize the prescribed type + the prime-pair arrow Y'' -> Y_I over X_I sending the mark to mk_I is onto."
+   "detail": "Cycle 101 split ('The actual sample pair is all-dominated' / 'Removing the arity restriction'). | Cycle 109: all-domination pulls back to sub-objects containing the mark (infra_83_dominated_pull) and transports along onto arrows (infra_83_dominated_push). | Cycle 109: reduced (infra_83_dominated_of_realizes_onto) to: values realize the prescribed type + the prime-pair arrow Y'' -> Y_I over X_I sending the mark to mk_I is onto. | Cycle 109 caveat: the onto-prime-arrow route (infra_83_dominated_of_realizes_onto') may not apply (non-onto self-embeddings over X+b); direct domination is the primary route."
   },
   {
    "id": "infra_83_samples_core",
@@ -6408,7 +6408,7 @@
    "file": "AEC/Section8/Lemma83Assembly.lean",
    "status": "done",
    "blocker": null,
-   "detail": "Cycle 109: proved (sorry-free reduction; with infra_83_closed_tail). The faithful full_single remains open: (R) and (O)/(domination) are the remaining mathematics."
+   "detail": "Cycle 109: proved (sorry-free reduction; with infra_83_closed_tail). The faithful full_single remains open: (R) and (O)/(domination) are the remaining mathematics. | Caveat: (O) quantifies over all arrows over X_I hitting the mark; even for a genuine marked pair a non-onto self-embedding over X+b may exist, so (O) is only a sufficient condition and may fail. The primary route stays: prove all-domination directly (Lemma 7.6 isolation + Prop 7.5) and use infra_83_conclusion_of_marked_values."
   }
  ],
  "edges": [
