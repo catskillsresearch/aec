@@ -594,6 +594,8 @@ Lean: imports `Section5.Results` and `Section6.Results`. Soft paper chain after 
 | `infra_83_pair2_samples` | Lemma 8.3 proof: samples in the two-copy pair language, X and Y closed in the sublanguage | [`Lemma83PairSamples.lean`](AEC/Section8/Lemma83PairSamples.lean) (**done**, cycle 105) |
 | `infra_83_Y_iso_over_X` | Lemma 8.3 proof: iso Y ≅ F(Z) over X ≅ F(J) | [`Lemma83PairSamples.lean`](AEC/Section8/Lemma83PairSamples.lean) (open, cycle 105) |
 | `infra_83_sublang_bundle_chain` | Lemma 8.3 proof: sort chain X_H → Y_H (sublanguage) → L_H via bundled subPiecesHom | [`HullSubBundle83.lean`](AEC/Section8/HullSubBundle83.lean) (**done**, cycle 105) |
+| `infra_83_pair2_template` | Lemma 8.3 proof: concrete three-sort pair2 template, strong natural X→Y→L | [`Lemma83PairTemplate.lean`](AEC/Section8/Lemma83PairTemplate.lean) (**done**, cycle 105) |
+| `infra_83_X_hull_eq_FJ` | Lemma 8.3 proof: X-sort pieces are F(J_H) | [`Lemma83PairTemplate.lean`](AEC/Section8/Lemma83PairTemplate.lean) (open) |
 | `infra_72_mixed_level` | Lemma 7.2 last sentence (A at a smaller level than B), stated with sorry (audit) | [`Lemma72Mixed.lean`](AEC/Section7/Lemma72Mixed.lean) (open, cycle 96) |
 | `infra_82_tiedFreeMixed_base_equiv` | Mixed tied freeness under a reindexed change of base tuple | [`TiedAlong.lean`](AEC/Section8/TiedAlong.lean) (**done**, cycle 97) |
 | `infra_82_mark_tied_along_single` | Lemma 8.2(4) for `P.scheme`: tied freeness of the mark along arrows (Def 8.1 tied, cycle 97 ruling) | [`TiedAlong.lean`](AEC/Section8/TiedAlong.lean) (**done**, cycle 97) |
