@@ -7183,6 +7183,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 182: proved."
+  },
+  {
+   "id": "infra_83_ret_sample_tau",
+   "label": "Strengthen the ret-sample data (RetSampleLike) so that eX : F(J) -> X is a tau-isomorphism and F : Y -> F(Jp) a tau-embedding (both hold for the real samples, where X = F(J) and Y embeds in F(Jp) through g), and re-verify the real samples; needed to promote the order-map tau-embeddings (infra_83_sample_pair_square) to scheme SystemArrows toA : X_I -> M.X and h : Y_u -> M.Y.",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83SampleLikeY.lean",
+   "status": "open",
+   "blocker": null,
+   "detail": "Open (cycle 182): RetSampleLike currently records eX and F only as functions."
   }
  ],
  "edges": [
@@ -13141,6 +13150,11 @@
   },
   {
    "from": "infra_83_eX_bijective",
+   "to": "infra_83_bounded_list_match",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_83_ret_sample_tau",
    "to": "infra_83_bounded_list_match",
    "kind": "hard"
   }
