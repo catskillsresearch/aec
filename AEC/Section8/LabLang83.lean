@@ -74,5 +74,41 @@ theorem map_label_value {J Jp : Type u} [LinearOrder J] [Nonempty J] [LinearOrde
   rw [E.realize_map f t]
   exact labFun_skeleton ⟨t.label, f ∘ t.pos, f.strictMono.comp t.increasing⟩
 
+/-- Order embeddings `y ↦ (y, b y)` into `Jp ×ₗ Bool`. -/
+def boolEmb {Jp : Type u} [LinearOrder Jp] (b : Jp → Bool) : Jp ↪o Lex (Jp × ULift.{u} Bool) :=
+  OrderEmbedding.ofStrictMono (fun y => toLex (y, ULift.up (b y)))
+    (fun _ _ hyz => Prod.Lex.lt_iff.mpr (Or.inl hyz))
+
+@[simp] theorem boolEmb_apply {Jp : Type u} [LinearOrder Jp] (b : Jp → Bool) (y : Jp) :
+    boolEmb b y = toLex (y, ULift.up (b y)) := rfl
+
+/-- **Skeleton elements in the image of `E(f)` sit at positions in `f`.**  Two order embeddings
+into `Jp ×ₗ Bool` agreeing on `f(J)` but separating a position outside it would otherwise
+send the skeleton element to two distinct skeleton elements. -/
+theorem skeleton_mem_range {J Jp : Type u} [LinearOrder J] [Nonempty J] [LinearOrder Jp]
+    [Nonempty Jp] (f : J ↪o Jp) {i : Jp} (h : E.skeleton i ∈ Set.range (E.map f)) :
+    i ∈ Set.range f := by
+  classical
+  by_contra hi
+  obtain ⟨x, hx⟩ := h
+  let g := boolEmb (Jp := Jp) fun _ => false
+  let g' := boolEmb (Jp := Jp) fun y => decide (y ∉ Set.range f)
+  have hfg : f.trans g = f.trans g' := by
+    ext j
+    simp only [RelEmbedding.trans_apply, g, g', boolEmb_apply]
+    simp
+  have h1 : E.map g (E.skeleton i) = E.map g' (E.skeleton i) := by
+    rw [← hx]
+    have e1 := congrFun (congrArg (⇑) (E.map_comp f g)) x
+    have e2 := congrFun (congrArg (⇑) (E.map_comp f g')) x
+    simp only [Language.Embedding.comp_apply] at e1 e2
+    rw [← e1, ← e2, hfg]
+  rw [E.skeleton_natural, E.skeleton_natural] at h1
+  have h2 := E.skeleton.injective h1
+  have h3 := congrArg (fun z => (ofLex z).2.down) h2
+  have hi' : ∀ x, ¬ f x = i := fun x hx => hi ⟨x, hx⟩
+  simp only [g, g', boolEmb_apply, ofLex_toLex] at h3
+  simp [hi'] at h3
+
 end Lab83
 end AEC
