@@ -155,7 +155,7 @@ theorem infra_83_pairMS_coherent_colors (P : SingleModelData K)
         (thetaM P.E Pr.n i).relabel (fun _ => (a, i)) ∈ c m hm := by
   refine Hull83.tpB_coherent_colors_formula (thetaM P.E Pr.n) fun κ => ?_
   obtain ⟨μ, hθ, -, J, i1, i2, -, hJ, M, -, eX, -, -, ι, Jplus, i3, i4, emb, strip, hstrip, -,
-    F, -, -, s₀, hcl, hred, hX, hchX, -, -, -, -, hlabX⟩ := infra_83_pairR_samples P Pr (κ := ℵ₀) le_rfl κ
+    F, -, -, s₀, hcl, hred, hX, hchX, -, -, -, -, hlabX, -⟩ := infra_83_pairR_samples P Pr (κ := ℵ₀) le_rfl κ
   obtain ⟨e⟩ : Nonempty (J ≃ strip) := Cardinal.eq.mp (hJ.trans hstrip.symm)
   let str : (LS83.pairLangM3 P.E Pr.n).Structure (P.E.obj Jplus).carrier :=
     @Language.sumStructure _ _ _ (@Language.sumStructure _ _ _

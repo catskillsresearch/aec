@@ -162,7 +162,7 @@ theorem infra_83_pairMS2_coherent_colors (P : SingleModelData K)
         (rhoM P.E Pr.n i).relabel ![(a, i), (b, i)] ∈ c m hm := by
   refine Hull83.tpB_coherent_colors_formula2 (thetaM P.E Pr.n) (rhoM P.E Pr.n) fun κ => ?_
   obtain ⟨μ, hθ, -, J, i1, i2, -, hJ, M, -, eX, -, -, ι, Jplus, i3, i4, emb, strip, hstrip, -,
-    F, -, hF, s₀, hcl, hred, hX, hchX, hY, hchY, -, -, hlabX⟩ :=
+    F, -, hF, s₀, hcl, hred, hX, hchX, hY, hchY, -, -, hlabX, -⟩ :=
     infra_83_pairR_samples P Pr (κ := ℵ₀) le_rfl κ
   obtain ⟨e⟩ : Nonempty (J ≃ strip) := Cardinal.eq.mp (hJ.trans hstrip.symm)
   let str : (LS83.pairLangM3 P.E Pr.n).Structure (P.E.obj Jplus).carrier :=
