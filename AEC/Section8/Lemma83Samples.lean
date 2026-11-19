@@ -110,4 +110,14 @@ theorem infra_83_samples_order_exists (P : SingleModelData K) {μ : Cardinal.{u}
   · rw [hc]; exact hcat
   · rw [hc]; exact htκ
 
+/-- **The retraction family of the samples (P.scheme).** English (Lemma 8.3 proof): "Include a
+sort of retraction indices and an evaluation function for a family r_i : Y → X from Corollary
+6.16." Every marked pair at a level closed for Proposition 6.15 carries an approximate retraction
+family of its extension onto its base along the inclusion. -/
+theorem infra_83_samples_retractions (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme)
+    (M : MarkedPair K oneVertexShape P.scheme Pr) (hM : M.μ ∈ infra_615_closed P) :
+    Nonempty (ApproximateRetraction K oneVertexShape P.scheme M.hμ M.X M.Y M.incl) :=
+  corollary_6_16_family P hM M.X M.Y M.incl
+
 end AEC

@@ -5077,6 +5077,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 101: unbounded categoricity + orderPresentation_obj_card."
+  },
+  {
+   "id": "infra_83_samples_retractions",
+   "label": "Lemma 8.3 proof (P.scheme): every marked pair at a 6.15-closed level carries a Cor 6.16 retraction family Y -> X",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83Samples.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 101: corollary_6_16_family."
   }
  ],
  "edges": [
@@ -9637,8 +9646,13 @@
    "from": "infra_83_samples_order_exists",
    "to": "infra_83_samples_core",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_samples_retractions",
+   "to": "infra_83_samples",
+   "kind": "hard"
   }
  ],
- "doneCount": 502,
+ "doneCount": 503,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
