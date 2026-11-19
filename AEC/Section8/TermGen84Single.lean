@@ -550,4 +550,49 @@ theorem infra_84_layout_agree_single
     eB₁ eB₂ e hqν hB₁ν hB₂ν hidx hidxν W hW hExt₁ hExt₂ hMarg₁ hMarg₂ P.D (fun b => c (p b))
     hρinf hj ht₀ ht₁
 
+/-- **Two-segment presentation of the layout object.** Every layout object `B` at an eligible level
+`μ` is charted onto the two-segment presentation `P.E(I₁ +lex I₂)` (`#(I₁ +lex I₂) = μ`, by
+categoricity), and through such a chart the Lemma 7.2 extensions `qB₁`, `qB₂` have lifting placements
+with the same full comparison (`infra_84_layout_agree_single`). -/
+theorem infra_84_layout_agree_presented
+    (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : ℵ₀ ≤ σ)
+    {ν μ : Cardinal.{u}} (hν : ν ∈ P.eligible) (hμ : μ ∈ P.eligible) (hνμ : ν ≤ μ)
+    (hrec : ν ∈ recursionClosedLevels P σ) (hσSucc : Order.succ σ ≤ ν)
+    (hrecμ : μ ∈ recursionClosedLevels P σ)
+    {A : P.scheme.Object ν hν} {B : P.scheme.Object μ hμ}
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hν A) (P.scheme.asSystem hμ B))
+    (hf : P.scheme.permitted (X := A) (Y := B) f)
+    (q : TupleOver K oneVertexShape P.scheme hν A)
+    (qB₁ qB₂ : TupleOver K oneVertexShape P.scheme hμ B)
+    (eB₁ : q.idx ≃ qB₁.idx) (eB₂ : q.idx ≃ qB₂.idx)
+    {uIdx cIdx : Type u} (e : q.idx ≃ uIdx ⊕ cIdx)
+    (hqν : q.ν = ν) (hB₁ν : qB₁.ν = μ) (hB₂ν : qB₂.ν = μ)
+    (hidx : #q.idx ≤ σ) (hidxν : #q.idx < ν)
+    {wι : Type u} (W : wι → Occurrence K oneVertexShape (P.scheme.asSystem hν A))
+    (hW : IsIsolatingFragment q e W)
+    (hExt₁ : SameGaloisType q (qB₁.restrict f hf) eB₁ (Equiv.refl qB₁.idx))
+    (hExt₂ : SameGaloisType q (qB₂.restrict f hf) eB₂ (Equiv.refl qB₂.idx))
+    (hMarg₁ : IsTiedFreeMixed f (q.marginal e) (qB₁.marginal (eB₁.symm.trans e))
+      (Equiv.refl uIdx))
+    (hMarg₂ : IsTiedFreeMixed f (q.marginal e) (qB₂.marginal (eB₂.symm.trans e))
+      (Equiv.refl uIdx))
+    (I₁ I₂ : Type u) [LinearOrder I₁] [WellFoundedLT I₁] [LinearOrder I₂] [WellFoundedLT I₂]
+    [Nonempty I₁] (hI : #(Lex (I₁ ⊕ I₂)) = μ)
+    {τ : Cardinal.{u}} (hτinf : aleph0 ≤ τ) (hτ : τ < μ) (hα : #(uIdx ⊕ cIdx) ≤ τ) :
+    ∃ c : (P.E.obj (Lex (I₁ ⊕ I₂))).carrier ≃[K.τ]
+        ((P.scheme.asSystem hμ B).obj PUnit.unit).carrier,
+      ∀ P₀ P₁ : Placement P.E.lab P.E.arity (Lex (I₁ ⊕ I₂)) (uIdx ⊕ cIdx),
+        P₀.LiftsBounded P.E P.D ((P.scheme.asSystem qB₁.hν qB₁.host).inK PUnit.unit)
+          ((qB₁.incl.onVertex PUnit.unit).comp c.toEmbedding)
+          (fun i => (qB₁.val ((eB₁.symm.trans e).symm i)).2) μ →
+        P₁.LiftsBounded P.E P.D ((P.scheme.asSystem qB₂.hν qB₂.host).inK PUnit.unit)
+          ((qB₂.incl.onVertex PUnit.unit).comp c.toEmbedding)
+          (fun i => (qB₂.val ((eB₂.symm.trans e).symm i)).2) μ →
+        P₀.AgreeOn P.E P.D P₁ Set.univ := by
+  have : Nonempty (Lex (I₁ ⊕ I₂)) := ⟨toLex (Sum.inl (Classical.arbitrary I₁))⟩
+  obtain ⟨c⟩ := P.exists_present_equiv hμ B (Lex (I₁ ⊕ I₂)) hI
+  exact ⟨c, fun P₀ P₁ h₀ h₁ => infra_84_layout_agree_single P σ hσ hν hμ hνμ hrec hσSucc hrecμ
+    f hf q qB₁ qB₂ eB₁ eB₂ e hqν hB₁ν hB₂ν hidx hidxν W hW hExt₁ hExt₂ hMarg₁ hMarg₂ I₁ I₂ hI c
+    hτinf hτ hα P₀ P₁ h₀ h₁⟩
+
 end AEC
