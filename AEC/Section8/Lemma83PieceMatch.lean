@@ -3199,4 +3199,51 @@ theorem infra_83_dominated_of_tower_at (P : SingleModelData K) {μ : Cardinal.{u
   · exact heq_of_eq (hb i)
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+set_option maxHeartbeats 1600000 in
+/-- **`full_single` from realization + one isolated tower per level (proved reduction).**
+Lemma 8.3 follows once, at each closed well-ordered level, the template mark realizes the
+prescription and `Y_I` has one exhausting countable tower of small strong submodels containing
+the mark whose stages are isolated relative to the mark over `X_I`
+(`infra_83_dominated_of_tower_at` + `infra_83_full_single_of_dominated` assembly). Remaining
+arity-removal content: such a tower of nested bounded-width lists and the isolation of its
+stages from bounded-arity matches. -/
+theorem infra_83_full_single_of_towers (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) :
+    ∃ (X Y : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
+        P.scheme.Object #I hI)
+      (incl : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
+        SystemArrow K oneVertexShape (P.scheme.asSystem hI (X I hI))
+          (P.scheme.asSystem hI (Y I hI)))
+      (mk : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
+        Fin Pr.n → Occurrence K oneVertexShape (P.scheme.asSystem hI (Y I hI))),
+      (∀ (I : Type u) [LinearOrder I] [WellFoundedLT I] [Nonempty I]
+          (hI : #I ∈ infra_78_closedTail P ∩ infra_615_closed P),
+          (∃ realEq : ULift.{u} (Fin Pr.n) ≃ (Pr.assign hI.2.1 (X I hI.2.1)).idx,
+            SameGaloisType (asTuple (incl I hI.2.1) trivial
+              (fun a : ULift.{u} (Fin Pr.n) => mk I hI.2.1 a.down))
+              (Pr.assign hI.2.1 (X I hI.2.1)) realEq (Equiv.refl _)) ∧
+          ∃ (M : ℕ → Model K.τ)
+            (j : ∀ n, Language.Embedding K.τ (M n).carrier (Y I hI.2.1).model.carrier),
+            (∀ n, K.Strong (j n)) ∧ (∀ n, Model.card (M n) < #I) ∧
+            (∀ n x, ∃ y, j (n + 1) y = j n x) ∧ (∀ y, ∃ n x, j n x = y) ∧
+            (∀ a : ULift.{u} (Fin Pr.n), ∃ x, j 0 x = (mk I hI.2.1 a.down).2) ∧
+            ∀ n, IsRelativelyIsolated (uIdx := ULift.{u} (Fin Pr.n)) (cIdx := (M n).carrier)
+              (asTuple (incl I hI.2.1) trivial
+                (seqJoint (fun a : ULift.{u} (Fin Pr.n) => mk I hI.2.1 a.down)
+                  (fun x => (Y I hI.2.1).occ (j n x))))
+              (Equiv.refl (ULift.{u} (Fin Pr.n) ⊕ (M n).carrier))) →
+      Lemma83Conclusion P.scheme Pr := by
+  obtain ⟨F, X, Y, eX, eY, incl, mk, hincl, harr⟩ := infra_83_pair_template_clauses P Pr
+  refine ⟨X, Y, incl, mk, fun hS => ?_⟩
+  refine infra_83_conclusion_of_marked_values_idx P Pr F X Y eX eY incl mk hincl harr _
+    (infra_83_closed_tail P) (fun I _ _ _ hI => ?_)
+  obtain ⟨⟨realEq, hr⟩, M, j, hj, hMc, hmono, hcov, hd, hIso⟩ := hS I hI
+  exact ⟨ULift.{u} (Fin Pr.n), Equiv.refl _, realEq, hr,
+    infra_83_dominated_of_tower_at P hI (incl I hI.2.1) _ M j hj hMc hmono hcov hd hIso⟩
+end
+
 end AEC
