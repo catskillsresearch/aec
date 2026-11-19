@@ -618,6 +618,7 @@ Lean: imports `Section5.Results` and `Section6.Results`. Soft paper chain after 
 | `infra_83_X_pieces_setlevel` | Lemma 8.3 proof: sample-like admitted class; X-pieces equal F(J_H) through g | [`Lemma83SampleLike.lean`](AEC/Section8/Lemma83SampleLike.lean) (**done**, cycle 106) |
 | `infra_83_X_pieces_iso` | Lemma 8.3 proof: X-pieces τ-isomorphic to F(J_k) | [`Lemma83SampleLike.lean`](AEC/Section8/Lemma83SampleLike.lean) (**done**, cycle 106) |
 | `infra_83_pairMS_template` | Lemma 8.3 proof: marked template over sample-like structures with X_k ≅ F(J_k) | [`Lemma83SampleLike.lean`](AEC/Section8/Lemma83SampleLike.lean) (**done**, cycle 106) |
+| `infra_83_Y_samplelike` | Lemma 8.3 proof: Y-side sample-like data, Y-hull = e₀(F(Z_H)), colors over S2 | [`Lemma83SampleLikeY.lean`](AEC/Section8/Lemma83SampleLikeY.lean) (**done**, cycle 106) |
 | `infra_72_mixed_level` | Lemma 7.2 last sentence (A at a smaller level than B), stated with sorry (audit) | [`Lemma72Mixed.lean`](AEC/Section7/Lemma72Mixed.lean) (open, cycle 96) |
 | `infra_82_tiedFreeMixed_base_equiv` | Mixed tied freeness under a reindexed change of base tuple | [`TiedAlong.lean`](AEC/Section8/TiedAlong.lean) (**done**, cycle 97) |
 | `infra_82_mark_tied_along_single` | Lemma 8.2(4) for `P.scheme`: tied freeness of the mark along arrows (Def 8.1 tied, cycle 97 ruling) | [`TiedAlong.lean`](AEC/Section8/TiedAlong.lean) (**done**, cycle 97) |

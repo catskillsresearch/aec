@@ -5833,6 +5833,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 106: infra_83_pairMS_template (supersedes pairM template as candidate F^b)."
+  },
+  {
+   "id": "infra_83_Y_samplelike",
+   "label": "Lemma 8.3 proof: Y-side sample-like data (τ-embedding e₀ : F(Z) → L with Y closed under the Y-language incl. mark, Y chart generation, Y-chart relation, X ⊆ Y), Y-hull = e₀(F(Z_H)) through g, coherent colors over X- and Y-sample-like structures",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83SampleLikeY.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 106: yFun, chartYM, YSampleLike, yHull_eq_chart, pairMAdmittedS2, infra_83_pairMS2_coherent_colors."
   }
  ],
  "edges": [
@@ -10923,8 +10932,13 @@
    "from": "infra_83_pairMS_template",
    "to": "infra_83_template_from_colors",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_Y_samplelike",
+   "to": "infra_83_Y_hull_eq_FZ",
+   "kind": "hard"
   }
  ],
- "doneCount": 581,
+ "doneCount": 582,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
