@@ -6184,6 +6184,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 107: OCol83.card_col_le, OCol83.exists_coord_embedding (for the level of F^b(I): #J_I = #I)."
+  },
+  {
+   "id": "infra_83_chart_coord_natural",
+   "label": "Chart transition order embeddings move coordinates: h_e(j_k a) = j_l(e a) (X and Y)",
+   "section": 8,
+   "file": "Lemma83SampleLikeY.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 107: chart_natural now exports the coordinate generators; chart_functor exports h_e ∘ j_k = j_l ∘ e."
   }
  ],
  "edges": [
@@ -11534,8 +11543,18 @@
    "from": "infra_83_order_colimit_card",
    "to": "infra_83_template_from_colors",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_chart_coord_natural",
+   "to": "infra_83_X_hull_eq_FJ",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_83_chart_coord_natural",
+   "to": "infra_83_Y_hull_eq_FZ",
+   "kind": "hard"
   }
  ],
- "doneCount": 620,
+ "doneCount": 621,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
