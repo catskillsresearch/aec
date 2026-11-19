@@ -4537,6 +4537,24 @@
    "status": "open",
    "blocker": null,
    "detail": "Cycle 98. Paper par. 36: tests below the uniform testing bound matched upstairs over both approximation lists; each list computes the free extension; beta identifies answers; Theorem 6.6 / isolation identifies the joint type; then infra_82_pointed_all. Mark marginal input done (infra_82_mark_reflect_single)."
+  },
+  {
+   "id": "infra_82_saturate_inside",
+   "label": "Saturation inside the object (realization in the small base)",
+   "section": 8,
+   "file": "AEC/Section8/ReflectSingle.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "DONE cycle 99. IsSaturated realizes in an extension Z at the same level; diagram_iso moves the realization back into X over the original list. Sub-lemma of infra_82_reflect_small_realization."
+  },
+  {
+   "id": "infra_82_isolated_fixing_iso",
+   "label": "Isolated types are invariant under base self-arrows fixing the fragment",
+   "section": 8,
+   "file": "AEC/Section8/ReflectSingle.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "DONE cycle 99. Approximation calculation of the 8.2 proof: if Wf isolates q relative to its u-marginal and h fixes Wf with u-marginal type preserved, q read through h has q's type. Sub-lemma of infra_82_reflect_type_transport."
   }
  ],
  "edges": [
@@ -8797,8 +8815,18 @@
    "from": "infra_82_reflect_type_transport",
    "to": "infra_82_comparison_single",
    "kind": "hard"
+  },
+  {
+   "from": "infra_82_saturate_inside",
+   "to": "infra_82_reflect_small_realization",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_82_isolated_fixing_iso",
+   "to": "infra_82_reflect_type_transport",
+   "kind": "hard"
   }
  ],
- "doneCount": 448,
+ "doneCount": 450,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
