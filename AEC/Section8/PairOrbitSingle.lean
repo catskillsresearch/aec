@@ -99,7 +99,8 @@ theorem infra_82_mark_type_auto_single {P : SingleModelData K}
     SameGaloisType (asTuple N.incl N.incl_arrow N.b)
       (⟨N.μ, N.hμ, N.Y, SystemArrow.comp e N.incl, trivial, N.bIdx, N.b⟩ :
         TupleOver K oneVertexShape P.scheme N.hμ N.X) (Equiv.refl _) (Equiv.refl _) := by
-  obtain ⟨eb, hR⟩ := N.realizes
+  have hR := N.realizes
+  generalize N.realEq = eb at hR
   have hk := hiso N.X N.X e trivial hbij
   have hκ : (Pr.arity N.hμ N.X).trans (Pr.arity N.hμ N.X).symm = Equiv.refl _ := by
     ext i; simp
@@ -301,7 +302,7 @@ theorem infra_82_orbit_preservation_of_tied_single (P : SingleModelData K)
   obtain ⟨γ, Z, hγ, HZ⟩ := M.dominated ι t₁ hι
   obtain ⟨e, hbij, he⟩ := infra_82_base_homogeneity_single M N hlev f α Z hγ
   -- sizes
-  obtain ⟨eb, -⟩ := M.realizes
+  obtain ⟨eb, -⟩ : ∃ e, _ := (⟨M.realEq, M.realizes⟩ : ∃ e, _)
   have hfinB : Finite M.bIdx :=
     Finite.of_equiv _ (eb.trans (Pr.arity M.hμ M.X)).symm
   have hμ0 : ℵ₀ < M.μ := P.aleph0_lt M.hμ
@@ -354,8 +355,8 @@ theorem infra_82_orbit_preservation_of_tied_single (P : SingleModelData K)
     obtain ⟨arr, hX, hσ', hY, hmap⟩ := H.mpr ⟨hbase, hsgt⟩
     exact ⟨arr, hσ', fun v => by rw [hX]; exact hbij v, hY, hmap⟩
   -- over-`B` isolation at the common level
-  obtain ⟨μM, hμM, XM, YM, inclM, hinclM, bIM, bM, hrM, hdM⟩ := M
-  obtain ⟨μN, hμN, XN, YN, inclN, hinclN, bIN, bN, hrN, hdN⟩ := N
+  obtain ⟨μM, hμM, XM, YM, inclM, hinclM, bIM, bM, erM, hrM, hdM⟩ := M
+  obtain ⟨μN, hμN, XN, YN, inclN, hinclN, bIN, bN, erN, hrN, hdN⟩ := N
   change μM = μN at hlev
   subst hlev
   have hW := infra_72_over_B_isolation P σ hσ hμM hrec hσSucc f.onX trivial
@@ -417,8 +418,8 @@ theorem infra_82_base_homogeneity_cross_single {P : SingleModelData K}
     (fun j => α.onX.mapOcc (Z j)) hγ₂ hγN₂
   have d := P.scheme.diagram_trans _ _ _ _ _ _
     (P.scheme.diagram_trans _ _ _ _ _ _ (P.scheme.diagram_symm _ _ _ _ d1) d2) d3
-  obtain ⟨μ₁, hμ₁, X₁, Y₁, i₁, hi₁, bI₁, b₁, r₁, d₁⟩ := N₁
-  obtain ⟨μ₂, hμ₂, X₂, Y₂, i₂, hi₂, bI₂, b₂, r₂, d₂'⟩ := N₂
+  obtain ⟨μ₁, hμ₁, X₁, Y₁, i₁, hi₁, bI₁, b₁, er₁, r₁, d₁⟩ := N₁
+  obtain ⟨μ₂, hμ₂, X₂, Y₂, i₂, hi₂, bI₂, b₂, er₂, r₂, d₂'⟩ := N₂
   change μ₁ = μ₂ at hN
   subst hN
   obtain ⟨g, hg, hmap⟩ := (P.scheme.diagram_iso X₁ X₂
@@ -495,24 +496,26 @@ theorem infra_82_orbit_diagram_cross_single {P : SingleModelData K}
 /-- **Structural isomorphisms of bases carry the mark's type (P.scheme; toward Lemma 8.2(5)).**
 If the prescription commutes with isomorphisms, a structural isomorphism `e : N₁.X ≅ N₂.X` of the
 bases of two marked pairs at one level carries `tp(b₁/N₁.X)` to `tp(b₂/N₂.X)`, the marks matched
-by list position through the realizations and `arity`. -/
+by list position through the realizations (`realEq`, data since cycle 97) and `arity`. -/
 theorem infra_82_mark_type_iso_single {P : SingleModelData K}
     {Pr : StationaryPrescription K oneVertexShape P.scheme} (hiso : Pr.CommutesWithIso)
     (N₁ N₂ : MarkedPair K oneVertexShape P.scheme Pr) (hN : N₁.μ = N₂.μ)
     (e : SystemArrow K oneVertexShape (P.scheme.asSystem N₁.hμ N₁.X)
       (P.scheme.asSystem N₂.hμ N₂.X))
     (hbij : ∀ v, Function.Bijective (e.onVertex v)) :
-    ∃ σ : N₁.bIdx ≃ N₂.bIdx, SameGaloisType (asTuple N₁.incl N₁.incl_arrow N₁.b)
-      ((asTuple N₂.incl N₂.incl_arrow N₂.b).restrict e trivial) σ (Equiv.refl _) := by
-  obtain ⟨μ₁, hμ₁, X₁, Y₁, i₁, hi₁, bI₁, b₁, r₁, d₁⟩ := N₁
-  obtain ⟨μ₂, hμ₂, X₂, Y₂, i₂, hi₂, bI₂, b₂, r₂, d₂⟩ := N₂
+    SameGaloisType (asTuple N₁.incl N₁.incl_arrow N₁.b)
+      ((asTuple N₂.incl N₂.incl_arrow N₂.b).restrict e trivial)
+      (N₁.realEq.trans (((Pr.arity N₁.hμ N₁.X).trans (Pr.arity N₂.hμ N₂.X).symm).trans
+        N₂.realEq.symm)) (Equiv.refl _) := by
+  obtain ⟨μ₁, hμ₁, X₁, Y₁, i₁, hi₁, bI₁, b₁, er₁, r₁, d₁⟩ := N₁
+  obtain ⟨μ₂, hμ₂, X₂, Y₂, i₂, hi₂, bI₂, b₂, er₂, r₂, d₂⟩ := N₂
   change μ₁ = μ₂ at hN
   subst hN
-  obtain ⟨eb₁, hR₁⟩ := r₁
-  obtain ⟨eb₂, hR₂⟩ := r₂
+  have hR₁ := r₁
+  have hR₂ := r₂
   have hk := hiso X₁ X₂ e trivial hbij
   have hR₂e : SameGaloisType ((asTuple i₂ hi₂ b₂).restrict e trivial)
-      ((Pr.assign hμ₁ X₂).restrict e trivial) eb₂ (Equiv.refl _) := by
+      ((Pr.assign hμ₁ X₂).restrict e trivial) er₂ (Equiv.refl _) := by
     rcases hR₂ with ⟨ρ, hρ, top, f1, f2, hf1, hf2, hc, hv⟩
     refine ⟨ρ, hρ, top, f1, f2, hf1, hf2, fun v => ?_, hv⟩
     change (f1.onVertex v).comp ((i₂.onVertex v).comp (e.onVertex v)) =
@@ -522,12 +525,14 @@ theorem infra_82_mark_type_iso_single {P : SingleModelData K}
     exact h
   have hμ0 : ℵ₀ < μ₁ := P.aleph0_lt hμ₁
   have hfinA : Finite (Pr.assign hμ₁ X₁).idx := Finite.of_equiv _ (Pr.arity hμ₁ X₁).symm
-  have hfinB : Finite bI₁ := Finite.of_equiv _ eb₁.symm
+  have hfinB : Finite bI₁ := Finite.of_equiv _ er₁.symm
   have hA : #(Pr.assign hμ₁ X₁).idx ≤ ℵ₀ :=
     (Cardinal.lt_aleph0_of_finite (Pr.assign hμ₁ X₁).idx).le
   have hB : #bI₁ ≤ ℵ₀ := (Cardinal.lt_aleph0_of_finite bI₁).le
   have h24 := infra_612_galois_trans_last_base hk hR₂e.symm ℵ₀ le_rfl hμ0 hA rfl
   have h24' := SameGaloisType.swap_refl h24
-  exact ⟨_, infra_612_galois_trans_last_base hR₁ h24' ℵ₀ le_rfl hμ0 hB rfl⟩
+  have hfin := infra_612_galois_trans_last_base hR₁ h24' ℵ₀ le_rfl hμ0 hB rfl
+  rw [Equiv.symm_symm] at hfin
+  exact hfin
 
 end AEC

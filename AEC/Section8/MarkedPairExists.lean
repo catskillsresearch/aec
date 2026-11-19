@@ -43,7 +43,7 @@ theorem infra_82_marked_pair_exists (P : SingleModelData K)
   obtain ⟨Y, f, hf, b, hAll, hS⟩ :=
     infra_79_existence_at P ⟨htail, infra_79_retraction_pair P⟩ hμ X
       (Pr.assign (Tail.mem hT hμ) X) hfin
-  refine ⟨⟨μ, Tail.mem hT hμ, X, Y, f, hf, _, b, ⟨Equiv.refl _, hS.symm⟩, hAll⟩, rfl,
+  refine ⟨⟨μ, Tail.mem hT hμ, X, Y, f, hf, _, b, Equiv.refl _, hS.symm, hAll⟩, rfl,
     SystemArrow.refl _, trivial, fun v => ?_⟩
   exact Function.bijective_id
 
@@ -74,8 +74,8 @@ theorem infra_82_pair_extend_same_level (P : SingleModelData K)
     (he : P.scheme.permitted (X := M.X) (Y := N.X) e) :
     ∃ arr : MarkedArrow K oneVertexShape P.scheme Pr M N, arr.onX = e := by
   classical
-  obtain ⟨μ, hμ, X, Y, incl, hincl, bIdx, b, ⟨eM, hM⟩, hdom⟩ := M
-  obtain ⟨μ', hμ', X', Y', incl', hincl', bIdx', b', ⟨eN, hN⟩, hdom'⟩ := N
+  obtain ⟨μ, hμ, X, Y, incl, hincl, bIdx, b, eM, hM, hdom⟩ := M
+  obtain ⟨μ', hμ', X', Y', incl', hincl', bIdx', b', eN, hN, hdom'⟩ := N
   simp only at hlev e he ⊢
   subst hlev
   obtain ⟨e0, hFL, -⟩ := Pr.along e he

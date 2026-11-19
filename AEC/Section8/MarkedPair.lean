@@ -22,8 +22,11 @@ structure MarkedPair (K : AbstractElementaryClass.{u}) (S : SystemShape.{u})
   incl_arrow : W.permitted (X := X) (Y := Y) incl
   bIdx : Type u
   b : bIdx → Occurrence K S (W.asSystem hμ Y)
-  realizes : ∃ e : bIdx ≃ (P.assign hμ X).idx,
-    SameGaloisType (asTuple incl incl_arrow b) (P.assign hμ X) e (Equiv.refl _)
+  /-- The realizing identification of the mark's list positions with the prescribed tuple's
+  coordinates, kept as data (cycle 97 ruling) so that marks of different pairs can be matched by
+  position. -/
+  realEq : bIdx ≃ (P.assign hμ X).idx
+  realizes : SameGaloisType (asTuple incl incl_arrow b) (P.assign hμ X) realEq (Equiv.refl _)
   dominated : AllDominated incl incl_arrow bIdx b
 
 /-- An arrow of marked pairs is a commuting pair of arrows carrying the mark to the mark.

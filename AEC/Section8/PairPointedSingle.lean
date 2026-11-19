@@ -138,8 +138,8 @@ theorem infra_82_pointed_all (P : SingleModelData K)
       have h2 : #N.X.model.carrier = N.μ := N.X.card
       rw [← h1, ← h2]
       exact Cardinal.mk_congr (Equiv.ofBijective _ (hbij PUnit.unit))
-    obtain ⟨μ, hμ, X, Y, incl, hincl, bIdx, b, hreal, hdom⟩ := M
-    obtain ⟨μ', hμ', X', Y', incl', hincl', bIdx', b', hreal', hdom'⟩ := N
+    obtain ⟨μ, hμ, X, Y, incl, hincl, bIdx, b, eR, hreal, hdom⟩ := M
+    obtain ⟨μ', hμ', X', Y', incl', hincl', bIdx', b', eR', hreal', hdom'⟩ := N
     simp only at hlev e he hbij σ t t' hι hGal ⊢
     subst hlev
     have hg : P.scheme.permitted (X := X) (Y := Y') (SystemArrow.comp e incl') :=
@@ -160,7 +160,7 @@ theorem infra_82_pointed_all (P : SingleModelData K)
       exact infra_82_isolated_base_iso e g heg hge _ _ h1
     have hBlt : #(ι ⊕ bIdx) < μ := by
       have hfinB : Finite bIdx := by
-        obtain ⟨eM, -⟩ := hreal
+        obtain ⟨eM, -⟩ : ∃ e, _ := (⟨eR, hreal⟩ : ∃ e, _)
         exact Finite.of_equiv _ (eM.trans (Pr.arity hμ X)).symm
       exact infra_75_sum_lt (P.aleph0_le hμ) hι
         ((Cardinal.lt_aleph0_of_finite _).trans_le (P.aleph0_le hμ))

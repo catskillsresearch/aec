@@ -204,6 +204,7 @@ public import AEC.Section8.PairIsoSingle
 public import AEC.Section8.PairPointedSingle
 public import AEC.Section8.Lemma83Single
 public import AEC.Section8.PairOrbitSingle
+public import AEC.Section8.TiedAlong
 public import AEC.Section8.Lemma84Single
 public import AEC.Section8.Results
 public import AEC.Section8.StationaryPrescription

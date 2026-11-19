@@ -141,8 +141,8 @@ theorem infra_82_pair_extend_mixed (P : SingleModelData K)
     (he : P.scheme.permitted (X := M.X) (Y := N.X) e) :
     ∃ arr : MarkedArrow K oneVertexShape P.scheme Pr M N, arr.onX = e := by
   classical
-  obtain ⟨μ, hμ, X, Y, incl, hincl, bIdx, b, ⟨eM, hM⟩, hdom⟩ := M
-  obtain ⟨μ', hμ', X', Y', incl', hincl', bIdx', b', ⟨eN, hN⟩, hdom'⟩ := N
+  obtain ⟨μ, hμ, X, Y, incl, hincl, bIdx, b, eM, hM, hdom⟩ := M
+  obtain ⟨μ', hμ', X', Y', incl', hincl', bIdx', b', eN, hN, hdom'⟩ := N
   simp only at hlev e he ⊢
   obtain ⟨e0, hFL, -⟩ := Pr.along e he
   have hN' := infra_82_sameGalois_restrict e he hN

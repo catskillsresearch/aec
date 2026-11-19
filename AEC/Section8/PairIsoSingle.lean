@@ -213,8 +213,8 @@ theorem infra_82_iso_single (P : SingleModelData K)
     have h2 : #N.X.model.carrier = N.μ := N.X.card
     rw [← h1, ← h2]
     exact Cardinal.mk_congr (Equiv.ofBijective _ (hbij PUnit.unit))
-  obtain ⟨μ, hμ, X, Y, incl, hincl, bIdx, b, ⟨eM, hM⟩, hdom⟩ := M
-  obtain ⟨μ', hμ', X', Y', incl', hincl', bIdx', b', ⟨eN, hN⟩, hdom'⟩ := N
+  obtain ⟨μ, hμ, X, Y, incl, hincl, bIdx, b, eM, hM, hdom⟩ := M
+  obtain ⟨μ', hμ', X', Y', incl', hincl', bIdx', b', eN, hN, hdom'⟩ := N
   simp only at hlev e he hbij hMT ⊢
   subst hlev
   obtain ⟨e0, hFL, -⟩ := Pr.along e he
@@ -282,8 +282,8 @@ theorem infra_82_iso_any (P : SingleModelData K)
     have h2 : #N.X.model.carrier = N.μ := N.X.card
     rw [← h1, ← h2]
     exact Cardinal.mk_congr (Equiv.ofBijective _ (hbij PUnit.unit))
-  obtain ⟨μ, hμ, X, Y, incl, hincl, bIdx, b, ⟨eM, hM⟩, hdom⟩ := M
-  obtain ⟨μ', hμ', X', Y', incl', hincl', bIdx', b', ⟨eN, hN⟩, hdom'⟩ := N
+  obtain ⟨μ, hμ, X, Y, incl, hincl, bIdx, b, eM, hM, hdom⟩ := M
+  obtain ⟨μ', hμ', X', Y', incl', hincl', bIdx', b', eN, hN, hdom'⟩ := N
   simp only at hlev e he hbij ⊢
   subst hlev
   obtain ⟨e0, hFL, -⟩ := Pr.along e he

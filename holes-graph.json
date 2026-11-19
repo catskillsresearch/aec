@@ -4293,7 +4293,7 @@
    "file": "AEC/Section8/PairOrbitSingle.lean",
    "status": "open",
    "blocker": null,
-   "detail": "Cycle 96. Needed: for a same-level marked arrow f : M -> N, IsTiedFreeMixed f.onX (b over M.X) (b' o markMap over N.X) refl. English Def 8.1: 'for every arrow X -> X', p_X' is the free extension of p_X'. Lean StationaryPrescription.along is the untied IsFreeLift, which the repo notes follows from the extension alone (infra_73_ext_isFreeLift), so it does not give this. Proposed: a P.scheme hypothesis predicate Pr.TiedAlong (positional via arity, like CommutesWithIso) plus transport from assign to the realizing marks (infra_75_tiedFree_base_congr and a target-side congruence). Needs a ruling: whether 'free extension' in Def 8.1 is the tied notion (as in Sections 6-7)."
+   "detail": "Cycle 96. Needed: for a same-level marked arrow f : M -> N, IsTiedFreeMixed f.onX (b over M.X) (b' o markMap over N.X) refl. English Def 8.1: 'for every arrow X -> X', p_X' is the free extension of p_X'. Lean StationaryPrescription.along is the untied IsFreeLift, which the repo notes follows from the extension alone (infra_73_ext_isFreeLift), so it does not give this. Proposed: a P.scheme hypothesis predicate Pr.TiedAlong (positional via arity, like CommutesWithIso) plus transport from assign to the realizing marks (infra_75_tiedFree_base_congr and a target-side congruence). Needs a ruling: whether 'free extension' in Def 8.1 is the tied notion (as in Sections 6-7). | Cycle 97 ruling: Def 8.1 freeness is tied. Implemented for P.scheme as StationaryPrescription.TiedAlong (AEC/Section8/TiedAlong.lean; positional via arity; SGT extension part + IsTiedFreeMixed), since the general structure field along is over an arbitrary working scheme where Lean has no tied notion (infra_8_general_calculus, untouched). MarkedPair now carries realEq as data."
   },
   {
    "id": "infra_82_orbit_tail_single",
@@ -4338,7 +4338,7 @@
    "file": "AEC/Section8/Results.lean",
    "status": "open",
    "blocker": null,
-   "detail": "Cycle 96. English 8.2: comparisons preserved and reflected from a common small level to a common larger level. Preservation route mirrors clause (4): cross homogeneity (infra_82_base_homogeneity_cross_single), cross diagram transport (infra_82_orbit_diagram_cross_single), mixed over-B isolation, positional mark matching between two pairs (needs the realizing equivalence as data, see the markMap/list-position finding), tied mark freeness (infra_82_mark_tied_along_single). Reflection: paper 'let a large pair isomorphism match the two images ... approximation list'."
+   "detail": "Cycle 96. English 8.2: comparisons preserved and reflected from a common small level to a common larger level. Preservation route mirrors clause (4): cross homogeneity (infra_82_base_homogeneity_cross_single), cross diagram transport (infra_82_orbit_diagram_cross_single), mixed over-B isolation, positional mark matching between two pairs (needs the realizing equivalence as data, see the markMap/list-position finding), tied mark freeness (infra_82_mark_tied_along_single). Reflection: paper 'let a large pair isomorphism match the two images ... approximation list'. | Cycle 97: MarkedPair.realEq is data; infra_82_mark_type_iso_single now gives the explicit positional matching realEq1 . arity1 . arity2^-1 . realEq2^-1."
   },
   {
    "id": "infra_82_base_homogeneity_cross_single",
@@ -4411,6 +4411,15 @@
    "status": "done",
    "blocker": null,
    "detail": "DONE cycle 96. If qB is mixed tied free over q and q'' has the same Galois type as qB over B, q'' is mixed tied free. Axioms clean."
+  },
+  {
+   "id": "infra_82_tiedFreeMixed_base_equiv",
+   "label": "Mixed tied freeness under a reindexed change of base tuple",
+   "section": 8,
+   "file": "AEC/Section8/TiedAlong.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "DONE cycle 97. Axioms clean."
   }
  ],
  "edges": [
@@ -8601,8 +8610,13 @@
    "from": "infra_72_tiedFreeMixed_of_sameGalois",
    "to": "infra_72_mixed_level",
    "kind": "hard"
+  },
+  {
+   "from": "infra_82_tiedFreeMixed_base_equiv",
+   "to": "infra_82_mark_tied_along_single",
+   "kind": "hard"
   }
  ],
- "doneCount": 434,
+ "doneCount": 435,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
