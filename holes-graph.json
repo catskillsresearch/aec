@@ -6912,7 +6912,7 @@
    "file": "AEC/Section8/Lemma83RetGood.lean",
    "status": "open",
    "blocker": null,
-   "detail": "Open (cycle 154 plan)."
+   "detail": "Open (cycle 154 plan). | Cycle 156: piece level done (infra_83_XH_sort_sample, infra_83_XH_sort_pieces). Remaining: transport to the template values (limits over finite subsets of H) as an X_H object with X_H = F(J_H), J_H := X-chart of the Y_H hull, natural in H, and use it in place of the X-language hull X_I."
   },
   {
    "id": "infra_83_bounded_list_match",
