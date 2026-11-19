@@ -1237,4 +1237,35 @@ theorem infra_83_value_pair (P : SingleModelData K) {μ : Cardinal.{u}} (hμ : �
   · show eY (η (eX.symm (eX a))) = eY (η a)
     rw [Language.Equiv.symm_apply_apply]
 
+/-- **Order embeddings give commuting arrows of the value pairs**: if the template maps
+`g_X : A → A'`, `g_Y : B → B'` (i.e. `F_X(f)`, `F_Y(f)`) are strong and commute with the template
+inclusions (`η' ∘ g_X = g_Y ∘ η`), their transports along the value isomorphisms are strong
+arrows `X → X'`, `Y → Y'` commuting with the inclusions (the pair-of-arrows part of a marked
+arrow, Lemma 8.3 clause (2)). -/
+theorem infra_83_value_arrow {A B A' B' X Y X' Y' : Model K.τ}
+    (hX : K.Mem X) (hY : K.Mem Y) (hA' : K.Mem A') (hB' : K.Mem B')
+    (η : A.carrier ↪[K.τ] B.carrier) (η' : A'.carrier ↪[K.τ] B'.carrier)
+    (eX : A.carrier ≃[K.τ] X.carrier) (eY : B.carrier ≃[K.τ] Y.carrier)
+    (eX' : A'.carrier ≃[K.τ] X'.carrier) (eY' : B'.carrier ≃[K.τ] Y'.carrier)
+    (incl : X.carrier ↪[K.τ] Y.carrier) (incl' : X'.carrier ↪[K.τ] Y'.carrier)
+    (hincl : ∀ a, incl (eX a) = eY (η a)) (hincl' : ∀ a, incl' (eX' a) = eY' (η' a))
+    (gX : A.carrier ↪[K.τ] A'.carrier) (gY : B.carrier ↪[K.τ] B'.carrier)
+    (hgX : K.Strong gX) (hgY : K.Strong gY) (hsq : ∀ a, η' (gX a) = gY (η a)) :
+    ∃ (onX : X.carrier ↪[K.τ] X'.carrier) (onY : Y.carrier ↪[K.τ] Y'.carrier),
+      K.Strong onX ∧ K.Strong onY ∧ (∀ a, onX (eX a) = eX' (gX a)) ∧
+      (∀ b, onY (eY b) = eY' (gY b)) ∧ ∀ x, onY (incl x) = incl' (onX x) := by
+  refine ⟨(eX'.toEmbedding.comp gX).comp eX.symm.toEmbedding,
+    (eY'.toEmbedding.comp gY).comp eY.symm.toEmbedding, ?_, ?_, fun a => ?_, fun b => ?_, fun x => ?_⟩
+  · exact K.strong_trans _ _ (strong_of_equiv K (M := X) (N := A) eX.symm hX)
+      (K.strong_trans _ _ hgX (strong_of_equiv K (M := A') (N := X') eX' hA'))
+  · exact K.strong_trans _ _ (strong_of_equiv K (M := Y) (N := B) eY.symm hY)
+      (K.strong_trans _ _ hgY (strong_of_equiv K (M := B') (N := Y') eY' hB'))
+  · show eX' (gX (eX.symm (eX a))) = _
+    rw [Language.Equiv.symm_apply_apply]
+  · show eY' (gY (eY.symm (eY b))) = _
+    rw [Language.Equiv.symm_apply_apply]
+  · obtain ⟨a, rfl⟩ := eX.surjective x
+    show eY' (gY (eY.symm (incl (eX a)))) = incl' (eX' (gX (eX.symm (eX a))))
+    rw [hincl, Language.Equiv.symm_apply_apply, Language.Equiv.symm_apply_apply, hincl', hsq]
+
 end AEC
