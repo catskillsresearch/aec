@@ -1072,4 +1072,28 @@ theorem infra_83_tau_embedding_of_reading {L L' : FirstOrder.Language.{u, u}} {A
   exact ⟨gY, fun y => rfl⟩
 end
 
+
+section
+open FirstOrder.Language
+
+/-- **The image of a hull piece stays in a closed set (proved).** If every element of the piece
+`A` is a term in generators `v`, `mN : A ↪[L] N`, and `T ⊆ N` is closed under the `L`-functions and
+contains the images of the generators, then `mN[A] ⊆ T`. With `T` the `Y`-copy (closed under the
+`Y`-language, `YSampleLike`) this gives the range clause `gY x ∈ F[M.Y]` of the piece data. -/
+theorem infra_83_hull_image_closed {L : FirstOrder.Language.{u, u}} {A N : Type u}
+    [L.Structure A] [L.Structure N] (mN : A ↪[L] N) {ι : Type*} (v : ι → A)
+    (hgen : ∀ a, ∃ t : L.Term ι, t.realize v = a) (T : Set N) (hv : ∀ i, mN (v i) ∈ T)
+    (hT : ∀ {k} (f : L.Functions k) (x : Fin k → N), (∀ i, x i ∈ T) →
+      Structure.funMap f x ∈ T) :
+    ∀ a, mN a ∈ T := by
+  intro a
+  obtain ⟨t, rfl⟩ := hgen a
+  induction t with
+  | var i => exact hv i
+  | func f ts ih =>
+    simp only [Term.realize]
+    rw [mN.map_fun]
+    exact hT f _ fun i => ih i
+end
+
 end AEC

@@ -7327,6 +7327,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 198: proved."
+  },
+  {
+   "id": "infra_83_hull_image_closed",
+   "label": "Image of a hull piece stays in a closed set: if every element of the piece is a term in generators v, mN is an L-embedding, and T is closed under L-functions and contains mN(v i), then mN[A] is inside T (the range clause gY x in F[M.Y] from the Y-copy closure)",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PieceMatch.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 199: proved."
   }
  ],
  "edges": [
@@ -13367,8 +13376,13 @@
    "from": "infra_83_tau_embedding_of_reading",
    "to": "infra_83_XH_sort",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_hull_image_closed",
+   "to": "infra_83_XH_sort",
+   "kind": "hard"
   }
  ],
- "doneCount": 745,
+ "doneCount": 746,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
