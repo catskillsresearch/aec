@@ -260,4 +260,32 @@ theorem infra_83_ret_image_into_X (P : SingleModelData K)
   rintro _ ⟨_, ⟨y, rfl⟩, rfl⟩
   exact infra_83_ret_term_into_X P eX hsurj emb F hF R code G heval i y
 
+
+/-- **`μ` good codes over a finite part of `X`.** For a marked pair of infinite size `μ` and a
+finite `A ⊆ J`, exactly `μ` codes `c_i` both fix `F(A)` pointwise and send `F(Y)` into `F(J)`. -/
+theorem infra_83_ret_good_card_mu (P : SingleModelData K)
+    {Pr : StationaryPrescription K oneVertexShape P.scheme}
+    {J Jplus : Type u} [LinearOrder J] [Nonempty J] [LinearOrder Jplus] [Nonempty Jplus]
+    {M : MarkedPair K oneVertexShape P.scheme Pr}
+    (eX : (P.E.obj J).carrier → ((P.scheme.asSystem M.hμ M.X).obj PUnit.unit).carrier)
+    (hsurj : Function.Surjective eX) (emb : J ↪o Jplus)
+    (F : ((P.scheme.asSystem M.hμ M.Y).obj PUnit.unit).carrier → (P.E.obj Jplus).carrier)
+    (hF : ∀ x, F (M.incl.onVertex PUnit.unit (eX x)) = P.E.map emb x)
+    (R : ApproximateRetraction K oneVertexShape P.scheme M.hμ M.X M.Y M.incl)
+    (code : R.index → (P.E.obj J).carrier)
+    (G : (P.E.obj Jplus).carrier → (P.E.obj Jplus).carrier → (P.E.obj Jplus).carrier)
+    (heval : ∀ i y, G (P.E.map emb (code i)) (F y) =
+      F (M.incl.onVertex PUnit.unit ((R.retr i).onVertex PUnit.unit y)))
+    (hinf : ℵ₀ ≤ M.μ) (A : Finset (P.E.obj J).carrier) :
+    #{i : R.index | (∀ x ∈ A, G (P.E.map emb (code i)) (P.E.map emb x) = P.E.map emb x) ∧
+      G (P.E.map emb (code i)) '' Set.range F ⊆ Set.range (P.E.map emb)} = M.μ := by
+  have : {i : R.index | (∀ x ∈ A, G (P.E.map emb (code i)) (P.E.map emb x) = P.E.map emb x) ∧
+      G (P.E.map emb (code i)) '' Set.range F ⊆ Set.range (P.E.map emb)} =
+      {i : R.index | ∀ x ∈ A, G (P.E.map emb (code i)) (P.E.map emb x) = P.E.map emb x} := by
+    ext i
+    exact ⟨fun h => h.1, fun h => ⟨h, infra_83_ret_image_into_X P eX hsurj emb F hF R code G
+      heval i⟩⟩
+  rw [this]
+  exact infra_83_ret_term_fix_card_mu P eX emb F hF R code G heval hinf A
+
 end AEC

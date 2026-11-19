@@ -6805,6 +6805,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 143: proved."
+  },
+  {
+   "id": "infra_83_ret_good_card_mu",
+   "label": "For infinite μ and finite A ⊆ J, exactly μ codes fix F(A) pointwise and send F(Y) into F(J).",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83Isolation.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 144: proved."
   }
  ],
  "edges": [
@@ -12540,8 +12549,13 @@
    "from": "infra_83_ret_image_into_X",
    "to": "infra_83_ret_admission",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_ret_good_card_mu",
+   "to": "infra_83_ret_admission",
+   "kind": "hard"
   }
  ],
- "doneCount": 691,
+ "doneCount": 692,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
