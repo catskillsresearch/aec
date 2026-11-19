@@ -891,6 +891,34 @@ theorem infra_78_rc_stage_seed {ν : Cardinal.{u}} {hν : ν ∈ P.eligible}
 
 end StageSeedDef77
 
+/-- **Level choices for the Prop 7.8 matrix inside a given cofinal set of closed levels
+(proved, cycle 93).** As `infra_78_assembly_levels`, with the matrix level `κ` taken in a
+prescribed cofinal set `S ⊆ infra_78_closedTail P` (e.g. the Definition 7.7 levels of the mark). -/
+theorem infra_78_assembly_levels_in (P : SingleModelData K) {lam : Cardinal.{u}}
+    (hlam : lam ∈ infra_78_closedTail P) {θ : Cardinal.{u}} (hθ : ℵ₀ ≤ θ) (hθlam : θ < lam)
+    (S : Set Cardinal.{u}) (hS : ∀ x, ∃ κ, x ≤ κ ∧ κ ∈ S) (hSC : S ⊆ infra_78_closedTail P) :
+    ∃ ρ κ : Cardinal.{u}, lam < ρ ∧ ρ ^ lam = ρ ∧ Order.succ ρ < κ ∧ lam ≤ κ ∧
+      κ ∈ infra_73_tailSet P lam ∧ κ ∈ infra_73_tailSet P θ ∧
+      lam ∈ infra_73_tailSet P (infra_76_sigma2 P θ) ∧ Order.succ θ ≤ lam ∧ κ ∈ S := by
+  obtain ⟨hel, htail, -⟩ := hlam
+  have hlamInf : ℵ₀ ≤ lam := P.aleph0_le hel
+  have hθT : lam ∈ infra_73_tailSet P θ := htail θ hθ hθlam
+  have hhθ : infra_73_h P θ < lam := infra_73_h_lt hel hθT
+  have hhθinf : ℵ₀ ≤ infra_73_h P θ := hθ.trans (infra_76_lt_h P θ).le
+  have hh2T : lam ∈ infra_73_tailSet P (infra_73_h P θ) := htail _ hhθinf hhθ
+  have h2 : infra_76_sigma2 P θ < lam := infra_73_h_lt hel hh2T
+  have h2inf : ℵ₀ ≤ infra_76_sigma2 P θ := hhθinf.trans (infra_76_lt_h P _).le
+  have hσ2T : lam ∈ infra_73_tailSet P (infra_76_sigma2 P θ) := htail _ h2inf h2
+  obtain ⟨κ, hκle, hκS⟩ := hS (Order.succ (Order.succ (2 ^ lam)))
+  have hρκ : Order.succ (2 ^ lam) < κ :=
+    (Order.lt_succ_of_not_isMax (not_isMax _)).trans_le hκle
+  have hlκ : lam < κ :=
+    (cantor lam).trans ((Order.lt_succ_of_not_isMax (not_isMax _)).trans hρκ)
+  have hκC := hSC hκS
+  refine ⟨2 ^ lam, κ, cantor lam, ?_, hρκ, hlκ.le, hκC.2.1 lam hlamInf hlκ,
+    hκC.2.1 θ hθ (hθlam.trans hlκ), hσ2T, Order.succ_le_of_lt hθlam, hκS⟩
+  rw [← power_mul, mul_eq_self hlamInf]
+
 /-- Definition 7.7 for `p` at one level `κ` (the body of `SatisfiesContinuityTied` at `κ`). -/
 def infra_78_def77_at {P : SingleModelData K} {μ : Cardinal.{u}} {hμ : μ ∈ P.eligible}
     {A : P.scheme.Object μ hμ} (p : TupleOver K oneVertexShape P.scheme hμ A)
@@ -923,7 +951,7 @@ theorem infra_78_general_assembly_closed (P : SingleModelData K) :
       (p : TupleOver K oneVertexShape P.scheme (Tail.mem (infra_78_closedTail_tail P) hμ) X)
       (θ : Cardinal.{u}),
       #p.idx ≤ θ → p.ν = μ → aleph0 ≤ θ → θ < μ →
-      (∀ κ (hκT : κ ∈ infra_73_tailSet P μ), infra_78_def77_at p κ hκT.1.1) →
+      (∀ x, ∃ κ, x ≤ κ ∧ ∃ hκC : κ ∈ infra_78_closedTail P, infra_78_def77_at p κ hκC.1) →
       ∃ (U : P.scheme.Object μ (Tail.mem (infra_78_closedTail_tail P) hμ))
         (f : SystemArrow K oneVertexShape (P.scheme.asSystem _ X) (P.scheme.asSystem _ U))
         (hf : P.scheme.permitted (X := X) (Y := U) f)
@@ -937,8 +965,10 @@ theorem infra_78_general_assembly_closed (P : SingleModelData K) :
   intro μ hμ X p θ hidxθ hpν hθ hθμ hcont
   have hel : μ ∈ P.eligible := Tail.mem (infra_78_closedTail_tail P) hμ
   have hμInf : ℵ₀ ≤ μ := P.aleph0_le hel
-  obtain ⟨ρ, κ, hlρ, hpow, hρκ, hlκ, hκT, hκTθ, hlT2, hθsucc⟩ :=
-    infra_78_assembly_levels P hμ hθ hθμ
+  obtain ⟨ρ, κ, hlρ, hpow, hρκ, hlκ, hκT, hκTθ, hlT2, hθsucc, ⟨hκC, hdef⟩⟩ :=
+    infra_78_assembly_levels_in P hμ hθ hθμ
+      {κ | ∃ hκC : κ ∈ infra_78_closedTail P, infra_78_def77_at p κ hκC.1}
+      (fun x => by obtain ⟨κ, hx, h⟩ := hcont x; exact ⟨κ, hx, h⟩) (fun κ h => h.1)
   have hκel : κ ∈ P.eligible := Tail.mem (infra_73_tail P μ hμInf) hκT
   have hrecμθ : μ ∈ recursionClosedLevels P θ := (hμ.2.1 θ hθ hθμ).1
   have hrecκθ : κ ∈ recursionClosedLevels P θ := hκTθ.1
@@ -977,7 +1007,7 @@ theorem infra_78_general_assembly_closed (P : SingleModelData K) :
     s0 s0.e hidx p hlκ hidxμ ι0 (Equiv.refl _)
     (fun k h => infra_78_rc_stage_seed hρκ hel (infra_78_candS θ.ord.ToType) s0 s0.e p
       (Equiv.refl _) ι0 hg0 hidxμ hlκ hT hDp hm00 k h)
-    (hcont κ hκT) h5seed
+    hdef h5seed
   obtain ⟨i, -, hiso⟩ := infra_78_isolation_over_A P μ hμInf hκT (uIdx := p.idx)
     (cIdx := θ.ord.ToType) hρκ X0 hel s0 s0.e hidx h5all hlρ hpow hc h5seed hS0 h0 hclosed hlκ
     le_rfl hθ hθsucc hidxθ (Cardinal.mk_ord_toType θ).ge θ hθ le_rfl hlT2 hκTθ
@@ -1094,7 +1124,7 @@ theorem infra_78_general_closed (P : SingleModelData K) :
       (p : TupleOver K oneVertexShape P.scheme (Tail.mem (infra_78_closedTail_tail P) hμ) X)
       (θ : Cardinal.{u}),
       #p.idx ≤ θ →
-      (∀ κ (hκT : κ ∈ infra_73_tailSet P μ), infra_78_def77_at p κ hκT.1.1) →
+      (∀ x, ∃ κ, x ≤ κ ∧ ∃ hκC : κ ∈ infra_78_closedTail P, infra_78_def77_at p κ hκC.1) →
       aleph0 ≤ θ → θ < μ →
       ∃ (U : P.scheme.Object μ (Tail.mem (infra_78_closedTail_tail P) hμ))
         (f : SystemArrow K oneVertexShape (P.scheme.asSystem _ X) (P.scheme.asSystem _ U))
@@ -1113,7 +1143,9 @@ theorem infra_78_general_closed (P : SingleModelData K) :
     ⟨μ, Tail.mem (infra_78_closedTail_tail P) hμ, host, incl, hincl, p.idx, val⟩
   obtain ⟨U, f, hf, b, hgal, hiso⟩ :=
     infra_78_general_assembly_closed P μ hμ X p' θ hidxθ rfl hθ hθμ
-      (fun κ hκT => infra_78_def77_at_congr (p := p) (p' := p') (Equiv.refl _) h12 hidxμ (hcont κ hκT))
+      (fun x => by
+        obtain ⟨κ, hx, hC, hd⟩ := hcont x
+        exact ⟨κ, hx, hC, infra_78_def77_at_congr (p := p) (p' := p') (Equiv.refl _) h12 hidxμ hd⟩)
   refine ⟨U, f, hf, b, ?_, hiso⟩
   have hrec : μ ∈ recursionClosedLevels P θ := (hμ.2.1 θ hθ hθμ).1
   have h := infra_612_galois_trans_cross_level_right_base (t1 := p) (t2 := p')
@@ -1131,12 +1163,27 @@ def infra_78_def77_tail_meet_statement (P : SingleModelData K) : Prop :=
     (X : P.scheme.Object μ (Tail.mem (infra_78_closedTail_tail P) hμ))
     (p : TupleOver K oneVertexShape P.scheme (Tail.mem (infra_78_closedTail_tail P) hμ) X),
     SatisfiesContinuityTied p →
-    ∀ κ (hκT : κ ∈ infra_73_tailSet P μ), infra_78_def77_at p κ hκT.1.1
+    ∀ x, ∃ κ, x ≤ κ ∧ ∃ hκC : κ ∈ infra_78_closedTail P, infra_78_def77_at p κ hκC.1
 
 /-- **General Prop 7.8 from the tail meet (proved, cycle 93).** -/
 theorem infra_78_general_of_tail_meet (P : SingleModelData K)
     (hmeet : infra_78_def77_tail_meet_statement P) : infra_78_general_statement P :=
   fun μ hμ X p θ hidxθ hp hθ hθμ =>
     infra_78_general_closed P μ hμ X p θ hidxθ (hmeet μ hμ X p hp) hθ hθμ
+
+/-- **The tail meet when the Definition 7.7 levels are closed (proved, cycle 93).** If Definition
+7.7 for `p` holds on a cofinal set `T` of levels contained in `infra_78_closedTail P` ("at every
+sufficiently closed eligible level"; e.g. Theorem 7.13 (2), `infra_713_continuity`, produces
+`T = infra_712_levels P ⊆ infra_78_closedTail P`), then the hypothesis of `infra_78_general_closed`
+holds. Hence `infra_78_general` for every such mark. -/
+theorem infra_78_def77_meet_of_closed {P : SingleModelData K} {μ : Cardinal.{u}}
+    {hμ : μ ∈ P.eligible} {A : P.scheme.Object μ hμ}
+    (p : TupleOver K oneVertexShape P.scheme hμ A) (T : Set Cardinal.{u})
+    (hT : Tail P.eligible T) (hTC : T ⊆ infra_78_closedTail P)
+    (H : ∀ μ' (hμ' : μ' ∈ T), μ ≤ μ' → infra_78_def77_at p μ' (Tail.mem hT hμ')) :
+    ∀ x, ∃ κ, x ≤ κ ∧ ∃ hκC : κ ∈ infra_78_closedTail P, infra_78_def77_at p κ hκC.1 := by
+  intro x
+  obtain ⟨κ, hle, hκT⟩ := hT.2 (max x μ)
+  exact ⟨κ, (le_max_left _ _).trans hle, hTC hκT, H κ hκT ((le_max_right _ _).trans hle)⟩
 
 end AEC
