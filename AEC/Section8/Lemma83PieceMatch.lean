@@ -1133,4 +1133,83 @@ theorem infra_83_piece_XH_of_chart {Yc Xc B : Type u} (gY : Yc → B) (inclu : X
   exact ⟨y, hy.symm⟩
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+open FirstOrder.Language
+
+set_option maxHeartbeats 3200000 in
+/-- **Piece clauses from one pair-language match of the piece (proved assembly).** Let the
+template piece `X' ≤ Y_u` carry an `L`-structure whose `φ`-reduct is its `τ`-structure, and let
+`mN : Y_u ↪[L] N` match it into a sample with identification `g : N ≃ F(Jp)` respecting the
+`τ`-reduct. If `g ∘ mN = F(e_Z) ∘ ψY` for a strong `ψY : Y_u → F(Z₀)`, the piece is a term hull in
+generators whose images lie in the `g`-preimage of `F[M.Y]` (closed under `L`), and `g ∘ mN` meets
+the `X`-copy exactly in a chart copy lying in `g(mN[X'])`, then the piece data clauses hold: a strong
+`τ`-embedding `gY = g ∘ mN` inside `F[M.Y]` with the sort intersection, and an `L`-reading of `gY`
+with `r` read as `g (r (g⁻¹ a) (g⁻¹ b))`. -/
+theorem infra_83_piece_clauses_of_match (P : SingleModelData K)
+    {Pr : StationaryPrescription K oneVertexShape P.scheme} {M : MarkedPair K oneVertexShape P.scheme Pr}
+    {J Jp Z0 : Type u} [LinearOrder J] [Nonempty J] [LinearOrder Jp] [Nonempty Jp]
+    [LinearOrder Z0] [Nonempty Z0] (emb : J ↪o Jp)
+    (eX : (P.E.obj J).carrier → ((P.scheme.asSystem M.hμ M.X).obj PUnit.unit).carrier)
+    (hsurj : Function.Surjective eX)
+    (F : ((P.scheme.asSystem M.hμ M.Y).obj PUnit.unit).carrier → (P.E.obj Jp).carrier)
+    (hF : ∀ x, F (M.incl.onVertex PUnit.unit (eX x)) = P.E.map emb x)
+    {ν : Cardinal.{u}} {hν : ν ∈ P.eligible} {X' Yu : P.scheme.Object ν hν}
+    (inclu : SystemArrow K oneVertexShape (P.scheme.asSystem hν X') (P.scheme.asSystem hν Yu))
+    {L : FirstOrder.Language.{u, u}} {N : Type u}
+    [L.Structure ((P.scheme.asSystem hν Yu).obj PUnit.unit).carrier] [L.Structure N]
+    (φ : K.τ →ᴸ L)
+    (hAf : ∀ {k} (f : K.τ.Functions k) (x : Fin k → ((P.scheme.asSystem hν Yu).obj PUnit.unit).carrier),
+      Structure.funMap f x = Structure.funMap (φ.onFunction f) x)
+    (hAr : ∀ {k} (r : K.τ.Relations k) (x : Fin k → ((P.scheme.asSystem hν Yu).obj PUnit.unit).carrier),
+      Structure.RelMap r x ↔ Structure.RelMap (φ.onRelation r) x)
+    (g : N ≃ (P.E.obj Jp).carrier)
+    (hgf : ∀ {k} (f : K.τ.Functions k) (x : Fin k → N),
+      g (Structure.funMap (φ.onFunction f) x) = Structure.funMap f (g ∘ x))
+    (hgr : ∀ {k} (r : K.τ.Relations k) (x : Fin k → N),
+      Structure.RelMap (φ.onRelation r) x ↔ Structure.RelMap r (g ∘ x))
+    (mN : ((P.scheme.asSystem hν Yu).obj PUnit.unit).carrier ↪[L] N)
+    (ψY : Language.Embedding K.τ ((P.scheme.asSystem hν Yu).obj PUnit.unit).carrier
+      (P.E.obj Z0).carrier) (hψY : K.Strong ψY) (eZ : Z0 ↪o Jp)
+    (hZ : ∀ y, g (mN y) = P.E.map eZ (ψY y))
+    {ι : Type*} (v : ι → ((P.scheme.asSystem hν Yu).obj PUnit.unit).carrier)
+    (hgen : ∀ a, ∃ t : L.Term ι, t.realize v = a)
+    (hv : ∀ i, g (mN (v i)) ∈ Set.range F)
+    (hT : ∀ {k} (f : L.Functions k) (x : Fin k → N), (∀ i, g (x i) ∈ Set.range F) →
+      g (Structure.funMap f x) ∈ Set.range F)
+    (C : Set (P.E.obj Jp).carrier)
+    (hS : Set.range (fun y => g (mN y)) ∩ Set.range (P.E.map emb) = C)
+    (hsub : C ⊆ Set.range (fun x => g (mN (inclu.onVertex PUnit.unit x))))
+    (r : L.Functions 2) :
+    ∃ gY : Language.Embedding K.τ ((P.scheme.asSystem hν Yu).obj PUnit.unit).carrier
+        (P.E.obj Jp).carrier,
+      (∀ y, gY y = g (mN y)) ∧ K.Strong gY ∧ (∀ x, gY x ∈ Set.range F) ∧
+      (∀ (x' : ((P.scheme.asSystem hν Yu).obj PUnit.unit).carrier)
+        (z : ((P.scheme.asSystem M.hμ M.X).obj PUnit.unit).carrier),
+        gY x' = F (M.incl.onVertex PUnit.unit z) → ∃ y, x' = inclu.onVertex PUnit.unit y) ∧
+      ∃ (_ : L.Structure (P.E.obj Jp).carrier)
+        (mY : ((P.scheme.asSystem hν Yu).obj PUnit.unit).carrier ↪[L] (P.E.obj Jp).carrier),
+        (∀ y, mY y = gY y) ∧
+        ∀ a b, Structure.funMap r ![a, b] = g (Structure.funMap r ![g.symm a, g.symm b]) := by
+  obtain ⟨gY, hgY⟩ := infra_83_tau_embedding_of_reading φ hAf hAr g hgf hgr mN
+  have hs : K.Strong gY := infra_83_gY_strong_of_FZ P.E ψY hψY eZ gY (fun y => by rw [hgY, hZ])
+  have hr : ∀ x, gY x ∈ Set.range F := by
+    intro x
+    rw [hgY]
+    exact infra_83_hull_image_closed mN v hgen {w | g w ∈ Set.range F} hv
+      (fun f x hx => hT f x hx) x
+  have hXH := infra_83_piece_XH_of_chart gY (inclu.onVertex PUnit.unit) (Set.range (P.E.map emb)) C
+    (by
+      have : (gY : _ → _) = fun y => g (mN y) := funext hgY
+      rw [this]; exact hS)
+    (by
+      intro w hw
+      obtain ⟨x, hx⟩ := hsub hw
+      exact ⟨x, by simp only [Function.comp_apply, hgY]; exact hx⟩)
+  have hmeet := infra_83_piece_meet P emb eX hsurj F hF inclu gY gY.injective hXH
+  obtain ⟨sB, mY, hmY, hret⟩ := infra_83_L0_reading_transport g mN r
+  exact ⟨gY, hgY, hs, hr, hmeet, sB, mY, fun y => by rw [hmY, hgY], hret⟩
+end
+
 end AEC
