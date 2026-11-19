@@ -1732,4 +1732,15 @@ theorem infra_83_orderPieces_iso_limit (E : OrderPresentation K) {H H' : ℕ →
   ⟨EM83.PiecesHom.limMap_bijective _ I (fun k => infra_83_map_iso_surjective E (g k)),
     EM83.PiecesHom.limMap_strong _ I⟩
 
+
+/-- **Chart transition maps are unique**: if `F(h₁) ∘ ε = F(h₂) ∘ ε` for a surjective `ε`,
+then `h₁ = h₂`; so the order embeddings `h_e` of the charts are determined by the piece maps. -/
+theorem infra_83_map_unique_of_surj (E : OrderPresentation K) {A B : Type u} [LinearOrder A]
+    [Nonempty A] [LinearOrder B] [Nonempty B] {X : Type*} (ε : X → (E.obj A).carrier)
+    (hε : Function.Surjective ε) (h₁ h₂ : A ↪o B)
+    (h : ∀ x, E.map h₁ (ε x) = E.map h₂ (ε x)) : h₁ = h₂ :=
+  infra_83_map_faithful E h₁ h₂ fun y => by
+    obtain ⟨x, rfl⟩ := hε y
+    exact h x
+
 end AEC
