@@ -5121,7 +5121,7 @@
    "file": "AEC/Section8/HullExtract83.lean",
    "status": "open",
    "blocker": null,
-   "detail": "Cycle 102 split of infra_83_hull_extraction: instantiate Hull83.coherent_colors. | Cycle 102: largeness input done (infra_83_large_saturated_samples); remaining: the fixed finitary expansion and its finite-hull colors with a set-sized palette, closed under thinning. | Cycle 102 design note: either (A) present the marked-pair samples as models of an expanded AEC K^b (then Section 2's colorTower/emOrderPresentation apply verbatim, but all AEC axioms for K^b must be proved), or (B) colors = FamilyCode-style hull codes of the pair (X ≤ Y ≤ L, mark, retractions) in a ColorSample family, with sub-tuple restriction maps for infra_83_color_coherence."
+   "detail": "Cycle 102 split of infra_83_hull_extraction: instantiate Hull83.coherent_colors. | Cycle 102: largeness input done (infra_83_large_saturated_samples); remaining: the fixed finitary expansion and its finite-hull colors with a set-sized palette, closed under thinning. | Cycle 102 design note: either (A) present the marked-pair samples as models of an expanded AEC K^b (then Section 2's colorTower/emOrderPresentation apply verbatim, but all AEC axioms for K^b must be proved), or (B) colors = FamilyCode-style hull codes of the pair (X ≤ Y ≤ L, mark, retractions) in a ColorSample family, with sub-tuple restriction maps for infra_83_color_coherence. | Cycle 103: route B chosen, coloring layer done generically (infra_83_type_colors, any expanded language L). Remaining: the expanded term language of the pair samples (old template labels, coordinate/representation functions, retractions) with the sample structures and their largeness, and folding the order-saturation demand into the admitted class P."
   },
   {
    "id": "infra_83_template_from_colors",
@@ -5266,6 +5266,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 103: section2Enum (labels Enum K, pieceEnum enumerations, slot-0 skeleton; skel_distinct via arityMap_enum_incl + colorWitness.inj for every level), section2_presentation_obj (rfl). Axioms clean."
+  },
+  {
+   "id": "infra_83_type_colors",
+   "label": "Lemma 8.3 proof: type colors of samples in an expanded language (thinning-closed, sub-tuple restriction, coherent extraction)",
+   "section": 8,
+   "file": "AEC/Section8/HullTypes83.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 103: Hull83.TpSample / tpCode / tpRes; tpSample_restrict (thinning), tpSample_large, tpSample_compat; tp_coherent_colors: coherent types at all arities (c m' = tpRes f (c m)) with arbitrarily large homogeneous samples, for any class of L-structures with large members. Axioms clean."
   }
  ],
  "edges": [
@@ -9931,8 +9940,13 @@
    "from": "infra_83_em_presentation_section2",
    "to": "infra_83_em_extension_generic",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_type_colors",
+   "to": "infra_83_pair_sample_family",
+   "kind": "hard"
   }
  ],
- "doneCount": 521,
+ "doneCount": 522,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
