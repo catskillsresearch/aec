@@ -1106,4 +1106,36 @@ theorem infra_83_pairMS2_X_chart_skeleton (P : SingleModelData K)
   · intro k l e x x' p p' q q' hp hp' hq hq'
     exact (hord k x x' p p' hp hp').trans ((hX2 e x x').trans (hord l _ _ q q' hq hq').symm)
 
+/-- **Induced chart order embeddings**: for every piece map `e` there is an order embedding
+`h_e : H_k ↪o H_l` of the charts with `ε_l (F_X(e) x) = skeleton (h_e p)` whenever
+`ε_k x = skeleton p`. -/
+theorem infra_83_pairMS2_X_chart_orderEmb (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) :
+    ∃ (c : (m : ℕ) → 0 < m → Hull83.TpColorB (LS83.pairLangM3 P.E Pr.n) 3 m)
+      (hc : ∀ (n : ℕ) (κ : Cardinal.{u}),
+        Hull83.Joint (Hull83.TpSampleB (fun N _ => pairMAdmittedS2 P.E Pr.n N) 3) n c κ)
+      (hcoh : ∀ {m m' : ℕ} (hm' : 0 < m') (hm : 0 < m) (f : Fin m' ↪o Fin m),
+        c m' hm' = Hull83.tpResB 3 f (c m hm))
+      (hXs : Hull83.SubHullStrong ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) (fun N _ => pairMAdmittedS2 P.E Pr.n N))
+      (ch : ∀ k, PieceChart P.E ((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).obj k) k),
+      ∀ {k l : ℕ} (e : Fin (k + 1) ↪o Fin (l + 1)), ∃ h : (ch k).H ↪o (ch l).H,
+        ∀ x (p : (ch k).H), (ch k).ε x = P.E.skeleton p →
+          (ch l).ε ((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).map e x) = P.E.skeleton (h p) := by
+  obtain ⟨c, hc, hcoh, hXs, ch, hpt, hord⟩ := infra_83_pairMS2_X_chart_skeleton P Pr
+  refine ⟨c, hc, hcoh, hXs, ch, fun {k l} e => ?_⟩
+  have hx : ∀ p : (ch k).H, ∃ x, (ch k).ε x = P.E.skeleton p := fun p => (ch k).bij.2 _
+  choose x hx using hx
+  have hq : ∀ p : (ch k).H, ∃ q : (ch l).H, (ch l).ε ((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+          ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).map e (x p)) =
+      P.E.skeleton q := fun p => hpt e (x p) p (hx p)
+  choose q hq using hq
+  have hmono : StrictMono q := fun p p' hpp => (hord e _ _ p p' _ _ (hx p) (hx p') (hq p) (hq p')).1 hpp
+  refine ⟨OrderEmbedding.ofStrictMono q hmono, fun y p hy => ?_⟩
+  have : y = x p := (ch k).bij.1 (hy.trans (hx p).symm)
+  subst this
+  exact hq p
+
 end AEC

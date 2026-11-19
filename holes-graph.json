@@ -5986,6 +5986,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 107: pairMS2_X_coord_of extended (skeleton points ↔ chartX, order ↔ chartLt); infra_83_pairMS2_X_chart_skeleton."
+  },
+  {
+   "id": "infra_83_pairMS2_X_chart_orderEmb",
+   "label": "Lemma 8.3 proof: each X-piece map e induces an order embedding h_e : H_k ↪o H_l with θ_e(skeleton p) = skeleton(h_e p)",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83SampleLikeY.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 107: infra_83_pairMS2_X_chart_orderEmb. Remaining for θ_e = E.map h_e: θ_e commutes with the labels (needs a label clause in XSampleLike: labels act as Lab83.labFun through g, exported from infra_83_pair3_samples' hlabR, plus labFun naturality under E.map), then closure_skeleton_eq."
   }
  ],
  "edges": [
@@ -11196,8 +11205,13 @@
    "from": "infra_83_pairMS2_X_chart_skeleton",
    "to": "infra_83_X_hull_eq_FJ",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_pairMS2_X_chart_orderEmb",
+   "to": "infra_83_X_hull_eq_FJ",
+   "kind": "hard"
   }
  ],
- "doneCount": 598,
+ "doneCount": 599,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
