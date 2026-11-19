@@ -6327,7 +6327,7 @@
    "file": "AEC/Section8/OrderColimit83.lean",
    "status": "done",
    "blocker": null,
-   "detail": "Cycle 108: infra_83_pair_template_clauses. Remaining for infra_83_lemma_8_3_full_single: MarkedPair data (mark occurrences b, realEq, realizes = SameGaloisType with P.assign, AllDominated), markMap/preserves_mark in clause (2), clause (3), and the tail T (WellFoundedLT I)."
+   "detail": "Cycle 108: infra_83_pair_template_clauses. Remaining for infra_83_lemma_8_3_full_single: MarkedPair data (mark occurrences b, realEq, realizes = SameGaloisType with P.assign, AllDominated), markMap/preserves_mark in clause (2), clause (3), and the tail T (WellFoundedLT I). | Cycle 108 (later): mark occurrences of Y_I (mark constants) added; Y-arrows carry them to those of Y_J (preserves_mark with markMap = id)."
   }
  ],
  "edges": [

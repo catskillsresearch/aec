@@ -1387,7 +1387,8 @@ theorem infra_83_pair_values (P : SingleModelData K)
 template `F^b` is a `TermTemplate` on the doubled shape; at every `I` of eligible size its base and
 extension copies are `τ`-isomorphic to scheme objects `X_I`, `Y_I`, with a system arrow
 `X_I → Y_I` carrying the template edge; and every order embedding gives commuting system arrows
-`X_I → X_J`, `Y_I → Y_J` equal to `F^b(f)` under the isomorphisms. -/
+`X_I → X_J`, `Y_I → Y_J` equal to `F^b(f)` under the isomorphisms, the `Y`-arrows carrying the mark
+occurrences (mark constants) of `Y_I` to those of `Y_J`. -/
 theorem infra_83_pair_template_clauses (P : SingleModelData K)
     (Pr : StationaryPrescription K oneVertexShape P.scheme) :
     ∃ (F : TermTemplate K oneVertexShape.{u}.doubled)
@@ -1397,7 +1398,9 @@ theorem infra_83_pair_template_clauses (P : SingleModelData K)
       (eY : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible) v,
         ((F.present I).obj (Sum.inr v)).carrier ≃[K.τ] ((P.scheme.asSystem hI (Y I hI)).obj v).carrier)
       (incl : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
-        SystemArrow K oneVertexShape (P.scheme.asSystem hI (X I hI)) (P.scheme.asSystem hI (Y I hI))),
+        SystemArrow K oneVertexShape (P.scheme.asSystem hI (X I hI)) (P.scheme.asSystem hI (Y I hI)))
+      (mk : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
+        Fin Pr.n → Occurrence K oneVertexShape (P.scheme.asSystem hI (Y I hI))),
       (∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible) v x,
         (incl I hI).onVertex v (eX I hI v x) =
           eY I hI v ((F.present I).edge
@@ -1408,13 +1411,17 @@ theorem infra_83_pair_template_clauses (P : SingleModelData K)
           (onY : SystemArrow K oneVertexShape (P.scheme.asSystem hI (Y I hI)) (P.scheme.asSystem hJ (Y J hJ))),
           SystemArrow.comp (incl I hI) onY = SystemArrow.comp onX (incl J hJ) ∧
           (∀ v x, onX.onVertex v (eX I hI v x) = eX J hJ v ((F.onOrder f).onVertex (Sum.inl v) x)) ∧
-          (∀ v x, onY.onVertex v (eY I hI v x) = eY J hJ v ((F.onOrder f).onVertex (Sum.inr v) x)) := by
+          (∀ v x, onY.onVertex v (eY I hI v x) = eY J hJ v ((F.onOrder f).onVertex (Sum.inr v) x)) ∧
+          ∀ i, (⟨(mk I hI i).1, onY.onVertex (mk I hI i).1 (mk I hI i).2⟩ :
+            Occurrence K oneVertexShape (P.scheme.asSystem hJ (Y J hJ))) = mk J hJ i := by
   obtain ⟨FX, FY, η, b, -, hη, X, Y, eX, eY, incl, hincl, harr⟩ := infra_83_pair_values P Pr
   refine ⟨pairTemplate83 FX FY η, X, Y, fun I _ _ hI _ => eX I hI, fun I _ _ hI _ => eY I hI,
-    fun I _ _ hI => oneVertexArrow (incl I hI) (hincl I hI).1, fun I _ _ hI v x => (hincl I hI).2 x,
+    fun I _ _ hI => oneVertexArrow (incl I hI) (hincl I hI).1,
+    fun I _ _ hI i => ⟨PUnit.unit, eY I hI (b I i)⟩, fun I _ _ hI v x => (hincl I hI).2 x,
     fun I J _ _ _ _ f hI hJ => ?_⟩
-  obtain ⟨onX, onY, h1, h2, h3, h4, h5, -⟩ := harr I J f hI hJ
-  refine ⟨oneVertexArrow onX h1, oneVertexArrow onY h2, ?_, fun v x => h3 x, fun v x => h4 x⟩
+  obtain ⟨onX, onY, h1, h2, h3, h4, h5, h6⟩ := harr I J f hI hJ
+  refine ⟨oneVertexArrow onX h1, oneVertexArrow onY h2, ?_, fun v x => h3 x, fun v x => h4 x,
+    fun i => Sigma.ext rfl (heq_of_eq (h6 i))⟩
   show SystemArrow.mk _ _ _ = SystemArrow.mk _ _ _
   congr 1
   funext v
