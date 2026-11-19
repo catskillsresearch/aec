@@ -6112,6 +6112,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 107."
+  },
+  {
+   "id": "infra_83_orderPieces_cocone",
+   "label": "Order cocones ι_s : H_(|s|-1) ↪o J induce strong maps (F∘H)(I) → F(J) restricting to F(ι_s)",
+   "section": 8,
+   "file": "Lemma83SampleLikeY.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 107: map half of (F∘H)(I) ≅ F(J_I); remaining: J_I as directed colimit of orders and surjectivity via sub_cover."
   }
  ],
  "edges": [
@@ -11407,8 +11416,18 @@
    "from": "infra_83_map_unique_of_surj",
    "to": "infra_83_Y_hull_eq_FZ",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_orderPieces_cocone",
+   "to": "infra_83_X_hull_eq_FJ",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_83_orderPieces_cocone",
+   "to": "infra_83_Y_hull_eq_FZ",
+   "kind": "hard"
   }
  ],
- "doneCount": 612,
+ "doneCount": 613,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

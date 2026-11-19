@@ -1743,4 +1743,29 @@ theorem infra_83_map_unique_of_surj (E : OrderPresentation K) {A B : Type u} [Li
     obtain ⟨x, rfl⟩ := hε y
     exact h x
 
+
+/-- **Cocones of orders give maps out of the EM values of `F ∘ H`**: compatible order
+embeddings `ι_s : H_(|s|-1) ↪o J` (over the finite supports `s ⊆ I`) induce a strong
+`τ`-embedding of the EM value of `k ↦ F(H k)` at `I` into `F(J)`, restricting to `F(ι_s)`. -/
+theorem infra_83_orderPieces_cocone (E : OrderPresentation K) {H : ℕ → Type u}
+    [∀ k, LinearOrder (H k)] [∀ k, Nonempty (H k)]
+    {h : ∀ {k l : ℕ}, (Fin (k + 1) ↪o Fin (l + 1)) → H k ↪o H l}
+    {hid : ∀ k (p : H k), h (idEmb (α := Fin (k + 1))) p = p}
+    {hcomp : ∀ {k l m : ℕ} (e : Fin (k + 1) ↪o Fin (l + 1)) (f : Fin (l + 1) ↪o Fin (m + 1))
+      (p : H k), h (e.trans f) p = h f (h e p)}
+    (I : Type u) [LinearOrder I] [Nonempty I] (J : Type u) [LinearOrder J] [Nonempty J]
+    (ι : ∀ s : ((orderPieces83 E H h hid hcomp).system I).ι, H s.1.card.pred ↪o J)
+    (hι : ∀ {s t : ((orderPieces83 E H h hid hcomp).system I).ι}
+      (hst : ((orderPieces83 E H h hid hcomp).system I).rel s t),
+      (h (placeSucc hst s.2 t.2)).trans (ι t) = ι s) :
+    ∃ m : ((orderPieces83 E H h hid hcomp).limit I).obj.carrier ↪[K.τ] (E.obj J).carrier,
+      K.Strong m ∧ ∀ s, m.comp (((orderPieces83 E H h hid hcomp).limit I).canon s) =
+        E.map (ι s) :=
+  ((orderPieces83 E H h hid hcomp).limit_spec I).2.2 (E.obj J) (fun s => E.map (ι s))
+    (K.strong_mem_dom _ (E.map_strong (OrderIso.refl J).toOrderEmbedding))
+    (fun s => E.map_strong _)
+    (fun {s t} hst => by
+      show (E.map (ι t)).comp (E.map (h (placeSucc hst s.2 t.2))) = E.map (ι s)
+      rw [← E.map_comp, hι])
+
 end AEC
