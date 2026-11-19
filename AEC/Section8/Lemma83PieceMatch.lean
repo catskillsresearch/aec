@@ -2547,4 +2547,71 @@ theorem infra_83_arrow_of_substructure_cover {M N : Model K.τ} (hM : K.Mem M) (
   exact ⟨f, hf, fun A hA => hfc ⟨A, hA⟩⟩
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+/-- The directed system of an increasing `ℕ`-chain of substructures. -/
+def natSubSystem83 {M : Model K.τ} (A : ℕ → K.τ.Substructure M.carrier) (hmono : Monotone A) :
+    DirectedSystem K.τ where
+  ι := ULift.{u} ℕ
+  nonempty := ⟨⟨0⟩⟩
+  rel i j := i.down ≤ j.down
+  refl _ := le_rfl
+  trans h1 h2 := h1.trans h2
+  directed i j := ⟨⟨max i.down j.down⟩, le_max_left _ _, le_max_right _ _⟩
+  obj i := subM83 (A i.down)
+  map h := Language.Substructure.inclusion (hmono h)
+  map_refl _ := by ext; rfl
+  map_trans _ _ := by ext; rfl
+
+/-- **Arrow out of a model along an exhausting chain, built step by step (proved).** If `M` is
+the union of an increasing chain `A 0 ≤ A 1 ≤ …` of strong substructures and every strong
+`g : A n → N` extends to a strong `g' : A (n+1) → N`, then a strong `g₀ : A 0 → N` extends to a
+strong `f : M → N`. This is the recursion-and-union skeleton of the paper's arity removal
+(nested bounded-width lists, each step by Prop 7.5 constructive primeness); the remaining input
+is the one-step extension. -/
+theorem infra_83_arrow_of_chain {M N : Model K.τ} (hM : K.Mem M) (hN : K.Mem N)
+    (A : ℕ → K.τ.Substructure M.carrier) (hmono : Monotone A)
+    (hS : ∀ n, K.Strong (M := subM83 (A n)) (N := M) (A n).subtype)
+    (hcover : ∀ x : M.carrier, ∃ n, x ∈ A n)
+    (g₀ : Language.Embedding K.τ (A 0) N.carrier) (hg₀ : K.Strong (M := subM83 (A 0)) (N := N) g₀)
+    (step : ∀ n (g : Language.Embedding K.τ (A n) N.carrier),
+      K.Strong (M := subM83 (A n)) (N := N) g →
+      ∃ g' : Language.Embedding K.τ (A (n + 1)) N.carrier,
+        K.Strong (M := subM83 (A (n + 1))) (N := N) g' ∧
+        g'.comp (Language.Substructure.inclusion (hmono n.le_succ)) = g) :
+    ∃ f : Language.Embedding K.τ M.carrier N.carrier, K.Strong f ∧
+      f.comp (A 0).subtype = g₀ := by
+  let G : ∀ n, {g : Language.Embedding K.τ (A n) N.carrier //
+      K.Strong (M := subM83 (A n)) (N := N) g} := fun n =>
+    Nat.rec ⟨g₀, hg₀⟩ (fun n gn => ⟨Classical.choose (step n gn.1 gn.2),
+      (Classical.choose_spec (step n gn.1 gn.2)).1⟩) n
+  have hstep : ∀ n, (G (n + 1)).1.comp (Language.Substructure.inclusion (hmono n.le_succ)) =
+      (G n).1 := fun n => (Classical.choose_spec (step n (G n).1 (G n).2)).2
+  have hcomp : ∀ i j (h : i ≤ j),
+      (G j).1.comp (Language.Substructure.inclusion (hmono h)) = (G i).1 := by
+    intro i j h
+    induction j, h using Nat.le_induction with
+    | base => ext x; rfl
+    | succ j hij ih =>
+      ext x
+      have h1 := congrFun (congrArg DFunLike.coe (hstep j))
+        (Language.Substructure.inclusion (hmono hij) x)
+      have h2 := congrFun (congrArg DFunLike.coe ih) x
+      simp only [Language.Embedding.comp_apply] at h1 h2 ⊢
+      rw [← h2, ← h1]
+      rfl
+  have hmem : ∀ n, K.Mem (subM83 (A n)) := fun n => K.strong_mem_dom _ (hS n)
+  obtain ⟨f, hf, hfc⟩ := infra_83_arrow_of_cover (natSubSystem83 A hmono)
+    (fun i => hmem i.down)
+    (fun {i j} hij => K.coherence (M₀ := subM83 (A i.down)) (M₁ := subM83 (A j.down)) (M₂ := M)
+      (Language.Substructure.inclusion (hmono hij)) (A i.down).subtype (A j.down).subtype
+      (hS i.down) (hS j.down) (by ext; rfl))
+    hM hN (fun i => (A i.down).subtype) (fun i => hS i.down) (fun _ => by ext; rfl)
+    (fun x => by obtain ⟨n, hx⟩ := hcover x; exact ⟨⟨n⟩, ⟨x, hx⟩, rfl⟩)
+    (fun i => (G i.down).1) (fun i => (G i.down).2) (fun {i j} hij => hcomp i.down j.down hij)
+  exact ⟨f, hf, hfc ⟨0⟩⟩
+end
+
 end AEC
