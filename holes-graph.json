@@ -4194,7 +4194,7 @@
    "file": "AEC/Section8/Results.lean",
    "status": "open",
    "blocker": null,
-   "detail": "Cycle 96. English (8.2): 'Same-level arrows preserve bounded pair orbits'; orbits are pair isomorphism orbits (line 3173), the base moves. Lean PairOrbitEq M M refl t1 t2 -> PairOrbitEq N N refl (f t1) (f t2) matches (bijective onX allowed; mark fixed entrywise). Proof (paper 3010-3018): Lemma 7.2 free extension of joint types, bounded approximation lists, an automorphism of N.X matching them by bounded diagram homogeneity in C, testing bound, then the pair isomorphism test (clause 3, done for P.scheme as infra_82_pointed_single). Not provided by infra_82_iso_any / infra_75_iso (same base only); no bounded diagram homogeneity lemma exists in Lean yet."
+   "detail": "Cycle 96. English (8.2): 'Same-level arrows preserve bounded pair orbits'; orbits are pair isomorphism orbits (line 3173), the base moves. Lean PairOrbitEq M M refl t1 t2 -> PairOrbitEq N N refl (f t1) (f t2) matches (bijective onX allowed; mark fixed entrywise). Proof (paper 3010-3018): Lemma 7.2 free extension of joint types, bounded approximation lists, an automorphism of N.X matching them by bounded diagram homogeneity in C, testing bound, then the pair isomorphism test (clause 3, done for P.scheme as infra_82_pointed_single). Not provided by infra_82_iso_any / infra_75_iso (same base only); no bounded diagram homogeneity lemma exists in Lean yet. | Cycle 96: reduction proved (infra_82_orbit_criterion_single); remaining piece infra_82_orbit_base_auto_single."
   },
   {
    "id": "infra_84_single",
@@ -4204,6 +4204,24 @@
    "status": "open",
    "blocker": null,
    "detail": "Cycle 96. lemma_8_4's conclusion factored into def Lemma84Conclusion W P (statement unchanged); the P.scheme tip is Lemma84Conclusion P.scheme Pr. All hosts (C, T, T') sit at the level mu, so no both_off comparison is involved; the open content is the uniform testing bound k(sigma) (Prop 7.3 / Thm 6.6 machinery) for P.scheme. DiagramEq for P.scheme is SameD in the big presentations (not finitary), so no locality shortcut."
+  },
+  {
+   "id": "infra_82_orbit_criterion_single",
+   "label": "Lemma 8.2(4) reduction for P.scheme: base automorphism criterion",
+   "section": 8,
+   "file": "AEC/Section8/PairOrbitSingle.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "DONE cycle 96. On the clause-(3) tail: for N and bounded s there is a bounded isolating fragment Z of N.X (from all-domination) such that every base automorphism e matching base entries of s/s', keeping tp(b/N.X) positionwise, and carrying the diagram of (b,s,Z) to (b,s',eZ) extends to a pair automorphism (markMap refl) taking s to s'. Uses infra_82_pointed_single and Def 7.4 relative isolation. Axioms clean."
+  },
+  {
+   "id": "infra_82_orbit_base_auto_single",
+   "label": "Lemma 8.2(4) for P.scheme: the base automorphism",
+   "section": 8,
+   "file": "AEC/Section8/PairOrbitSingle.lean",
+   "status": "open",
+   "blocker": null,
+   "detail": "Cycle 96. Remaining piece of infra_82_orbit_preservation_single: given a same-level marked arrow f : M -> N and a pair automorphism of M (marks fixed) taking t1 to t2, produce an automorphism e of N.X meeting infra_82_orbit_criterion_single for s = f t1, s' = f t2: base entries, tp(b_N/N.X) kept positionwise, diagram of (b,s,Z) carried to (b,s',eZ). Paper (3010-3018): Lemma 7.2 free extension of joint types, bounded approximation lists, bounded diagram homogeneity (P.scheme.diagram_iso, Def 5.2(3)), testing bound. The global condition on tp(b/N.X) is not a bounded-list condition, so diagram_iso alone does not give it."
   }
  ],
  "edges": [
@@ -8279,8 +8297,18 @@
    "from": "infra_84_single",
    "to": "lemma_8_5",
    "kind": "hard"
+  },
+  {
+   "from": "infra_82_orbit_criterion_single",
+   "to": "infra_82_orbit_preservation_single",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_82_orbit_base_auto_single",
+   "to": "infra_82_orbit_preservation_single",
+   "kind": "hard"
   }
  ],
- "doneCount": 415,
+ "doneCount": 416,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

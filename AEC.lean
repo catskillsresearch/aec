@@ -202,6 +202,7 @@ public import AEC.Section8.MarkedPairExists
 public import AEC.Section8.PairIsoSingle
 public import AEC.Section8.PairPointedSingle
 public import AEC.Section8.Lemma83Single
+public import AEC.Section8.PairOrbitSingle
 public import AEC.Section8.Results
 public import AEC.Section8.StationaryPrescription
 public import AEC.Section9.BoundaryMap
