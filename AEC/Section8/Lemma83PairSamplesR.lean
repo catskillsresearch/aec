@@ -74,7 +74,7 @@ theorem infra_83_pairR_samples (P : SingleModelData K)
             Lab83.labR (Set.range (P.E.map emb)) a x) := by
   classical
   obtain ⟨μ, h1, h2, J, i1, i2, h4, hJ, M, h8, eX, h9, sX, ι, Jplus, i3, i4, emb, strip, hs, hc,
-    F, sF, hF, s₀, hcl, hred, hX, -, hY, hYlab, hfull, hlabR⟩ := infra_83_pair3_samples P Pr hκ θ
+    F, sF, hF, s₀, hcl, hred, hX, -, hY, hYlab, hfull, hlabR, -⟩ := infra_83_pair3_samples P Pr hκ θ
   have hXF : Set.range (P.E.map emb) ⊆ Set.range F := by
     rintro _ ⟨z, rfl⟩
     exact ⟨_, hF z⟩
