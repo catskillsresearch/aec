@@ -245,6 +245,7 @@ public import AEC.Section8.LabRepHull83
 public import AEC.Section8.LabRepT83
 public import AEC.Section8.ChartRel83
 public import AEC.Section8.Lemma83PairTemplateR4
+public import AEC.Section8.Lemma83PairDemand
 public import AEC.Section8.Lemma84Single
 public import AEC.Section8.Results
 public import AEC.Section8.StationaryPrescription

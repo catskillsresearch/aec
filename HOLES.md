@@ -609,6 +609,7 @@ Lean: imports `Section5.Results` and `Section6.Results`. Soft paper chain after 
 | `infra_83_chart_generation_Y` | Lemma 8.3 proof: S ∩ Y = e(F(Z_S)) via transported labels and representation positions | [`LabRepT83.lean`](AEC/Section8/LabRepT83.lean) (**done**, cycle 105) |
 | `infra_83_sample_Y_hull_eq_FZ` | Lemma 8.3 proof: sample Y-language hull = e(F(Z_H)) | [`LabRepHull83.lean`](AEC/Section8/LabRepHull83.lean) (**done**, cycle 105) |
 | `infra_83_chart_relations` | Lemma 8.3 proof: chart relations in pairLangR4 and template with them | [`Lemma83PairTemplateR4.lean`](AEC/Section8/Lemma83PairTemplateR4.lean) (**done**, cycle 105) |
+| `infra_83_saturation_demand` | Lemma 8.3 proof: coherent colors under the joint size / order-saturation demand | [`Lemma83PairDemand.lean`](AEC/Section8/Lemma83PairDemand.lean) (**done**, cycle 105) |
 | `infra_72_mixed_level` | Lemma 7.2 last sentence (A at a smaller level than B), stated with sorry (audit) | [`Lemma72Mixed.lean`](AEC/Section7/Lemma72Mixed.lean) (open, cycle 96) |
 | `infra_82_tiedFreeMixed_base_equiv` | Mixed tied freeness under a reindexed change of base tuple | [`TiedAlong.lean`](AEC/Section8/TiedAlong.lean) (**done**, cycle 97) |
 | `infra_82_mark_tied_along_single` | Lemma 8.2(4) for `P.scheme`: tied freeness of the mark along arrows (Def 8.1 tied, cycle 97 ruling) | [`TiedAlong.lean`](AEC/Section8/TiedAlong.lean) (**done**, cycle 97) |
