@@ -219,6 +219,7 @@ public import AEC.Section8.HullTypes83
 public import AEC.Section8.HullPieces83
 public import AEC.Section8.HullReduct83
 public import AEC.Section8.HullSub83
+public import AEC.Section8.HullBundle83
 public import AEC.Section8.Lemma84Single
 public import AEC.Section8.Results
 public import AEC.Section8.StationaryPrescription

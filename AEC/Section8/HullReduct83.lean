@@ -55,7 +55,7 @@ def redEquiv {M N : Type u} [L.Structure M] [L.Structure N] (f : M ↪[L] N) (g 
 /-- **Vertex LS witnesses.**  In every admitted structure the reduct of the term hull of every
 finite tuple is strong in the reduct of the structure. -/
 def HullStrong (P : ∀ (M : Type u) [L.Structure M], Prop) : Prop :=
-  ∀ (M : Type u) [L.Structure M], P M → ∀ {m : ℕ} (v : Fin m → M),
+  ∀ (M : Type u) [L.Structure M], P M → ∀ {ι : Type} [Finite ι] (v : ι → M),
     K.Strong (redEmb φ (hullEmb (L := L) v))
 
 variable {φ}
@@ -63,8 +63,8 @@ variable {φ}
 /-- **Hull maps are strong.**  Between admitted structures, the hull map along a position map
 `g` with `tp(v') = tp(v ∘ g)` is a strong `τ`-embedding. -/
 theorem hullMap_strong {P : ∀ (M : Type u) [L.Structure M], Prop} (hP : HullStrong φ P)
-    {M N : Type u} [L.Structure M] [L.Structure N] (hM : P M) (hN : P N) {m m' : ℕ}
-    {v' : Fin m' → N} {v : Fin m → M} (g : Fin m' → Fin m)
+    {M N : Type u} [L.Structure M] [L.Structure N] (hM : P M) (hN : P N) {ι ι' : Type}
+    [Finite ι] [Finite ι'] {v' : ι' → N} {v : ι → M} (g : ι' → ι)
     (h : tpCode (L := L) v' = tpCode (v ∘ g)) :
     K.Strong (redEmb φ (hullMapEmb g h)) := by
   -- the sub-hull of `v ∘ g` inside the hull of `v`

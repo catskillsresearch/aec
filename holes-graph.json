@@ -5329,6 +5329,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 103: TpColorB (variables Fin m x Fin r), tpResB, bundleOf, TpSampleB (each sort sequence injective), tpSampleB_reindex/_restrict/_large/_compat, tpB_coherent_colors. Hull/hullMap/tpCode generalized from Fin m to any variable type (HullPieces83), so bundled witnesses use the same hull API. Axioms clean."
+  },
+  {
+   "id": "infra_83_bundled_finpieces",
+   "label": "Lemma 8.3 proof: FinPieces K from bundled samples (hull maps along Prod.map e id)",
+   "section": 8,
+   "file": "AEC/Section8/HullBundle83.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 103: TpWitB, tpWitB_nonempty, witB, tpPieceB_tp, tpFinPiecesB : FinPieces K (HullStrong now quantifies over finite variable types), exists_tpFinPiecesB. Axioms clean."
   }
  ],
  "edges": [
@@ -10029,8 +10038,13 @@
    "from": "infra_83_bundled_type_colors",
    "to": "infra_83_pair_sample_family",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_bundled_finpieces",
+   "to": "infra_83_pair_pieces",
+   "kind": "hard"
   }
  ],
- "doneCount": 528,
+ "doneCount": 529,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

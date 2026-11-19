@@ -55,14 +55,14 @@ variable {L₀ L : Language.{u, u}} (ψ : L₀ →ᴸ L)
 
 section SubHull
 
-variable {M : Type u} [L.Structure M] {m : ℕ}
+variable {M : Type u} [L.Structure M] {ι : Type}
 
 /-- The `L₀`-hull of a tuple of an `L`-structure (computed in the reduct). -/
-def subHull (v : Fin m → M) : Type u := @Hull L₀ M (ψ.reduct M) (Fin m) v
+def subHull (v : ι → M) : Type u := @Hull L₀ M (ψ.reduct M) ι v
 
 /-- The `L₀`-hull maps into the `L`-hull. -/
-def subToHull (v : Fin m → M) : subHull ψ v → Hull (L := L) v :=
-  @Quotient.map _ _ (@hullSetoid L₀ M (ψ.reduct M) (Fin m) v) (hullSetoid (L := L) v) (ψ.onTerm)
+def subToHull (v : ι → M) : subHull ψ v → Hull (L := L) v :=
+  @Quotient.map _ _ (@hullSetoid L₀ M (ψ.reduct M) ι v) (hullSetoid (L := L) v) (ψ.onTerm)
     (fun t t' (htt : @Term.realize L₀ M (ψ.reduct M) _ v t =
         @Term.realize L₀ M (ψ.reduct M) _ v t') => by
       letI := ψ.reduct M
@@ -70,8 +70,8 @@ def subToHull (v : Fin m → M) : subHull ψ v → Hull (L := L) v :=
       rw [LHom.realize_onTerm, LHom.realize_onTerm]
       exact htt)
 
-theorem hullVal_subToHull (v : Fin m → M) (x : subHull ψ v) :
-    hullVal (L := L) v (subToHull ψ v x) = @hullVal L₀ M (ψ.reduct M) (Fin m) v x := by
+theorem hullVal_subToHull (v : ι → M) (x : subHull ψ v) :
+    hullVal (L := L) v (subToHull ψ v x) = @hullVal L₀ M (ψ.reduct M) ι v x := by
   letI := ψ.reduct M
   induction x using Quotient.ind with
   | _ t =>
@@ -83,27 +83,27 @@ end SubHull
 variable (φ₀ : K.τ →ᴸ L₀)
 
 /-- The `τ`-model of the `L₀`-hull. -/
-noncomputable def subHullModel {M : Type u} [L.Structure M] {m : ℕ} (v : Fin m → M) : Model K.τ :=
-  @red K L₀ φ₀ (subHull ψ v) (@hullStructure L₀ M (ψ.reduct M) (Fin m) v)
+noncomputable def subHullModel {M : Type u} [L.Structure M] {ι : Type} (v : ι → M) : Model K.τ :=
+  @red K L₀ φ₀ (subHull ψ v) (@hullStructure L₀ M (ψ.reduct M) ι v)
 
 /-- The `τ`-model of the sample, seen through `L₀`. -/
 def subModel' (M : Type u) [L.Structure M] : Model K.τ := @red K L₀ φ₀ M (ψ.reduct M)
 
 /-- The `L₀`-hull embedding into the sample, after reduct. -/
-noncomputable def subHullEmb {M : Type u} [L.Structure M] {m : ℕ} (v : Fin m → M) :
+noncomputable def subHullEmb {M : Type u} [L.Structure M] {ι : Type} (v : ι → M) :
     (subHullModel ψ φ₀ v).carrier ↪[K.τ] (red (ψ.comp φ₀) M).carrier :=
-  @redEmb K L₀ φ₀ (subHull ψ v) M (@hullStructure L₀ M (ψ.reduct M) (Fin m) v) (ψ.reduct M)
-    (@hullEmb L₀ M (ψ.reduct M) (Fin m) v)
+  @redEmb K L₀ φ₀ (subHull ψ v) M (@hullStructure L₀ M (ψ.reduct M) ι v) (ψ.reduct M)
+    (@hullEmb L₀ M (ψ.reduct M) ι v)
 
 /-- **Sublanguage hull inclusion.**  The `L₀`-hull of `v` is a `τ`-substructure of its
 `L`-hull, compatibly with both embeddings into the sample. -/
-noncomputable def subHullIncl {M : Type u} [L.Structure M] {m : ℕ} (v : Fin m → M) :
+noncomputable def subHullIncl {M : Type u} [L.Structure M] {ι : Type} (v : ι → M) :
     (subHullModel ψ φ₀ v).carrier ↪[K.τ] (red (ψ.comp φ₀) (Hull (L := L) v)).carrier :=
   embOfComp (redEmb (ψ.comp φ₀) (hullEmb (L := L) v)) (subHullEmb ψ φ₀ v) (subToHull ψ v)
     (fun x => hullVal_subToHull ψ v x)
 
 /-- The inclusion is strong when both hulls are strong in the sample. -/
-theorem subHullIncl_strong {M : Type u} [L.Structure M] {m : ℕ} (v : Fin m → M)
+theorem subHullIncl_strong {M : Type u} [L.Structure M] {ι : Type} (v : ι → M)
     (hL : K.Strong (redEmb (ψ.comp φ₀) (hullEmb (L := L) v)))
     (hL₀ : K.Strong (subHullEmb ψ φ₀ v)) :
     K.Strong (subHullIncl ψ φ₀ v) :=
@@ -137,7 +137,7 @@ theorem subToHull_hullMap {M N : Type u} [L.Structure M] [L.Structure N] {m m' :
 
 /-- Vertex LS witnesses for the sublanguage hulls. -/
 def SubHullStrong (P : ∀ (M : Type u) [L.Structure M], Prop) : Prop :=
-  ∀ (M : Type u) [L.Structure M], P M → ∀ {m : ℕ} (v : Fin m → M),
+  ∀ (M : Type u) [L.Structure M], P M → ∀ {ι : Type} [Finite ι] (v : ι → M),
     K.Strong (subHullEmb ψ φ₀ v)
 
 /-- The admitted `L₀`-structures: reducts of admitted `L`-structures. -/
@@ -147,7 +147,7 @@ def reductClass (P : ∀ (M : Type u) [L.Structure M], Prop) :
 
 theorem hullStrong_reductClass {P : ∀ (M : Type u) [L.Structure M], Prop}
     (hP : SubHullStrong ψ φ₀ P) : HullStrong φ₀ (reductClass ψ P) := by
-  intro M inst₀ hM m v
+  intro M inst₀ hM ι hι v
   obtain ⟨inst, hPM, rfl⟩ := hM
   exact hP M hPM v
 
@@ -177,7 +177,7 @@ noncomputable def subFinPieces (hP : SubHullStrong ψ φ₀ P) : EM83.FinPieces 
       (⇑e) (⇑f) (tpCode_reduct ψ (tpPiece_tp hc hcoh e)) (tpCode_reduct ψ (tpPiece_tp hc hcoh f))
       (tpCode_reduct ψ (tpPiece_tp hc hcoh (e.trans f))) x).symm
   strong e := @hullMap_strong K L₀ φ₀ (reductClass ψ P) (hullStrong_reductClass ψ φ₀ hP)
-    _ _ (ψ.reduct _) (ψ.reduct _) ⟨_, (wit hc _).mem, rfl⟩ ⟨_, (wit hc _).mem, rfl⟩ _ _ _ _ (⇑e)
+    _ _ (ψ.reduct _) (ψ.reduct _) ⟨_, (wit hc _).mem, rfl⟩ ⟨_, (wit hc _).mem, rfl⟩ _ _ _ _ _ _ (⇑e)
     (tpCode_reduct ψ (tpPiece_tp hc hcoh e))
 
 include hcoh in
