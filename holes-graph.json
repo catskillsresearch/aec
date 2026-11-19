@@ -5248,6 +5248,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 102: Section 2's emMap/emMap_id/emMap_comp ported to FinPieces (gEmMap, gEmMap_strong, gEmMap_id, gEmMap_comp, gEmMap_canon). Axioms clean."
+  },
+  {
+   "id": "infra_83_em_natural_maps",
+   "label": "Lemma 8.3 proof: natural strong maps of pieces (X -> Y -> L components) induce strong maps of EM values, natural in the index order",
+   "section": 8,
+   "file": "AEC/Section8/EMExtend83.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 102: EM83.PiecesHom, limMap, limMap_strong, limMap_canon, limMap_natural. Axioms clean."
   }
  ],
  "edges": [
@@ -9903,8 +9912,13 @@
    "from": "infra_83_em_functor_generic",
    "to": "infra_83_em_extension_generic",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_em_natural_maps",
+   "to": "infra_83_template_from_colors",
+   "kind": "hard"
   }
  ],
- "doneCount": 518,
+ "doneCount": 519,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

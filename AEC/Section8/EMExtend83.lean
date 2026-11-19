@@ -317,6 +317,83 @@ theorem gEmMap_comp {I J P : Type u} [LinearOrder I] [LinearOrder J] [LinearOrde
 
 end Functor
 
+
+/-! ### Natural transformations of pieces induce natural maps of EM values
+
+For the pair template of Lemma 8.3 the components `X ⊆ Y ⊆ L` are three piece functors with
+natural strong maps between them; their EM values inherit strong maps, natural in the index
+order. -/
+
+/-- A natural family of strong embeddings between two piece functors. -/
+structure PiecesHom (F G : FinPieces K) where
+  app : ∀ k, (F.obj k).carrier ↪[K.τ] (G.obj k).carrier
+  strong : ∀ k, K.Strong (app k)
+  natural : ∀ {k l : ℕ} (e : Fin (k + 1) ↪o Fin (l + 1)),
+    (app l).comp (F.map e) = (G.map e).comp (app k)
+
+namespace PiecesHom
+
+variable {F G : FinPieces K} (η : PiecesHom F G)
+
+/-- The cocone on `F.system I` given by `η` followed by the canonical maps of `G`'s value. -/
+noncomputable def cocone (I : Type u) [LinearOrder I] [Nonempty I] (s : (F.system I).ι) :
+    ((F.system I).obj s).carrier ↪[K.τ] (G.limit I).obj.carrier :=
+  ((G.limit I).canon (show (G.system I).ι from s)).comp (η.app s.1.card.pred)
+
+theorem cocone_strong (I : Type u) [LinearOrder I] [Nonempty I] (s : (F.system I).ι) :
+    K.Strong (η.cocone I s) :=
+  K.strong_trans _ _ (η.strong _) ((G.limit_spec I).2.1 _)
+
+theorem cocone_compat (I : Type u) [LinearOrder I] [Nonempty I] {s t : (F.system I).ι}
+    (h : (F.system I).rel s t) : (η.cocone I t).comp ((F.system I).map h) = η.cocone I s := by
+  ext x
+  show (G.limit I).canon t (η.app t.1.card.pred (F.map (placeSucc h s.2 t.2) x)) =
+    (G.limit I).canon s (η.app s.1.card.pred x)
+  have hnat : η.app t.1.card.pred (F.map (placeSucc h s.2 t.2) x) =
+      G.map (placeSucc h s.2 t.2) (η.app s.1.card.pred x) := by
+    exact congrFun (congrArg (⇑) (η.natural (placeSucc h s.2 t.2))) x
+  rw [hnat]
+  exact congrFun (congrArg (⇑) ((G.limit I).compat (i := s) (j := t) h))
+    (η.app s.1.card.pred x)
+
+/-- The induced map of EM values `F(I) → G(I)`. -/
+noncomputable def limMap (I : Type u) [LinearOrder I] [Nonempty I] :
+    (F.limit I).obj.carrier ↪[K.τ] (G.limit I).obj.carrier :=
+  Classical.choose ((F.limit_spec I).2.2 (G.limit I).obj (η.cocone I) (G.limit_spec I).1
+    (η.cocone_strong I) (fun h => η.cocone_compat I h))
+
+theorem limMap_strong (I : Type u) [LinearOrder I] [Nonempty I] : K.Strong (η.limMap I) :=
+  (Classical.choose_spec ((F.limit_spec I).2.2 (G.limit I).obj (η.cocone I) (G.limit_spec I).1
+    (η.cocone_strong I) (fun h => η.cocone_compat I h))).1
+
+theorem limMap_canon (I : Type u) [LinearOrder I] [Nonempty I] (s : (F.system I).ι) :
+    (η.limMap I).comp ((F.limit I).canon s) = η.cocone I s :=
+  (Classical.choose_spec ((F.limit_spec I).2.2 (G.limit I).obj (η.cocone I) (G.limit_spec I).1
+    (η.cocone_strong I) (fun h => η.cocone_compat I h))).2 s
+
+
+/-- The induced maps are natural in the index order: `η_J ∘ F(f) = G(f) ∘ η_I`. -/
+theorem limMap_natural {I J : Type u} [LinearOrder I] [LinearOrder J] [Nonempty I] [Nonempty J]
+    (f : I ↪o J) :
+    (η.limMap J).comp (gEmMap (F := F) f) = (gEmMap (F := G) f).comp (η.limMap I) := by
+  ext x
+  obtain ⟨s, y, rfl⟩ := (F.limit I).joint x
+  have h1 := congrFun (congrArg (⇑) (gEmMap_canon (F := F) f s)) y
+  have h2 := congrFun (congrArg (⇑) (η.limMap_canon I s)) y
+  have h3 := congrFun (congrArg (⇑) (gEmMap_canon (F := G) f s)) (η.app s.1.card.pred y)
+  have h4 := congrFun (congrArg (⇑) (η.limMap_canon J (gSystemImage (F := F) f s)))
+    (gSystemComponent (F := F) f s y)
+  have hnat := congrFun (congrArg (⇑) (η.natural (indexCast f s))) y
+  simp only [Language.Embedding.comp_apply] at h1 h2 h3 h4 ⊢
+  rw [h1, h2]
+  erw [h3]
+  simp only [gSubstAt, Language.Embedding.comp_apply]
+  erw [h4]
+  simp only [cocone, Language.Embedding.comp_apply]
+  exact congrArg ((G.limit J).canon _) hnat
+
+end PiecesHom
+
 /-- Section 2's pieces form a `FinPieces` functor; `F.system` is then Section 2's `emSystem`. -/
 noncomputable def section2Pieces (K : AbstractElementaryClass.{u}) [ArbitrarilyLarge K] :
     FinPieces K where
