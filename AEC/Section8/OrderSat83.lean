@@ -1,6 +1,7 @@
 module
 
 public import AEC.Section2.Partition
+public import Mathlib.Order.PiLex
 
 /-!
 # Lemma 8.3: order saturation of the sample orders
@@ -137,6 +138,153 @@ theorem orderSaturated_lex {κ : Cardinal.{u}} {I J₀ : Type u} [LinearOrder I]
     rcases (hiB b hb).lt_or_eq with h | h
     · exact Or.inl h
     · exact Or.inr ⟨h, hyB _ ⟨b, ⟨hb, h.symm⟩, rfl⟩⟩
+
+/-- **Saturation of a lexicographic power.**  Let `ι` be a well-order in which every set of
+size `< κ` is strictly bounded, and `V` an order without endpoints in which any two sets
+`S ≤ U` of size `< κ` are separated (non-strictly) by a point.  Then `Lex (ι → V)` is
+`κ`-order-saturated: below a bound `γ` of all first differences inside `A ∪ B` the realizing
+function follows the agreeing elements non-strictly, and at `γ` at most one element of
+`A ∪ B` still agrees with it, so a strict step there suffices. -/
+theorem orderSaturated_piLex {κ : Cardinal.{u}} (hκ : aleph0 ≤ κ) {ι V : Type u}
+    [LinearOrder ι] [WellFoundedLT ι] [LinearOrder V] [NoMaxOrder V] [NoMinOrder V]
+    [Nonempty V]
+    (hbd : ∀ s : Set ι, #s < κ → ∃ γ, ∀ j ∈ s, j < γ)
+    (hint : ∀ S U : Set V, #S < κ → #U < κ → (∀ a ∈ S, ∀ b ∈ U, a ≤ b) →
+      ∃ v, (∀ a ∈ S, a ≤ v) ∧ ∀ b ∈ U, v ≤ b) :
+    OrderSaturated κ (Lex (ι → V)) := by
+  classical
+  intro A B hA hB hAB
+  have hlt : ∀ x y : Lex (ι → V), x < y ↔ ∃ i, (∀ j < i, x j = y j) ∧ x i < y i :=
+    fun _ _ => Iff.rfl
+  have hκ0 : (0 : Cardinal) < κ := aleph0_pos.trans_le hκ
+  have : Nonempty ι := by
+    obtain ⟨γ, -⟩ := hbd ∅ (by simpa using hκ0)
+    exact ⟨γ⟩
+  -- first differences
+  let fd : Lex (ι → V) → Lex (ι → V) → ι := fun p q =>
+    if h : ∃ j, p j ≠ q j then (wellFounded_lt (α := ι)).min {j | p j ≠ q j} h
+    else Classical.arbitrary ι
+  have hfd : ∀ p q : Lex (ι → V), p ≠ q → p (fd p q) ≠ q (fd p q) := by
+    intro p q hpq
+    have h : ∃ j, p j ≠ q j := by
+      by_contra hc
+      push Not at hc
+      exact hpq (funext hc)
+    simp only [fd, h, dite_true]
+    exact (wellFounded_lt (α := ι)).min_mem {j | p j ≠ q j} h
+  let C : Set (Lex (ι → V)) := A ∪ B
+  have hC : #C < κ := (mk_union_le _ _).trans_lt (add_lt_of_lt hκ hA hB)
+  let D : Set ι := Set.image2 fd C C
+  have hD : #D < κ := by
+    refine (mk_image2_le).trans_lt ?_
+    exact mul_lt_of_lt hκ hC hC
+  obtain ⟨γ, hγ⟩ := hbd D hD
+  have hsep : ∀ p ∈ C, ∀ q ∈ C, p ≠ q → ∃ j < γ, p j ≠ q j := fun p hp q hq hpq =>
+    ⟨fd p q, hγ _ (Set.mem_image2_of_mem hp hq), hfd p q hpq⟩
+  -- the recursion
+  let Ag : ∀ β : ι, (∀ j : ι, j < β → V) → Set (Lex (ι → V)) := fun β prev =>
+    {a | a ∈ A ∧ ∀ j (h : j < β), a j = prev j h}
+  let Bg : ∀ β : ι, (∀ j : ι, j < β → V) → Set (Lex (ι → V)) := fun β prev =>
+    {b | b ∈ B ∧ ∀ j (h : j < β), b j = prev j h}
+  let step : ∀ β : ι, (∀ j : ι, j < β → V) → V := fun β prev =>
+    if β = γ then
+      (if h : ∃ v, (∀ a ∈ Ag β prev, a β < v) ∧ ∀ b ∈ Bg β prev, v < b β then h.choose
+        else Classical.arbitrary V)
+    else
+      (if h : ∃ v, (∀ a ∈ Ag β prev, a β ≤ v) ∧ ∀ b ∈ Bg β prev, v ≤ b β then h.choose
+        else Classical.arbitrary V)
+  let g : ι → V := (wellFounded_lt (α := ι)).fix step
+  have hg : ∀ β, g β = step β (fun j _ => g j) := fun β =>
+    (wellFounded_lt (α := ι)).fix_eq step β
+  -- agreement and the pointwise order
+  have hagree : ∀ β, ∀ a ∈ A, ∀ b ∈ B, (∀ j < β, a j = g j) → (∀ j < β, b j = g j) →
+      a β ≤ b β := by
+    intro β a ha b hb hab hbb
+    obtain ⟨i, hi, hlti⟩ := (hlt a b).1 (hAB a ha b hb)
+    rcases lt_trichotomy i β with h | h | h
+    · exact absurd ((hab i h).trans (hbb i h).symm) hlti.ne
+    · exact h ▸ hlti.le
+    · exact (hi β h).le
+  have hnonstrict : ∀ β, β ≠ γ → (∀ a ∈ A, (∀ j < β, a j = g j) → a β ≤ g β) ∧
+      (∀ b ∈ B, (∀ j < β, b j = g j) → g β ≤ b β) := by
+    intro β hβ
+    have hex : ∃ v, (∀ a ∈ Ag β (fun j _ => g j), a β ≤ v) ∧
+        ∀ b ∈ Bg β (fun j _ => g j), v ≤ b β := by
+      obtain ⟨v, hv1, hv2⟩ := hint ((fun a : Lex (ι → V) => a β) '' Ag β (fun j _ => g j))
+        ((fun b : Lex (ι → V) => b β) '' Bg β (fun j _ => g j))
+        (mk_image_le.trans_lt ((mk_le_mk_of_subset
+          (s := Ag β (fun j _ => g j)) (t := A) fun x hx => hx.1).trans_lt hA))
+        (mk_image_le.trans_lt ((mk_le_mk_of_subset
+          (s := Bg β (fun j _ => g j)) (t := B) fun x hx => hx.1).trans_lt hB))
+        (by
+          rintro _ ⟨a, ⟨ha, hag⟩, rfl⟩ _ ⟨b, ⟨hb, hbg⟩, rfl⟩
+          exact hagree β a ha b hb hag hbg)
+      exact ⟨v, fun a ha => hv1 _ ⟨a, ha, rfl⟩, fun b hb => hv2 _ ⟨b, hb, rfl⟩⟩
+    have hgβ : g β = hex.choose := by
+      rw [hg]
+      simp only [step, hβ, hex, ite_false, dite_true]
+    have hspec := hex.choose_spec
+    rw [← hgβ] at hspec
+    exact ⟨fun a ha hag => hspec.1 a ⟨ha, hag⟩, fun b hb hbg => hspec.2 b ⟨hb, hbg⟩⟩
+  have hstrict : (∀ a ∈ A, (∀ j < γ, a j = g j) → a γ < g γ) ∧
+      (∀ b ∈ B, (∀ j < γ, b j = g j) → g γ < b γ) := by
+    have huniq : ∀ p ∈ C, ∀ q ∈ C, (∀ j < γ, p j = g j) → (∀ j < γ, q j = g j) → p = q := by
+      intro p hp q hq hpg hqg
+      by_contra hpq
+      obtain ⟨j, hj, hne⟩ := hsep p hp q hq hpq
+      exact hne ((hpg j hj).trans (hqg j hj).symm)
+    have hex : ∃ v, (∀ a ∈ Ag γ (fun j _ => g j), a γ < v) ∧
+        ∀ b ∈ Bg γ (fun j _ => g j), v < b γ := by
+      by_cases hAn : (Ag γ (fun j _ => g j)).Nonempty
+      · obtain ⟨a0, ha0, ha0g⟩ := hAn
+        obtain ⟨v, hv⟩ := exists_gt (a0 γ)
+        refine ⟨v, fun a ⟨ha, hag⟩ => ?_, fun b ⟨hb, hbg⟩ => ?_⟩
+        · rw [huniq a (Or.inl ha) a0 (Or.inl ha0) hag ha0g]
+          exact hv
+        · have := huniq a0 (Or.inl ha0) b (Or.inr hb) ha0g hbg
+          exact absurd (this ▸ hAB a0 ha0 b hb) (lt_irrefl _)
+      · by_cases hBn : (Bg γ (fun j _ => g j)).Nonempty
+        · obtain ⟨b0, hb0, hb0g⟩ := hBn
+          obtain ⟨v, hv⟩ := exists_lt (b0 γ)
+          refine ⟨v, fun a ha => absurd ⟨a, ha⟩ hAn, fun b ⟨hb, hbg⟩ => ?_⟩
+          rw [huniq b (Or.inr hb) b0 (Or.inr hb0) hbg hb0g]
+          exact hv
+        · exact ⟨Classical.arbitrary V, fun a ha => absurd ⟨a, ha⟩ hAn,
+            fun b hb => absurd ⟨b, hb⟩ hBn⟩
+    have hgγ : g γ = hex.choose := by
+      rw [hg]
+      simp only [step, hex, ite_true, dite_true]
+    have hspec := hex.choose_spec
+    rw [← hgγ] at hspec
+    exact ⟨fun a ha hag => hspec.1 a ⟨ha, hag⟩, fun b hb hbg => hspec.2 b ⟨hb, hbg⟩⟩
+  -- the realizing point
+  refine ⟨toLex g, fun a ha => ?_, fun b hb => ?_⟩
+  · by_cases hN : ∃ j, a j ≠ g j
+    · let i := (wellFounded_lt (α := ι)).min {j | a j ≠ g j} hN
+      have hi : a i ≠ g i := (wellFounded_lt (α := ι)).min_mem {j | a j ≠ g j} hN
+      have hbelow : ∀ j < i, a j = g j := fun j hj => by
+        by_contra hne
+        exact (wellFounded_lt (α := ι)).not_lt_min {j | a j ≠ g j} hne hj
+      refine (hlt a (toLex g)).2 ⟨i, hbelow, ?_⟩
+      by_cases hiγ : i = γ
+      · rw [hiγ] at hbelow ⊢
+        exact hstrict.1 a ha hbelow
+      · exact lt_of_le_of_ne ((hnonstrict i hiγ).1 a ha hbelow) hi
+    · push Not at hN
+      exact absurd (hN γ ▸ hstrict.1 a ha fun j _ => hN j) (lt_irrefl _)
+  · by_cases hN : ∃ j, b j ≠ g j
+    · let i := (wellFounded_lt (α := ι)).min {j | b j ≠ g j} hN
+      have hi : b i ≠ g i := (wellFounded_lt (α := ι)).min_mem {j | b j ≠ g j} hN
+      have hbelow : ∀ j < i, b j = g j := fun j hj => by
+        by_contra hne
+        exact (wellFounded_lt (α := ι)).not_lt_min {j | b j ≠ g j} hne hj
+      refine (hlt (toLex g) b).2 ⟨i, fun j hj => (hbelow j hj).symm, ?_⟩
+      by_cases hiγ : i = γ
+      · rw [hiγ] at hbelow ⊢
+        exact hstrict.2 b hb hbelow
+      · exact lt_of_le_of_ne ((hnonstrict i hiγ).2 b hb hbelow) (Ne.symm hi)
+    · push Not at hN
+      exact absurd (hN γ ▸ hstrict.2 b hb fun j _ => hN j) (lt_irrefl _)
 
 end OrderSat83
 end AEC

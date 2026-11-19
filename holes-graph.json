@@ -5176,6 +5176,24 @@
    "status": "open",
    "blocker": null,
    "detail": "Cycle 102 split of infra_83_saturated_orders_exist: the remaining base case; with infra_83_order_sat_lex and strong-limit levels it gives saturated padded dense orders of every eligible size above 2^λ. | Cycle 102 plan: T = Lex(ι → V), ι = λ.ord.ToType with λ regular ≥ κ (sets of size < κ strictly bounded), V = Lex(λᵒᵈ ⊕ λ) (no endpoints; any S ≤ U of size < κ has v with S ≤ v ≤ U: max S, else sup of S in the λ-part, else the reversed sup of U). Given A < B: γ bounds all first differences in A ∪ B; define x below γ by recursion keeping x|β ≥ a|β, ≤ b|β for the a, b agreeing with x so far; at γ at most one of A ∪ B still agrees with x, and V has no endpoints, giving strictness."
+  },
+  {
+   "id": "infra_83_order_sat_pilex",
+   "label": "Lemma 8.3 proof: lex power Lex(ι → V) is κ-order-saturated (ι well-order with small sets strictly bounded; V without endpoints separating small S ≤ U)",
+   "section": 8,
+   "file": "AEC/Section8/OrderSat83.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 102: OrderSat83.orderSaturated_piLex (recursion below a bound γ of all first differences, strict step at γ). Axioms clean."
+  },
+  {
+   "id": "infra_83_pilex_params",
+   "label": "Lemma 8.3 proof: parameters for the lex power: ι = κ⁺.ord.ToType (small sets bounded) and an endpoint-free V separating small S ≤ U (e.g. Lex(ιᵒᵈ ⊕ ι))",
+   "section": 8,
+   "file": "AEC/Section8/OrderSat83.lean",
+   "status": "open",
+   "blocker": null,
+   "detail": "Cycle 102: the remaining step of infra_83_small_saturated_order."
   }
  ],
  "edges": [
@@ -9791,8 +9809,18 @@
    "from": "infra_83_small_saturated_order",
    "to": "infra_83_saturated_orders_exist",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_order_sat_pilex",
+   "to": "infra_83_small_saturated_order",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_83_pilex_params",
+   "to": "infra_83_small_saturated_order",
+   "kind": "hard"
   }
  ],
- "doneCount": 509,
+ "doneCount": 510,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
