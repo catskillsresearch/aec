@@ -458,6 +458,7 @@ Lean: imports `Section5.Results` and `Section6.Results`. Soft paper chain after 
 | `infra_82_comparison_single` | Lemma 8.2(5) for `P.scheme`: comparisons preserved and reflected | `AEC/Section8/Results.lean` (open, cycle 96) |
 | `infra_82_mark_type_iso_single` | Lemma 8.2(5) for `P.scheme`: base isomorphisms carry the mark type | [`PairOrbitSingle.lean`](AEC/Section8/PairOrbitSingle.lean) (**done**, cycle 96) |
 | `infra_72_ext_align_mixed` | Lemma 7.2 mixed, step (b): `hExt` alignment across levels | [`Lemma72Mixed.lean`](AEC/Section7/Lemma72Mixed.lean) (**done**, cycle 96) |
+| `infra_72_tied_move_mixed` | Lemma 7.2 mixed: tied moves across levels | [`Lemma72Mixed.lean`](AEC/Section7/Lemma72Mixed.lean) (**done**, cycle 96) |
 | `infra_72_mixed_level` | Lemma 7.2 last sentence (A at a smaller level than B), stated with sorry (audit) | [`Lemma72Mixed.lean`](AEC/Section7/Lemma72Mixed.lean) (open, cycle 96) |
 | `infra_82_mark_tied_along_single` | Lemma 8.2(4) for `P.scheme`: tied freeness of the mark along arrows (Def 8.1 reading; ruling needed) | `AEC/Section8/PairOrbitSingle.lean` (open, cycle 96) |
 | `infra_82_orbit_tail_single` | Lemma 8.2(4) for `P.scheme`: diagonal closure (via `infra_615_closed`) | [`PairOrbitSingle.lean`](AEC/Section8/PairOrbitSingle.lean) (**done**, cycle 96) |
