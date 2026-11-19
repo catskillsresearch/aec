@@ -235,6 +235,34 @@ noncomputable def subBundleHom (hP : HullStrong φ P) :
 
 end SubBundle
 
+
+section InSample
+
+variable {P : ∀ (M : Type u) [L.Structure M], Prop} {r : ℕ}
+  {c : (m : ℕ) → 0 < m → TpColorB L r m}
+  (hc : ∀ (n : ℕ) (κ : Cardinal.{u}), Joint (TpSampleB P r) n c κ)
+
+/-- **Pieces live in every homogeneous sample.**  In an admitted bundled sample homogeneous
+through arity `n`, each piece of arity `k + 1 ≤ n` embeds (as an `L`-structure) into the
+sample structure, sending each variable to the corresponding entry of the bundles
+enumerated by any `k + 1` indices.  Thus term equalities and relations of the template are
+those of actual homogeneous samples. -/
+theorem piece_into_sample {S : ColorSample (TpColorB L r)} {M : Type u} [L.Structure M]
+    (base : S.α → Fin r → M)
+    (hcol : ∀ (m : ℕ) (s : Finset S.α) (h : s.card = m), S.col m s = tpCode (bundleOf base s h))
+    {n : ℕ} (hhom : Homog S n c) {k : ℕ} (hk : k + 1 ≤ n) (s : Finset S.α)
+    (hs : s.card = k + 1) :
+    ∃ f : Hull (L := L) (witB hc k).v ↪[L] M,
+      ∀ p, f (Quotient.mk _ (Term.var p)) = bundleOf base s hs p := by
+  have htp : tpCode (L := L) (witB hc k).v = tpCode (bundleOf base s hs ∘ id) := by
+    rw [(witB hc k).tp, ← hhom (k + 1) (Nat.succ_pos k) hk s hs, hcol (k + 1) s hs]
+    rfl
+  refine ⟨(hullEmb (bundleOf base s hs)).comp (hullMapEmb id htp), ?_⟩
+  intro p
+  rfl
+
+end InSample
+
 end Hull83
 
 namespace EM83
