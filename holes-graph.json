@@ -5392,6 +5392,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 103: Hull83.hullStrong_of_substructures: if every L-substructure of an admitted structure has strong tau-reduct, every term hull does (equivRange onto the range, iso invariance, transitivity). Reduces HullStrong for the pair samples to closure of L-substructures under the LS witness functions. Axioms clean."
+  },
+  {
+   "id": "infra_83_vertex_ls_expansion",
+   "label": "Lemma 8.3 proof: LS witness expansion — expand sample structures by <= ls K functions so every closed substructure is strong (Shelah presentation-style, finite-subset directed LS system)",
+   "section": 8,
+   "file": "AEC/Section8/HullReduct83.lean",
+   "status": "open",
+   "blocker": null,
+   "detail": "Cycle 103 split: the remaining input of HullStrong via hullStrong_of_substructures. Needs a coherent choice N_s <= M (s finite) with s ⊆ N_s, N_s <= N_t for s ⊆ t, #N_s <= ls K, enumerated by ls K many s-ary functions; closure under them is a directed union of the N_s, strong by chain/coherence axioms."
   }
  ],
  "edges": [
@@ -10126,6 +10135,11 @@
   {
    "from": "infra_83_hullstrong_substructures",
    "to": "infra_83_template_strong",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_83_vertex_ls_expansion",
+   "to": "infra_83_pair_sample_family",
    "kind": "hard"
   }
  ],
