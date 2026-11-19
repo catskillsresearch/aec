@@ -152,4 +152,45 @@ theorem infra_83_XH_sort_sample (E : OrderPresentation K) (n : ℕ) {N : Type u}
   obtain ⟨y, hy, hyx⟩ := hx i
   rwa [← g.injective hyx]
 
+
+/-- **`X_H = F(J_H)` for the `X`-sort of every `Y`-piece of the template (proved).** For the
+coherent colors of `infra_83_pairMS2_coherent_colors`, in each witness sample of piece `k`, the
+`Y`-language hull of the `J`- and `Z`-coordinates meets the `X`-copy exactly in `F` of its own
+`X`-chart, which is nonempty (it contains the `J`-coordinates). This is the paper's `X_H`: the
+`X`-sort part of the whole hull. -/
+theorem infra_83_XH_sort_pieces (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) :
+    ∃ (c : (m : ℕ) → 0 < m → Hull83.TpColorB (LS83.pairLangM3 P.E Pr.n) 3 m)
+      (hc : ∀ (n : ℕ) (κ : Cardinal.{u}),
+        Hull83.Joint (Hull83.TpSampleB (fun N _ => pairMAdmittedS2 P.E Pr.n N) 3) n c κ),
+      (∀ {m m' : ℕ} (hm' : 0 < m') (hm : 0 < m) (f : Fin m' ↪o Fin m),
+        c m' hm' = Hull83.tpResB 3 f (c m hm)) ∧
+      ∀ k : ℕ, ∃ (J Jp : Type u) (_ : LinearOrder J) (_ : Nonempty J) (_ : LinearOrder Jp)
+        (_ : Nonempty Jp) (emb : J ↪o Jp) (g : (Hull83.witB hc k).M ≃ (P.E.obj Jp).carrier)
+        (_ : Nonempty (Lab83.chart emb (g '' Set.range (@Hull83.hullVal _ _
+          ((psiM P.E Pr.n).reduct _) _ ((Hull83.witB hc k).v ∘
+            Prod.map id (fun i : Fin 2 => i.castSucc)))))),
+        g '' Set.range (@Hull83.hullVal _ _ ((psiM P.E Pr.n).reduct _) _
+            ((Hull83.witB hc k).v ∘ Prod.map id (fun i : Fin 2 => i.castSucc))) ∩
+            Set.range (P.E.map emb) =
+          Set.range (P.E.map (Lab83.chartEmb emb (g '' Set.range (@Hull83.hullVal _ _
+            ((psiM P.E Pr.n).reduct _) _ ((Hull83.witB hc k).v ∘
+              Prod.map id (fun i : Fin 2 => i.castSucc)))))) := by
+  obtain ⟨c, hc, hcoh, hθ, hρ, -⟩ := infra_83_pairMS2_coherent_colors P Pr
+  refine ⟨c, hc, hcoh, fun k => ?_⟩
+  obtain ⟨J, Jp, i1, i2, i3, i4, emb, g, hX, hch, hcx, -⟩ := (Hull83.witB hc k).mem.1.2
+  obtain ⟨j, hj⟩ : ∃ j, P.E.skeleton (emb j) = g ((Hull83.witB hc k).v (0, 0)) :=
+    (hcx _).1 ((thetaM_zero _ _ _).1 (Hull83.witB_realize hc hθ k 0 0))
+  have hne : Nonempty (Lab83.chart emb (g '' Set.range (@Hull83.hullVal _ _
+      ((psiM P.E Pr.n).reduct _) _ ((Hull83.witB hc k).v ∘
+        Prod.map id (fun i : Fin 2 => i.castSucc))))) := by
+    refine ⟨⟨j, ?_⟩⟩
+    simp only [Lab83.chart, Set.mem_setOf_eq]
+    rw [hj]
+    refine ⟨_, ⟨Quotient.mk _ (FirstOrder.Language.Term.var ((0 : Fin (k + 1)), (0 : Fin 2))),
+      rfl⟩, ?_⟩
+    rfl
+  exact ⟨J, Jp, i1, i2, i3, i4, emb, g, hne,
+    @infra_83_XH_sort_sample _ P.E Pr.n _ _ J Jp i1 i2 i3 i4 emb g (fun T _ hT => hch T hT) _ _ hne⟩
+
 end AEC
