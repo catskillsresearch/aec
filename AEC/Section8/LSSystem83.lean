@@ -166,6 +166,56 @@ theorem subModel_card (s : {t : Finset α // t.Nonempty}) :
     _ = ls K := max_eq_left hA
 
 
+section System
+
+variable {α : Type u} [DecidableEq α] (base : α → M.carrier)
+
+theorem subIncl_covers_sub (t s : {t : Finset α // t.Nonempty}) (hts : t.1 ⊆ s.1)
+    (x : (subModel hM base t).carrier) : ∃ y, subIncl hM base s y = subIncl hM base t x := by
+  by_cases hlt : t.1.card < s.1.card
+  · exact ⟨subInclFactor hM base t s hts hlt x,
+      congrFun (congrArg (⇑) (subInclFactor_comp hM base t s hts hlt)) x⟩
+  · have hst : t = s := Subtype.ext (Finset.eq_of_subset_of_card_le hts (not_lt.mp hlt))
+    subst hst
+    exact ⟨x, rfl⟩
+
+/-- The maps of the finite-subset system. -/
+noncomputable def sysMap (t s : {t : Finset α // t.Nonempty}) (hts : t.1 ⊆ s.1) :
+    (subModel hM base t).carrier ↪[K.τ] (subModel hM base s).carrier :=
+  factorEmbedding (subIncl hM base t) (subIncl hM base s) (subIncl_covers_sub hM base t s hts)
+
+theorem sysMap_spec (t s : {t : Finset α // t.Nonempty}) (hts : t.1 ⊆ s.1) (x) :
+    subIncl hM base s (sysMap hM base t s hts x) = subIncl hM base t x :=
+  congrFun (congrArg (⇑) (factorEmbedding_comp _ _ (subIncl_covers_sub hM base t s hts))) x
+
+/-- **The finite-subset LS system** as a directed system of models of `K`. -/
+noncomputable def lsSystem [Nonempty α] : DirectedSystem K.τ where
+  ι := {t : Finset α // t.Nonempty}
+  nonempty := ⟨⟨{Classical.arbitrary α}, Finset.singleton_nonempty _⟩⟩
+  rel t s := t.1 ⊆ s.1
+  refl t := Finset.Subset.refl _
+  trans h h' := h.trans h'
+  directed t s := ⟨⟨t.1 ∪ s.1, t.2.mono Finset.subset_union_left⟩,
+    Finset.subset_union_left, Finset.subset_union_right⟩
+  obj t := subModel hM base t
+  map {t s} h := sysMap hM base t s h
+  map_refl t := by
+    ext x
+    exact (subIncl hM base t).injective (sysMap_spec hM base t t _ x)
+  map_trans {t s r} h h' := by
+    ext x
+    apply (subIncl hM base r).injective
+    rw [sysMap_spec]
+    simp only [Language.Embedding.comp_apply]
+    rw [sysMap_spec, sysMap_spec]
+
+theorem lsSystem_strong [Nonempty α] {t s : (lsSystem hM base).ι}
+    (h : (lsSystem hM base).rel t s) : K.Strong ((lsSystem hM base).map h) :=
+  K.coherence _ (subIncl hM base t) (subIncl hM base s) (subIncl_strong hM base t)
+    (subIncl_strong hM base s) (by ext x; exact sysMap_spec hM base t s h x)
+
+end System
+
 /-- **Directed covers are strong.**  If a model `A` embedded in `N ∈ K` is covered by the
 images of a directed system of models of `K` with strong maps, each strong in `N` through
 `A`, then `A` is strong in `N` (Lemma 2.1 and isomorphism invariance).  This turns the

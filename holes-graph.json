@@ -5400,7 +5400,7 @@
    "file": "AEC/Section8/HullReduct83.lean",
    "status": "open",
    "blocker": null,
-   "detail": "Cycle 103 split: the remaining input of HullStrong via hullStrong_of_substructures. Needs a coherent choice N_s <= M (s finite) with s ⊆ N_s, N_s <= N_t for s ⊆ t, #N_s <= ls K, enumerated by ls K many s-ary functions; closure under them is a directed union of the N_s, strong by chain/coherence axioms. | Cycle 103: directed system done (infra_83_ls_system). Remaining: the expansion language (for each n and each of ls K slots an n-ary function enumerating N_s for the n-element set s, in increasing enumeration of a well-order of M), closure = union of the N_s over finite s (directed), strong via chain_union/chain_upper or a directed-union lemma."
+   "detail": "Cycle 103 split: the remaining input of HullStrong via hullStrong_of_substructures. Needs a coherent choice N_s <= M (s finite) with s ⊆ N_s, N_s <= N_t for s ⊆ t, #N_s <= ls K, enumerated by ls K many s-ary functions; closure under them is a directed union of the N_s, strong by chain/coherence axioms. | Cycle 103: directed system done (infra_83_ls_system). Remaining: the expansion language (for each n and each of ls K slots an n-ary function enumerating N_s for the n-element set s, in increasing enumeration of a well-order of M), closure = union of the N_s over finite s (directed), strong via chain_union/chain_upper or a directed-union lemma. | Cycle 103: + lsSystem (directed, strong maps) and strong_of_directed_cover. Remaining: witness language (arity-n symbols indexed by Enum K) interpreted by enumerating N_{set of the arguments}; every closed L-substructure B equals the union of N_s over finite s ⊆ B, so strong_of_directed_cover (restricted system) gives HullStrong via hullStrong_of_substructures."
   },
   {
    "id": "infra_83_ls_system",
@@ -5409,7 +5409,7 @@
    "file": "AEC/Section8/LSSystem83.lean",
    "status": "done",
    "blocker": null,
-   "detail": "Cycle 103: LS83.subHull/subModel/subIncl (strong, covers base '' s), subInclFactor (strong, commuting) for t ⊊ s, subModel_card <= ls K; port of Section 2 FiniteHull from Fin n to any DecidableEq α. Axioms clean."
+   "detail": "Cycle 103: LS83.subHull/subModel/subIncl (strong, covers base '' s), subInclFactor (strong, commuting) for t ⊊ s, subModel_card <= ls K; port of Section 2 FiniteHull from Fin n to any DecidableEq α. Axioms clean. | Cycle 103: + LS83.sysMap (factor for any t ⊆ s), sysMap_spec, lsSystem : DirectedSystem K.τ over nonempty finite subsets, lsSystem_strong (coherence). Axioms clean."
   },
   {
    "id": "infra_83_directed_cover_strong",
