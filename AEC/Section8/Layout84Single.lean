@@ -188,4 +188,41 @@ theorem infra_84_two_segment_placement (K : AbstractElementaryClass.{u}) [Catego
   have : Nonempty (Lex (I₁ ⊕ I₂)) := ⟨toLex (Sum.inl (Classical.arbitrary I₁))⟩
   exact lemma_6_4 K E D σ χ hσinf hσ hχ hpow hI q hnat hcoh
 
+/-- **Layout (8): moving the second ambient onto the first (diagram level).** English (Lemma 8.4
+proof): "The argument applies both to (8) and to the specified image inside T'." If bounded lists
+`L` in `T` and `L′` in `T′` (both at level `μ`) have equal diagrams (e.g. the layout lists of
+`infra_84_layout_diagrams_single`), there is a structural isomorphism `h : T ≅ T′` with
+`h ∘ L = L′`; then for candidates `v` in `T`, `v′` in `T′`, the comparison of `v ⌢ L` with
+`v′ ⌢ L′` is the comparison of `h v ⌢ L′` with `v′ ⌢ L′` inside the single ambient `T′`
+(bounded homogeneity, `diagram_iso`). -/
+theorem infra_84_layout_one_ambient (P : SingleModelData K) {μ : Cardinal.{u}}
+    (hμ : μ ∈ P.eligible) (Tt Tt' : P.scheme.Object μ hμ) {κ : Type u}
+    (L : κ → Occurrence K oneVertexShape (P.scheme.asSystem hμ Tt))
+    (L' : κ → Occurrence K oneVertexShape (P.scheme.asSystem hμ Tt')) (hκ : #κ < μ)
+    (hL : P.scheme.DiagramEq (X := Tt) (Y := Tt') L L') :
+    ∃ h : SystemArrow K oneVertexShape (P.scheme.asSystem hμ Tt) (P.scheme.asSystem hμ Tt'),
+      (∀ i, L' i = h.mapOcc (L i)) ∧
+      ∀ {α : Type u} (v : α → Occurrence K oneVertexShape (P.scheme.asSystem hμ Tt))
+        (v' : α → Occurrence K oneVertexShape (P.scheme.asSystem hμ Tt')), #α < μ →
+        (P.scheme.DiagramEq (X := Tt) (Y := Tt') (Sum.elim v L) (Sum.elim v' L') ↔
+          P.scheme.DiagramEq (X := Tt') (Y := Tt')
+            (Sum.elim (fun i => h.mapOcc (v i)) L') (Sum.elim v' L')) := by
+  obtain ⟨h, _, hh⟩ := (P.scheme.diagram_iso Tt Tt' L L' hκ).mp hL
+  refine ⟨h, hh, fun {α} v v' hα => ?_⟩
+  have hακ : #(α ⊕ κ) < μ := by
+    rw [Cardinal.mk_sum, Cardinal.lift_id, Cardinal.lift_id]
+    exact add_lt_of_lt (P.aleph0_le hμ) hα hκ
+  have d := P.scheme.diagram_preserved Tt Tt' h trivial (Sum.elim v L) hακ hακ
+  have d' : P.scheme.DiagramEq (X := Tt) (Y := Tt') (Sum.elim v L)
+      (Sum.elim (fun i => h.mapOcc (v i)) L') :=
+    infra_73_diagramEq_of_eq d (fun _ => rfl) (fun x => by
+      rcases x with a | k
+      · rfl
+      · exact (hh k).symm)
+  constructor
+  · intro H
+    exact P.scheme.diagram_trans _ _ _ _ _ _ (P.scheme.diagram_symm _ _ _ _ d') H
+  · intro H
+    exact P.scheme.diagram_trans _ _ _ _ _ _ d' H
+
 end AEC

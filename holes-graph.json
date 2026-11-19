@@ -4672,6 +4672,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 100: specialization of lemma_6_4 (Prop 4.9) to the lexicographic two-segment well-order. Axioms clean."
+  },
+  {
+   "id": "infra_84_layout_one_ambient",
+   "label": "Layout (8): equal bounded layout diagrams give T ~= T' moving L to L'; T/T' comparisons become comparisons in one ambient",
+   "section": 8,
+   "file": "AEC/Section8/Layout84Single.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 100: English 'The argument applies both to (8) and to the specified image inside T''. Via diagram_iso + diagram_preserved. Axioms clean."
   }
  ],
  "edges": [
@@ -9007,8 +9016,13 @@
    "from": "infra_84_two_segment_placement",
    "to": "infra_84_layout_amalgam",
    "kind": "hard"
+  },
+  {
+   "from": "infra_84_layout_one_ambient",
+   "to": "infra_84_layout_amalgam",
+   "kind": "hard"
   }
  ],
- "doneCount": 464,
+ "doneCount": 465,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
