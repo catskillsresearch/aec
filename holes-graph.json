@@ -1,6 +1,6 @@
 {
- "updated": "2026-11-18 cycle 93 (Prop 6.12 closed)",
- "sorryCount": 39,
+ "updated": "2026-11-18 cycle 95 (Section 8 lemmas 8.2-8.5 restated to the English)",
+ "sorryCount": 38,
  "legend": {
   "open": "No unfinished required proof-deps — try next",
   "blocked": "Waiting on incomplete required proof-deps",
@@ -652,7 +652,7 @@
    "file": "AEC/Section8/Results.lean",
    "status": "blocked",
    "blocker": null,
-   "detail": "Blocked: stated for an arbitrary WorkingScheme W with no IsWorkingPackage/categoricity hypotheses (underhypothesized vs the English, which uses saturation/exhaustion). Proof path needs proposition_7_8 (blocked on infra_78_mixed_level_isolation) and a general-scheme version of the Section 6-7 same-level machinery, which exists only for SingleModelData. Large missing development. | Cycle 94: theorem_7_13 / infra_79_general done; clause (1) for the Prop 5.6 scheme proved as infra_82_marked_pair_exists. Remaining: restate for SingleModelData (or with IsWorkingPackage hypotheses) and the pair-isomorphism clause (English 'iff it transports the joint type'; Lean asserts every base iso extends, condition dropped — audit needed). | Cycle 94: the Lean statement is proved for W := P.scheme (infra_82_lemma_8_2_single). Remaining: the arbitrary-WorkingScheme statement (underhypothesized: needs IsWorkingPackage/closure hypotheses or a SingleModelData-like structure on C^b) and the English clauses missing from the Lean statement (iso of pairs, pointed iff, orbit preservation, mixed reflection)."
+   "detail": "Cycle 95 restatement to the English (Lars ruling): hypotheses = Section 8 conventions (IsWorkingPackage W, Section8Arrows W: arrows = componentwise strong embeddings); clauses (1) marked pairs over every object, (2) base iso extends to pair iso, (3) pointed iff (base entries + tp(t,b/X) transported, markedJointOver), (4) same-level arrows preserve bounded pair orbits (PairOrbitEq, one-way as in English), (5) mixed-level preservation and reflection (iff). Blocked: proof needs the Section 6-7 calculus/isolation for a general working scheme (Lean has it only for SingleModelData; infra_8_general_calculus) and Def 8.1 'prescription commutes with isomorphisms' (not in StationaryPrescription; infra_81_prescription_iso). For W := P.scheme clause (3) needs Prop 7.5 back-and-forth on pairs; clause (5) hits both_off (infra_82_mixed_reflection). Former weaker statement proved for P.scheme as infra_82_lemma_8_2_single."
   },
   {
    "id": "lemma_8_3",
@@ -661,7 +661,7 @@
    "file": "AEC/Section8/Results.lean",
    "status": "blocked",
    "blocker": null,
-   "detail": "Blocked: stated for an arbitrary WorkingScheme W with no IsWorkingPackage/categoricity hypotheses (underhypothesized vs the English, which uses saturation/exhaustion). Proof path needs proposition_7_8 (blocked on infra_78_mixed_level_isolation) and a general-scheme version of the Section 6-7 same-level machinery, which exists only for SingleModelData. Large missing development. | Cycle 94: the Lean statement is proved for W := P.scheme (infra_83_lemma_8_3_single, via categoricity). Remaining: arbitrary WorkingScheme (underhypothesized) and the English clauses the Lean statement omits."
+   "detail": "Cycle 95 restatement to the English: template F^b on SystemShape.doubled, values on well-orders of tail size presented by marked pairs val I, order embeddings give MarkedArrows (also between levels), every marked pair at a tail level is isomorphic (vertexwise bijective MarkedArrow) to the value of its size. Hypotheses: IsWorkingPackage W, Section8Arrows W. Open; needs infra_8_general_calculus. Former weaker statement proved for P.scheme (infra_83_lemma_8_3_single)."
   },
   {
    "id": "lemma_8_4",
@@ -670,7 +670,7 @@
    "file": "AEC/Section8/Results.lean",
    "status": "blocked",
    "blocker": null,
-   "detail": "Blocked: stated for an arbitrary WorkingScheme W with no IsWorkingPackage/categoricity hypotheses (underhypothesized vs the English, which uses saturation/exhaustion). Proof path needs proposition_7_8 (blocked on infra_78_mixed_level_isolation) and a general-scheme version of the Section 6-7 same-level machinery, which exists only for SingleModelData. Large missing development. lemma_8_4 is itself a mixed-level (nu<mu) descent of Galois types: same blocker as infra_78_mixed_level_isolation. | Cycle 94 audit: the Lean lemma_8_4 is a generic testing bound (p, q over A at ν with hosts at arbitrary levels; tests of size ≤ k(σ) ⇒ SameGaloisType). The English Lemma 8.4 is about a small marked pair (A,U,b) inside T, its image inside T′, over C at level μ, with b/C, b′/C prescribed free extensions; comparisons of v ∈ T, v′ ∈ T′ on joint tests from U and C. The Lean form drops this setting; for W := P.scheme with both hosts above ν it is the infra_612_galois_trans_cross_level_both_off obstruction. Restatement needed before proof."
+   "detail": "Cycle 95 restatement to the English configuration: A ≤ U small marked pair M (level ν) inside T, image M' inside T' with U ≅ U' fixing A over C, b/C and b'/C the prescribed types, equal joint types over C of bounded tuples; uniform k(ν,σ) < ν such that tests (ZU,ZC) of size ≤ k determine all tests of size < ν. Hypotheses: IsWorkingPackage W, Section8Arrows W. Open; both_off-type mixed comparison (both hosts at level μ > ν) for P.scheme; needs infra_8_general_calculus."
   },
   {
    "id": "lemma_8_5",
@@ -679,7 +679,7 @@
    "file": "AEC/Section8/Results.lean",
    "status": "blocked",
    "blocker": null,
-   "detail": "Blocked: stated for an arbitrary WorkingScheme W with no IsWorkingPackage/categoricity hypotheses (underhypothesized vs the English, which uses saturation/exhaustion). Proof path needs proposition_7_8 (blocked on infra_78_mixed_level_isolation) and a general-scheme version of the Section 6-7 same-level machinery, which exists only for SingleModelData. Large missing development. | Cycle 94: the Lean statement is proved for W := P.scheme (infra_85_lemma_8_5_single) by categoricity alone, which shows the Lean form is much weaker than the English (no chain/union clause). Needs restatement (chain + union is a marked pair + upper bound at a larger level) and the arbitrary-scheme hypotheses."
+   "detail": "Cycle 95 restatement to the English: increasing chains (LinearOrder index, coherent MarkedArrows on both components, #index ≤ μ) have a marked-pair union U at μ with a cocone, and the common-upper-bound clause into any marked pair at an equal or larger tail level (mirrors HasChainUnions). Hypotheses: IsWorkingPackage W, Section8Arrows W. Open; needs lemma_8_4 (paper proof) and infra_8_general_calculus. Former weaker family-upper-bound statement proved for P.scheme (infra_85_lemma_8_5_single)."
   },
   {
    "id": "theorem_8_6",
@@ -4096,6 +4096,33 @@
    "status": "done",
    "blocker": null,
    "detail": "PROVED cycle 95 (axioms clean): port of infra_79_primeness_mixed with |p| ≤ θ."
+  },
+  {
+   "id": "infra_8_general_calculus",
+   "label": "Sections 6-7 calculus/isolation for a general working scheme",
+   "section": 8,
+   "file": "AEC/Section8/Results.lean",
+   "status": "blocked",
+   "blocker": null,
+   "detail": "Section 8 conventions: 'We use the working package of Definition 5.2, and the calculus and isolation results of the preceding two Sections, at sufficiently closed eligible levels.' Lean proves Sections 6-7 only for SingleModelData; lemma_8_2..8_5 over an arbitrary working scheme (and the derived C^b) need them for W. Large development (or a ruling to take them as an explicit hypothesis bundle)."
+  },
+  {
+   "id": "infra_81_prescription_iso",
+   "label": "Def 8.1: prescription commutes with isomorphisms",
+   "section": 8,
+   "file": "AEC/Section8/StationaryPrescription.lean",
+   "status": "open",
+   "blocker": null,
+   "detail": "English Def 8.1: the prescription 'commutes with isomorphisms and is free along arrows'. Lean StationaryPrescription has only 'along' (free lift); the iso-commutation is missing. Needed for lemma_8_2 clauses (2),(3). Add as a hypothesis predicate (not a field) once ruled."
+  },
+  {
+   "id": "infra_82_mixed_reflection",
+   "label": "Lemma 8.2(5) mixed-level preservation/reflection",
+   "section": 8,
+   "file": "AEC/Section8/Results.lean",
+   "status": "blocked",
+   "blocker": null,
+   "detail": "Clause (5) of the restated lemma_8_2: PairOrbitEq between two pairs at a common small level iff between their images at a common larger level. For W := P.scheme the larger-level comparison has both hosts large: the both_off obstruction. Tracked separately per ruling."
   }
  ],
  "edges": [
@@ -8085,6 +8112,36 @@
   {
    "from": "infra_78_general",
    "to": "proposition_7_8",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_8_general_calculus",
+   "to": "lemma_8_2",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_81_prescription_iso",
+   "to": "lemma_8_2",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_82_mixed_reflection",
+   "to": "lemma_8_2",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_8_general_calculus",
+   "to": "lemma_8_3",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_8_general_calculus",
+   "to": "lemma_8_4",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_8_general_calculus",
+   "to": "lemma_8_5",
    "kind": "hard"
   }
  ],

@@ -118,7 +118,7 @@ theorem infra_82_pair_extend_same_level (P : SingleModelData K)
   intro h1
   exact congrArg (Sigma.mk PUnit.unit) h1
 
-/-- **Lemma 8.2 for the Prop 5.6 scheme (proved, cycle 94).** The Lean statement of `lemma_8_2`
+/-- **Lemma 8.2 for the Prop 5.6 scheme (proved, cycle 94).** The former (pre-cycle-95, weaker) Lean statement of `lemma_8_2`
 with `W := P.scheme`: on the Theorem 7.9 tail every object sits in a marked pair
 (`infra_82_marked_pair_exists`), and every bijective class embedding of bases extends to an arrow of
 marked pairs (`infra_82_pair_extend_same_level`; a bijection of bases forces equal levels, since an
@@ -146,7 +146,7 @@ theorem infra_82_lemma_8_2_single (P : SingleModelData K)
     exact Cardinal.mk_congr (Equiv.ofBijective _ (hbij PUnit.unit))
   exact infra_82_pair_extend_same_level P Pr M N hlev e he
 
-/-- **Lean `lemma_8_3` statement for the Prop 5.6 scheme (proved, cycle 94).** With `F` the
+/-- **Former (pre-cycle-95, weaker) Lean `lemma_8_3` statement for the Prop 5.6 scheme (proved, cycle 94).** With `F` the
 scheme's template (`P.template`, the order presentation `E`): for `#I = μ` on the Theorem 7.9 tail,
 the marked pair over the coded copy of `E(I)` (`infra_82_marked_pair_exists`) has its upper object
 isomorphic to `E(I)`, by categoricity at the level (`SingleModelData.categorical`). Audit note: the
@@ -170,7 +170,7 @@ theorem infra_83_lemma_8_3_single (P : SingleModelData K)
   have hcat := SingleModelData.categorical (P := P) hμe
   exact hcat.unique_model (P.E.obj I) M.Y.model (P.hE I) M.Y.mem hcI (M.Y.card.trans hMμ)
 
-/-- **Lean `lemma_8_5` statement for the Prop 5.6 scheme (proved, cycle 94).** On the Theorem 7.9
+/-- **Former (pre-cycle-95, weaker) Lean `lemma_8_5` statement for the Prop 5.6 scheme (proved, cycle 94).** On the Theorem 7.9
 tail, any family of at most `μ` marked pairs at level `μ` has a common upper bound: take a marked
 pair `U` at `μ` (`infra_82_marked_pair_exists` over a model of size `μ`); every base `(M i).X` is
 isomorphic to `U.X` by categoricity, and the isomorphism extends to an arrow of marked pairs
