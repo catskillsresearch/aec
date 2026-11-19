@@ -192,6 +192,27 @@ theorem cover {K : AbstractElementaryClass.{u}} (E : OrderPresentation K) [Nonem
   rw [E.skeleton_natural, hx]
 
 
+
+/-- **Universal property of `J_I`**: compatible order embeddings `κ_s : G s ↪o T` factor
+through a unique-on-generators order embedding `J_I ↪o T`. -/
+noncomputable def lift {T : Type*} [LinearOrder T] (κ : ∀ s, G s ↪o T)
+    (hκ : ∀ {s t : Idx I} (hst : s.1 ⊆ t.1) (x : G s), κ t (φ hst x) = κ s x) :
+    Col φ hcomp ↪o T :=
+  OrderEmbedding.ofMapLEIff
+    (Quotient.lift (fun a : Σ s, G s => κ a.1 a.2) fun a b hab => by
+      have h1 := (eqS_iff φ hcomp (u := up a.1 b.1) Finset.subset_union_left
+        Finset.subset_union_right).1 hab
+      exact (hκ _ a.2).symm.trans ((congrArg _ h1).trans (hκ _ b.2)))
+    fun x y => Quotient.inductionOn₂ x y fun a b => by
+      show κ a.1 a.2 ≤ κ b.1 b.2 ↔ leS φ a b
+      rw [← hκ (t := up a.1 b.1) Finset.subset_union_left a.2,
+        ← hκ (t := up a.1 b.1) Finset.subset_union_right b.2]
+      exact (κ _).le_iff_le
+
+theorem lift_iota {T : Type*} [LinearOrder T] (κ : ∀ s, G s ↪o T)
+    (hκ : ∀ {s t : Idx I} (hst : s.1 ⊆ t.1) (x : G s), κ t (φ hst x) = κ s x)
+    (s : Idx I) (x : G s) : lift φ hcomp κ hκ (iota φ hcomp hid s x) = κ s x := rfl
+
 omit hid in
 /-- **Size of the colimit order**: if every `G s` has size at most `κ`, then
 `#J_I ≤ #(finite supports of I) · κ`. -/
@@ -228,6 +249,65 @@ theorem exists_coord_embedding
     rw [hg0 u i hi, hg0 u i' hi']
     exact (iota φ hcomp hid u).strictMono (hmono u i i' hi hi' hii')
   exact ⟨OrderEmbedding.ofStrictMono g0 hlt, fun s i hi => hg0 s i hi⟩
+
+
+end OCol83
+
+namespace OCol83
+
+section Natural
+
+variable {H : ℕ → Type u} [∀ k, LinearOrder (H k)]
+  (h : ∀ {k l : ℕ}, (Fin (k + 1) ↪o Fin (l + 1)) → H k ↪o H l)
+  (hid : ∀ k (p : H k), h (idEmb (α := Fin (k + 1))) p = p)
+  (hcomp : ∀ {k l m : ℕ} (e : Fin (k + 1) ↪o Fin (l + 1)) (f : Fin (l + 1) ↪o Fin (m + 1))
+    (p : H k), h (e.trans f) p = h f (h e p))
+
+/-- The transition maps of the chart orders over the supports of `I`. -/
+noncomputable def phiH (I : Type u) [LinearOrder I] :
+    ∀ {s t : Idx I}, s.1 ⊆ t.1 → H s.1.card.pred ↪o H t.1.card.pred :=
+  fun {s t} hst => h (placeSucc hst s.2 t.2)
+
+include hcomp in
+theorem phiH_comp (I : Type u) [LinearOrder I] {s t u : Idx I} (h1 : s.1 ⊆ t.1) (h2 : t.1 ⊆ u.1)
+    (x : H s.1.card.pred) : phiH h I (h1.trans h2) x = phiH h I h2 (phiH h I h1 x) := by
+  show h (placeSucc (h1.trans h2) s.2 u.2) x = _
+  rw [placeSucc_trans h1 h2 s.2 t.2 u.2]
+  exact hcomp _ _ x
+
+include hid in
+theorem phiH_id (I : Type u) [LinearOrder I] (s : Idx I) (x : H s.1.card.pred) :
+    phiH h I (Finset.Subset.refl s.1) x = x := by
+  show h (placeSucc (Finset.Subset.refl s.1) s.2 s.2) x = x
+  rw [placeSucc_refl s.1 s.2]
+  exact hid _ x
+
+/-- **Naturality of the chart colimit in `I`**: an order embedding `f : I ↪o I'` induces an
+order embedding `J_f : J_I ↪o J_I'` sending `ι_s x` to `ι_{f(s)} (h (indexCast f s) x)`. -/
+noncomputable def colMap {I I' : Type u} [LinearOrder I] [LinearOrder I'] (f : I ↪o I') :
+    Col (phiH h I) (phiH_comp h hcomp I) ↪o Col (phiH h I') (phiH_comp h hcomp I') :=
+  lift (phiH h I) (phiH_comp h hcomp I)
+    (fun s => (h (indexCast f s)).trans
+      (iota (phiH h I') (phiH_comp h hcomp I') (phiH_id h hid I') (imageIndex f s)))
+    (fun {s t} hst x => by
+      show iota (phiH h I') (phiH_comp h hcomp I') (phiH_id h hid I') (imageIndex f t)
+          (h (indexCast f t) (h (placeSucc hst s.2 t.2) x)) =
+        iota (phiH h I') (phiH_comp h hcomp I') (phiH_id h hid I') (imageIndex f s)
+          (h (indexCast f s) x)
+      have e1 := (hcomp (placeSucc hst s.2 t.2) (indexCast f t) x).symm.trans
+        ((congrArg (fun e => h e x) (placeSucc_map f hst s.2 t.2)).trans (hcomp _ _ x))
+      refine (congrArg _ e1).trans ?_
+      exact iota_comp (phiH h I') (phiH_comp h hcomp I') (phiH_id h hid I')
+        (s := imageIndex f s) (t := imageIndex f t)
+        (Finset.map_subset_map.mpr hst) _)
+
+theorem colMap_iota {I I' : Type u} [LinearOrder I] [LinearOrder I'] (f : I ↪o I') (s : Idx I)
+    (x : H s.1.card.pred) :
+    colMap h hid hcomp f (iota (phiH h I) (phiH_comp h hcomp I) (phiH_id h hid I) s x) =
+      iota (phiH h I') (phiH_comp h hcomp I') (phiH_id h hid I') (imageIndex f s)
+        (h (indexCast f s) x) := rfl
+
+end Natural
 
 end OCol83
 

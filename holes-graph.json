@@ -6211,6 +6211,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 107: piece size ≤ LS(K) via term counting; card_col_le; I ↪o J_I."
+  },
+  {
+   "id": "infra_83_order_colimit_natural",
+   "label": "J_I universal property (lift) and naturality in I: f : I ↪o I' induces J_f : J_I ↪o J_I' on generators ι_s x ↦ ι_{f(s)}(h(indexCast f s) x)",
+   "section": 8,
+   "file": "OrderColimit83.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 107: OCol83.lift, lift_iota, phiH, colMap, colMap_iota. Remaining for the tips: square F_X(f) vs F(J_f) under the isos."
   }
  ],
  "edges": [
@@ -11591,8 +11600,18 @@
    "from": "infra_83_hull_eq_card",
    "to": "infra_83_Y_hull_eq_FZ",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_order_colimit_natural",
+   "to": "infra_83_X_hull_eq_FJ",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_83_order_colimit_natural",
+   "to": "infra_83_Y_hull_eq_FZ",
+   "kind": "hard"
   }
  ],
- "doneCount": 623,
+ "doneCount": 624,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
