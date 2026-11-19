@@ -54,8 +54,11 @@ def YSampleLike (E : OrderPresentation K) (n : ℕ) (N : Type u)
       g (@Structure.funMap _ _ ((tauRed E n).reduct N) k f x) = Structure.funMap f (g ∘ x)) ∧
     (∀ {k} (r : K.τ.Relations k) (x : Fin k → N),
       (@Structure.RelMap _ _ ((tauRed E n).reduct N) k r x ↔ Structure.RelMap r (g ∘ x))) ∧
-    ∀ x y, chartLtYM E n x y ↔
-      ∃ z z', z < z' ∧ e₀ (E.skeleton z) = g x ∧ e₀ (E.skeleton z') = g y
+    (∀ x y, chartLtYM E n x y ↔
+      ∃ z z', z < z' ∧ e₀ (E.skeleton z) = g x ∧ e₀ (E.skeleton z') = g y) ∧
+    ∀ {m} (a : (Lab83.labLang E).Functions m) (y : Fin m → N) (z : Fin m → (E.obj Z).carrier),
+      (∀ i, g (y i) = e₀ (z i)) →
+        g (yFun E n (Sum.inr (Sum.inl (Sum.inl a))) y) = e₀ (Lab83.labFun a z)
 
 /-- **`Y_H ≅ F(Z_H)` in a sample-like structure** (set level, through `g`). -/
 theorem yHull_eq_chart (E : OrderPresentation K) (n : ℕ) {N : Type u}
@@ -184,7 +187,10 @@ theorem infra_83_pairMS2_coherent_colors (P : SingleModelData K)
      J, Jplus, i1, i2, i3, i4, e₀, Equiv.refl _, ?_, ?_, fun x => Iff.rfl, ?_,
       fun f x => congrArg (fun s' => @Structure.funMap _ _ s' _ f x) hred,
       fun r x => Iff.of_eq (congrArg (fun s' => @Structure.RelMap _ _ s' _ r x) hred),
-      fun x y => Iff.rfl⟩,
+      fun x y => Iff.rfl, fun a y z hy => by
+        have hyz : y = fun i => F (ι (z i)) := funext fun i => hy i
+        subst hyz
+        exact Lab83.labT_apply (fun y => F (ι y)) (F.injective.comp ι.injective) a z⟩,
     hJ ▸ hθ, jzwBundle (fun j => P.E.skeleton (emb j)) (fun j => F (ι (P.E.skeleton j)))
       (fun j => P.E.skeleton (e j).1), fun i => ?_, fun a i => ?_, fun a b hab i => ?_⟩
   · intro k f x hx
@@ -681,7 +687,7 @@ theorem pairMS2_Y_coord_of (P : SingleModelData K)
               ((Hull83.witB hc k).v ∘ Prod.map id (fun i : Fin 2 => i.castSucc)) x =
               (Hull83.witB hc k).v (a, 1) →
             ε x = P.E.skeleton (zH a) := by
-  obtain ⟨Z, Jp, i1, i2, i3, i4, e₀, g, hY, hch, hcy, hXY, hτf, hτr, hlt⟩ := (Hull83.witB hc k).mem.2
+  obtain ⟨Z, Jp, i1, i2, i3, i4, e₀, g, hY, hch, hcy, hXY, hτf, hτr, hlt, -⟩ := (Hull83.witB hc k).mem.2
   have hv : ∀ p : Fin (k + 1) × Fin 2,
       g (((Hull83.witB hc k).v ∘ Prod.map id (fun i : Fin 2 => i.castSucc)) p) ∈
         Set.range e₀ := by

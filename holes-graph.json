@@ -6022,6 +6022,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Transition maps of X-hull pieces are F-images of order embeddings of chart index sets (labels commute)"
+  },
+  {
+   "id": "infra_83_Y_label_clause",
+   "label": "Lemma 8.3 proof: Y-labels act as e₀ ∘ labFun in Y-sample-like structures",
+   "section": 8,
+   "file": "Lemma83SampleLikeY.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 107: label clause added to YSampleLike; concrete samples satisfy it via Lab83.labT_apply."
   }
  ],
  "edges": [
@@ -11252,8 +11261,13 @@
    "from": "infra_83_pairMS2_X_chart_natural",
    "to": "infra_83_X_hull_eq_FJ",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_Y_label_clause",
+   "to": "infra_83_Y_hull_eq_FZ",
+   "kind": "hard"
   }
  ],
- "doneCount": 602,
+ "doneCount": 603,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
