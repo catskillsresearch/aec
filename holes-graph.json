@@ -7129,6 +7129,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 176: proved."
+  },
+  {
+   "id": "infra_83_full_single_of_piece_arrows",
+   "label": "Lemma83Conclusion for the constructed template from piece arrows of each value: per bounded c, a piece Y_u of Y_I over X_I with a preimage of (mk_I,c), h : Y_u -> N.Y over toA : X_I -> N.X carrying the mark, and >= #I good Cor 6.16 indices",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PieceMatch.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 177: proved."
   }
  ],
  "edges": [
@@ -13059,8 +13068,13 @@
    "from": "infra_83_marked_of_piece_arrows",
    "to": "infra_83_bounded_list_match",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_full_single_of_piece_arrows",
+   "to": "infra_83_lemma_8_3_full_single",
+   "kind": "hard"
   }
  ],
- "doneCount": 723,
+ "doneCount": 724,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

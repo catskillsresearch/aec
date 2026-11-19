@@ -195,4 +195,62 @@ theorem infra_83_marked_of_piece_arrows (P : SingleModelData K)
     exact infra_83_sgt_of_piece_arrow P inclu incl' j hj toA N.incl h hh d hd
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+set_option maxHeartbeats 3200000 in
+/-- **Lemma 8.3 (P.scheme) reduced to piece arrows of the template values (proved reduction).**
+For the constructed pair template, `Lemma83Conclusion` holds once, for every value on a well-order
+`I` with `#I` in the closed tail and every bounded tuple `c` of `Y_I`, there are a marked sample
+pair `N` at a closed level `≥ #I`, `toA : X_I → N.X`, a Cor 6.16 family `R`, a piece `Y_u` of
+`Y_I` over `X_I` holding a preimage `d` of `(mk_I, c)`, and `h : Y_u → N.Y` over `toA` carrying the
+mark part of `d` to `N.b ∘ τ`, with at least `#I` indices whose retractions send `h(d)` into
+`toA[X_I]` (`infra_83_marked_of_piece_arrows`). -/
+theorem infra_83_full_single_of_piece_arrows (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) :
+    ∃ (X Y : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
+        P.scheme.Object #I hI)
+      (incl : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
+        SystemArrow K oneVertexShape (P.scheme.asSystem hI (X I hI))
+          (P.scheme.asSystem hI (Y I hI)))
+      (mk : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
+        Fin Pr.n → Occurrence K oneVertexShape (P.scheme.asSystem hI (Y I hI))),
+      (∀ (I : Type u) [LinearOrder I] [WellFoundedLT I] [Nonempty I]
+          (hI : #I ∈ infra_78_closedTail P ∩ infra_615_closed P)
+          (cIdx : Type u)
+          (c : cIdx → Occurrence K oneVertexShape (P.scheme.asSystem hI.2.1 (Y I hI.2.1))),
+          #cIdx < #I →
+          ∃ (N : MarkedPair K oneVertexShape P.scheme Pr) (hlC : N.μ ∈ infra_615_closed P)
+            (_ : N.μ ∈ infra_78_closedTail P) (_ : #I ≤ N.μ)
+            (toA : SystemArrow K oneVertexShape (P.scheme.asSystem hI.2.1 (X I hI.2.1))
+              (P.scheme.asSystem hlC.1 N.X))
+            (R : ApproximateRetraction K oneVertexShape P.scheme N.hμ N.X N.Y N.incl)
+            (τ : ULift.{u} (Fin Pr.n) ≃ N.bIdx) (Yu : P.scheme.Object #I hI.2.1)
+            (inclu : SystemArrow K oneVertexShape (P.scheme.asSystem hI.2.1 (X I hI.2.1))
+              (P.scheme.asSystem hI.2.1 Yu))
+            (j : SystemArrow K oneVertexShape (P.scheme.asSystem hI.2.1 Yu)
+              (P.scheme.asSystem hI.2.1 (Y I hI.2.1)))
+            (h : SystemArrow K oneVertexShape (P.scheme.asSystem hI.2.1 Yu)
+              (P.scheme.asSystem hlC.1 N.Y))
+            (d : ULift.{u} (Fin Pr.n) ⊕ cIdx →
+              Occurrence K oneVertexShape (P.scheme.asSystem hI.2.1 Yu)),
+            SystemArrow.comp inclu j = incl I hI.2.1 ∧
+            SystemArrow.comp inclu h = SystemArrow.comp toA N.incl ∧
+            (∀ s, j.mapOcc (d s) =
+              seqJoint (fun a : ULift.{u} (Fin Pr.n) => mk I hI.2.1 a.down) c s) ∧
+            (∀ a, h.mapOcc (d (Sum.inl a)) = N.b (τ a)) ∧
+            #I ≤ #{i : R.index // ∀ s, ∃ y, toA.onVertex (d s).1 y =
+              (R.retr i).onVertex (d s).1 (h.onVertex (d s).1 (d s).2)}) →
+      Lemma83Conclusion P.scheme Pr := by
+  obtain ⟨F, X, Y, eX, eY, incl, mk, hincl, harr⟩ := infra_83_pair_template_clauses P Pr
+  refine ⟨X, Y, incl, mk, fun hS => ?_⟩
+  refine infra_83_conclusion_of_marked_values_idx P Pr F X Y eX eY incl mk hincl harr _
+    (infra_83_closed_tail P) (fun I _ _ _ hI => ?_)
+  obtain ⟨hR, hD⟩ := infra_83_marked_of_piece_arrows P Pr hI.2 hI.1 (incl I hI.2.1)
+    (fun j : ULift.{u} (Fin Pr.n) => mk I hI.2.1 j.down) (hS I hI)
+  obtain ⟨realEq, hr⟩ := hR
+  exact ⟨ULift.{u} (Fin Pr.n), Equiv.refl _, realEq, hr, hD⟩
+end
+
 end AEC
