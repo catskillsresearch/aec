@@ -6706,6 +6706,15 @@
    "status": "open",
    "blocker": null,
    "detail": "Cycle 131 (found): pairMAdmittedS2 = pairMAdmitted + XSampleLike + YSampleLike records LS-closure, sort closure, chart and the sort-intersection clause for closed sets, but not that ret is a retraction family of a marked pair; infra_83_ret_samples has the eval law only for the constructed samples. Needed for the paper's (7) via colors."
+  },
+  {
+   "id": "infra_83_hull_emb_const",
+   "label": "matches of template hulls carry designated constants (marks) to the sample's constants",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83Isolation.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 132: proved."
   }
  ],
  "edges": [
@@ -12386,8 +12395,13 @@
    "from": "infra_83_ret_admission",
    "to": "infra_83_all_dominated",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_hull_emb_const",
+   "to": "infra_83_bounded_arity_free",
+   "kind": "hard"
   }
  ],
- "doneCount": 680,
+ "doneCount": 681,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

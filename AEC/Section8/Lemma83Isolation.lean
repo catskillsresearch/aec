@@ -1239,4 +1239,29 @@ theorem infra_83_piece_matches_bounded {L : FirstOrder.Language.{u, u}}
   exact infra_83_hull_match_compat _ _ (m s) (m t) _ _ (hm s) (hm t)
     (fun p => infra_83_bundleOf_placeSucc base h s.2.1 t.2.1 _ _ p)
 
+/-- **Matches carry designated constants (proved).** English (Lemma 8.3 proof): the marks of the
+template are designated terms (mark constants); every match of a template hull into a sample
+sends the hull element of a constant term to the constant of the sample. This is the
+mark-preservation of the matches (`hb` of `infra_83_full_single_of_sample_arrows`). -/
+theorem infra_83_hull_emb_const {L : FirstOrder.Language.{u, u}} {M N : Type u}
+    [L.Structure M] [L.Structure N] {ι : Type} {v : ι → M}
+    (f : Hull83.Hull (L := L) v ↪[L] N) (k : L.Constants) :
+    f (Quotient.mk _ (FirstOrder.Language.Term.func k Fin.elim0)) =
+      FirstOrder.Language.Structure.funMap k Fin.elim0 := by
+  rw [infra_83_hull_mk_realize v, ← FirstOrder.Language.HomClass.realize_term]
+  simp only [FirstOrder.Language.Term.realize]
+  congr 1
+  funext i
+  exact Fin.elim0 i
+
+/-- **Matches carry designated terms (proved).** More generally every match of a template hull
+sends the class of a term to the term evaluated at the images of the generators. -/
+theorem infra_83_hull_emb_term {L : FirstOrder.Language.{u, u}} {M N : Type u}
+    [L.Structure M] [L.Structure N] {ι : Type} {v : ι → M}
+    (f : Hull83.Hull (L := L) v ↪[L] N) (t : L.Term ι) :
+    f (Quotient.mk _ t) =
+      t.realize (fun p => f (Quotient.mk _ (FirstOrder.Language.Term.var p))) := by
+  rw [infra_83_hull_mk_realize v, ← FirstOrder.Language.HomClass.realize_term]
+  rfl
+
 end AEC
