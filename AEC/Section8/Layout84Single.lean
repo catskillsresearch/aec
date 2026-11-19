@@ -134,4 +134,58 @@ theorem infra_84_strip_realize_single (P : SingleModelData K) {ν μ : Cardinal.
   · exact hws i
   · rfl
 
+/-- **Proposition 6.3 for the two-segment layout (8).** English (Lemma 8.4 proof): "The layout has
+two well-ordered horizontal segments with designated term parts. Proposition 6.3 gives a bound
+depending on the candidate arity and the fixed template, not on H, H' or V." One bound `g`
+(Proposition 4.8 / 6.3) serves every two-segment layout `I₁ ⊕ₗ I₂` of well-orders: placements of a
+tuple of length at most `σ` that agree on every parameter set of size at most `g σ` agree
+everywhere. `g` depends only on the template (`E`, `D`), not on the segments. -/
+theorem infra_84_two_segment_tester (K : AbstractElementaryClass.{u}) [CategoricalUnbounded K]
+    (E : OrderPresentation K) (D : StableDiagram K) :
+    ∃ g : Cardinal.{u} → Cardinal.{u},
+      (∀ σ τ, σ ≤ τ → g σ ≤ g τ) ∧ (∀ σ, aleph0 ≤ g σ) ∧
+      ∀ (I₁ I₂ : Type u) [LinearOrder I₁] [WellFoundedLT I₁] [LinearOrder I₂]
+        [WellFoundedLT I₂] [Nonempty I₁] {α : Type u} (σ : Cardinal.{u}), aleph0 ≤ σ →
+        #α ≤ σ → ∀ P P' : Placement E.lab E.arity (Lex (I₁ ⊕ I₂)) α,
+          (∀ X : Set (Lex (I₁ ⊕ I₂)), #X ≤ g σ → P.AgreeOn E D P' X) →
+          P.AgreeOn E D P' Set.univ := by
+  obtain ⟨g, hmono, hinf, htest⟩ := proposition_4_8_over_base K E D
+  refine ⟨g, hmono, hinf, fun I₁ I₂ _ _ _ _ _ α σ hσ hα P P' h => ?_⟩
+  have : Nonempty (Lex (I₁ ⊕ I₂)) := ⟨toLex (Sum.inl (Classical.arbitrary I₁))⟩
+  exact htest σ hσ hα P P' h
+
+/-- **Lemma 6.4 over the two-segment layout (8).** English (Lemma 8.4 proof): "Apply Lemma 6.4 to
+lift its comparisons to a placed comparison over (8)." Compact placement (Lemma 6.4 /
+Proposition 4.9) for the well-ordered presentation `E(I₁ ⊕ₗ I₂)` of the two-segment layout:
+coherent natural local prescriptions over parameter sets of size at most `χ` are realized by one
+order enlargement. -/
+theorem infra_84_two_segment_placement (K : AbstractElementaryClass.{u}) [CategoricalUnbounded K]
+    (E : OrderPresentation K) (D : StableDiagram K) (I₁ I₂ : Type u) [LinearOrder I₁]
+    [WellFoundedLT I₁] [LinearOrder I₂] [WellFoundedLT I₂] [Nonempty I₁]
+    {α : Type u} (σ χ : Cardinal.{u}) (hσinf : aleph0 ≤ σ) (hσ : #α ≤ σ)
+    (hχ : ls K + σ < χ) (hpow : χ ^ σ = χ) (hI : K.Mem (E.obj (Lex (I₁ ⊕ I₂))))
+    (q : ∀ {β : Type u}, #β ≤ χ → (β → (E.obj (Lex (I₁ ⊕ I₂))).carrier) → α ⊕ β →
+      (E.obj (Lex (I₁ ⊕ I₂))).carrier)
+    (hnat : ∀ {β : Type u} (hβ : #β ≤ χ) (p : β → (E.obj (Lex (I₁ ⊕ I₂))).carrier)
+      (hpar : #β ≤ σ + χ) (hcardI : D.t (σ + χ) ≤ Model.card (E.obj (Lex (I₁ ⊕ I₂)))),
+      D.same hpar hI hI hcardI hcardI (fun b => q hβ p (Sum.inr b)) p)
+    (hcoh : ∀ {β β' : Type u} (hβ : #β ≤ χ) (hβ' : #β' ≤ χ)
+      (p : β → (E.obj (Lex (I₁ ⊕ I₂))).carrier)
+      (ι : β' → β) (hjoint : #(α ⊕ β') ≤ σ + χ)
+      (hcardI : D.t (σ + χ) ≤ Model.card (E.obj (Lex (I₁ ⊕ I₂)))),
+      D.same hjoint hI hI hcardI hcardI
+        (fun i => q hβ p (Sum.map id ι i)) (q hβ' (fun b => p (ι b)))) :
+    ∃ (J : Type u) (_ : LinearOrder J) (_ : Nonempty J) (f : Lex (I₁ ⊕ I₂) ↪o J)
+      (z : α → (E.obj J).carrier) (hJ : K.Mem (E.obj J)),
+      ∀ {β : Type u} (hβ : #β ≤ χ) (p : β → (E.obj (Lex (I₁ ⊕ I₂))).carrier)
+        (hjoint : #(α ⊕ β) ≤ σ + χ)
+        (_hcardI : D.t (σ + χ) ≤ Model.card (E.obj (Lex (I₁ ⊕ I₂))))
+        (hcardJ : D.t (σ + χ) ≤ Model.card (E.obj J)),
+        D.same hjoint hJ hJ hcardJ hcardJ
+          (Sum.elim z (fun b => E.map f (p b)))
+          (Sum.elim (fun a => E.map f (q hβ p (Sum.inl a)))
+            (fun b => E.map f (q hβ p (Sum.inr b)))) := by
+  have : Nonempty (Lex (I₁ ⊕ I₂)) := ⟨toLex (Sum.inl (Classical.arbitrary I₁))⟩
+  exact lemma_6_4 K E D σ χ hσinf hσ hχ hpow hI q hnat hcoh
+
 end AEC

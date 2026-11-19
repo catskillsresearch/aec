@@ -4654,6 +4654,24 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 100: English 'Corollary 6.7 then embeds A_{H'} into C over this copy of V'. Diagram-level form: every list of B (level nu, over A) of length < mu realized in C over a bounded list of A with the same joint diagram; via diagram_preserved + infra_82_saturate_inside. The companion step 'include the questioned tuple over A in a level-nu V <= C' is infra_72_level_hull. Axioms clean."
+  },
+  {
+   "id": "infra_84_two_segment_tester",
+   "label": "Prop 6.3 for the two-segment layout (8): one placed-testing bound g for every I1 +lex I2",
+   "section": 8,
+   "file": "AEC/Section8/Layout84Single.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 100: from proposition_4_8_over_base (Prop 4.8/6.3 placed tester) on Lex (I1 + I2); g depends only on E, D (the template), not on the segments (English: 'not on H, H' or V'). Axioms clean."
+  },
+  {
+   "id": "infra_84_two_segment_placement",
+   "label": "Lemma 6.4 over the two-segment layout (8): compact placement in E(I1 +lex I2)",
+   "section": 8,
+   "file": "AEC/Section8/Layout84Single.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 100: specialization of lemma_6_4 (Prop 4.9) to the lexicographic two-segment well-order. Axioms clean."
   }
  ],
  "edges": [
@@ -8979,8 +8997,18 @@
    "from": "infra_84_strip_realize_single",
    "to": "infra_84_layout_amalgam",
    "kind": "hard"
+  },
+  {
+   "from": "infra_84_two_segment_tester",
+   "to": "infra_84_layout_amalgam",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_84_two_segment_placement",
+   "to": "infra_84_layout_amalgam",
+   "kind": "hard"
   }
  ],
- "doneCount": 462,
+ "doneCount": 464,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
