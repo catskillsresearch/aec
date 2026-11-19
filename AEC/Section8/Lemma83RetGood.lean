@@ -60,4 +60,55 @@ theorem infra_83_good_codes_of_match_ret (P : SingleModelData K)
   obtain ⟨i, hi⟩ := hcode.2 w
   exact ⟨i, by simp only [hi, ← hF w, hw]⟩
 
+
+/-- **Sort intersection from a set inclusion (proved).** The `hmeet` hypothesis of
+`infra_83_good_codes_of_match_ret` follows from the set-level statement that the matched
+`Y_I`-image meets the sample's `X`-image `F(incl(X))` only inside the matched `X_I`-image,
+given that the match of `Y_I` is injective. -/
+theorem infra_83_meet_of_subset {Xc Yc LL XI YI : Type u} (incl : Xc → Yc) (F : Yc → LL)
+    (onX : XI → Xc) (onY : YI → Yc) (inclI : XI → YI)
+    (hcomm : ∀ x, onY (inclI x) = incl (onX x))
+    (hinj : Function.Injective (fun y => F (onY y)))
+    (hsub : Set.range (fun y => F (onY y)) ∩ Set.range (fun z => F (incl z)) ⊆
+      Set.range (fun x => F (incl (onX x)))) :
+    ∀ (x' : YI) (z : Xc), F (onY x') = F (incl z) → ∃ y, x' = inclI y := by
+  intro x' z h
+  obtain ⟨y, hy⟩ := hsub ⟨⟨x', rfl⟩, ⟨z, h.symm⟩⟩
+  refine ⟨y, hinj ?_⟩
+  simp only [hcomm]
+  exact hy.symm
+
+/-- **Sort intersection from the `X`-chart (proved).** In a sample whose `X`-copy is
+`F(emb)(J)` (`F ∘ incl ∘ eX = F(emb)`, `eX` onto) and whose `X`-closed sets `T` meet the
+`X`-copy in `F(chart T)` (the chart clause of `XSampleLike`/`RetSampleLike`), the sort
+intersection for an `X`-closed matched `Y_I`-image `T` reduces to: `F(chart T)` lies in the
+matched `X_I`-image. -/
+theorem infra_83_meet_of_chart (P : SingleModelData K)
+    {Pr : StationaryPrescription K oneVertexShape P.scheme}
+    {J Jplus : Type u} [LinearOrder J] [Nonempty J] [LinearOrder Jplus] [Nonempty Jplus]
+    {M : MarkedPair K oneVertexShape P.scheme Pr}
+    (eX : (P.E.obj J).carrier → ((P.scheme.asSystem M.hμ M.X).obj PUnit.unit).carrier)
+    (hsurj : Function.Surjective eX) (emb : J ↪o Jplus)
+    (F : ((P.scheme.asSystem M.hμ M.Y).obj PUnit.unit).carrier → (P.E.obj Jplus).carrier)
+    (hF : ∀ x, F (M.incl.onVertex PUnit.unit (eX x)) = P.E.map emb x)
+    {XI YI : Type u}
+    (onX : XI → ((P.scheme.asSystem M.hμ M.X).obj PUnit.unit).carrier)
+    (onY : YI → ((P.scheme.asSystem M.hμ M.Y).obj PUnit.unit).carrier) (inclI : XI → YI)
+    (hcomm : ∀ x, onY (inclI x) = M.incl.onVertex PUnit.unit (onX x))
+    (hinj : Function.Injective (fun y => F (onY y)))
+    [Nonempty (Lab83.chart emb (Set.range (fun y => F (onY y))))]
+    (hT : Set.range (fun y => F (onY y)) ∩ Set.range (P.E.map emb) =
+      Set.range (P.E.map (Lab83.chartEmb emb (Set.range (fun y => F (onY y))))))
+    (hchart : Set.range (P.E.map (Lab83.chartEmb emb (Set.range (fun y => F (onY y))))) ⊆
+      Set.range (fun x => F (M.incl.onVertex PUnit.unit (onX x)))) :
+    ∀ (x' : YI) (z : ((P.scheme.asSystem M.hμ M.X).obj PUnit.unit).carrier),
+      F (onY x') = F (M.incl.onVertex PUnit.unit z) → ∃ y, x' = inclI y := by
+  refine infra_83_meet_of_subset _ F onX onY inclI hcomm hinj ?_
+  rintro w ⟨hw1, ⟨z, rfl⟩⟩
+  obtain ⟨v, rfl⟩ := hsurj z
+  have hw : F (M.incl.onVertex PUnit.unit (eX v)) ∈
+      Set.range (fun y => F (onY y)) ∩ Set.range (P.E.map emb) := ⟨hw1, v, (hF v).symm⟩
+  rw [hT] at hw
+  exact hchart hw
+
 end AEC

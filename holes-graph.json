@@ -6886,6 +6886,24 @@
    "status": "open",
    "blocker": null,
    "detail": "Open (cycle 152): split off from infra_83_ret_admission, whose ret-evaluation half is closed by RetSampleLike. Needed: chart of the Y_I-hull ∩ X-copy = J-chart of X_I (xHull_eq_chart gives X_I-hull = F(J_H); XSampleLike chart clause gives T ∩ X = F(chart T))."
+  },
+  {
+   "id": "infra_83_meet_of_subset",
+   "label": "hmeet from the set inclusion range(F∘onY) ∩ F(incl X) ⊆ matched X_I-image (injective Y_I-match)",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83RetGood.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 153: proved."
+  },
+  {
+   "id": "infra_83_meet_of_chart",
+   "label": "hmeet for an X-closed matched Y_I-image T reduces (via the X-chart clause T ∩ X = F(chart T)) to F(chart T) ⊆ matched X_I-image",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83RetGood.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 153: proved."
   }
  ],
  "edges": [
@@ -12681,8 +12699,18 @@
    "from": "infra_83_YX_meet",
    "to": "infra_83_all_dominated",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_meet_of_subset",
+   "to": "infra_83_YX_meet",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_83_meet_of_chart",
+   "to": "infra_83_YX_meet",
+   "kind": "hard"
   }
  ],
- "doneCount": 699,
+ "doneCount": 701,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
