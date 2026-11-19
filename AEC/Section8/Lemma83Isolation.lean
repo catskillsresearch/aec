@@ -1136,4 +1136,40 @@ theorem infra_83_wellOrder_into_saturated {κ : Cardinal.{u}} (hκ : ℵ₀ ≤ 
     (fun d => absurd d.2 (Set.notMem_empty _)) (fun a => absurd a.2 (Set.notMem_empty _))
   exact ⟨OrderEmbedding.ofStrictMono g hg⟩
 
+/-- **The mixed template pair of a small well-order maps into an order-saturated homogeneous
+sample (proved).** English (Lemma 8.3 proof): "the partial matches into a homogeneous sample,
+extended by order saturation": for a bundled sample homogeneous in every arity whose order is
+`κ`-order-saturated, every well-order `I` of size `< κ` embeds into the sample order and the
+template pair `X_I ≤ Y_I` maps strongly into the sample along it. -/
+theorem infra_83_mix_pair_into_saturated_sample {L₁ L₂ L : FirstOrder.Language.{u, u}}
+    (χ : L₁ →ᴸ L₂) (ψ₂ : L₂ →ᴸ L) (φ₀ : K.τ →ᴸ L₁) {P : ∀ (M : Type u) [L.Structure M], Prop}
+    {r r₁ r₀ : ℕ} [NeZero r] [NeZero r₁] [NeZero r₀]
+    {c : (m : ℕ) → 0 < m → Hull83.TpColorB L r m}
+    (hc : ∀ (n : ℕ) (κ : Cardinal.{u}), Hull83.Joint (Hull83.TpSampleB P r) n c κ)
+    (hcoh : ∀ {m m' : ℕ} (hm' : 0 < m') (hm : 0 < m) (f : Fin m' ↪o Fin m),
+      c m' hm' = Hull83.tpResB r f (c m hm))
+    (σ : Fin r₁ → Fin r) (τ : Fin r₀ → Fin r₁)
+    (hPX : Hull83.SubHullStrong (ψ₂.comp χ) φ₀ P) (hPY : Hull83.SubHullStrong ψ₂ (χ.comp φ₀) P)
+    {S : Hull83.ColorSample (Hull83.TpColorB L r)} {M : Type u} [L.Structure M] (hPM : P M)
+    (hMK : K.Mem (Hull83.subModel' ψ₂ (χ.comp φ₀) M)) (base : S.α → Fin r → M)
+    (hcol : ∀ (m : ℕ) (s : Finset S.α) (h : s.card = m),
+      S.col m s = Hull83.tpCode (Hull83.bundleOf base s h))
+    (hhom : ∀ n, Hull83.Homog S n c) {κ : Cardinal.{u}} (hκ : ℵ₀ ≤ κ)
+    (hsat : OrderSat83.OrderSaturated κ S.α) {I : Type u} [LinearOrder I] [WellFoundedLT I]
+    [Nonempty I] (hI : #I < κ) :
+    ∃ (e : I ↪o S.α) (onX : ((Hull83.subLangPieces (ψ₂.comp χ) φ₀ hc hcoh (σ ∘ τ) hPX).limit I).obj.carrier
+        ↪[K.τ] (Hull83.subModel' (ψ₂.comp χ) φ₀ M).carrier)
+      (onY : ((Hull83.subLangPieces ψ₂ (χ.comp φ₀) hc hcoh σ hPY).limit I).obj.carrier
+        ↪[K.τ] (Hull83.subModel' ψ₂ (χ.comp φ₀) M).carrier),
+      K.Strong onX ∧ K.Strong onY ∧
+      (∀ x, onY ((Hull83.subLangMixHom χ ψ₂ φ₀ hc hcoh σ τ hPX hPY).limMap I x) = onX x) ∧
+      ∀ (s : {s : Finset I // s.Nonempty}) p,
+        onY (((Hull83.subLangPieces ψ₂ (χ.comp φ₀) hc hcoh σ hPY).limit I).canon s
+          (Quotient.mk _ (FirstOrder.Language.Term.var p))) =
+          (Hull83.bundleOf (fun i => base (e i)) s.1 (Nat.succ_pred_eq_of_pos (Finset.card_pos.mpr s.2)).symm ∘
+            Prod.map id σ) p  := by
+  obtain ⟨e⟩ := infra_83_wellOrder_into_saturated hκ hsat hI
+  exact ⟨e, infra_83_mix_pair_into_sample_along χ ψ₂ φ₀ hc hcoh σ τ hPX hPY hPM hMK base hcol
+    hhom e⟩
+
 end AEC
