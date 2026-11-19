@@ -125,6 +125,27 @@ It does not use Sections 6-7 or the `both_off` cross-level Galois transitivity. 
 
 Steps 1-3 are small or medium. Steps 4-5 are the bulk: weeks of cycles at the current rate. Alternative considered: code marked pairs as single models of an expanded AEC `K^b` and reuse `SingleModelData` verbatim. It is not viable as stated, because `K^b` must be an AEC at all cardinalities (chains, LS), while marked pairs are only defined at eligible levels. The paper deliberately works with schemes for this reason.
 
+## Fidelity gaps (audit Nov 19, 2026)
+
+Rule (Lars): Lean statements must match the paper text 100%. Scope: paper-numbered nodes that are hard-edge ancestors of `theorem_1_2`/`theorem_1_3`, plus the goal theorems. Method: keyword audit of every such node's board record and Lean docstring (omitted / not stated / not formalized / demoted / degenerate / Path A packaging / weaker), plus a direct check of `theorem_1_2`, `theorem_1_3` against the text. **This is not yet a line-by-line comparison of all ~100 statements.** Each gap is a tracked tip (node `fid_*`, status open, hard edge to the affected node).
+
+| Tip | Affected | Gap |
+|---|---|---|
+| `fid_52_presentation_clause` | `proposition_5_6`, `theorem_8_6` | Def 5.2(2) presentation clause missing from IsWorkingPackage: HasPresentations is not a conjunct, and as stated it only gives vertexwise isos + some permitted arrow per order embedding. Paper: elements are labels on finite increasing lists (finite support), substitution along order embeddings induces the arrow (incl. mixed levels), every object iso to a well-ordered presentation, natural term diagrams (5.2(3) last sentence). RULED (Lars Nov 19): restate faithfully, later window. |
+| `fid_67_general_package` | `infra_8_general_calculus` | Sections 6.15-7.13 stated only for SingleModelData / P.scheme (Path A packaging: recursion-closed levels, same-level hosts) where the paper's Sections 6-7 are for any scheme with the working package and template F: corollary_6_16, proposition_6_15 (G = P.E), lemma_6_17, lemma_7_2, proposition_7_3, proposition_7_5, lemma_7_6, proposition_7_8, theorem_7_9, lemma_7_11, lemma_7_12, theorem_7_13. Same work as infra_8_general_calculus. |
+| `fid_72_mixed_sentence` | `lemma_7_2` | lemma_7_2: the English last sentence (A at a smaller level than B) is not in the Lean statement (it is infra_72_mixed_level, off-path because nothing downstream uses it). Under the 100%-fidelity rule the statement must include it; needs a ruling on fidelity vs. off-path proof work. |
+| `fid_75_clauses` | `proposition_7_5` | proposition_7_5: English clause 3 (product freeness from X), mixed-level targets, and prescribed extra tuple matches are demoted (not in the statement); also SingleModelData/same-level packaging. |
+| `fid_79_clauses` | `theorem_7_9` | theorem_7_9: omitted from the statement: the bounded-mark generalization ('more generally ... /b/ <= theta') and the primeness clause. |
+| `fid_86_marked_arrows` | `theorem_8_6` | theorem_8_6: the correspondence of W' permitted arrows with MarkedArrows is not yet stated (and 'fixed template F^b' / mixed arrows between output levels should be checked against the English). |
+| `fid_91_free_products` | `proposition_9_1` | proposition_9_1: witnessed free products and commutation with isomorphisms are not stated. |
+| `fid_93_def91_iterated` | `theorem_9_3` | theorem_9_3: the iterated marked-increment construction (Def 9.1 / 8.1 iterated over the axes) is not formalized; the link 'C_n is the marked increment of the single-model scheme' is captured only by a properness clause. |
+| `fid_105_clause2` | `theorem_10_5` | theorem_10_5: clause (2)'s preservation under strong maps is omitted from the statement. |
+| `fid_106_freelift` | `proposition_10_6` | proposition_10_6: the free-lift clauses for p^B along (mixed) pointed arrows are not yet stated. |
+| `fid_108_clause3` | `lemma_10_8` | lemma_10_8: clause 3 (the prescription recurs at arbitrarily large single-model levels) is not stated. |
+| `fid_46_packaging` | `lemma_4_6` | lemma_4_6: board notes the DisjointBlockSwap/OrderIso packaging is degenerate (orderIso_swaps_blocks_empty); the done proof goes through the English pipeline (BlockRegions/LexTree). Verify the registered lemma_4_6 statement is the English one, not the degenerate packaging. |
+
+Checked and matching the text: `theorem_1_2` (via `IsUniformThreshold`: for infinite λ, μ(λ) ≥ λ, every K with LS(K) ≤ λ, categorical at one κ ≥ μ(λ) ⇒ at all κ' ≥ μ(λ)), `theorem_1_3` (`CategoricalUnbounded K → CategoricalOnTail K`). The untied 6.11/6.12/6.13/6.17 wrappers are degenerate but are not the registered nodes (the registered nodes are the tied, faithful forms).
+
 ## Off-path nodes (Nov 19, 2026)
 
 Ruling (Lars): prove only what `theorem_1_2` / `theorem_1_3` use. The nodes below are not hard-edge ancestors of either goal theorem; they are kept (not deleted) and get no further work. Field `path` in `holes-graph.json` is `off` for them, `main` otherwise.

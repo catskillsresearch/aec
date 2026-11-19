@@ -8897,6 +8897,126 @@
    "blocker": null,
    "detail": "Cycle 273: proved.",
    "path": "main"
+  },
+  {
+   "id": "fid_52_presentation_clause",
+   "label": "fid_52_presentation_clause",
+   "section": 5,
+   "file": "AEC/Section5/PackageClauses.lean",
+   "status": "open",
+   "blocker": null,
+   "detail": "FIDELITY GAP (audit Nov 19): Def 5.2(2) presentation clause missing from IsWorkingPackage: HasPresentations is not a conjunct, and as stated it only gives vertexwise isos + some permitted arrow per order embedding. Paper: elements are labels on finite increasing lists (finite support), substitution along order embeddings induces the arrow (incl. mixed levels), every object iso to a well-ordered presentation, natural term diagrams (5.2(3) last sentence). RULED (Lars Nov 19): restate faithfully, later window.",
+   "path": "main"
+  },
+  {
+   "id": "fid_67_general_package",
+   "label": "fid_67_general_package",
+   "section": 6,
+   "file": "AEC/Section7/Results.lean",
+   "status": "open",
+   "blocker": null,
+   "detail": "FIDELITY GAP (audit Nov 19): Sections 6.15-7.13 stated only for SingleModelData / P.scheme (Path A packaging: recursion-closed levels, same-level hosts) where the paper's Sections 6-7 are for any scheme with the working package and template F: corollary_6_16, proposition_6_15 (G = P.E), lemma_6_17, lemma_7_2, proposition_7_3, proposition_7_5, lemma_7_6, proposition_7_8, theorem_7_9, lemma_7_11, lemma_7_12, theorem_7_13. Same work as infra_8_general_calculus.",
+   "path": "main"
+  },
+  {
+   "id": "fid_72_mixed_sentence",
+   "label": "fid_72_mixed_sentence",
+   "section": 7,
+   "file": "AEC/Section7/Results.lean",
+   "status": "open",
+   "blocker": null,
+   "detail": "FIDELITY GAP (audit Nov 19): lemma_7_2: the English last sentence (A at a smaller level than B) is not in the Lean statement (it is infra_72_mixed_level, off-path because nothing downstream uses it). Under the 100%-fidelity rule the statement must include it; needs a ruling on fidelity vs. off-path proof work.",
+   "path": "main"
+  },
+  {
+   "id": "fid_75_clauses",
+   "label": "fid_75_clauses",
+   "section": 7,
+   "file": "AEC/Section7/Results.lean",
+   "status": "open",
+   "blocker": null,
+   "detail": "FIDELITY GAP (audit Nov 19): proposition_7_5: English clause 3 (product freeness from X), mixed-level targets, and prescribed extra tuple matches are demoted (not in the statement); also SingleModelData/same-level packaging.",
+   "path": "main"
+  },
+  {
+   "id": "fid_79_clauses",
+   "label": "fid_79_clauses",
+   "section": 7,
+   "file": "AEC/Section7/Results.lean",
+   "status": "open",
+   "blocker": null,
+   "detail": "FIDELITY GAP (audit Nov 19): theorem_7_9: omitted from the statement: the bounded-mark generalization ('more generally ... |b| <= theta') and the primeness clause.",
+   "path": "main"
+  },
+  {
+   "id": "fid_86_marked_arrows",
+   "label": "fid_86_marked_arrows",
+   "section": 8,
+   "file": "AEC/Section8/Results.lean",
+   "status": "open",
+   "blocker": null,
+   "detail": "FIDELITY GAP (audit Nov 19): theorem_8_6: the correspondence of W' permitted arrows with MarkedArrows is not yet stated (and 'fixed template F^b' / mixed arrows between output levels should be checked against the English).",
+   "path": "main"
+  },
+  {
+   "id": "fid_91_free_products",
+   "label": "fid_91_free_products",
+   "section": 9,
+   "file": "AEC/Section9/Results.lean",
+   "status": "open",
+   "blocker": null,
+   "detail": "FIDELITY GAP (audit Nov 19): proposition_9_1: witnessed free products and commutation with isomorphisms are not stated.",
+   "path": "main"
+  },
+  {
+   "id": "fid_93_def91_iterated",
+   "label": "fid_93_def91_iterated",
+   "section": 9,
+   "file": "AEC/Section9/Results.lean",
+   "status": "open",
+   "blocker": null,
+   "detail": "FIDELITY GAP (audit Nov 19): theorem_9_3: the iterated marked-increment construction (Def 9.1 / 8.1 iterated over the axes) is not formalized; the link 'C_n is the marked increment of the single-model scheme' is captured only by a properness clause.",
+   "path": "main"
+  },
+  {
+   "id": "fid_105_clause2",
+   "label": "fid_105_clause2",
+   "section": 10,
+   "file": "AEC/Section10/Results.lean",
+   "status": "open",
+   "blocker": null,
+   "detail": "FIDELITY GAP (audit Nov 19): theorem_10_5: clause (2)'s preservation under strong maps is omitted from the statement.",
+   "path": "main"
+  },
+  {
+   "id": "fid_106_freelift",
+   "label": "fid_106_freelift",
+   "section": 10,
+   "file": "AEC/Section10/Results.lean",
+   "status": "open",
+   "blocker": null,
+   "detail": "FIDELITY GAP (audit Nov 19): proposition_10_6: the free-lift clauses for p^B along (mixed) pointed arrows are not yet stated.",
+   "path": "main"
+  },
+  {
+   "id": "fid_108_clause3",
+   "label": "fid_108_clause3",
+   "section": 10,
+   "file": "AEC/Section10/Results.lean",
+   "status": "open",
+   "blocker": null,
+   "detail": "FIDELITY GAP (audit Nov 19): lemma_10_8: clause 3 (the prescription recurs at arbitrarily large single-model levels) is not stated.",
+   "path": "main"
+  },
+  {
+   "id": "fid_46_packaging",
+   "label": "fid_46_packaging",
+   "section": 4,
+   "file": "AEC/Section4/BlockInterchange.lean",
+   "status": "open",
+   "blocker": null,
+   "detail": "FIDELITY GAP (audit Nov 19): lemma_4_6: board notes the DisjointBlockSwap/OrderIso packaging is degenerate (orderIso_swaps_blocks_empty); the done proof goes through the English pipeline (BlockRegions/LexTree). Verify the registered lemma_4_6 statement is the English one, not the degenerate packaging.",
+   "path": "main"
   }
  ],
  "edges": [
@@ -15306,6 +15426,71 @@
   {
    "from": "infra_83_full_single_of_template_list_piece_arrows",
    "to": "infra_83_lemma_8_3_full_single",
+   "kind": "hard"
+  },
+  {
+   "from": "fid_52_presentation_clause",
+   "to": "proposition_5_6",
+   "kind": "hard"
+  },
+  {
+   "from": "fid_52_presentation_clause",
+   "to": "theorem_8_6",
+   "kind": "hard"
+  },
+  {
+   "from": "fid_67_general_package",
+   "to": "infra_8_general_calculus",
+   "kind": "hard"
+  },
+  {
+   "from": "fid_72_mixed_sentence",
+   "to": "lemma_7_2",
+   "kind": "hard"
+  },
+  {
+   "from": "fid_75_clauses",
+   "to": "proposition_7_5",
+   "kind": "hard"
+  },
+  {
+   "from": "fid_79_clauses",
+   "to": "theorem_7_9",
+   "kind": "hard"
+  },
+  {
+   "from": "fid_86_marked_arrows",
+   "to": "theorem_8_6",
+   "kind": "hard"
+  },
+  {
+   "from": "fid_91_free_products",
+   "to": "proposition_9_1",
+   "kind": "hard"
+  },
+  {
+   "from": "fid_93_def91_iterated",
+   "to": "theorem_9_3",
+   "kind": "hard"
+  },
+  {
+   "from": "fid_105_clause2",
+   "to": "theorem_10_5",
+   "kind": "hard"
+  },
+  {
+   "from": "fid_106_freelift",
+   "to": "proposition_10_6",
+   "kind": "hard"
+  },
+  {
+   "from": "fid_108_clause3",
+   "to": "lemma_10_8",
+   "kind": "hard"
+  },
+  {
+   "from": "fid_46_packaging",
+   "to": "lemma_4_6",
    "kind": "hard"
   }
  ],

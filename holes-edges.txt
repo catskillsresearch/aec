@@ -1,4 +1,4 @@
-# Nodes: (see holes-graph.json)  Hard edges: 1204
+# Nodes: (see holes-graph.json)  Hard edges: 1217
 # Convention: FROM --> TO means the English proof of TO requires FROM.
 # infra_78_mixed_level_isolation (Prop 7.8 rho^+ matrix argument; mixed tied free lift and mixed Lemma 7.6 done grokbot_02)
 # Retired: infra_610_qPres_empty_joint_on_I, infra_610_same_head_transfers_joint, infra_69_transfer_sequence, WorkingScheme.exists_approximationSequence.
@@ -1207,3 +1207,16 @@ infra_83_full_single_of_template_lists --> infra_83_lemma_8_3_full_single
 infra_83_full_single_of_template_list_matches --> infra_83_lemma_8_3_full_single
 infra_83_tuple_match_of_piece_arrow --> infra_83_lemma_8_3_full_single
 infra_83_full_single_of_template_list_piece_arrows --> infra_83_lemma_8_3_full_single
+fid_52_presentation_clause --> proposition_5_6
+fid_52_presentation_clause --> theorem_8_6
+fid_67_general_package --> infra_8_general_calculus
+fid_72_mixed_sentence --> lemma_7_2
+fid_75_clauses --> proposition_7_5
+fid_79_clauses --> theorem_7_9
+fid_86_marked_arrows --> theorem_8_6
+fid_91_free_products --> proposition_9_1
+fid_93_def91_iterated --> theorem_9_3
+fid_105_clause2 --> theorem_10_5
+fid_106_freelift --> proposition_10_6
+fid_108_clause3 --> lemma_10_8
+fid_46_packaging --> lemma_4_6
