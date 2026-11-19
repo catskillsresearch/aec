@@ -291,6 +291,7 @@ public import AEC.Section5.EmptiedScheme
 public import AEC.Audit.AllSets
 public import AEC.Audit.AllSetsMinimal
 public import AEC.Audit.NoPairs
+public import AEC.Audit.JointNoAllArity
 public import AEC.Audit.ProductAxiomsAudit
 public import AEC.Audit.WitnessingChainVacuous
 public import AEC.Audit.FreeFromVacuous

@@ -6696,7 +6696,7 @@
    "file": "AEC/Section8/Lemma83Isolation.lean",
    "status": "open",
    "blocker": null,
-   "detail": "Cycle 131 (found): Hull83.Joint only gives samples homogeneous through each finite n; a single all-arity homogeneous sample is not supplied by the coherent colors (that is what the EM limit avoids). The global-arrow route of infra_83_full_single_of_ret_evals therefore needs either this sample or a tuple-wise (bounded-arity) reformulation; infra_83_piece_matches_bounded gives the finite matches."
+   "detail": "Cycle 131 (found): Hull83.Joint only gives samples homogeneous through each finite n; a single all-arity homogeneous sample is not supplied by the coherent colors (that is what the EM limit avoids). The global-arrow route of infra_83_full_single_of_ret_evals therefore needs either this sample or a tuple-wise (bounded-arity) reformulation; infra_83_piece_matches_bounded gives the finite matches. | Cycle 150: AEC/Audit/JointNoAllArity.lean (sorry-free): the abstract Joint interface (∀ n κ, Joint P n c κ) does NOT yield an infinite P-sample homogeneous in every arity (Boolean colors, c ≡ true, P = 'true exactly up to some N'). Simultaneous homogeneity for colorings of [S]^{<ω} is an omega-Erdős-type partition property, not available in ZFC in general, so this gap should be closed by the tuple-wise reformulation (pieces of bounded arity via infra_83_piece_matches_bounded), not by producing the sample."
   },
   {
    "id": "infra_83_ret_admission",
