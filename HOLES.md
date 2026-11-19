@@ -595,11 +595,11 @@ Lean: imports `Section5.Results` and `Section6.Results`. Soft paper chain after 
 | `infra_83_Y_iso_over_X` | Lemma 8.3 proof: iso Y ≅ F(Z) over X ≅ F(J) | [`Lemma83PairSamples.lean`](AEC/Section8/Lemma83PairSamples.lean) (retired, cycle 105: superseded by mixed-sublanguage chain) |
 | `infra_83_sublang_bundle_chain` | Lemma 8.3 proof: sort chain X_H → Y_H (sublanguage) → L_H via bundled subPiecesHom | [`HullSubBundle83.lean`](AEC/Section8/HullSubBundle83.lean) (**done**, cycle 105) |
 | `infra_83_pair2_template` | Lemma 8.3 proof: concrete three-sort pair2 template, strong natural X→Y→L | [`Lemma83PairTemplate.lean`](AEC/Section8/Lemma83PairTemplate.lean) (**done**, cycle 105) |
-| `infra_83_X_hull_eq_FJ` | Lemma 8.3 proof: X-sort pieces are F(J_H) | [`Lemma83PairTemplate.lean`](AEC/Section8/Lemma83PairTemplate.lean) (open) |
+| `infra_83_X_hull_eq_FJ` | Lemma 8.3 proof: X-sort pieces are F(J_H) | [`OrderColimit83.lean`](AEC/Section8/OrderColimit83.lean) (**done**, cycle 108) |
 | `infra_83_sublang_mix_hom` | Lemma 8.3 proof: X_H (X-language) → Y_H (Y-language) bundled sort map | [`HullSubMix83.lean`](AEC/Section8/HullSubMix83.lean) (**done**, cycle 105) |
 | `infra_83_pair3_samples` | Lemma 8.3 proof: three-copy pair samples (X-, Y-, full labels) | [`Lemma83PairSamples3.lean`](AEC/Section8/Lemma83PairSamples3.lean) (**done**, cycle 105) |
 | `infra_83_pair3_template` | Lemma 8.3 proof: three-language template, strong natural X→Y→L | [`Lemma83PairTemplate3.lean`](AEC/Section8/Lemma83PairTemplate3.lean) (**done**, cycle 105) |
-| `infra_83_Y_hull_eq_FZ` | Lemma 8.3 proof: Y-sort pieces are F(Z_H) | [`Lemma83PairTemplate3.lean`](AEC/Section8/Lemma83PairTemplate3.lean) (open) |
+| `infra_83_Y_hull_eq_FZ` | Lemma 8.3 proof: Y-sort pieces are F(Z_H) | [`OrderColimit83.lean`](AEC/Section8/OrderColimit83.lean) (**done**, cycle 108) |
 | `infra_83_pair3_template_strong` | Lemma 8.3 proof: pair3 template sort maps and order-embedding maps strong and commuting | [`Lemma83PairTemplate3.lean`](AEC/Section8/Lemma83PairTemplate3.lean) (**done**, cycle 105) |
 | `infra_83_chart_generation` | Lemma 8.3 proof: S ∩ X = F(J_S) for sets closed under X-labels and representation positions | [`LabRep83.lean`](AEC/Section8/LabRep83.lean) (**done**, cycle 105) |
 | `infra_83_rep_language` | Lemma 8.3 proof: representation-position functions and pair languages pairLangR/R2/R3 | [`PairLangR83.lean`](AEC/Section8/PairLangR83.lean) (**done**, cycle 105) |

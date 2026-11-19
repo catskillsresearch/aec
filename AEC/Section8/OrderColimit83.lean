@@ -470,6 +470,8 @@ theorem infra_83_pairMS2_X_hull_natural (P : SingleModelData K)
         ((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
         ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).limit I).obj.carrier ↪[K.τ]
           (P.E.obj (OCol83.Col (OCol83.phiH h I) (OCol83.phiH_comp h hcomp I))).carrier),
+      (∀ k (a : Fin (k + 1)), (ch k).ε (Quotient.mk _ (Term.var (a, (0 : Fin 1))) : ((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).obj k).carrier) = P.E.skeleton ((ch k).j a)) ∧
       (∀ (I : Type u) [LinearOrder I] [Nonempty I], K.Strong (m I) ∧ Function.Bijective (m I)) ∧
       (∀ (I I' : Type u) [LinearOrder I] [Nonempty I] [LinearOrder I'] [Nonempty I'] (f : I ↪o I') x,
         m I' (EM83.gEmMap (F := Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
@@ -495,7 +497,7 @@ theorem infra_83_pairMS2_X_hull_natural (P : SingleModelData K)
         ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).limit I).canon s x) = P.E.skeleton (g I i)) ∧
       ∀ (I : Type u) [LinearOrder I],
         #(OCol83.Col (OCol83.phiH h I) (OCol83.phiH_comp h hcomp I)) ≤ #(Finset I) * ls K := by
-  obtain ⟨c, hc, hcoh, hXs, ch, h, hid, hcomp, hjc, η, happ, -, hlim⟩ := infra_83_pairMS2_X_F_pieces P Pr
+  obtain ⟨c, hc, hcoh, hXs, ch, h, hid, hcomp, hjc, η, hv, happ, -, hlim⟩ := infra_83_pairMS2_X_F_pieces P Pr
   have hco : ∀ (I : Type u) [LinearOrder I] [Nonempty I], ∃ m' : ((orderPieces83 P.E (fun k => (ch k).H) h hid hcomp).limit I).obj.carrier ↪[K.τ]
         (P.E.obj (OCol83.Col (OCol83.phiH h I) (OCol83.phiH_comp h hcomp I))).carrier,
       K.Strong m' ∧ Function.Bijective m' ∧ ∀ s, m'.comp
@@ -505,6 +507,7 @@ theorem infra_83_pairMS2_X_hull_natural (P : SingleModelData K)
       (fun {s t} hst => OCol83.iota_compat _ _ _ hst) (fun y => OCol83.cover _ _ _ P.E y)
   refine ⟨c, hc, hcoh, hXs, ch, h, hid, hcomp,
     fun I _ _ => (Classical.choose (hco I)).comp (η.limMap I),
+    hv,
     fun I _ _ => ⟨K.strong_trans _ _ (hlim I).2 (Classical.choose_spec (hco I)).1,
       (Classical.choose_spec (hco I)).2.1.comp (hlim I).1⟩, ?_⟩
   have hsq : ∀ (I I' : Type u) [LinearOrder I] [Nonempty I] [LinearOrder I'] [Nonempty I'] (f : I ↪o I') x,
@@ -634,6 +637,8 @@ theorem infra_83_pairMS2_Y_hull_natural (P : SingleModelData K)
         ((Hull83.subLangPieces (psiM P.E Pr.n)
         ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs).limit I).obj.carrier ↪[K.τ]
           (P.E.obj (OCol83.Col (OCol83.phiH h I) (OCol83.phiH_comp h hcomp I))).carrier),
+      (∀ k (a : Fin (k + 1)), (ch k).ε (Quotient.mk _ (Term.var (a, (1 : Fin 2))) : ((Hull83.subLangPieces (psiM P.E Pr.n)
+        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs).obj k).carrier) = P.E.skeleton ((ch k).j a)) ∧
       (∀ (I : Type u) [LinearOrder I] [Nonempty I], K.Strong (m I) ∧ Function.Bijective (m I)) ∧
       (∀ (I I' : Type u) [LinearOrder I] [Nonempty I] [LinearOrder I'] [Nonempty I'] (f : I ↪o I') x,
         m I' (EM83.gEmMap (F := Hull83.subLangPieces (psiM P.E Pr.n)
@@ -659,7 +664,7 @@ theorem infra_83_pairMS2_Y_hull_natural (P : SingleModelData K)
         ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs).limit I).canon s x) = P.E.skeleton (g I i)) ∧
       ∀ (I : Type u) [LinearOrder I],
         #(OCol83.Col (OCol83.phiH h I) (OCol83.phiH_comp h hcomp I)) ≤ #(Finset I) * ls K := by
-  obtain ⟨c, hc, hcoh, hXs, ch, h, hid, hcomp, hjc, η, happ, -, hlim⟩ := infra_83_pairMS2_Y_F_pieces P Pr
+  obtain ⟨c, hc, hcoh, hXs, ch, h, hid, hcomp, hjc, η, hv, happ, -, hlim⟩ := infra_83_pairMS2_Y_F_pieces P Pr
   have hco : ∀ (I : Type u) [LinearOrder I] [Nonempty I], ∃ m' : ((orderPieces83 P.E (fun k => (ch k).H) h hid hcomp).limit I).obj.carrier ↪[K.τ]
         (P.E.obj (OCol83.Col (OCol83.phiH h I) (OCol83.phiH_comp h hcomp I))).carrier,
       K.Strong m' ∧ Function.Bijective m' ∧ ∀ s, m'.comp
@@ -669,6 +674,7 @@ theorem infra_83_pairMS2_Y_hull_natural (P : SingleModelData K)
       (fun {s t} hst => OCol83.iota_compat _ _ _ hst) (fun y => OCol83.cover _ _ _ P.E y)
   refine ⟨c, hc, hcoh, hXs, ch, h, hid, hcomp,
     fun I _ _ => (Classical.choose (hco I)).comp (η.limMap I),
+    hv,
     fun I _ _ => ⟨K.strong_trans _ _ (hlim I).2 (Classical.choose_spec (hco I)).1,
       (Classical.choose_spec (hco I)).2.1.comp (hlim I).1⟩, ?_⟩
   have hsq : ∀ (I I' : Type u) [LinearOrder I] [Nonempty I] [LinearOrder I'] [Nonempty I'] (f : I ↪o I') x,

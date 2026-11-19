@@ -1254,10 +1254,12 @@ theorem infra_83_pairMS2_X_chart_natural (P : SingleModelData K)
         ((LS83.pairInlR P.E).comp (LS83.lsInl K)) (fun N _ => pairMAdmittedS2 P.E Pr.n N))
       (ch : ∀ k, PieceChart P.E ((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
         ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).obj k) k),
-      (∀ k (a : Fin (k + 1)), ∃ x, (ch k).ε x = P.E.skeleton ((ch k).j a) ∧
+      (∀ k (a : Fin (k + 1)), (ch k).ε (Quotient.mk _ (Term.var (a, (0 : Fin 1))) : ((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).obj k).carrier) = P.E.skeleton ((ch k).j a) ∧
         ∀ {l : ℕ} (e : Fin (k + 1) ↪o Fin (l + 1)),
           (ch l).ε ((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
-        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).map e x) = P.E.skeleton ((ch l).j (e a))) ∧
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).map e (Quotient.mk _ (Term.var (a, (0 : Fin 1))) : ((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).obj k).carrier)) = P.E.skeleton ((ch l).j (e a))) ∧
       ∀ {k l : ℕ} (e : Fin (k + 1) ↪o Fin (l + 1)), ∃ h : (ch k).H ↪o (ch l).H,
         ∀ x, (ch l).ε ((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
         ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).map e x) = P.E.map h ((ch k).ε x) := by
@@ -1314,7 +1316,7 @@ theorem infra_83_pairMS2_X_chart_natural (P : SingleModelData K)
   refine ⟨c, hc, hcoh, hXs, fun k =>
     { J := J k, lo := lo k, ne := ne k, H := H k, hne := hne k, ε := ε k, bij := hb k,
       j := jH k, inj := hi k, mono := hmo k },
-    fun k a => ⟨Quotient.mk _ (Term.var (a, (0 : Fin 1))), hcoord k _ a rfl, fun {l} e =>
+    fun k a => ⟨hcoord k _ a rfl, fun {l} e =>
       hcoord l _ (e a) (Hull83.subLangPieces_coord _ _ hc hcoh _ hXs e _ a 0 rfl)⟩,
     fun {k l} e => ?_⟩
   have hx : ∀ p : H k, ∃ x, ε k x = P.E.skeleton p := fun p => (hb k).2 _
@@ -1375,10 +1377,12 @@ theorem infra_83_pairMS2_Y_chart_natural (P : SingleModelData K)
         ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) (fun N _ => pairMAdmittedS2 P.E Pr.n N))
       (ch : ∀ k, PieceChart P.E ((Hull83.subLangPieces (psiM P.E Pr.n)
         ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs).obj k) k),
-      (∀ k (a : Fin (k + 1)), ∃ x, (ch k).ε x = P.E.skeleton ((ch k).j a) ∧
+      (∀ k (a : Fin (k + 1)), (ch k).ε (Quotient.mk _ (Term.var (a, (1 : Fin 2))) : ((Hull83.subLangPieces (psiM P.E Pr.n)
+        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs).obj k).carrier) = P.E.skeleton ((ch k).j a) ∧
         ∀ {l : ℕ} (e : Fin (k + 1) ↪o Fin (l + 1)),
           (ch l).ε ((Hull83.subLangPieces (psiM P.E Pr.n)
-        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs).map e x) = P.E.skeleton ((ch l).j (e a))) ∧
+        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs).map e (Quotient.mk _ (Term.var (a, (1 : Fin 2))) : ((Hull83.subLangPieces (psiM P.E Pr.n)
+        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs).obj k).carrier)) = P.E.skeleton ((ch l).j (e a))) ∧
       ∀ {k l : ℕ} (e : Fin (k + 1) ↪o Fin (l + 1)), ∃ h : (ch k).H ↪o (ch l).H,
         ∀ x, (ch l).ε ((Hull83.subLangPieces (psiM P.E Pr.n)
         ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs).map e x) = P.E.map h ((ch k).ε x) := by
@@ -1435,7 +1439,7 @@ theorem infra_83_pairMS2_Y_chart_natural (P : SingleModelData K)
   refine ⟨c, hc, hcoh, hXs, fun k =>
     { J := J k, lo := lo k, ne := ne k, H := H k, hne := hne k, ε := ε k, bij := hb k,
       j := jH k, inj := hi k, mono := hmo k },
-    fun k a => ⟨Quotient.mk _ (Term.var (a, (1 : Fin 2))), hcoord k _ a rfl, fun {l} e =>
+    fun k a => ⟨hcoord k _ a rfl, fun {l} e =>
       hcoord l _ (e a) (Hull83.subLangPieces_coord _ _ hc hcoh _ hXs e _ a 1 rfl)⟩,
     fun {k l} e => ?_⟩
   have hx : ∀ p : H k, ∃ x, ε k x = P.E.skeleton p := fun p => (hb k).2 _
@@ -1498,6 +1502,8 @@ theorem infra_83_pairMS2_X_chart_functor (P : SingleModelData K)
       (ch : ∀ k, PieceChart P.E ((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
         ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).obj k) k)
       (h : ∀ {k l : ℕ}, (Fin (k + 1) ↪o Fin (l + 1)) → (ch k).H ↪o (ch l).H),
+      (∀ k (a : Fin (k + 1)), (ch k).ε (Quotient.mk _ (Term.var (a, (0 : Fin 1))) : ((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).obj k).carrier) = P.E.skeleton ((ch k).j a)) ∧
       (∀ {k l : ℕ} (e : Fin (k + 1) ↪o Fin (l + 1)) x,
         (ch l).ε ((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
         ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).map e x) = P.E.map (h e) ((ch k).ε x)) ∧
@@ -1517,10 +1523,9 @@ theorem infra_83_pairMS2_X_chart_functor (P : SingleModelData K)
         ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).map e x) = P.E.skeleton (h k l e p) := by
     intro k l e p x hx
     rw [hh, hx, P.E.skeleton_natural]
-  refine ⟨c, hc, hcoh, hXs, ch, fun {k l} e => h k l e, fun {k l} e x => hh k l e x, ?_, ?_, ?_⟩
+  refine ⟨c, hc, hcoh, hXs, ch, fun {k l} e => h k l e, fun k a => (hj k a).1, fun {k l} e x => hh k l e x, ?_, ?_, ?_⟩
   · intro k l e a
-    obtain ⟨x, hx, hxe⟩ := hj k a
-    exact (P.E.skeleton.injective ((key k l e _ x hx).symm.trans (hxe e)))
+    exact (P.E.skeleton.injective ((key k l e _ _ (hj k a).1).symm.trans ((hj k a).2 e)))
   · intro k p
     obtain ⟨x, hx⟩ := (ch k).bij.2 (P.E.skeleton p)
     have h1 := key k k idEmb p x hx
@@ -1548,6 +1553,8 @@ theorem infra_83_pairMS2_Y_chart_functor (P : SingleModelData K)
       (ch : ∀ k, PieceChart P.E ((Hull83.subLangPieces (psiM P.E Pr.n)
         ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs).obj k) k)
       (h : ∀ {k l : ℕ}, (Fin (k + 1) ↪o Fin (l + 1)) → (ch k).H ↪o (ch l).H),
+      (∀ k (a : Fin (k + 1)), (ch k).ε (Quotient.mk _ (Term.var (a, (1 : Fin 2))) : ((Hull83.subLangPieces (psiM P.E Pr.n)
+        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs).obj k).carrier) = P.E.skeleton ((ch k).j a)) ∧
       (∀ {k l : ℕ} (e : Fin (k + 1) ↪o Fin (l + 1)) x,
         (ch l).ε ((Hull83.subLangPieces (psiM P.E Pr.n)
         ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs).map e x) = P.E.map (h e) ((ch k).ε x)) ∧
@@ -1567,10 +1574,9 @@ theorem infra_83_pairMS2_Y_chart_functor (P : SingleModelData K)
         ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs).map e x) = P.E.skeleton (h k l e p) := by
     intro k l e p x hx
     rw [hh, hx, P.E.skeleton_natural]
-  refine ⟨c, hc, hcoh, hXs, ch, fun {k l} e => h k l e, fun {k l} e x => hh k l e x, ?_, ?_, ?_⟩
+  refine ⟨c, hc, hcoh, hXs, ch, fun {k l} e => h k l e, fun k a => (hj k a).1, fun {k l} e x => hh k l e x, ?_, ?_, ?_⟩
   · intro k l e a
-    obtain ⟨x, hx, hxe⟩ := hj k a
-    exact (P.E.skeleton.injective ((key k l e _ x hx).symm.trans (hxe e)))
+    exact (P.E.skeleton.injective ((key k l e _ _ (hj k a).1).symm.trans ((hj k a).2 e)))
   · intro k p
     obtain ⟨x, hx⟩ := (ch k).bij.2 (P.E.skeleton p)
     have h1 := key k k idEmb p x hx
@@ -1628,15 +1634,17 @@ theorem infra_83_pairMS2_X_F_pieces (P : SingleModelData K)
         h e ((ch k).j a) = (ch l).j (e a))
       (η : EM83.PiecesHom (Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
         ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs) (orderPieces83 P.E (fun k => (ch k).H) h hid hcomp)),
+      (∀ k (a : Fin (k + 1)), (ch k).ε (Quotient.mk _ (Term.var (a, (0 : Fin 1))) : ((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).obj k).carrier) = P.E.skeleton ((ch k).j a)) ∧
       (∀ k x, η.app k x = (ch k).ε x) ∧ (∀ k, Function.Bijective (η.app k)) ∧
       ∀ (I : Type u) [LinearOrder I] [Nonempty I],
         Function.Bijective (η.limMap I) ∧ K.Strong (η.limMap I) := by
-  obtain ⟨c, hc, hcoh, hXs, ch, h, hnat, hjc, hid, hcomp⟩ := infra_83_pairMS2_X_chart_functor P Pr
+  obtain ⟨c, hc, hcoh, hXs, ch, h, hv, hnat, hjc, hid, hcomp⟩ := infra_83_pairMS2_X_chart_functor P Pr
   refine ⟨c, hc, hcoh, hXs, ch, h, hid, hcomp, hjc,
     { app := fun k => (ch k).ε
       strong := fun k => strong_of_equiv K (embeddingEquivOfSurjective (ch k).ε (ch k).bij.2)
         ((Hull83.subLangPieces _ _ hc hcoh _ hXs).mem k)
-      natural := fun e => by ext x; exact hnat e x }, fun _ _ => rfl, fun k => (ch k).bij,
+      natural := fun e => by ext x; exact hnat e x }, hv, fun _ _ => rfl, fun k => (ch k).bij,
     fun I _ _ => ⟨EM83.PiecesHom.limMap_bijective _ I (fun k => (ch k).bij.2),
       EM83.PiecesHom.limMap_strong _ I⟩⟩
 
@@ -1663,15 +1671,17 @@ theorem infra_83_pairMS2_Y_F_pieces (P : SingleModelData K)
         h e ((ch k).j a) = (ch l).j (e a))
       (η : EM83.PiecesHom (Hull83.subLangPieces (psiM P.E Pr.n)
         ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs) (orderPieces83 P.E (fun k => (ch k).H) h hid hcomp)),
+      (∀ k (a : Fin (k + 1)), (ch k).ε (Quotient.mk _ (Term.var (a, (1 : Fin 2))) : ((Hull83.subLangPieces (psiM P.E Pr.n)
+        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs).obj k).carrier) = P.E.skeleton ((ch k).j a)) ∧
       (∀ k x, η.app k x = (ch k).ε x) ∧ (∀ k, Function.Bijective (η.app k)) ∧
       ∀ (I : Type u) [LinearOrder I] [Nonempty I],
         Function.Bijective (η.limMap I) ∧ K.Strong (η.limMap I) := by
-  obtain ⟨c, hc, hcoh, hXs, ch, h, hnat, hjc, hid, hcomp⟩ := infra_83_pairMS2_Y_chart_functor P Pr
+  obtain ⟨c, hc, hcoh, hXs, ch, h, hv, hnat, hjc, hid, hcomp⟩ := infra_83_pairMS2_Y_chart_functor P Pr
   refine ⟨c, hc, hcoh, hXs, ch, h, hid, hcomp, hjc,
     { app := fun k => (ch k).ε
       strong := fun k => strong_of_equiv K (embeddingEquivOfSurjective (ch k).ε (ch k).bij.2)
         ((Hull83.subLangPieces _ _ hc hcoh _ hXs).mem k)
-      natural := fun e => by ext x; exact hnat e x }, fun _ _ => rfl, fun k => (ch k).bij,
+      natural := fun e => by ext x; exact hnat e x }, hv, fun _ _ => rfl, fun k => (ch k).bij,
     fun I _ _ => ⟨EM83.PiecesHom.limMap_bijective _ I (fun k => (ch k).bij.2),
       EM83.PiecesHom.limMap_strong _ I⟩⟩
 
@@ -1851,7 +1861,7 @@ theorem infra_83_pairMS2_X_limit_of_cocone (P : SingleModelData K)
         ∃ m : (((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
         ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).limit I).obj.carrier ↪[K.τ] (P.E.obj J).carrier),
           K.Strong m ∧ Function.Bijective m := by
-  obtain ⟨c, hc, hcoh, hXs, ch, h, hid, hcomp, hjc, η, -, -, hlim⟩ := infra_83_pairMS2_X_F_pieces P Pr
+  obtain ⟨c, hc, hcoh, hXs, ch, h, hid, hcomp, hjc, η, -, -, -, hlim⟩ := infra_83_pairMS2_X_F_pieces P Pr
   refine ⟨c, hc, hcoh, hXs, ch, h, hid, hcomp, hjc, fun I _ _ J _ _ ι hι hcov => ?_⟩
   obtain ⟨m, hm, hbij, -⟩ := infra_83_orderPieces_cocone_bij P.E I J ι hι hcov
   exact ⟨m.comp (η.limMap I), K.strong_trans _ _ (hlim I).2 hm, hbij.comp (hlim I).1⟩
@@ -1887,7 +1897,7 @@ theorem infra_83_pairMS2_Y_limit_of_cocone (P : SingleModelData K)
         ∃ m : (((Hull83.subLangPieces (psiM P.E Pr.n)
         ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs).limit I).obj.carrier ↪[K.τ] (P.E.obj J).carrier),
           K.Strong m ∧ Function.Bijective m := by
-  obtain ⟨c, hc, hcoh, hXs, ch, h, hid, hcomp, hjc, η, -, -, hlim⟩ := infra_83_pairMS2_Y_F_pieces P Pr
+  obtain ⟨c, hc, hcoh, hXs, ch, h, hid, hcomp, hjc, η, -, -, -, hlim⟩ := infra_83_pairMS2_Y_F_pieces P Pr
   refine ⟨c, hc, hcoh, hXs, ch, h, hid, hcomp, hjc, fun I _ _ J _ _ ι hι hcov => ?_⟩
   obtain ⟨m, hm, hbij, -⟩ := infra_83_orderPieces_cocone_bij P.E I J ι hι hcov
   exact ⟨m.comp (η.limMap I), K.strong_trans _ _ (hlim I).2 hm, hbij.comp (hlim I).1⟩
