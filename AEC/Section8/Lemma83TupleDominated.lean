@@ -352,5 +352,43 @@ theorem infra_83_dominated_of_marked_matches (P : SingleModelData K)
     (N.incl.onVertex a.1 a.2) ≠ a.2}) (fun i => ⟨i.1.1, i.2⟩)
     (fun x y h => Subtype.ext (Subtype.ext (congrArg Subtype.val h :)))
 
+
+/-- **The mark realizes the prescribed type from a match over the base (proved).** As
+`infra_83_realizes_descend`, but with no arrow of the upper objects: it suffices that `b` (in
+`X ≤ Y`) has the same Galois type over `X` as the restriction along `onX : X → X'` of a tuple `b'`
+of `X' ≤ Y'` realizing `p_{X'}` (the paper's identification of the template mark with the sample
+mark over `X_H`, then stationarity `Pr.along`). -/
+theorem infra_83_realizes_of_match (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) {μ μ' : Cardinal.{u}}
+    {hμ : μ ∈ P.eligible} {hμ' : μ' ∈ P.eligible}
+    {X Y : P.scheme.Object μ hμ} {X' Y' : P.scheme.Object μ' hμ'}
+    (incl : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ Y))
+    (incl' : SystemArrow K oneVertexShape (P.scheme.asSystem hμ' X')
+      (P.scheme.asSystem hμ' Y'))
+    (onX : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ' X'))
+    {bIdx bIdx' : Type u} (b : bIdx → Occurrence K oneVertexShape (P.scheme.asSystem hμ Y))
+    (b' : bIdx' → Occurrence K oneVertexShape (P.scheme.asSystem hμ' Y'))
+    (τ : bIdx ≃ bIdx')
+    (hD : SameGaloisType (asTuple incl trivial b)
+      ((asTuple incl' trivial b').restrict onX trivial) τ (Equiv.refl _))
+    (realEq' : bIdx' ≃ (Pr.assign hμ' X').idx)
+    (hr' : SameGaloisType (asTuple incl' trivial b') (Pr.assign hμ' X') realEq' (Equiv.refl _)) :
+    ∃ realEq : bIdx ≃ (Pr.assign hμ X).idx,
+      SameGaloisType (asTuple incl trivial b) (Pr.assign hμ X) realEq (Equiv.refl _) := by
+  have hlt : ℵ₀ < μ := P.aleph0_lt hμ
+  obtain ⟨e0, hFL, -⟩ := Pr.along onX trivial
+  have hN' := infra_82_sameGalois_restrict onX trivial hr'
+  have hfin' : #(Pr.assign hμ' X').idx ≤ ℵ₀ := by
+    have : Finite (Pr.assign hμ' X').idx := Finite.of_equiv _ (Pr.arity hμ' X').symm
+    exact (Cardinal.lt_aleph0_of_finite _).le
+  have hfin : #(Pr.assign hμ X).idx ≤ ℵ₀ := by
+    have : Finite (Pr.assign hμ X).idx := Finite.of_equiv _ (Pr.arity hμ X).symm
+    exact (Cardinal.lt_aleph0_of_finite _).le
+  have SA := infra_612_galois_trans_last_base (SameGaloisType.unswap_refl hN'.symm) hD.symm
+    ℵ₀ le_rfl hlt hfin' rfl
+  have SB := infra_612_galois_trans_last_base hFL (SameGaloisType.swap_refl SA)
+    ℵ₀ le_rfl hlt hfin rfl
+  exact ⟨_, SameGaloisType.unswap_refl SB.symm⟩
+
 end
 end AEC

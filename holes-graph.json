@@ -7039,6 +7039,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 167: proved."
+  },
+  {
+   "id": "infra_83_realizes_of_match",
+   "label": "The mark realizes p_X from a match over the base only: b has the Galois type over X of the restriction along onX of a tuple b' realizing p_X' (Pr.along); no arrow of the upper objects",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83TupleDominated.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 168: proved."
   }
  ],
  "edges": [
@@ -12919,8 +12928,13 @@
    "from": "infra_83_dominated_of_marked_matches",
    "to": "infra_83_all_dominated",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_realizes_of_match",
+   "to": "infra_83_bounded_arity_free",
+   "kind": "hard"
   }
  ],
- "doneCount": 714,
+ "doneCount": 715,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
