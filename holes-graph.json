@@ -7777,6 +7777,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 248: proved."
+  },
+  {
+   "id": "infra_83_dominated_of_tower_matches_at",
+   "label": "At a closed level a finite mark is all-dominated once Y has an exhausting countable tower of small strong submodels containing it whose stage lists (b, M n) each have a sample match (toA into a sample base at a closed level >= mu, mu retractions almost fixing A, retraction images of the matched list in toA[X], type over X = restricted sample type, sample type isolated relative to the mark): isolation_of_matched_tuple per stage + dominated_of_tower_at",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PieceMatch.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 249: proved."
   }
  ],
  "edges": [
@@ -14067,8 +14076,13 @@
    "from": "infra_83_full_single_of_towers",
    "to": "infra_83_lemma_8_3_full_single",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_dominated_of_tower_matches_at",
+   "to": "infra_83_arity_removal",
+   "kind": "hard"
   }
  ],
- "doneCount": 795,
+ "doneCount": 796,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

@@ -3246,4 +3246,58 @@ theorem infra_83_full_single_of_towers (P : SingleModelData K)
     infra_83_dominated_of_tower_at P hI (incl I hI.2.1) _ M j hj hMc hmono hcov hd hIso⟩
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+set_option maxHeartbeats 3200000 in
+/-- **All-domination from bounded-arity matches of the stages of one tower (proved).** At a
+closed level `μ`, a finite mark `b` of `X ≤ Y` is all-dominated once `Y` has an exhausting
+countable tower of small strong submodels `M n ∋ b` such that each stage list `(b, M n)` has a
+sample match in the sense of `infra_83_isolation_of_matched_tuple` (an embedding `toA` of `X`
+into a sample base `A ≤ U` at a closed level `l ≥ μ`, `μ` retractions almost fixing `A`, an
+image `dU` of the list whose retraction images land in `toA[X]`, the type of the list over `X`
+equal to the restriction of `tp(dU/A)`, and `tp(dU/A)` isolated relative to its mark part).
+This is the paper's arity removal: the stages are nested lists, and only their (bounded-width)
+matches are required. -/
+theorem infra_83_dominated_of_tower_matches_at (P : SingleModelData K) {μ : Cardinal.{u}}
+    (hμ : μ ∈ infra_78_closedTail P ∩ infra_615_closed P) {X Y : P.scheme.Object μ hμ.1.1}
+    (incl : SystemArrow K oneVertexShape (P.scheme.asSystem _ X) (P.scheme.asSystem _ Y))
+    {bIdx : Type u} [Finite bIdx]
+    (b : bIdx → Occurrence K oneVertexShape (P.scheme.asSystem _ Y))
+    (M : ℕ → Model K.τ) (j : ∀ n, Language.Embedding K.τ (M n).carrier Y.model.carrier)
+    (hj : ∀ n, K.Strong (j n)) (hMc : ∀ n, Model.card (M n) < μ)
+    (hmono : ∀ n x, ∃ y, j (n + 1) y = j n x) (hcov : ∀ y, ∃ n x, j n x = y)
+    (hd : ∀ i, ∃ x, j 0 x = (b i).2)
+    (hmatch : ∀ n, ∃ (l : Cardinal.{u}) (hlC : l ∈ infra_615_closed P)
+      (_ : l ∈ infra_78_closedTail P) (_ : μ ≤ l)
+      (A U : P.scheme.Object l hlC.1)
+      (toA : SystemArrow K oneVertexShape (P.scheme.asSystem hμ.2.1 X)
+        (P.scheme.asSystem hlC.1 A))
+      (inclS : SystemArrow K oneVertexShape (P.scheme.asSystem hlC.1 A)
+        (P.scheme.asSystem hlC.1 U))
+      (ι : Type u) (r : ι → SystemArrow K oneVertexShape
+        (P.scheme.asSystem hlC.1 U) (P.scheme.asSystem hlC.1 A))
+      (_ : #ι = μ)
+      (_ : ∀ a : Occurrence K oneVertexShape (P.scheme.asSystem hlC.1 A),
+        Finite {i : ι // (r i).onVertex a.1 (inclS.onVertex a.1 a.2) ≠ a.2})
+      (dU : bIdx ⊕ (M n).carrier → Occurrence K oneVertexShape (P.scheme.asSystem hlC.1 U)),
+      (∀ i s, ∃ y, toA.onVertex (dU s).1 y = (r i).onVertex (dU s).1 (dU s).2) ∧
+      SameGaloisType (asTuple incl trivial (seqJoint b (fun x => Y.occ (j n x))))
+        ((asTuple inclS trivial dU).restrict toA trivial) (Equiv.refl _) (Equiv.refl _) ∧
+      IsRelativelyIsolated (uIdx := bIdx) (cIdx := (M n).carrier) (asTuple inclS trivial dU)
+        (Equiv.refl _)) :
+    AllDominated incl trivial bIdx b := by
+  refine infra_83_dominated_of_tower_at P hμ incl b M j hj hMc hmono hcov hd (fun n => ?_)
+  obtain ⟨l, hlC, hlT, hμl, A, U, toA, inclS, ι, r, hιcard, halmost, dU, himg, hExt, hIso⟩ :=
+    hmatch n
+  have hsz : #(bIdx ⊕ (M n).carrier) < μ :=
+    infra_75_sum_lt (P.aleph0_le hμ.1.1)
+      ((Cardinal.lt_aleph0_of_finite _).trans (P.aleph0_lt hμ.1.1))
+      (by simpa [Model.card] using hMc n)
+  exact infra_83_isolation_of_matched_tuple P hμ.2 hlC hμ.1 hlT hμl A U X Y toA trivial inclS
+    trivial incl trivial r hιcard halmost (seqJoint b (fun x => Y.occ (j n x))) dU hsz himg hExt
+    hIso
+end
+
 end AEC
