@@ -465,6 +465,7 @@ Lean: imports `Section5.Results` and `Section6.Results`. Soft paper chain after 
 | `infra_72_level_hull` | Level-`ν` hull between `A` and `B` containing a small list (for the mixed `tied_answer`) | [`Lemma72Mixed.lean`](AEC/Section7/Lemma72Mixed.lean) (**done**, cycle 97) |
 | `infra_72_tiedFree_restrict_factor` | Mixed tied freeness restricts to a level-`ν` factor `A → B₀ → B` | [`Lemma72Mixed.lean`](AEC/Section7/Lemma72Mixed.lean) (**done**, cycle 97) |
 | `infra_72_tied_of_isolated_mixed` | Lemma 7.2 mixed tied step (bounds at `A`'s level only) | [`Lemma72Mixed.lean`](AEC/Section7/Lemma72Mixed.lean) (**done**, cycle 97) |
+| `infra_72_mixed_level_closed` | Lemma 7.2 mixed clause 2 with `B`'s level closed (helper for 8.2(5); English-exact form stays open) | [`Lemma72Mixed.lean`](AEC/Section7/Lemma72Mixed.lean) (**done**, cycle 97) |
 | `infra_72_mixed_level` | Lemma 7.2 last sentence (A at a smaller level than B), stated with sorry (audit) | [`Lemma72Mixed.lean`](AEC/Section7/Lemma72Mixed.lean) (open, cycle 96) |
 | `infra_82_tiedFreeMixed_base_equiv` | Mixed tied freeness under a reindexed change of base tuple | [`TiedAlong.lean`](AEC/Section8/TiedAlong.lean) (**done**, cycle 97) |
 | `infra_82_mark_tied_along_single` | Lemma 8.2(4) for `P.scheme`: tied freeness of the mark along arrows (Def 8.1 tied, cycle 97 ruling) | [`TiedAlong.lean`](AEC/Section8/TiedAlong.lean) (**done**, cycle 97) |

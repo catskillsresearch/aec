@@ -502,6 +502,112 @@ theorem infra_72_tied_of_isolated_mixed
     (fun t => by cases t <;> rfl)
   exact P.scheme.diagram_trans _ _ _ _ _ _ ans (P.scheme.diagram_symm _ _ _ _ d2)
 
+set_option maxHeartbeats 6400000 in
+/-- **English Lemma 7.2 clause 2 at mixed levels, with the level of `B` closed (proved helper;
+cycle 97 ruling 3).** As `infra_72_mixed_level`, with two extra hypotheses: `A`'s level `ν` in
+the `σ`-tail and `B`'s level `μ` recursion closed. Only the uniqueness step
+(`infra_72_tied_unique_mixed`, testing over `B`) uses them; every other step uses bounds at `ν`
+only. Used for Lemma 8.2(5), where both levels lie in the tail. The English-exact statement
+`infra_72_mixed_level` stays open. -/
+theorem infra_72_mixed_level_closed
+    (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : ℵ₀ ≤ σ)
+    {ν μ : Cardinal.{u}} (hν : ν ∈ P.eligible) (hμ : μ ∈ P.eligible) (hνμ : ν ≤ μ)
+    (hrec : ν ∈ recursionClosedLevels P σ) (hσSucc : Order.succ σ ≤ ν)
+    (hνT : ν ∈ infra_73_tailSet P σ) (hrecμ : μ ∈ recursionClosedLevels P σ)
+    {A : P.scheme.Object ν hν} {B : P.scheme.Object μ hμ}
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hν A) (P.scheme.asSystem hμ B))
+    (hf : P.scheme.permitted (X := A) (Y := B) f)
+    (q : TupleOver K oneVertexShape P.scheme hν A)
+    (qB : TupleOver K oneVertexShape P.scheme hμ B)
+    (eB : q.idx ≃ qB.idx)
+    {uIdx cIdx : Type u} (e : q.idx ≃ uIdx ⊕ cIdx)
+    (hqν : q.ν = ν) (hBν : qB.ν = μ)
+    (hidx : #q.idx ≤ σ) (hidxν : #q.idx < ν)
+    {wι : Type u} (W : wι → Occurrence K oneVertexShape (P.scheme.asSystem hν A))
+    (hW : IsIsolatingFragment q e W)
+    (hExt : SameGaloisType q (qB.restrict f hf) eB (Equiv.refl qB.idx))
+    (hMargTied : IsTiedFreeMixed f (q.marginal e) (qB.marginal (eB.symm.trans e))
+      (Equiv.refl uIdx)) :
+    IsIsolatingFragment qB (eB.symm.trans e) (pushParams f W) := by
+  classical
+  have hσlt : σ < ν := (Order.lt_succ σ).trans_le hσSucc
+  refine ⟨hW.1.trans_le hνμ, ?_⟩
+  intro q'' e'' hν'' hMargB hDEW
+  let qA : TupleOver K oneVertexShape P.scheme hν A := q''.restrict f hf
+  -- (a)
+  have hMargA := infra_72_marginal_over_A_mixed P σ hσ hν hμ hνμ hrec hσSucc f hf q qB q''
+    eB e e'' hqν hBν.ge hν''.ge hidx hMargTied hMargB
+  -- (b)
+  have hWA : P.scheme.DiagramEq (X := q.host) (Y := qA.host)
+      (alignJoint e (typeJoint (p := q) W)) (alignJoint e'' (typeJoint (p := qA) W)) := by
+    have d0 := infra_72_ext_align_mixed hνμ f hf q qB eB e hqν hBν hidxν hExt W hW.1
+    have d0' := infra_73_diagramEq_of_eq d0 (fun _ => rfl)
+      (fun t => (by cases t <;> rfl :
+        alignJoint (eB.symm.trans e) (typeJoint (p := qB.restrict f hf) W) t =
+        alignJoint (eB.symm.trans e) (typeJoint (p := qB) (pushParams f W)) t))
+    have d := P.scheme.diagram_trans q.host qB.host q''.host _ _ _ d0' hDEW
+    exact infra_73_diagramEq_of_eq d (fun _ => rfl) (fun t => by cases t <;> rfl)
+  -- (c) realize the competitor read over `A` at level `ν`, then isolate
+  have hqAidx : #qA.idx < ν := by
+    have : #q''.idx = #q.idx := Cardinal.mk_congr (e''.trans e.symm)
+    change #q''.idx < ν
+    rw [this]; exact hidxν
+  obtain ⟨r, er, hrν, hRr⟩ := infra_78_same_level_realization qA hqAidx
+  have huidx : #uIdx ≤ #q.idx :=
+    Cardinal.mk_le_of_injective (f := fun i : uIdx => e.symm (Sum.inl i))
+      (fun a b h => Sum.inl.inj (e.symm.injective h))
+  have hMr0 := infra_72_sgt_marginal hRr e''
+  have hMr : SameGaloisType (q.marginal e) (r.marginal (er.trans e''))
+      (Equiv.refl uIdx) (Equiv.refl uIdx) :=
+    infra_612_galois_trans_last_base hMargA hMr0 σ hσ hσlt (huidx.trans hidx) hrν
+  have hWr : P.scheme.DiagramEq (X := q.host) (Y := r.host)
+      (alignJoint e (typeJoint (p := q) W)) (alignJoint (er.trans e'') (typeJoint (p := r) W)) := by
+    have hb : #(qA.idx ⊕ wι) < ν := by
+      rw [mk_sum, lift_id, lift_id]
+      exact add_lt_of_lt (P.aleph0_le hν) hqAidx hW.1
+    have d := infra_78_diagramEq_of_sameGalois hRr W (hb.trans_le (hνμ.trans hν''.ge))
+      (by rw [hrν]; exact hb)
+    have d1 := infra_73_scheme_comp d (Sum.map e''.symm id)
+    have d2 := infra_73_diagramEq_of_eq d1 (xs' := alignJoint e'' (typeJoint (p := qA) W))
+      (ys' := alignJoint (er.trans e'') (typeJoint (p := r) W))
+      (fun t => by cases t <;> rfl) (fun t => by cases t <;> rfl)
+    exact P.scheme.diagram_trans _ _ _ _ _ _ hWA d2
+  have hSameR := hW.2 r (er.trans e'') hrν hMr hWr
+  have h12 := infra_73_sgt_uncommon hRr
+  have h32 := SameGaloisType.symm (infra_73_sgt_uncommon hSameR)
+  have hAq := infra_612_galois_trans_last_base h12 h32 σ hσ hσlt
+    (by change #q''.idx ≤ σ; rw [Cardinal.mk_congr (e''.trans e.symm)]; exact hidx) hqν
+  have hqA := infra_73_sgt_uncommon (SameGaloisType.symm hAq)
+  let eB'' : q.idx ≃ q''.idx := e.trans e''.symm
+  have hE : (Equiv.refl q.idx).trans (((Equiv.refl qA.idx).trans er.symm).trans
+      (e.trans (er.trans e'').symm).symm).symm = eB'' := by
+    ext k
+    exact Equiv.apply_symm_apply er _
+  have hExt'' : SameGaloisType q (q''.restrict f hf) eB'' (Equiv.refl q''.idx) :=
+    cast (congrArg (fun E => SameGaloisType q qA E (Equiv.refl qA.idx)) hE) hqA
+  have he'' : eB''.symm.trans e = e'' := by
+    ext k
+    simp [eB'']
+  -- (d)
+  have hMargTied'' : IsTiedFreeMixed f (q.marginal e) (q''.marginal (eB''.symm.trans e))
+      (Equiv.refl uIdx) := by
+    rw [he'']
+    exact infra_72_tiedFreeMixed_of_sameGalois hνμ f (q.marginal e)
+      (qB.marginal (eB.symm.trans e)) (q''.marginal e'')
+      (Equiv.refl uIdx) (Equiv.refl uIdx) (Equiv.refl uIdx)
+      hBν.ge hν''.ge (huidx.trans_lt hidxν) hMargTied hMargB
+  -- (e)
+  have hIso : IsRelativelyIsolated q e := IsRelativelyIsolated.of_fragment hW
+  have hT := infra_72_tied_of_isolated_mixed P σ hσ hν hμ hνμ hrec hσSucc f hf q qB eB e
+    hqν hBν.ge hidx hidxν hIso hExt hMargTied
+  have hT'' := infra_72_tied_of_isolated_mixed P σ hσ hν hμ hνμ hrec hσSucc f hf q q'' eB'' e
+    hqν hν''.ge hidx hidxν hIso hExt'' hMargTied''
+  have hU := infra_72_tied_unique_mixed P σ hσ hν hνT hμ hνμ hrecμ f hf q hidx qB q'' eB eB''
+    hBν hν'' hT hT''
+  have hU' := infra_73_sgt_equiv_trans hU e
+  rw [he''] at hU'
+  exact hU'
+
 /-- **English Lemma 7.2, clause 2 at mixed levels (open).** -/
 theorem infra_72_mixed_level
     (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : ℵ₀ ≤ σ)

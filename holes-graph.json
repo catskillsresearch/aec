@@ -4374,7 +4374,7 @@
    "file": "AEC/Section7/Lemma72Mixed.lean",
    "status": "open",
    "blocker": null,
-   "detail": "Statement now in Lean (sorry), cycle 96: infra_72_mixed_level in AEC/Section7/Lemma72Mixed.lean, the mixed-level port of infra_72_over_B_isolation with bounds at the level of A and IsTiedFreeMixed marginal. | Cycle 96 progress: ext_align_mixed, tied_move_mixed, tied_unique_mixed done. Remaining: mixed infra_73_tied_of_isolated (q relatively isolated + hExt + IsTiedFreeMixed marginal => IsTiedFreeMixed f q qB), then the assembly. Caveat: the uniqueness port uses recursion closure at the level mu of B (differing test over B); the English proviso only mentions bounds below the level of A, so either derive mu-testing from nu-bounds or ask for a ruling to add mu in the tail (harmless for 8.2(5) where both levels are in T). | Port analysis (cycle 96): the remaining step, mixed infra_73_tied_answer, cannot be a line-by-line port. The same-level proof uses a structural isomorphism psi : A -> B agreeing with f on the fragment and both approximation families (infra_73_move_iso), and reads qB over A along psi. Across levels no such psi exists; infra_78_move_mixed gives only a joint-diagram copy Z' in A (via saturation at nu plus diagram_iso into the saturating extension). Plan: run the competitor through the saturating extension Zext (level nu) and its iso phi : A = Zext, as in infra_78_move_mixed, i.e. expose the arrow/iso data from that proof as a separate lemma first. Also note the main statement assumes only recursion closure at nu; tied_move_mixed and tied_unique_mixed use the sigma-tail at nu (infra_73_tailSet) and recursion closure at mu. | Step (a) (same u-marginal over A) next: infra_73_differing_test needs both tuples hosted at the base level, but the competitor (q''.restrict f hf) is hosted at mu > nu; first realize its u-marginal at level nu (infra_78_same_level_realization), run the differing test there, and transfer back by Galois-type transitivity (infra_612_galois_trans_last_base / infra_78_trans_via_mixed). | Cycle 97 plan for mixed tied_answer (bounds at nu only): per query Z in B take the level-nu hull B0 (infra_72_level_hull), f = f0 . j; restrict hMargTied along j to a same-level IsTiedFree for f0; realize qB|B0 at level nu (infra_78_same_level_realization); apply same-level infra_73_tied_of_isolated at nu; carry the answer back along j. Uniqueness (tied_unique_mixed) still uses mu recursion-closed: if no nu-only route is found, prove infra_72_mixed_level_closed with mu in the tail and keep the English-exact statement open (ruling 3)."
+   "detail": "Statement now in Lean (sorry), cycle 96: infra_72_mixed_level in AEC/Section7/Lemma72Mixed.lean, the mixed-level port of infra_72_over_B_isolation with bounds at the level of A and IsTiedFreeMixed marginal. | Cycle 96 progress: ext_align_mixed, tied_move_mixed, tied_unique_mixed done. Remaining: mixed infra_73_tied_of_isolated (q relatively isolated + hExt + IsTiedFreeMixed marginal => IsTiedFreeMixed f q qB), then the assembly. Caveat: the uniqueness port uses recursion closure at the level mu of B (differing test over B); the English proviso only mentions bounds below the level of A, so either derive mu-testing from nu-bounds or ask for a ruling to add mu in the tail (harmless for 8.2(5) where both levels are in T). | Port analysis (cycle 96): the remaining step, mixed infra_73_tied_answer, cannot be a line-by-line port. The same-level proof uses a structural isomorphism psi : A -> B agreeing with f on the fragment and both approximation families (infra_73_move_iso), and reads qB over A along psi. Across levels no such psi exists; infra_78_move_mixed gives only a joint-diagram copy Z' in A (via saturation at nu plus diagram_iso into the saturating extension). Plan: run the competitor through the saturating extension Zext (level nu) and its iso phi : A = Zext, as in infra_78_move_mixed, i.e. expose the arrow/iso data from that proof as a separate lemma first. Also note the main statement assumes only recursion closure at nu; tied_move_mixed and tied_unique_mixed use the sigma-tail at nu (infra_73_tailSet) and recursion closure at mu. | Step (a) (same u-marginal over A) next: infra_73_differing_test needs both tuples hosted at the base level, but the competitor (q''.restrict f hf) is hosted at mu > nu; first realize its u-marginal at level nu (infra_78_same_level_realization), run the differing test there, and transfer back by Galois-type transitivity (infra_612_galois_trans_last_base / infra_78_trans_via_mixed). | Cycle 97 plan for mixed tied_answer (bounds at nu only): per query Z in B take the level-nu hull B0 (infra_72_level_hull), f = f0 . j; restrict hMargTied along j to a same-level IsTiedFree for f0; realize qB|B0 at level nu (infra_78_same_level_realization); apply same-level infra_73_tied_of_isolated at nu; carry the answer back along j. Uniqueness (tied_unique_mixed) still uses mu recursion-closed: if no nu-only route is found, prove infra_72_mixed_level_closed with mu in the tail and keep the English-exact statement open (ruling 3). | Cycle 97: all steps proved with bounds at nu except uniqueness over B; helper infra_72_mixed_level_closed (extra: nu in sigma-tail, mu recursion closed) is proved. English-exact statement stays open: remaining gap is uniqueness of mixed tied-free extensions over B without closure at mu (testing over B needs mu; a hull-based route still needs the differing test over B)."
   },
   {
    "id": "infra_72_ext_align_mixed",
@@ -4456,6 +4456,15 @@
    "status": "done",
    "blocker": null,
    "detail": "DONE cycle 97: per query a level-nu hull A -> B0 -> B, qB read over B0 and realized at nu, same-level infra_73_tied_of_isolated at nu, answer carried back. Helpers infra_72_sgt_marginal, infra_72_sgt_restrict, infra_72_ext_factor. Axioms clean."
+  },
+  {
+   "id": "infra_72_mixed_level_closed",
+   "label": "Lemma 7.2 clause 2 at mixed levels with B's level closed (helper, ruling 3)",
+   "section": 8,
+   "file": "AEC/Section7/Lemma72Mixed.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "DONE cycle 97. Extra hypotheses vs English: nu in infra_73_tailSet and mu recursion closed, used only by the uniqueness step (infra_72_tied_unique_mixed: testing over B). All other steps use bounds at nu only. For 8.2(5). Axioms clean."
   }
  ],
  "edges": [
@@ -8671,8 +8680,13 @@
    "from": "infra_72_tied_of_isolated_mixed",
    "to": "infra_72_mixed_level",
    "kind": "hard"
+  },
+  {
+   "from": "infra_72_mixed_level_closed",
+   "to": "infra_82_comparison_single",
+   "kind": "hard"
   }
  ],
- "doneCount": 441,
+ "doneCount": 442,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
