@@ -430,7 +430,8 @@ theorem infra_83_pairMS2_Y_hull_eq_FZ (P : SingleModelData K)
 /-- **`F_X(I) ≅ F(J_I)` naturally in `I`**: with `J_I` the directed colimit of the `X`-chart
 orders, there are strong bijective `τ`-isomorphisms `m_I : F_X(I) → F(J_I)` such that for every
 order embedding `f : I ↪o I'`, `m_I' ∘ F_X(f) = F(J_f) ∘ m_I` with `J_f : J_I ↪o J_I'` the
-induced map of colimits. -/
+induced map of colimits; moreover `I ↦ J_I`, `f ↦ J_f` is a functor (J_id = id,
+J_(g∘f) = J_g ∘ J_f). -/
 theorem infra_83_pairMS2_X_hull_natural (P : SingleModelData K)
     (Pr : StationaryPrescription K oneVertexShape P.scheme) :
     ∃ (c : (m : ℕ) → 0 < m → Hull83.TpColorB (LS83.pairLangM3 P.E Pr.n) 3 m)
@@ -451,10 +452,16 @@ theorem infra_83_pairMS2_X_hull_natural (P : SingleModelData K)
         ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).limit I).obj.carrier ↪[K.τ]
           (P.E.obj (OCol83.Col (OCol83.phiH h I) (OCol83.phiH_comp h hcomp I))).carrier),
       (∀ (I : Type u) [LinearOrder I] [Nonempty I], K.Strong (m I) ∧ Function.Bijective (m I)) ∧
-      ∀ (I I' : Type u) [LinearOrder I] [Nonempty I] [LinearOrder I'] [Nonempty I'] (f : I ↪o I') x,
+      (∀ (I I' : Type u) [LinearOrder I] [Nonempty I] [LinearOrder I'] [Nonempty I'] (f : I ↪o I') x,
         m I' (EM83.gEmMap (F := Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
         ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs) f x) =
-          P.E.map (OCol83.colMap h hid hcomp f) (m I x) := by
+          P.E.map (OCol83.colMap h hid hcomp f) (m I x)) ∧
+      (∀ (I : Type u) [LinearOrder I] [Nonempty I],
+        OCol83.colMap h hid hcomp (OrderIso.refl I).toOrderEmbedding = (OrderIso.refl _).toOrderEmbedding) ∧
+      ∀ (I I' I'' : Type u) [LinearOrder I] [Nonempty I] [LinearOrder I'] [Nonempty I']
+        [LinearOrder I''] [Nonempty I''] (f : I ↪o I') (g : I' ↪o I''),
+        OCol83.colMap h hid hcomp (f.trans g) =
+          (OCol83.colMap h hid hcomp f).trans (OCol83.colMap h hid hcomp g) := by
   obtain ⟨c, hc, hcoh, hXs, ch, h, hid, hcomp, -, η, happ, -, hlim⟩ := infra_83_pairMS2_X_F_pieces P Pr
   have hco : ∀ (I : Type u) [LinearOrder I] [Nonempty I], ∃ m' : ((orderPieces83 P.E (fun k => (ch k).H) h hid hcomp).limit I).obj.carrier ↪[K.τ]
         (P.E.obj (OCol83.Col (OCol83.phiH h I) (OCol83.phiH_comp h hcomp I))).carrier,
@@ -467,54 +474,76 @@ theorem infra_83_pairMS2_X_hull_natural (P : SingleModelData K)
     fun I _ _ => (Classical.choose (hco I)).comp (η.limMap I),
     fun I _ _ => ⟨K.strong_trans _ _ (hlim I).2 (Classical.choose_spec (hco I)).1,
       (Classical.choose_spec (hco I)).2.1.comp (hlim I).1⟩, ?_⟩
-  intro I I' _ _ _ _ f x
-  obtain ⟨s, y, rfl⟩ := ((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
-        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).limit I).joint x
-  have e1 := congrFun (congrArg (⇑) (EM83.gEmMap_canon (F := Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
-        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs) f s)) y
-  have e2 : ∀ (J : Type u) [LinearOrder J] [Nonempty J] t z,
-      η.limMap J (((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
-        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).limit J).canon t z) =
-        ((orderPieces83 P.E (fun k => (ch k).H) h hid hcomp).limit J).canon t (η.app _ z) :=
-    fun J _ _ t z => congrFun (congrArg (⇑) (η.limMap_canon J t)) z
-  have e3 : ∀ (J : Type u) [LinearOrder J] [Nonempty J] t w,
-      Classical.choose (hco J) (((orderPieces83 P.E (fun k => (ch k).H) h hid hcomp).limit J).canon t w) =
-        P.E.map (OCol83.iota (OCol83.phiH h J) (OCol83.phiH_comp h hcomp J) (OCol83.phiH_id h hid J) t) w :=
-    fun J _ _ t w => congrFun (congrArg (⇑) ((Classical.choose_spec (hco J)).2.2 t)) w
-  have e4 := congrFun (congrArg (⇑) (η.natural (indexCast f s))) y
-  simp only [Language.Embedding.comp_apply] at e1 e4 ⊢
-  rw [e1]
-  show Classical.choose (hco I') (η.limMap I' (((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
-        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).limit I').canon _
+  have hsq : ∀ (I I' : Type u) [LinearOrder I] [Nonempty I] [LinearOrder I'] [Nonempty I'] (f : I ↪o I') x,
+      (Classical.choose (hco I')).comp (η.limMap I') (EM83.gEmMap (F := Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs) f x) =
+        P.E.map (OCol83.colMap h hid hcomp f) ((Classical.choose (hco I)).comp (η.limMap I) x) := by
+    intro I I' _ _ _ _ f x
+    obtain ⟨s, y, rfl⟩ := ((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+          ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).limit I).joint x
+    have e1 := congrFun (congrArg (⇑) (EM83.gEmMap_canon (F := Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+          ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs) f s)) y
+    have e2 : ∀ (J : Type u) [LinearOrder J] [Nonempty J] t z,
+        η.limMap J (((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+          ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).limit J).canon t z) =
+          ((orderPieces83 P.E (fun k => (ch k).H) h hid hcomp).limit J).canon t (η.app _ z) :=
+      fun J _ _ t z => congrFun (congrArg (⇑) (η.limMap_canon J t)) z
+    have e3 : ∀ (J : Type u) [LinearOrder J] [Nonempty J] t w,
+        Classical.choose (hco J) (((orderPieces83 P.E (fun k => (ch k).H) h hid hcomp).limit J).canon t w) =
+          P.E.map (OCol83.iota (OCol83.phiH h J) (OCol83.phiH_comp h hcomp J) (OCol83.phiH_id h hid J) t) w :=
+      fun J _ _ t w => congrFun (congrArg (⇑) ((Classical.choose_spec (hco J)).2.2 t)) w
+    have e4 := congrFun (congrArg (⇑) (η.natural (indexCast f s))) y
+    simp only [Language.Embedding.comp_apply] at e1 e4 ⊢
+    rw [e1]
+    show Classical.choose (hco I') (η.limMap I' (((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+          ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).limit I').canon _
+        ((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+          ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).map (indexCast f s) y))) = _
+    have L1 := e2 I' (EM83.gSystemImage (F := Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+          ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs) f s)
       ((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
-        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).map (indexCast f s) y))) = _
-  have L1 := e2 I' (EM83.gSystemImage (F := Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
-        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs) f s)
-    ((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
-        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).map (indexCast f s) y)
-  have L2 := e3 I' (EM83.gSystemImage (F := Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
-        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs) f s)
-    (η.app _ ((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
-        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).map (indexCast f s) y))
-  refine (congrArg (fun z => Classical.choose (hco I') z) L1).trans (L2.trans ?_)
-  rw [e2]
-  refine Eq.trans ?_ (congrArg (fun z => P.E.map (OCol83.colMap h hid hcomp f) z)
-    (e3 I s (η.app _ y))).symm
-  refine (congrArg (fun z => P.E.map (OCol83.iota (OCol83.phiH h I') (OCol83.phiH_comp h hcomp I')
-    (OCol83.phiH_id h hid I') (imageIndex f s)) z) e4).trans ?_
-  show P.E.map _ (P.E.map (h (indexCast f s)) _) = P.E.map _ (P.E.map _ _)
-  have key : (h (indexCast f s)).trans (OCol83.iota (OCol83.phiH h I') (OCol83.phiH_comp h hcomp I')
-      (OCol83.phiH_id h hid I') (imageIndex f s)) =
-      (OCol83.iota (OCol83.phiH h I) (OCol83.phiH_comp h hcomp I) (OCol83.phiH_id h hid I) s).trans
-        (OCol83.colMap h hid hcomp f) := RelEmbedding.ext fun z => rfl
-  exact (congrFun (congrArg (⇑) (P.E.map_comp _ _)) _).symm.trans
-    ((congrArg (fun g => P.E.map g (η.app _ y)) key).trans
-      (congrFun (congrArg (⇑) (P.E.map_comp _ _)) _))
+          ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).map (indexCast f s) y)
+    have L2 := e3 I' (EM83.gSystemImage (F := Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+          ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs) f s)
+      (η.app _ ((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+          ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).map (indexCast f s) y))
+    refine (congrArg (fun z => Classical.choose (hco I') z) L1).trans (L2.trans ?_)
+    rw [e2]
+    refine Eq.trans ?_ (congrArg (fun z => P.E.map (OCol83.colMap h hid hcomp f) z)
+      (e3 I s (η.app _ y))).symm
+    refine (congrArg (fun z => P.E.map (OCol83.iota (OCol83.phiH h I') (OCol83.phiH_comp h hcomp I')
+      (OCol83.phiH_id h hid I') (imageIndex f s)) z) e4).trans ?_
+    show P.E.map _ (P.E.map (h (indexCast f s)) _) = P.E.map _ (P.E.map _ _)
+    have key : (h (indexCast f s)).trans (OCol83.iota (OCol83.phiH h I') (OCol83.phiH_comp h hcomp I')
+        (OCol83.phiH_id h hid I') (imageIndex f s)) =
+        (OCol83.iota (OCol83.phiH h I) (OCol83.phiH_comp h hcomp I) (OCol83.phiH_id h hid I) s).trans
+          (OCol83.colMap h hid hcomp f) := RelEmbedding.ext fun z => rfl
+    exact (congrFun (congrArg (⇑) (P.E.map_comp _ _)) _).symm.trans
+      ((congrArg (fun g => P.E.map g (η.app _ y)) key).trans
+        (congrFun (congrArg (⇑) (P.E.map_comp _ _)) _))
+  have hsurj : ∀ (I : Type u) [LinearOrder I] [Nonempty I],
+      Function.Surjective ((Classical.choose (hco I)).comp (η.limMap I)) :=
+    fun I _ _ => ((Classical.choose_spec (hco I)).2.1.comp (hlim I).1).2
+  refine ⟨hsq, fun I _ _ => ?_, fun I I' I'' _ _ _ _ _ _ f g => ?_⟩
+  · apply infra_83_map_faithful P.E
+    intro y
+    obtain ⟨x, rfl⟩ := hsurj I y
+    rw [← hsq, EM83.gEmMap_id, P.E.map_id]
+    rfl
+  · apply infra_83_map_faithful P.E
+    intro y
+    obtain ⟨x, rfl⟩ := hsurj I y
+    refine (hsq I I'' (f.trans g) x).symm.trans ?_
+    rw [EM83.gEmMap_comp]
+    refine (hsq I' I'' g _).trans ?_
+    rw [hsq I I' f x, P.E.map_comp]
+    rfl
 
 /-- **`F_Y(I) ≅ F(Z_I)` naturally in `I`**: with `Z_I` the directed colimit of the `Y`-chart
 orders, there are strong bijective `τ`-isomorphisms `m_I : F_Y(I) → F(Z_I)` such that for every
 order embedding `f : I ↪o I'`, `m_I' ∘ F_Y(f) = F(Z_f) ∘ m_I` with `Z_f : Z_I ↪o Z_I'` the
-induced map of colimits. -/
+induced map of colimits; moreover `I ↦ Z_I`, `f ↦ Z_f` is a functor (Z_id = id,
+Z_(g∘f) = Z_g ∘ Z_f). -/
 theorem infra_83_pairMS2_Y_hull_natural (P : SingleModelData K)
     (Pr : StationaryPrescription K oneVertexShape P.scheme) :
     ∃ (c : (m : ℕ) → 0 < m → Hull83.TpColorB (LS83.pairLangM3 P.E Pr.n) 3 m)
@@ -535,10 +564,16 @@ theorem infra_83_pairMS2_Y_hull_natural (P : SingleModelData K)
         ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs).limit I).obj.carrier ↪[K.τ]
           (P.E.obj (OCol83.Col (OCol83.phiH h I) (OCol83.phiH_comp h hcomp I))).carrier),
       (∀ (I : Type u) [LinearOrder I] [Nonempty I], K.Strong (m I) ∧ Function.Bijective (m I)) ∧
-      ∀ (I I' : Type u) [LinearOrder I] [Nonempty I] [LinearOrder I'] [Nonempty I'] (f : I ↪o I') x,
+      (∀ (I I' : Type u) [LinearOrder I] [Nonempty I] [LinearOrder I'] [Nonempty I'] (f : I ↪o I') x,
         m I' (EM83.gEmMap (F := Hull83.subLangPieces (psiM P.E Pr.n)
         ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs) f x) =
-          P.E.map (OCol83.colMap h hid hcomp f) (m I x) := by
+          P.E.map (OCol83.colMap h hid hcomp f) (m I x)) ∧
+      (∀ (I : Type u) [LinearOrder I] [Nonempty I],
+        OCol83.colMap h hid hcomp (OrderIso.refl I).toOrderEmbedding = (OrderIso.refl _).toOrderEmbedding) ∧
+      ∀ (I I' I'' : Type u) [LinearOrder I] [Nonempty I] [LinearOrder I'] [Nonempty I']
+        [LinearOrder I''] [Nonempty I''] (f : I ↪o I') (g : I' ↪o I''),
+        OCol83.colMap h hid hcomp (f.trans g) =
+          (OCol83.colMap h hid hcomp f).trans (OCol83.colMap h hid hcomp g) := by
   obtain ⟨c, hc, hcoh, hXs, ch, h, hid, hcomp, -, η, happ, -, hlim⟩ := infra_83_pairMS2_Y_F_pieces P Pr
   have hco : ∀ (I : Type u) [LinearOrder I] [Nonempty I], ∃ m' : ((orderPieces83 P.E (fun k => (ch k).H) h hid hcomp).limit I).obj.carrier ↪[K.τ]
         (P.E.obj (OCol83.Col (OCol83.phiH h I) (OCol83.phiH_comp h hcomp I))).carrier,
@@ -551,48 +586,69 @@ theorem infra_83_pairMS2_Y_hull_natural (P : SingleModelData K)
     fun I _ _ => (Classical.choose (hco I)).comp (η.limMap I),
     fun I _ _ => ⟨K.strong_trans _ _ (hlim I).2 (Classical.choose_spec (hco I)).1,
       (Classical.choose_spec (hco I)).2.1.comp (hlim I).1⟩, ?_⟩
-  intro I I' _ _ _ _ f x
-  obtain ⟨s, y, rfl⟩ := ((Hull83.subLangPieces (psiM P.E Pr.n)
-        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs).limit I).joint x
-  have e1 := congrFun (congrArg (⇑) (EM83.gEmMap_canon (F := Hull83.subLangPieces (psiM P.E Pr.n)
-        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs) f s)) y
-  have e2 : ∀ (J : Type u) [LinearOrder J] [Nonempty J] t z,
-      η.limMap J (((Hull83.subLangPieces (psiM P.E Pr.n)
-        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs).limit J).canon t z) =
-        ((orderPieces83 P.E (fun k => (ch k).H) h hid hcomp).limit J).canon t (η.app _ z) :=
-    fun J _ _ t z => congrFun (congrArg (⇑) (η.limMap_canon J t)) z
-  have e3 : ∀ (J : Type u) [LinearOrder J] [Nonempty J] t w,
-      Classical.choose (hco J) (((orderPieces83 P.E (fun k => (ch k).H) h hid hcomp).limit J).canon t w) =
-        P.E.map (OCol83.iota (OCol83.phiH h J) (OCol83.phiH_comp h hcomp J) (OCol83.phiH_id h hid J) t) w :=
-    fun J _ _ t w => congrFun (congrArg (⇑) ((Classical.choose_spec (hco J)).2.2 t)) w
-  have e4 := congrFun (congrArg (⇑) (η.natural (indexCast f s))) y
-  simp only [Language.Embedding.comp_apply] at e1 e4 ⊢
-  rw [e1]
-  show Classical.choose (hco I') (η.limMap I' (((Hull83.subLangPieces (psiM P.E Pr.n)
-        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs).limit I').canon _
+  have hsq : ∀ (I I' : Type u) [LinearOrder I] [Nonempty I] [LinearOrder I'] [Nonempty I'] (f : I ↪o I') x,
+      (Classical.choose (hco I')).comp (η.limMap I') (EM83.gEmMap (F := Hull83.subLangPieces (psiM P.E Pr.n)
+        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs) f x) =
+        P.E.map (OCol83.colMap h hid hcomp f) ((Classical.choose (hco I)).comp (η.limMap I) x) := by
+    intro I I' _ _ _ _ f x
+    obtain ⟨s, y, rfl⟩ := ((Hull83.subLangPieces (psiM P.E Pr.n)
+          ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs).limit I).joint x
+    have e1 := congrFun (congrArg (⇑) (EM83.gEmMap_canon (F := Hull83.subLangPieces (psiM P.E Pr.n)
+          ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs) f s)) y
+    have e2 : ∀ (J : Type u) [LinearOrder J] [Nonempty J] t z,
+        η.limMap J (((Hull83.subLangPieces (psiM P.E Pr.n)
+          ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs).limit J).canon t z) =
+          ((orderPieces83 P.E (fun k => (ch k).H) h hid hcomp).limit J).canon t (η.app _ z) :=
+      fun J _ _ t z => congrFun (congrArg (⇑) (η.limMap_canon J t)) z
+    have e3 : ∀ (J : Type u) [LinearOrder J] [Nonempty J] t w,
+        Classical.choose (hco J) (((orderPieces83 P.E (fun k => (ch k).H) h hid hcomp).limit J).canon t w) =
+          P.E.map (OCol83.iota (OCol83.phiH h J) (OCol83.phiH_comp h hcomp J) (OCol83.phiH_id h hid J) t) w :=
+      fun J _ _ t w => congrFun (congrArg (⇑) ((Classical.choose_spec (hco J)).2.2 t)) w
+    have e4 := congrFun (congrArg (⇑) (η.natural (indexCast f s))) y
+    simp only [Language.Embedding.comp_apply] at e1 e4 ⊢
+    rw [e1]
+    show Classical.choose (hco I') (η.limMap I' (((Hull83.subLangPieces (psiM P.E Pr.n)
+          ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs).limit I').canon _
+        ((Hull83.subLangPieces (psiM P.E Pr.n)
+          ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs).map (indexCast f s) y))) = _
+    have L1 := e2 I' (EM83.gSystemImage (F := Hull83.subLangPieces (psiM P.E Pr.n)
+          ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs) f s)
       ((Hull83.subLangPieces (psiM P.E Pr.n)
-        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs).map (indexCast f s) y))) = _
-  have L1 := e2 I' (EM83.gSystemImage (F := Hull83.subLangPieces (psiM P.E Pr.n)
-        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs) f s)
-    ((Hull83.subLangPieces (psiM P.E Pr.n)
-        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs).map (indexCast f s) y)
-  have L2 := e3 I' (EM83.gSystemImage (F := Hull83.subLangPieces (psiM P.E Pr.n)
-        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs) f s)
-    (η.app _ ((Hull83.subLangPieces (psiM P.E Pr.n)
-        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs).map (indexCast f s) y))
-  refine (congrArg (fun z => Classical.choose (hco I') z) L1).trans (L2.trans ?_)
-  rw [e2]
-  refine Eq.trans ?_ (congrArg (fun z => P.E.map (OCol83.colMap h hid hcomp f) z)
-    (e3 I s (η.app _ y))).symm
-  refine (congrArg (fun z => P.E.map (OCol83.iota (OCol83.phiH h I') (OCol83.phiH_comp h hcomp I')
-    (OCol83.phiH_id h hid I') (imageIndex f s)) z) e4).trans ?_
-  show P.E.map _ (P.E.map (h (indexCast f s)) _) = P.E.map _ (P.E.map _ _)
-  have key : (h (indexCast f s)).trans (OCol83.iota (OCol83.phiH h I') (OCol83.phiH_comp h hcomp I')
-      (OCol83.phiH_id h hid I') (imageIndex f s)) =
-      (OCol83.iota (OCol83.phiH h I) (OCol83.phiH_comp h hcomp I) (OCol83.phiH_id h hid I) s).trans
-        (OCol83.colMap h hid hcomp f) := RelEmbedding.ext fun z => rfl
-  exact (congrFun (congrArg (⇑) (P.E.map_comp _ _)) _).symm.trans
-    ((congrArg (fun g => P.E.map g (η.app _ y)) key).trans
-      (congrFun (congrArg (⇑) (P.E.map_comp _ _)) _))
+          ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs).map (indexCast f s) y)
+    have L2 := e3 I' (EM83.gSystemImage (F := Hull83.subLangPieces (psiM P.E Pr.n)
+          ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs) f s)
+      (η.app _ ((Hull83.subLangPieces (psiM P.E Pr.n)
+          ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs).map (indexCast f s) y))
+    refine (congrArg (fun z => Classical.choose (hco I') z) L1).trans (L2.trans ?_)
+    rw [e2]
+    refine Eq.trans ?_ (congrArg (fun z => P.E.map (OCol83.colMap h hid hcomp f) z)
+      (e3 I s (η.app _ y))).symm
+    refine (congrArg (fun z => P.E.map (OCol83.iota (OCol83.phiH h I') (OCol83.phiH_comp h hcomp I')
+      (OCol83.phiH_id h hid I') (imageIndex f s)) z) e4).trans ?_
+    show P.E.map _ (P.E.map (h (indexCast f s)) _) = P.E.map _ (P.E.map _ _)
+    have key : (h (indexCast f s)).trans (OCol83.iota (OCol83.phiH h I') (OCol83.phiH_comp h hcomp I')
+        (OCol83.phiH_id h hid I') (imageIndex f s)) =
+        (OCol83.iota (OCol83.phiH h I) (OCol83.phiH_comp h hcomp I) (OCol83.phiH_id h hid I) s).trans
+          (OCol83.colMap h hid hcomp f) := RelEmbedding.ext fun z => rfl
+    exact (congrFun (congrArg (⇑) (P.E.map_comp _ _)) _).symm.trans
+      ((congrArg (fun g => P.E.map g (η.app _ y)) key).trans
+        (congrFun (congrArg (⇑) (P.E.map_comp _ _)) _))
+  have hsurj : ∀ (I : Type u) [LinearOrder I] [Nonempty I],
+      Function.Surjective ((Classical.choose (hco I)).comp (η.limMap I)) :=
+    fun I _ _ => ((Classical.choose_spec (hco I)).2.1.comp (hlim I).1).2
+  refine ⟨hsq, fun I _ _ => ?_, fun I I' I'' _ _ _ _ _ _ f g => ?_⟩
+  · apply infra_83_map_faithful P.E
+    intro y
+    obtain ⟨x, rfl⟩ := hsurj I y
+    rw [← hsq, EM83.gEmMap_id, P.E.map_id]
+    rfl
+  · apply infra_83_map_faithful P.E
+    intro y
+    obtain ⟨x, rfl⟩ := hsurj I y
+    refine (hsq I I'' (f.trans g) x).symm.trans ?_
+    rw [EM83.gEmMap_comp]
+    refine (hsq I' I'' g _).trans ?_
+    rw [hsq I I' f x, P.E.map_comp]
+    rfl
 
 end AEC
