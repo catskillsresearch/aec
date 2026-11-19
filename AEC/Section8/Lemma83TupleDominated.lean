@@ -155,5 +155,52 @@ theorem infra_83_descent_of_tuple_retractions (P : SingleModelData K) {ν l : Ca
     (hlT.2.1 σ hσ (hσν.trans_le hνl)) hνl toA htoA (asTuple incl' hincl' d)
     (asTuple incl hincl _) (Equiv.refl _) (Equiv.refl _) rfl rfl (le_max_right _ _) hS hT hI
 
+
+set_option maxHeartbeats 3200000 in
+/-- **A pair mapping into a marked sample pair is marked, from tuple retraction images (proved).**
+As `infra_83_marked_of_sample_arrow`, but the retractions need only send the image of each bounded
+tuple `(b, c)` of `Y` into the image of `X` (the paper's "only images of the tested tuple have
+been placed in `X_H`"). Conclusion: `b` realizes `p_X` and `Y` is all-dominated over `X + b`. -/
+theorem infra_83_marked_of_sample_tuples (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) {ν : Cardinal.{u}}
+    (hνC : ν ∈ infra_615_closed P) (hνT : ν ∈ infra_78_closedTail P)
+    {X Y : P.scheme.Object ν hνC.1}
+    (incl : SystemArrow K oneVertexShape (P.scheme.asSystem hνC.1 X)
+      (P.scheme.asSystem hνC.1 Y))
+    (N : MarkedPair K oneVertexShape P.scheme Pr)
+    (hlC : N.μ ∈ infra_615_closed P) (hlT : N.μ ∈ infra_78_closedTail P) (hνl : ν ≤ N.μ)
+    (onX : SystemArrow K oneVertexShape (P.scheme.asSystem hνC.1 X)
+      (P.scheme.asSystem N.hμ N.X))
+    (onY : SystemArrow K oneVertexShape (P.scheme.asSystem hνC.1 Y)
+      (P.scheme.asSystem N.hμ N.Y))
+    (hcomm : SystemArrow.comp incl onY = SystemArrow.comp onX N.incl)
+    {ι : Type u}
+    (r : ι → SystemArrow K oneVertexShape (P.scheme.asSystem N.hμ N.Y)
+      (P.scheme.asSystem N.hμ N.X))
+    (hιcard : #ι = ν)
+    (halmost : ∀ a : Occurrence K oneVertexShape (P.scheme.asSystem N.hμ N.X),
+      Finite {i : ι // (r i).onVertex a.1 (N.incl.onVertex a.1 a.2) ≠ a.2})
+    (b : N.bIdx → Occurrence K oneVertexShape (P.scheme.asSystem hνC.1 Y))
+    (hb : ∀ i, onY.mapOcc (b i) = N.b i)
+    (himg : ∀ (cIdx : Type u) (c : cIdx → Occurrence K oneVertexShape (P.scheme.asSystem hνC.1 Y)),
+      #cIdx < ν → ∀ i (s : N.bIdx ⊕ cIdx), ∃ y,
+        onX.onVertex (seqJoint b c s).1 y =
+          (r i).onVertex (seqJoint b c s).1 (onY.onVertex (seqJoint b c s).1 (seqJoint b c s).2)) :
+    (∃ realEq : N.bIdx ≃ (Pr.assign hνC.1 X).idx,
+      SameGaloisType (asTuple incl trivial b) (Pr.assign hνC.1 X) realEq (Equiv.refl _)) ∧
+    AllDominated incl trivial N.bIdx b := by
+  have hfin : Finite N.bIdx := Finite.of_equiv _ (N.realEq.trans (Pr.arity N.hμ N.X)).symm
+  refine ⟨infra_83_realizes_descend P Pr incl N.incl onX onY hcomm b N.b (Equiv.refl _) hb
+    N.realEq N.realizes, ?_⟩
+  obtain ⟨μ, hμ, NX, NY, nincl, hni, bIdx, nb, rE, hr, hd⟩ := N
+  have hsq : ∀ v, (nincl.onVertex v).comp (onX.onVertex v) =
+      (onY.onVertex v).comp (incl.onVertex v) := fun v =>
+    (congrArg (fun φ : SystemArrow K oneVertexShape _ _ => φ.onVertex v) hcomm).symm
+  have huν : #bIdx < ν :=
+    (Cardinal.lt_aleph0_of_finite bIdx).trans_le (P.aleph0_le hνC.1)
+  exact infra_83_descent_of_tuple_retractions P hνC hlC hνT hlT hνl NX NY X Y onX onY nincl incl
+    trivial trivial trivial trivial hsq r hιcard halmost huν b nb (fun k => (hb k).symm) himg
+    (fun c hJ => hd _ c (hJ.trans_le hνl))
+
 end
 end AEC
