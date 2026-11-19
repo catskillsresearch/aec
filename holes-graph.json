@@ -5037,10 +5037,10 @@
    "id": "infra_83_template_strong",
    "label": "Lemma 8.3 proof (P.scheme): X_H -> Y_H -> L_H componentwise strong, also for maps induced by order embeddings of H incl. mixed sizes (vertex LS witnesses, directed unions)",
    "section": 8,
-   "file": "AEC/Section8/Lemma83Single.lean",
-   "status": "open",
+   "file": "AEC/Section8/OrderColimit83.lean",
+   "status": "done",
    "blocker": null,
-   "detail": "Cycle 101 split ('The vertex LS witnesses prove ...'). | Cycle 105: content proved for the pair3 template (infra_83_pair3_template_strong). Stays open until the pair3 template is identified with F^b: X_H ≅ F(J_H) (infra_83_X_hull_eq_FJ), Y_H ≅ F(Z_H) (infra_83_Y_hull_eq_FZ), and the mark."
+   "detail": "Cycle 101 split ('The vertex LS witnesses prove ...'). | Cycle 105: content proved for the pair3 template (infra_83_pair3_template_strong). Stays open until the pair3 template is identified with F^b: X_H ≅ F(J_H) (infra_83_X_hull_eq_FJ), Y_H ≅ F(Z_H) (infra_83_Y_hull_eq_FZ), and the mark. | Cycle 108: DONE. The template is now identified with F^b from one color family (infra_83_pairMS2_joint: F_X(I) ≅ F(J_I), F_Y(I) ≅ F(Z_I), marks as designated terms infra_83_pairMS2_Y_marks_c, TermTemplate pairTemplate83). Strongness: ηXY, ηYL limMaps strong (joint / infra_83_pairMS2_template) and EM83.gEmMap_strong for every order embedding f : I ↪o J (any sizes); transported to scheme objects in infra_83_pair_values / infra_83_value_arrow."
   },
   {
    "id": "infra_83_bounded_arity_free",
@@ -11790,6 +11790,6 @@
    "kind": "hard"
   }
  ],
- "doneCount": 639,
+ "doneCount": 640,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

@@ -529,7 +529,7 @@ Lean: imports `Section5.Results` and `Section6.Results`. Soft paper chain after 
 | `infra_83_clause3_single` | Lemma 8.3 (P.scheme): faithful clause (3) for any values of the right levels | [`Lemma83Single.lean`](AEC/Section8/Lemma83Single.lean) (**done**, cycle 101) |
 | `infra_83_samples` | Lemma 8.3 proof (P.scheme): samples X = F(J) <= Y ~ F(Z) inside L = F(J+W) | [`Lemma83Single.lean`](AEC/Section8/Lemma83Single.lean) (**done**, cycle 102) |
 | `infra_83_hull_extraction` | Lemma 8.3 proof (P.scheme): homogeneous finite hulls give the pair template F^b | [`Lemma83Single.lean`](AEC/Section8/Lemma83Single.lean) (open, cycle 101) |
-| `infra_83_template_strong` | Lemma 8.3 proof (P.scheme): template values and order maps are componentwise strong | [`Lemma83Single.lean`](AEC/Section8/Lemma83Single.lean) (open, cycle 101) |
+| `infra_83_template_strong` | Lemma 8.3 proof (P.scheme): template values and order maps are componentwise strong | [`OrderColimit83.lean`](AEC/Section8/OrderColimit83.lean) (**done**, cycle 108) |
 | `infra_83_bounded_arity_free` | Lemma 8.3 proof (P.scheme): bounded-arity mark realizes p and free extension (7) | [`Lemma83Single.lean`](AEC/Section8/Lemma83Single.lean) (open, cycle 101) |
 | `infra_83_all_dominated` | Lemma 8.3 proof (P.scheme): template values are all-dominated | [`Lemma83Single.lean`](AEC/Section8/Lemma83Single.lean) (open, cycle 101) |
 | `infra_83_samples_core` | Lemma 8.3 proof (P.scheme): sample pair with base E(J) embedded into E(J + W) over the base | [`Lemma83Samples.lean`](AEC/Section8/Lemma83Samples.lean) (**done**, cycle 101) |
