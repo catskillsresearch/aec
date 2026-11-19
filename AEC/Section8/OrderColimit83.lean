@@ -887,4 +887,134 @@ theorem infra_83_pairMS2_Y_hull_natural (P : SingleModelData K)
   obtain ⟨c, hc, hcoh, hθ, hρ⟩ := infra_83_pairMS2_coherent_colors P Pr
   exact ⟨c, hc, hcoh, fun M _ hM => pairM_subHullStrongY P.E Pr.n M hM.1.1, infra_83_pairMS2_Y_hull_natural_c P Pr c hc hcoh hθ hρ (fun M _ hM => pairM_subHullStrongY P.E Pr.n M hM.1.1)⟩
 
+/-- **One choice of colors for `X`, `Y` and `L`**: a single coherent color family `c` gives the
+pair template `F_X → F_Y → F_L` (strong natural piece maps, presentation `E` with values
+`F_L(I)`) together with both identifications `F_X(I) ≅ F(J_I)` and `F_Y(I) ≅ F(Z_I)` (natural in
+`I`, functorial colimit orders, natural skeleton embeddings, coordinates to skeleton points), all
+for the same `F_X`, `F_Y`. -/
+theorem infra_83_pairMS2_joint (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) :
+    ∃ (c : (m : ℕ) → 0 < m → Hull83.TpColorB (LS83.pairLangM3 P.E Pr.n) 3 m)
+      (hc : ∀ (n : ℕ) (κ : Cardinal.{u}),
+        Hull83.Joint (Hull83.TpSampleB (fun N _ => pairMAdmittedS2 P.E Pr.n N) 3) n c κ)
+      (hcoh : ∀ {m m' : ℕ} (hm' : 0 < m') (hm : 0 < m) (f : Fin m' ↪o Fin m),
+        c m' hm' = Hull83.tpResB 3 f (c m hm))
+      (hX : Hull83.SubHullStrong ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) (fun N _ => pairMAdmittedS2 P.E Pr.n N))
+      (hY : Hull83.SubHullStrong (psiM P.E Pr.n)
+        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) (fun N _ => pairMAdmittedS2 P.E Pr.n N))
+      (ηXY : EM83.PiecesHom (Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hX) (Hull83.subLangPieces (psiM P.E Pr.n)
+        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hY))
+      (FL : EM83.FinPieces K) (ηYL : EM83.PiecesHom (Hull83.subLangPieces (psiM P.E Pr.n)
+        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hY) FL) (E : OrderPresentation K),
+      (∀ (I : Type u) [LinearOrder I] [Nonempty I], E.obj I = (FL.limit I).obj) ∧
+      (∀ (I : Type u) [LinearOrder I] [Nonempty I],
+        K.Strong (ηXY.limMap I) ∧ K.Strong (ηYL.limMap I)) ∧
+      (∀ {I J : Type u} [LinearOrder I] [LinearOrder J] [Nonempty I] [Nonempty J] (f : I ↪o J),
+        (ηXY.limMap J).comp (EM83.gEmMap (F := Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hX) f) =
+            (EM83.gEmMap (F := Hull83.subLangPieces (psiM P.E Pr.n)
+        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hY) f).comp (ηXY.limMap I) ∧
+          (ηYL.limMap J).comp (EM83.gEmMap (F := Hull83.subLangPieces (psiM P.E Pr.n)
+        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hY) f) =
+            (EM83.gEmMap (F := FL) f).comp (ηYL.limMap I)) ∧
+      (∃ (ch : ∀ k, PieceChart P.E ((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hX).obj k) k)
+      (h : ∀ {k l : ℕ}, (Fin (k + 1) ↪o Fin (l + 1)) → (ch k).H ↪o (ch l).H)
+      (hid : ∀ k (p : (ch k).H), h (idEmb (α := Fin (k + 1))) p = p)
+      (hcomp : ∀ {k l m : ℕ} (e : Fin (k + 1) ↪o Fin (l + 1)) (f : Fin (l + 1) ↪o Fin (m + 1))
+        (p : (ch k).H), h (e.trans f) p = h f (h e p))
+      (m : ∀ (I : Type u) [LinearOrder I] [Nonempty I],
+        ((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hX).limit I).obj.carrier ↪[K.τ]
+          (P.E.obj (OCol83.Col (OCol83.phiH h I) (OCol83.phiH_comp h hcomp I))).carrier),
+      (∀ k (a : Fin (k + 1)), (ch k).ε (Quotient.mk _ (Term.var (a, (0 : Fin 1))) : ((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hX).obj k).carrier) = P.E.skeleton ((ch k).j a)) ∧
+      (∀ (I : Type u) [LinearOrder I] [Nonempty I], K.Strong (m I) ∧ Function.Bijective (m I)) ∧
+      (∀ (I I' : Type u) [LinearOrder I] [Nonempty I] [LinearOrder I'] [Nonempty I'] (f : I ↪o I') x,
+        m I' (EM83.gEmMap (F := Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hX) f x) =
+          P.E.map (OCol83.colMap h hid hcomp f) (m I x)) ∧
+      (∀ (I : Type u) [LinearOrder I] [Nonempty I],
+        OCol83.colMap h hid hcomp (OrderIso.refl I).toOrderEmbedding = (OrderIso.refl _).toOrderEmbedding) ∧
+      (∀ (I I' I'' : Type u) [LinearOrder I] [Nonempty I] [LinearOrder I'] [Nonempty I']
+        [LinearOrder I''] [Nonempty I''] (f : I ↪o I') (g : I' ↪o I''),
+        OCol83.colMap h hid hcomp (f.trans g) =
+          (OCol83.colMap h hid hcomp f).trans (OCol83.colMap h hid hcomp g)) ∧
+      ∃ g : ∀ (I : Type u) [LinearOrder I], I ↪o OCol83.Col (OCol83.phiH h I) (OCol83.phiH_comp h hcomp I),
+        (∀ (I : Type u) [LinearOrder I] (s : OCol83.Idx I) (i : I) (hi : i ∈ s.1),
+          g I i = OCol83.iota (OCol83.phiH h I) (OCol83.phiH_comp h hcomp I) (OCol83.phiH_id h hid I) s
+            ((ch s.1.card.pred).j (OCol83.pos s i hi))) ∧
+        (∀ (I I' : Type u) [LinearOrder I] [LinearOrder I'] (f : I ↪o I') (i : I),
+          OCol83.colMap h hid hcomp f (g I i) = g I' (f i)) ∧
+        (∀ (I : Type u) [LinearOrder I] [Nonempty I] (s : OCol83.Idx I) (i : I) (hi : i ∈ s.1)
+          (x : ((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hX).obj s.1.card.pred).carrier),
+          (ch s.1.card.pred).ε x = P.E.skeleton ((ch s.1.card.pred).j (OCol83.pos s i hi)) →
+          m I (((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hX).limit I).canon s x) = P.E.skeleton (g I i)) ∧
+      ∀ (I : Type u) [LinearOrder I],
+        #(OCol83.Col (OCol83.phiH h I) (OCol83.phiH_comp h hcomp I)) ≤ #(Finset I) * ls K) ∧
+      (∃ (ch : ∀ k, PieceChart P.E ((Hull83.subLangPieces (psiM P.E Pr.n)
+        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hY).obj k) k)
+      (h : ∀ {k l : ℕ}, (Fin (k + 1) ↪o Fin (l + 1)) → (ch k).H ↪o (ch l).H)
+      (hid : ∀ k (p : (ch k).H), h (idEmb (α := Fin (k + 1))) p = p)
+      (hcomp : ∀ {k l m : ℕ} (e : Fin (k + 1) ↪o Fin (l + 1)) (f : Fin (l + 1) ↪o Fin (m + 1))
+        (p : (ch k).H), h (e.trans f) p = h f (h e p))
+      (m : ∀ (I : Type u) [LinearOrder I] [Nonempty I],
+        ((Hull83.subLangPieces (psiM P.E Pr.n)
+        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hY).limit I).obj.carrier ↪[K.τ]
+          (P.E.obj (OCol83.Col (OCol83.phiH h I) (OCol83.phiH_comp h hcomp I))).carrier),
+      (∀ k (a : Fin (k + 1)), (ch k).ε (Quotient.mk _ (Term.var (a, (1 : Fin 2))) : ((Hull83.subLangPieces (psiM P.E Pr.n)
+        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hY).obj k).carrier) = P.E.skeleton ((ch k).j a)) ∧
+      (∀ (I : Type u) [LinearOrder I] [Nonempty I], K.Strong (m I) ∧ Function.Bijective (m I)) ∧
+      (∀ (I I' : Type u) [LinearOrder I] [Nonempty I] [LinearOrder I'] [Nonempty I'] (f : I ↪o I') x,
+        m I' (EM83.gEmMap (F := Hull83.subLangPieces (psiM P.E Pr.n)
+        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hY) f x) =
+          P.E.map (OCol83.colMap h hid hcomp f) (m I x)) ∧
+      (∀ (I : Type u) [LinearOrder I] [Nonempty I],
+        OCol83.colMap h hid hcomp (OrderIso.refl I).toOrderEmbedding = (OrderIso.refl _).toOrderEmbedding) ∧
+      (∀ (I I' I'' : Type u) [LinearOrder I] [Nonempty I] [LinearOrder I'] [Nonempty I']
+        [LinearOrder I''] [Nonempty I''] (f : I ↪o I') (g : I' ↪o I''),
+        OCol83.colMap h hid hcomp (f.trans g) =
+          (OCol83.colMap h hid hcomp f).trans (OCol83.colMap h hid hcomp g)) ∧
+      ∃ g : ∀ (I : Type u) [LinearOrder I], I ↪o OCol83.Col (OCol83.phiH h I) (OCol83.phiH_comp h hcomp I),
+        (∀ (I : Type u) [LinearOrder I] (s : OCol83.Idx I) (i : I) (hi : i ∈ s.1),
+          g I i = OCol83.iota (OCol83.phiH h I) (OCol83.phiH_comp h hcomp I) (OCol83.phiH_id h hid I) s
+            ((ch s.1.card.pred).j (OCol83.pos s i hi))) ∧
+        (∀ (I I' : Type u) [LinearOrder I] [LinearOrder I'] (f : I ↪o I') (i : I),
+          OCol83.colMap h hid hcomp f (g I i) = g I' (f i)) ∧
+        (∀ (I : Type u) [LinearOrder I] [Nonempty I] (s : OCol83.Idx I) (i : I) (hi : i ∈ s.1)
+          (x : ((Hull83.subLangPieces (psiM P.E Pr.n)
+        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hY).obj s.1.card.pred).carrier),
+          (ch s.1.card.pred).ε x = P.E.skeleton ((ch s.1.card.pred).j (OCol83.pos s i hi)) →
+          m I (((Hull83.subLangPieces (psiM P.E Pr.n)
+        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hY).limit I).canon s x) = P.E.skeleton (g I i)) ∧
+      ∀ (I : Type u) [LinearOrder I],
+        #(OCol83.Col (OCol83.phiH h I) (OCol83.phiH_comp h hcomp I)) ≤ #(Finset I) * ls K) := by
+  obtain ⟨c, hc, hcoh, hθ, hρ⟩ := infra_83_pairMS2_coherent_colors P Pr
+  have hX : Hull83.SubHullStrong ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+      ((LS83.pairInlR P.E).comp (LS83.lsInl K)) (fun N _ => pairMAdmittedS2 P.E Pr.n N) :=
+    fun M _ hM => pairM_subHullStrongX P.E Pr.n M hM.1.1
+  have hY : Hull83.SubHullStrong (psiM P.E Pr.n)
+      ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) (fun N _ => pairMAdmittedS2 P.E Pr.n N) :=
+    fun M _ hM => pairM_subHullStrongY P.E Pr.n M hM.1.1
+  have hL : Hull83.HullStrong ((psiM P.E Pr.n).comp ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))))
+      (fun N _ => pairMAdmittedS2 P.E Pr.n N) :=
+    fun M _ hM => pairM_hullStrong P.E Pr.n M hM.1.1
+  let ηXY := Hull83.subLangMixHom (chiM P.E Pr.n) (psiM P.E Pr.n) ((LS83.pairInlR P.E).comp (LS83.lsInl K))
+    hc hcoh (fun i : Fin 2 => i.castSucc) (fun _ : Fin 1 => (0 : Fin 2)) hX hY
+  let ηYL := Hull83.subLangChain (psiM P.E Pr.n) ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K)))
+    hc hcoh (fun i : Fin 2 => i.castSucc) hY hL
+  exact ⟨c, hc, hcoh, hX, hY, ηXY, _, ηYL,
+    Hull83.tpPresentationB hc hcoh (by norm_num)
+      ((psiM P.E Pr.n).comp ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))))
+      hL (LS83.pairLangM3_functions_le P.E Pr.n),
+    fun I _ _ => rfl,
+    fun I _ _ => ⟨ηXY.limMap_strong I, ηYL.limMap_strong I⟩,
+    fun f => ⟨ηXY.limMap_natural f, ηYL.limMap_natural f⟩,
+    infra_83_pairMS2_X_hull_natural_c P Pr c hc hcoh hθ hρ hX,
+    infra_83_pairMS2_Y_hull_natural_c P Pr c hc hcoh hθ hρ hY⟩
+
 end AEC

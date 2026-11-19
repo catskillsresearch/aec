@@ -663,6 +663,7 @@ Lean: imports `Section5.Results` and `Section6.Results`. Soft paper chain after 
 | `infra_83_order_colimit_natural` | J_I universal property and naturality in I (J_f : J_I ↪o J_I') | [`OrderColimit83.lean`](AEC/Section8/OrderColimit83.lean) (**done**, cycle 107) |
 | `infra_83_pairMS2_hull_natural` | F_X(I) ≅ F(J_I), F_Y(I) ≅ F(Z_I) naturally in I (squares with F(J_f) commute) | [`OrderColimit83.lean`](AEC/Section8/OrderColimit83.lean) (**done**, cycle 107) |
 | `infra_83_pairMS2_c_parametric` | Lemma 8.3 proof: X/Y chart chain parametric in the colors c | [`OrderColimit83.lean`](AEC/Section8/OrderColimit83.lean) (**done**, cycle 108) |
+| `infra_83_pairMS2_joint` | Lemma 8.3 proof: one color family for X, Y, L with both identifications | [`OrderColimit83.lean`](AEC/Section8/OrderColimit83.lean) (**done**, cycle 108) |
 | `infra_72_mixed_level` | Lemma 7.2 last sentence (A at a smaller level than B), stated with sorry (audit) | [`Lemma72Mixed.lean`](AEC/Section7/Lemma72Mixed.lean) (open, cycle 96) |
 | `infra_82_tiedFreeMixed_base_equiv` | Mixed tied freeness under a reindexed change of base tuple | [`TiedAlong.lean`](AEC/Section8/TiedAlong.lean) (**done**, cycle 97) |
 | `infra_82_mark_tied_along_single` | Lemma 8.2(4) for `P.scheme`: tied freeness of the mark along arrows (Def 8.1 tied, cycle 97 ruling) | [`TiedAlong.lean`](AEC/Section8/TiedAlong.lean) (**done**, cycle 97) |
