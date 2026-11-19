@@ -6040,6 +6040,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 107: pairMS2_Y_coord_of now also gives skeleton ↔ chartYM, p<p' ↔ chartLtYM, and label commutation ε(lab a xs) = labFun a (ε∘xs)."
+  },
+  {
+   "id": "infra_83_pairMS2_Y_chart_natural",
+   "label": "Y-chart pieces natural: ε_l ∘ F_Y(e) = E.map h_e ∘ ε_k for an order embedding h_e",
+   "section": 8,
+   "file": "Lemma83SampleLikeY.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 107: transition maps of Y-hull pieces are F-images of order embeddings of chart index sets (labels commute)."
   }
  ],
  "edges": [
@@ -11280,8 +11289,13 @@
    "from": "infra_83_pairMS2_Y_coord_charts",
    "to": "infra_83_Y_hull_eq_FZ",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_pairMS2_Y_chart_natural",
+   "to": "infra_83_Y_hull_eq_FZ",
+   "kind": "hard"
   }
  ],
- "doneCount": 604,
+ "doneCount": 605,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
