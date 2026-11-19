@@ -1327,4 +1327,55 @@ theorem infra_79_identify_bounded (P : SingleModelData K) {ν l : Cardinal.{u}}
     htest hlong toA hanch incl' toU hsq' b' hbU
   exact ⟨φ, hφ, hGal⟩
 
+/-- **Theorem 7.9 same-level primeness for a bounded mark (proved, cycle 93).** As
+`infra_79_primeness_same_level`, with `|p| ≤ θ < μ` in place of finiteness. Sub-step of
+`infra_79_general`. -/
+theorem infra_79_primeness_same_level_bounded {P : SingleModelData K} {μ : Cardinal.{u}}
+    (hμ : μ ∈ P.eligible) (X : P.scheme.Object μ hμ)
+    (p : TupleOver K oneVertexShape P.scheme hμ X) (θ : Cardinal.{u}) (hθ : ℵ₀ ≤ θ) (hθμ : θ < μ)
+    (hidxθ : #p.idx ≤ θ)
+    (Y : P.scheme.Object μ hμ)
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ Y))
+    (hf : P.scheme.permitted (X := X) (Y := Y) f)
+    (b : p.idx → Occurrence K oneVertexShape (P.scheme.asSystem hμ Y))
+    (hAll : AllDominated f hf p.idx b)
+    (hp : SameGaloisType p (asTuple f hf b) (Equiv.refl p.idx) (Equiv.refl p.idx))
+    (N : P.scheme.Object μ hμ)
+    (g : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ N))
+    (hg : P.scheme.permitted (X := X) (Y := N) g)
+    (b' : p.idx → Occurrence K oneVertexShape (P.scheme.asSystem hμ N))
+    (hN : SameGaloisType p (asTuple g hg b') (Equiv.refl p.idx) (Equiv.refl p.idx)) :
+    ∃ h : SystemArrow K oneVertexShape (P.scheme.asSystem hμ Y) (P.scheme.asSystem hμ N),
+      P.scheme.permitted (X := Y) (Y := N) h ∧
+      SystemArrow.comp f h = g ∧
+      ∀ i, h.onVertex (b i).1 (b i).2 = (b' i).2 := by
+  have hYN := infra_612_galois_trans_mid_any (t1 := asTuple f hf b) (t2 := p)
+    (t3 := asTuple g hg b') (e12 := Equiv.refl p.idx) (e32 := Equiv.refl p.idx)
+    hp.symm hN θ hθ hθμ hidxθ rfl rfl
+  exact infra_75_embed hμ X Y N f hf g hg b b'
+    (hidxθ.trans_lt hθμ) hYN hAll
+
+/-- **Primeness clause of `infra_79_general` (proved, cycle 93).** The second conjunct of
+`infra_79_general_statement` for every mark with `|p| < μ` (Definition 7.7 is not needed for
+primeness): `infra_79_primeness_same_level_bounded` at `θ = max ℵ₀ |p|`. -/
+theorem infra_79_general_primeness (P : SingleModelData K) {μ : Cardinal.{u}}
+    (hμ : μ ∈ P.eligible) (X : P.scheme.Object μ hμ)
+    (p : TupleOver K oneVertexShape P.scheme hμ X) (hidx : #p.idx < μ) :
+    ∀ (Y : P.scheme.Object μ hμ)
+      (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ Y))
+      (b : p.idx → Occurrence K oneVertexShape (P.scheme.asSystem hμ Y)),
+      AllDominated f trivial p.idx b →
+      SameGaloisType p (asTuple f trivial b) (Equiv.refl _) (Equiv.refl _) →
+      ∀ (N : P.scheme.Object μ hμ)
+        (g : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ N))
+        (b' : p.idx → Occurrence K oneVertexShape (P.scheme.asSystem hμ N)),
+        SameGaloisType p (asTuple g trivial b') (Equiv.refl _) (Equiv.refl _) →
+        ∃ h : SystemArrow K oneVertexShape (P.scheme.asSystem hμ Y) (P.scheme.asSystem hμ N),
+          SystemArrow.comp f h = g ∧ ∀ i, h.onVertex (b i).1 (b i).2 = (b' i).2 := by
+  intro Y f b hAll hp N g b' hN
+  obtain ⟨h, -, hc, hv⟩ := infra_79_primeness_same_level_bounded hμ X p (max ℵ₀ #p.idx)
+    (le_max_left _ _) (max_lt (P.aleph0_lt hμ) hidx) (le_max_right _ _) Y f trivial b hAll hp
+    N g trivial b' hN
+  exact ⟨h, hc, hv⟩
+
 end AEC
