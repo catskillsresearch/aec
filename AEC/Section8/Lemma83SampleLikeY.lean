@@ -1167,4 +1167,118 @@ theorem infra_83_pairMS2_X_chart_orderEmb (P : SingleModelData K)
   subst this
   exact hq p
 
+/-- **`ε_l ∘ F_X(e) = F(h_e) ∘ ε_k`**: the coherent `X`-charts identify every piece map with
+`F` of an order embedding `h_e : H_k ↪o H_l` of the charts. -/
+theorem infra_83_pairMS2_X_chart_natural (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) :
+    ∃ (c : (m : ℕ) → 0 < m → Hull83.TpColorB (LS83.pairLangM3 P.E Pr.n) 3 m)
+      (hc : ∀ (n : ℕ) (κ : Cardinal.{u}),
+        Hull83.Joint (Hull83.TpSampleB (fun N _ => pairMAdmittedS2 P.E Pr.n N) 3) n c κ)
+      (hcoh : ∀ {m m' : ℕ} (hm' : 0 < m') (hm : 0 < m) (f : Fin m' ↪o Fin m),
+        c m' hm' = Hull83.tpResB 3 f (c m hm))
+      (hXs : Hull83.SubHullStrong ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) (fun N _ => pairMAdmittedS2 P.E Pr.n N))
+      (ch : ∀ k, PieceChart P.E ((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).obj k) k),
+      ∀ {k l : ℕ} (e : Fin (k + 1) ↪o Fin (l + 1)), ∃ h : (ch k).H ↪o (ch l).H,
+        ∀ x, (ch l).ε ((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).map e x) = P.E.map h ((ch k).ε x) := by
+  obtain ⟨c, hc, hcoh, hθ, hρ⟩ := infra_83_pairMS2_coherent_colors P Pr
+  have hXs : Hull83.SubHullStrong ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+      ((LS83.pairInlR P.E).comp (LS83.lsInl K)) (fun N _ => pairMAdmittedS2 P.E Pr.n N) :=
+    fun M _ hM => pairM_subHullStrongX P.E Pr.n M hM.1.1
+  have hk := fun k => pairMS2_X_coord_of P Pr hc hθ hρ k
+  choose J lo ne H hne ε jH hb hi hmo hcoord hsk hord hlb using hk
+  have hX1 : ∀ {k l : ℕ} (e : Fin (k + 1) ↪o Fin (l + 1)) x,
+      chartXM (M := (Hull83.witB hc k).M) P.E Pr.n (Hull83.subHullEmb ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K))
+        ((Hull83.witB hc k).v ∘ Prod.map id (fun _ : Fin 1 => (0 : Fin 3))) x :
+        (Hull83.witB hc k).M) ↔
+      chartXM (M := (Hull83.witB hc l).M) P.E Pr.n (Hull83.subHullEmb ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K))
+        ((Hull83.witB hc l).v ∘ Prod.map id (fun _ : Fin 1 => (0 : Fin 3))) ((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).map e x) :
+        (Hull83.witB hc l).M) := by
+    intro k l e x
+    have h := Hull83.subLangPieces_rel _ _ hc hcoh _ hXs e
+      (Sum.inr (Sum.inl ⟨⟨0⟩, rfl⟩) : (LS83.pairLangM3 P.E Pr.n).Relations 1) ![x]
+    unfold chartXM
+    refine (iff_of_eq (congrArg _ (funext fun i => ?_))).trans (h.trans
+      (iff_of_eq (congrArg _ (funext fun i => ?_))))
+    · fin_cases i; rfl
+    · fin_cases i; rfl
+  have hX2 : ∀ {k l : ℕ} (e : Fin (k + 1) ↪o Fin (l + 1)) x x',
+      chartLtXM (M := (Hull83.witB hc k).M) P.E Pr.n (Hull83.subHullEmb ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K))
+        ((Hull83.witB hc k).v ∘ Prod.map id (fun _ : Fin 1 => (0 : Fin 3))) x :
+        (Hull83.witB hc k).M) (Hull83.subHullEmb ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K))
+        ((Hull83.witB hc k).v ∘ Prod.map id (fun _ : Fin 1 => (0 : Fin 3))) x' :
+        (Hull83.witB hc k).M) ↔
+      chartLtXM (M := (Hull83.witB hc l).M) P.E Pr.n (Hull83.subHullEmb ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K))
+        ((Hull83.witB hc l).v ∘ Prod.map id (fun _ : Fin 1 => (0 : Fin 3))) ((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).map e x) :
+        (Hull83.witB hc l).M)
+        (Hull83.subHullEmb ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K))
+        ((Hull83.witB hc l).v ∘ Prod.map id (fun _ : Fin 1 => (0 : Fin 3))) ((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).map e x') :
+        (Hull83.witB hc l).M) := by
+    intro k l e x x'
+    have h := Hull83.subLangPieces_rel _ _ hc hcoh _ hXs e
+      (Sum.inr (Sum.inr ⟨⟨0⟩, rfl⟩) : (LS83.pairLangM3 P.E Pr.n).Relations 2) ![x, x']
+    unfold chartLtXM
+    refine (iff_of_eq (congrArg _ (funext fun i => ?_))).trans (h.trans
+      (iff_of_eq (congrArg _ (funext fun i => ?_))))
+    · fin_cases i <;> rfl
+    · fin_cases i <;> rfl
+  refine ⟨c, hc, hcoh, hXs, fun k =>
+    { J := J k, lo := lo k, ne := ne k, H := H k, hne := hne k, ε := ε k, bij := hb k,
+      j := jH k, inj := hi k, mono := hmo k }, fun {k l} e => ?_⟩
+  have hx : ∀ p : H k, ∃ x, ε k x = P.E.skeleton p := fun p => (hb k).2 _
+  choose xp hxp using hx
+  have hq : ∀ p : H k, ∃ q : H l, ε l ((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+          ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).map e (xp p)) =
+      P.E.skeleton q := fun p => (hsk l _).2 ((hX1 e _).1 ((hsk k _).1 ⟨p, hxp p⟩))
+  choose q hq using hq
+  have hmono : StrictMono q := fun p p' hpp =>
+    ((hord k _ _ p p' (hxp p) (hxp p')).trans ((hX2 e _ _).trans
+      (hord l _ _ _ _ (hq p) (hq p')).symm)).1 hpp
+  refine ⟨OrderEmbedding.ofStrictMono q hmono, fun x => ?_⟩
+  obtain ⟨m, a, p, hp, hy⟩ := Lab83.exists_label_value (E := P.E) (ε k x)
+  let ψ' := (psiM P.E Pr.n).comp (chiM P.E Pr.n)
+  let x' := @Structure.funMap _ _ (@Hull83.hullStructure _ _ (ψ'.reduct (Hull83.witB hc k).M) _
+    ((Hull83.witB hc k).v ∘ Prod.map id (fun _ : Fin 1 => (0 : Fin 3)))) m
+    (Sum.inl (Sum.inr a)) (fun i => xp (p i))
+  have hsh := by
+    letI := ψ'.reduct (Hull83.witB hc k).M
+    exact (Hull83.hullEmb (L := LS83.pairLangR P.E)
+      ((Hull83.witB hc k).v ∘ Prod.map id (fun _ : Fin 1 => (0 : Fin 3)))).map_fun
+      (Sum.inl (Sum.inr a)) (fun i => xp (p i))
+  have hx' : x' = x := (hb k).1 ((hlb k a (fun i => xp (p i)) x' hsh).trans (by
+    simp only [hxp]; exact hy))
+  subst hx'
+  have hmap := by
+    letI := ψ'.reduct (Hull83.witB hc k).M
+    letI := ψ'.reduct (Hull83.witB hc l).M
+    exact (Hull83.hullMapEmb (L := LS83.pairLangR P.E)
+      (v' := (Hull83.witB hc k).v ∘ Prod.map id (fun _ : Fin 1 => (0 : Fin 3)))
+      (v := (Hull83.witB hc l).v ∘ Prod.map id (fun _ : Fin 1 => (0 : Fin 3))) (Prod.map e id)
+      (Hull83.tpCode_reduct' ψ' (Hull83.subBundle_tp hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) e))).map_fun
+      (Sum.inl (Sum.inr a)) (fun i => xp (p i))
+  have hsh2 := by
+    letI := ψ'.reduct (Hull83.witB hc l).M
+    exact (Hull83.hullEmb (L := LS83.pairLangR P.E)
+      ((Hull83.witB hc l).v ∘ Prod.map id (fun _ : Fin 1 => (0 : Fin 3)))).map_fun
+      (Sum.inl (Sum.inr a)) (fun i => (Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+          ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).map e (xp (p i)))
+  refine (congrArg (ε l) hmap).trans ((hlb l a _ _ hsh2).trans ?_)
+  show _ = P.E.map _ (ε k x')
+  rw [← hy, ← Lab83.labFun_map]
+  congr 1
+  funext i
+  rw [hq, P.E.skeleton_natural]
+  rfl
+
 end AEC
