@@ -366,4 +366,24 @@ theorem infra_83_sample_pair_square (E : OrderPresentation K) (n : ℕ) {N : Typ
     rw [← h1, ← h2, hsq]
 end
 
+
+/-- **Order maps for the pair square by saturation (proved).** Paper (Lemma 8.3 proof): "extend
+these partial order maps to `J_H → J`, `W_H → W` by saturation". Given the `X`-part map
+`e₀ : J₀ ↪o J`, an inclusion `i₀ : J₀ ↪o Z₀`, and a strictly increasing partial map `f` on
+`D ⊆ Z₀` (the matched positions) that contains `i₀[J₀]` and agrees there with `emb ∘ e₀`, a
+`κ`-order-saturated `Jp` with `|Z₀| < κ` admits `e : Z₀ ↪o Jp` extending `f` with
+`e₀ ; emb = i₀ ; e` (the hypothesis `hsq` of `infra_83_sample_pair_square`). -/
+theorem infra_83_square_extension {κ : Cardinal.{u}} {J Jp J0 Z0 : Type u} [LinearOrder J]
+    [LinearOrder Jp] [LinearOrder J0] [LinearOrder Z0]
+    (hsat : OrderSat83.OrderSaturated κ Jp) (hZ : #Z0 < κ)
+    (emb : J ↪o Jp) (e0 : J0 ↪o J) (i0 : J0 ↪o Z0) (D : Set Z0) (f : D → Jp)
+    (hf : StrictMono f) (hD : ∀ x, i0 x ∈ D) (hfa : ∀ x, f ⟨i0 x, hD x⟩ = emb (e0 x)) :
+    ∃ e : Z0 ↪o Jp, (∀ d : D, e d = f d) ∧ e0.trans emb = i0.trans e := by
+  obtain ⟨g, hg, hgf⟩ := OrderSat83.extend_strictMono_linear hsat hZ D f hf
+  refine ⟨OrderEmbedding.ofStrictMono g hg, hgf, ?_⟩
+  ext x
+  show emb (e0 x) = g (i0 x)
+  rw [← hfa x]
+  exact (hgf ⟨i0 x, hD x⟩).symm
+
 end AEC

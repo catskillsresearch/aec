@@ -7165,6 +7165,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 180: proved."
+  },
+  {
+   "id": "infra_83_square_extension",
+   "label": "Order maps for the pair square by saturation: a strictly increasing partial map on matched positions D (containing i0[J0], agreeing with emb o e0) extends to e : Z0 -> Jp with e0;emb = i0;e when Jp is kappa-order-saturated and #Z0 < kappa",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PieceMatch.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 181: proved."
   }
  ],
  "edges": [
@@ -13115,8 +13124,13 @@
    "from": "infra_83_sample_pair_square",
    "to": "infra_83_bounded_list_match",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_square_extension",
+   "to": "infra_83_bounded_list_match",
+   "kind": "hard"
   }
  ],
- "doneCount": 727,
+ "doneCount": 728,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
