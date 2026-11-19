@@ -5058,7 +5058,7 @@
    "file": "AEC/Section8/Lemma83Single.lean",
    "status": "open",
    "blocker": null,
-   "detail": "Cycle 101 split ('The actual sample pair is all-dominated' / 'Removing the arity restriction'). | Cycle 109: all-domination pulls back to sub-objects containing the mark (infra_83_dominated_pull) and transports along onto arrows (infra_83_dominated_push). | Cycle 109: reduced (infra_83_dominated_of_realizes_onto) to: values realize the prescribed type + the prime-pair arrow Y'' -> Y_I over X_I sending the mark to mk_I is onto. | Cycle 109 caveat: the onto-prime-arrow route (infra_83_dominated_of_realizes_onto') may not apply (non-onto self-embeddings over X+b); direct domination is the primary route. | Cycle 110: Lemma 7.6 step done for same-level pair arrows (infra_83_dominated_descend_pair). Remaining: (7) tied-free lifts (Lemma 6.11 majority with retraction images), a same-level pair arrow from the value into an all-dominated pair, and the arity-removal recursion (Prop 7.5). | Cycle 110: reduced (infra_83_dominated_of_retraction_pair) to a same-level pair arrow from the value into an all-dominated sample pair whose Cor 6.16 retractions send the value's Y into its X. Remaining: building that arrow from colors + order saturation (the paper's partial-match extension), or the tuple-wise variant + Prop 7.5 arity removal. | Cycle 110: cross-level form done (infra_83_dominated_of_retraction_pair_mixed). Remaining: the pair arrow value -> actual sample (paper: partial matches from homogeneous colors extended by sample order saturation) with the samples' Cor 6.16 retractions mapping the value's Y into its X (paper only needs it for tested tuples + Prop 7.5 recursion). | Cycles 162-167: all-domination from tuple retraction images only (infra_83_dominated_of_tuple_retractions, infra_83_descent_of_tuple_retractions, infra_83_dominated_of_matched_tuples, infra_83_dominated_of_marked_matches). Arity removal (Prop 7.5 / nested lists) is not needed for the bounded-c definition of AllDominated once matches exist for every bounded c; remaining input is infra_83_bounded_list_match."
+   "detail": "Cycle 101 split ('The actual sample pair is all-dominated' / 'Removing the arity restriction'). | Cycle 109: all-domination pulls back to sub-objects containing the mark (infra_83_dominated_pull) and transports along onto arrows (infra_83_dominated_push). | Cycle 109: reduced (infra_83_dominated_of_realizes_onto) to: values realize the prescribed type + the prime-pair arrow Y'' -> Y_I over X_I sending the mark to mk_I is onto. | Cycle 109 caveat: the onto-prime-arrow route (infra_83_dominated_of_realizes_onto') may not apply (non-onto self-embeddings over X+b); direct domination is the primary route. | Cycle 110: Lemma 7.6 step done for same-level pair arrows (infra_83_dominated_descend_pair). Remaining: (7) tied-free lifts (Lemma 6.11 majority with retraction images), a same-level pair arrow from the value into an all-dominated pair, and the arity-removal recursion (Prop 7.5). | Cycle 110: reduced (infra_83_dominated_of_retraction_pair) to a same-level pair arrow from the value into an all-dominated sample pair whose Cor 6.16 retractions send the value's Y into its X. Remaining: building that arrow from colors + order saturation (the paper's partial-match extension), or the tuple-wise variant + Prop 7.5 arity removal. | Cycle 110: cross-level form done (infra_83_dominated_of_retraction_pair_mixed). Remaining: the pair arrow value -> actual sample (paper: partial matches from homogeneous colors extended by sample order saturation) with the samples' Cor 6.16 retractions mapping the value's Y into its X (paper only needs it for tested tuples + Prop 7.5 recursion). | Cycles 162-167: all-domination from tuple retraction images only (infra_83_dominated_of_tuple_retractions, infra_83_descent_of_tuple_retractions, infra_83_dominated_of_matched_tuples, infra_83_dominated_of_marked_matches). Arity removal (Prop 7.5 / nested lists) is not needed for the bounded-c definition of AllDominated once matches exist for every bounded c; remaining input is infra_83_bounded_list_match. | Cycle 174 CORRECTION: the cycle-169 note that 'the Prop 7.5 arity-removal step is not needed' is wrong as a route claim. infra_83_marked_of_marked_matches needs a match for EVERY bounded c, but a sample homogeneous only at bounded arity matches only lists whose entries have bounded horizontal width; general c (entries of unbounded width) need the arity removal, tracked as infra_83_arity_removal."
   },
   {
    "id": "infra_83_samples_core",
@@ -7102,6 +7102,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 174: proved."
+  },
+  {
+   "id": "infra_83_arity_removal",
+   "label": "Prop 7.5 arity removal for Lemma 8.3: bounded-arity homogeneity only matches lists whose entries have bounded horizontal width (<= q indices); a general bounded c of Y_I has entries of unbounded width. Exhaust Y_I by countably many nested bounded-width lists with small vertex witness models, and use Prop 7.5 constructive primeness to get an arrow Y_I -> V over X_I + b into a pair V all-dominated over X_I + b'; pull all-domination back (infra_83_dominated_pull).",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83TupleDominated.lean",
+   "status": "open",
+   "blocker": null,
+   "detail": "Open (cycle 174 correction)."
   }
  ],
  "edges": [
@@ -13016,6 +13025,11 @@
   {
    "from": "infra_83_piece_matches_bounded_along",
    "to": "infra_83_bounded_list_match",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_83_arity_removal",
+   "to": "infra_83_all_dominated",
    "kind": "hard"
   }
  ],
