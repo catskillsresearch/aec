@@ -4375,6 +4375,15 @@
    "status": "open",
    "blocker": null,
    "detail": "Statement now in Lean (sorry), cycle 96: infra_72_mixed_level in AEC/Section7/Lemma72Mixed.lean, the mixed-level port of infra_72_over_B_isolation with bounds at the level of A and IsTiedFreeMixed marginal."
+  },
+  {
+   "id": "infra_72_ext_align_mixed",
+   "label": "Lemma 7.2 mixed, step (b): hExt alignment across levels",
+   "section": 8,
+   "file": "AEC/Section7/Lemma72Mixed.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "DONE cycle 96. Port of infra_73_ext_align with A at nu <= mu; via infra_78_diagramEq_of_sameGalois. Axioms clean."
   }
  ],
  "edges": [
@@ -8545,8 +8554,13 @@
    "from": "infra_72_mixed_level",
    "to": "infra_82_comparison_single",
    "kind": "hard"
+  },
+  {
+   "from": "infra_72_ext_align_mixed",
+   "to": "infra_72_mixed_level",
+   "kind": "hard"
   }
  ],
- "doneCount": 430,
+ "doneCount": 431,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
