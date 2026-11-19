@@ -2,6 +2,7 @@ module
 
 public import AEC.Section2.Partition
 public import Mathlib.Order.PiLex
+public import Mathlib.SetTheory.Cardinal.Regular
 
 /-!
 # Lemma 8.3: order saturation of the sample orders
@@ -285,6 +286,123 @@ theorem orderSaturated_piLex {κ : Cardinal.{u}} (hκ : aleph0 ≤ κ) {ι V : T
       · exact lt_of_le_of_ne ((hnonstrict i hiγ).2 b hb hbelow) (Ne.symm hi)
     · push Not at hN
       exact absurd (hN γ ▸ hstrict.2 b hb fun j _ => hN j) (lt_irrefl _)
+
+/-- In `(succ κ).ord.ToType` (a regular well-order) every set of size `< κ` is strictly
+bounded. -/
+theorem succ_toType_bdd {κ : Cardinal.{u}} (hκ : aleph0 ≤ κ) (s : Set (Order.succ κ).ord.ToType)
+    (hs : #s < κ) : ∃ γ, ∀ j ∈ s, j < γ := by
+  have hcof : (Order.succ κ).ord.cof = Order.succ κ := (isRegular_succ hκ).cof_ord
+  let f : s → Ordinal.{u} := fun x => Ordinal.typein (α := (Order.succ κ).ord.ToType) (· < ·) x.1
+  have hf : ∀ x, f x < (Order.succ κ).ord := fun x => by
+    simpa [f, Ordinal.type_toType] using
+      Ordinal.typein_lt_type (α := (Order.succ κ).ord.ToType) (· < ·) x.1
+  have hlt : ⨆ x, f x + 1 < (Order.succ κ).ord :=
+    Ordinal.iSup_add_one_lt_of_lt_cof (by
+      rw [hcof]; exact hs.trans (Order.lt_succ_of_not_isMax (not_isMax κ))) hf
+  have hlt' : ⨆ x, f x + 1 < Ordinal.type (α := (Order.succ κ).ord.ToType) (· < ·) := by
+    simpa [Ordinal.type_toType] using hlt
+  refine ⟨Ordinal.enum (α := (Order.succ κ).ord.ToType) (· < ·) ⟨⨆ x, f x + 1, hlt'⟩,
+    fun j hj => ?_⟩
+  have hfj : f ⟨j, hj⟩ < ⨆ x, f x + 1 :=
+    (Order.lt_add_one_iff.mpr le_rfl).trans_le (Ordinal.le_iSup (fun x => f x + 1) ⟨j, hj⟩)
+  rw [← Ordinal.enum_typein (α := (Order.succ κ).ord.ToType) (· < ·) j]
+  exact Ordinal.enum_lt_enum.mpr hfj
+
+/-- The value order `ιᵒᵈ ×ₗ ι` separates (non-strictly) any two small sets `S ≤ U`, when small
+subsets of the well-order `ι` are strictly bounded. -/
+theorem dualLex_interp {κ : Cardinal.{u}} {ι : Type u} [LinearOrder ι] [WellFoundedLT ι]
+    [Nonempty ι] (hbd : ∀ s : Set ι, #s < κ → ∃ γ, ∀ j ∈ s, j < γ)
+    (S U : Set (Lex (ιᵒᵈ × ι))) (hS : #S < κ) (hU : #U < κ)
+    (hSU : ∀ a ∈ S, ∀ b ∈ U, a ≤ b) :
+    ∃ v, (∀ a ∈ S, a ≤ v) ∧ ∀ b ∈ U, v ≤ b := by
+  classical
+  have hle : ∀ p q : Lex (ιᵒᵈ × ι), p ≤ q ↔ (ofLex p).1 < (ofLex q).1 ∨
+      (ofLex p).1 = (ofLex q).1 ∧ (ofLex p).2 ≤ (ofLex q).2 := fun p q =>
+    Prod.Lex.toLex_le_toLex (x := ofLex p) (y := ofLex q)
+  by_cases hSne : S.Nonempty
+  · let F : Set ι := (fun s => OrderDual.ofDual (ofLex s).1) '' S
+    have hFne : F.Nonempty := hSne.image _
+    obtain ⟨c, hcF, hcmin⟩ : ∃ c ∈ F, ∀ x ∈ F, c ≤ x :=
+      ⟨(wellFounded_lt (α := ι)).min F hFne, (wellFounded_lt (α := ι)).min_mem F hFne,
+        fun x hx => not_lt.mp ((wellFounded_lt (α := ι)).not_lt_min F hx)⟩
+    obtain ⟨s0, hs0, hs0c⟩ := hcF
+    have hcle : ∀ s ∈ S, c ≤ OrderDual.ofDual (ofLex s).1 := fun s hs => hcmin _ ⟨s, hs, rfl⟩
+    have hc0 : OrderDual.toDual c = (ofLex s0).1 := by rw [← hs0c]; rfl
+    let T : Set ι := (fun s => (ofLex s).2) '' {s | s ∈ S ∧ OrderDual.ofDual (ofLex s).1 = c}
+    have hT : #T < κ := mk_image_le.trans_lt
+      ((mk_le_mk_of_subset (s := {s | s ∈ S ∧ OrderDual.ofDual (ofLex s).1 = c}) (t := S)
+        fun x hx => hx.1).trans_lt hS)
+    obtain ⟨γ, hγ⟩ := hbd T hT
+    let UB : Set ι := {t | ∀ x ∈ T, x ≤ t}
+    have hUB : UB.Nonempty := ⟨γ, fun x hx => (hγ x hx).le⟩
+    let t := (wellFounded_lt (α := ι)).min UB hUB
+    have ht : t ∈ UB := (wellFounded_lt (α := ι)).min_mem UB hUB
+    refine ⟨toLex (OrderDual.toDual c, t), fun s hs => ?_, fun u hu => ?_⟩
+    · rw [hle]
+      rcases (hcle s hs).lt_or_eq with h | h
+      · exact Or.inl h
+      · refine Or.inr ⟨?_, ht _ ⟨s, ⟨hs, h.symm⟩, rfl⟩⟩
+        exact congrArg OrderDual.toDual h.symm
+    · have hsu := (hle s0 u).1 (hSU s0 hs0 u hu)
+      rw [hle]
+      rcases hsu with h | h
+      · left
+        rw [hc0]
+        exact h
+      · right
+        refine ⟨?_, ?_⟩
+        · rw [hc0]
+          exact h.1
+        · refine not_lt.mp ((wellFounded_lt (α := ι)).not_lt_min UB ?_)
+          rintro x ⟨s, ⟨hs, hsc⟩, rfl⟩
+          rcases (hle s u).1 (hSU s hs u hu) with h' | h'
+          · exfalso
+            have h1 : (ofLex u).1 = OrderDual.toDual c := by rw [← h.1, hc0]
+            rw [h1] at h'
+            exact (not_lt.mpr (hcle s hs)) (by
+              have : OrderDual.toDual (OrderDual.ofDual (ofLex s).1) < OrderDual.toDual c := h'
+              rw [hsc] at this
+              exact absurd this (lt_irrefl _))
+          · exact h'.2
+  · let G : Set ι := (fun u => OrderDual.ofDual (ofLex u).1) '' U
+    obtain ⟨γ, hγ⟩ := hbd G (mk_image_le.trans_lt hU)
+    refine ⟨toLex (OrderDual.toDual γ, Classical.arbitrary ι),
+      fun s hs => absurd ⟨s, hs⟩ hSne, fun u hu => ?_⟩
+    rw [hle]
+    exact Or.inl (hγ _ ⟨u, hu, rfl⟩)
+
+/-- **Small saturated orders exist.**  For every infinite `κ` there is a `κ`-order-saturated
+linear order of size `2 ^ κ⁺`: the lexicographic power `Lex (ι → ιᵒᵈ ×ₗ ι)`,
+`ι = κ⁺.ord.ToType`. -/
+theorem exists_orderSaturated {κ : Cardinal.{u}} (hκ : aleph0 ≤ κ) :
+    ∃ (J : Type u) (_ : LinearOrder J), OrderSaturated κ J ∧ #J = 2 ^ Order.succ κ := by
+  let ι := (Order.succ κ).ord.ToType
+  have hbd : ∀ s : Set ι, #s < κ → ∃ γ, ∀ j ∈ s, j < γ := succ_toType_bdd hκ
+  have hκ1 : (1 : Cardinal) < κ := one_lt_aleph0.trans_le hκ
+  have : Nonempty ι := by
+    obtain ⟨γ, -⟩ := hbd ∅ (by simpa using (zero_lt_one.trans hκ1))
+    exact ⟨γ⟩
+  have : NoMaxOrder ι := ⟨fun x => by
+    obtain ⟨γ, hγ⟩ := hbd {x} (by simpa using hκ1)
+    exact ⟨γ, hγ x rfl⟩⟩
+  let V := Lex (ιᵒᵈ × ι)
+  have : NoMaxOrder V := ⟨fun p => by
+    obtain ⟨b, hb⟩ := exists_gt (ofLex p).2
+    exact ⟨toLex ((ofLex p).1, b), Prod.Lex.toLex_lt_toLex.2 (Or.inr ⟨rfl, hb⟩)⟩⟩
+  have : NoMinOrder V := ⟨fun p => by
+    obtain ⟨b, hb⟩ := exists_gt (OrderDual.ofDual (ofLex p).1)
+    exact ⟨toLex (OrderDual.toDual b, (ofLex p).2), Prod.Lex.toLex_lt_toLex.2 (Or.inl hb)⟩⟩
+  have : Nonempty V := ⟨toLex (OrderDual.toDual (Classical.arbitrary ι), Classical.arbitrary ι)⟩
+  refine ⟨Lex (ι → V), inferInstance, orderSaturated_piLex hκ hbd
+    (fun S U hS hU hSU => dualLex_interp hbd S U hS hU hSU), ?_⟩
+  have hι : #ι = Order.succ κ := Cardinal.mk_ord_toType _
+  have hV : #V = Order.succ κ := by
+    show #(ιᵒᵈ × ι) = _
+    rw [mk_prod, lift_id, lift_id]
+    show #ι * #ι = _
+    rw [hι, mul_eq_self (hκ.trans (Order.le_succ κ))]
+  show #(ι → V) = _
+  rw [← power_def, hV, hι, power_self_eq (hκ.trans (Order.le_succ κ))]
 
 end OrderSat83
 end AEC
