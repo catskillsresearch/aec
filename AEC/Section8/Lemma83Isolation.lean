@@ -936,4 +936,28 @@ theorem infra_83_subLang_limit_into_sample {L L₀ : FirstOrder.Language.{u, u}}
   exact ⟨f, hf, fun s p => (congrFun (congrArg (⇑) (hfc s))
     (Quotient.mk _ (FirstOrder.Language.Term.var p))).trans rfl⟩
 
+/-- **Matching the mixed-language sort map into a sample (proved).** The value in a sample of
+the image of an `L₁`-hull element under the Lemma 8.3 mixed sort map `X_H → Y_H`
+(`Hull83.mixMap`, the template's `ηXY`), transported by the `L₂`-match, equals the value of the
+`L₁`-match: the matches of the `X` and `Y` pieces of the sublanguage pair template into a sample
+commute with the template inclusion. -/
+theorem infra_83_mix_hullVal_match {L₁ L₂ L : FirstOrder.Language.{u, u}} (χ : L₁ →ᴸ L₂) (ψ₂ : L₂ →ᴸ L) {M N : Type u} [L.Structure M]
+    [L.Structure N] {ι ι₀ : Type} (w : ι → N) (v : ι → M) (τ : ι₀ → ι)
+    (hY : @Hull83.tpCode L₂ N (ψ₂.reduct N) ι w = @Hull83.tpCode L₂ M (ψ₂.reduct M) ι (v ∘ id))
+    (hX : @Hull83.tpCode L₁ N ((ψ₂.comp χ).reduct N) ι₀ (w ∘ τ) =
+      @Hull83.tpCode L₁ M ((ψ₂.comp χ).reduct M) ι₀ ((v ∘ τ) ∘ id))
+    (x : Hull83.subHull (ψ₂.comp χ) (w ∘ τ)) :
+    @Hull83.hullVal L₂ M (ψ₂.reduct M) ι v
+      (@Hull83.hullMap L₂ M N (ψ₂.reduct M) (ψ₂.reduct N) ι ι w v id hY
+        (Hull83.mixMap χ ψ₂ w τ x)) =
+    @Hull83.hullVal L₁ M ((ψ₂.comp χ).reduct M) ι₀ (v ∘ τ)
+      (@Hull83.hullMap L₁ M N ((ψ₂.comp χ).reduct M) ((ψ₂.comp χ).reduct N) ι₀ ι₀ (w ∘ τ) (v ∘ τ) id hX x) := by
+  induction x using Quotient.ind with
+  | _ t =>
+    letI := ψ₂.reduct M
+    letI := χ.reduct M
+    show (((χ.onTerm t).relabel τ).relabel id).realize v = (t.relabel id).realize (v ∘ τ)
+    rw [FirstOrder.Language.Term.realize_relabel, FirstOrder.Language.Term.realize_relabel, FirstOrder.Language.Term.realize_relabel]
+    simp only [Function.comp_id, FirstOrder.Language.LHom.realize_onTerm]
+
 end AEC

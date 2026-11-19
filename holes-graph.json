@@ -6625,6 +6625,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 123: proved."
+  },
+  {
+   "id": "infra_83_mix_hullVal_match",
+   "label": "Matches of the X and Y sublanguage pieces into a sample commute with the mixed sort map (template ηXY)",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83Isolation.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 124: proved."
   }
  ],
  "edges": [
@@ -12250,8 +12259,13 @@
    "from": "infra_83_subLang_limit_into_sample",
    "to": "infra_83_bounded_arity_free",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_mix_hullVal_match",
+   "to": "infra_83_bounded_arity_free",
+   "kind": "hard"
   }
  ],
- "doneCount": 673,
+ "doneCount": 674,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
