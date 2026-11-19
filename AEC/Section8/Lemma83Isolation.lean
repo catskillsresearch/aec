@@ -694,4 +694,56 @@ theorem infra_83_sample_tp_orderMap {L : FirstOrder.Language.{u, u}} {r : ℕ}
   rw [hb, ← hcol]
   exact hhom (k + 1) (k + 1) (Nat.succ_pos k) le_rfl _ h'
 
+/-- **The template value of `I` maps into a homogeneous sample (proved).** English (Lemma 8.3
+proof): the template value is matched into an actual sample. For bundle families `base : I → M`
+in an admitted `L`-structure `M` (with `K`-reduct) whose finite enumerations have the template
+colors (e.g. `infra_83_sample_tp_orderMap`), the EM value `F(I)` of the bundled pieces embeds
+strongly into the reduct of `M`, sending the generators of every support `s` to the bundles of
+`s`. -/
+theorem infra_83_limit_into_sample {L : FirstOrder.Language.{u, u}}
+    {P : ∀ (M : Type u) [L.Structure M], Prop} {r : ℕ} [NeZero r]
+    {c : (m : ℕ) → 0 < m → Hull83.TpColorB L r m}
+    (hc : ∀ (n : ℕ) (κ : Cardinal.{u}), Hull83.Joint (Hull83.TpSampleB P r) n c κ)
+    (hcoh : ∀ {m m' : ℕ} (hm' : 0 < m') (hm : 0 < m) (f : Fin m' ↪o Fin m),
+      c m' hm' = Hull83.tpResB r f (c m hm))
+    (φ : K.τ →ᴸ L) (hP : Hull83.HullStrong φ P)
+    {I : Type u} [LinearOrder I] [Nonempty I] {M : Type u} [L.Structure M] (hPM : P M)
+    (hMK : K.Mem (Hull83.red φ M)) (base : I → Fin r → M)
+    (htp : ∀ (k : ℕ) (s : Finset I) (h : s.card = k + 1),
+      Hull83.tpCode (L := L) (Hull83.bundleOf base s h) = c (k + 1) (Nat.succ_pos k)) :
+    ∃ f : ((Hull83.tpFinPiecesB (hc := hc) (hcoh := hcoh) (φ := φ) hP).limit I).obj.carrier
+        ↪[K.τ] (Hull83.red φ M).carrier,
+      K.Strong f ∧ ∀ (s : {s : Finset I // s.Nonempty}) p,
+        f (((Hull83.tpFinPiecesB (hc := hc) (hcoh := hcoh) (φ := φ) hP).limit I).canon s
+          (Quotient.mk _ (FirstOrder.Language.Term.var p))) =
+          Hull83.bundleOf base s.1 (Nat.succ_pred_eq_of_pos (Finset.card_pos.mpr s.2)).symm p := by
+  classical
+  let F := Hull83.tpFinPiecesB (hc := hc) (hcoh := hcoh) (φ := φ) hP
+  have hs : ∀ s : {s : Finset I // s.Nonempty}, s.1.card = s.1.card.pred + 1 :=
+    fun s => (Nat.succ_pred_eq_of_pos (Finset.card_pos.mpr s.2)).symm
+  have h' : ∀ s : {s : Finset I // s.Nonempty},
+      Hull83.tpCode (L := L) (Hull83.witB hc s.1.card.pred).v =
+        Hull83.tpCode (Hull83.bundleOf base s.1 (hs s) ∘ id) :=
+    fun s => (Hull83.witB hc s.1.card.pred).tp.trans (htp _ s.1 (hs s)).symm
+  let m : ∀ s : {s : Finset I // s.Nonempty},
+      Hull83.Hull (L := L) (Hull83.witB hc s.1.card.pred).v ↪[L] M :=
+    fun s => (Hull83.hullEmb (Hull83.bundleOf base s.1 (hs s))).comp (Hull83.hullMapEmb id (h' s))
+  let g : ∀ s : (F.system I).ι, ((F.system I).obj s).carrier ↪[K.τ] (Hull83.red φ M).carrier :=
+    fun s => Hull83.redEmb φ (m s)
+  have hg : ∀ s, K.Strong (g s) := by
+    intro s
+    have h1 := Hull83.hullMap_strong hP hPM (Hull83.witB hc s.1.card.pred).mem id (h' s)
+    have h2 := hP M hPM (Hull83.bundleOf base s.1 (hs s))
+    exact K.strong_trans _ _ h1 h2
+  have hcompat : ∀ {s t} (h : (F.system I).rel s t), (g t).comp ((F.system I).map h) = g s := by
+    intro s t h
+    have := infra_83_hull_match_compat (Prod.map (placeSucc h s.2 t.2) id)
+      (Hull83.tpPieceB_tp hc hcoh (placeSucc h s.2 t.2)) (m s) (m t) _ _
+      (fun p => rfl) (fun p => rfl) (fun p => infra_83_bundleOf_placeSucc base h s.2 t.2 _ _ p)
+    ext x
+    exact congrFun (congrArg (⇑) this) x
+  obtain ⟨f, hf, hfc⟩ := (F.limit_spec I).2.2 (Hull83.red φ M) g hMK hg hcompat
+  refine ⟨f, hf, fun s p => ?_⟩
+  exact congrFun (congrArg (⇑) (hfc s)) _
+
 end AEC
