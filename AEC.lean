@@ -208,6 +208,7 @@ public import AEC.Section8.TiedAlong
 public import AEC.Section8.ComparisonSingle
 public import AEC.Section8.ReflectSingle
 public import AEC.Section8.Layout84Single
+public import AEC.Section8.TermGen84Single
 public import AEC.Section8.Lemma84Single
 public import AEC.Section8.Results
 public import AEC.Section8.StationaryPrescription

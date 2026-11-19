@@ -4834,6 +4834,33 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 100: A-part of C read through U (uT o incl = cT o aC, iso fixes A), then infra_84_U_tests_single'. Axioms clean. Remaining joint case: C-parts outside A (infra_84_layout_amalgam)."
+  },
+  {
+   "id": "infra_84_term_generation_single",
+   "label": "Lemma 8.4 (P.scheme): bounded lists of a level-nu object are term values over <= theta generator positions of its chart E(J)",
+   "section": 8,
+   "file": "AEC/Section8/TermGen84Single.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 101 term-generation step: via paramSupport / supportTermOf / infra_612_map_restrict (chart route as in infra_612_same_galois_left_large)."
+  },
+  {
+   "id": "infra_84_transfer_of_agreeOn",
+   "label": "Lemma 8.4 (P.scheme): placed agreement on generator positions X transfers to all bounded term parameters supported in X",
+   "section": 8,
+   "file": "AEC/Section8/TermGen84Single.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 101 diagram transfer generators -> term parameters (closed level, both hosts)."
+  },
+  {
+   "id": "infra_84_agreeOn_of_generator_tests",
+   "label": "Lemma 8.4 (P.scheme): bounded generator tests (parameters from E(X+i0)) give placed agreement on X",
+   "section": 8,
+   "file": "AEC/Section8/TermGen84Single.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 101 converse: generator tests -> AgreeOn X (Prop 4.8 style, two hosts)."
   }
  ],
  "edges": [
@@ -9259,8 +9286,23 @@
    "from": "infra_84_UA_tests_single",
    "to": "infra_84_U_part_bound",
    "kind": "hard"
+  },
+  {
+   "from": "infra_84_term_generation_single",
+   "to": "infra_84_layout_amalgam",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_84_transfer_of_agreeOn",
+   "to": "infra_84_layout_amalgam",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_84_agreeOn_of_generator_tests",
+   "to": "infra_84_layout_amalgam",
+   "kind": "hard"
   }
  ],
- "doneCount": 482,
+ "doneCount": 485,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
