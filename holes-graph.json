@@ -6175,6 +6175,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 107: pointwise-in-I identification; remaining: naturality in I, skeleton correspondence, X ⊆ Y compatibility."
+  },
+  {
+   "id": "infra_83_order_colimit_card",
+   "label": "Size of J_I: #J_I ≤ #(finite supports)·κ; coherent strictly increasing coordinates give I ↪o J_I",
+   "section": 8,
+   "file": "OrderColimit83.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 107: OCol83.card_col_le, OCol83.exists_coord_embedding (for the level of F^b(I): #J_I = #I)."
   }
  ],
  "edges": [
@@ -11520,8 +11529,13 @@
    "from": "infra_83_pairMS2_Y_hull_eq_FZ",
    "to": "infra_83_Y_hull_eq_FZ",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_order_colimit_card",
+   "to": "infra_83_template_from_colors",
+   "kind": "hard"
   }
  ],
- "doneCount": 619,
+ "doneCount": 620,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

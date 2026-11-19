@@ -175,6 +175,44 @@ theorem cover {K : AbstractElementaryClass.{u}} (E : OrderPresentation K) [Nonem
   funext k
   rw [E.skeleton_natural, hx]
 
+
+omit hid in
+/-- **Size of the colimit order**: if every `G s` has size at most `κ`, then
+`#J_I ≤ #(finite supports of I) · κ`. -/
+theorem card_col_le (κ : Cardinal.{u}) (hG : ∀ s, #(G s) ≤ κ) :
+    #(Col φ hcomp) ≤ #(Idx I) * κ := by
+  refine (Cardinal.mk_le_of_surjective (Quotient.mk_surjective (s := setoid φ hcomp))).trans ?_
+  rw [Cardinal.mk_sigma]
+  exact (Cardinal.sum_le_sum _ _ hG).trans (Cardinal.sum_const' _ _).le
+
+/-- **`I` embeds in the colimit order through coherent coordinates**: if each `G s` carries
+coordinates `cs s i` (`i ∈ s`), strictly increasing in `i` and moved by the transition maps
+to the coordinates of the same point, then `i ↦ ι_{{i}} (cs {i} i)` is an order embedding
+`I ↪o J_I`. -/
+theorem exists_coord_embedding
+    (cs : ∀ (s : Idx I) (i : I), i ∈ s.1 → G s)
+    (hcs : ∀ {s t : Idx I} (hst : s.1 ⊆ t.1) (i : I) (hi : i ∈ s.1),
+      φ hst (cs s i hi) = cs t i (hst hi))
+    (hmono : ∀ (s : Idx I) (i i' : I) (hi : i ∈ s.1) (hi' : i' ∈ s.1),
+      i < i' → cs s i hi < cs s i' hi') :
+    ∃ g : I ↪o Col φ hcomp, ∀ (s : Idx I) (i : I) (hi : i ∈ s.1),
+      g i = iota φ hcomp hid s (cs s i hi) := by
+  classical
+  let sg : I → Idx I := fun i => ⟨{i}, Finset.singleton_nonempty i⟩
+  let g0 : I → Col φ hcomp := fun i => iota φ hcomp hid (sg i) (cs (sg i) i (Finset.mem_singleton_self i))
+  have hg0 : ∀ (s : Idx I) (i : I) (hi : i ∈ s.1), g0 i = iota φ hcomp hid s (cs s i hi) := by
+    intro s i hi
+    have hsub : (sg i).1 ⊆ s.1 := Finset.singleton_subset_iff.2 hi
+    exact (iota_comp φ hcomp hid hsub _).symm.trans (by rw [hcs])
+  have hlt : StrictMono g0 := by
+    intro i i' hii'
+    let u : Idx I := up (sg i) (sg i')
+    have hi : i ∈ u.1 := by simp [u, up, sg]
+    have hi' : i' ∈ u.1 := by simp [u, up, sg]
+    rw [hg0 u i hi, hg0 u i' hi']
+    exact (iota φ hcomp hid u).strictMono (hmono u i i' hi hi' hii')
+  exact ⟨OrderEmbedding.ofStrictMono g0 hlt, fun s i hi => hg0 s i hi⟩
+
 end OCol83
 
 
