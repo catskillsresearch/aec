@@ -7093,6 +7093,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 173: proved."
+  },
+  {
+   "id": "infra_83_piece_matches_bounded_along",
+   "label": "Bounded-width pieces along an arbitrary order map e : D -> S.alpha into a sample homogeneous only through arity n: pieces on supports of size <= n embed compatibly, generators to moved bundles (with infra_83_sample_tp_orderMap_bounded)",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PieceMatch.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 174: proved."
   }
  ],
  "edges": [
@@ -13003,8 +13012,13 @@
    "from": "infra_83_full_single_of_value_matches",
    "to": "infra_83_lemma_8_3_full_single",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_piece_matches_bounded_along",
+   "to": "infra_83_bounded_list_match",
+   "kind": "hard"
   }
  ],
- "doneCount": 720,
+ "doneCount": 721,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
