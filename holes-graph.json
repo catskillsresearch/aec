@@ -4374,7 +4374,7 @@
    "file": "AEC/Section7/Lemma72Mixed.lean",
    "status": "open",
    "blocker": null,
-   "detail": "Statement now in Lean (sorry), cycle 96: infra_72_mixed_level in AEC/Section7/Lemma72Mixed.lean, the mixed-level port of infra_72_over_B_isolation with bounds at the level of A and IsTiedFreeMixed marginal."
+   "detail": "Statement now in Lean (sorry), cycle 96: infra_72_mixed_level in AEC/Section7/Lemma72Mixed.lean, the mixed-level port of infra_72_over_B_isolation with bounds at the level of A and IsTiedFreeMixed marginal. | Cycle 96 progress: ext_align_mixed, tied_move_mixed, tied_unique_mixed done. Remaining: mixed infra_73_tied_of_isolated (q relatively isolated + hExt + IsTiedFreeMixed marginal => IsTiedFreeMixed f q qB), then the assembly. Caveat: the uniqueness port uses recursion closure at the level mu of B (differing test over B); the English proviso only mentions bounds below the level of A, so either derive mu-testing from nu-bounds or ask for a ruling to add mu in the tail (harmless for 8.2(5) where both levels are in T)."
   },
   {
    "id": "infra_72_ext_align_mixed",
@@ -4393,6 +4393,15 @@
    "status": "done",
    "blocker": null,
    "detail": "DONE cycle 96. Port of infra_73_tied_move with A at nu in the sigma-tail, B at mu >= nu; via infra_78_sequence_mixed and infra_78_move_mixed. Axioms clean."
+  },
+  {
+   "id": "infra_72_tied_unique_mixed",
+   "label": "Lemma 7.2 mixed: uniqueness of mixed tied-free extensions",
+   "section": 8,
+   "file": "AEC/Section7/Lemma72Mixed.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "DONE cycle 96. Port of infra_73_tied_unique; needs mu in recursionClosedLevels (testing over B via infra_73_differing_test). Axioms clean."
   }
  ],
  "edges": [
@@ -8573,8 +8582,13 @@
    "from": "infra_72_tied_move_mixed",
    "to": "infra_72_mixed_level",
    "kind": "hard"
+  },
+  {
+   "from": "infra_72_tied_unique_mixed",
+   "to": "infra_72_mixed_level",
+   "kind": "hard"
   }
  ],
- "doneCount": 432,
+ "doneCount": 433,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

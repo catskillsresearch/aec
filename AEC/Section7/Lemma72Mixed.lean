@@ -104,6 +104,42 @@ theorem infra_72_tied_move_mixed
     (fun t : p.idx ⊕ β => Sum.map (fun j => (i, j)) id t)
   exact infra_73_diagramEq_of_eq h (fun t => by cases t <;> rfl) (fun t => by cases t <;> rfl)
 
+/-- **Mixed-level uniqueness of tied-free extensions (proved; port of `infra_73_tied_unique`).**
+Two mixed tied-free extensions over `B` (level `μ`, recursion closed) of `p` over `A` (level `ν`
+in the `σ`-tail) have the same Galois type over `B`. The level hypothesis at `μ` is the one of
+`infra_73_differing_test` (testing over `B`). -/
+theorem infra_72_tied_unique_mixed
+    (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : ℵ₀ ≤ σ)
+    {ν μ : Cardinal.{u}} (hν : ν ∈ P.eligible) (hνT : ν ∈ infra_73_tailSet P σ)
+    (hμ : μ ∈ P.eligible) (hνμ : ν ≤ μ)
+    (hrecμ : μ ∈ recursionClosedLevels P σ)
+    {A : P.scheme.Object ν hν} {B : P.scheme.Object μ hμ}
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hν A) (P.scheme.asSystem hμ B))
+    (hf : P.scheme.permitted (X := A) (Y := B) f)
+    (p : TupleOver K oneVertexShape P.scheme hν A) (hidx : #p.idx ≤ σ)
+    (pB1 pB2 : TupleOver K oneVertexShape P.scheme hμ B)
+    (eB1 : p.idx ≃ pB1.idx) (eB2 : p.idx ≃ pB2.idx)
+    (h1ν : pB1.ν = μ) (h2ν : pB2.ν = μ)
+    (hT1 : IsTiedFreeMixed f p pB1 eB1) (hT2 : IsTiedFreeMixed f p pB2 eB2) :
+    SameGaloisType pB1 pB2 eB1.symm eB2.symm := by
+  classical
+  have hσSuccν : Order.succ σ ≤ ν := infra_73_tail_succ hνT
+  have hσSucc : Order.succ σ ≤ μ := hσSuccν.trans hνμ
+  have hσlt : σ < μ := (Order.lt_succ σ).trans_le hσSucc
+  have hidx1 : #pB1.idx ≤ σ := by rw [← Cardinal.mk_congr eB1]; exact hidx
+  by_contra hneq
+  obtain ⟨β, Y, hβ, hnot⟩ :=
+    infra_73_differing_test P σ hσ hμ hrecμ hσSucc pB1 pB2 eB1.symm eB2.symm h1ν h2ν
+      hidx1 (hidx1.trans_lt hσlt) hneq
+  apply hnot
+  obtain ⟨seq, Y0, hlong, hβτ, hβν, hmv⟩ :=
+    infra_72_tied_move_mixed P σ hσ hν hνT hνμ f hf p hidx Y hβ
+  have d1 := hT1 seq Y Y0 hlong hβτ hβν hmv
+  have d2 := hT2 seq Y Y0 hlong hβτ hβν hmv
+  have d := P.scheme.diagram_trans pB1.host p.host pB2.host _ _ _
+    (P.scheme.diagram_symm p.host pB1.host _ _ d1) d2
+  exact infra_73_diagramEq_of_eq d (fun t => by cases t <;> rfl) (fun t => by cases t <;> rfl)
+
 /-- **English Lemma 7.2, clause 2 at mixed levels (open).** -/
 theorem infra_72_mixed_level
     (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : ℵ₀ ≤ σ)
