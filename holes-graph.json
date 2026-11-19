@@ -5878,6 +5878,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 106: infra_83_pairMS2_Y_pieces_coord."
+  },
+  {
+   "id": "infra_83_pieces_coord_natural",
+   "label": "Lemma 8.3 proof: template piece maps send the hull element of coordinate (a, σ i) to that of (e a, σ i)",
+   "section": 8,
+   "file": "AEC/Section8/HullSubBundle83.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 106: Hull83.subLangPieces_coord (generic, any sublanguage pieces). With infra_83_pairMS2_X/Y_pieces_coord: ε_l(F_X(e) x_a) = skeleton(j_l(e a))."
   }
  ],
  "edges": [
@@ -11003,8 +11012,18 @@
    "from": "infra_83_pairMS2_Y_pieces_coord",
    "to": "infra_83_Y_hull_eq_FZ",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_pieces_coord_natural",
+   "to": "infra_83_X_hull_eq_FJ",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_83_pieces_coord_natural",
+   "to": "infra_83_Y_hull_eq_FZ",
+   "kind": "hard"
   }
  ],
- "doneCount": 586,
+ "doneCount": 587,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

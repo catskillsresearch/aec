@@ -119,6 +119,21 @@ noncomputable def subLangChain (hP₀ : SubHullStrong ψ φ₀ P) (hP : HullStro
       (tpFinPiecesB (hc := hc) (hcoh := hcoh) (φ := ψ.comp φ₀) hP) :=
   (subBundleHom hc hcoh σ (ψ.comp φ₀) hP).comp (subLangHom ψ φ₀ hc hcoh σ hP₀ hP)
 
+include hcoh in
+/-- **Piece maps move coordinates to coordinates**: the piece map of `e` sends the hull element
+of the coordinate `(a, σ i)` to that of `(e a, σ i)` (in the witness samples). -/
+theorem subLangPieces_coord (hP₀ : SubHullStrong ψ φ₀ P) {k l : ℕ}
+    (e : Fin (k + 1) ↪o Fin (l + 1))
+    (x : ((subLangPieces ψ φ₀ hc hcoh σ hP₀).obj k).carrier) (a : Fin (k + 1)) (i : Fin r₁)
+    (hx : subHullEmb ψ φ₀ ((witB hc k).v ∘ Prod.map id σ) x = (witB hc k).v (a, σ i)) :
+    subHullEmb ψ φ₀ ((witB hc l).v ∘ Prod.map id σ)
+        ((subLangPieces ψ φ₀ hc hcoh σ hP₀).map e x) = (witB hc l).v (e a, σ i) := by
+  have h1 : x = @Quotient.mk _ (@hullSetoid L₀ _ (ψ.reduct _) _
+      ((witB hc k).v ∘ Prod.map id σ)) (Term.var (a, i)) :=
+    @hullVal_injective L₀ _ (ψ.reduct _) _ _ x _ hx
+  subst h1
+  rfl
+
 end SubLangBundle
 
 end Hull83
