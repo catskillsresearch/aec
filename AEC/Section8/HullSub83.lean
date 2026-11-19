@@ -109,5 +109,105 @@ theorem subHullIncl_strong {M : Type u} [L.Structure M] {m : ℕ} (v : Fin m →
     K.Strong (subHullIncl ψ φ₀ v) :=
   embOfComp_strong _ _ _ _ hL hL₀
 
+theorem onTerm_relabel {α β : Type*} (g : α → β) (t : L₀.Term α) :
+    ψ.onTerm (t.relabel g) = (ψ.onTerm t).relabel g := by
+  induction t with
+  | var => rfl
+  | func f ts ih => simp only [Term.relabel, LHom.onTerm, ih]
+
+/-- Equal `L`-types give equal `L₀`-types in the reducts. -/
+theorem tpCode_reduct {M N : Type u} [L.Structure M] [L.Structure N] {m : ℕ}
+    {v : Fin m → M} {w : Fin m → N} (h : tpCode (L := L) v = tpCode w) :
+    @tpCode L₀ M (ψ.reduct M) m v = @tpCode L₀ N (ψ.reduct N) m w := by
+  letI := ψ.reduct M
+  letI := ψ.reduct N
+  ext θ
+  have := congrArg (fun c : TpColor L m => ψ.onFormula θ ∈ c) h
+  simp only [tpCode, Set.mem_setOf_eq, LHom.realize_onFormula] at this
+  exact Iff.of_eq this
+
+theorem subToHull_hullMap {M N : Type u} [L.Structure M] [L.Structure N] {m m' : ℕ}
+    {v' : Fin m' → N} {v : Fin m → M} (g : Fin m' → Fin m)
+    (h : tpCode (L := L) v' = tpCode (v ∘ g)) (x : subHull ψ v') :
+    subToHull ψ v (@hullMap L₀ M N (ψ.reduct M) (ψ.reduct N) m m' v' v g (tpCode_reduct ψ h) x) =
+      hullMap g h (subToHull ψ v' x) := by
+  induction x using Quotient.ind with
+  | _ t =>
+    exact congrArg (Quotient.mk _) (onTerm_relabel ψ g t)
+
+/-- Vertex LS witnesses for the sublanguage hulls. -/
+def SubHullStrong (P : ∀ (M : Type u) [L.Structure M], Prop) : Prop :=
+  ∀ (M : Type u) [L.Structure M], P M → ∀ {m : ℕ} (v : Fin m → M),
+    K.Strong (subHullEmb ψ φ₀ v)
+
+/-- The admitted `L₀`-structures: reducts of admitted `L`-structures. -/
+def reductClass (P : ∀ (M : Type u) [L.Structure M], Prop) :
+    ∀ (M : Type u) [L₀.Structure M], Prop :=
+  fun M inst₀ => ∃ inst : L.Structure M, @P M inst ∧ inst₀ = @LHom.reduct L₀ L ψ M inst
+
+theorem hullStrong_reductClass {P : ∀ (M : Type u) [L.Structure M], Prop}
+    (hP : SubHullStrong ψ φ₀ P) : HullStrong φ₀ (reductClass ψ P) := by
+  intro M inst₀ hM m v
+  obtain ⟨inst, hPM, rfl⟩ := hM
+  exact hP M hPM v
+
+section SubPieces
+
+variable {P : ∀ (M : Type u) [L.Structure M], Prop} {c : (m : ℕ) → 0 < m → TpColor L m}
+  (hc : ∀ (n : ℕ) (κ : Cardinal.{u}), Joint (TpSample P) n c κ)
+  (hcoh : ∀ {m m' : ℕ} (hm' : 0 < m') (hm : 0 < m) (f : Fin m' ↪o Fin m),
+    c m' hm' = tpRes f (c m hm))
+
+include hcoh in
+/-- **The sublanguage pieces** on the same witnesses, as finite pieces of `K`. -/
+noncomputable def subFinPieces (hP : SubHullStrong ψ φ₀ P) : EM83.FinPieces K where
+  obj k := subHullModel ψ φ₀ (wit hc k).v
+  mem k := K.strong_mem_dom _ (hP _ (wit hc k).mem (wit hc k).v)
+  map e := @redEmb K L₀ φ₀ _ _ (@hullStructure L₀ _ (ψ.reduct _) _ _)
+    (@hullStructure L₀ _ (ψ.reduct _) _ _)
+    (@hullMapEmb L₀ _ _ (ψ.reduct _) (ψ.reduct _) _ _ _ _ e
+      (tpCode_reduct ψ (tpPiece_tp hc hcoh e)))
+  map_refl k := by
+    ext x
+    exact @hullMap_id L₀ _ (ψ.reduct _) _ _
+      (tpCode_reduct ψ (tpPiece_tp hc hcoh (k := k) (l := k) idEmb)) x
+  map_trans e f := by
+    ext x
+    exact (@hullMap_comp L₀ _ _ (ψ.reduct _) (ψ.reduct _) _ _ _ (ψ.reduct _) _ _ _ _
+      (⇑e) (⇑f) (tpCode_reduct ψ (tpPiece_tp hc hcoh e)) (tpCode_reduct ψ (tpPiece_tp hc hcoh f))
+      (tpCode_reduct ψ (tpPiece_tp hc hcoh (e.trans f))) x).symm
+  strong e := @hullMap_strong K L₀ φ₀ (reductClass ψ P) (hullStrong_reductClass ψ φ₀ hP)
+    _ _ (ψ.reduct _) (ψ.reduct _) ⟨_, (wit hc _).mem, rfl⟩ ⟨_, (wit hc _).mem, rfl⟩ _ _ _ _ (⇑e)
+    (tpCode_reduct ψ (tpPiece_tp hc hcoh e))
+
+include hcoh in
+/-- **Sort inclusion of templates.**  The sublanguage pieces include strongly and naturally
+into the full pieces (`φ = ψ ∘ φ₀`). -/
+noncomputable def subPiecesHom (hP₀ : SubHullStrong ψ φ₀ P)
+    (hP : HullStrong (ψ.comp φ₀) P) :
+    EM83.PiecesHom (subFinPieces ψ φ₀ hc hcoh hP₀) (tpFinPieces hc hcoh hP) where
+  app k := subHullIncl ψ φ₀ (wit hc k).v
+  strong k := subHullIncl_strong ψ φ₀ _ (hP _ (wit hc k).mem _) (hP₀ _ (wit hc k).mem _)
+  natural e := by
+    ext x
+    exact subToHull_hullMap ψ (⇑e) (tpPiece_tp hc hcoh e) x
+
+include hcoh in
+/-- **Sort maps of the template.**  On every nonempty order `I`, the EM value of the
+sublanguage pieces embeds strongly into the EM value of the full pieces, naturally in order
+embeddings (`X_H → L_H`-type maps of the pair template). -/
+theorem sub_template_map (hP₀ : SubHullStrong ψ φ₀ P) (hP : HullStrong (ψ.comp φ₀) P) :
+    (∀ (I : Type u) [LinearOrder I] [Nonempty I],
+      K.Strong ((subPiecesHom ψ φ₀ hc hcoh hP₀ hP).limMap I)) ∧
+    ∀ {I J : Type u} [LinearOrder I] [LinearOrder J] [Nonempty I] [Nonempty J] (f : I ↪o J),
+      ((subPiecesHom ψ φ₀ hc hcoh hP₀ hP).limMap J).comp
+          (EM83.gEmMap (F := subFinPieces ψ φ₀ hc hcoh hP₀) f) =
+        (EM83.gEmMap (F := tpFinPieces hc hcoh hP) f).comp
+          ((subPiecesHom ψ φ₀ hc hcoh hP₀ hP).limMap I) :=
+  ⟨fun I _ _ => (subPiecesHom ψ φ₀ hc hcoh hP₀ hP).limMap_strong I,
+    fun f => (subPiecesHom ψ φ₀ hc hcoh hP₀ hP).limMap_natural f⟩
+
+end SubPieces
+
 end Hull83
 end AEC
