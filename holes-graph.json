@@ -7543,6 +7543,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 222: proved."
+  },
+  {
+   "id": "infra_83_support_set",
+   "label": "Support set of size nu for a base set and at most nu points: for T in Z with #T = nu >= aleph0 and at most nu elements x i of F(Z), some S containing T has #S = nu and every x i in F(S)",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PieceMatch.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 223: proved."
   }
  ],
  "edges": [
@@ -13703,8 +13712,13 @@
    "from": "infra_83_finite_support",
    "to": "infra_83_XH_sort",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_support_set",
+   "to": "infra_83_XH_sort",
+   "kind": "hard"
   }
  ],
- "doneCount": 769,
+ "doneCount": 770,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

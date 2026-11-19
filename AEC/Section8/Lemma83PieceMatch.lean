@@ -1961,4 +1961,40 @@ theorem infra_83_finite_support (E : OrderPresentation K) {Z : Type u} [LinearOr
   rfl
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+/-- **A support set of size `ν` for a base set and at most `ν` points (proved).** For `T ⊆ Z` with
+`#T = ν ≥ ℵ₀` and at most `ν` elements `x i` of `F(Z)`, there is `S ⊇ T` with `#S = ν` and every
+`x i ∈ F(S)`: the support set of `infra_83_piece_of_support` for `T` the support of `X_I` and `x`
+the entries of `(mk_I, c)` (`infra_83_finite_support`). -/
+theorem infra_83_support_set (E : OrderPresentation K) {Z : Type u} [LinearOrder Z]
+    [Nonempty Z] {ν : Cardinal.{u}} (hν : ℵ₀ ≤ ν) (T : Set Z) (hT : #T = ν)
+    {ι : Type u} (hι : #ι ≤ ν) (x : ι → (E.obj Z).carrier) :
+    ∃ (S : Set Z) (_ : Nonempty S), T ⊆ S ∧ #S = ν ∧
+      ∀ i, x i ∈ Set.range (E.map (OrderEmbedding.subtype (fun z => z ∈ S))) := by
+  classical
+  choose s hs using fun i => infra_83_finite_support E (x i)
+  let S : Set Z := T ∪ ⋃ i, (↑(s i) : Set Z)
+  have hTne : Nonempty T := by
+    rw [← Cardinal.mk_ne_zero_iff, hT]
+    exact (Cardinal.aleph0_pos.trans_le hν).ne'
+  have hne : Nonempty S := ⟨⟨hTne.some.1, Or.inl hTne.some.2⟩⟩
+  have hcard : #S = ν := by
+    apply le_antisymm
+    · have hU : #(⋃ i, (↑(s i) : Set Z)) ≤ ν :=
+        calc #(⋃ i, (↑(s i) : Set Z)) ≤ #ι * ⨆ i, #(↑(s i) : Set Z) := Cardinal.mk_iUnion_le _
+          _ ≤ ν * ν := mul_le_mul' hι
+            (ciSup_le' fun i => (Cardinal.lt_aleph0_of_finite _).le.trans hν)
+          _ = ν := Cardinal.mul_eq_self hν
+      calc #S ≤ #T + #(⋃ i, (↑(s i) : Set Z)) := Cardinal.mk_union_le _ _
+        _ ≤ ν + ν := add_le_add hT.le hU
+        _ = ν := Cardinal.add_eq_self hν
+    · rw [← hT]
+      exact Cardinal.mk_le_mk_of_subset Set.subset_union_left
+  refine ⟨S, hne, Set.subset_union_left, hcard, fun i => ?_⟩
+  exact hs i S fun z hz => Or.inr (Set.mem_iUnion.mpr ⟨i, hz⟩)
+end
+
 end AEC
