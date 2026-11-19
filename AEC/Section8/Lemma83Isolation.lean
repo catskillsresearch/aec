@@ -218,4 +218,44 @@ theorem infra_83_dominated_of_retraction_pair_mixed (P : SingleModelData K) {ν 
     trivial trivial hsq r hιcard (fun _ => trivial) halmost himg b b' (fun k => (hb k).symm)
     (fun c hJ => hdom _ c (hJ.trans_le hνl))
 
+/-- **A pair mapping into a marked sample pair with a retraction family is marked (Lemma 8.3).**
+For `X ≤ Y` with finite tuple `b` at a closed level `ν`, a marked pair `N` at a closed level
+`l ≥ ν`, an arrow of pairs `(onX, onY)` carrying `b` to `N.b` and `ν` retractions
+`r_i : N.Y → N.X` almost fixing `N.X` and sending the image of `Y` into the image of `X`: `b`
+realizes `p_X` (some position identification; `infra_83_realizes_descend`) and `Y` is
+all-dominated over `X + b` (`infra_83_dominated_of_retraction_pair_mixed`). -/
+theorem infra_83_marked_of_sample_arrow (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) {ν : Cardinal.{u}}
+    (hνC : ν ∈ infra_615_closed P) (hνT : ν ∈ infra_78_closedTail P)
+    {X Y : P.scheme.Object ν hνC.1}
+    (incl : SystemArrow K oneVertexShape (P.scheme.asSystem hνC.1 X)
+      (P.scheme.asSystem hνC.1 Y))
+    (N : MarkedPair K oneVertexShape P.scheme Pr)
+    (hlC : N.μ ∈ infra_615_closed P) (hlT : N.μ ∈ infra_78_closedTail P) (hνl : ν ≤ N.μ)
+    (onX : SystemArrow K oneVertexShape (P.scheme.asSystem hνC.1 X)
+      (P.scheme.asSystem N.hμ N.X))
+    (onY : SystemArrow K oneVertexShape (P.scheme.asSystem hνC.1 Y)
+      (P.scheme.asSystem N.hμ N.Y))
+    (hcomm : SystemArrow.comp incl onY = SystemArrow.comp onX N.incl)
+    {ι : Type u}
+    (r : ι → SystemArrow K oneVertexShape (P.scheme.asSystem N.hμ N.Y)
+      (P.scheme.asSystem N.hμ N.X))
+    (hιcard : #ι = ν)
+    (halmost : ∀ a : Occurrence K oneVertexShape (P.scheme.asSystem N.hμ N.X),
+      Finite {i : ι // (r i).onVertex a.1 (N.incl.onVertex a.1 a.2) ≠ a.2})
+    (himg : ∀ i (x : Y.model.carrier),
+      ∃ y : X.model.carrier,
+        onX.onVertex PUnit.unit y = (r i).onVertex PUnit.unit (onY.onVertex PUnit.unit x))
+    (b : N.bIdx → Occurrence K oneVertexShape (P.scheme.asSystem hνC.1 Y))
+    (hb : ∀ i, onY.mapOcc (b i) = N.b i) :
+    (∃ realEq : N.bIdx ≃ (Pr.assign hνC.1 X).idx,
+      SameGaloisType (asTuple incl trivial b) (Pr.assign hνC.1 X) realEq (Equiv.refl _)) ∧
+    AllDominated incl trivial N.bIdx b := by
+  have hfin : Finite N.bIdx := Finite.of_equiv _ (N.realEq.trans (Pr.arity N.hμ N.X)).symm
+  refine ⟨infra_83_realizes_descend P Pr incl N.incl onX onY hcomm b N.b (Equiv.refl _) hb
+    N.realEq N.realizes, ?_⟩
+  obtain ⟨μ, hμ, NX, NY, nincl, hni, bIdx, nb, rE, hr, hd⟩ := N
+  exact infra_83_dominated_of_retraction_pair_mixed P hνC hlC hνT hlT hνl incl nincl onX onY
+    hcomm r hιcard halmost himg b nb hb hd
+
 end AEC

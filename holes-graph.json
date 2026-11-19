@@ -6436,6 +6436,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 110: proved via infra_79_descent (Lemma 6.17 tied + mixed Lemma 7.6). This is the paper's '(7) + actual sample pair is all-dominated' for the full value, given the arrow into a sample and the retraction family."
+  },
+  {
+   "id": "infra_83_marked_of_sample_arrow",
+   "label": "Lemma 8.3 proof (P.scheme): a pair with a mark-preserving pair arrow into a marked sample pair at a closed level >= its own, carrying a retraction family into the image of X, is marked (realizes + all-dominated)",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83Isolation.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 110: proved (infra_83_realizes_descend + infra_83_dominated_of_retraction_pair_mixed)."
   }
  ],
  "edges": [
@@ -11956,8 +11965,13 @@
    "from": "infra_83_dominated_of_retraction_pair_mixed",
    "to": "infra_83_all_dominated",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_marked_of_sample_arrow",
+   "to": "infra_83_lemma_8_3_full_single",
+   "kind": "hard"
   }
  ],
- "doneCount": 652,
+ "doneCount": 653,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
