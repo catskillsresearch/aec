@@ -3,6 +3,7 @@ module
 public import AEC.Section8.Lemma83ExpSamples
 public import AEC.Section8.LSPairLang83
 public import AEC.Section8.HullBundle83
+public import AEC.Section8.PairChain83
 
 @[expose] public section
 
@@ -128,5 +129,77 @@ theorem infra_83_JZ_template (P : SingleModelData K)
     Hull83.tpPresentationB hc hcoh (by norm_num) (LS83.lsInl K) LS83.hullStrong_lsClosed
       LS83.lsLang_functions_le,
     fun I _ _ => rfl, fun I _ _ => η.limMap_strong I, fun f => η.limMap_natural f⟩
+
+/-- The three-sort bundle (`J` in `X`, `Z` in `Y`, `W` in `L`). -/
+def jzwBundle {α M : Type u} (a b w : α → M) : α → Fin 3 → M := fun j => ![a j, b j, w j]
+
+/-- **Arbitrarily long three-sort skeleton sequences** (sorts `J`, `Z`, `W`).  As in
+`infra_83_JZ_skeleton_large`, plus an injective `W`-sequence: the skeleton of `J⁺` along an
+injection of `J` into the fresh strip of `J⁺` (of the same size `μ`). -/
+theorem infra_83_JZW_skeleton_large (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) (κ : Cardinal.{u}) :
+    ∃ (J : Type u) (_ : LinearOrder J) (Jplus : Type u) (_ : LinearOrder Jplus)
+      (_ : Nonempty Jplus) (emb : J ↪o Jplus) (_ : Nonempty J)
+      (str : (LS83.lsLang K).Structure (P.E.obj Jplus).carrier)
+      (y : J → (P.E.obj Jplus).carrier) (strip : Set Jplus) (w : J → strip),
+      @LS83.LSClosed K _ str ∧ κ ≤ #J ∧
+      Function.Injective (fun j => P.E.skeleton (emb j)) ∧ Function.Injective y ∧
+      Function.Injective w ∧ IsConvexRegion strip := by
+  obtain ⟨μ, hθ, -, -, J, i1, i2, -, -, hJ, -, M, -, eX, -, -, hZ, Jplus, i3, i4, emb, strip, -, -,
+    hconv, hstrip, -, -, F, -, -, str, -, hcl, -, -⟩ :=
+    infra_83_ls_expanded_samples P Pr (κ := ℵ₀) le_rfl κ
+  obtain ⟨ι⟩ := hZ J hJ
+  obtain ⟨e⟩ : Nonempty (J ≃ strip) := Cardinal.eq.mp (hJ.trans hstrip.symm)
+  exact ⟨J, i1, Jplus, i3, i4, emb, i2, str, fun j => F (ι (P.E.skeleton j)), strip, e, hcl,
+    hJ ▸ hθ, P.E.skeleton.injective.comp emb.injective,
+    F.injective.comp (ι.injective.comp P.E.skeleton.injective), e.injective, hconv⟩
+
+/-- **Coherent colors of the three-sort skeleton bundles** (`J`, `Z`, `W`). -/
+theorem infra_83_JZW_coherent_colors (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) :
+    ∃ c : (m : ℕ) → 0 < m → Hull83.TpColorB (LS83.lsLang K) 3 m,
+      (∀ (n : ℕ) (κ : Cardinal.{u}),
+        Hull83.Joint (Hull83.TpSampleB (fun N _ => LS83.LSClosed (K := K) N) 3) n c κ) ∧
+      ∀ {m m' : ℕ} (hm' : 0 < m') (hm : 0 < m) (f : Fin m' ↪o Fin m),
+        c m' hm' = Hull83.tpResB 3 f (c m hm) := by
+  refine Hull83.tpB_coherent_colors fun κ => ?_
+  obtain ⟨J, i1, Jplus, i3, i4, emb, i2, str, y, strip, w, hcl, hκ, hinj, hy, hw, -⟩ :=
+    infra_83_JZW_skeleton_large P Pr κ
+  refine ⟨J, i1, (P.E.obj Jplus).carrier, str, hcl, hκ,
+    jzwBundle (fun j => P.E.skeleton (emb j)) y (fun j => P.E.skeleton (w j).1), fun i => ?_⟩
+  fin_cases i
+  · exact hinj
+  · exact hy
+  · exact P.E.skeleton.injective.comp (Subtype.val_injective.comp hw)
+
+/-- **The `X → Y → L` template of the three-sort skeleton colors** (Lemma 8.3: `X_H = F(J_H)`,
+`Y_H` from `J_H, Z_H`, `L_H = F(J_H + W_H)`).  Piece functors `F_X`, `F_Y`, `F_L` (hulls of the
+`J`-, `J,Z`-, and all coordinates) with strong natural transformations `F_X → F_Y → F_L`, an
+order presentation of `K` with values `F_L(I)`, and induced maps `F_X(I) → F_Y(I) → F_L(I)`,
+strong and natural in order embeddings, whose composite is the induced map of the composite. -/
+theorem infra_83_JZW_template (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) :
+    ∃ (FX FY FL : EM83.FinPieces K) (ηXY : EM83.PiecesHom FX FY) (ηYL : EM83.PiecesHom FY FL)
+      (E : OrderPresentation K),
+      (∀ (I : Type u) [LinearOrder I] [Nonempty I], E.obj I = (FL.limit I).obj) ∧
+      (∀ (I : Type u) [LinearOrder I] [Nonempty I],
+        K.Strong (ηXY.limMap I) ∧ K.Strong (ηYL.limMap I) ∧
+          (ηYL.comp ηXY).limMap I = (ηYL.limMap I).comp (ηXY.limMap I)) ∧
+      ∀ {I J : Type u} [LinearOrder I] [LinearOrder J] [Nonempty I] [Nonempty J] (f : I ↪o J),
+        (ηXY.limMap J).comp (EM83.gEmMap (F := FX) f) =
+            (EM83.gEmMap (F := FY) f).comp (ηXY.limMap I) ∧
+          (ηYL.limMap J).comp (EM83.gEmMap (F := FY) f) =
+            (EM83.gEmMap (F := FL) f).comp (ηYL.limMap I) := by
+  obtain ⟨c, hc, hcoh⟩ := infra_83_JZW_coherent_colors P Pr
+  let σ : Fin 2 → Fin 3 := fun i => i.castSucc
+  let τ : Fin 1 → Fin 2 := fun _ => 0
+  let ηXY := Hull83.subSubBundleHom hc hcoh σ τ (LS83.lsInl K) LS83.hullStrong_lsClosed
+  let ηYL := Hull83.subBundleHom hc hcoh σ (LS83.lsInl K) LS83.hullStrong_lsClosed
+  exact ⟨_, _, _, ηXY, ηYL,
+    Hull83.tpPresentationB hc hcoh (by norm_num) (LS83.lsInl K) LS83.hullStrong_lsClosed
+      LS83.lsLang_functions_le,
+    fun I _ _ => rfl,
+    fun I _ _ => ⟨ηXY.limMap_strong I, ηYL.limMap_strong I, EM83.PiecesHom.limMap_comp _ _ I⟩,
+    fun f => ⟨ηXY.limMap_natural f, ηYL.limMap_natural f⟩⟩
 
 end AEC
