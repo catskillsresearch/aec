@@ -549,6 +549,8 @@ Lean: imports `Section5.Results` and `Section6.Results`. Soft paper chain after 
 | `infra_83_full_single_of_sample_arrows` | Lemma 8.3 (P.scheme) ⟸ retraction-carrying arrows from template values into marked samples | [`Lemma83Isolation.lean`](AEC/Section8/Lemma83Isolation.lean) (**done**, cycle 111) |
 | `infra_83_retraction_subfamily` | ν-sized sub-families of a Cor 6.16 retraction family | [`Lemma83Isolation.lean`](AEC/Section8/Lemma83Isolation.lean) (**done**, cycle 112) |
 | `infra_83_full_single_of_sample_families` | Lemma 8.3 (P.scheme) ⟸ arrows into marked samples with ≥ #I good Cor 6.16 retractions | [`Lemma83Isolation.lean`](AEC/Section8/Lemma83Isolation.lean) (**done**, cycle 112) |
+| `infra_83_good_of_ret_eval` | good retraction indices from the sample's retraction evaluation | [`Lemma83Isolation.lean`](AEC/Section8/Lemma83Isolation.lean) (**done**, cycle 113) |
+| `infra_83_full_single_of_ret_evals` | Lemma 8.3 (P.scheme) ⟸ arrows into ret-expanded samples with ≥ #I good evaluation indices | [`Lemma83Isolation.lean`](AEC/Section8/Lemma83Isolation.lean) (**done**, cycle 113) |
 | `infra_83_samples_core` | Lemma 8.3 proof (P.scheme): sample pair with base E(J) embedded into E(J + W) over the base | [`Lemma83Samples.lean`](AEC/Section8/Lemma83Samples.lean) (**done**, cycle 101) |
 | `infra_83_samples_order_exists` | Lemma 8.3 proof (P.scheme): the W of the samples exists | [`Lemma83Samples.lean`](AEC/Section8/Lemma83Samples.lean) (**done**, cycle 101) |
 | `infra_83_samples_retractions` | Lemma 8.3 proof (P.scheme): retraction family of the samples | [`Lemma83Samples.lean`](AEC/Section8/Lemma83Samples.lean) (**done**, cycle 101) |

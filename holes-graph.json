@@ -6481,6 +6481,24 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 112: proved reduction."
+  },
+  {
+   "id": "infra_83_good_of_ret_eval",
+   "label": "Good retraction indices from the retraction evaluation g(code_i, F y) = F(incl(r_i y))",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83Isolation.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 113: proved."
+  },
+  {
+   "id": "infra_83_full_single_of_ret_evals",
+   "label": "Lemma 8.3 (P.scheme) reduced to arrows into retraction-expanded samples with >= #I evaluation indices mapping Y_I into X_I",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83Isolation.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 113: proved reduction."
   }
  ],
  "edges": [
@@ -12026,8 +12044,18 @@
    "from": "infra_83_full_single_of_sample_families",
    "to": "infra_83_lemma_8_3_full_single",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_good_of_ret_eval",
+   "to": "infra_83_lemma_8_3_full_single",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_83_full_single_of_ret_evals",
+   "to": "infra_83_lemma_8_3_full_single",
+   "kind": "hard"
   }
  ],
- "doneCount": 657,
+ "doneCount": 659,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

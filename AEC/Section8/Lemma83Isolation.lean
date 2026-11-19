@@ -431,4 +431,64 @@ theorem infra_83_full_single_of_sample_families (P : SingleModelData K)
   rw [hrj]
   exact hj x
 
+/-- **Good retraction indices from the retraction evaluation (proved).** English (Lemma 8.3 proof):
+"Include a sort of retraction indices and an evaluation function for a family `r_i : Y → X`."
+In a sample `X ≤ Y ↪ L` with evaluation `g` (`g(code_i, F y) = F(incl(r_i y))`,
+`infra_83_ret_samples`), if the evaluation at `code_i` sends the image of `Y_I` into the image of
+`X_I` then `r_i` does. -/
+theorem infra_83_good_of_ret_eval {Xc Yc L XI YI : Type*} (incl : Xc → Yc)
+    (hincl : Function.Injective incl) (F : Yc → L) (hF : Function.Injective F) (r : Yc → Xc)
+    (onX : XI → Xc) (onY : YI → Yc) (g : L → L → L) (c : L)
+    (hev : ∀ y, g c (F y) = F (incl (r y)))
+    (h : ∀ x, ∃ y, g c (F (onY x)) = F (incl (onX y))) :
+    ∀ x, ∃ y, onX y = r (onY x) := by
+  intro x
+  obtain ⟨y, hy⟩ := h x
+  refine ⟨y, hincl (hF ?_)⟩
+  rw [← hy, hev]
+
+/-- **Lemma 8.3 (P.scheme) reduced to arrows into retraction-expanded samples (proved
+reduction).** As `infra_83_full_single_of_sample_families`, with the good retraction indices
+read off the evaluation function `g` of the retraction-expanded sample (`infra_83_ret_samples`):
+it suffices that for at least `#I` indices `i` the evaluation `g(code_i, -)` sends the image of
+`Y_I` in `L` into the image of `X_I`. -/
+theorem infra_83_full_single_of_ret_evals (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) :
+    ∃ (X Y : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
+        P.scheme.Object #I hI)
+      (incl : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
+        SystemArrow K oneVertexShape (P.scheme.asSystem hI (X I hI))
+          (P.scheme.asSystem hI (Y I hI)))
+      (mk : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
+        Fin Pr.n → Occurrence K oneVertexShape (P.scheme.asSystem hI (Y I hI))),
+      (∀ (I : Type u) [LinearOrder I] [WellFoundedLT I] [Nonempty I]
+          (hI : #I ∈ infra_78_closedTail P ∩ infra_615_closed P),
+        ∃ (N : MarkedPair K oneVertexShape P.scheme Pr) (_ : N.μ ∈ infra_615_closed P)
+          (_ : N.μ ∈ infra_78_closedTail P) (_ : #I ≤ N.μ)
+          (onX : SystemArrow K oneVertexShape (P.scheme.asSystem hI.1.1 (X I hI.1.1))
+            (P.scheme.asSystem N.hμ N.X))
+          (onY : SystemArrow K oneVertexShape (P.scheme.asSystem hI.1.1 (Y I hI.1.1))
+            (P.scheme.asSystem N.hμ N.Y))
+          (R : ApproximateRetraction K oneVertexShape P.scheme N.hμ N.X N.Y N.incl)
+          (σ : N.bIdx ≃ ULift.{u} (Fin Pr.n)) (L : Type u)
+          (F : ((P.scheme.asSystem N.hμ N.Y).obj PUnit.unit).carrier → L) (g : L → L → L)
+          (code : R.index → L),
+          SystemArrow.comp (incl I hI.1.1) onY = SystemArrow.comp onX N.incl ∧
+          Function.Injective F ∧
+          (∀ i y, g (code i) (F y) =
+            F (N.incl.onVertex PUnit.unit ((R.retr i).onVertex PUnit.unit y))) ∧
+          #I ≤ #{i : R.index // ∀ x : (Y I hI.1.1).model.carrier,
+            ∃ y : (X I hI.1.1).model.carrier,
+              g (code i) (F (onY.onVertex PUnit.unit x)) =
+                F (N.incl.onVertex PUnit.unit (onX.onVertex PUnit.unit y))} ∧
+          ∀ j, onY.mapOcc (mk I hI.1.1 (σ j).down) = N.b j) →
+      Lemma83Conclusion P.scheme Pr := by
+  obtain ⟨X, Y, incl, mk, H⟩ := infra_83_full_single_of_sample_families P Pr
+  refine ⟨X, Y, incl, mk, fun hS => H fun I _ _ _ hI => ?_⟩
+  obtain ⟨N, hlC, hlT, hle, onX, onY, R, σ, L, F, g, code, hc, hF, hev, hgood, hb⟩ := hS I hI
+  refine ⟨N, hlC, hlT, hle, onX, onY, R, σ, hc, hgood.trans ?_, hb⟩
+  exact Cardinal.mk_subtype_mono fun i hi =>
+    infra_83_good_of_ret_eval _ (N.incl.onVertex PUnit.unit).injective F hF _ _ _ g (code i)
+      (hev i) hi
+
 end AEC
