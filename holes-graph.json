@@ -5977,6 +5977,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 107: Hull83.subLangPieces_rel (generic). Used to transport chart and chart-order relations along F_X(e), F_Y(e)."
+  },
+  {
+   "id": "infra_83_pairMS2_X_chart_skeleton",
+   "label": "Lemma 8.3 proof: X-piece maps send chart skeleton points to chart skeleton points, preserving and reflecting the chart order (intrinsic characterization of chart points and chart order through ε_k; transport via subLangPieces_rel)",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83SampleLikeY.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 107: pairMS2_X_coord_of extended (skeleton points ↔ chartX, order ↔ chartLt); infra_83_pairMS2_X_chart_skeleton."
   }
  ],
  "edges": [
@@ -11182,8 +11191,13 @@
    "from": "infra_83_pieces_rel_natural",
    "to": "infra_83_Y_hull_eq_FZ",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_pairMS2_X_chart_skeleton",
+   "to": "infra_83_X_hull_eq_FJ",
+   "kind": "hard"
   }
  ],
- "doneCount": 597,
+ "doneCount": 598,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
