@@ -5121,7 +5121,7 @@
    "file": "AEC/Section8/HullExtract83.lean",
    "status": "open",
    "blocker": null,
-   "detail": "Cycle 102 split of infra_83_hull_extraction: instantiate Hull83.coherent_colors. | Cycle 102: largeness input done (infra_83_large_saturated_samples); remaining: the fixed finitary expansion and its finite-hull colors with a set-sized palette, closed under thinning."
+   "detail": "Cycle 102 split of infra_83_hull_extraction: instantiate Hull83.coherent_colors. | Cycle 102: largeness input done (infra_83_large_saturated_samples); remaining: the fixed finitary expansion and its finite-hull colors with a set-sized palette, closed under thinning. | Cycle 102 design note: either (A) present the marked-pair samples as models of an expanded AEC K^b (then Section 2's colorTower/emOrderPresentation apply verbatim, but all AEC axioms for K^b must be proved), or (B) colors = FamilyCode-style hull codes of the pair (X ≤ Y ≤ L, mark, retractions) in a ColorSample family, with sub-tuple restriction maps for infra_83_color_coherence."
   },
   {
    "id": "infra_83_template_from_colors",
@@ -5203,6 +5203,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 102: infra_83_large_saturated_samples — the 'arbitrarily large samples' input of Hull83.coherent_colors for the pair samples. Axioms clean."
+  },
+  {
+   "id": "infra_83_color_coherence",
+   "label": "Lemma 8.3 proof: extracted colors are coherent under sub-tuple restriction maps (EM-limit compatibility), generic",
+   "section": 8,
+   "file": "AEC/Section8/HullExtract83.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 102: Hull83.coherent_colors_compat. Axioms clean."
   }
  ],
  "edges": [
@@ -9833,8 +9842,13 @@
    "from": "infra_83_large_saturated_samples",
    "to": "infra_83_pair_sample_family",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_color_coherence",
+   "to": "infra_83_template_from_colors",
+   "kind": "hard"
   }
  ],
- "doneCount": 515,
+ "doneCount": 516,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

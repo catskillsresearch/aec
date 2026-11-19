@@ -207,5 +207,34 @@ theorem Homog.reindex {S : ColorSample C} {n : ℕ} {d : (m : ℕ) → 0 < m →
 theorem ColorSample.restrict_eq_reindex (S : ColorSample C) (H : Set S.α) :
     S.restrict H = S.reindex (OrderEmbedding.subtype (· ∈ H)) := rfl
 
+
+/-- **Coherence of the extracted colors.**  If the colors of sub-tuples are computed from the
+color of a tuple by restriction maps `res` (as the finite-hull diagram of a sub-tuple is read
+off the diagram of the tuple), then the extracted colors are coherent: the arity-`m'` color is
+the restriction of the arity-`m` color along every increasing `Fin m' ↪o Fin m`.  This is the
+compatibility the Ehrenfeucht–Mostowski limit of the template needs. -/
+theorem coherent_colors_compat
+    (res : ∀ {m m' : ℕ}, (Fin m' ↪o Fin m) → C m → C m')
+    (hres : ∀ S, P S → ∀ {m m' : ℕ} (f : Fin m' ↪o Fin m) (s : Finset S.α) (hs : s.card = m),
+      S.col m' (Finset.univ.map (f.trans (s.orderEmbOfFin hs)).toEmbedding) =
+        res f (S.col m s))
+    {c : (m : ℕ) → 0 < m → C m} (hc : ∀ (n : ℕ) (κ : Cardinal.{u}), Joint P n c κ)
+    {m m' : ℕ} (hm' : 0 < m') (hm : 0 < m) (f : Fin m' ↪o Fin m) :
+    c m' hm' = res f (c m hm) := by
+  have hmm : m' ≤ m := by simpa using Fintype.card_le_of_embedding f.toEmbedding
+  obtain ⟨S, hPS, hκ, hhom⟩ := hc m (m : Cardinal.{u})
+  obtain ⟨s, hs⟩ : ∃ s : Finset S.α, s.card = m := by
+    obtain ⟨t, ht⟩ := Cardinal.le_mk_iff_exists_set.mp hκ
+    have hfin : t.Finite :=
+      Cardinal.lt_aleph0_iff_set_finite.mp (by rw [ht]; exact Cardinal.natCast_lt_aleph0)
+    refine ⟨hfin.toFinset, ?_⟩
+    have h1 : #(↥(hfin.toFinset : Set S.α)) = (hfin.toFinset.card : Cardinal) :=
+      Cardinal.mk_coe_finset
+    rw [Set.Finite.coe_toFinset, ht] at h1
+    exact_mod_cast h1.symm
+  have hsub : (Finset.univ.map (f.trans (s.orderEmbOfFin hs)).toEmbedding).card = m' := by
+    simp
+  rw [← hhom m' hm' hmm _ hsub, hres S hPS f s hs, hhom m _ le_rfl s hs]
+
 end Hull83
 end AEC
