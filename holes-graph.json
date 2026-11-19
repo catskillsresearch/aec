@@ -13157,11 +13157,6 @@
    "from": "infra_83_ret_sample_tau",
    "to": "infra_83_bounded_list_match",
    "kind": "hard"
-  },
-  {
-   "from": "infra_83_ret_sample_tau",
-   "to": "infra_83_bounded_list_match",
-   "kind": "hard"
   }
  ],
  "doneCount": 730,
