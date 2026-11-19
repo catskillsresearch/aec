@@ -7309,6 +7309,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 196: proved."
+  },
+  {
+   "id": "infra_83_piece_mark_reading",
+   "label": "Mark reading of a piece from mark constants: if template marks are constants of the piece, mN embeds the piece into the sample, the sample reads the constants through g as F(markY M k), and gY = g o mN, then gY (m k) = F(markY M k)",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PieceMatch.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 197: proved."
   }
  ],
  "edges": [
@@ -13339,8 +13348,13 @@
    "from": "infra_83_L0_reading_transport",
    "to": "infra_83_XH_sort",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_piece_mark_reading",
+   "to": "infra_83_XH_sort",
+   "kind": "hard"
   }
  ],
- "doneCount": 743,
+ "doneCount": 744,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

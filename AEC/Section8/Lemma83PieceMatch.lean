@@ -1017,4 +1017,23 @@ theorem infra_83_L0_reading_transport {L : FirstOrder.Language.{u, u}} {A N B : 
   fin_cases i <;> rfl
 end
 
+
+section
+open FirstOrder.Language
+
+/-- **The mark reading of a piece from mark constants (proved).** Paper ("matches carry the mark
+constants", `infra_83_hull_emb_const`): if the template mark positions are the interpretations of
+constants `cst k` in the piece `A`, the piece embeds into the sample `N` by an `L`-embedding `mN`,
+the sample reads `cst k` (through `g`) as `F(markY M k)`, and `gY = g ∘ mN`, then
+`gY (m k) = F(markY M k)`: the mark clause of `infra_83_marked_of_piece_data`. -/
+theorem infra_83_piece_mark_reading {L : FirstOrder.Language.{u, u}} {A N B : Type u}
+    [L.Structure A] [L.Structure N] {n : ℕ} (cst : Fin n → L.Constants) (g : N ≃ B)
+    (mN : A ↪[L] N) (gY : A → B) (hgY : ∀ y, gY y = g (mN y))
+    (m : Fin n → A) (hm : ∀ k, m k = (cst k : A)) (FmarkY : Fin n → B)
+    (hN : ∀ k, g (cst k : N) = FmarkY k) :
+    ∀ k, gY (m k) = FmarkY k := by
+  intro k
+  rw [hgY, hm, HomClass.map_constants, hN]
+end
+
 end AEC
