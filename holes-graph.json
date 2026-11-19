@@ -5670,7 +5670,7 @@
    "file": "AEC/Section8/Lemma83PairTemplate3.lean",
    "status": "open",
    "blocker": null,
-   "detail": "Cycle 105 split from infra_83_pair_pieces; replaces infra_83_Y_iso_over_X. | Cycle 105: sample-level generation done (infra_83_chart_generation_Y). Remaining: add repTStr to the Y-language (a pairLangR2 variant with a repLang copy), the Y-hull lemma (as Lab83.hull_eq_chart), and the transfer to the template pieces. | Cycle 105 (later): repTStr added to the Y-language and Y chart generation is in infra_83_pairR_samples. Remaining: Y-hull lemma and transfer to the pieces."
+   "detail": "Cycle 105 split from infra_83_pair_pieces; replaces infra_83_Y_iso_over_X. | Cycle 105: sample-level generation done (infra_83_chart_generation_Y). Remaining: add repTStr to the Y-language (a pairLangR2 variant with a repLang copy), the Y-hull lemma (as Lab83.hull_eq_chart), and the transfer to the template pieces. | Cycle 105 (later): repTStr added to the Y-language and Y chart generation is in infra_83_pairR_samples. Remaining: Y-hull lemma and transfer to the pieces. | Cycle 105: sample-level Y_H = e(F(Z_H)) done (infra_83_sample_Y_hull_eq_FZ). Remaining: transfer to the template pieces and limit."
   },
   {
    "id": "infra_83_pair3_template_strong",
@@ -5734,6 +5734,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 105: Lab83.labT_apply, repTN/repTA/repTP, chartT, inter_eq_chartT, repTFun, repTStr, repTFun_mem, repT_closed."
+  },
+  {
+   "id": "infra_83_sample_Y_hull_eq_FZ",
+   "label": "Lemma 8.3 proof: in a sample, the Y-language hull of Y-points (one a transported skeleton point) is exactly e(F(Z_H)) for its chart Z_H",
+   "section": 8,
+   "file": "AEC/Section8/LabRepHull83.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 105: Lab83.hull_eq_chartT (hypotheses supplied by infra_83_pairR_samples)."
   }
  ],
  "edges": [
@@ -10729,8 +10738,13 @@
    "from": "infra_83_chart_generation_Y",
    "to": "infra_83_Y_hull_eq_FZ",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_sample_Y_hull_eq_FZ",
+   "to": "infra_83_Y_hull_eq_FZ",
+   "kind": "hard"
   }
  ],
- "doneCount": 569,
+ "doneCount": 570,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

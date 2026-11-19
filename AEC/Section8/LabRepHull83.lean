@@ -1,6 +1,7 @@
 module
 
 public import AEC.Section8.PairLangR83
+public import AEC.Section8.LabRepT83
 public import AEC.Section8.HullPieces83
 
 /-!
@@ -67,6 +68,51 @@ theorem hull_eq_chart (sR : (LS83.pairLangR E).Structure (E.obj Jp).carrier)
     show v i ∈ S
     rw [hS]
     exact ⟨Term.var i, rfl⟩
+  refine ⟨hne, ?_⟩
+  rw [← hchart S hcl, Set.inter_eq_left.mpr hsub]
+
+/-- **`Y_H ≅ F(Z_H)`** in a sample (any language `L'` keeping `Y = range e` closed with chart
+generation): the term hull of points of `Y`, one of them a transported skeleton point, is
+`e(F(Z_H))` for its chart `Z_H`. -/
+theorem hull_eq_chartT {I N : Type u} [LinearOrder I] [Nonempty I] (e : (E.obj I).carrier → N)
+    {L' : Language.{u, u}} (s : L'.Structure N)
+    (hY : ∀ {n} (f : L'.Functions n) (x : Fin n → N), (∀ i, x i ∈ Set.range e) →
+      @Structure.funMap _ _ s n f x ∈ Set.range e)
+    (hchart : ∀ (S : Set N) [Nonempty (chartT e S)],
+      (∀ {n} (f : L'.Functions n) (x : Fin n → N), (∀ i, x i ∈ S) →
+        @Structure.funMap _ _ s n f x ∈ S) →
+      S ∩ Set.range e = Set.range (e ∘ E.map (OrderEmbedding.subtype (fun z => z ∈ chartT e S))))
+    {ι : Type} (v : ι → N) (hv : ∀ i, v i ∈ Set.range e) (i₀ : ι) (z₀ : I)
+    (h₀ : v i₀ = e (E.skeleton z₀)) :
+    ∃ _ : Nonempty (chartT e (Set.range (@Hull83.hullVal _ _ s ι v))),
+      Set.range (@Hull83.hullVal _ _ s ι v) = Set.range (e ∘ E.map (OrderEmbedding.subtype
+        (fun z => z ∈ chartT e (Set.range (@Hull83.hullVal _ _ s ι v))))) := by
+  letI := s
+  set S := Set.range (Hull83.hullVal (L := L') v)
+  have hS : S = Set.range fun t : L'.Term ι => t.realize v := by
+    ext y
+    constructor
+    · rintro ⟨x, rfl⟩
+      exact ⟨x.out, (Hull83.hullVal_out v x).symm⟩
+    · rintro ⟨t, rfl⟩
+      exact ⟨Quotient.mk _ t, rfl⟩
+  have hcl : ∀ {n} (f : L'.Functions n) (x : Fin n → N),
+      (∀ i, x i ∈ S) → Structure.funMap f x ∈ S := by
+    intro n f x hx
+    rw [hS] at hx ⊢
+    choose t ht using hx
+    exact ⟨Term.func f t, by simp only [Term.realize, ht]⟩
+  have hsub : S ⊆ Set.range e := by
+    rw [hS]
+    rintro _ ⟨t, rfl⟩
+    induction t with
+    | var i => exact hv i
+    | func f ts ih => exact hY f _ ih
+  have hne : Nonempty (chartT e S) := by
+    refine ⟨⟨z₀, ?_⟩⟩
+    show e (E.skeleton z₀) ∈ S
+    rw [hS, ← h₀]
+    exact ⟨Term.var i₀, rfl⟩
   refine ⟨hne, ?_⟩
   rw [← hchart S hcl, Set.inter_eq_left.mpr hsub]
 
