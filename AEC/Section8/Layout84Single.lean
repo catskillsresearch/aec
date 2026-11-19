@@ -699,4 +699,33 @@ theorem infra_84_U_tests_single (P : SingleModelData K) {ν μ : Cardinal.{u}}
   exact P.scheme.diagram_trans _ _ _ _ _ _ (P.scheme.diagram_symm _ _ _ _ (tr₀ Z hj))
     (P.scheme.diagram_trans _ _ _ _ _ _ H (tr₁ Z hj))
 
+/-- A two-segment well-order of every eligible size: `PUnit ⊕ₗ ν.ord.ToType` has size `ν`. -/
+theorem infra_84_two_segment_card (P : SingleModelData K) {ν : Cardinal.{u}}
+    (hν : ν ∈ P.eligible) : #(Lex (PUnit.{u + 1} ⊕ ν.ord.ToType)) = ν := by
+  rw [show #(Lex (PUnit.{u + 1} ⊕ ν.ord.ToType)) = #(PUnit.{u + 1} ⊕ ν.ord.ToType) from
+    Cardinal.mk_congr toLex.symm, Cardinal.mk_sum, Cardinal.lift_id, Cardinal.lift_id,
+    Cardinal.mk_ord_toType, Cardinal.mk_punit]
+  exact Cardinal.add_eq_right (P.aleph0_le hν) (Cardinal.one_le_aleph0.trans (P.aleph0_le hν))
+
+/-- **Lemma 8.4 for P.scheme, tests from `U` alone (uniform bound), chart discharged.**
+`infra_84_U_tests_single` with the two-segment well-order `PUnit ⊕ₗ ν.ord.ToType`. -/
+theorem infra_84_U_tests_single' (P : SingleModelData K) {ν μ : Cardinal.{u}}
+    (hν : ν ∈ P.eligible) (hμ : μ ∈ P.eligible) (hνμ : ν ≤ μ)
+    (X : P.scheme.Object ν hν) (Tt Tt' : P.scheme.Object μ hμ)
+    (x : SystemArrow K oneVertexShape (P.scheme.asSystem hν X) (P.scheme.asSystem hμ Tt))
+    (x' : SystemArrow K oneVertexShape (P.scheme.asSystem hν X) (P.scheme.asSystem hμ Tt'))
+    {α : Type u} {σ : Cardinal.{u}} (hσinf : aleph0 ≤ σ) (hσ : σ < ν) (hα : #α ≤ σ)
+    (v : α → Occurrence K oneVertexShape (P.scheme.asSystem hμ Tt))
+    (v' : α → Occurrence K oneVertexShape (P.scheme.asSystem hμ Tt'))
+    (hsmall : ∀ {β : Type u} (Z : β → Occurrence K oneVertexShape (P.scheme.asSystem hν X)),
+      #β ≤ P.g σ + ls K →
+      P.scheme.DiagramEq (X := Tt) (Y := Tt')
+        (Sum.elim v (fun b => x.mapOcc (Z b))) (Sum.elim v' (fun b => x'.mapOcc (Z b))))
+    {β : Type u} (Z : β → Occurrence K oneVertexShape (P.scheme.asSystem hν X))
+    (hj : #(α ⊕ β) < ν) :
+    P.scheme.DiagramEq (X := Tt) (Y := Tt')
+      (Sum.elim v (fun b => x.mapOcc (Z b))) (Sum.elim v' (fun b => x'.mapOcc (Z b))) :=
+  infra_84_U_tests_single P hν hμ hνμ PUnit.{u + 1} ν.ord.ToType (infra_84_two_segment_card P hν)
+    X Tt Tt' x x' hσinf hσ hα v v' hsmall Z hj
+
 end AEC

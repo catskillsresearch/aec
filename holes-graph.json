@@ -4807,6 +4807,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 100: level-nu hulls of x(U) + v in T and x'(U) + v' in T' (infra_72_level_hull), then infra_84_object_testing_single with base U. Complements infra_84_C_tests_single (U-free part). Takes a two-segment well-order of size nu as a parameter (always exists for infinite nu). Remaining joint U-and-C tests: infra_84_layout_amalgam. Axioms clean."
+  },
+  {
+   "id": "infra_84_U_tests_single'",
+   "label": "Lemma 8.4 (P.scheme): U-only tests, chart discharged (PUnit +lex nu.ord.ToType)",
+   "section": 8,
+   "file": "AEC/Section8/Layout84Single.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 100: infra_84_U_tests_single with infra_84_two_segment_card; no extra hypotheses. Axioms clean."
   }
  ],
  "edges": [
@@ -9217,8 +9226,13 @@
    "from": "infra_84_U_tests_single",
    "to": "infra_84_U_part_bound",
    "kind": "hard"
+  },
+  {
+   "from": "infra_84_U_tests_single'",
+   "to": "infra_84_U_part_bound",
+   "kind": "hard"
   }
  ],
- "doneCount": 479,
+ "doneCount": 480,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
