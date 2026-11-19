@@ -419,4 +419,68 @@ theorem infra_84_layout_testing_presented (K : AbstractElementaryClass.{u})
       (fun hβ ρ' h1 h2 p' hj' ht₀' ht₁' => hsmall hβ ρ' h1 h2 p' hj' ht₀' ht₁'))
   exact h₀.same_of_agreeOn hL hI h₁ hag ρ hρinf hρ p hj ht₀ ht₁
 
+/-- Every eligible level of `P` is a closed level of its presentation data (`ClosedLevel K P.E P.D
+P.g`), so Section 4/6 placed-comparison results apply at the levels of `P.scheme`. -/
+theorem infra_84_closedLevel_single (P : SingleModelData K) {μ : Cardinal.{u}}
+    (hμ : μ ∈ P.eligible) : ClosedLevel K P.E P.D P.g μ := by
+  have := P.D.categoricalUnbounded
+  exact ClosedLevel.of_closurePoint P.tester hμ.1 hμ.2
+
+/-- Change of bound for `D.same` in two models of an eligible size `ν`, between two infinite bounds
+below `ν` (`StableDiagram.same_relevel`). -/
+theorem infra_84_same_relevel_single (P : SingleModelData K) {ν : Cardinal.{u}}
+    (hν : ν ∈ P.eligible) {M N : Model K.τ} (hM : K.Mem M) (hN : K.Mem N)
+    (hcM : Model.card M = ν) (hcN : Model.card N = ν) {γ : Type u} {σ₁ τ₁ : Cardinal.{u}}
+    (h1 : #γ ≤ σ₁) (h2 : #γ ≤ τ₁) (hσ₁ : aleph0 ≤ σ₁) (hτ₁ : aleph0 ≤ τ₁) (hσν : σ₁ < ν)
+    (hτν : τ₁ < ν) (hMσ : P.D.t σ₁ ≤ Model.card M) (hNσ : P.D.t σ₁ ≤ Model.card N)
+    (hMτ : P.D.t τ₁ ≤ Model.card M) (hNτ : P.D.t τ₁ ≤ Model.card N)
+    (xs : γ → M.carrier) (ys : γ → N.carrier)
+    (h : P.D.same h1 hM hN hMσ hNσ xs ys) : P.D.same h2 hM hN hMτ hNτ xs ys := by
+  have hL := infra_84_closedLevel_single P hν
+  set σ' := max (max σ₁ τ₁) (ls K)
+  have hσ'ν : σ' < ν := max_lt (max_lt hσν hτν) hν.2
+  have hσ'inf : aleph0 ≤ σ' := hσ₁.trans ((le_max_left _ _).trans (le_max_left _ _))
+  have hM' : P.D.t σ' ≤ Model.card M := (hL.t_lt hσ'inf hσ'ν).le.trans hcM.ge
+  have hN' : P.D.t σ' ≤ Model.card N := (hL.t_lt hσ'inf hσ'ν).le.trans hcN.ge
+  exact P.D.same_relevel h1 hσ₁ hτ₁ ((le_max_left _ _).trans (le_max_left _ _))
+    ((le_max_right _ _).trans (le_max_left _ _)) (le_max_right _ _) hM hN hMσ hNσ hM' hN'
+    hMτ hNτ xs ys h h2 id
+
+/-- **Layout (8) testing for `P` (presented layout, canonical-bound form).** At an eligible level
+`ν` of `P`, over the two-segment presentation `P.E(I₁ ⊕ₗ I₂)` of size `ν`: candidates `d₀ ∈ B₀`,
+`d₁ ∈ B₁` (strong extensions of size `ν`, length at most `σ < ν`) whose `D`-diagrams with every
+layout parameter list of size at most `g(σ) + LS(K)` agree have equal `D`-diagrams with every
+layout parameter list of total size `< ν`. -/
+theorem infra_84_layout_testing_single_presented (P : SingleModelData K) {ν : Cardinal.{u}}
+    (hν : ν ∈ P.eligible)
+    (I₁ I₂ : Type u) [LinearOrder I₁] [WellFoundedLT I₁] [LinearOrder I₂] [WellFoundedLT I₂]
+    [Nonempty I₁] (hI : #(Lex (I₁ ⊕ I₂)) = ν)
+    {B₀ B₁ : Model K.τ}
+    (incl₀ : Language.Embedding K.τ (P.E.obj (Lex (I₁ ⊕ I₂))).carrier B₀.carrier)
+    (incl₁ : Language.Embedding K.τ (P.E.obj (Lex (I₁ ⊕ I₂))).carrier B₁.carrier)
+    (hB₀ : K.Mem B₀) (hB₁ : K.Mem B₁) (hs₀ : K.Strong incl₀) (hs₁ : K.Strong incl₁)
+    (hc₀ : Model.card B₀ = ν) (hc₁ : Model.card B₁ = ν)
+    {α : Type u} {σ : Cardinal.{u}} (hσinf : aleph0 ≤ σ) (hσ : σ < ν) (hα : #α ≤ σ)
+    (d₀ : α → B₀.carrier) (d₁ : α → B₁.carrier)
+    (hsmall : ∀ {β : Type u}, #β ≤ P.g σ + ls K →
+      ∀ (p : β → (P.E.obj (Lex (I₁ ⊕ I₂))).carrier),
+        P.D.SameD B₀ B₁ (Sum.elim d₀ (fun b => incl₀ (p b))) (Sum.elim d₁ (fun b => incl₁ (p b))))
+    {β : Type u} (p : β → (P.E.obj (Lex (I₁ ⊕ I₂))).carrier) (hj : #(α ⊕ β) < ν) :
+    P.D.SameD B₀ B₁ (Sum.elim d₀ (fun b => incl₀ (p b))) (Sum.elim d₁ (fun b => incl₁ (p b))) := by
+  have := P.D.categoricalUnbounded
+  have hL := infra_84_closedLevel_single P hν
+  have hρν : max #(α ⊕ β) ℵ₀ < ν := max_lt hj (P.aleph0_lt hν)
+  have ht₀ : P.D.t (max #(α ⊕ β) ℵ₀) ≤ Model.card B₀ :=
+    (hL.t_lt (le_max_right _ _) hρν).le.trans hc₀.ge
+  have ht₁ : P.D.t (max #(α ⊕ β) ℵ₀) ≤ Model.card B₁ :=
+    (hL.t_lt (le_max_right _ _) hρν).le.trans hc₁.ge
+  refine ⟨hB₀, hB₁, ht₀, ht₁, ?_⟩
+  refine infra_84_layout_testing_presented K P.E P.D P.g hL I₁ I₂ hI incl₀ incl₁ hB₀ hB₁ hs₀ hs₁
+    hc₀ hc₁ hσinf hσ hα d₀ d₁ ?_ _ (le_max_right _ _) hρν p (le_max_left _ _) ht₀ ht₁
+  intro β' hβ' ρ' hρ'inf hρ' p' hj' ht₀' ht₁'
+  obtain ⟨_, _, hc0, hc1, hS⟩ := hsmall hβ' p'
+  have hcan : max #(α ⊕ β') ℵ₀ < ν := lt_of_le_of_lt (max_le hj' hρ'inf) hρ'
+  exact infra_84_same_relevel_single P hν hB₀ hB₁ hc₀ hc₁ (le_max_left _ _) hj'
+    (le_max_right _ _) hρ'inf hcan hρ' hc0 hc1 ht₀' ht₁' _ _ hS
+
 end AEC
