@@ -6760,6 +6760,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 134: proved."
+  },
+  {
+   "id": "infra_83_ret_term_into_X",
+   "label": "Ret-terms ret(c_i, y), y ∈ F(Y), land in the X-copy F(J) under the Cor 6.16 eval law (paper's (7): ret over the J-skeleton lands in X).",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83Isolation.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 139: proved."
   }
  ],
  "edges": [
@@ -12470,8 +12479,13 @@
    "from": "infra_83_good_codes_of_match",
    "to": "infra_83_bounded_arity_free",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_ret_term_into_X",
+   "to": "infra_83_ret_admission",
+   "kind": "hard"
   }
  ],
- "doneCount": 686,
+ "doneCount": 687,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
