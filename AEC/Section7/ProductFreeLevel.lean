@@ -545,5 +545,37 @@ theorem infra_75_product_free_level (P : SingleModelData K) :
     infra_75_product_free_level_statement P :=
   infra_75_product_free_level_of_eval P (infra_75_free_eval_level P)
 
+/-- **Proposition 7.5(3)** (paper clause, cycle 93). English: "Let Y be all-dominated over X + b
+at a sufficiently closed eligible level µ. … 3. In an actual coupling, if a bounded tuple x has
+product with b over X, then tp(x/Y) is free from X." Packaged as the other Section 7 statements:
+for bounded arity `σ`, a tail of sufficiently closed levels (closed at `σ` and at the test arity
+`infra_75_wide P σ`, which depends only on `σ`); the coupling is actual (`x.ν = μ`, `x` in `Y`'s
+level; Cor 6.7); products and freeness are the tied notions. Proved from
+`infra_75_product_free_level`. The stronger claim with closure at `σ` only stays tracked as
+`infra_75_product_free`. -/
+theorem proposition_7_5_product_free (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : ℵ₀ ≤ σ) :
+    ∃ T, ∃ hT : Tail P.eligible T,
+      ∀ μ (hμ : μ ∈ T) (X Y : P.scheme.Object μ (Tail.mem hT hμ))
+        (f : SystemArrow K oneVertexShape (P.scheme.asSystem _ X) (P.scheme.asSystem _ Y))
+        (hf : P.scheme.permitted (X := X) (Y := Y) f)
+        (bIdx : Type u) (b : bIdx → Occurrence K oneVertexShape (P.scheme.asSystem _ Y)),
+        #bIdx ≤ σ → AllDominated f hf bIdx b →
+        ∀ x : TupleOver K oneVertexShape P.scheme (Tail.mem hT hμ) Y, x.ν = μ → #x.idx ≤ σ →
+          IsProductTied (x.restrict f hf) (infra_75_markOver f hf x b)
+            (infra_75_jointOver f hf x b) (Equiv.refl _) →
+          IsTiedFree f (x.restrict f hf) x (Equiv.refl _) := by
+  let w : Cardinal.{u} := infra_75_wide P σ
+  have hσw : σ ≤ w := le_self_add
+  have hw : ℵ₀ ≤ w := hσ.trans hσw
+  let T : Set Cardinal.{u} := {μ | μ ∈ recursionClosedLevels P w ∧ Order.succ w ≤ μ}
+  have hT : Tail P.eligible T := by
+    refine ⟨fun μ hμ => hμ.1.1, fun κ => ?_⟩
+    obtain ⟨μ, hle, hμ, hrec⟩ :=
+      (infra_69_recursion_tail P hw).2 (max κ (Order.succ w))
+    exact ⟨μ, (le_max_left _ _).trans hle, ⟨⟨hμ, hrec⟩, (le_max_right _ _).trans hle⟩⟩
+  refine ⟨T, hT, fun μ hμ X Y f hf bIdx b hb hdom x hxν hxσ hprod => ?_⟩
+  exact infra_75_product_free_level P σ hσ (Tail.mem hT hμ) (infra_76_rec_mono hσw hμ.1)
+    ((Order.succ_le_succ hσw).trans hμ.2) hμ.1 hμ.2 X Y f hf bIdx b hb hdom x hxν hxσ hprod
+
 end
 end AEC

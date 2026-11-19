@@ -2943,7 +2943,7 @@
    "file": null,
    "status": "open",
    "blocker": null,
-   "detail": "Blocked (cycle 73; the demoted clause 3 of Proposition 7.5, now tracked). Statement: at sufficiently closed mu, incl : X -> Y permitted, finite b in Y, AllDominated incl b; x over Y with x.nu = mu, bounded; IsProductTied (x restricted to X) (b hosted with x over X) (joint (x, b) over X) refl  ==>  IsTiedFree incl (x.restrict incl) x refl. English proof: symmetry of products and the definition give W >= X containing x with b free from X; type-identifying amalgamation; Lemma 7.2 for every bounded c in Y; symmetry and projection; testing theorem (infra_78_tiedFree_of_upTo). | Cycle 93: unblocked (infra_612_tied_symmetry, infra_612_tied_finite done; proposition_6_12 closed). Note the copy-form reading of 6.12: use the at-level corollaries or level-mu copies."
+   "detail": "Blocked (cycle 73; the demoted clause 3 of Proposition 7.5, now tracked). Statement: at sufficiently closed mu, incl : X -> Y permitted, finite b in Y, AllDominated incl b; x over Y with x.nu = mu, bounded; IsProductTied (x restricted to X) (b hosted with x over X) (joint (x, b) over X) refl  ==>  IsTiedFree incl (x.restrict incl) x refl. English proof: symmetry of products and the definition give W >= X containing x with b free from X; type-identifying amalgamation; Lemma 7.2 for every bounded c in Y; symmetry and projection; testing theorem (infra_78_tiedFree_of_upTo). | Cycle 93: unblocked (infra_612_tied_symmetry, infra_612_tied_finite done; proposition_6_12 closed). Note the copy-form reading of 6.12: use the at-level corollaries or level-mu copies. | Cycle 93: the paper clause is now proposition_7_5_product_free (done, tail of levels closed at infra_75_wide P sigma = 'sufficiently closed'). This node is the stronger infra claim with closure at sigma only; no paper consumer needs it (Lemma 7.11/7.12 use the level form). Kept open, off-path."
   },
   {
    "id": "infra_711_successor",
@@ -3727,6 +3727,15 @@
    "status": "done",
    "blocker": null,
    "detail": "PROVED cycle 93 (axioms clean): only the last binary step changes, infra_612_isProductTied_copy."
+  },
+  {
+   "id": "proposition_7_5_product_free",
+   "label": "Prop 7.5(3) (paper clause, tail form)",
+   "section": 7,
+   "file": "AEC/Section7/ProductFreeLevel.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "PROVED cycle 93 (axioms clean). English: 'Let Y be all-dominated over X + b at a sufficiently closed eligible level µ. ... 3. In an actual coupling, if a bounded tuple x has product with b over X, then tp(x/Y) is free from X.' Tail of levels closed at sigma and at infra_75_wide P sigma (a function of sigma: 'sufficiently closed'); actual coupling x.nu = mu; tied product/freeness. From infra_75_product_free_level."
   }
  ],
  "edges": [
@@ -7436,8 +7445,13 @@
    "from": "infra_612_finiteLevel_copy",
    "to": "infra_612_tied_finite",
    "kind": "hard"
+  },
+  {
+   "from": "infra_75_product_free_level",
+   "to": "proposition_7_5_product_free",
+   "kind": "hard"
   }
  ],
- "doneCount": 360,
+ "doneCount": 361,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

@@ -375,7 +375,8 @@ Lean: imports `AEC.Section6.Results`.
 | `infra_75_eval_product` | 7.5(3) (i)-(iii): x has tied product with (b,Z) over X, every bounded test Z | **done** (cycle 80: `infra_75_eval_product` via `infra_75_product_extend`; level-μ amalgam + Lemma 7.2 tied, no large amalgam) |
 | `infra_75_eval_project` | 7.5(3) (iv): symmetry + projection give free evaluation | **done** (cycle 79: `infra_75_eval_project` via `infra_75_eval_one`; symmetry at arity `infra_75_wide P σ`; the level 7.5(3) statements now also assume closure at that arity) |
 | `infra_75_free_eval_glue` | free evaluation from the two steps | **done** (`infra_75_free_eval_of_parts`) |
-| `infra_75_product_free` | Prop 7.5(3) tied: product with `b` + all-dominated `Y` ⇒ `tp(x/Y)` free from `X` | **open** (cycle 93: 6.12 closed) |
+| `infra_75_product_free` | Prop 7.5(3) tied: product with `b` + all-dominated `Y` ⇒ `tp(x/Y)` free from `X` | **open**, off-path (cycle 93: closure at `σ` only; the paper clause is `proposition_7_5_product_free`, **done**) |
+| `proposition_7_5_product_free` | Prop 7.5(3), paper clause (tail of sufficiently closed levels) | `AEC/Section7/ProductFreeLevel.lean` (**done** cycle 93) |
 | `infra_711_induction` | Lemma 7.11 induction assembly | [`Lemma711Induction.lean`](AEC/Section7/Lemma711Induction.lean) (**done**, cycle 75; `lemma_7_11` from `infra_711_successor_statement`; first stage via `infra_711_tiedFree_of_bijective`, limit via tied 6.13) |
 | `lemma_7_12` | Lemma 7.12 | `AEC/Section7/Results.lean` (**done**, cycle 89: sorry-free, axioms propext / Classical.choice / Quot.sound; restated cycle 76 to the tied notions: `ProductIndependentTied`, `TiedListWitnessingChain`) |
 | `lemma_7_12_existence` | Lemma 7.12(1) | done (cycle 87/88): lemma_7_12_existence + lemma_7_12_existence_tail (tail infra_712_levels) |
