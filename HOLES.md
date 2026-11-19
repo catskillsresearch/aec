@@ -551,7 +551,7 @@ Lean: imports `Section5.Results` and `Section6.Results`. Soft paper chain after 
 | `infra_83_color_coherence` | Lemma 8.3 proof: coherence of extracted colors under sub-tuple restriction | [`HullExtract83.lean`](AEC/Section8/HullExtract83.lean) (**done**, cycle 102) |
 | `infra_83_em_pieces_system` | Lemma 8.3 proof: generic EM directed system from finite pieces | [`EMExtend83.lean`](AEC/Section8/EMExtend83.lean) (**done**, cycle 102) |
 | `infra_83_em_extension_generic` | Lemma 8.3 proof: generic EM order presentation from finite pieces | [`EMPresent83.lean`](AEC/Section8/EMPresent83.lean) (**done**, cycle 103) |
-| `infra_83_pair_pieces` | Lemma 8.3 proof: finite-piece functors for the pair components | [`EMExtend83.lean`](AEC/Section8/EMExtend83.lean) (open, cycle 102) |
+| `infra_83_pair_pieces` | Lemma 8.3 proof: finite-piece functors for the pair components | [`OrderColimit83.lean`](AEC/Section8/OrderColimit83.lean) (**done**, cycle 108) |
 | `infra_83_em_functor_generic` | Lemma 8.3 proof: functoriality of generic EM values | [`EMExtend83.lean`](AEC/Section8/EMExtend83.lean) (**done**, cycle 102) |
 | `infra_83_em_natural_maps` | Lemma 8.3 proof: natural maps of EM values from natural maps of pieces | [`EMExtend83.lean`](AEC/Section8/EMExtend83.lean) (**done**, cycle 102) |
 | `infra_83_em_presentation_section2` | Lemma 8.3 reuse check: Section 2 pieces as a generic presentation instance | [`EMPresent83.lean`](AEC/Section8/EMPresent83.lean) (**done**, cycle 103) |
