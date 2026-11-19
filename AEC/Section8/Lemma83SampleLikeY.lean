@@ -148,12 +148,49 @@ abbrev pairMAdmittedS2 (E : OrderPresentation K) (n : ℕ) (N : Type u)
     [(LS83.pairLangM3 E n).Structure N] : Prop :=
   pairMAdmittedS E n N ∧ YSampleLike E n N
 
-/-- **Coherent colors over `X`- and `Y`-sample-like structures, recording chart coordinates.** -/
-theorem infra_83_pairMS2_coherent_colors (P : SingleModelData K)
+/-- The binary `ret` symbol of the marked full language. -/
+abbrev retM3 (E : OrderPresentation K) (n : ℕ) : (LS83.pairLangM3 E n).Functions 2 :=
+  Sum.inl (Sum.inl (Sum.inl (Sum.inl (Sum.inl (Sum.inr PUnit.unit)))))
+
+/-- **Ret-sample-like structures**: `ret` evaluates a Cor 6.16 retraction family of a marked
+pair whose `X`-copy is `F(J)` inside `N ≃ E(J⁺)`. -/
+def RetSampleLike (P : SingleModelData K) (Pr : StationaryPrescription K oneVertexShape P.scheme)
+    (N : Type u) [(LS83.pairLangM3 P.E Pr.n).Structure N] : Prop :=
+  ∃ (M : MarkedPair K oneVertexShape P.scheme Pr) (J Jp : Type u) (_ : LinearOrder J)
+    (_ : Nonempty J) (_ : LinearOrder Jp) (_ : Nonempty Jp) (emb : J ↪o Jp)
+    (g : N ≃ (P.E.obj Jp).carrier)
+    (eX : (P.E.obj J).carrier → ((P.scheme.asSystem M.hμ M.X).obj PUnit.unit).carrier)
+    (F : ((P.scheme.asSystem M.hμ M.Y).obj PUnit.unit).carrier → (P.E.obj Jp).carrier)
+    (R : ApproximateRetraction K oneVertexShape P.scheme M.hμ M.X M.Y M.incl)
+    (code : R.index → (P.E.obj J).carrier),
+    Function.Surjective eX ∧ Function.Injective F ∧
+    (∀ x, F (M.incl.onVertex PUnit.unit (eX x)) = P.E.map emb x) ∧
+    Function.Bijective code ∧ ℵ₀ ≤ M.μ ∧
+    ∀ (i : R.index) (y : ((P.scheme.asSystem M.hμ M.Y).obj PUnit.unit).carrier),
+      g (Structure.funMap (retM3 P.E Pr.n)
+        ![g.symm (P.E.map emb (code i)), g.symm (F y)]) =
+        F (M.incl.onVertex PUnit.unit ((R.retr i).onVertex PUnit.unit y))
+
+/-- The admitted class with `X`-, `Y`-side sample data and the ret evaluation law. -/
+abbrev pairMAdmittedS3 (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) (N : Type u)
+    [(LS83.pairLangM3 P.E Pr.n).Structure N] : Prop :=
+  pairMAdmittedS2 P.E Pr.n N ∧ RetSampleLike P Pr N
+
+/-- **The ret-admitted class is a subclass** of the `pairMS2` admitted class. -/
+theorem pairMAdmittedS3.toS2 {P : SingleModelData K}
+    {Pr : StationaryPrescription K oneVertexShape P.scheme} {N : Type u}
+    [(LS83.pairLangM3 P.E Pr.n).Structure N] (h : pairMAdmittedS3 P Pr N) :
+    pairMAdmittedS2 P.E Pr.n N := h.1
+
+/-- **Coherent colors over ret-admitted samples.** As `infra_83_pairMS2_coherent_colors`, with the
+admitted class strengthened by `RetSampleLike`: every admitted sample carries a Cor 6.16 family
+whose evaluation law is realized by its `ret` symbol. -/
+theorem infra_83_pairMS3_coherent_colors (P : SingleModelData K)
     (Pr : StationaryPrescription K oneVertexShape P.scheme) :
     ∃ c : (m : ℕ) → 0 < m → Hull83.TpColorB (LS83.pairLangM3 P.E Pr.n) 3 m,
       (∀ (n : ℕ) (κ : Cardinal.{u}),
-        Hull83.Joint (Hull83.TpSampleB (fun N _ => pairMAdmittedS2 P.E Pr.n N) 3) n c κ) ∧
+        Hull83.Joint (Hull83.TpSampleB (fun N _ => pairMAdmittedS3 P Pr N) 3) n c κ) ∧
       (∀ {m m' : ℕ} (hm' : 0 < m') (hm : 0 < m) (f : Fin m' ↪o Fin m),
         c m' hm' = Hull83.tpResB 3 f (c m hm)) ∧
       (∀ (m : ℕ) (hm : 0 < m) (a : Fin m) (i : Fin 3),
@@ -161,8 +198,8 @@ theorem infra_83_pairMS2_coherent_colors (P : SingleModelData K)
       ∀ (m : ℕ) (hm : 0 < m) (a b : Fin m), a < b → ∀ i : Fin 3,
         (rhoM P.E Pr.n i).relabel ![(a, i), (b, i)] ∈ c m hm := by
   refine Hull83.tpB_coherent_colors_formula2 (thetaM P.E Pr.n) (rhoM P.E Pr.n) fun κ => ?_
-  obtain ⟨μ, hθ, -, J, i1, i2, -, hJ, M, -, eX, -, -, ι, Jplus, i3, i4, emb, strip, hstrip, -,
-    F, -, hF, s₀, hcl, hred, hX, hchX, hY, hchY, -, -, hlabX, -⟩ :=
+  obtain ⟨μ, hθ, hμ, J, i1, i2, -, hJ, M, hM, eX, hbij, -, ι, Jplus, i3, i4, emb, strip, hstrip, -,
+    F, -, hF, s₀, hcl, hred, hX, hchX, hY, hchY, -, -, hlabX, hret⟩ :=
     infra_83_pairR_samples P Pr (κ := ℵ₀) le_rfl κ
   obtain ⟨e⟩ : Nonempty (J ≃ strip) := Cardinal.eq.mp (hJ.trans hstrip.symm)
   let str : (LS83.pairLangM3 P.E Pr.n).Structure (P.E.obj Jplus).carrier :=
@@ -179,7 +216,7 @@ theorem infra_83_pairMS2_coherent_colors (P : SingleModelData K)
     exact ⟨ι.symm y, by rw [he₀]; exact congrArg F (ι.apply_symm_apply y)⟩
   have hre : Set.range e₀ = Set.range (fun y => F (ι y)) := rfl
   refine ⟨J, i1, (P.E.obj Jplus).carrier, str,
-    ⟨⟨hcl, J, Jplus, i1, i2, i3, i4, emb, Equiv.refl _, fun f x hx => hX f x hx,
+    ⟨⟨⟨hcl, J, Jplus, i1, i2, i3, i4, emb, Equiv.refl _, fun f x hx => hX f x hx,
       fun T _ hT => hchX T hT, fun x => Iff.rfl,
       fun f x => congrArg (fun s' => @Structure.funMap _ _ s' _ f x) hred,
       fun r x => Iff.of_eq (congrArg (fun s' => @Structure.RelMap _ _ s' _ r x) hred),
@@ -190,7 +227,7 @@ theorem infra_83_pairMS2_coherent_colors (P : SingleModelData K)
       fun x y => Iff.rfl, fun a y z hy => by
         have hyz : y = fun i => F (ι (z i)) := funext fun i => hy i
         subst hyz
-        exact Lab83.labT_apply (fun y => F (ι y)) (F.injective.comp ι.injective) a z⟩,
+        exact Lab83.labT_apply (fun y => F (ι y)) (F.injective.comp ι.injective) a z⟩, ?_⟩,
     hJ ▸ hθ, jzwBundle (fun j => P.E.skeleton (emb j)) (fun j => F (ι (P.E.skeleton j)))
       (fun j => P.E.skeleton (e j).1), fun i => ?_, fun a i => ?_, fun a b hab i => ?_⟩
   · intro k f x hx
@@ -210,6 +247,9 @@ theorem infra_83_pairMS2_coherent_colors (P : SingleModelData K)
   · intro x hx
     obtain ⟨j, rfl⟩ : ∃ j, P.E.skeleton (emb j) = x := hx
     exact hrF ⟨_, (hF (P.E.skeleton j)).trans (P.E.skeleton_natural emb j)⟩
+  · obtain ⟨R, code, hcode, hev⟩ := hret
+    exact ⟨M, J, Jplus, i1, i2, i3, i4, emb, Equiv.refl _, eX, F, R, code, hbij.2, F.injective,
+      hF, hcode, by rw [hM]; exact hμ.le, fun i y => hev i y⟩
   · fin_cases i
     · exact P.E.skeleton.injective.comp emb.injective
     · exact F.injective.comp (ι.injective.comp P.E.skeleton.injective)
@@ -228,6 +268,32 @@ theorem infra_83_pairMS2_coherent_colors (P : SingleModelData K)
         F (ι (P.E.skeleton a)) ∧ F (ι (P.E.skeleton z')) = F (ι (P.E.skeleton b)) from
         ⟨a, b, hab, rfl, rfl⟩)
     · simp [rhoM]
+
+/-- Joint samples are monotone in the admitted class. -/
+theorem joint_tpSampleB_mono {L : FirstOrder.Language.{u, u}} {r : ℕ}
+    {P Q : ∀ (M : Type u) [L.Structure M], Prop} (hPQ : ∀ (M : Type u) [L.Structure M], P M → Q M)
+    {n : ℕ} {c : (m : ℕ) → 0 < m → Hull83.TpColorB L r m} {κ : Cardinal.{u}}
+    (h : Hull83.Joint (Hull83.TpSampleB P r) n c κ) : Hull83.Joint (Hull83.TpSampleB Q r) n c κ := by
+  obtain ⟨S, ⟨M, inst, hP, rest⟩, hκ, hS⟩ := h
+  exact ⟨S, ⟨M, inst, hPQ M hP, rest⟩, hκ, hS⟩
+
+/-- **Coherent colors over `X`- and `Y`-sample-like structures, recording chart coordinates.**
+The same colors are also jointly realized by ret-admitted samples (`pairMAdmittedS3`). -/
+theorem infra_83_pairMS2_coherent_colors (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) :
+    ∃ c : (m : ℕ) → 0 < m → Hull83.TpColorB (LS83.pairLangM3 P.E Pr.n) 3 m,
+      (∀ (n : ℕ) (κ : Cardinal.{u}),
+        Hull83.Joint (Hull83.TpSampleB (fun N _ => pairMAdmittedS2 P.E Pr.n N) 3) n c κ) ∧
+      (∀ {m m' : ℕ} (hm' : 0 < m') (hm : 0 < m) (f : Fin m' ↪o Fin m),
+        c m' hm' = Hull83.tpResB 3 f (c m hm)) ∧
+      (∀ (m : ℕ) (hm : 0 < m) (a : Fin m) (i : Fin 3),
+        (thetaM P.E Pr.n i).relabel (fun _ => (a, i)) ∈ c m hm) ∧
+      (∀ (m : ℕ) (hm : 0 < m) (a b : Fin m), a < b → ∀ i : Fin 3,
+        (rhoM P.E Pr.n i).relabel ![(a, i), (b, i)] ∈ c m hm) ∧
+      ∀ (n : ℕ) (κ : Cardinal.{u}),
+        Hull83.Joint (Hull83.TpSampleB (fun N _ => pairMAdmittedS3 P Pr N) 3) n c κ := by
+  obtain ⟨c, hc, hcoh, hθ, hρ⟩ := infra_83_pairMS3_coherent_colors P Pr
+  exact ⟨c, fun n κ => joint_tpSampleB_mono (fun _ _ h => h.1) (hc n κ), hcoh, hθ, hρ, hc⟩
 
 /-- **`X_k ≅ F(J_k)` and `Y_k ≅ F(Z_k)`** for the template pieces over `X`- and
 `Y`-sample-like structures: bijective `τ`-embeddings onto `F` of the charts. -/
@@ -249,7 +315,7 @@ theorem infra_83_pairMS2_pieces_iso (P : SingleModelData K)
             ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K)))
             ((Hull83.witB hc k).v ∘ Prod.map id (fun i : Fin 2 => i.castSucc))).carrier ↪[K.τ]
             (P.E.obj H).carrier), Function.Bijective ε) := by
-  obtain ⟨c, hc, hcoh, hθ, hρ⟩ := infra_83_pairMS2_coherent_colors P Pr
+  obtain ⟨c, hc, hcoh, hθ, hρ, -⟩ := infra_83_pairMS2_coherent_colors P Pr
   refine ⟨c, hc, hcoh, fun k => ⟨?_, ?_⟩⟩
   · obtain ⟨J, Jp, i1, i2, i3, i4, emb, g, hX, hch, hcx, hτf, hτr, -⟩ := (Hull83.witB hc k).mem.1.2
     have hpt : ∀ p : Fin (k + 1) × Fin 1, ∃ j, P.E.skeleton (emb j) =
@@ -398,7 +464,7 @@ theorem infra_83_pairMS2_X_pieces_coord (P : SingleModelData K)
               ((Hull83.witB hc k).v ∘ Prod.map id (fun _ : Fin 1 => (0 : Fin 3))) x =
               (Hull83.witB hc k).v (a, 0) →
             ε x = P.E.skeleton (jH a) := by
-  obtain ⟨c, hc, hcoh, hθ, hρ⟩ := infra_83_pairMS2_coherent_colors P Pr
+  obtain ⟨c, hc, hcoh, hθ, hρ, -⟩ := infra_83_pairMS2_coherent_colors P Pr
   refine ⟨c, hc, hcoh, fun k => ?_⟩
   obtain ⟨J, Jp, i1, i2, i3, i4, emb, g, hX, hch, hcx, hτf, hτr, -⟩ := (Hull83.witB hc k).mem.1.2
   have hpt : ∀ p : Fin (k + 1) × Fin 1, ∃ j, P.E.skeleton (emb j) =
@@ -610,7 +676,7 @@ theorem infra_83_pairMS2_Y_pieces_coord (P : SingleModelData K)
               ((Hull83.witB hc k).v ∘ Prod.map id (fun i : Fin 2 => i.castSucc)) x =
               (Hull83.witB hc k).v (a, 1) →
             ε x = P.E.skeleton (zH a) := by
-  obtain ⟨c, hc, hcoh, hθ, hρ⟩ := infra_83_pairMS2_coherent_colors P Pr
+  obtain ⟨c, hc, hcoh, hθ, hρ, -⟩ := infra_83_pairMS2_coherent_colors P Pr
   refine ⟨c, hc, hcoh, fun k => ?_⟩
   obtain ⟨Z, Jp, i1, i2, i3, i4, e₀, g, hY, hch, hcy, hXY, hτf, hτr, -⟩ := (Hull83.witB hc k).mem.2
   have hv : ∀ p : Fin (k + 1) × Fin 2,
@@ -858,7 +924,7 @@ theorem infra_83_pairMS2_X_charts_coherent (P : SingleModelData K)
         (ch l).ε ((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
           ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3))
           hXs).map e x) = P.E.skeleton ((ch l).j (e a)) := by
-  obtain ⟨c, hc, hcoh, hθ, hρ⟩ := infra_83_pairMS2_coherent_colors P Pr
+  obtain ⟨c, hc, hcoh, hθ, hρ, -⟩ := infra_83_pairMS2_coherent_colors P Pr
   have hXs : Hull83.SubHullStrong ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
       ((LS83.pairInlR P.E).comp (LS83.lsInl K)) (fun N _ => pairMAdmittedS2 P.E Pr.n N) :=
     fun M _ hM => pairM_subHullStrongX P.E Pr.n M hM.1.1
@@ -894,7 +960,7 @@ theorem infra_83_pairMS2_Y_charts_coherent (P : SingleModelData K)
         (ch l).ε ((Hull83.subLangPieces (psiM P.E Pr.n)
           ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh
           (fun i : Fin 2 => i.castSucc) hYs).map e x) = P.E.skeleton ((ch l).j (e a)) := by
-  obtain ⟨c, hc, hcoh, hθ, hρ⟩ := infra_83_pairMS2_coherent_colors P Pr
+  obtain ⟨c, hc, hcoh, hθ, hρ, -⟩ := infra_83_pairMS2_coherent_colors P Pr
   have hYs : Hull83.SubHullStrong (psiM P.E Pr.n)
       ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K)))
       (fun N _ => pairMAdmittedS2 P.E Pr.n N) :=
@@ -1151,7 +1217,7 @@ theorem infra_83_pairMS2_X_chart_skeleton (P : SingleModelData K)
         ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).map e x) = P.E.skeleton q →
         (ch l).ε ((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
         ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).map e x') = P.E.skeleton q' → (p < p' ↔ q < q') := by
-  obtain ⟨c, hc, hcoh, hθ, hρ⟩ := infra_83_pairMS2_coherent_colors P Pr
+  obtain ⟨c, hc, hcoh, hθ, hρ, -⟩ := infra_83_pairMS2_coherent_colors P Pr
   have hXs : Hull83.SubHullStrong ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
       ((LS83.pairInlR P.E).comp (LS83.lsInl K)) (fun N _ => pairMAdmittedS2 P.E Pr.n N) :=
     fun M _ hM => pairM_subHullStrongX P.E Pr.n M hM.1.1
@@ -1389,7 +1455,7 @@ theorem infra_83_pairMS2_X_chart_natural (P : SingleModelData K)
       ∀ {k l : ℕ} (e : Fin (k + 1) ↪o Fin (l + 1)), ∃ h : (ch k).H ↪o (ch l).H,
         ∀ x, (ch l).ε ((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
         ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).map e x) = P.E.map h ((ch k).ε x) := by
-  obtain ⟨c, hc, hcoh, hθ, hρ⟩ := infra_83_pairMS2_coherent_colors P Pr
+  obtain ⟨c, hc, hcoh, hθ, hρ, -⟩ := infra_83_pairMS2_coherent_colors P Pr
   exact ⟨c, hc, hcoh, fun M _ hM => pairM_subHullStrongX P.E Pr.n M hM.1.1, infra_83_pairMS2_X_chart_natural_c P Pr c hc hcoh hθ hρ (fun M _ hM => pairM_subHullStrongX P.E Pr.n M hM.1.1)⟩
 
 /-- Parametric form of `infra_83_pairMS2_Y_chart_natural`: for any coherent colors `c` (with the `θ`/`ρ` facts) and
@@ -1540,7 +1606,7 @@ theorem infra_83_pairMS2_Y_chart_natural (P : SingleModelData K)
       ∀ {k l : ℕ} (e : Fin (k + 1) ↪o Fin (l + 1)), ∃ h : (ch k).H ↪o (ch l).H,
         ∀ x, (ch l).ε ((Hull83.subLangPieces (psiM P.E Pr.n)
         ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs).map e x) = P.E.map h ((ch k).ε x) := by
-  obtain ⟨c, hc, hcoh, hθ, hρ⟩ := infra_83_pairMS2_coherent_colors P Pr
+  obtain ⟨c, hc, hcoh, hθ, hρ, -⟩ := infra_83_pairMS2_coherent_colors P Pr
   exact ⟨c, hc, hcoh, fun M _ hM => pairM_subHullStrongY P.E Pr.n M hM.1.1, infra_83_pairMS2_Y_chart_natural_c P Pr c hc hcoh hθ hρ (fun M _ hM => pairM_subHullStrongY P.E Pr.n M hM.1.1)⟩
 
 /-- Parametric form of `infra_83_pairMS2_X_chart_functor`: for any coherent colors `c` (with the `θ`/`ρ` facts) and
@@ -1621,7 +1687,7 @@ theorem infra_83_pairMS2_X_chart_functor (P : SingleModelData K)
       (∀ k (p : (ch k).H), h (idEmb (α := Fin (k + 1))) p = p) ∧
       ∀ {k l m : ℕ} (e : Fin (k + 1) ↪o Fin (l + 1)) (f : Fin (l + 1) ↪o Fin (m + 1))
         (p : (ch k).H), h (e.trans f) p = h f (h e p) := by
-  obtain ⟨c, hc, hcoh, hθ, hρ⟩ := infra_83_pairMS2_coherent_colors P Pr
+  obtain ⟨c, hc, hcoh, hθ, hρ, -⟩ := infra_83_pairMS2_coherent_colors P Pr
   exact ⟨c, hc, hcoh, fun M _ hM => pairM_subHullStrongX P.E Pr.n M hM.1.1, infra_83_pairMS2_X_chart_functor_c P Pr c hc hcoh hθ hρ (fun M _ hM => pairM_subHullStrongX P.E Pr.n M hM.1.1)⟩
 
 /-- Parametric form of `infra_83_pairMS2_Y_chart_functor`: for any coherent colors `c` (with the `θ`/`ρ` facts) and
@@ -1702,7 +1768,7 @@ theorem infra_83_pairMS2_Y_chart_functor (P : SingleModelData K)
       (∀ k (p : (ch k).H), h (idEmb (α := Fin (k + 1))) p = p) ∧
       ∀ {k l m : ℕ} (e : Fin (k + 1) ↪o Fin (l + 1)) (f : Fin (l + 1) ↪o Fin (m + 1))
         (p : (ch k).H), h (e.trans f) p = h f (h e p) := by
-  obtain ⟨c, hc, hcoh, hθ, hρ⟩ := infra_83_pairMS2_coherent_colors P Pr
+  obtain ⟨c, hc, hcoh, hθ, hρ, -⟩ := infra_83_pairMS2_coherent_colors P Pr
   exact ⟨c, hc, hcoh, fun M _ hM => pairM_subHullStrongY P.E Pr.n M hM.1.1, infra_83_pairMS2_Y_chart_functor_c P Pr c hc hcoh hθ hρ (fun M _ hM => pairM_subHullStrongY P.E Pr.n M hM.1.1)⟩
 
 /-- **`F` along a functor of orders**: given orders `H k` and order embeddings
@@ -1792,7 +1858,7 @@ theorem infra_83_pairMS2_X_F_pieces (P : SingleModelData K)
       (∀ k x, η.app k x = (ch k).ε x) ∧ (∀ k, Function.Bijective (η.app k)) ∧
       ∀ (I : Type u) [LinearOrder I] [Nonempty I],
         Function.Bijective (η.limMap I) ∧ K.Strong (η.limMap I) := by
-  obtain ⟨c, hc, hcoh, hθ, hρ⟩ := infra_83_pairMS2_coherent_colors P Pr
+  obtain ⟨c, hc, hcoh, hθ, hρ, -⟩ := infra_83_pairMS2_coherent_colors P Pr
   exact ⟨c, hc, hcoh, fun M _ hM => pairM_subHullStrongX P.E Pr.n M hM.1.1, infra_83_pairMS2_X_F_pieces_c P Pr c hc hcoh hθ hρ (fun M _ hM => pairM_subHullStrongX P.E Pr.n M hM.1.1)⟩
 
 /-- Parametric form of `infra_83_pairMS2_Y_F_pieces`: for any coherent colors `c` (with the `θ`/`ρ` facts) and
@@ -1861,7 +1927,7 @@ theorem infra_83_pairMS2_Y_F_pieces (P : SingleModelData K)
       (∀ k x, η.app k x = (ch k).ε x) ∧ (∀ k, Function.Bijective (η.app k)) ∧
       ∀ (I : Type u) [LinearOrder I] [Nonempty I],
         Function.Bijective (η.limMap I) ∧ K.Strong (η.limMap I) := by
-  obtain ⟨c, hc, hcoh, hθ, hρ⟩ := infra_83_pairMS2_coherent_colors P Pr
+  obtain ⟨c, hc, hcoh, hθ, hρ, -⟩ := infra_83_pairMS2_coherent_colors P Pr
   exact ⟨c, hc, hcoh, fun M _ hM => pairM_subHullStrongY P.E Pr.n M hM.1.1, infra_83_pairMS2_Y_F_pieces_c P Pr c hc hcoh hθ hρ (fun M _ hM => pairM_subHullStrongY P.E Pr.n M hM.1.1)⟩
 
 /-- **Natural order embeddings induce piece morphisms**: a family `g k : H k ↪o H' k` natural

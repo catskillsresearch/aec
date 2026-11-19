@@ -662,7 +662,7 @@ theorem infra_83_pairMS2_X_hull_natural (P : SingleModelData K)
         ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).limit I).canon s x) = P.E.skeleton (g I i)) ∧
       ∀ (I : Type u) [LinearOrder I],
         #(OCol83.Col (OCol83.phiH h I) (OCol83.phiH_comp h hcomp I)) ≤ #(Finset I) * ls K := by
-  obtain ⟨c, hc, hcoh, hθ, hρ⟩ := infra_83_pairMS2_coherent_colors P Pr
+  obtain ⟨c, hc, hcoh, hθ, hρ, -⟩ := infra_83_pairMS2_coherent_colors P Pr
   exact ⟨c, hc, hcoh, fun M _ hM => pairM_subHullStrongX P.E Pr.n M hM.1.1, infra_83_pairMS2_X_hull_natural_c P Pr c hc hcoh hθ hρ (fun M _ hM => pairM_subHullStrongX P.E Pr.n M hM.1.1)⟩
 
 /-- Parametric form of `infra_83_pairMS2_Y_hull_natural`: for any coherent colors `c` (with the `θ`/`ρ` facts) and
@@ -884,7 +884,7 @@ theorem infra_83_pairMS2_Y_hull_natural (P : SingleModelData K)
         ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs).limit I).canon s x) = P.E.skeleton (g I i)) ∧
       ∀ (I : Type u) [LinearOrder I],
         #(OCol83.Col (OCol83.phiH h I) (OCol83.phiH_comp h hcomp I)) ≤ #(Finset I) * ls K := by
-  obtain ⟨c, hc, hcoh, hθ, hρ⟩ := infra_83_pairMS2_coherent_colors P Pr
+  obtain ⟨c, hc, hcoh, hθ, hρ, -⟩ := infra_83_pairMS2_coherent_colors P Pr
   exact ⟨c, hc, hcoh, fun M _ hM => pairM_subHullStrongY P.E Pr.n M hM.1.1, infra_83_pairMS2_Y_hull_natural_c P Pr c hc hcoh hθ hρ (fun M _ hM => pairM_subHullStrongY P.E Pr.n M hM.1.1)⟩
 
 /-- **One choice of colors for `X`, `Y` and `L`**: a single coherent color family `c` gives the
@@ -993,7 +993,7 @@ theorem infra_83_pairMS2_joint (P : SingleModelData K)
         ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hY).limit I).canon s x) = P.E.skeleton (g I i)) ∧
       ∀ (I : Type u) [LinearOrder I],
         #(OCol83.Col (OCol83.phiH h I) (OCol83.phiH_comp h hcomp I)) ≤ #(Finset I) * ls K) := by
-  obtain ⟨c, hc, hcoh, hθ, hρ⟩ := infra_83_pairMS2_coherent_colors P Pr
+  obtain ⟨c, hc, hcoh, hθ, hρ, -⟩ := infra_83_pairMS2_coherent_colors P Pr
   have hX : Hull83.SubHullStrong ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
       ((LS83.pairInlR P.E).comp (LS83.lsInl K)) (fun N _ => pairMAdmittedS2 P.E Pr.n N) :=
     fun M _ hM => pairM_subHullStrongX P.E Pr.n M hM.1.1
