@@ -221,4 +221,44 @@ theorem infra_83_saturated_sample_order (P : SingleModelData K) {κ μ : Cardina
       #J = μ ∧ ∃ S : Set J, #S = μ ∧ S.WellFoundedOn (· < ·) :=
   OrderSat83.exists_saturated_padded hκ hμ.1.working.strongLimit hκμ
 
+
+/-- **Arbitrarily large order-saturated samples** (Lemma 8.3, "The samples and their language"
+with "Choose the presentations sufficiently rich for any prescribed set-sized order-saturation
+bound").  For every infinite `κ` and every bound `θ` there is a level `μ ≥ θ` of the tail
+`infra_78_closedTail P ∩ infra_615_closed P` and a dense `κ`-order-saturated order `J` of size
+`μ` with a well-ordered subset of size `μ`, carrying the sample of `infra_83_samples_strip`.
+This is the "arbitrarily large samples" input of the color extraction
+(`Hull83.coherent_colors`). -/
+theorem infra_83_large_saturated_samples (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) {κ : Cardinal.{u}} (hκ : ℵ₀ ≤ κ)
+    (θ : Cardinal.{u}) :
+    ∃ μ : Cardinal.{u}, θ ≤ μ ∧ κ < μ ∧ μ ∈ infra_78_closedTail P ∩ infra_615_closed P ∧
+    ∃ (J : Type u) (_ : LinearOrder J) (_ : Nonempty J), OrderSat83.OrderSaturated κ J ∧
+      DenselyOrdered J ∧ #J = μ ∧ (∃ S : Set J, #S = μ ∧ S.WellFoundedOn (· < ·)) ∧
+    ∃ M : MarkedPair K oneVertexShape P.scheme Pr, M.μ = μ ∧
+      ∃ eX : Language.Embedding K.τ (P.E.obj J).carrier
+          ((P.scheme.asSystem M.hμ M.X).obj PUnit.unit).carrier,
+        Function.Bijective eX ∧ K.Strong eX ∧
+        (∀ (Z : Type u) [LinearOrder Z] [Nonempty Z], #Z = μ →
+          Nonempty ((P.E.obj Z).carrier ≃[K.τ]
+            ((P.scheme.asSystem M.hμ M.Y).obj PUnit.unit).carrier)) ∧
+        ∃ (Jplus : Type u) (_ : LinearOrder Jplus) (_ : Nonempty Jplus) (emb : J ↪o Jplus)
+          (strip : Set Jplus) (V : ℕ → Set Jplus),
+          #Jplus = μ ∧ IsConvexRegion strip ∧ #strip = μ ∧
+          (∀ n, IsConvexRegion (V n) ∧ #(V n) = μ ∧ V n ⊆ strip) ∧
+          Pairwise (Function.onFun Disjoint V) ∧
+          ∃ F : Language.Embedding K.τ ((P.scheme.asSystem M.hμ M.Y).obj PUnit.unit).carrier
+              (P.E.obj Jplus).carrier,
+            K.Strong F ∧ ∀ x, F (M.incl.onVertex PUnit.unit (eX x)) = P.E.map emb x := by
+  obtain ⟨hle, h1, h2⟩ := infra_78_closedTower_sup_mem P (max θ (Order.succ κ))
+  set μ := ⨆ n, infra_78_closedTower P (max θ (Order.succ κ)) n
+  have hκμ : κ < μ :=
+    (Order.lt_succ_of_not_isMax (not_isMax κ)).trans_le ((le_max_right _ _).trans hle)
+  obtain ⟨J, _, hsat, hdense, hJ, hS⟩ := infra_83_saturated_sample_order P hκ h1.1 hκμ
+  have hne : Nonempty J := by
+    rw [← Cardinal.mk_ne_zero_iff, hJ]
+    exact (aleph0_pos.trans (hκ.trans_lt hκμ)).ne'
+  exact ⟨μ, (le_max_left _ _).trans hle, hκμ, ⟨h1, h2⟩, J, inferInstance, hne, hsat, hdense, hJ,
+    hS, infra_83_samples_strip P Pr ⟨h1, h2⟩ J hJ⟩
+
 end AEC

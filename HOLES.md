@@ -547,6 +547,7 @@ Lean: imports `Section5.Results` and `Section6.Results`. Soft paper chain after 
 | `infra_83_small_saturated_order` | Lemma 8.3 proof: some κ-order-saturated order exists | [`OrderSat83.lean`](AEC/Section8/OrderSat83.lean) (**done**, cycle 102) |
 | `infra_83_order_sat_pilex` | Lemma 8.3 proof: saturation of a lexicographic power | [`OrderSat83.lean`](AEC/Section8/OrderSat83.lean) (**done**, cycle 102) |
 | `infra_83_pilex_params` | Lemma 8.3 proof: index and value orders for the lex power | [`OrderSat83.lean`](AEC/Section8/OrderSat83.lean) (**done**, cycle 102) |
+| `infra_83_large_saturated_samples` | Lemma 8.3 proof: arbitrarily large order-saturated pair samples | [`Lemma83Samples.lean`](AEC/Section8/Lemma83Samples.lean) (**done**, cycle 102) |
 | `infra_72_mixed_level` | Lemma 7.2 last sentence (A at a smaller level than B), stated with sorry (audit) | [`Lemma72Mixed.lean`](AEC/Section7/Lemma72Mixed.lean) (open, cycle 96) |
 | `infra_82_tiedFreeMixed_base_equiv` | Mixed tied freeness under a reindexed change of base tuple | [`TiedAlong.lean`](AEC/Section8/TiedAlong.lean) (**done**, cycle 97) |
 | `infra_82_mark_tied_along_single` | Lemma 8.2(4) for `P.scheme`: tied freeness of the mark along arrows (Def 8.1 tied, cycle 97 ruling) | [`TiedAlong.lean`](AEC/Section8/TiedAlong.lean) (**done**, cycle 97) |

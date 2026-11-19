@@ -5121,7 +5121,7 @@
    "file": "AEC/Section8/HullExtract83.lean",
    "status": "open",
    "blocker": null,
-   "detail": "Cycle 102 split of infra_83_hull_extraction: instantiate Hull83.coherent_colors."
+   "detail": "Cycle 102 split of infra_83_hull_extraction: instantiate Hull83.coherent_colors. | Cycle 102: largeness input done (infra_83_large_saturated_samples); remaining: the fixed finitary expansion and its finite-hull colors with a set-sized palette, closed under thinning."
   },
   {
    "id": "infra_83_template_from_colors",
@@ -5194,6 +5194,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 102: succ_toType_bdd (regularity of κ⁺ via iSup_add_one_lt_of_lt_cof), dualLex_interp. Axioms clean."
+  },
+  {
+   "id": "infra_83_large_saturated_samples",
+   "label": "Lemma 8.3 proof: arbitrarily large κ-order-saturated pair samples on the tail (samples_strip over a saturated padded dense J)",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83Samples.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 102: infra_83_large_saturated_samples — the 'arbitrarily large samples' input of Hull83.coherent_colors for the pair samples. Axioms clean."
   }
  ],
  "edges": [
@@ -9819,8 +9828,13 @@
    "from": "infra_83_pilex_params",
    "to": "infra_83_small_saturated_order",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_large_saturated_samples",
+   "to": "infra_83_pair_sample_family",
+   "kind": "hard"
   }
  ],
- "doneCount": 514,
+ "doneCount": 515,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
