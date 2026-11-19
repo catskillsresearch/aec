@@ -7156,6 +7156,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 179: proved."
+  },
+  {
+   "id": "infra_83_sample_pair_square",
+   "label": "Pair square into a sample-like structure along order maps: e0 : J0 -> J, e : Z0 -> Jp, i0 : J0 -> Z0 with e0;emb = i0;e give tau-embeddings phiX : F(J0) -> N (into X), phiY : F(Z0) -> N with phiY o F(i0) = phiX",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PieceMatch.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 180: proved."
   }
  ],
  "edges": [
@@ -13101,8 +13110,13 @@
    "from": "infra_83_sample_X_embedding",
    "to": "infra_83_XH_sort",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_sample_pair_square",
+   "to": "infra_83_bounded_list_match",
+   "kind": "hard"
   }
  ],
- "doneCount": 726,
+ "doneCount": 727,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

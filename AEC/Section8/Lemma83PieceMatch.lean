@@ -324,4 +324,46 @@ theorem infra_83_sample_X_embedding (E : OrderPresentation K) (n : ℕ) {N : Typ
   rfl
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+open FirstOrder.Language
+
+/-- **Pair square into a sample along order maps (proved).** In a sample-like structure with
+`g : N ≃ F(Jp)`, order embeddings `e₀ : J₀ ↪o J` (the `X`-part) and `e : Z₀ ↪o Jp` (the `Y`-part)
+with an inclusion `i₀ : J₀ ↪o Z₀` such that `e₀ ; emb = i₀ ; e` give `τ`-embeddings
+`φX : F(J₀) → N`, `φY : F(Z₀) → N` with `φY ∘ F(i₀) = φX`, `φX` landing in the sample's `X`:
+the square `inclu ; h = toA ; incl` of `infra_83_sgt_of_piece_arrow` at the level of carriers. -/
+theorem infra_83_sample_pair_square (E : OrderPresentation K) (n : ℕ) {N : Type u}
+    [(LS83.pairLangM3 E n).Structure N] {J Jp J0 Z0 : Type u} [LinearOrder J] [Nonempty J]
+    [LinearOrder Jp] [Nonempty Jp] [LinearOrder J0] [Nonempty J0] [LinearOrder Z0] [Nonempty Z0]
+    (emb : J ↪o Jp) (g : N ≃ (E.obj Jp).carrier)
+    (hfun : ∀ {k} (f : K.τ.Functions k) (x : Fin k → N),
+      g (@Structure.funMap _ _ ((tauRed E n).reduct N) k f x) = Structure.funMap f (g ∘ x))
+    (hrel : ∀ {k} (r : K.τ.Relations k) (x : Fin k → N),
+      (@Structure.RelMap _ _ ((tauRed E n).reduct N) k r x ↔ Structure.RelMap r (g ∘ x)))
+    (e0 : J0 ↪o J) (e : Z0 ↪o Jp) (i0 : J0 ↪o Z0) (hsq : e0.trans emb = i0.trans e) :
+    ∃ (φX : @Language.Embedding K.τ (E.obj J0).carrier N _ ((tauRed E n).reduct N))
+      (φY : @Language.Embedding K.τ (E.obj Z0).carrier N _ ((tauRed E n).reduct N)),
+      (∀ x, g (φX x) = E.map emb (E.map e0 x)) ∧ (∀ y, g (φY y) = E.map e y) ∧
+      ∀ x, φY (E.map i0 x) = φX x := by
+  letI := (tauRed E n).reduct N
+  let G := infra_83_sample_tauEquiv E n g hfun hrel
+  refine ⟨G.symm.toEmbedding.comp ((E.map emb).comp (E.map e0)), G.symm.toEmbedding.comp (E.map e),
+    fun x => ?_, fun y => ?_, fun x => ?_⟩
+  · show G (G.symm _) = _
+    rw [Language.Equiv.apply_symm_apply]
+    rfl
+  · show G (G.symm _) = _
+    rw [Language.Equiv.apply_symm_apply]
+  · apply G.injective
+    show G (G.symm _) = G (G.symm _)
+    rw [Language.Equiv.apply_symm_apply, Language.Equiv.apply_symm_apply]
+    have h1 := congrArg (fun φ => φ x) (E.map_comp i0 e)
+    have h2 := congrArg (fun φ => φ x) (E.map_comp e0 emb)
+    simp only [Language.Embedding.comp_apply] at h1 h2
+    show E.map e (E.map i0 x) = E.map emb (E.map e0 x)
+    rw [← h1, ← h2, hsq]
+end
+
 end AEC
