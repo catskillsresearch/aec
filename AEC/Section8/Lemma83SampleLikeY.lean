@@ -269,6 +269,69 @@ theorem infra_83_pairMS3_coherent_colors (P : SingleModelData K)
         ⟨a, b, hab, rfl, rfl⟩)
     · simp [rhoM]
 
+/-- **Good ret codes in a ret-sample-like structure.** In a structure satisfying
+`RetSampleLike`, for every finite `A ⊆ J` exactly `μ` codes `c_i` have `ret(c_i, -)` fixing
+`F(A)` pointwise and sending the `Y`-copy `F(Y)` into the `X`-copy `F(J)` (all read through
+`g : N ≃ E(J⁺)`). -/
+theorem infra_83_retSampleLike_good (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) {N : Type u}
+    [(LS83.pairLangM3 P.E Pr.n).Structure N] (h : RetSampleLike P Pr N) :
+    ∃ (M : MarkedPair K oneVertexShape P.scheme Pr) (J Jp : Type u) (_ : LinearOrder J)
+      (_ : Nonempty J) (_ : LinearOrder Jp) (_ : Nonempty Jp) (emb : J ↪o Jp)
+      (g : N ≃ (P.E.obj Jp).carrier)
+      (eX : (P.E.obj J).carrier → ((P.scheme.asSystem M.hμ M.X).obj PUnit.unit).carrier)
+      (F : ((P.scheme.asSystem M.hμ M.Y).obj PUnit.unit).carrier → (P.E.obj Jp).carrier)
+      (R : ApproximateRetraction K oneVertexShape P.scheme M.hμ M.X M.Y M.incl)
+      (code : R.index → (P.E.obj J).carrier),
+      Function.Surjective eX ∧ Function.Injective F ∧
+      (∀ x, F (M.incl.onVertex PUnit.unit (eX x)) = P.E.map emb x) ∧
+      Function.Bijective code ∧
+      ∀ A : Finset (P.E.obj J).carrier,
+        #{i : R.index |
+          (∀ x ∈ A, g (Structure.funMap (retM3 P.E Pr.n)
+              ![g.symm (P.E.map emb (code i)), g.symm (P.E.map emb x)]) = P.E.map emb x) ∧
+          (fun b => g (Structure.funMap (retM3 P.E Pr.n)
+              ![g.symm (P.E.map emb (code i)), g.symm b])) '' Set.range F ⊆
+            Set.range (P.E.map emb)} = M.μ := by
+  obtain ⟨M, J, Jp, i1, i2, i3, i4, emb, g, eX, F, R, code, hsurj, hF, hFX, hcode, hμ, hev⟩ := h
+  refine ⟨M, J, Jp, i1, i2, i3, i4, emb, g, eX, F, R, code, hsurj, hF, hFX, hcode, fun A => ?_⟩
+  exact infra_83_ret_good_card_mu P eX hsurj emb F hFX R code
+    (fun a b => g (Structure.funMap (retM3 P.E Pr.n) ![g.symm a, g.symm b])) hev hμ A
+
+/-- **Joint ret-admitted samples carry good ret codes.** A joint sample for the ret-admitted
+class (size `≥ κ`, homogeneous through arity `n` for `c`) lives in a structure where every
+finite part of `X` is fixed by `μ` codes whose `ret`-translates send `Y` into `X`. -/
+theorem infra_83_joint_S3_good (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) {n : ℕ}
+    {c : (m : ℕ) → 0 < m → Hull83.TpColorB (LS83.pairLangM3 P.E Pr.n) 3 m} {κ : Cardinal.{u}}
+    (hc : Hull83.Joint (Hull83.TpSampleB (fun N _ => pairMAdmittedS3 P Pr N) 3) n c κ) :
+    ∃ S : Hull83.ColorSample (Hull83.TpColorB (LS83.pairLangM3 P.E Pr.n) 3),
+      κ ≤ #S.α ∧ Hull83.Homog S n c ∧
+      ∃ (N : Type u) (_ : (LS83.pairLangM3 P.E Pr.n).Structure N),
+        pairMAdmittedS2 P.E Pr.n N ∧
+        (∃ base : S.α → Fin 3 → N, (∀ i, Function.Injective fun a => base a i) ∧
+          ∀ (m : ℕ) (s : Finset S.α) (h : s.card = m),
+            S.col m s = Hull83.tpCode (Hull83.bundleOf base s h)) ∧
+        ∃ (M : MarkedPair K oneVertexShape P.scheme Pr) (J Jp : Type u) (_ : LinearOrder J)
+          (_ : Nonempty J) (_ : LinearOrder Jp) (_ : Nonempty Jp) (emb : J ↪o Jp)
+          (g : N ≃ (P.E.obj Jp).carrier)
+          (eX : (P.E.obj J).carrier → ((P.scheme.asSystem M.hμ M.X).obj PUnit.unit).carrier)
+          (F : ((P.scheme.asSystem M.hμ M.Y).obj PUnit.unit).carrier → (P.E.obj Jp).carrier)
+          (R : ApproximateRetraction K oneVertexShape P.scheme M.hμ M.X M.Y M.incl)
+          (code : R.index → (P.E.obj J).carrier),
+          Function.Surjective eX ∧ Function.Injective F ∧
+          (∀ x, F (M.incl.onVertex PUnit.unit (eX x)) = P.E.map emb x) ∧
+          Function.Bijective code ∧
+          ∀ A : Finset (P.E.obj J).carrier,
+            #{i : R.index |
+              (∀ x ∈ A, g (Structure.funMap (retM3 P.E Pr.n)
+                  ![g.symm (P.E.map emb (code i)), g.symm (P.E.map emb x)]) = P.E.map emb x) ∧
+              (fun b => g (Structure.funMap (retM3 P.E Pr.n)
+                  ![g.symm (P.E.map emb (code i)), g.symm b])) '' Set.range F ⊆
+                Set.range (P.E.map emb)} = M.μ := by
+  obtain ⟨S, ⟨N, inst, hN, base, hinj, hcol⟩, hκ, hS⟩ := hc
+  exact ⟨S, hκ, hS, N, inst, hN.1, ⟨base, hinj, hcol⟩, infra_83_retSampleLike_good P Pr hN.2⟩
+
 /-- Joint samples are monotone in the admitted class. -/
 theorem joint_tpSampleB_mono {L : FirstOrder.Language.{u, u}} {r : ℕ}
     {P Q : ∀ (M : Type u) [L.Structure M], Prop} (hPQ : ∀ (M : Type u) [L.Structure M], P M → Q M)

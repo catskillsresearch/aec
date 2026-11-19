@@ -6832,6 +6832,24 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 145: proved; witnesses are the pairR samples with the sR-based str, RetSampleLike from the threaded eval law."
+  },
+  {
+   "id": "infra_83_retSampleLike_good",
+   "label": "In a RetSampleLike structure, for every finite A ⊆ J exactly μ codes have ret(c_i,-) fixing F(A) and sending F(Y) into F(J)",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83SampleLikeY.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 148: proved from infra_83_ret_good_card_mu."
+  },
+  {
+   "id": "infra_83_joint_S3_good",
+   "label": "Joint ret-admitted samples (homogeneous through n, size ≥ κ) live in structures where every finite part of X is fixed by μ codes whose ret-translates send Y into X",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83SampleLikeY.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 148: proved."
   }
  ],
  "edges": [
@@ -12592,8 +12610,18 @@
    "from": "infra_83_pairMS3_coherent_colors",
    "to": "infra_83_pairMS3_rebase",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_retSampleLike_good",
+   "to": "infra_83_pairMS3_rebase",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_83_joint_S3_good",
+   "to": "infra_83_pairMS3_rebase",
+   "kind": "hard"
   }
  ],
- "doneCount": 694,
+ "doneCount": 696,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
