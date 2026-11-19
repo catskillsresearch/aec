@@ -193,4 +193,32 @@ theorem infra_83_XH_sort_pieces (P : SingleModelData K)
   exact ⟨J, Jp, i1, i2, i3, i4, emb, g, hne,
     @infra_83_XH_sort_sample _ P.E Pr.n _ _ J Jp i1 i2 i3 i4 emb g (fun T _ hT => hch T hT) _ _ hne⟩
 
+
+/-- **Few retractions move a small set (proved).** English (Lemma 8.3 proof, (7)): "For each
+`Z ⊆ X` with `|Z| ≤ χ`, all but at most `|Z| + ℵ₀` of these retractions fix `Z` pointwise."
+From Cor 6.16 `almost_id` (each point is moved by finitely many `r_i`). -/
+theorem infra_83_retr_fix_small (P : SingleModelData K)
+    {Pr : StationaryPrescription K oneVertexShape P.scheme}
+    {M : MarkedPair K oneVertexShape P.scheme Pr}
+    (R : ApproximateRetraction K oneVertexShape P.scheme M.hμ M.X M.Y M.incl)
+    (Z : Set ((P.scheme.asSystem M.hμ M.X).obj PUnit.unit).carrier) :
+    #{i : R.index | ∃ z ∈ Z, (R.retr i).onVertex PUnit.unit
+        (M.incl.onVertex PUnit.unit z) ≠ z} ≤ #Z + ℵ₀ := by
+  have hsub : {i : R.index | ∃ z ∈ Z, (R.retr i).onVertex PUnit.unit
+        (M.incl.onVertex PUnit.unit z) ≠ z} ⊆ ⋃ z ∈ Z, {i : R.index | (R.retr i).onVertex PUnit.unit
+        (M.incl.onVertex PUnit.unit z) ≠ z} := by
+    rintro i ⟨z, hz, hi⟩
+    exact Set.mem_biUnion hz hi
+  refine (Cardinal.mk_le_mk_of_subset hsub).trans ((Cardinal.mk_biUnion_le _ Z).trans ?_)
+  have hfin : ∀ z : Z, #{i : R.index | (R.retr i).onVertex PUnit.unit
+        (M.incl.onVertex PUnit.unit z) ≠ z} ≤ ℵ₀ := by
+    intro z
+    have : Finite {i : R.index // (R.retr i).onVertex PUnit.unit
+        (M.incl.onVertex PUnit.unit z) ≠ z} := R.almost_id ⟨_, z.1⟩
+    exact (Cardinal.lt_aleph0_of_finite _).le
+  refine (mul_le_mul_right (ciSup_le' hfin) _).trans ?_
+  exact (Cardinal.mul_le_max _ _).trans (by
+    rw [max_assoc, max_self]
+    exact max_le le_self_add le_add_self)
+
 end AEC
