@@ -994,4 +994,27 @@ theorem infra_83_piece_meet (P : SingleModelData K)
   exact ⟨y, hgi hy⟩
 end
 
+
+section
+open FirstOrder.Language
+
+/-- **The `L₀`-reading of a piece by transport along the sample identification (proved).** If a
+piece `A` embeds into a sample `N` in the pair language (`mN : A ↪[L] N`, e.g. from the hull
+matches `infra_83_piece_matches_bounded_along`) and `g : N ≃ F(Jp)` is the sample's identification,
+then `F(Jp)` carries the induced `L`-structure, `g ∘ mN` is an `L`-embedding into it, and a binary
+symbol `r` is read there as `g (r (g⁻¹ a) (g⁻¹ b))`: the `mY`/`ret` clauses of
+`infra_83_marked_of_piece_data`, with `G` the evaluation of `infra_83_one_match_of_retSample`. -/
+theorem infra_83_L0_reading_transport {L : FirstOrder.Language.{u, u}} {A N B : Type u}
+    [L.Structure A] [L.Structure N] (g : N ≃ B) (mN : A ↪[L] N) (r : L.Functions 2) :
+    ∃ (_ : L.Structure B) (mY : A ↪[L] B), (∀ y, mY y = g (mN y)) ∧
+      ∀ a b, Structure.funMap r ![a, b] = g (Structure.funMap r ![g.symm a, g.symm b]) := by
+  letI : L.Structure B := g.inducedStructure
+  refine ⟨g.inducedStructure, (g.inducedStructureEquiv.toEmbedding).comp mN, fun y => rfl,
+    fun a b => ?_⟩
+  show g (Structure.funMap r (g.symm ∘ ![a, b])) = _
+  congr 2
+  funext i
+  fin_cases i <;> rfl
+end
+
 end AEC

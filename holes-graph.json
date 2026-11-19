@@ -7300,6 +7300,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 195: proved."
+  },
+  {
+   "id": "infra_83_L0_reading_transport",
+   "label": "L0 reading of a piece by transport: a pair-language embedding mN of the piece into a sample N and the identification g : N = F(Jp) give the induced structure on F(Jp), the L-embedding g o mN, and r read as g(r(g^-1 a, g^-1 b)) (the mY/ret clauses of the piece data)",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PieceMatch.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 196: proved."
   }
  ],
  "edges": [
@@ -13325,8 +13334,13 @@
    "from": "infra_83_piece_meet",
    "to": "infra_83_XH_sort",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_L0_reading_transport",
+   "to": "infra_83_XH_sort",
+   "kind": "hard"
   }
  ],
- "doneCount": 742,
+ "doneCount": 743,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
