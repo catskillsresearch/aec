@@ -1125,4 +1125,15 @@ theorem infra_83_mix_pair_into_sample_along {L₁ L₂ L : FirstOrder.Language.{
   infra_83_mix_pair_into_sample χ ψ₂ φ₀ hc hcoh σ τ hPX hPY hPM hMK (fun i => base (e i))
     (infra_83_sample_tp_orderMap base hcol hhom e)
 
+/-- **Small well-orders embed into order-saturated orders (proved).** English (Lemma 8.3 proof):
+the sample order is order saturated, so every well-order `I` of size `< κ` embeds into it
+(`OrderSat83.extend_strictMono` from the empty partial map); with
+`infra_83_mix_pair_into_sample_along` this matches the template pair of `I` into the sample. -/
+theorem infra_83_wellOrder_into_saturated {κ : Cardinal.{u}} (hκ : ℵ₀ ≤ κ) {J I : Type u}
+    [LinearOrder J] [LinearOrder I] [WellFoundedLT I] (hJ : OrderSat83.OrderSaturated κ J)
+    (hI : #I < κ) : Nonempty (I ↪o J) := by
+  obtain ⟨g, hg, -⟩ := OrderSat83.extend_strictMono hκ hJ hI (∅ : Set I)
+    (fun d => absurd d.2 (Set.notMem_empty _)) (fun a => absurd a.2 (Set.notMem_empty _))
+  exact ⟨OrderEmbedding.ofStrictMono g hg⟩
+
 end AEC
