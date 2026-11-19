@@ -7192,6 +7192,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 183: proved."
+  },
+  {
+   "id": "infra_83_sample_toA",
+   "label": "Carrier map of toA: for e0 : J0 -> J, eX o F(e0) : F(J0) -> X of a ret-sample is a strong tau-embedding with F(incl(phi x)) = F(emb)(F(e0) x)",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PieceMatch.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 184: proved."
   }
  ],
  "edges": [
@@ -13157,8 +13166,13 @@
    "from": "infra_83_ret_sample_tau",
    "to": "infra_83_bounded_list_match",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_sample_toA",
+   "to": "infra_83_bounded_list_match",
+   "kind": "hard"
   }
  ],
- "doneCount": 730,
+ "doneCount": 731,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

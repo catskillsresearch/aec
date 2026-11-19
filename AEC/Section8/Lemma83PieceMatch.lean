@@ -431,4 +431,28 @@ theorem infra_83_ret_sample_tau (P : SingleModelData K)
     infra_83_eX_bijective P emb eX F hsurj hF, hsX, hsF, hF⟩
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+/-- **`X_H = F(J₀)` into the sample's `X` as a strong embedding (proved).** In ret-sample data,
+for an order embedding `e₀ : J₀ ↪o J` the composite `eX ∘ F(e₀) : F(J₀) → X` is a strong
+`τ`-embedding whose image read in `F(Jp)` is `F(emb) ∘ F(e₀)`: the carrier map of `toA` in the
+paper's "F of that order map embeds `X_H` into `X`". -/
+theorem infra_83_sample_toA (P : SingleModelData K)
+    {Pr : StationaryPrescription K oneVertexShape P.scheme} {M : MarkedPair K oneVertexShape P.scheme Pr}
+    {J Jp J0 : Type u} [LinearOrder J] [Nonempty J] [LinearOrder Jp] [Nonempty Jp]
+    [LinearOrder J0] [Nonempty J0] (emb : J ↪o Jp)
+    (eX : Language.Embedding K.τ (P.E.obj J).carrier
+      ((P.scheme.asSystem M.hμ M.X).obj PUnit.unit).carrier)
+    (F : Language.Embedding K.τ ((P.scheme.asSystem M.hμ M.Y).obj PUnit.unit).carrier
+      (P.E.obj Jp).carrier)
+    (hsX : K.Strong eX) (hF : ∀ x, F (M.incl.onVertex PUnit.unit (eX x)) = P.E.map emb x)
+    (e0 : J0 ↪o J) :
+    ∃ φ : Language.Embedding K.τ (P.E.obj J0).carrier
+        ((P.scheme.asSystem M.hμ M.X).obj PUnit.unit).carrier,
+      K.Strong φ ∧ ∀ x, F (M.incl.onVertex PUnit.unit (φ x)) = P.E.map emb (P.E.map e0 x) :=
+  ⟨eX.comp (P.E.map e0), K.strong_trans _ _ (P.E.map_strong e0) hsX, fun x => hF _⟩
+end
+
 end AEC
