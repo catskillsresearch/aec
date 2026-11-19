@@ -7282,6 +7282,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 193: proved."
+  },
+  {
+   "id": "infra_83_full_single_of_piece_data",
+   "label": "Lemma 8.3 (P.scheme) reduced to template-side piece data: Lemma83Conclusion holds once every (I, bounded c) has piece data X_I <= Y_u <= Y_I (strong psi, strong gY into ret-sample data inside F[N.Y], L0 reading with ret, sort intersection, mark reading) at a closed level >= #I",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PieceMatch.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 194: proved."
   }
  ],
  "edges": [
@@ -13297,8 +13306,13 @@
    "from": "infra_83_marked_of_piece_data",
    "to": "infra_83_bounded_list_match",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_full_single_of_piece_data",
+   "to": "infra_83_lemma_8_3_full_single",
+   "kind": "hard"
   }
  ],
- "doneCount": 740,
+ "doneCount": 741,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

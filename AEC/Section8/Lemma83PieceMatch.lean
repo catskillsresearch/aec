@@ -882,4 +882,85 @@ theorem infra_83_marked_of_piece_data (P : SingleModelData K)
   exact hτ a
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+open FirstOrder.Language
+
+set_option maxHeartbeats 6400000 in
+/-- **Lemma 8.3 (P.scheme) reduced to template-side piece data (proved reduction).** As
+`infra_83_full_single_of_piece_arrows`, with the per-`(I, c)` input being the template-side piece
+data of `infra_83_marked_of_piece_data` (piece `X_I ≤ Y_u ≤ Y_I` holding a preimage of
+`(mk_I, c)`, strong `ψ : X_I → F(J₀)` and `gY : Y_u → F(Jp)` into ret-sample data, the `L₀`-reading
+with `ret`, the sort intersection, and the mark reading). -/
+theorem infra_83_full_single_of_piece_data (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) :
+    ∃ (X Y : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
+        P.scheme.Object #I hI)
+      (incl : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
+        SystemArrow K oneVertexShape (P.scheme.asSystem hI (X I hI))
+          (P.scheme.asSystem hI (Y I hI)))
+      (mk : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
+        Fin Pr.n → Occurrence K oneVertexShape (P.scheme.asSystem hI (Y I hI))),
+      (∀ (I : Type u) [LinearOrder I] [WellFoundedLT I] [Nonempty I]
+          (hI : #I ∈ infra_78_closedTail P ∩ infra_615_closed P)
+          (cIdx : Type u)
+          (c : cIdx → Occurrence K oneVertexShape (P.scheme.asSystem hI.2.1 (Y I hI.2.1))),
+          #cIdx < #I →
+      ∃ (N : MarkedPair K oneVertexShape P.scheme Pr) (hlC : N.μ ∈ infra_615_closed P)
+        (_ : N.μ ∈ infra_78_closedTail P) (_ : #I ≤ N.μ)
+        (J Jp J0 : Type u) (_ : LinearOrder J) (_ : Nonempty J) (_ : LinearOrder Jp)
+        (_ : Nonempty Jp) (_ : LinearOrder J0) (_ : Nonempty J0) (emb : J ↪o Jp)
+        (eX : Language.Embedding K.τ (P.E.obj J).carrier
+          ((P.scheme.asSystem N.hμ N.X).obj PUnit.unit).carrier)
+        (F : Language.Embedding K.τ ((P.scheme.asSystem N.hμ N.Y).obj PUnit.unit).carrier
+          (P.E.obj Jp).carrier)
+        (R : ApproximateRetraction K oneVertexShape P.scheme N.hμ N.X N.Y N.incl)
+        (code : R.index → (P.E.obj J).carrier)
+        (G : (P.E.obj Jp).carrier → (P.E.obj Jp).carrier → (P.E.obj Jp).carrier)
+        (Yu : P.scheme.Object #I hI.2.1)
+        (ψ : Language.Embedding K.τ ((P.scheme.asSystem hI.2.1 (X I hI.2.1)).obj PUnit.unit).carrier
+          (P.E.obj J0).carrier) (e0 : J0 ↪o J)
+        (inclu : SystemArrow K oneVertexShape (P.scheme.asSystem hI.2.1 (X I hI.2.1))
+          (P.scheme.asSystem hI.2.1 Yu))
+        (j : SystemArrow K oneVertexShape (P.scheme.asSystem hI.2.1 Yu)
+          (P.scheme.asSystem hI.2.1 (Y I hI.2.1)))
+        (gY : Language.Embedding K.τ ((P.scheme.asSystem hI.2.1 Yu).obj PUnit.unit).carrier
+          (P.E.obj Jp).carrier)
+        (L₀ : FirstOrder.Language.{u, u})
+        (_ : L₀.Structure ((P.scheme.asSystem hI.2.1 Yu).obj PUnit.unit).carrier)
+        (_ : L₀.Structure (P.E.obj Jp).carrier)
+        (mY : ((P.scheme.asSystem hI.2.1 Yu).obj PUnit.unit).carrier ↪[L₀] (P.E.obj Jp).carrier)
+        (ret : L₀.Functions 2)
+        (m : Fin Pr.n → ((P.scheme.asSystem hI.2.1 Yu).obj PUnit.unit).carrier)
+        (d : ULift.{u} (Fin Pr.n) ⊕ cIdx → Occurrence K oneVertexShape (P.scheme.asSystem hI.2.1 Yu)),
+        Function.Surjective eX ∧ K.Strong eX ∧ K.Strong F ∧
+        (∀ x, F (N.incl.onVertex PUnit.unit (eX x)) = P.E.map emb x) ∧
+        Function.Bijective code ∧
+        (∀ i y, G (P.E.map emb (code i)) (F y) =
+          F (N.incl.onVertex PUnit.unit ((R.retr i).onVertex PUnit.unit y))) ∧
+        K.Strong ψ ∧ K.Strong gY ∧ (∀ x, gY x ∈ Set.range F) ∧
+        (∀ x, gY (inclu.onVertex PUnit.unit x) = P.E.map emb (P.E.map e0 (ψ x))) ∧
+        (∀ y, mY y = gY y) ∧ (∀ a b, Structure.funMap ret ![a, b] = G a b) ∧
+        (∀ (x' : ((P.scheme.asSystem hI.2.1 Yu).obj PUnit.unit).carrier)
+          (z : ((P.scheme.asSystem N.hμ N.X).obj PUnit.unit).carrier),
+          gY x' = F (N.incl.onVertex PUnit.unit z) → ∃ y, x' = inclu.onVertex PUnit.unit y) ∧
+        (∀ k, gY (m k) = F (markY N k)) ∧
+        SystemArrow.comp inclu j = incl I hI.2.1 ∧
+        (∀ s, j.mapOcc (d s) = seqJoint (fun a : ULift.{u} (Fin Pr.n) => mk I hI.2.1 a.down) c s) ∧
+        (∀ a, d (Sum.inl a) = ⟨PUnit.unit, m a.down⟩)) →
+      Lemma83Conclusion P.scheme Pr := by
+  obtain ⟨X, Y, incl, mk, H⟩ := infra_83_full_single_of_piece_arrows P Pr
+  refine ⟨X, Y, incl, mk, fun hS => H fun I _ _ _ hI cIdx c hc => ?_⟩
+  obtain ⟨N, hlC, hlT, hνl, J, Jp, J0, i1, i2, i3, i4, i5, i6, emb, eX, F, R, code, G, Yu, ψ, e0,
+    inclu, j, gY, L₀, s1, s2, mY, ret, m, d, hsurj, hsX, hsF, hF, hcode, hev, hψ, hgY, hr, hX,
+    hmY, hret, hmeet, hm, hj, hjd, hdm⟩ := hS I hI cIdx c hc
+  obtain ⟨toA, h, τ, hsq, hτ, hcount⟩ := infra_83_one_match_of_piece P emb eX F hsurj hsX hsF hF
+    R code hcode G hev ψ hψ e0 inclu gY hgY hr hX mY hmY ret hret hmeet m hm
+  refine ⟨N, hlC, hlT, hνl, toA, R, τ, Yu, inclu, j, h, d, hj, hsq, hjd, fun a => ?_, ?_⟩
+  · rw [hdm]
+    exact hτ a
+  · exact hcount d
+end
+
 end AEC
