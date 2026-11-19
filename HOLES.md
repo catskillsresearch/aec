@@ -570,6 +570,7 @@ Lean: imports `Section5.Results` and `Section6.Results`. Soft paper chain after 
 | `infra_83_mix_pair_into_sample_along` | mixed template pair into a homogeneous sample along `I ↪o S.α` | [`Lemma83Isolation.lean`](AEC/Section8/Lemma83Isolation.lean) (**done**, cycle 126) |
 | `infra_83_wellOrder_into_saturated` | well-orders of size `< κ` embed into `κ`-order-saturated orders | [`Lemma83Isolation.lean`](AEC/Section8/Lemma83Isolation.lean) (**done**, cycle 127) |
 | `infra_83_mix_pair_into_saturated_sample` | mixed template pair of a small well-order into an order-saturated homogeneous sample | [`Lemma83Isolation.lean`](AEC/Section8/Lemma83Isolation.lean) (**done**, cycle 128) |
+| `infra_83_good_of_closure` | good evaluation indices from closure of Y_I under ret and the sort intersection Y_I ∩ X = X_I | [`Lemma83Isolation.lean`](AEC/Section8/Lemma83Isolation.lean) (**done**, cycle 129) |
 | `infra_83_samples_core` | Lemma 8.3 proof (P.scheme): sample pair with base E(J) embedded into E(J + W) over the base | [`Lemma83Samples.lean`](AEC/Section8/Lemma83Samples.lean) (**done**, cycle 101) |
 | `infra_83_samples_order_exists` | Lemma 8.3 proof (P.scheme): the W of the samples exists | [`Lemma83Samples.lean`](AEC/Section8/Lemma83Samples.lean) (**done**, cycle 101) |
 | `infra_83_samples_retractions` | Lemma 8.3 proof (P.scheme): retraction family of the samples | [`Lemma83Samples.lean`](AEC/Section8/Lemma83Samples.lean) (**done**, cycle 101) |

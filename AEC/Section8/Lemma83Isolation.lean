@@ -1189,4 +1189,21 @@ theorem infra_83_mix_pair_into_saturated_sample {L₁ L₂ L : FirstOrder.Langua
   exact ⟨e, infra_83_mix_pair_into_sample_along χ ψ₂ φ₀ hc hcoh σ τ hPX hPY hPM hMK base hcol
     hhom e⟩
 
+/-- **Good evaluation indices from closure and the sort intersection (proved).** English (Lemma 8.3
+proof, (7)): the evaluation `ret(code_i, -)` maps the sample's `Y` into its `X`; if the image of
+`Y_I` in the sample is closed under `ret(code_i, -)` and meets the image of the sample's `X` only
+in the image of `X_I` (the colors record that `Y`-terms landing in the `X` sort are `X`-terms),
+then `ret(code_i, -)` sends the image of `Y_I` into the image of `X_I`. -/
+theorem infra_83_good_of_closure {Xc Yc L XI YI : Type*} (incl : Xc → Yc) (F : Yc → L)
+    (r : Yc → Xc) (onX : XI → Xc) (onY : YI → Yc) (inclI : XI → YI)
+    (hcomm : ∀ x, onY (inclI x) = incl (onX x)) (g : L → L → L) (c : L)
+    (hev : ∀ y, g c (F y) = F (incl (r y)))
+    (hclosed : ∀ x, ∃ x', g c (F (onY x)) = F (onY x'))
+    (hmeet : ∀ (x' : YI) (z : Xc), F (onY x') = F (incl z) → ∃ y, x' = inclI y) :
+    ∀ x, ∃ y, g c (F (onY x)) = F (incl (onX y)) := by
+  intro x
+  obtain ⟨x', hx'⟩ := hclosed x
+  obtain ⟨y, rfl⟩ := hmeet x' (r (onY x)) (hx'.symm.trans (hev _))
+  exact ⟨y, hx'.trans (by rw [hcomm])⟩
+
 end AEC
