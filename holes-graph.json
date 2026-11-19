@@ -5985,7 +5985,7 @@
    "file": "AEC/Section8/Lemma83SampleLikeY.lean",
    "status": "done",
    "blocker": null,
-   "detail": "Cycle 107: pairMS2_X_coord_of extended (skeleton points ↔ chartX, order ↔ chartLt); infra_83_pairMS2_X_chart_skeleton."
+   "detail": "Cycle 107: pairMS2_X_coord_of extended (skeleton points ↔ chartX, order ↔ chartLt); infra_83_pairMS2_X_chart_skeleton. | Cycle 107: pairMS2_X_coord_of also gives ε(label-element) = labFun a (ε ∘ xs) (labels commute with the X-charts)."
   },
   {
    "id": "infra_83_pairMS2_X_chart_orderEmb",
