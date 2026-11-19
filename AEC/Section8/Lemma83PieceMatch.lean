@@ -3338,4 +3338,27 @@ theorem infra_83_dominated_of_small_pieces_at (P : SingleModelData K) {μ : Card
   exact hIsoS (M n) (j n) (hj n) (hMc n) hbn
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+set_option maxHeartbeats 1600000 in
+/-- **All-domination iff isolation of small strong pieces holding the mark (proved).** The
+hypothesis of `infra_83_dominated_of_small_pieces_at` loses nothing: conversely, all-domination
+gives isolation of every small list, in particular of `(b, M)` for small strong `M ∋ b`. -/
+theorem infra_83_dominated_iff_small_pieces_at (P : SingleModelData K) {μ : Cardinal.{u}}
+    (hμ : μ ∈ infra_78_closedTail P ∩ infra_615_closed P) {X Y : P.scheme.Object μ hμ.1.1}
+    (incl : SystemArrow K oneVertexShape (P.scheme.asSystem _ X) (P.scheme.asSystem _ Y))
+    {bIdx : Type u} [Finite bIdx]
+    (b : bIdx → Occurrence K oneVertexShape (P.scheme.asSystem _ Y)) :
+    AllDominated incl trivial bIdx b ↔
+    ∀ (M : Model K.τ) (j : Language.Embedding K.τ M.carrier Y.model.carrier),
+      K.Strong j → Model.card M < μ → (∀ i, ∃ x, j x = (b i).2) →
+      IsRelativelyIsolated (uIdx := bIdx) (cIdx := M.carrier)
+        (asTuple incl trivial (seqJoint b (fun x => Y.occ (j x))))
+        (Equiv.refl (bIdx ⊕ M.carrier)) :=
+  ⟨fun hD M j _ hMc _ => hD M.carrier (fun x => Y.occ (j x)) (by simpa [Model.card] using hMc),
+    infra_83_dominated_of_small_pieces_at P hμ incl b⟩
+end
+
 end AEC

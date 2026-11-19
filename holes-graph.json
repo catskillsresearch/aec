@@ -7795,6 +7795,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 250: proved."
+  },
+  {
+   "id": "infra_83_dominated_iff_small_pieces_at",
+   "label": "At a closed level, all-domination of a finite mark iff isolation (relative to the mark, over X) of (b, M) for every small strong submodel M of Y containing b; the small-pieces reduction loses nothing",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PieceMatch.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 251: proved."
   }
  ],
  "edges": [
@@ -14095,8 +14104,13 @@
    "from": "infra_83_dominated_of_small_pieces_at",
    "to": "infra_83_arity_removal",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_dominated_iff_small_pieces_at",
+   "to": "infra_83_arity_removal",
+   "kind": "hard"
   }
  ],
- "doneCount": 797,
+ "doneCount": 798,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
