@@ -5257,6 +5257,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 102: EM83.PiecesHom, limMap, limMap_strong, limMap_canon, limMap_natural. Axioms clean."
+  },
+  {
+   "id": "infra_83_em_presentation_section2",
+   "label": "Lemma 8.3 reuse check: Section 2 pieces carry PieceEnum data (generic presentation instance)",
+   "section": 8,
+   "file": "AEC/Section8/EMPresent83.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 103: section2Enum (labels Enum K, pieceEnum enumerations, slot-0 skeleton; skel_distinct via arityMap_enum_incl + colorWitness.inj for every level), section2_presentation_obj (rfl). Axioms clean."
   }
  ],
  "edges": [
@@ -9917,8 +9926,13 @@
    "from": "infra_83_em_natural_maps",
    "to": "infra_83_template_from_colors",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_em_presentation_section2",
+   "to": "infra_83_em_extension_generic",
+   "kind": "hard"
   }
  ],
- "doneCount": 520,
+ "doneCount": 521,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

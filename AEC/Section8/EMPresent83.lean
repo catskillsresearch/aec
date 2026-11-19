@@ -12,7 +12,7 @@ pieces to any finite-piece functor `F : FinPieces K` equipped with enumeration d
 element whose two copies in the two-element piece differ.  The result
 `PieceEnum.presentation E : OrderPresentation K` is the order presentation whose values are
 `F`'s generic EM values (`FinPieces.limit`) with the maps `gEmMap`.  Section 2's
-`emOrderPresentation` is the instance for `section2Pieces` (to be connected separately).
+`emOrderPresentation` is the instance `section2Enum` for `section2Pieces`.
 -/
 
 @[expose] public section
@@ -634,6 +634,43 @@ noncomputable def presentation (E : PieceEnum F) :
   card_lower {I} lin non := pEmCardLower E
   card_upper {I} lin non := pEmCardUpper E
 
+
+/-! ### Section 2 is an instance
+
+The Section 2 pieces carry the enumerations `pieceEnum` with labels `Enum K`; the
+distinguished singleton element is the slot-0 name. -/
+
+theorem section2_skel_distinct (K : AbstractElementaryClass.{u}) [ArbitrarilyLarge K]
+    {l : ℕ} (e e' : Fin 1 ↪o Fin (l + 1)) (hne : e 0 ≠ e' 0) :
+    (section2Pieces K).map e ((pieceEnum (K := K) 1 (Nat.succ_pos 0)).enum (slot K 1 ⟨0, Nat.succ_pos 0⟩)) ≠
+      (section2Pieces K).map e' ((pieceEnum (K := K) 1 (Nat.succ_pos 0)).enum (slot K 1 ⟨0, Nat.succ_pos 0⟩)) := by
+  intro h_eq
+  have h0_incl := arityMap_enum_incl (K := K) (Nat.succ_pos 0) (Nat.succ_pos l) e
+    (slot K 1 ⟨0, Nat.succ_pos 0⟩)
+  have h1_incl := arityMap_enum_incl (K := K) (Nat.succ_pos 0) (Nat.succ_pos l) e'
+    (slot K 1 ⟨0, Nat.succ_pos 0⟩)
+  have hboth := h0_incl.symm.trans
+    ((congrArg (subIncl (colorWitness (K := K) (l + 1) (Nat.succ_pos l)).mem
+      (colorWitness (K := K) (l + 1) (Nat.succ_pos l)).base (fullSet (l + 1) (Nat.succ_pos l))) h_eq).trans h1_incl)
+  rw [subIncl_subsetEnum_slot0 (Nat.succ_pos l) (Nat.succ_pos 0) e,
+      subIncl_subsetEnum_slot0 (Nat.succ_pos l) (Nat.succ_pos 0) e'] at hboth
+  exact hne ((colorWitness (K := K) (l + 1) (Nat.succ_pos l)).inj hboth)
+
+/-- The Section 2 enumeration data. -/
+noncomputable def section2Enum (K : AbstractElementaryClass.{u}) [ArbitrarilyLarge K] :
+    PieceEnum (section2Pieces K) where
+  Lab := Enum K
+  lab_small := (enum_card K).le
+  enum k := (pieceEnum (K := K) (k + 1) (Nat.succ_pos k)).enum
+  surj k := (pieceEnum (K := K) (k + 1) (Nat.succ_pos k)).surj
+  skelLab := slot K 1 ⟨0, Nat.succ_pos 0⟩
+  skel_distinct e e' hne := section2_skel_distinct K e e' hne
+
+/-- Reuse check: the generic presentation of the Section 2 pieces has the same objects as
+Section 2's `emOrderPresentation`. -/
+theorem section2_presentation_obj (K : AbstractElementaryClass.{u}) [ArbitrarilyLarge K]
+    (I : Type u) [LinearOrder I] [Nonempty I] :
+    (presentation (section2Enum K)).obj I = (emLimit (K := K) I).obj := rfl
 
 end EM83
 end AEC
