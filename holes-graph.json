@@ -6940,6 +6940,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 156: proved."
+  },
+  {
+   "id": "infra_83_order_extend_linear",
+   "label": "Order saturation extends any strictly monotone partial map from ANY linear order of size < κ (not only well-orders): the paper's extension of partial matches to J_H → J, W_H → W (OrderSat83.extend_strictMono_linear / extend_orderEmbedding_linear)",
+   "section": 8,
+   "file": "AEC/Section8/OrderSat83.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 157: proved (Zorn over order-isomorphic partial graphs)."
   }
  ],
  "edges": [
@@ -12765,8 +12774,13 @@
    "from": "infra_83_XH_sort_pieces",
    "to": "infra_83_XH_sort",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_order_extend_linear",
+   "to": "infra_83_bounded_list_match",
+   "kind": "hard"
   }
  ],
- "doneCount": 703,
+ "doneCount": 704,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

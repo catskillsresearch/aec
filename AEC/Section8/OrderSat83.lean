@@ -448,5 +448,83 @@ theorem exists_saturated_padded {κ μ : Cardinal.{u}} (hκ : aleph0 ≤ κ) (h�
       rw [this]
       exact wellFounded_lt
 
+/-- **Extension through order saturation, any linear source (proved).** English (Lemma 8.3
+proof): "Extend the partial matches to embeddings of the entire orders `J_H`, `W_H` into the
+respective sample orders. In a recursion of at most `λ` steps, each next position specifies an
+order pattern over at most `λ` earlier positions, and sample order saturation realizes it." For a
+`κ`-order-saturated `J` and ANY linear order `H` with `#H < κ` (not necessarily well-ordered,
+as the chart orders `J_H` need not be), every strictly monotone partial map `D → J` extends to a
+strictly monotone `H → J` (Zorn over partial order-isomorphic graphs). -/
+theorem extend_strictMono_linear {κ : Cardinal.{u}} {J H : Type u}
+    [LinearOrder J] [LinearOrder H] (hJ : OrderSaturated κ J)
+    (hH : #H < κ) (D : Set H) (f : D → J) (hf : StrictMono f) :
+    ∃ g : H → J, StrictMono g ∧ ∀ d : D, g d = f d := by
+  classical
+  let C : Set (H × J) → Prop := fun S => ∀ a ∈ S, ∀ b ∈ S, (a.1 < b.1 ↔ a.2 < b.2)
+  let G : Set (H × J) := Set.range fun d : D => ((d : H), f d)
+  have hG : C G := by
+    rintro _ ⟨a, rfl⟩ _ ⟨b, rfl⟩
+    exact hf.lt_iff_lt.symm
+  have hfun : ∀ S, C S → ∀ a ∈ S, ∀ b ∈ S, a.1 = b.1 → a.2 = b.2 := by
+    intro S hS a ha b hb hab
+    rcases lt_trichotomy a.2 b.2 with h | h | h
+    · exact absurd ((hS a ha b hb).2 h) (by rw [hab]; exact lt_irrefl _)
+    · exact h
+    · exact absurd ((hS b hb a ha).2 h) (by rw [hab]; exact lt_irrefl _)
+  obtain ⟨m, hGm, hm⟩ := zorn_subset_nonempty {S | C S} (fun c hc hcc _ => by
+    refine ⟨⋃₀ c, ?_, fun s hs => Set.subset_sUnion_of_mem hs⟩
+    rintro a ⟨s, hs, ha⟩ b ⟨t, ht, hb⟩
+    rcases hcc.total hs ht with hst | hts
+    · exact hc ht a (hst ha) b hb
+    · exact hc hs a ha b (hts hb)) G hG
+  have hmC : C m := hm.prop
+  have hall : ∀ h : H, ∃ y, (h, y) ∈ m := by
+    intro h
+    by_contra hno
+    simp only [not_exists] at hno
+    have hcard : #m ≤ #H := by
+      refine Cardinal.mk_le_of_injective (f := fun p : m => p.1.1) ?_
+      intro p q hpq
+      exact Subtype.ext (Prod.ext hpq (hfun m hmC p.1 p.2 q.1 q.2 hpq))
+    obtain ⟨y, hyA, hyB⟩ := hJ ((fun p : H × J => p.2) '' {p ∈ m | p.1 < h})
+      ((fun p : H × J => p.2) '' {p ∈ m | h < p.1})
+      ((Cardinal.mk_image_le.trans ((Cardinal.mk_le_mk_of_subset
+        (show {p | p ∈ m ∧ p.1 < h} ⊆ m from fun p hp => hp.1)).trans hcard)).trans_lt hH)
+      ((Cardinal.mk_image_le.trans ((Cardinal.mk_le_mk_of_subset
+        (show {p | p ∈ m ∧ h < p.1} ⊆ m from fun p hp => hp.1)).trans hcard)).trans_lt hH)
+      (by
+        rintro _ ⟨a, ⟨ha, hah⟩, rfl⟩ _ ⟨b, ⟨hb, hhb⟩, rfl⟩
+        exact (hmC a ha b hb).1 (hah.trans hhb))
+    have hC' : C (insert (h, y) m) := by
+      have key : ∀ b ∈ m, ((h, y).1 < b.1 ↔ (h, y).2 < b.2) ∧ (b.1 < (h, y).1 ↔ b.2 < (h, y).2) := by
+        intro b hb
+        rcases lt_trichotomy b.1 h with hbh | hbh | hbh
+        · have := hyA b.2 ⟨b, ⟨hb, hbh⟩, rfl⟩
+          exact ⟨⟨fun h' => absurd (hbh.trans h') (lt_irrefl _), fun h' => absurd (this.trans h') (lt_irrefl _)⟩,
+            ⟨fun _ => this, fun _ => hbh⟩⟩
+        · exact (hno b.2 (by
+            have hbe : b = (h, b.2) := Prod.ext hbh rfl
+            rw [← hbe]; exact hb)).elim
+        · have := hyB b.2 ⟨b, ⟨hb, hbh⟩, rfl⟩
+          exact ⟨⟨fun _ => this, fun _ => hbh⟩,
+            ⟨fun h' => absurd (hbh.trans h') (lt_irrefl _), fun h' => absurd (this.trans h') (lt_irrefl _)⟩⟩
+      rintro a (rfl | ha) b (rfl | hb)
+      · exact ⟨fun h' => absurd h' (lt_irrefl _), fun h' => absurd h' (lt_irrefl _)⟩
+      · exact (key b hb).1
+      · exact (key a ha).2
+      · exact hmC a ha b hb
+    have := hm.eq_of_subset hC' (Set.subset_insert _ _)
+    exact hno y (this ▸ Set.mem_insert _ _)
+  choose g hg using hall
+  refine ⟨g, fun a b hab => (hmC (a, g a) (hg a) (b, g b) (hg b)).1 hab, fun d => ?_⟩
+  exact hfun m hmC _ (hg d) _ (hGm ⟨d, rfl⟩) rfl
+
+/-- Order-embedding form of `extend_strictMono_linear`. -/
+theorem extend_orderEmbedding_linear {κ : Cardinal.{u}} {J H : Type u} [LinearOrder J]
+    [LinearOrder H] (hJ : OrderSaturated κ J) (hH : #H < κ) (D : Set H) (f : D ↪o J) :
+    ∃ g : H ↪o J, ∀ d : D, g d = f d := by
+  obtain ⟨g, hg, hgf⟩ := extend_strictMono_linear hJ hH D f f.strictMono
+  exact ⟨OrderEmbedding.ofStrictMono g hg, hgf⟩
+
 end OrderSat83
 end AEC
