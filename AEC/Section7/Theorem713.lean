@@ -1097,37 +1097,8 @@ theorem infra_713_realize_of_general (P : SingleModelData K) (hG : infra_79_gene
     intro h1
     exact congrArg (Sigma.mk PUnit.unit) h1
 
-/-- **General Theorem 7.9 (open tip `infra_79_general`; needs the general Prop 7.8,
-`infra_78_general`, for bounded marks satisfying Definition 7.7).** -/
-theorem infra_79_general (P : SingleModelData K) : infra_79_general_statement P := by
-  sorry
-
-/-- **Theorem 7.13 (3) for an infinite list (reduced, cycle 93: from `infra_79_general`).** Follows from the
-general Theorem 7.9 (`infra_79_general`); Definition 7.7 for the mark is clause (2). -/
-theorem infra_713_realize_infinite (P : SingleModelData K) {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
-    (hl : μ ∈ infra_712_levels P) (X : P.scheme.Object μ hμ) (L : TupleList P.scheme hμ X)
-    [LinearOrder L.δ] [L.FiniteEach] [WellFoundedLT L.δ] (hPI : ProductIndependentTied L)
-    (hS : #(Σ i, L.indexAt i) < μ) (_hinf : ¬ Finite L.whole.idx) :
-    ∃ (Y : P.scheme.Object μ hμ)
-      (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ Y))
-      (b : L.whole.idx → Occurrence K oneVertexShape (P.scheme.asSystem hμ Y)),
-      AllDominated f trivial L.whole.idx b ∧
-      SameGaloisType L.whole (asTuple f trivial b) (Equiv.refl _) (Equiv.refl _) ∧
-      ∃ (N : P.scheme.Object μ hμ)
-        (h : SystemArrow K oneVertexShape (P.scheme.asSystem hμ L.host)
-          (P.scheme.asSystem hμ N))
-        (g : SystemArrow K oneVertexShape (P.scheme.asSystem hμ Y) (P.scheme.asSystem hμ N)),
-        (∀ v, (g.onVertex v).comp (f.onVertex v) = (h.onVertex v).comp (L.incl.onVertex v)) ∧
-        ∀ a, g.mapOcc (b a) = h.mapOcc (L.whole.val a) :=
-  infra_713_realize_of_general P (infra_79_general P) hμ hl X L hPI hS
-
-/-- **Theorem 7.13 (3) (split, cycle 93):** the finite case is proved
-(`infra_713_realize_finite`); the infinite case is the open tip `infra_713_realize_infinite`. -/
-theorem infra_713_realize (P : SingleModelData K) : infra_713_realize_statement P := by
-  intro μ hμ hl X L _ _ _ hPI hS
-  by_cases hfin : Finite L.whole.idx
-  · exact infra_713_realize_finite P hμ hl X L hfin
-  · exact infra_713_realize_infinite P hμ hl X L hPI hS hfin
+-- `infra_79_general`, `infra_713_realize_infinite` and `infra_713_realize` are proved in
+-- `AEC/Section7/Prop78General.lean` (cycle 94; they need the general Prop 7.8).
 
 end
 end AEC

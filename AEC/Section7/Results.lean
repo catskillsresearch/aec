@@ -26,6 +26,7 @@ public import AEC.Section7.RetractionPair
 public import AEC.Section7.MixedDescent
 public import AEC.Section6.Results
 public import AEC.Section7.Theorem713
+public import AEC.Section7.Prop78General
 
 @[expose] public section
 

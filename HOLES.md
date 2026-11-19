@@ -393,7 +393,7 @@ Lean: imports `AEC.Section6.Results`.
 | `lemma_7_12_bounded` | Lemma 7.12(2), bounded individual tuples | **done** (cycle 90, sorry-free; `TupleList.FiniteEach` refactor) |
 | `infra_712b_free_pull` | 7.12(2) bounded: `free_pull_of_lt` | **done** (cycle 90) |
 | `infra_712b_chain_succ` | 7.12(2) bounded: successor step at arity `max(#idx, ℵ₀) < μ` | **done** (cycle 90) |
-| `theorem_7_13` | Theorem 7.13 | `AEC/Section7/Results.lean:462` (cycle 91: assembled from `infra_713_*`; restated cycle 90 to tied notions: uniqueness, tied free lift product-independent + determined, tied Def 7.7 continuity, all-dominated realization + embedding) |
+| `theorem_7_13` | Theorem 7.13 | `AEC/Section7/Results.lean` (**done**, cycle 94, sorry-free: lift, continuity, realize; restated cycle 90 to tied notions; Def 7.7 tail ⊆ `infra_78_closedTail` per ruling (a)) |
 | `infra_713_unique_short` | Thm 7.13 (1a), `|δ| ≤ μ` | **done** (cycle 90, `Theorem713.lean`) |
 | `infra_713_unique_long` | Thm 7.13 (1a), `|δ| > μ` | **done** (cycle 91, `infra_713_unique`) |
 | `infra_713_lift` | Thm 7.13 (1b) | **done** (cycle 92: both halves proved) |
@@ -414,10 +414,10 @@ Lean: imports `AEC.Section6.Results`.
 | `infra_713_productTied_base_change_mixed` / `infra_713_finite_base_change_mixed` / `infra_713_tiedFreeMixed_base_sameGalois` | mixed base change and source transfer | **done** (cycle 93) |
 | `infra_713_tied_move_mixed` | mixed tied move | **done** (cycle 93) |
 | `infra_713_tiedFree_reindex_mixed` | finite projections of mixed tied free lifts | **done** (cycle 93) |
-| `infra_713_realize` | Thm 7.13 (3) | split (cycle 93): glue proved, blocked on `infra_713_realize_infinite` |
+| `infra_713_realize` | Thm 7.13 (3) | [`Prop78General.lean`](AEC/Section7/Prop78General.lean) (**done**, cycle 94: finite + infinite cases) |
 | `infra_713_realize_finite` | Thm 7.13 (3), finite list | **done** (cycle 93, via Thm 7.9 at the level) |
-| `infra_713_realize_infinite` | Thm 7.13 (3), infinite list | reduced (cycle 93) to `infra_79_general` via `infra_713_realize_of_general` (**done**); Def 7.7 comes from 7.13(2), so def77 is not needed |
-| `infra_79_general` | Thm 7.9 general form (bounded marginal with Def 7.7) | **open**, blocked on `infra_78_general` (1 `sorry` in `Theorem713.lean`; cycle 93: primeness clause `infra_79_general_primeness`, bounded descent/identify/retraction pair **done**; existence clause remains: bounded lift_isolate + existence_at) |
+| `infra_713_realize_infinite` | Thm 7.13 (3), infinite list | [`Prop78General.lean`](AEC/Section7/Prop78General.lean) (**done**, cycle 94, from `infra_79_general`) |
+| `infra_79_general` | Thm 7.9 general form (bounded marginal with Def 7.7) | [`Prop78General.lean`](AEC/Section7/Prop78General.lean) (**done**, cycle 94: `infra_79_existence_at_bounded` + `infra_79_general_primeness`) |
 | `infra_78_general` | Prop 7.8 general form (bounded mark with Def 7.7, `|b| ≤ θ`) | [`Prop78General.lean`](AEC/Section7/Prop78General.lean) (**done**, cycle 94: `infra_78_general` from `infra_78_general_of_tail_meet` + `infra_78_def77_tail_meet`) |
 | `infra_78_general_small_cof` | Prop 7.8 general: invariant (5) at limits with `cf δ ≤ |b|` via Def 7.7 | **done** (cycle 93: `infra_78_rc_inv5_all_def77`, `infra_78_limit_inv5_cocone_def77`, `infra_78_matrix_limit_step_def77`, cancellation `infra_78_tiedFree_cancel`, `infra_78_chain_stage_free`, `infra_78_rc_stage_seed`) |
 | `infra_78_general_assembly` | Prop 7.8 general: matrix assembly for bounded marks | **done** (cycle 93: `infra_78_general_assembly_closed`, Def 7.7 at every closed matrix level) |
@@ -600,6 +600,7 @@ Counts are standalone `sorry` lines in `AEC/` (`git grep -nE '^\s*sorry\s*$'`), 
 | `infra_78_tiedFreeMixed_trans_gen2` | Thm 7.9 (bounded): mixed–mixed transitivity, arbitrary marks/bijections | [`Prop78General.lean`](AEC/Section7/Prop78General.lean) (**done**, cycle 94) |
 | `infra_78_def77_transfer_lift` | Thm 7.9 (bounded): Def 7.7 transfers to the mixed tied free lift | [`Prop78General.lean`](AEC/Section7/Prop78General.lean) (**done**, cycle 94) |
 | `infra_79_lift_isolate_bounded` | Thm 7.9 (bounded): lift and isolate via general Prop 7.8 at λ | [`Prop78General.lean`](AEC/Section7/Prop78General.lean) (**done**, cycle 94) |
+| `infra_79_existence_at_bounded` | Thm 7.9 (bounded): existence clause at one level | [`Prop78General.lean`](AEC/Section7/Prop78General.lean) (**done**, cycle 94) |
 | `infra_78_marginal_identify_level` | Prop 7.8: `tp(b/A)` carried to `p` for `p` realized at the level of `X` (Theorem 6.6 at that level) | [`MarginalAnchor.lean`](AEC/Section7/MarginalAnchor.lean) (**done**, cycle 63) |
 | `infra_78_marginal_general_level` | Prop 7.8: marginal identification for `p` hosted above the level of `X` (needs `infra_612_galois_trans_cross_level`, or alternatively `infra_78_cross_level_galois`; cycle 64: no route avoids a cross-level identification) | [`GeneralLevel.lean`](AEC/Section7/GeneralLevel.lean) (**done**, cycle 67; level copy + `matrix_assembly_level` + `galois_trans_cross_level_right_base`) |
 | `infra_78_matrix_assembly_level` | Prop 7.8 assembly (seed, levels `ρ, κ`, matrix, shrink, rename) for `p` realized at the level of `X` | [`AssemblyGlue.lean`](AEC/Section7/AssemblyGlue.lean) (**done**, cycle 66; statement `infra_78_matrix_assembly_level_statement` (unchanged) = `assembly_levels` + `seq_diagram_transfer` + `stage_transport` + `seed_stage` + `assembly_glue`, all done; `proposition_7_8` done cycle 67 via `infra_78_marginal_general_level`) |

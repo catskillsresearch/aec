@@ -631,9 +631,9 @@
    "label": "Thm 7.13",
    "section": 7,
    "file": "AEC/Section7/Results.lean",
-   "status": "blocked",
-   "blocker": "infra_713_realize",
-   "detail": "Cycle 91: ASSEMBLED theorem_7_13 := infra_713_of_parts P (infra_713_lift P) (infra_713_continuity P) (infra_713_realize P) on the tail infra_712_levels P; (1a) = infra_713_unique (done). Remaining sorries: infra_713_lift (1b), infra_713_continuity (2), infra_713_realize (3). RESTATED cycle 90 to the tied notions (per the cycle-76 7.12 precedent), matching the English: over SingleModelData P, a tail; L well-ordered, finite entries (TupleList.FiniteEach), ProductIndependentTied, bounded (#(Sigma i, idx) < mu). (1a) any product-independent L' of finite tuples with the same marginals has the same whole type; (1b) a tied free lift q of L.whole along X -> B (IsTiedFree) has every finite sublist the IsFiniteProductTied of the lifted marginals, and any q' over B with the same finite-subtuple types has q's type; (2) SatisfiesContinuityTied L.whole (tied Definition 7.7, WIDENED cycle 91 per review to the English quantifier: exists a tail T such that at every mu' in T with mu <= mu', every SameLevelChain at mu', base arrow A -> X_0 across levels, tied free lift at X_0 via IsTiedFreeMixed, tied freeness at every stage ==> tied freeness over the union; no proved result used the narrow same-level form); (3) all-dominated Y over X + b realizing tp(b/X), mapped over X, b into an ambient containing L. Old untied statement (WorkingScheme, ProductIndependent, IsFreeLift, SatisfiesContinuity) removed (no consumers). Open sorry. Plan: (1a) from lemma_7_12 existence + uniqueness (transport the order along e); (1b) Prop 6.12 tied finite projections + (1a) at base B; (2) infra_78_tied_continuity on finite subtuples + (1b); (3) Theorem 7.9 general form (needs bounded marks: infra_78_def77_bounded_marks / Prop 7.8 general) -- clause (3) is the hard one. | Cycle 93: (1a), (1b), (2) all proved; only (3) infra_713_realize remains (blocked on def77_bounded_marks / bounded-mark 7.8/7.9)."
+   "status": "done",
+   "blocker": null,
+   "detail": "PROVED cycle 94, sorry-free (axioms clean): infra_713_of_parts with lift, continuity, realize. | Cycle 91: ASSEMBLED theorem_7_13 := infra_713_of_parts P (infra_713_lift P) (infra_713_continuity P) (infra_713_realize P) on the tail infra_712_levels P; (1a) = infra_713_unique (done). Remaining sorries: infra_713_lift (1b), infra_713_continuity (2), infra_713_realize (3). RESTATED cycle 90 to the tied notions (per the cycle-76 7.12 precedent), matching the English: over SingleModelData P, a tail; L well-ordered, finite entries (TupleList.FiniteEach), ProductIndependentTied, bounded (#(Sigma i, idx) < mu). (1a) any product-independent L' of finite tuples with the same marginals has the same whole type; (1b) a tied free lift q of L.whole along X -> B (IsTiedFree) has every finite sublist the IsFiniteProductTied of the lifted marginals, and any q' over B with the same finite-subtuple types has q's type; (2) SatisfiesContinuityTied L.whole (tied Definition 7.7, WIDENED cycle 91 per review to the English quantifier: exists a tail T such that at every mu' in T with mu <= mu', every SameLevelChain at mu', base arrow A -> X_0 across levels, tied free lift at X_0 via IsTiedFreeMixed, tied freeness at every stage ==> tied freeness over the union; no proved result used the narrow same-level form); (3) all-dominated Y over X + b realizing tp(b/X), mapped over X, b into an ambient containing L. Old untied statement (WorkingScheme, ProductIndependent, IsFreeLift, SatisfiesContinuity) removed (no consumers). Open sorry. Plan: (1a) from lemma_7_12 existence + uniqueness (transport the order along e); (1b) Prop 6.12 tied finite projections + (1a) at base B; (2) infra_78_tied_continuity on finite subtuples + (1b); (3) Theorem 7.9 general form (needs bounded marks: infra_78_def77_bounded_marks / Prop 7.8 general) -- clause (3) is the hard one. | Cycle 93: (1a), (1b), (2) all proved; only (3) infra_713_realize remains (blocked on def77_bounded_marks / bounded-mark 7.8/7.9)."
   },
   {
    "id": "theorem_7_9",
@@ -3417,10 +3417,10 @@
    "id": "infra_713_realize",
    "label": "Thm 7.13 (3) level-wise",
    "section": 7,
-   "file": "AEC/Section7/Theorem713.lean",
-   "status": "blocked",
-   "blocker": "infra_713_realize_infinite",
-   "detail": "Open, not started (cycle 91) per instruction. infra_713_realize_statement: all-dominated Y over X + b realizing tp(b/X), mapped over X, b into an ambient containing L. Needs the general bounded-mark Prop 7.8 / Thm 7.9 (cf. infra_78_def77_bounded_marks, soft) -- hard. | Cycle 93 split: glue proved (case on Finite L.whole.idx); finite case done (infra_713_realize_finite), infinite case is the open tip infra_713_realize_infinite. Paper statement unchanged."
+   "file": "AEC/Section7/Prop78General.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "PROVED cycle 94 (axioms clean; moved to Prop78General.lean): finite + infinite cases. | Open, not started (cycle 91) per instruction. infra_713_realize_statement: all-dominated Y over X + b realizing tp(b/X), mapped over X, b into an ambient containing L. Needs the general bounded-mark Prop 7.8 / Thm 7.9 (cf. infra_78_def77_bounded_marks, soft) -- hard. | Cycle 93 split: glue proved (case on Finite L.whole.idx); finite case done (infra_713_realize_finite), infinite case is the open tip infra_713_realize_infinite. Paper statement unchanged."
   },
   {
    "id": "infra_713_lift_pi",
@@ -3606,10 +3606,10 @@
    "id": "infra_713_realize_infinite",
    "label": "Thm 7.13 (3) for an infinite list (bounded marks)",
    "section": 7,
-   "file": "AEC/Section7/Theorem713.lean",
-   "status": "blocked",
-   "blocker": "infra_79_general",
-   "detail": "OPEN, hard (cycle 93 split of infra_713_realize). Infinite L.whole.idx of size < mu. Needs bounded-mark Prop 7.8 / Thm 7.9 (not formalized; proposition_7_8/theorem_7_9 are Finite p.idx). Their Def 7.7 input is proved for |b| < cf delta (infra_78_limit_invariant5) and is the paper hypothesis infra_78_def77_bounded_marks for |b| >= cf delta. Even the |b| < cf delta case needs a bounded-mark 7.8/7.9 formalization first. | Cycle 93 later: REDUCED (proved glue infra_713_realize_of_general) to infra_79_general. Finding: the English 7.13 proof ('The marked marginal tp(b/X) satisfies Definition 7.7' = clause 2; 'We may now apply the general forms of Proposition 7.8 and Theorem 7.9') supplies Def 7.7 from clause (2), which is proved (infra_713_continuity). So infra_78_def77_bounded_marks is NOT a dependency of 7.13(3)."
+   "file": "AEC/Section7/Prop78General.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "PROVED cycle 94 (axioms clean; moved to Prop78General.lean) from infra_79_general. | OPEN, hard (cycle 93 split of infra_713_realize). Infinite L.whole.idx of size < mu. Needs bounded-mark Prop 7.8 / Thm 7.9 (not formalized; proposition_7_8/theorem_7_9 are Finite p.idx). Their Def 7.7 input is proved for |b| < cf delta (infra_78_limit_invariant5) and is the paper hypothesis infra_78_def77_bounded_marks for |b| >= cf delta. Even the |b| < cf delta case needs a bounded-mark 7.8/7.9 formalization first. | Cycle 93 later: REDUCED (proved glue infra_713_realize_of_general) to infra_79_general. Finding: the English 7.13 proof ('The marked marginal tp(b/X) satisfies Definition 7.7' = clause 2; 'We may now apply the general forms of Proposition 7.8 and Theorem 7.9') supplies Def 7.7 from clause (2), which is proved (infra_713_continuity). So infra_78_def77_bounded_marks is NOT a dependency of 7.13(3)."
   },
   {
    "id": "infra_78_tuple_amalgam_large_cat",
@@ -3642,10 +3642,10 @@
    "id": "infra_79_general",
    "label": "General Thm 7.9: bounded marginal satisfying Def 7.7 (level-wise)",
    "section": 7,
-   "file": "AEC/Section7/Theorem713.lean",
-   "status": "blocked",
-   "blocker": "infra_79_existence_at_bounded assembly",
-   "detail": "OPEN (cycle 93; Lean statement infra_79_general_statement, sorry'd theorem infra_79_general). English: 'More generally this holds for a bounded marginal satisfying Definition 7.7.' Hypothesis SatisfiesContinuityTied p, #p.idx < mu, at infra_712_levels; existence of an all-dominated realization + same-level primeness. Proof: as infra_79_existence_of_parts, with the general Prop 7.8. | Cycle 93 (end): bounded descent (infra_79_descent_bounded) and identification (infra_79_identify_bounded) DONE. Remaining: bounded lift_isolate (needs general Prop 7.8 at lambda for the lifted mark: infra_78_general_of_closed_def77 + transfer of Def 7.7 to the mixed tied free lift), bounded retraction pair (infra_79_retraction_pair_statement uses a finite mark), bounded existence_at/primeness; all behind infra_78_general / infra_78_def77_tail_meet. | Primeness clause DONE (infra_79_general_primeness); only the existence clause remains (bounded lift_isolate + retraction pair + existence_at). | Bounded retraction pair DONE (infra_79_retraction_pair_bounded). Existence clause remaining: bounded lift_isolate (Prop 7.8 at lambda for the mixed tied free lift of p: needs Def 7.7 for the lifted mark at closed levels, i.e. infra_78_general_of_closed_def77 + a Def 7.7 transfer along the lift) and the bounded existence_at assembly. | Plan for the Def 7.7 transfer to the lift q0 (level l): for kappa >= l, a chain mark with b|0 the mixed tied free lift of q0 along B -> X_0 is the mixed tied free lift of p along X -> B -> X_0 (needs a mixed-mixed transitivity lemma, port of infra_78_tiedFree_trans_gen with both legs IsTiedFreeMixed), so Def 7.7 for p at kappa applies. Then infra_78_general_of_closed_def77 at lambda replaces infra_78_marginal_general_level in lift_isolate. | Mixed-mixed transitivity DONE (infra_78_tiedFreeMixed_trans_mm). | Cycle 94: infra_78_general DONE (ruling a); Def 7.7 transfer (infra_78_def77_transfer_lift) and bounded lift_isolate (infra_79_lift_isolate_bounded) DONE. Remaining: bounded existence_at assembly."
+   "file": "AEC/Section7/Prop78General.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "PROVED cycle 94 (axioms clean; moved to Prop78General.lean): existence infra_79_existence_at_bounded, primeness infra_79_general_primeness. | OPEN (cycle 93; Lean statement infra_79_general_statement, sorry'd theorem infra_79_general). English: 'More generally this holds for a bounded marginal satisfying Definition 7.7.' Hypothesis SatisfiesContinuityTied p, #p.idx < mu, at infra_712_levels; existence of an all-dominated realization + same-level primeness. Proof: as infra_79_existence_of_parts, with the general Prop 7.8. | Cycle 93 (end): bounded descent (infra_79_descent_bounded) and identification (infra_79_identify_bounded) DONE. Remaining: bounded lift_isolate (needs general Prop 7.8 at lambda for the lifted mark: infra_78_general_of_closed_def77 + transfer of Def 7.7 to the mixed tied free lift), bounded retraction pair (infra_79_retraction_pair_statement uses a finite mark), bounded existence_at/primeness; all behind infra_78_general / infra_78_def77_tail_meet. | Primeness clause DONE (infra_79_general_primeness); only the existence clause remains (bounded lift_isolate + retraction pair + existence_at). | Bounded retraction pair DONE (infra_79_retraction_pair_bounded). Existence clause remaining: bounded lift_isolate (Prop 7.8 at lambda for the mixed tied free lift of p: needs Def 7.7 for the lifted mark at closed levels, i.e. infra_78_general_of_closed_def77 + a Def 7.7 transfer along the lift) and the bounded existence_at assembly. | Plan for the Def 7.7 transfer to the lift q0 (level l): for kappa >= l, a chain mark with b|0 the mixed tied free lift of q0 along B -> X_0 is the mixed tied free lift of p along X -> B -> X_0 (needs a mixed-mixed transitivity lemma, port of infra_78_tiedFree_trans_gen with both legs IsTiedFreeMixed), so Def 7.7 for p at kappa applies. Then infra_78_general_of_closed_def77 at lambda replaces infra_78_marginal_general_level in lift_isolate. | Mixed-mixed transitivity DONE (infra_78_tiedFreeMixed_trans_mm). | Cycle 94: infra_78_general DONE (ruling a); Def 7.7 transfer (infra_78_def77_transfer_lift) and bounded lift_isolate (infra_79_lift_isolate_bounded) DONE. Remaining: bounded existence_at assembly."
   },
   {
    "id": "infra_78_general",
@@ -4024,6 +4024,15 @@
    "status": "done",
    "blocker": null,
    "detail": "PROVED cycle 94 (axioms clean): infra_78_tied_free_lift_mixed at sigma + infra_78_def77_transfer_lift + infra_78_general at lambda."
+  },
+  {
+   "id": "infra_79_existence_at_bounded",
+   "label": "Thm 7.9 existence clause for a bounded mark with Def 7.7, at one level",
+   "section": 7,
+   "file": "AEC/Section7/Prop78General.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "PROVED cycle 94 (axioms clean): infra_79_tail + infra_79_lift_isolate_bounded + infra_79_retraction_pair_bounded + infra_79_descent_bounded + infra_79_identify_bounded."
   }
  ],
  "edges": [
@@ -7944,8 +7953,18 @@
    "from": "infra_79_lift_isolate_bounded",
    "to": "infra_79_general",
    "kind": "hard"
+  },
+  {
+   "from": "infra_79_existence_at_bounded",
+   "to": "infra_79_general",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_79_lift_isolate_bounded",
+   "to": "infra_79_existence_at_bounded",
+   "kind": "hard"
   }
  ],
- "doneCount": 394,
+ "doneCount": 399,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

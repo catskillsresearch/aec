@@ -1779,4 +1779,81 @@ theorem infra_79_lift_isolate_bounded (P : SingleModelData K) {ν l : Cardinal.{
   intro J c hc
   exact hiso c hc
 
+/-- **Existence clause of Theorem 7.9 for a bounded mark satisfying Definition 7.7, at one level
+(proved, cycle 94).** As `infra_79_existence_at` for `|p| < μ`, `p.ν = μ`: a closed `λ > μ`
+(`infra_79_tail`), `infra_79_lift_isolate_bounded` with `σ = max |p| ℵ₀`, the bounded retraction
+pair, bounded descent and bounded identification. -/
+theorem infra_79_existence_at_bounded (P : SingleModelData K) {μ : Cardinal.{u}}
+    (hμ : μ ∈ infra_78_closedTail P ∩ infra_615_closed P) (X : P.scheme.Object μ hμ.1.1)
+    (p : TupleOver K oneVertexShape P.scheme hμ.1.1 X) (hpν : p.ν = μ) (hidx : #p.idx < μ)
+    (hp : SatisfiesContinuityTied p) :
+    ∃ (Y : P.scheme.Object μ hμ.1.1)
+      (f : SystemArrow K oneVertexShape (P.scheme.asSystem _ X) (P.scheme.asSystem _ Y))
+      (hf : P.scheme.permitted (X := X) (Y := Y) f)
+      (b : p.idx → Occurrence K oneVertexShape (P.scheme.asSystem _ Y)),
+      AllDominated f hf p.idx b ∧
+      SameGaloisType p (asTuple f hf b) (Equiv.refl p.idx) (Equiv.refl p.idx) := by
+  classical
+  have hlt : ℵ₀ < μ := P.aleph0_lt hμ.1.1
+  let σ : Cardinal.{u} := max #p.idx ℵ₀
+  have hσ : ℵ₀ ≤ σ := le_max_right _ _
+  have hσμ : σ < μ := max_lt hidx hlt
+  have hidxσ : #p.idx ≤ σ := le_max_left _ _
+  obtain ⟨l, hμl', hlT, hlC⟩ := infra_79_tail P (Order.succ μ)
+  have hμl : μ < l := (Order.lt_succ_of_not_isMax (not_isMax μ)).trans_le hμl'
+  obtain ⟨B, U, ι, f, bU, hseed, hTf, hiso⟩ :=
+    infra_79_lift_isolate_bounded P hμ.1 hlT hμl X p hpν σ hσ hσμ hidxσ hp
+  obtain ⟨A', U', toA, toU, incl', b', ιs, r, hsq, hbU, hX, hcard, halmost, himg⟩ :=
+    infra_79_retraction_pair_bounded P μ l hμ.1.1 hlC hμl.le X B U ι f (hidx.le) bU
+  have hdom := infra_79_descent_bounded P hμ.2 hlC hμ.1 hlT hμl.le B U A' U' toA toU f incl'
+    trivial trivial trivial trivial hsq r hcard (fun _ => trivial) halmost himg hidx b' bU hbU
+    (fun c hc => hiso c hc.le)
+  obtain ⟨φ, hφ, hgal⟩ := infra_79_identify_bounded P hμ.1 hlT.1 hμl.le X p hpν σ hσ hσμ hidxσ
+    ι f bU hseed hTf toA toU incl' hsq b' hbU hX
+  refine ⟨U', SystemArrow.comp φ incl', trivial, b', ?_, ?_⟩
+  · intro cIdx c hc
+    have hc' := hdom cIdx c hc
+    have hv : (Sum.elim b' c : p.idx ⊕ cIdx → _) = seqJoint b' c := by
+      funext s; rcases s with k | j <;> rfl
+    apply infra_78_iso_rename_asTuple φ hφ incl' b' c
+    rw [hv]
+    exact hc'
+  · exact SameGaloisType.swap_refl hgal
+
+/-- **General Theorem 7.9 (proved, cycle 94; was tip `infra_79_general`).** Existence:
+`infra_79_existence_at_bounded` (general Prop 7.8 via `infra_79_lift_isolate_bounded`); primeness:
+`infra_79_general_primeness`. -/
+theorem infra_79_general (P : SingleModelData K) : infra_79_general_statement P := by
+  intro μ hμ hl X p hpν hidx hp
+  refine ⟨?_, infra_79_general_primeness P hμ X p hidx⟩
+  obtain ⟨Y, f, _hf, b, hAll, hS⟩ := infra_79_existence_at_bounded P ⟨hl.1, hl.2.1⟩ X p hpν hidx hp
+  exact ⟨Y, f, b, hAll, hS⟩
+
+/-- **Theorem 7.13 (3) for an infinite list (proved, cycle 94: from `infra_79_general`).** Follows from the
+general Theorem 7.9 (`infra_79_general`); Definition 7.7 for the mark is clause (2). -/
+theorem infra_713_realize_infinite (P : SingleModelData K) {μ : Cardinal.{u}} (hμ : μ ∈ P.eligible)
+    (hl : μ ∈ infra_712_levels P) (X : P.scheme.Object μ hμ) (L : TupleList P.scheme hμ X)
+    [LinearOrder L.δ] [L.FiniteEach] [WellFoundedLT L.δ] (hPI : ProductIndependentTied L)
+    (hS : #(Σ i, L.indexAt i) < μ) (_hinf : ¬ Finite L.whole.idx) :
+    ∃ (Y : P.scheme.Object μ hμ)
+      (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ Y))
+      (b : L.whole.idx → Occurrence K oneVertexShape (P.scheme.asSystem hμ Y)),
+      AllDominated f trivial L.whole.idx b ∧
+      SameGaloisType L.whole (asTuple f trivial b) (Equiv.refl _) (Equiv.refl _) ∧
+      ∃ (N : P.scheme.Object μ hμ)
+        (h : SystemArrow K oneVertexShape (P.scheme.asSystem hμ L.host)
+          (P.scheme.asSystem hμ N))
+        (g : SystemArrow K oneVertexShape (P.scheme.asSystem hμ Y) (P.scheme.asSystem hμ N)),
+        (∀ v, (g.onVertex v).comp (f.onVertex v) = (h.onVertex v).comp (L.incl.onVertex v)) ∧
+        ∀ a, g.mapOcc (b a) = h.mapOcc (L.whole.val a) :=
+  infra_713_realize_of_general P (infra_79_general P) hμ hl X L hPI hS
+
+/-- **Theorem 7.13 (3) (proved, cycle 94):** the finite case `infra_713_realize_finite`, the
+infinite case `infra_713_realize_infinite`. -/
+theorem infra_713_realize (P : SingleModelData K) : infra_713_realize_statement P := by
+  intro μ hμ hl X L _ _ _ hPI hS
+  by_cases hfin : Finite L.whole.idx
+  · exact infra_713_realize_finite P hμ hl X L hfin
+  · exact infra_713_realize_infinite P hμ hl X L hPI hS hfin
+
 end AEC
