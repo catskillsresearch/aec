@@ -5608,6 +5608,15 @@
    "status": "open",
    "blocker": null,
    "detail": "Cycle 105 split: needed for the faithful Y_H ≅ F(Z_H); the current samples only give some iso F(Z) ≅ Y (categoricity)."
+  },
+  {
+   "id": "infra_83_sublang_bundle_chain",
+   "label": "Lemma 8.3 proof: bundled hull pieces in a sublanguage L₀ ⊆ L; nested σ∘τ ⊆ σ maps in L₀ (X_H → Y_H) and L₀-to-L inclusion composed with subBundleHom (Y_H → L_H), all strong and natural",
+   "section": 8,
+   "file": "AEC/Section8/HullSubBundle83.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 105: Hull83.subLangPieces, subLangHom, subLangSubHom, subLangChain (+ tpCode_reduct', subToHull_hullMap' for any variable type). Axioms clean."
   }
  ],
  "edges": [
@@ -10503,8 +10512,13 @@
    "from": "infra_83_Y_iso_over_X",
    "to": "infra_83_template_from_colors",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_sublang_bundle_chain",
+   "to": "infra_83_pair_pieces",
+   "kind": "hard"
   }
  ],
- "doneCount": 557,
+ "doneCount": 558,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
