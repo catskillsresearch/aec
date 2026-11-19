@@ -13,8 +13,8 @@ public import AEC.Section8.Lemma83Single
 values `X_I ≤ Y_I` (presentations `eX`, `eY`, edge = inclusion), mark occurrences `mk_I`, and
 order embeddings acting by commuting arrows `F^b(f)` that preserve the marks (exactly the data of
 `infra_83_pair_template_clauses`) gives the faithful `Lemma83Conclusion` on any tail `T` of
-eligible levels on which the values are marked pairs (the mark realizes the prescribed type via
-the arity identification, and `Y_I` is all-dominated over `X_I + mk_I`). Clause (3) is
+eligible levels on which the values (on well-orders) are marked pairs (the mark realizes the prescribed type
+under some identification `realEq` of positions, and `Y_I` is all-dominated over `X_I + mk_I`). Clause (3) is
 `infra_83_clause3_single`. So `infra_83_lemma_8_3_full_single` reduces to the marked-pair
 property of the template values (`infra_83_bounded_arity_free`, `infra_83_all_dominated`).
 -/
@@ -61,12 +61,11 @@ theorem infra_83_conclusion_of_marked_values (P : SingleModelData K)
         ∀ i, (⟨(mk I hI i).1, onY.onVertex (mk I hI i).1 (mk I hI i).2⟩ :
           Occurrence K oneVertexShape (P.scheme.asSystem hJ (Y J hJ))) = mk J hJ i)
     (T : Set Cardinal.{u}) (hT : Tail P.scheme.eligible T)
-    (hmark : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ T),
+    (hmark : ∀ (I : Type u) [LinearOrder I] [WellFoundedLT I] [Nonempty I] (hI : #I ∈ T),
+      ∃ realEq : ULift.{u} (Fin Pr.n) ≃ (Pr.assign (Tail.mem hT hI) (X I (Tail.mem hT hI))).idx,
       SameGaloisType (asTuple (incl I (Tail.mem hT hI)) trivial
             (fun j : ULift.{u} (Fin Pr.n) => mk I (Tail.mem hT hI) j.down))
-          (Pr.assign (Tail.mem hT hI) (X I (Tail.mem hT hI)))
-          (Equiv.ulift.trans (Pr.arity (Tail.mem hT hI) (X I (Tail.mem hT hI))).symm)
-          (Equiv.refl _) ∧
+          (Pr.assign (Tail.mem hT hI) (X I (Tail.mem hT hI))) realEq (Equiv.refl _) ∧
         AllDominated (incl I (Tail.mem hT hI)) trivial (ULift.{u} (Fin Pr.n))
           (fun j => mk I (Tail.mem hT hI) j.down)) :
     Lemma83Conclusion P.scheme Pr := by
@@ -74,8 +73,7 @@ theorem infra_83_conclusion_of_marked_values (P : SingleModelData K)
       #I ∈ T → MarkedPair K oneVertexShape P.scheme Pr := fun I _ _ _ hI =>
     ⟨#I, Tail.mem hT hI, X I (Tail.mem hT hI), Y I (Tail.mem hT hI), incl I (Tail.mem hT hI),
       trivial, ULift.{u} (Fin Pr.n), fun j => mk I (Tail.mem hT hI) j.down,
-      Equiv.ulift.trans (Pr.arity (Tail.mem hT hI) (X I (Tail.mem hT hI))).symm,
-      (hmark I hI).1, (hmark I hI).2⟩
+      (hmark I hI).choose, (hmark I hI).choose_spec.1, (hmark I hI).choose_spec.2⟩
   refine ⟨F, T, hT, val, fun I _ _ _ hI => eX I (Tail.mem hT hI),
     fun I _ _ _ hI => eY I (Tail.mem hT hI),
     fun I _ _ _ hI => ⟨rfl, fun v x => hincl I (Tail.mem hT hI) v x,

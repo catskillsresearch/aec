@@ -5049,7 +5049,7 @@
    "file": "AEC/Section8/Lemma83Single.lean",
    "status": "open",
    "blocker": null,
-   "detail": "Cycle 101 split ('Bounded horizontal arity'). | Cycle 109: reduced (infra_83_marked_of_sub) to embedding the template value Y_I over X_I into a Lemma 8.2(1) marked pair over X_I with b_I going to its mark."
+   "detail": "Cycle 101 split ('Bounded horizontal arity'). | Cycle 109: reduced (infra_83_marked_of_sub) to embedding the template value Y_I over X_I into a Lemma 8.2(1) marked pair over X_I with b_I going to its mark. | Cycle 109: realizes descends along pair arrows across levels (infra_83_realizes_descend); remaining: a pair arrow from the template value into a realizing pair (e.g. into a value at a larger level known to realize, or into a sample-derived pair)."
   },
   {
    "id": "infra_83_all_dominated",
@@ -6354,7 +6354,7 @@
    "file": "AEC/Section8/Lemma83Assembly.lean",
    "status": "done",
    "blocker": null,
-   "detail": "Cycle 109: proved. infra_83_lemma_8_3_full_single now reduces exactly to the marked-pair property of the template values (infra_83_bounded_arity_free, infra_83_all_dominated); realEq := ULift-Fin n ≃ assign via Pr.arity. | Cycle 109: prescribed-index variant infra_83_conclusion_of_marked_values_assign (marks indexed by (Pr.assign X_I).idx, realEq = id, as for Lemma 8.2(1) pairs)."
+   "detail": "Cycle 109: proved. infra_83_lemma_8_3_full_single now reduces exactly to the marked-pair property of the template values (infra_83_bounded_arity_free, infra_83_all_dominated); realEq := ULift-Fin n ≃ assign via Pr.arity. | Cycle 109: prescribed-index variant infra_83_conclusion_of_marked_values_assign (marks indexed by (Pr.assign X_I).idx, realEq = id, as for Lemma 8.2(1) pairs). | Cycle 109: hypothesis weakened to well-orders and to some realEq (∃)."
   },
   {
    "id": "infra_83_dominated_of_realizes_onto",
@@ -6364,6 +6364,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 109: proved. Splits infra_83_all_dominated into realizes (infra_83_bounded_arity_free) + onto-ness of the prime arrow into the template value."
+  },
+  {
+   "id": "infra_83_realizes_descend",
+   "label": "Lemma 8.3 proof (P.scheme): the prescribed-type clause descends along arrows of pairs carrying the mark, also across eligible levels (restriction + stationarity Pr.along)",
+   "section": 8,
+   "file": "AEC/Section8/MarkedPairTransport.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 109: proved. With infra_83_dominated_of_realizes_onto this reduces bounded_arity_free to mapping the template value (X_I, Y_I, mk_I) by a pair arrow into some pair whose mark realizes the prescribed type."
   }
  ],
  "edges": [
@@ -11844,8 +11853,13 @@
    "from": "infra_83_dominated_of_realizes_onto",
    "to": "infra_83_all_dominated",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_realizes_descend",
+   "to": "infra_83_bounded_arity_free",
+   "kind": "hard"
   }
  ],
- "doneCount": 644,
+ "doneCount": 645,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

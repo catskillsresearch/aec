@@ -394,4 +394,49 @@ theorem infra_83_dominated_of_realizes_onto (P : SingleModelData K)
   subst hcomp
   exact H
 
+/-- **The prescribed-type clause descends along arrows of pairs (Lemma 8.3 support), also across
+eligible levels.** If `X' ≤ Y'` has a tuple `b'` realizing `p_{X'}` and `(onX, onY)` is an arrow of
+pairs from `X ≤ Y` (level `μ`) to `X' ≤ Y'` carrying `b` to `b'` positionwise along `τ`, then `b`
+realizes `p_X` under some identification of positions: restrict the realization along `onX` and
+use stationarity (`Pr.along`: `p_{X'}` is the free extension of `p_X`). -/
+theorem infra_83_realizes_descend (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) {μ μ' : Cardinal.{u}}
+    {hμ : μ ∈ P.eligible} {hμ' : μ' ∈ P.eligible}
+    {X Y : P.scheme.Object μ hμ} {X' Y' : P.scheme.Object μ' hμ'}
+    (incl : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ Y))
+    (incl' : SystemArrow K oneVertexShape (P.scheme.asSystem hμ' X')
+      (P.scheme.asSystem hμ' Y'))
+    (onX : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ' X'))
+    (onY : SystemArrow K oneVertexShape (P.scheme.asSystem hμ Y) (P.scheme.asSystem hμ' Y'))
+    (hcomm : SystemArrow.comp incl onY = SystemArrow.comp onX incl')
+    {bIdx bIdx' : Type u} (b : bIdx → Occurrence K oneVertexShape (P.scheme.asSystem hμ Y))
+    (b' : bIdx' → Occurrence K oneVertexShape (P.scheme.asSystem hμ' Y'))
+    (τ : bIdx ≃ bIdx') (hb : ∀ i, onY.mapOcc (b i) = b' (τ i))
+    (realEq' : bIdx' ≃ (Pr.assign hμ' X').idx)
+    (hr' : SameGaloisType (asTuple incl' trivial b') (Pr.assign hμ' X') realEq' (Equiv.refl _)) :
+    ∃ realEq : bIdx ≃ (Pr.assign hμ X).idx,
+      SameGaloisType (asTuple incl trivial b) (Pr.assign hμ X) realEq (Equiv.refl _) := by
+  have hlt : ℵ₀ < μ := P.aleph0_lt hμ
+  obtain ⟨e0, hFL, -⟩ := Pr.along onX trivial
+  have hN' := infra_82_sameGalois_restrict onX trivial hr'
+  -- the pair tuple and the restricted realization have the same type over `X`
+  have hD : SameGaloisType (asTuple incl trivial b)
+      ((asTuple incl' trivial b').restrict onX trivial) τ (Equiv.refl _) := by
+    refine ⟨μ', hμ', Y', onY, SystemArrow.refl _, trivial, trivial, fun v => ?_, fun i => ?_⟩
+    · exact congrArg (fun φ : SystemArrow K oneVertexShape _ _ => φ.onVertex v) hcomm
+    · have := hb (τ.symm i)
+      rw [Equiv.apply_symm_apply] at this
+      exact this
+  have hfin' : #(Pr.assign hμ' X').idx ≤ ℵ₀ := by
+    have : Finite (Pr.assign hμ' X').idx := Finite.of_equiv _ (Pr.arity hμ' X').symm
+    exact (Cardinal.lt_aleph0_of_finite _).le
+  have hfin : #(Pr.assign hμ X).idx ≤ ℵ₀ := by
+    have : Finite (Pr.assign hμ X).idx := Finite.of_equiv _ (Pr.arity hμ X).symm
+    exact (Cardinal.lt_aleph0_of_finite _).le
+  have SA := infra_612_galois_trans_last_base (SameGaloisType.unswap_refl hN'.symm) hD.symm
+    ℵ₀ le_rfl hlt hfin' rfl
+  have SB := infra_612_galois_trans_last_base hFL (SameGaloisType.swap_refl SA)
+    ℵ₀ le_rfl hlt hfin rfl
+  exact ⟨_, SameGaloisType.unswap_refl SB.symm⟩
+
 end AEC
