@@ -5842,6 +5842,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 106: yFun, chartYM, YSampleLike, yHull_eq_chart, pairMAdmittedS2, infra_83_pairMS2_coherent_colors."
+  },
+  {
+   "id": "infra_83_pairMS2_template",
+   "label": "Lemma 8.3 proof: pair template over X- and Y-sample-like structures with X_k ≅ F(J_k) and Y_k ≅ F(Z_k) (bijective τ-embeddings) for every finite piece",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83SampleLikeY.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 106: infra_83_pairMS2_pieces_iso, infra_83_pairMS2_template. Finite-piece level of X_hull_eq_FJ / Y_hull_eq_FZ; limit level F_X(I) ≅ F(J_I) still open."
   }
  ],
  "edges": [
@@ -10937,8 +10946,18 @@
    "from": "infra_83_Y_samplelike",
    "to": "infra_83_Y_hull_eq_FZ",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_pairMS2_template",
+   "to": "infra_83_X_hull_eq_FJ",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_83_pairMS2_template",
+   "to": "infra_83_Y_hull_eq_FZ",
+   "kind": "hard"
   }
  ],
- "doneCount": 582,
+ "doneCount": 583,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

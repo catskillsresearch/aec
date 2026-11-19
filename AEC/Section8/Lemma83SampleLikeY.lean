@@ -178,4 +178,129 @@ theorem infra_83_pairMS2_coherent_colors (P : SingleModelData K)
         (show ∃ z, F (ι (P.E.skeleton z)) = F (ι (P.E.skeleton a)) from ⟨a, rfl⟩)
     · simp [thetaM]
 
+/-- **`X_k ≅ F(J_k)` and `Y_k ≅ F(Z_k)`** for the template pieces over `X`- and
+`Y`-sample-like structures: bijective `τ`-embeddings onto `F` of the charts. -/
+theorem infra_83_pairMS2_pieces_iso (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) :
+    ∃ (c : (m : ℕ) → 0 < m → Hull83.TpColorB (LS83.pairLangM3 P.E Pr.n) 3 m)
+      (hc : ∀ (n : ℕ) (κ : Cardinal.{u}),
+        Hull83.Joint (Hull83.TpSampleB (fun N _ => pairMAdmittedS2 P.E Pr.n N) 3) n c κ),
+      (∀ {m m' : ℕ} (hm' : 0 < m') (hm : 0 < m) (f : Fin m' ↪o Fin m),
+        c m' hm' = Hull83.tpResB 3 f (c m hm)) ∧
+      ∀ k : ℕ,
+        (∃ (J : Type u) (_ : LinearOrder J) (_ : Nonempty J) (H : Set J) (_ : Nonempty H)
+          (ε : (Hull83.subHullModel ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+            ((LS83.pairInlR P.E).comp (LS83.lsInl K))
+            ((Hull83.witB hc k).v ∘ Prod.map id (fun _ : Fin 1 => (0 : Fin 3)))).carrier ↪[K.τ]
+            (P.E.obj H).carrier), Function.Bijective ε) ∧
+        (∃ (Z : Type u) (_ : LinearOrder Z) (_ : Nonempty Z) (H : Set Z) (_ : Nonempty H)
+          (ε : (Hull83.subHullModel (psiM P.E Pr.n)
+            ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K)))
+            ((Hull83.witB hc k).v ∘ Prod.map id (fun i : Fin 2 => i.castSucc))).carrier ↪[K.τ]
+            (P.E.obj H).carrier), Function.Bijective ε) := by
+  obtain ⟨c, hc, hcoh, hθ⟩ := infra_83_pairMS2_coherent_colors P Pr
+  refine ⟨c, hc, hcoh, fun k => ⟨?_, ?_⟩⟩
+  · obtain ⟨J, Jp, i1, i2, i3, i4, emb, g, hX, hch, hcx, hτf, hτr⟩ := (Hull83.witB hc k).mem.1.2
+    have hpt : ∀ p : Fin (k + 1) × Fin 1, ∃ j, P.E.skeleton (emb j) =
+        g ((Hull83.witB hc k).v (p.1, 0)) := fun p =>
+      (hcx _).1 ((thetaM_zero _ _ _).1 (Hull83.witB_realize hc hθ k p.1 0))
+    choose j hj using hpt
+    obtain ⟨T, hne, hset⟩ : ∃ (T : Set (P.E.obj Jp).carrier) (_ : Nonempty (Lab83.chart emb T)),
+        g '' Set.range (@Hull83.hullVal _ _ (((psiM P.E Pr.n).comp (chiM P.E Pr.n)).reduct _) _
+          ((Hull83.witB hc k).v ∘ Prod.map id (fun _ : Fin 1 => (0 : Fin 3)))) =
+          Set.range (P.E.map (Lab83.chartEmb emb T)) := by
+      obtain ⟨hne, hset⟩ := xHull_eq_chart P.E Pr.n emb g hX hch _ j hj
+      exact ⟨_, hne, hset⟩
+    let f := (sampleEmb P.E Pr.n g hτf hτr).comp
+      (Hull83.subHullEmb ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K))
+        ((Hull83.witB hc k).v ∘ Prod.map id (fun _ : Fin 1 => (0 : Fin 3))))
+    have hrange : Set.range f = Set.range (P.E.map (Lab83.chartEmb emb T)) := by
+      rw [← hset]
+      ext y
+      constructor
+      · rintro ⟨x, rfl⟩
+        exact ⟨_, ⟨x, rfl⟩, rfl⟩
+      · rintro ⟨_, ⟨x, rfl⟩, rfl⟩
+        exact ⟨x, rfl⟩
+    obtain ⟨ε, hbij, -⟩ := emb_equiv_of_range f _ hrange
+    exact ⟨J, i1, i2, _, hne, ε, hbij⟩
+  · obtain ⟨Z, Jp, i1, i2, i3, i4, e₀, g, hY, hch, hcy, hXY, hτf, hτr⟩ := (Hull83.witB hc k).mem.2
+    have hv : ∀ p : Fin (k + 1) × Fin 2,
+        g (((Hull83.witB hc k).v ∘ Prod.map id (fun i : Fin 2 => i.castSucc)) p) ∈
+          Set.range e₀ := by
+      rintro ⟨a, b⟩
+      fin_cases b
+      · exact hXY _ ((thetaM_zero _ _ _).1 (Hull83.witB_realize hc hθ k a 0))
+      · obtain ⟨z, hz⟩ := (hcy _).1 ((thetaM_one _ _ _).1 (Hull83.witB_realize hc hθ k a 1))
+        exact ⟨_, hz⟩
+    obtain ⟨z₀, hz₀⟩ := (hcy _).1 ((thetaM_one _ _ _).1 (Hull83.witB_realize hc hθ k 0 1))
+    obtain ⟨T, hne, hset⟩ := yHull_eq_chart P.E Pr.n e₀ g hY hch
+      ((Hull83.witB hc k).v ∘ Prod.map id (fun i : Fin 2 => i.castSucc)) hv (0, 1) z₀ hz₀
+    let f := (sampleEmb P.E Pr.n g hτf hτr).comp
+      (Hull83.subHullEmb (psiM P.E Pr.n)
+        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K)))
+        ((Hull83.witB hc k).v ∘ Prod.map id (fun i : Fin 2 => i.castSucc)))
+    have hrange : Set.range f = Set.range (e₀.comp (P.E.map (OrderEmbedding.subtype
+        (fun z => z ∈ Lab83.chartT e₀ T)))) := by
+      have h2 : Set.range (e₀.comp (P.E.map (OrderEmbedding.subtype
+          (fun z => z ∈ Lab83.chartT e₀ T)))) =
+          Set.range (e₀ ∘ P.E.map (OrderEmbedding.subtype (fun z => z ∈ Lab83.chartT e₀ T))) :=
+        rfl
+      rw [h2, ← hset]
+      ext y
+      constructor
+      · rintro ⟨x, rfl⟩
+        exact ⟨_, ⟨x, rfl⟩, rfl⟩
+      · rintro ⟨_, ⟨x, rfl⟩, rfl⟩
+        exact ⟨x, rfl⟩
+    obtain ⟨ε, hbij, -⟩ := emb_equiv_of_range f _ hrange
+    exact ⟨Z, i1, i2, _, hne, ε, hbij⟩
+
+/-- The pair template over `X`- and `Y`-sample-like structures: as
+`infra_83_pairMS_template`, with both `X_k ≅ F(J_k)` and `Y_k ≅ F(Z_k)`. -/
+theorem infra_83_pairMS2_template (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) :
+    ∃ (FX FY FL : EM83.FinPieces K) (ηXY : EM83.PiecesHom FX FY) (ηYL : EM83.PiecesHom FY FL)
+      (E : OrderPresentation K),
+      (∀ (I : Type u) [LinearOrder I] [Nonempty I], E.obj I = (FL.limit I).obj) ∧
+      (∀ (I : Type u) [LinearOrder I] [Nonempty I],
+        K.Strong (ηXY.limMap I) ∧ K.Strong (ηYL.limMap I) ∧
+          (ηYL.comp ηXY).limMap I = (ηYL.limMap I).comp (ηXY.limMap I)) ∧
+      (∀ {I J : Type u} [LinearOrder I] [LinearOrder J] [Nonempty I] [Nonempty J] (f : I ↪o J),
+        K.Strong (EM83.gEmMap (F := FX) f) ∧ K.Strong (EM83.gEmMap (F := FY) f) ∧
+        K.Strong (EM83.gEmMap (F := FL) f) ∧
+        (ηXY.limMap J).comp (EM83.gEmMap (F := FX) f) =
+            (EM83.gEmMap (F := FY) f).comp (ηXY.limMap I) ∧
+          (ηYL.limMap J).comp (EM83.gEmMap (F := FY) f) =
+            (EM83.gEmMap (F := FL) f).comp (ηYL.limMap I)) ∧
+      ∀ k : ℕ,
+        (∃ (J : Type u) (_ : LinearOrder J) (_ : Nonempty J) (H : Set J) (_ : Nonempty H)
+          (ε : (FX.obj k).carrier ↪[K.τ] (P.E.obj H).carrier), Function.Bijective ε) ∧
+        (∃ (Z : Type u) (_ : LinearOrder Z) (_ : Nonempty Z) (H : Set Z) (_ : Nonempty H)
+          (ε : (FY.obj k).carrier ↪[K.τ] (P.E.obj H).carrier), Function.Bijective ε) := by
+  obtain ⟨c, hc, hcoh, hiso⟩ := infra_83_pairMS2_pieces_iso P Pr
+  let σ : Fin 2 → Fin 3 := fun i => i.castSucc
+  let τ : Fin 1 → Fin 2 := fun _ => 0
+  let φ₀ := (LS83.pairInlR P.E).comp (LS83.lsInl K)
+  have hX : Hull83.SubHullStrong ((psiM P.E Pr.n).comp (chiM P.E Pr.n)) φ₀
+      (fun N _ => pairMAdmittedS2 P.E Pr.n N) :=
+    fun M _ hM => pairM_subHullStrongX P.E Pr.n M hM.1.1
+  have hY : Hull83.SubHullStrong (psiM P.E Pr.n) ((chiM P.E Pr.n).comp φ₀)
+      (fun N _ => pairMAdmittedS2 P.E Pr.n N) :=
+    fun M _ hM => pairM_subHullStrongY P.E Pr.n M hM.1.1
+  have hL : Hull83.HullStrong ((psiM P.E Pr.n).comp ((chiM P.E Pr.n).comp φ₀))
+      (fun N _ => pairMAdmittedS2 P.E Pr.n N) :=
+    fun M _ hM => pairM_hullStrong P.E Pr.n M hM.1.1
+  let ηXY := Hull83.subLangMixHom (chiM P.E Pr.n) (psiM P.E Pr.n) φ₀ hc hcoh σ τ hX hY
+  let ηYL := Hull83.subLangChain (psiM P.E Pr.n) ((chiM P.E Pr.n).comp φ₀) hc hcoh σ hY hL
+  refine ⟨_, _, _, ηXY, ηYL,
+    Hull83.tpPresentationB hc hcoh (by norm_num) ((psiM P.E Pr.n).comp ((chiM P.E Pr.n).comp φ₀))
+      hL (LS83.pairLangM3_functions_le P.E Pr.n),
+    fun I _ _ => rfl,
+    fun I _ _ => ⟨ηXY.limMap_strong I, ηYL.limMap_strong I, EM83.PiecesHom.limMap_comp _ _ I⟩,
+    fun f => ⟨EM83.gEmMap_strong f, EM83.gEmMap_strong f, EM83.gEmMap_strong f,
+      ηXY.limMap_natural f, ηYL.limMap_natural f⟩, fun k => ?_⟩
+  exact hiso k
+
 end AEC
