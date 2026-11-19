@@ -6850,6 +6850,24 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 148: proved."
+  },
+  {
+   "id": "infra_83_card_codes_cofinite",
+   "label": "Removing finitely many indices from an infinite bijective preimage keeps its size",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83SampleLikeY.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 149: proved."
+  },
+  {
+   "id": "infra_83_ret_good_in",
+   "label": "For infinite T ⊆ J and finite A, at least #T codes lie in T, fix F(A) pointwise and send F(Y) into F(J) (code-cover half of #I ≤ #{good i})",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83SampleLikeY.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 149: proved."
   }
  ],
  "edges": [
@@ -12620,8 +12638,18 @@
    "from": "infra_83_joint_S3_good",
    "to": "infra_83_pairMS3_rebase",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_card_codes_cofinite",
+   "to": "infra_83_pairMS3_rebase",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_83_ret_good_in",
+   "to": "infra_83_pairMS3_rebase",
+   "kind": "hard"
   }
  ],
- "doneCount": 696,
+ "doneCount": 698,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

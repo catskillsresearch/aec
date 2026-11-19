@@ -332,6 +332,51 @@ theorem infra_83_joint_S3_good (P : SingleModelData K)
   obtain ⟨S, ⟨N, inst, hN, base, hinj, hcol⟩, hκ, hS⟩ := hc
   exact ⟨S, hκ, hS, N, inst, hN.1, ⟨base, hinj, hcol⟩, infra_83_retSampleLike_good P Pr hN.2⟩
 
+/-- Removing finitely many indices from an infinite bijective preimage keeps its size. -/
+theorem infra_83_card_codes_cofinite {ι β : Type u} (code : ι → β)
+    (hcode : Function.Bijective code) (T : Set β) (bad : Set ι) (hbad : bad.Finite)
+    (hT : ℵ₀ ≤ #T) : #T ≤ #{i | code i ∈ T ∧ i ∉ bad} := by
+  have hs : #(code ⁻¹' T) = #T :=
+    Cardinal.mk_preimage_of_injective_of_subset_range code T hcode.1
+      (fun b _ => hcode.2 b)
+  have heq : {i | code i ∈ T ∧ i ∉ bad} = code ⁻¹' T \ bad := rfl
+  rw [heq, ← hs]
+  by_contra hlt
+  rw [not_le] at hlt
+  have h1 := Cardinal.le_mk_sdiff_add_mk (code ⁻¹' T) bad
+  have hT' : ℵ₀ ≤ #(code ⁻¹' T) := by rw [hs]; exact hT
+  have hb : #bad < #(code ⁻¹' T) :=
+    (Cardinal.lt_aleph0_iff_set_finite.mpr hbad).trans_le hT'
+  exact absurd h1 (not_le.mpr (Cardinal.add_lt_of_lt hT' hlt hb))
+
+/-- **Good ret codes inside any infinite part of `X`.** In the setting of the Cor 6.16 eval law
+with bijective codes, for every infinite `T ⊆ J`-copy and finite `A ⊆ J`, at least `#T` codes
+lie in `T`, fix `F(A)` pointwise and send `F(Y)` into `F(J)` — the code-cover half of the
+paper's count `#I ≤ #{good i}`. -/
+theorem infra_83_ret_good_in (P : SingleModelData K)
+    {Pr : StationaryPrescription K oneVertexShape P.scheme}
+    {J Jplus : Type u} [LinearOrder J] [Nonempty J] [LinearOrder Jplus] [Nonempty Jplus]
+    {M : MarkedPair K oneVertexShape P.scheme Pr}
+    (eX : (P.E.obj J).carrier → ((P.scheme.asSystem M.hμ M.X).obj PUnit.unit).carrier)
+    (hsurj : Function.Surjective eX) (emb : J ↪o Jplus)
+    (F : ((P.scheme.asSystem M.hμ M.Y).obj PUnit.unit).carrier → (P.E.obj Jplus).carrier)
+    (hF : ∀ x, F (M.incl.onVertex PUnit.unit (eX x)) = P.E.map emb x)
+    (R : ApproximateRetraction K oneVertexShape P.scheme M.hμ M.X M.Y M.incl)
+    (code : R.index → (P.E.obj J).carrier) (hcode : Function.Bijective code)
+    (G : (P.E.obj Jplus).carrier → (P.E.obj Jplus).carrier → (P.E.obj Jplus).carrier)
+    (heval : ∀ i y, G (P.E.map emb (code i)) (F y) =
+      F (M.incl.onVertex PUnit.unit ((R.retr i).onVertex PUnit.unit y)))
+    (T : Set (P.E.obj J).carrier) (hT : ℵ₀ ≤ #T) (A : Finset (P.E.obj J).carrier) :
+    #T ≤ #{i : R.index | code i ∈ T ∧
+      (∀ x ∈ A, G (P.E.map emb (code i)) (P.E.map emb x) = P.E.map emb x) ∧
+      G (P.E.map emb (code i)) '' Set.range F ⊆ Set.range (P.E.map emb)} := by
+  refine (infra_83_card_codes_cofinite code hcode T _
+    (infra_83_ret_term_fix_finite P eX emb F hF R code G heval A) hT).trans
+    (Cardinal.mk_le_mk_of_subset fun i hi => ⟨hi.1, fun x hx => ?_,
+      infra_83_ret_image_into_X P eX hsurj emb F hF R code G heval i⟩)
+  by_contra hne
+  exact hi.2 ⟨x, hx, hne⟩
+
 /-- Joint samples are monotone in the admitted class. -/
 theorem joint_tpSampleB_mono {L : FirstOrder.Language.{u, u}} {r : ℕ}
     {P Q : ∀ (M : Type u) [L.Structure M], Prop} (hPQ : ∀ (M : Type u) [L.Structure M], P M → Q M)
