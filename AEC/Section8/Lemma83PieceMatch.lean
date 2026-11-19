@@ -3656,4 +3656,40 @@ theorem infra_83_embed_of_lists {P : SingleModelData K} {μ : Cardinal.{u}}
     exact heq
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+set_option maxHeartbeats 1600000 in
+/-- **All-domination from nested isolated lists with witness models (proved).** At a closed
+level, a finite mark `b` of `X ≤ Y` is all-dominated if `Y` is covered by a directed family of
+strong witness substructures, each inside one of nested small lists `s n` of `Y` with
+`(b, s n)` isolated relative to `b` over `X` (`infra_83_embed_of_lists` +
+`infra_83_dominated_of_primeness_at`). -/
+theorem infra_83_dominated_of_lists_at (P : SingleModelData K) {μ : Cardinal.{u}}
+    (hμ : μ ∈ infra_78_closedTail P ∩ infra_615_closed P) {X Y : P.scheme.Object μ hμ.1.1}
+    (incl : SystemArrow K oneVertexShape (P.scheme.asSystem _ X) (P.scheme.asSystem _ Y))
+    {bIdx : Type u} [Finite bIdx]
+    (b : bIdx → Occurrence K oneVertexShape (P.scheme.asSystem _ Y))
+    {δ : ℕ → Type u} (s : ∀ n, δ n → Y.model.carrier) (hδ : ∀ n, #(δ n) < μ)
+    (hnest : ∀ n k, ∃ k', s (n + 1) k' = s n k)
+    (hIso : ∀ n, IsRelativelyIsolated (uIdx := bIdx) (cIdx := δ n)
+      (asTuple incl trivial (seqJoint b (fun k => Y.occ (s n k))))
+      (Equiv.refl (bIdx ⊕ δ n)))
+    (𝒮 : Set (K.τ.Substructure Y.model.carrier)) (hne : 𝒮.Nonempty)
+    (hdir : ∀ A ∈ 𝒮, ∀ B ∈ 𝒮, ∃ C ∈ 𝒮, A ≤ C ∧ B ≤ C)
+    (hS : ∀ A ∈ 𝒮, K.Strong (M := subM83 A) (N := Y.model) A.subtype)
+    (hcover : ∀ y : Y.model.carrier, ∃ A ∈ 𝒮, y ∈ A)
+    (hlist : ∀ A ∈ 𝒮, ∃ n, ∀ y ∈ A, ∃ k, s n k = y) :
+    AllDominated incl trivial bIdx b := by
+  refine infra_83_dominated_of_primeness_at P hμ incl b (fun V inclV b' _ hS' => ?_)
+  obtain ⟨h, -, hh, hb⟩ := infra_83_embed_of_lists hμ.1.1 X Y V incl trivial inclV trivial b b'
+    ((Cardinal.lt_aleph0_of_finite _).trans (P.aleph0_lt hμ.1.1)) hS' s hδ hnest hIso 𝒮 hne hdir
+    hS hcover hlist
+  refine ⟨h, hh, fun i => ?_⟩
+  apply Sigma.ext
+  · exact Subsingleton.elim _ _
+  · exact heq_of_eq (hb i)
+end
+
 end AEC
