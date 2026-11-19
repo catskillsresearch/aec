@@ -51,13 +51,18 @@ def markedJointOver {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
     Sum.elim t (fun j => N.b (σ j))⟩
 
 /-- Bounded pair tuples `t` of `M` and `t′` of `N` are in the same pair orbit (comparison of
-pair tuples): some isomorphism of marked pairs (vertexwise bijective marked arrow) takes `t` to
-`t′`. -/
+pair tuples) with the marks matched along `σ`: some isomorphism of marked pairs (vertexwise
+bijective marked arrow) taking the mark to the mark along `σ` takes `t` to `t′`. English (Lemma 8.2
+proof and §8.1): pair orbits are "pair isomorphism orbits"; an isomorphism of pairs takes the mark
+to the mark as a tuple, so for `M = N` the matching is `σ = refl` (cycle 95; previously the mark
+matching was unconstrained). -/
 def PairOrbitEq {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
     {W : WorkingScheme K S} {P : StationaryPrescription K S W} (M N : MarkedPair K S W P)
+    (σ : M.bIdx ≃ N.bIdx)
     {ι : Type u} (t : ι → Occurrence K S (W.asSystem M.hμ M.Y))
     (t' : ι → Occurrence K S (W.asSystem N.hμ N.Y)) : Prop :=
-  ∃ arr : MarkedArrow K S W P M N, (∀ v, Function.Bijective (arr.onX.onVertex v)) ∧
+  ∃ arr : MarkedArrow K S W P M N, arr.markMap = σ ∧
+    (∀ v, Function.Bijective (arr.onX.onVertex v)) ∧
     (∀ v, Function.Bijective (arr.onY.onVertex v)) ∧ ∀ i, arr.onY.mapOcc (t i) = t' i
 
 /-- **Lemma 8.2** (The pair isomorphism test; restated cycle 95 to the English). English:
@@ -112,16 +117,17 @@ theorem lemma_8_2 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
       -- same-level arrows preserve bounded pair orbits
       (∀ (M N : MarkedPair K S W P) (f : MarkedArrow K S W P M N), M.μ ∈ T → M.μ = N.μ →
         ∀ {ι : Type u} (t₁ t₂ : ι → Occurrence K S (W.asSystem M.hμ M.Y)), #ι < M.μ →
-          (PairOrbitEq M M t₁ t₂ →
-            PairOrbitEq N N (fun i => f.onY.mapOcc (t₁ i)) (fun i => f.onY.mapOcc (t₂ i)))) ∧
+          (PairOrbitEq M M (Equiv.refl _) t₁ t₂ →
+            PairOrbitEq N N (Equiv.refl _) (fun i => f.onY.mapOcc (t₁ i)) (fun i => f.onY.mapOcc (t₂ i)))) ∧
       -- comparisons preserved and reflected from a common small level to a common larger level
       (∀ (M₁ M₂ N₁ N₂ : MarkedPair K S W P) (f₁ : MarkedArrow K S W P M₁ N₁)
           (f₂ : MarkedArrow K S W P M₂ N₂),
         M₁.μ ∈ T → M₁.μ = M₂.μ → N₁.μ ∈ T → N₁.μ = N₂.μ → M₁.μ < N₁.μ →
         ∀ {ι : Type u} (t₁ : ι → Occurrence K S (W.asSystem M₁.hμ M₁.Y))
           (t₂ : ι → Occurrence K S (W.asSystem M₂.hμ M₂.Y)), #ι < M₁.μ →
-          (PairOrbitEq M₁ M₂ t₁ t₂ ↔
-            PairOrbitEq N₁ N₂ (fun i => f₁.onY.mapOcc (t₁ i)) (fun i => f₂.onY.mapOcc (t₂ i)))) := by
+          ∀ σ : M₁.bIdx ≃ M₂.bIdx,
+          (PairOrbitEq M₁ M₂ σ t₁ t₂ ↔
+            PairOrbitEq N₁ N₂ (f₁.markMap.symm.trans (σ.trans f₂.markMap)) (fun i => f₁.onY.mapOcc (t₁ i)) (fun i => f₂.onY.mapOcc (t₂ i)))) := by
   sorry
 
 /-- **Lemma 8.3** (The marked-pair template; restated cycle 95 to the English). English:
@@ -158,26 +164,10 @@ theorem lemma_8_3 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
               ∀ v, Function.Bijective (arr.onY.onVertex v)) := by
   sorry
 
-/-- **Lemma 8.4** (Testing beside an isolated small upper object; restated cycle 95 to the
-English). English: "Let ν < µ be sufficiently closed levels where Lemma 8.3 holds. Suppose
-A ≤ U, A ≤ C, C ≤ T, T′ are underlying arrows, A, U are at level ν, and C, T, T′ are at level µ.
-Suppose (A, U, b) is a small marked pair inside T, its specified image (A, U′, b′) is inside T′,
-and the map U ≅ U′ fixes A. Suppose further that b/C and b′/C are the prescribed free extensions
-and corresponding bounded tuples of U, U′, jointly with the marks, have equal types over C. For
-each σ < ν there is a bound k(σ) < ν, uniform in these objects, with the following property. If
-v ∈ T and v′ ∈ T′ have length at most σ, their comparisons on joint tests from U and C of total
-size at most k(σ) determine their comparisons on all such tests of total size < ν. Tests in U′
-are read by the specified map."
-
-Encoding: the small pair is `M` (`A = M.X`, `U = M.Y`, level `ν = M.μ`); its image is `M'` with
-a vertexwise bijective marked arrow `iso : M → M'` that fixes `A` over `C` (`iso.onX ≫ aC' = aC`);
-`b/C` is the prescribed type (`P.assign C`) read in `T` and in `T′`; tests are pairs `(ZU, ZC)`
-read in `T` by `uT`, `cT` and in `T′` by `iso.onY ≫ uT'`, `cT'`. `k` is chosen before the
-objects (uniformity). Hypotheses: the Section 8 conventions. -/
-theorem lemma_8_4 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
-    (W : WorkingScheme K S) (P : StationaryPrescription K S W)
-    (_hpack : IsWorkingPackage W) (_harr : Section8Arrows W)
-    (_hiso : P.CommutesWithIso) :
+/-- The conclusion of **Lemma 8.4** (stated once, used by `lemma_8_4` and by the single-scheme
+tip `infra_84_single`). -/
+def Lemma84Conclusion {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
+    (W : WorkingScheme K S) (P : StationaryPrescription K S W) : Prop :=
     ∃ T, ∃ hT : Tail W.eligible T, ∃ k : Cardinal.{u} → Cardinal.{u} → Cardinal.{u},
       ∀ ν, ν ∈ T → ∀ σ, σ < ν → k ν σ < ν ∧
         ∀ μ (hμ : μ ∈ T), ν < μ →
@@ -231,7 +221,28 @@ theorem lemma_8_4 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
               W.DiagramEq (X := Tt) (Y := Tt')
                 (Sum.elim v (Sum.elim (fun i => uT.mapOcc (ZU i)) (fun i => cT.mapOcc (ZC i))))
                 (Sum.elim v' (Sum.elim (fun i => uT'.mapOcc (iso.onY.mapOcc (ZU i)))
-                  (fun i => cT'.mapOcc (ZC i)))) := by
+                  (fun i => cT'.mapOcc (ZC i))))
+
+/-- **Lemma 8.4** (Testing beside an isolated small upper object; restated cycle 95 to the
+English). English: "Let ν < µ be sufficiently closed levels where Lemma 8.3 holds. Suppose
+A ≤ U, A ≤ C, C ≤ T, T′ are underlying arrows, A, U are at level ν, and C, T, T′ are at level µ.
+Suppose (A, U, b) is a small marked pair inside T, its specified image (A, U′, b′) is inside T′,
+and the map U ≅ U′ fixes A. Suppose further that b/C and b′/C are the prescribed free extensions
+and corresponding bounded tuples of U, U′, jointly with the marks, have equal types over C. For
+each σ < ν there is a bound k(σ) < ν, uniform in these objects, with the following property. If
+v ∈ T and v′ ∈ T′ have length at most σ, their comparisons on joint tests from U and C of total
+size at most k(σ) determine their comparisons on all such tests of total size < ν. Tests in U′
+are read by the specified map."
+
+Encoding: the small pair is `M` (`A = M.X`, `U = M.Y`, level `ν = M.μ`); its image is `M'` with
+a vertexwise bijective marked arrow `iso : M → M'` that fixes `A` over `C` (`iso.onX ≫ aC' = aC`);
+`b/C` is the prescribed type (`P.assign C`) read in `T` and in `T′`; tests are pairs `(ZU, ZC)`
+read in `T` by `uT`, `cT` and in `T′` by `iso.onY ≫ uT'`, `cT'`. `k` is chosen before the
+objects (uniformity). Hypotheses: the Section 8 conventions. -/
+theorem lemma_8_4 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
+    (W : WorkingScheme K S) (P : StationaryPrescription K S W)
+    (_hpack : IsWorkingPackage W) (_harr : Section8Arrows W)
+    (_hiso : P.CommutesWithIso) : Lemma84Conclusion W P := by
   sorry
 
 /-- **Lemma 8.5** (Chain closure; restated cycle 95 to the English). English: "At further
