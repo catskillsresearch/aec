@@ -1631,4 +1631,56 @@ theorem infra_83_marked_iff_pieces (P : SingleModelData K)
     infra_83_dominated_iff_pieces P incl b hb]
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+set_option maxHeartbeats 3200000 in
+/-- **Lemma 8.3 (P.scheme) reduced to realization plus isolation on pieces (proved reduction).**
+For the constructed pair template, `Lemma83Conclusion` holds once, for every value on a well-order
+`I` with `#I` in the closed tail, the mark realizes the prescribed type and every bounded `(mk_I, c)`
+type is isolated on some piece `X_I ≤ Y_u ≤ Y_I` holding a preimage
+(`infra_83_dominated_of_piece_isolation`). -/
+theorem infra_83_full_single_of_pieces (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) :
+    ∃ (X Y : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
+        P.scheme.Object #I hI)
+      (incl : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
+        SystemArrow K oneVertexShape (P.scheme.asSystem hI (X I hI))
+          (P.scheme.asSystem hI (Y I hI)))
+      (mk : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
+        Fin Pr.n → Occurrence K oneVertexShape (P.scheme.asSystem hI (Y I hI))),
+      (∀ (I : Type u) [LinearOrder I] [WellFoundedLT I] [Nonempty I]
+          (hI : #I ∈ infra_78_closedTail P ∩ infra_615_closed P),
+          (∃ realEq : ULift.{u} (Fin Pr.n) ≃ (Pr.assign hI.2.1 (X I hI.2.1)).idx,
+            SameGaloisType (asTuple (incl I hI.2.1) trivial
+              (fun a : ULift.{u} (Fin Pr.n) => mk I hI.2.1 a.down))
+              (Pr.assign hI.2.1 (X I hI.2.1)) realEq (Equiv.refl _)) ∧
+          ∀ (cIdx : Type u)
+            (c : cIdx → Occurrence K oneVertexShape (P.scheme.asSystem hI.2.1 (Y I hI.2.1))),
+            #cIdx < #I →
+            ∃ (Yu : P.scheme.Object #I hI.2.1)
+              (inclu : SystemArrow K oneVertexShape (P.scheme.asSystem hI.2.1 (X I hI.2.1))
+                (P.scheme.asSystem hI.2.1 Yu))
+              (j : SystemArrow K oneVertexShape (P.scheme.asSystem hI.2.1 Yu)
+                (P.scheme.asSystem hI.2.1 (Y I hI.2.1)))
+              (d : ULift.{u} (Fin Pr.n) ⊕ cIdx →
+                Occurrence K oneVertexShape (P.scheme.asSystem hI.2.1 Yu)),
+              SystemArrow.comp inclu j = incl I hI.2.1 ∧
+              (∀ s, j.mapOcc (d s) =
+                seqJoint (fun a : ULift.{u} (Fin Pr.n) => mk I hI.2.1 a.down) c s) ∧
+              IsRelativelyIsolated (uIdx := ULift.{u} (Fin Pr.n)) (cIdx := cIdx)
+                (asTuple inclu trivial d) (Equiv.refl _)) →
+      Lemma83Conclusion P.scheme Pr := by
+  obtain ⟨F, X, Y, eX, eY, incl, mk, hincl, harr⟩ := infra_83_pair_template_clauses P Pr
+  refine ⟨X, Y, incl, mk, fun hS => ?_⟩
+  refine infra_83_conclusion_of_marked_values_idx P Pr F X Y eX eY incl mk hincl harr _
+    (infra_83_closed_tail P) (fun I _ _ _ hI => ?_)
+  obtain ⟨⟨realEq, hr⟩, hloc⟩ := hS I hI
+  have hb : #(ULift.{u} (Fin Pr.n)) < #I :=
+    (Cardinal.lt_aleph0_of_finite _).trans (P.aleph0_lt hI.2.1)
+  exact ⟨ULift.{u} (Fin Pr.n), Equiv.refl _, realEq, hr,
+    infra_83_dominated_of_piece_isolation P (incl I hI.2.1) _ hb hloc⟩
+end
+
 end AEC
