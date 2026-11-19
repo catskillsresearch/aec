@@ -2086,4 +2086,41 @@ theorem infra_83_chart_sub_of_points (E : OrderPresentation K) {J Jp J0 : Type u
   rfl
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+/-- **Sort intersection on a piece from the sample chart and its chart points (proved).** In
+ret-sample data, if the piece image `T = gY[Y_u]` meets the `X`-copy exactly in `F` of its
+`X`-chart (the sample's chart clause, `infra_83_XH_sort_sample`, applied to the closed set `T`),
+`gY ∘ inclu = F(emb) ∘ F(e₀) ∘ ψ` with `ψ` onto, and every chart point of `T` lies in `e₀[J₀]`,
+then the sort intersection clause of the piece data holds (`infra_83_chart_sub_of_points`,
+`infra_83_piece_XH_of_chart`, `infra_83_piece_meet`). -/
+theorem infra_83_piece_meet_of_chart (P : SingleModelData K)
+    {Pr : StationaryPrescription K oneVertexShape P.scheme} {M : MarkedPair K oneVertexShape P.scheme Pr}
+    {J Jp J0 : Type u} [LinearOrder J] [Nonempty J] [LinearOrder Jp] [Nonempty Jp]
+    [LinearOrder J0] [Nonempty J0] (emb : J ↪o Jp) (e0 : J0 ↪o J)
+    (eX : (P.E.obj J).carrier → ((P.scheme.asSystem M.hμ M.X).obj PUnit.unit).carrier)
+    (hsurj : Function.Surjective eX)
+    (F : ((P.scheme.asSystem M.hμ M.Y).obj PUnit.unit).carrier → (P.E.obj Jp).carrier)
+    (hF : ∀ x, F (M.incl.onVertex PUnit.unit (eX x)) = P.E.map emb x)
+    {ν : Cardinal.{u}} {hν : ν ∈ P.eligible} {X' Yu : P.scheme.Object ν hν}
+    (inclu : SystemArrow K oneVertexShape (P.scheme.asSystem hν X') (P.scheme.asSystem hν Yu))
+    (gY : ((P.scheme.asSystem hν Yu).obj PUnit.unit).carrier → (P.E.obj Jp).carrier)
+    (hgi : Function.Injective gY)
+    (ψ : ((P.scheme.asSystem hν X').obj PUnit.unit).carrier → (P.E.obj J0).carrier)
+    (hψ : Function.Surjective ψ)
+    (hX : ∀ x, gY (inclu.onVertex PUnit.unit x) = P.E.map emb (P.E.map e0 (ψ x)))
+    [Nonempty (Lab83.chart emb (Set.range gY))]
+    (hchart : Set.range gY ∩ Set.range (P.E.map emb) =
+      Set.range (P.E.map (Lab83.chartEmb emb (Set.range gY))))
+    (hpts : ∀ j ∈ Lab83.chart emb (Set.range gY), j ∈ Set.range e0) :
+    ∀ (x' : ((P.scheme.asSystem hν Yu).obj PUnit.unit).carrier)
+      (z : ((P.scheme.asSystem M.hμ M.X).obj PUnit.unit).carrier),
+      gY x' = F (M.incl.onVertex PUnit.unit z) → ∃ y, x' = inclu.onVertex PUnit.unit y :=
+  infra_83_piece_meet P emb eX hsurj F hF inclu gY hgi
+    (infra_83_piece_XH_of_chart gY (inclu.onVertex PUnit.unit) _ _ hchart
+      (infra_83_chart_sub_of_points P.E emb e0 (inclu.onVertex PUnit.unit) gY ψ hψ hX _ hpts))
+end
+
 end AEC
