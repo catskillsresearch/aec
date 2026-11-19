@@ -6562,6 +6562,33 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 118: proved (piece_into_sample + hull_match_compat + bundleOf_placeSucc)."
+  },
+  {
+   "id": "infra_83_piece_matches_tp",
+   "label": "Compatible matches of template pieces from bundle families with the template colors, indexed by supports of I",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83Isolation.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 119: proved."
+  },
+  {
+   "id": "infra_83_bundleOf_orderMap",
+   "label": "Bundles along an order embedding are the bundles of the image support",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83Isolation.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 119: proved."
+  },
+  {
+   "id": "infra_83_sample_tp_orderMap",
+   "label": "Homogeneous samples restricted along I ↪o S.α have the template bundle colors",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83Isolation.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 119: proved."
   }
  ],
  "edges": [
@@ -12152,8 +12179,23 @@
    "from": "infra_83_piece_matches",
    "to": "infra_83_bounded_arity_free",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_piece_matches_tp",
+   "to": "infra_83_bounded_arity_free",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_83_bundleOf_orderMap",
+   "to": "infra_83_bounded_arity_free",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_83_sample_tp_orderMap",
+   "to": "infra_83_bounded_arity_free",
+   "kind": "hard"
   }
  ],
- "doneCount": 666,
+ "doneCount": 669,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

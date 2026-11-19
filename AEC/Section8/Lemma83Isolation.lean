@@ -624,4 +624,74 @@ theorem infra_83_piece_matches {L : FirstOrder.Language.{u, u}}
   exact infra_83_hull_match_compat _ _ (m s) (m t) _ _ (hm s) (hm t)
     (fun p => infra_83_bundleOf_placeSucc base h s.2 t.2 _ _ p)
 
+/-- **Compatible matches from bundle types (proved).** As `infra_83_piece_matches`, for any
+ordered family of bundles `base : I → Fin r → M` whose finite enumerations all have the template
+colors: the supports of `I` (the finite-support index of the EM system of `I`) give compatible
+matches of the template pieces into `M`. -/
+theorem infra_83_piece_matches_tp {L : FirstOrder.Language.{u, u}}
+    {P : ∀ (M : Type u) [L.Structure M], Prop} {r : ℕ}
+    {c : (m : ℕ) → 0 < m → Hull83.TpColorB L r m}
+    (hc : ∀ (n : ℕ) (κ : Cardinal.{u}), Hull83.Joint (Hull83.TpSampleB P r) n c κ)
+    (hcoh : ∀ {m m' : ℕ} (hm' : 0 < m') (hm : 0 < m) (f : Fin m' ↪o Fin m),
+      c m' hm' = Hull83.tpResB r f (c m hm))
+    {I : Type u} [LinearOrder I] {M : Type u} [L.Structure M] (base : I → Fin r → M)
+    (htp : ∀ (k : ℕ) (s : Finset I) (h : s.card = k + 1),
+      Hull83.tpCode (L := L) (Hull83.bundleOf base s h) = c (k + 1) (Nat.succ_pos k)) :
+    ∃ m : ∀ s : {s : Finset I // s.Nonempty},
+        Hull83.Hull (L := L) (Hull83.witB hc s.1.card.pred).v ↪[L] M,
+      (∀ s p, m s (Quotient.mk _ (FirstOrder.Language.Term.var p)) =
+        Hull83.bundleOf base s.1 (Nat.succ_pred_eq_of_pos (Finset.card_pos.mpr s.2)).symm p) ∧
+      ∀ {s t : {s : Finset I // s.Nonempty}} (h : s.1 ⊆ t.1),
+        (m t).comp (Hull83.hullMapEmb (Prod.map (placeSucc h s.2 t.2) id)
+          (Hull83.tpPieceB_tp hc hcoh (placeSucc h s.2 t.2))) = m s := by
+  have key : ∀ s : {s : Finset I // s.Nonempty}, ∃ f :
+      Hull83.Hull (L := L) (Hull83.witB hc s.1.card.pred).v ↪[L] M, ∀ p,
+        f (Quotient.mk _ (FirstOrder.Language.Term.var p)) =
+          Hull83.bundleOf base s.1 (Nat.succ_pred_eq_of_pos (Finset.card_pos.mpr s.2)).symm p := by
+    intro s
+    have hs := (Nat.succ_pred_eq_of_pos (Finset.card_pos.mpr s.2)).symm
+    have h' : Hull83.tpCode (L := L) (Hull83.witB hc s.1.card.pred).v =
+        Hull83.tpCode (Hull83.bundleOf base s.1 hs ∘ id) :=
+      (Hull83.witB hc s.1.card.pred).tp.trans (htp _ s.1 hs).symm
+    exact ⟨(Hull83.hullEmb (Hull83.bundleOf base s.1 hs)).comp (Hull83.hullMapEmb id h'),
+      fun p => rfl⟩
+  choose m hm using key
+  refine ⟨m, hm, fun {s t} h => ?_⟩
+  exact infra_83_hull_match_compat _ _ (m s) (m t) _ _ (hm s) (hm t)
+    (fun p => infra_83_bundleOf_placeSucc base h s.2 t.2 _ _ p)
+
+/-- **Bundles along an order embedding (proved).** Enumerating a support of `I` and then moving
+along `e : I ↪o α` gives the bundles of the image support. -/
+theorem infra_83_bundleOf_orderMap {I α : Type u} [LinearOrder I] [LinearOrder α] {M : Type u}
+    {r : ℕ} (base : α → Fin r → M) (e : I ↪o α) (s : Finset I) {m : ℕ} (h : s.card = m)
+    (h' : (s.map e.toEmbedding).card = m) (p : Fin m × Fin r) :
+    Hull83.bundleOf (fun i => base (e i)) s h p = Hull83.bundleOf base (s.map e.toEmbedding) h' p := by
+  have hu := Finset.orderEmbOfFin_unique' (s := s.map e.toEmbedding) h'
+    (f := (s.orderEmbOfFin h).trans e)
+    (fun x => Finset.mem_map_of_mem _ (Finset.orderEmbOfFin_mem s h x))
+  simp only [Hull83.bundleOf]
+  rw [← hu]
+  rfl
+
+/-- **Homogeneous samples restricted along an order embedding have the template bundle types
+(proved).** For a bundled sample homogeneous in every arity for `c` and `e : I ↪o S.α`, every
+finite enumeration of the moved bundles `base ∘ e` has the template color. -/
+theorem infra_83_sample_tp_orderMap {L : FirstOrder.Language.{u, u}} {r : ℕ}
+    {c : (m : ℕ) → 0 < m → Hull83.TpColorB L r m}
+    {S : Hull83.ColorSample (Hull83.TpColorB L r)} {M : Type u} [L.Structure M]
+    (base : S.α → Fin r → M)
+    (hcol : ∀ (m : ℕ) (s : Finset S.α) (h : s.card = m),
+      S.col m s = Hull83.tpCode (Hull83.bundleOf base s h))
+    (hhom : ∀ n, Hull83.Homog S n c) {I : Type u} [LinearOrder I] (e : I ↪o S.α) :
+    ∀ (k : ℕ) (s : Finset I) (h : s.card = k + 1),
+      Hull83.tpCode (L := L) (Hull83.bundleOf (fun i => base (e i)) s h) =
+        c (k + 1) (Nat.succ_pos k) := by
+  intro k s h
+  have h' : (s.map e.toEmbedding).card = k + 1 := (Finset.card_map _).trans h
+  have hb : Hull83.bundleOf (fun i => base (e i)) s h =
+      Hull83.bundleOf base (s.map e.toEmbedding) h' :=
+    funext fun p => infra_83_bundleOf_orderMap base e s h h' p
+  rw [hb, ← hcol]
+  exact hhom (k + 1) (k + 1) (Nat.succ_pos k) le_rfl _ h'
+
 end AEC
