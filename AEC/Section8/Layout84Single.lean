@@ -290,4 +290,57 @@ theorem infra_84_two_segment_witness (K : AbstractElementaryClass.{u}) [Categori
     · right; exact ⟨i, by simp [X₂, ← hxs, hx], by simp [← hxs]⟩
   exact (hno X₁ X₂ (h1.trans hX) (h2.trans hX)).mono hsub
 
+/-- **Layout (8): Lemma 7.2 determines the joint type (mixed level).** English (Lemma 8.4 proof):
+"each bounded tuple of U, together with b, is isolated over A, whereas the marginal of b over
+A_{H'} is the prescribed free extension. Lemma 7.2 determines its joint type." For a bounded tuple
+`q` over `A` (level `ν`) isolated relative to its `u`-part (the marks) by a fragment `W`, any two
+extensions `qB₁`, `qB₂` of `q` over `B` (level `μ ≥ ν`, hosts at `μ`) whose `u`-marginals are
+tied free extensions of `q`'s `u`-marginal have the same Galois type over `B`. Here `B` may be
+`A_{H'}` or `C`; the recursion closure at `μ` is that of the helper `infra_72_mixed_level_closed`
+(the closure tail of Section 8). -/
+theorem infra_84_layout_type_determined
+    (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : ℵ₀ ≤ σ)
+    {ν μ : Cardinal.{u}} (hν : ν ∈ P.eligible) (hμ : μ ∈ P.eligible) (hνμ : ν ≤ μ)
+    (hrec : ν ∈ recursionClosedLevels P σ) (hσSucc : Order.succ σ ≤ ν)
+    (hrecμ : μ ∈ recursionClosedLevels P σ)
+    {A : P.scheme.Object ν hν} {B : P.scheme.Object μ hμ}
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hν A) (P.scheme.asSystem hμ B))
+    (hf : P.scheme.permitted (X := A) (Y := B) f)
+    (q : TupleOver K oneVertexShape P.scheme hν A)
+    (qB₁ qB₂ : TupleOver K oneVertexShape P.scheme hμ B)
+    (eB₁ : q.idx ≃ qB₁.idx) (eB₂ : q.idx ≃ qB₂.idx)
+    {uIdx cIdx : Type u} (e : q.idx ≃ uIdx ⊕ cIdx)
+    (hqν : q.ν = ν) (hB₁ν : qB₁.ν = μ) (hB₂ν : qB₂.ν = μ)
+    (hidx : #q.idx ≤ σ) (hidxν : #q.idx < ν)
+    {wι : Type u} (W : wι → Occurrence K oneVertexShape (P.scheme.asSystem hν A))
+    (hW : IsIsolatingFragment q e W)
+    (hExt₁ : SameGaloisType q (qB₁.restrict f hf) eB₁ (Equiv.refl qB₁.idx))
+    (hExt₂ : SameGaloisType q (qB₂.restrict f hf) eB₂ (Equiv.refl qB₂.idx))
+    (hMarg₁ : IsTiedFreeMixed f (q.marginal e) (qB₁.marginal (eB₁.symm.trans e))
+      (Equiv.refl uIdx))
+    (hMarg₂ : IsTiedFreeMixed f (q.marginal e) (qB₂.marginal (eB₂.symm.trans e))
+      (Equiv.refl uIdx)) :
+    SameGaloisType qB₁ qB₂ (eB₁.symm.trans e) (eB₂.symm.trans e) := by
+  have hiso := infra_72_mixed_level_closed P σ hσ hν hμ hνμ hrec hσSucc hrecμ f hf q qB₁ eB₁ e
+    hqν hB₁ν hidx hidxν W hW hExt₁ hMarg₁
+  have huidx : #uIdx ≤ #q.idx :=
+    Cardinal.mk_le_of_injective (f := fun i : uIdx => e.symm (Sum.inl i))
+      (fun a b h => Sum.inl.inj (e.symm.injective h))
+  have hmarg := infra_72_tied_unique_mixed_rec P σ hσ hν hrec hσSucc hμ hνμ hrecμ f hf
+    (q.marginal e) hqν (huidx.trans hidx) (qB₁.marginal (eB₁.symm.trans e))
+    (qB₂.marginal (eB₂.symm.trans e)) (Equiv.refl uIdx) (Equiv.refl uIdx) hB₁ν hB₂ν
+    hMarg₁ hMarg₂
+  have d₁ := infra_72_ext_align_mixed hνμ f hf q qB₁ eB₁ e hqν hB₁ν hidxν hExt₁ W hW.1
+  have d₂ := infra_72_ext_align_mixed hνμ f hf q qB₂ eB₂ e hqν hB₂ν hidxν hExt₂ W hW.1
+  have d₁' := infra_73_diagramEq_of_eq d₁ (fun _ => rfl)
+    (fun t => (by cases t <;> rfl :
+      alignJoint (eB₁.symm.trans e) (typeJoint (p := qB₁.restrict f hf) W) t =
+      alignJoint (eB₁.symm.trans e) (typeJoint (p := qB₁) (pushParams f W)) t))
+  have d₂' := infra_73_diagramEq_of_eq d₂ (fun _ => rfl)
+    (fun t => (by cases t <;> rfl :
+      alignJoint (eB₂.symm.trans e) (typeJoint (p := qB₂.restrict f hf) W) t =
+      alignJoint (eB₂.symm.trans e) (typeJoint (p := qB₂) (pushParams f W)) t))
+  have d := P.scheme.diagram_trans _ _ _ _ _ _ (P.scheme.diagram_symm _ _ _ _ d₁') d₂'
+  exact hiso.2 qB₂ (eB₂.symm.trans e) hB₂ν hmarg d
+
 end AEC
