@@ -7110,7 +7110,7 @@
    "file": "AEC/Section8/Lemma83TupleDominated.lean",
    "status": "open",
    "blocker": null,
-   "detail": "Open (cycle 174 correction)."
+   "detail": "Open (cycle 174 correction). | Cycles 207-208: domination localized (proved): infra_83_dominated_of_local_arrows (per-c arrows into isolating pairs at the same level) and infra_83_dominated_of_piece_isolation (isolation of tp(d/X) on a piece X <= Y_u <= Y holding a preimage of (b, c); pieces exist by infra_83_piece_with_tuple). Remaining: the isolation on the piece for entries of unbounded width (Prop 7.5 constructive primeness over nested bounded-width lists)."
   },
   {
    "id": "infra_83_sgt_of_piece_arrow",
