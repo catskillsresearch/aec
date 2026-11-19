@@ -177,4 +177,81 @@ theorem cover {K : AbstractElementaryClass.{u}} (E : OrderPresentation K) [Nonem
 
 end OCol83
 
+
+variable {K : AbstractElementaryClass.{u}}
+
+/-- **`F_X(I) ≅ F(J_I)`**: in the pair template over `X`- and `Y`-sample-like structures, the
+EM value of the `X`-pieces at every `I` is strongly and bijectively `τ`-isomorphic to `F(J_I)`,
+where `J_I` is the directed colimit of the chart orders `H_(|s|-1)` (`s ⊆ I` finite) along the
+chart transition maps. -/
+theorem infra_83_pairMS2_X_hull_eq_FJ (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) :
+    ∃ (c : (m : ℕ) → 0 < m → Hull83.TpColorB (LS83.pairLangM3 P.E Pr.n) 3 m)
+      (hc : ∀ (n : ℕ) (κ : Cardinal.{u}),
+        Hull83.Joint (Hull83.TpSampleB (fun N _ => pairMAdmittedS2 P.E Pr.n N) 3) n c κ)
+      (hcoh : ∀ {m m' : ℕ} (hm' : 0 < m') (hm : 0 < m) (f : Fin m' ↪o Fin m),
+        c m' hm' = Hull83.tpResB 3 f (c m hm))
+      (hXs : Hull83.SubHullStrong ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) (fun N _ => pairMAdmittedS2 P.E Pr.n N)),
+      ∀ (I : Type u) [LinearOrder I] [Nonempty I],
+        ∃ (J : Type u) (_ : LinearOrder J) (_ : Nonempty J)
+          (m : (((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).limit I).obj.carrier ↪[K.τ] (P.E.obj J).carrier)),
+          K.Strong m ∧ Function.Bijective m := by
+  obtain ⟨c, hc, hcoh, hXs, ch, h, hid, hcomp, hL⟩ := infra_83_pairMS2_X_limit_of_cocone P Pr
+  refine ⟨c, hc, hcoh, hXs, fun I _ _ => ?_⟩
+  let φ : ∀ {s t : OCol83.Idx I}, s.1 ⊆ t.1 → (ch s.1.card.pred).H ↪o (ch t.1.card.pred).H :=
+    fun {s t} hst => h (placeSucc hst s.2 t.2)
+  have hcφ : ∀ {s t u : OCol83.Idx I} (h1 : s.1 ⊆ t.1) (h2 : t.1 ⊆ u.1) (x : (ch s.1.card.pred).H),
+      φ (h1.trans h2) x = φ h2 (φ h1 x) := by
+    intro s t u h1 h2 x
+    show h (placeSucc (h1.trans h2) s.2 u.2) x = _
+    rw [placeSucc_trans h1 h2 s.2 t.2 u.2]
+    exact hcomp _ _ x
+  have hiφ : ∀ (s : OCol83.Idx I) (x : (ch s.1.card.pred).H), φ (Finset.Subset.refl s.1) x = x := by
+    intro s x
+    show h (placeSucc (Finset.Subset.refl s.1) s.2 s.2) x = x
+    rw [placeSucc_refl s.1 s.2]
+    exact hid _ x
+  obtain ⟨m, hm, hb⟩ := hL I (OCol83.Col φ hcφ) (fun s => OCol83.iota φ hcφ hiφ s)
+    (fun {s t} hst => OCol83.iota_compat φ hcφ hiφ hst) (fun y => OCol83.cover φ hcφ hiφ P.E y)
+  exact ⟨OCol83.Col φ hcφ, inferInstance, inferInstance, m, hm, hb⟩
+
+/-- **`F_Y(I) ≅ F(Z_I)`**: in the pair template over `X`- and `Y`-sample-like structures, the
+EM value of the `Y`-pieces at every `I` is strongly and bijectively `τ`-isomorphic to `F(Z_I)`,
+where `Z_I` is the directed colimit of the chart orders `H_(|s|-1)` (`s ⊆ I` finite) along the
+chart transition maps. -/
+theorem infra_83_pairMS2_Y_hull_eq_FZ (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) :
+    ∃ (c : (m : ℕ) → 0 < m → Hull83.TpColorB (LS83.pairLangM3 P.E Pr.n) 3 m)
+      (hc : ∀ (n : ℕ) (κ : Cardinal.{u}),
+        Hull83.Joint (Hull83.TpSampleB (fun N _ => pairMAdmittedS2 P.E Pr.n N) 3) n c κ)
+      (hcoh : ∀ {m m' : ℕ} (hm' : 0 < m') (hm : 0 < m) (f : Fin m' ↪o Fin m),
+        c m' hm' = Hull83.tpResB 3 f (c m hm))
+      (hXs : Hull83.SubHullStrong (psiM P.E Pr.n)
+        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) (fun N _ => pairMAdmittedS2 P.E Pr.n N)),
+      ∀ (I : Type u) [LinearOrder I] [Nonempty I],
+        ∃ (J : Type u) (_ : LinearOrder J) (_ : Nonempty J)
+          (m : (((Hull83.subLangPieces (psiM P.E Pr.n)
+        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs).limit I).obj.carrier ↪[K.τ] (P.E.obj J).carrier)),
+          K.Strong m ∧ Function.Bijective m := by
+  obtain ⟨c, hc, hcoh, hXs, ch, h, hid, hcomp, hL⟩ := infra_83_pairMS2_Y_limit_of_cocone P Pr
+  refine ⟨c, hc, hcoh, hXs, fun I _ _ => ?_⟩
+  let φ : ∀ {s t : OCol83.Idx I}, s.1 ⊆ t.1 → (ch s.1.card.pred).H ↪o (ch t.1.card.pred).H :=
+    fun {s t} hst => h (placeSucc hst s.2 t.2)
+  have hcφ : ∀ {s t u : OCol83.Idx I} (h1 : s.1 ⊆ t.1) (h2 : t.1 ⊆ u.1) (x : (ch s.1.card.pred).H),
+      φ (h1.trans h2) x = φ h2 (φ h1 x) := by
+    intro s t u h1 h2 x
+    show h (placeSucc (h1.trans h2) s.2 u.2) x = _
+    rw [placeSucc_trans h1 h2 s.2 t.2 u.2]
+    exact hcomp _ _ x
+  have hiφ : ∀ (s : OCol83.Idx I) (x : (ch s.1.card.pred).H), φ (Finset.Subset.refl s.1) x = x := by
+    intro s x
+    show h (placeSucc (Finset.Subset.refl s.1) s.2 s.2) x = x
+    rw [placeSucc_refl s.1 s.2]
+    exact hid _ x
+  obtain ⟨m, hm, hb⟩ := hL I (OCol83.Col φ hcφ) (fun s => OCol83.iota φ hcφ hiφ s)
+    (fun {s t} hst => OCol83.iota_compat φ hcφ hiφ hst) (fun y => OCol83.cover φ hcφ hiφ P.E y)
+  exact ⟨OCol83.Col φ hcφ, inferInstance, inferInstance, m, hm, hb⟩
+
 end AEC

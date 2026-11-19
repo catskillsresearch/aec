@@ -6157,6 +6157,24 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 107: OCol83.Col / instLinearOrderCol / iota / iota_compat / exists_common / cover."
+  },
+  {
+   "id": "infra_83_pairMS2_X_hull_eq_FJ",
+   "label": "F_X(I) ≅ F(J_I) (strong bijective) with J_I the directed colimit of the X-chart orders",
+   "section": 8,
+   "file": "OrderColimit83.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 107: pointwise-in-I identification. Remaining for the tip: naturality in I (J_I functorial, squares commute), skeleton correspondence, compatibility with X ⊆ Y."
+  },
+  {
+   "id": "infra_83_pairMS2_Y_hull_eq_FZ",
+   "label": "F_Y(I) ≅ F(Z_I) (strong bijective) with Z_I the directed colimit of the Y-chart orders",
+   "section": 8,
+   "file": "OrderColimit83.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 107: pointwise-in-I identification; remaining: naturality in I, skeleton correspondence, X ⊆ Y compatibility."
   }
  ],
  "edges": [
@@ -11492,8 +11510,18 @@
    "from": "infra_83_order_colimit",
    "to": "infra_83_Y_hull_eq_FZ",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_pairMS2_X_hull_eq_FJ",
+   "to": "infra_83_X_hull_eq_FJ",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_83_pairMS2_Y_hull_eq_FZ",
+   "to": "infra_83_Y_hull_eq_FZ",
+   "kind": "hard"
   }
  ],
- "doneCount": 617,
+ "doneCount": 619,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
