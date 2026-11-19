@@ -6328,6 +6328,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 108: infra_83_pair_template_clauses. Remaining for infra_83_lemma_8_3_full_single: MarkedPair data (mark occurrences b, realEq, realizes = SameGaloisType with P.assign, AllDominated), markMap/preserves_mark in clause (2), clause (3), and the tail T (WellFoundedLT I). | Cycle 108 (later): mark occurrences of Y_I (mark constants) added; Y-arrows carry them to those of Y_J (preserves_mark with markMap = id)."
+  },
+  {
+   "id": "infra_83_marked_pair_transport",
+   "label": "Lemma 8.3 proof (P.scheme): marked pairs are invariant under an onto arrow of the upper object (realizes with the same realEq, all-domination), MarkedPair.pushY",
+   "section": 8,
+   "file": "AEC/Section8/MarkedPairTransport.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 109: proved (infra_83_realizes_push, infra_83_relIso_push, infra_83_dominated_push, MarkedPair.pushY). Lets the template values be shown marked by identifying (X_I, Y_I, b_I) over X_I with the Lemma 8.2(1) marked pair over X_I."
   }
  ],
  "edges": [
@@ -11788,8 +11797,13 @@
    "from": "infra_83_pair_template_clauses",
    "to": "infra_83_template_from_colors",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_marked_pair_transport",
+   "to": "infra_83_lemma_8_3_full_single",
+   "kind": "hard"
   }
  ],
- "doneCount": 640,
+ "doneCount": 641,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

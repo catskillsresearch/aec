@@ -200,6 +200,7 @@ public import AEC.Section7.Lemma712Common
 public import AEC.Section7.ProductFreeLevel
 public import AEC.Section8.MarkedPair
 public import AEC.Section8.MarkedPairExists
+public import AEC.Section8.MarkedPairTransport
 public import AEC.Section8.PairIsoSingle
 public import AEC.Section8.PairPointedSingle
 public import AEC.Section8.Lemma83Single
