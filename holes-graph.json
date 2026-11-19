@@ -6265,6 +6265,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 108: item (2) in its faithful form (vertexwise inclusion transported; need not be F of an order map J_I → Z_I)."
+  },
+  {
+   "id": "infra_83_colim_card_eq",
+   "label": "Lemma 8.3 proof: colimit orders J_I, Z_I have size |I| at tail levels (|I| ≥ max(ℵ₀, LS K))",
+   "section": 8,
+   "file": "AEC/Section8/OrderColimit83.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 108: infra_83_colim_card_eq (from g_I : I ↪o J_I and #J_I ≤ #(Finset I)·ls K)."
   }
  ],
  "edges": [
@@ -11690,8 +11699,13 @@
    "from": "infra_83_XY_incl_transport",
    "to": "infra_83_pair_pieces",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_colim_card_eq",
+   "to": "infra_83_template_from_colors",
+   "kind": "hard"
   }
  ],
- "doneCount": 632,
+ "doneCount": 633,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

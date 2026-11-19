@@ -1178,4 +1178,15 @@ theorem infra_83_XY_incl_transport (E : OrderPresentation K) (FX FY : EM83.FinPi
     rw [h1, h2, ← sqY]
     exact congrArg (mY I') (congrFun (congrArg (⇑) (sqη f)) x)
 
+/-- **The colimit orders have the size of `I` at tail levels**: if `I` is infinite with
+`LS(K) ≤ |I|`, an order `J` receiving `I` (e.g. the skeleton embedding `g_I : I ↪o J_I`) with
+`|J| ≤ |Finset I| · LS(K)` (the bound in `infra_83_pairMS2_X/Y_hull_natural`) has `|J| = |I|`.
+So `F_X(I) ≅ F(J_I)` and `F_Y(I) ≅ F(Z_I)` are values of `F` at orders of size `|I|`. -/
+theorem infra_83_colim_card_eq {I J : Type u} (hI : ℵ₀ ≤ #I) (hls : ls K ≤ #I) (g : I ↪ J)
+    (hJ : #J ≤ #(Finset I) * ls K) : #J = #I := by
+  refine le_antisymm (hJ.trans ?_) (Cardinal.mk_le_of_injective g.injective)
+  have : Infinite I := Cardinal.infinite_iff.mpr hI
+  rw [Cardinal.mk_finset_of_infinite]
+  exact (mul_le_mul_right hls _).trans (Cardinal.mul_eq_self hI).le
+
 end AEC
