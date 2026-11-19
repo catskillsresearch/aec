@@ -386,4 +386,24 @@ theorem infra_83_square_extension {κ : Cardinal.{u}} {J Jp J0 Z0 : Type u} [Lin
   rw [← hfa x]
   exact (hgf ⟨i0 x, hD x⟩).symm
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+/-- **The sample's `X`-identification is bijective (proved).** In ret-sample data (`RetSampleLike`:
+`eX : F(J) → X` surjective with `F (incl (eX x)) = F(emb) x`), `eX` is also injective, since
+`F(emb)` is. So `X ≃ F(J)` as sets; the order maps `F(e₀)` of `infra_83_sample_pair_square`
+transport to maps into `X`. -/
+theorem infra_83_eX_bijective (P : SingleModelData K)
+    {Pr : StationaryPrescription K oneVertexShape P.scheme} {M : MarkedPair K oneVertexShape P.scheme Pr}
+    {J Jp : Type u} [LinearOrder J] [Nonempty J] [LinearOrder Jp] [Nonempty Jp] (emb : J ↪o Jp)
+    (eX : (P.E.obj J).carrier → ((P.scheme.asSystem M.hμ M.X).obj PUnit.unit).carrier)
+    (F : ((P.scheme.asSystem M.hμ M.Y).obj PUnit.unit).carrier → (P.E.obj Jp).carrier)
+    (hsurj : Function.Surjective eX)
+    (hF : ∀ x, F (M.incl.onVertex PUnit.unit (eX x)) = P.E.map emb x) :
+    Function.Bijective eX := by
+  refine ⟨fun x y hxy => (P.E.map emb).injective ?_, hsurj⟩
+  rw [← hF x, ← hF y, hxy]
+end
+
 end AEC
