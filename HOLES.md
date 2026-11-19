@@ -637,6 +637,7 @@ Lean: imports `Section5.Results` and `Section6.Results`. Soft paper chain after 
 | `infra_83_pairMS2_X_chart_skeleton` | Lemma 8.3 proof: X-piece maps send chart skeleton points to skeleton points, in order | [`Lemma83SampleLikeY.lean`](AEC/Section8/Lemma83SampleLikeY.lean) (**done**, cycle 107) |
 | `infra_83_pairMS2_X_chart_orderEmb` | Lemma 8.3 proof: X-piece maps induce chart order embeddings h_e with θ_e(skel p) = skel(h_e p) | [`Lemma83SampleLikeY.lean`](AEC/Section8/Lemma83SampleLikeY.lean) (**done**, cycle 107) |
 | `infra_83_labFun_natural` | Lemma 8.3 proof: label functions natural under E(f) | [`LabLang83.lean`](AEC/Section8/LabLang83.lean) (**done**, cycle 107) |
+| `infra_83_X_label_clause` | Lemma 8.3 proof: X-labels act as labFun in X-sample-like structures | [`Lemma83SampleLike.lean`](AEC/Section8/Lemma83SampleLike.lean) (**done**, cycle 107) |
 | `infra_72_mixed_level` | Lemma 7.2 last sentence (A at a smaller level than B), stated with sorry (audit) | [`Lemma72Mixed.lean`](AEC/Section7/Lemma72Mixed.lean) (open, cycle 96) |
 | `infra_82_tiedFreeMixed_base_equiv` | Mixed tied freeness under a reindexed change of base tuple | [`TiedAlong.lean`](AEC/Section8/TiedAlong.lean) (**done**, cycle 97) |
 | `infra_82_mark_tied_along_single` | Lemma 8.2(4) for `P.scheme`: tied freeness of the mark along arrows (Def 8.1 tied, cycle 97 ruling) | [`TiedAlong.lean`](AEC/Section8/TiedAlong.lean) (**done**, cycle 97) |

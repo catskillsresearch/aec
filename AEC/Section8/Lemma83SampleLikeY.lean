@@ -159,7 +159,7 @@ theorem infra_83_pairMS2_coherent_colors (P : SingleModelData K)
         (rhoM P.E Pr.n i).relabel ![(a, i), (b, i)] ∈ c m hm := by
   refine Hull83.tpB_coherent_colors_formula2 (thetaM P.E Pr.n) (rhoM P.E Pr.n) fun κ => ?_
   obtain ⟨μ, hθ, -, J, i1, i2, -, hJ, M, -, eX, -, -, ι, Jplus, i3, i4, emb, strip, hstrip, -,
-    F, -, hF, s₀, hcl, hred, hX, hchX, hY, hchY, -⟩ :=
+    F, -, hF, s₀, hcl, hred, hX, hchX, hY, hchY, -, -, hlabX⟩ :=
     infra_83_pairR_samples P Pr (κ := ℵ₀) le_rfl κ
   obtain ⟨e⟩ : Nonempty (J ≃ strip) := Cardinal.eq.mp (hJ.trans hstrip.symm)
   let str : (LS83.pairLangM3 P.E Pr.n).Structure (P.E.obj Jplus).carrier :=
@@ -180,7 +180,7 @@ theorem infra_83_pairMS2_coherent_colors (P : SingleModelData K)
       fun T _ hT => hchX T hT, fun x => Iff.rfl,
       fun f x => congrArg (fun s' => @Structure.funMap _ _ s' _ f x) hred,
       fun r x => Iff.of_eq (congrArg (fun s' => @Structure.RelMap _ _ s' _ r x) hred),
-      fun x y => Iff.rfl⟩,
+      fun x y => Iff.rfl, fun a y hy => (hlabX a y).trans (Lab83.labR_of_mem a y hy)⟩,
      J, Jplus, i1, i2, i3, i4, e₀, Equiv.refl _, ?_, ?_, fun x => Iff.rfl, ?_,
       fun f x => congrArg (fun s' => @Structure.funMap _ _ s' _ f x) hred,
       fun r x => Iff.of_eq (congrArg (fun s' => @Structure.RelMap _ _ s' _ r x) hred),
@@ -471,7 +471,7 @@ theorem pairMS2_X_coord_of (P : SingleModelData K)
               ((LS83.pairInlR P.E).comp (LS83.lsInl K))
               ((Hull83.witB hc k).v ∘ Prod.map id (fun _ : Fin 1 => (0 : Fin 3))) x' :
               (Hull83.witB hc k).M)) := by
-  obtain ⟨J, Jp, i1, i2, i3, i4, emb, g, hX, hch, hcx, hτf, hτr, hlt⟩ := (Hull83.witB hc k).mem.1.2
+  obtain ⟨J, Jp, i1, i2, i3, i4, emb, g, hX, hch, hcx, hτf, hτr, hlt, hlab⟩ := (Hull83.witB hc k).mem.1.2
   have hpt : ∀ p : Fin (k + 1) × Fin 1, ∃ j, P.E.skeleton (emb j) =
       g ((Hull83.witB hc k).v (p.1, 0)) := fun p =>
     (hcx _).1 ((thetaM_zero _ _ _).1 (Hull83.witB_realize hc hθ k p.1 0))

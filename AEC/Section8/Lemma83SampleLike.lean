@@ -50,8 +50,11 @@ def XSampleLike (E : OrderPresentation K) (n : ℕ) (N : Type u)
       g (@Structure.funMap _ _ ((tauRed E n).reduct N) k f x) = Structure.funMap f (g ∘ x)) ∧
     (∀ {k} (r : K.τ.Relations k) (x : Fin k → N),
       (@Structure.RelMap _ _ ((tauRed E n).reduct N) k r x ↔ Structure.RelMap r (g ∘ x))) ∧
-    ∀ x y, chartLtXM E n x y ↔
-      ∃ j j', j < j' ∧ E.skeleton (emb j) = g x ∧ E.skeleton (emb j') = g y
+    (∀ x y, chartLtXM E n x y ↔
+      ∃ j j', j < j' ∧ E.skeleton (emb j) = g x ∧ E.skeleton (emb j') = g y) ∧
+    ∀ {m} (a : (Lab83.labLang E).Functions m) (y : Fin m → N),
+      (∀ i, g (y i) ∈ Set.range (E.map emb)) →
+        g (xFun E n (Sum.inl (Sum.inr a)) y) = Lab83.labFun a (g ∘ y)
 
 /-- **`X_H = F(J_H)` in a sample-like structure**: the `X`-language hull of chart points is
 (through `g`) exactly `F` of its chart. -/
@@ -152,7 +155,7 @@ theorem infra_83_pairMS_coherent_colors (P : SingleModelData K)
         (thetaM P.E Pr.n i).relabel (fun _ => (a, i)) ∈ c m hm := by
   refine Hull83.tpB_coherent_colors_formula (thetaM P.E Pr.n) fun κ => ?_
   obtain ⟨μ, hθ, -, J, i1, i2, -, hJ, M, -, eX, -, -, ι, Jplus, i3, i4, emb, strip, hstrip, -,
-    F, -, -, s₀, hcl, hred, hX, hchX, -⟩ := infra_83_pairR_samples P Pr (κ := ℵ₀) le_rfl κ
+    F, -, -, s₀, hcl, hred, hX, hchX, -, -, -, -, hlabX⟩ := infra_83_pairR_samples P Pr (κ := ℵ₀) le_rfl κ
   obtain ⟨e⟩ : Nonempty (J ≃ strip) := Cardinal.eq.mp (hJ.trans hstrip.symm)
   let str : (LS83.pairLangM3 P.E Pr.n).Structure (P.E.obj Jplus).carrier :=
     @Language.sumStructure _ _ _ (@Language.sumStructure _ _ _
@@ -166,7 +169,7 @@ theorem infra_83_pairMS_coherent_colors (P : SingleModelData K)
       fun T _ hT => hchX T hT, fun x => Iff.rfl,
       fun f x => congrArg (fun s' => @Structure.funMap _ _ s' _ f x) hred,
       fun r x => Iff.of_eq (congrArg (fun s' => @Structure.RelMap _ _ s' _ r x) hred),
-      fun x y => Iff.rfl⟩,
+      fun x y => Iff.rfl, fun a y hy => (hlabX a y).trans (Lab83.labR_of_mem a y hy)⟩,
     hJ ▸ hθ, jzwBundle (fun j => P.E.skeleton (emb j)) (fun j => F (ι (P.E.skeleton j)))
       (fun j => P.E.skeleton (e j).1), fun i => ?_, fun a i => ?_⟩
   · fin_cases i

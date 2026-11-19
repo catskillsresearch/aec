@@ -68,7 +68,10 @@ theorem infra_83_pairR_samples (P : SingleModelData K)
         (∀ t : SupportTerm P.E.lab P.E.arity Jplus,
           @Language.Structure.funMap _ _ (@Language.sumStructure _ _ _
             (@Language.sumStructure _ _ _ sR (@Language.sumStructure _ _ _ (Lab83.labTStr (fun y => F (ι y))) (Lab83.repTStr (fun y => F (ι y))))) Lab83.labStr) _
-            (Sum.inr ⟨t.label, rfl⟩) (fun k => P.E.skeleton (t.pos k)) = P.E.realize t) := by
+            (Sum.inr ⟨t.label, rfl⟩) (fun k => P.E.skeleton (t.pos k)) = P.E.realize t) ∧
+        (∀ {n} (a : (Lab83.labLang P.E).Functions n) (x : Fin n → (P.E.obj Jplus).carrier),
+          @Language.Structure.funMap _ _ sR n (Sum.inl (Sum.inr a)) x =
+            Lab83.labR (Set.range (P.E.map emb)) a x) := by
   classical
   obtain ⟨μ, h1, h2, J, i1, i2, h4, hJ, M, h8, eX, h9, sX, ι, Jplus, i3, i4, emb, strip, hs, hc,
     F, sF, hF, s₀, hcl, hred, hX, -, hY, hYlab, hfull, hlabR⟩ := infra_83_pair3_samples P Pr hκ θ
@@ -77,7 +80,7 @@ theorem infra_83_pairR_samples (P : SingleModelData K)
     exact ⟨_, hF z⟩
   refine ⟨μ, h1, h2, J, i1, i2, h4, hJ, M, h8, eX, h9, sX, ι, Jplus, i3, i4, emb, strip, hs, hc,
     F, sF, hF, @Language.sumStructure _ _ _ s₀ (Lab83.repStr emb), hcl, hred, ?_, ?_, ?_, ?_,
-    fun t => hYlab t, fun t => hfull t⟩
+    fun t => hYlab t, fun t => hfull t, fun a x => hlabR a x⟩
   · intro n f x hx
     rcases f with f | f
     · exact hX f x hx

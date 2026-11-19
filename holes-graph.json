@@ -6004,6 +6004,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 107: Lab83.labFun_map."
+  },
+  {
+   "id": "infra_83_X_label_clause",
+   "label": "Lemma 8.3 proof: X-sample-like structures interpret the X-labels as Lab83.labFun through g on X (exported restricted-label identity from the pair samples; concrete samples satisfy it)",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83SampleLike.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 107: label clause added to XSampleLike; infra_83_pairR_samples now exports the restricted-label identity."
   }
  ],
  "edges": [
@@ -11224,8 +11233,13 @@
    "from": "infra_83_labFun_natural",
    "to": "infra_83_X_hull_eq_FJ",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_X_label_clause",
+   "to": "infra_83_X_hull_eq_FJ",
+   "kind": "hard"
   }
  ],
- "doneCount": 600,
+ "doneCount": 601,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
