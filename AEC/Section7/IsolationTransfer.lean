@@ -199,8 +199,7 @@ relatively isolated over `bU` (`infra_78_isolation_over_shrink`). Level hypothes
 level `μ` is closed at `σ ≥ λ` and at the descent parameter `σd ≥ θ`, and `λ` is closed at
 `infra_76_sigma2 σd` (all supplied by `infra_78_closedTail` for levels in that tail). -/
 theorem infra_78_isolation_over_A (hidx : #(uIdx ⊕ cIdx) ≤ σ)
-    (hcof : ∀ δ : (Order.succ ρ).ord.ToType, Order.IsSuccLimit δ →
-      #uIdx < (Ordinal.ToType.toOrd δ).1.cof)
+    (h5all : ∀ k : (Order.succ ρ).ord.ToType, infra_78_StageInv5 Xb (infra_78_rcObj Xb hℓel (infra_78_candS cIdx) s0 e0 k))
     (hℓρ : ℓ < ρ) (hpow : ρ ^ ℓ = ρ) (hc : #cIdx ≤ ℓ) (h5seed : infra_78_StageInv5 Xb s0)
     (hS0 : ∃ y, (Sum.inr y : μ.ord.ToType ⊕ μ.ord.ToType) ∈ s0.e.R) (h0 : #s0.e.R ≤ ρ)
     (hseed : infra_78_PairClosed ρ hℓel (infra_78_toArr s0.hp) trivial s0.e.R)
@@ -243,10 +242,9 @@ theorem infra_78_isolation_over_A (hidx : #(uIdx ⊕ cIdx) ≤ σ)
               (Equiv.refl (uIdx ⊕ J)) := by
   classical
   have hpad := infra_78_padSeed_of_closed ρ hℓel s0 hseed
-  obtain ⟨i, hi, hiso⟩ := infra_78_isolated_stage P σ hσ hμT hρκ Xb hℓel hidx hcof hℓρ hpow hc
-    s0 e0 h5seed hS0 h0 hpad
-  have h5 := infra_78_rc_inv5_all P σ hσ hμT hρκ Xb hℓel (infra_78_candS cIdx) s0 e0 hidx hcof
-    h5seed
+  obtain ⟨i, hi, hiso⟩ := infra_78_isolated_stage P σ hσ hμT hρκ Xb hℓel hidx hℓρ hpow hc
+    s0 e0 h5seed h5all (hu.trans (((Order.le_succ θ).trans hθℓ).trans hℓρ.le)) hS0 h0 hpad
+  have h5 := h5all
   refine ⟨i, hi, fun s₀ hs₀ hs₀l hb => ?_⟩
   obtain ⟨A, U, jA, jU, gu, hjA, hjU, hgu, hsq, hs0, hTA, hTU, hfree⟩ :=
     infra_78_theta_shrink P σ hσ hμT hρκ Xb hℓel (infra_78_candS cIdx) s0 e0 hidx h5 hℓκ hℓρ hpow

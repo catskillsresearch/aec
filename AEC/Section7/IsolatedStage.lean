@@ -276,11 +276,11 @@ stage `i` with `cf(i) > λ` has every list `d : cIdx → S_i` relatively isolate
 (`infra_78_stationary_fixed_list`); local character in the `ρ⁺`-union makes the fixed list free
 from some stage on (`infra_78_matrix_eventually_free`), a contradiction at a stationary stage. -/
 theorem infra_78_isolated_stage_core (hidx : #(uIdx ⊕ cIdx) ≤ σ)
-    (hcof : ∀ δ : (Order.succ ρ).ord.ToType, Order.IsSuccLimit δ →
-      #uIdx < (Ordinal.ToType.toOrd δ).1.cof)
     (hℓρ : ℓ < ρ) (hpow : ρ ^ ℓ = ρ) (hc : #cIdx ≤ ℓ)
     (s0 : Infra78Stage P (Tail.mem (infra_73_tail P σ hσ) hμT) (Infra78MarkData μ uIdx))
     (e0 : Infra78MarkData μ uIdx) (h5seed : infra_78_StageInv5 Xb s0)
+    (h5all : ∀ k : (Order.succ ρ).ord.ToType, infra_78_StageInv5 Xb (infra_78_rcObj Xb hℓel (infra_78_candS cIdx) s0 e0 k))
+    (huρ : #uIdx ≤ ρ)
     (hS0 : ∃ y, (Sum.inr y : μ.ord.ToType ⊕ μ.ord.ToType) ∈ s0.e.R) (h0 : #s0.e.R ≤ ρ) :
     ∃ i : (Order.succ ρ).ord.ToType, ℓ < Order.cof (Set.Iio i) ∧
       ∀ d : cIdx → μ.ord.ToType,
@@ -316,8 +316,8 @@ theorem infra_78_isolated_stage_core (hidx : #(uIdx ⊕ cIdx) ≤ σ)
           (Equiv.refl _) := by
     intro i hi
     have hcov : i ⋖ Order.succ i := Order.covBy_succ_of_not_isMax (infra_78_stage_not_isMax hρ i)
-    obtain ⟨hX, hA | ⟨d, hdS, -, hnf⟩⟩ := infra_78_rc_failing_list P σ hσ hμT hρκ Xb hℓel hidx hcof
-      s0 e0 h5seed hS0 hcov
+    obtain ⟨hX, hA | ⟨d, hdS, -, hnf⟩⟩ := infra_78_rc_failing_list P σ hσ hμT hρκ Xb hℓel hidx
+      s0 e0 h5seed h5all hS0 hcov
     · exact absurd ⟨i, hi, hA⟩ hne
     · exact ⟨d, hdS, hX, hnf⟩
   have hsop := infra_78_succOp_stageArr Xb (infra_78_rcl ρ hℓel) (infra_78_candS (ι := (Order.succ ρ).ord.ToType) (κ := μ) (uIdx := uIdx) (P := P) (hκ := Tail.mem (infra_73_tail P σ hσ) hμT) cIdx)
@@ -370,7 +370,7 @@ theorem infra_78_isolated_stage_core (hidx : #(uIdx ⊕ cIdx) ≤ σ)
     (fun i hi => ⟨(F i).1, (hF i hi).1, rfl, (hF i hi).2.1⟩)
   dsimp only at hj'
   subst hj'
-  have hu : #uIdx ≤ ρ := infra_78_lt_stage_cof_le i0 (hcof i0 (infra_78_highcof_limit hℓ hi0))
+  have hu : #uIdx ≤ ρ := huρ
   have hIρ : #(uIdx ⊕ cIdx) ≤ ρ := by
     rw [Cardinal.mk_sum, Cardinal.lift_id, Cardinal.lift_id]
     exact Cardinal.add_le_of_le hρ hu (hc.trans hℓρ.le)
@@ -576,11 +576,11 @@ for EVERY index type `J` with `|J| ≤ θ` (including `J = ∅`) and every `c : 
 `(b_i, c)` is relatively isolated over `b_i`. Shorter lists are padded with a point `p_i(x_i) ∈ S_i`
 and projected back (`infra_78_isolated_of_pad`, injective reindexing only). -/
 theorem infra_78_isolated_stage (hidx : #(uIdx ⊕ cIdx) ≤ σ)
-    (hcof : ∀ δ : (Order.succ ρ).ord.ToType, Order.IsSuccLimit δ →
-      #uIdx < (Ordinal.ToType.toOrd δ).1.cof)
     (hℓρ : ℓ < ρ) (hpow : ρ ^ ℓ = ρ) (hc : #cIdx ≤ ℓ)
     (s0 : Infra78Stage P (Tail.mem (infra_73_tail P σ hσ) hμT) (Infra78MarkData μ uIdx))
     (e0 : Infra78MarkData μ uIdx) (h5seed : infra_78_StageInv5 Xb s0)
+    (h5all : ∀ k : (Order.succ ρ).ord.ToType, infra_78_StageInv5 Xb (infra_78_rcObj Xb hℓel (infra_78_candS cIdx) s0 e0 k))
+    (huρ : #uIdx ≤ ρ)
     (hS0 : ∃ y, (Sum.inr y : μ.ord.ToType ⊕ μ.ord.ToType) ∈ s0.e.R) (h0 : #s0.e.R ≤ ρ)
     (hpad : ∃ x, (Sum.inr (s0.p x) : μ.ord.ToType ⊕ μ.ord.ToType) ∈ s0.e.R) :
     ∃ i : (Order.succ ρ).ord.ToType, ℓ < Order.cof (Set.Iio i) ∧
@@ -592,8 +592,8 @@ theorem infra_78_isolated_stage (hidx : #(uIdx ⊕ cIdx) ≤ σ)
             (fun x => ⟨PUnit.unit, c x⟩)))
           (Equiv.refl (uIdx ⊕ J)) := by
   classical
-  obtain ⟨i, hi, hiso⟩ := infra_78_isolated_stage_core P σ hσ hμT hρκ Xb hℓel hidx hcof hℓρ hpow hc
-    s0 e0 h5seed hS0 h0
+  obtain ⟨i, hi, hiso⟩ := infra_78_isolated_stage_core P σ hσ hμT hρκ Xb hℓel hidx hℓρ hpow hc
+    s0 e0 h5seed h5all huρ hS0 h0
   refine ⟨i, hi, fun J hJ c hcS => ?_⟩
   obtain ⟨sJ⟩ := (Cardinal.le_def J cIdx).1 hJ
   obtain ⟨x0, hx0⟩ := infra_78_rc_padPoint hρκ Xb hℓel (infra_78_candS cIdx) s0 e0 hpad i

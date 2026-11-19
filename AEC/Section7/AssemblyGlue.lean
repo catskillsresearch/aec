@@ -60,7 +60,9 @@ theorem infra_78_matrix_assembly_level (P : SingleModelData K) :
   have hcof : ∀ δ : (Order.succ ρ).ord.ToType, Order.IsSuccLimit δ →
       #p.idx < (Ordinal.ToType.toOrd δ).1.cof := fun δ hδ => infra_78_finite_lt_stage_cof δ hδ
   obtain ⟨i, -, hiso⟩ := infra_78_isolation_over_A P μ hμInf hκT (uIdx := p.idx)
-    (cIdx := θ.ord.ToType) hρκ X0 hel s0 s0.e hidx hcof hlρ hpow hc h5seed hS0 h0 hclosed hlκ
+    (cIdx := θ.ord.ToType) hρκ X0 hel s0 s0.e hidx
+    (infra_78_rc_inv5_all P μ hμInf hκT hρκ X0 hel (infra_78_candS θ.ord.ToType) s0 s0.e hidx hcof
+      h5seed) hlρ hpow hc h5seed hS0 h0 hclosed hlκ
     le_rfl hθ hθsucc hidxθ (Cardinal.mk_ord_toType θ).ge θ hθ le_rfl hlT2 hκTθ
   obtain ⟨i0, -, hi0⟩ := (wellFounded_lt (α := (Order.succ ρ).ord.ToType)).has_min Set.univ
     ⟨i, trivial⟩

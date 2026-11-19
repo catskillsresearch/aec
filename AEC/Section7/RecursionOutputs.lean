@@ -388,10 +388,9 @@ include hρκ in
 the `S`-part candidates: `infra_78_opMatrix_failing_list` with its hypotheses ((5) at the stage,
 an `S`-list) discharged by `infra_78_rc_inv5_all` and `infra_78_rc_S_nonempty`. -/
 theorem infra_78_rc_failing_list {cIdx : Type u} (hidx : #(uIdx ⊕ cIdx) ≤ σ)
-    (hcof : ∀ δ : (Order.succ ρ).ord.ToType, Order.IsSuccLimit δ →
-      #uIdx < (Ordinal.ToType.toOrd δ).1.cof)
     (s0 : Infra78Stage P (Tail.mem (infra_73_tail P σ hσ) hμT) (Infra78MarkData μ uIdx))
     (e0 : Infra78MarkData μ uIdx) (h5seed : infra_78_StageInv5 Xb s0)
+    (h5all : ∀ k : (Order.succ ρ).ord.ToType, infra_78_StageInv5 Xb (infra_78_rcObj Xb hℓel (infra_78_candS cIdx) s0 e0 k))
     (hS0 : ∃ y, (Sum.inr y : μ.ord.ToType ⊕ μ.ord.ToType) ∈ s0.e.R)
     {β k : (Order.succ ρ).ord.ToType} (hβ : β ⋖ k) :
     let c := infra_78_pcObj s0 (infra_78_succOp Xb (infra_78_rcl ρ hℓel) (infra_78_candS cIdx)) (infra_78_limMarkE e0)
@@ -415,7 +414,7 @@ theorem infra_78_rc_failing_list {cIdx : Type u} (hidx : #(uIdx ⊕ cIdx) ≤ σ
               Occurrence K oneVertexShape (P.scheme.asSystem _ (c k).Y)))) (Equiv.refl _) := by
   obtain ⟨x, hx⟩ := infra_78_rc_S_nonempty hρκ Xb hℓel (infra_78_candS cIdx) s0 e0 hS0 β
   exact infra_78_opMatrix_failing_list P σ hσ hμT hρκ Xb (infra_78_rcl ρ hℓel) hidx s0 e0 hβ
-    (infra_78_rc_inv5_all P σ hσ hμT hρκ Xb hℓel (infra_78_candS cIdx) s0 e0 hidx hcof h5seed β)
+    (h5all β)
     (infra_78_exists_Slist _ hx)
 
 end Inv5All
