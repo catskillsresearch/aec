@@ -7741,6 +7741,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 244: proved."
+  },
+  {
+   "id": "infra_83_template_arrow_of_chain_inv",
+   "label": "Template arrow (full_single_of_template_arrows hypothesis) from nested-list chain data where step realizations are needed only along an invariant Inv that holds for every first-step arrow over X carrying m to b' and is re-established by each Prop 7.5(1) step",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PieceMatch.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 245: proved."
   }
  ],
  "edges": [
@@ -14011,8 +14020,13 @@
    "from": "infra_83_arrow_of_dominated_chain_inv",
    "to": "infra_83_arity_removal",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_template_arrow_of_chain_inv",
+   "to": "infra_83_arity_removal",
+   "kind": "hard"
   }
  ],
- "doneCount": 791,
+ "doneCount": 792,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

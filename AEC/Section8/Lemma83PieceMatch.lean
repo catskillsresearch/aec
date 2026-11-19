@@ -2979,4 +2979,67 @@ theorem infra_83_arrow_of_dominated_chain_inv (P : SingleModelData K) {μ : Card
   exact ⟨F, hF 0, fun n => by rw [hF n]; exact (G n).2⟩
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+set_option maxHeartbeats 1600000 in
+/-- **Template arrow from a dominated chain with an invariant (proved).** As
+`infra_83_template_arrow_of_chain`, but the step realizations are only required along arrows
+satisfying an invariant `Inv` that holds for every Prop 7.5(1) first-step arrow over `X`
+carrying `m` to `b'` and is re-established by each step. This is the form the paper's
+nested-list argument supplies (realize each list over the previous assignment). -/
+theorem infra_83_template_arrow_of_chain_inv (P : SingleModelData K) {μ : Cardinal.{u}}
+    (hμ : μ ∈ P.eligible) (X Y V : P.scheme.Object μ hμ) (A : ℕ → P.scheme.Object μ hμ)
+    (incl : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ Y))
+    (a : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ (A 0)))
+    (s : ∀ n, SystemArrow K oneVertexShape (P.scheme.asSystem hμ (A n))
+      (P.scheme.asSystem hμ (A (n + 1))))
+    (e : ∀ n, SystemArrow K oneVertexShape (P.scheme.asSystem hμ (A n)) (P.scheme.asSystem hμ Y))
+    (hae : SystemArrow.comp a (e 0) = incl)
+    (hes : ∀ n, SystemArrow.comp (s n) (e (n + 1)) = e n)
+    (hcover : ∀ x : ((P.scheme.asSystem hμ Y).obj PUnit.unit).carrier,
+      ∃ n y, (e n).onVertex PUnit.unit y = x)
+    {bIdx : Type u} (m : bIdx → Occurrence K oneVertexShape (P.scheme.asSystem hμ (A 0)))
+    (mk : bIdx → Occurrence K oneVertexShape (P.scheme.asSystem hμ Y))
+    (hm : ∀ i, (e 0).mapOcc (m i) = mk i) (hbc : #bIdx < μ)
+    (hDm : AllDominated a trivial bIdx m)
+    {cIdx : ℕ → Type u}
+    (c : ∀ n, cIdx n → Occurrence K oneVertexShape (P.scheme.asSystem hμ (A (n + 1))))
+    (hc : ∀ n, #(cIdx n) < μ)
+    (hD : ∀ n, AllDominated (s n) trivial (cIdx n) (c n))
+    (Inv : ∀ n, SystemArrow K oneVertexShape (P.scheme.asSystem hμ (A n))
+      (P.scheme.asSystem hμ V) → Prop)
+    (hreal : ∀ n (g : SystemArrow K oneVertexShape (P.scheme.asSystem hμ (A n))
+        (P.scheme.asSystem hμ V)), Inv n g →
+      ∃ c' : cIdx n → Occurrence K oneVertexShape (P.scheme.asSystem hμ V),
+        SameGaloisType (asTuple (s n) trivial (c n)) (asTuple g trivial c')
+          (Equiv.refl _) (Equiv.refl _) ∧
+        ∀ g' : SystemArrow K oneVertexShape (P.scheme.asSystem hμ (A (n + 1)))
+            (P.scheme.asSystem hμ V),
+          SystemArrow.comp (s n) g' = g → (∀ i, g'.mapOcc (c n i) = c' i) → Inv (n + 1) g')
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ V))
+    (b' : bIdx → Occurrence K oneVertexShape (P.scheme.asSystem hμ V))
+    (hS : SameGaloisType (asTuple a trivial m) (asTuple f trivial b')
+      (Equiv.refl _) (Equiv.refl _))
+    (hInv0 : ∀ g₀ : SystemArrow K oneVertexShape (P.scheme.asSystem hμ (A 0))
+        (P.scheme.asSystem hμ V),
+      SystemArrow.comp a g₀ = f → (∀ i, g₀.mapOcc (m i) = b' i) → Inv 0 g₀) :
+    ∃ h : SystemArrow K oneVertexShape (P.scheme.asSystem hμ Y) (P.scheme.asSystem hμ V),
+      SystemArrow.comp incl h = f ∧ ∀ i, h.mapOcc (mk i) = b' i := by
+  obtain ⟨g₀, -, hg₀, hg₀m⟩ := infra_75_embed hμ X (A 0) V a trivial f trivial m b' hbc hS hDm
+  have hg₀m' : ∀ i, g₀.mapOcc (m i) = b' i := fun i => by
+    apply Sigma.ext
+    · exact Subsingleton.elim _ _
+    · exact heq_of_eq (hg₀m i)
+  obtain ⟨F, hF, -⟩ := infra_83_arrow_of_dominated_chain_inv P hμ Y V A s e hes hcover c hc hD
+    Inv hreal g₀ (hInv0 g₀ hg₀ hg₀m')
+  refine ⟨F, ?_, fun i => ?_⟩
+  · rw [← hae, SystemArrow.comp_assoc, hF, hg₀]
+  · rw [← hm i, ← SystemArrow.mapOcc_comp, hF]
+    apply Sigma.ext
+    · exact Subsingleton.elim _ _
+    · exact heq_of_eq (hg₀m i)
+end
+
 end AEC
