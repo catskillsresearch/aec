@@ -7381,6 +7381,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 204: proved."
+  },
+  {
+   "id": "infra_83_piece_with_tuple",
+   "label": "Template piece holding a preimage of a small tuple: for incl' : X' -> Y' and at most nu occurrences w of Y' (e.g. seqJoint b c), a piece X' <= Y_u <= Y' and a tuple d of Y_u with j(d) = w",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PieceMatch.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 205: proved."
   }
  ],
  "edges": [
@@ -13451,8 +13460,13 @@
    "from": "infra_83_piece_object",
    "to": "infra_83_XH_sort",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_piece_with_tuple",
+   "to": "infra_83_XH_sort",
+   "kind": "hard"
   }
  ],
- "doneCount": 751,
+ "doneCount": 752,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

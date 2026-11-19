@@ -1309,4 +1309,32 @@ theorem infra_83_piece_object (P : SingleModelData K) {ν : Cardinal.{u}} {hν :
   exact hh0 x
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+/-- **A template piece holding a preimage of a small tuple (proved).** For `incl' : X' → Y'` at
+level `ν` and a tuple `w` of at most `ν` occurrences of `Y'` (e.g. `seqJoint b c` for the mark `b`
+and a bounded `c`), there are a piece `X' ≤ Y_u ≤ Y'` (`inclu ; j = incl'`) and a tuple `d` of
+`Y_u` with `j(d) = w`: the piece and preimage clauses of `infra_83_marked_of_piece_data`
+(`infra_83_piece_object`). -/
+theorem infra_83_piece_with_tuple (P : SingleModelData K) {ν : Cardinal.{u}} {hν : ν ∈ P.eligible}
+    {X' Y' : P.scheme.Object ν hν}
+    (incl' : SystemArrow K oneVertexShape (P.scheme.asSystem hν X') (P.scheme.asSystem hν Y'))
+    {idx : Type u} (w : idx → Occurrence K oneVertexShape (P.scheme.asSystem hν Y'))
+    (hidx : #idx ≤ ν) :
+    ∃ (Yu : P.scheme.Object ν hν)
+      (inclu : SystemArrow K oneVertexShape (P.scheme.asSystem hν X') (P.scheme.asSystem hν Yu))
+      (j : SystemArrow K oneVertexShape (P.scheme.asSystem hν Yu) (P.scheme.asSystem hν Y'))
+      (d : idx → Occurrence K oneVertexShape (P.scheme.asSystem hν Yu)),
+      SystemArrow.comp inclu j = incl' ∧ ∀ i, j.mapOcc (d i) = w i := by
+  obtain ⟨Yu, inclu, j, hj, hcov⟩ :=
+    infra_83_piece_object P incl' (fun i => (w i).2) hidx
+  choose y hy using hcov
+  refine ⟨Yu, inclu, j, fun i => ⟨PUnit.unit, y i⟩, hj, fun i => ?_⟩
+  apply Sigma.ext
+  · exact Subsingleton.elim _ _
+  · exact heq_of_eq (hy i)
+end
+
 end AEC
