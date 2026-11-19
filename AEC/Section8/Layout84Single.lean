@@ -2,6 +2,7 @@ module
 
 public import AEC.Section8.Lemma84Single
 public import AEC.Section7.RelativeIsolationTransfer
+public import AEC.Section8.ReflectSingle
 
 @[expose] public section
 
@@ -96,5 +97,41 @@ theorem infra_84_layout_diagrams_single (P : SingleModelData K)
     rw [Cardinal.mk_sum, Cardinal.lift_id, Cardinal.lift_id]
     exact (add_lt_of_lt hμ0.le hU hBlt).trans hνμ
   exact infra_84_layout_diagrams_of_type P hμ C Tt Tt' cT cT' hcT hcT' _ _ hκ (htypes ZU hU) ZC hC
+
+/-- **Corollary 6.7 strip step for Lemma 8.4, diagram level (P.scheme).** English (Lemma 8.4
+proof): "Corollary 6.7 then embeds A_{H'} into C over this copy of V." For `A` at level `ν`, an
+object `B` at level `ν` over `A` (the strip object `A_{H'}`) and `C` at level `μ > ν` over `A`:
+every list `Y` of `B` of length `< μ` (in particular all of `B`) is realized inside `C` over any
+bounded list `Z` of `A`, with the same joint diagram. Mixed saturation pulled inside `C`
+(`infra_82_saturate_inside`). -/
+theorem infra_84_strip_realize_single (P : SingleModelData K) {ν μ : Cardinal.{u}}
+    (hν : ν ∈ P.eligible) (hμ : μ ∈ P.eligible) (hνμ : ν < μ)
+    (A B : P.scheme.Object ν hν) (C : P.scheme.Object μ hμ)
+    (aB : SystemArrow K oneVertexShape (P.scheme.asSystem hν A) (P.scheme.asSystem hν B))
+    (aC : SystemArrow K oneVertexShape (P.scheme.asSystem hν A) (P.scheme.asSystem hμ C))
+    (haB : P.scheme.permitted (X := A) (Y := B) aB)
+    (haC : P.scheme.permitted (X := A) (Y := C) aC)
+    {α β : Type u} (Z : α → Occurrence K oneVertexShape (P.scheme.asSystem hν A))
+    (Y : β → Occurrence K oneVertexShape (P.scheme.asSystem hν B)) (hα : #α < ν) (hβ : #β < μ) :
+    ∃ ys : β → Occurrence K oneVertexShape (P.scheme.asSystem hμ C),
+      P.scheme.DiagramEq (X := C) (Y := B)
+        (Sum.elim (fun i => aC.mapOcc (Z i)) ys) (Sum.elim (fun i => aB.mapOcc (Z i)) Y) := by
+  have hαμ : #α < μ := hα.trans hνμ
+  have d1 := P.scheme.diagram_preserved A C aC haC Z hα hαμ
+  have d2 := P.scheme.diagram_preserved A B aB haB Z hα hα
+  have hEq : P.scheme.DiagramEq (X := C) (Y := B) (fun i => aC.mapOcc (Z i))
+      (fun i => aB.mapOcc (Z i)) :=
+    P.scheme.diagram_trans _ _ _ _ _ _ (P.scheme.diagram_symm _ _ _ _ d1) d2
+  have hsat : IsSaturated P.scheme := P.isSaturated
+  have hαβ : #(α ⊕ β) < μ := by
+    rw [Cardinal.mk_sum, Cardinal.lift_id, Cardinal.lift_id]
+    exact add_lt_of_lt (P.aleph0_le hμ) hαμ hβ
+  obtain ⟨ws, hws, hD⟩ := infra_82_saturate_inside C B (fun i => aC.mapOcc (Z i))
+    (fun i => aB.mapOcc (Z i)) (Sum.elim (fun i => aB.mapOcc (Z i)) Y) hαμ hβ hαβ
+    (fun _ => rfl) hEq
+  refine ⟨fun j => ws (Sum.inr j), infra_73_diagramEq_of_eq hD ?_ (fun _ => rfl)⟩
+  intro x; rcases x with i | j
+  · exact hws i
+  · rfl
 
 end AEC

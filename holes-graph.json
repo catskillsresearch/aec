@@ -4645,6 +4645,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 100: diagram-level layout (8) with C in place of A_{H'} (A_{H'} embeds into C). U-part < nu, C-part < mu. From the Lemma 8.4 hypothesis 'corresponding bounded tuples of U, U' jointly with the marks have equal types over C' via Theorem 6.6. Axioms clean."
+  },
+  {
+   "id": "infra_84_strip_realize_single",
+   "label": "Cor 6.7 strip step for Lemma 8.4 (P.scheme), diagram level: lists of a level-nu object over A (A_{H'}, all of it) realized inside C over A",
+   "section": 8,
+   "file": "AEC/Section8/Layout84Single.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 100: English 'Corollary 6.7 then embeds A_{H'} into C over this copy of V'. Diagram-level form: every list of B (level nu, over A) of length < mu realized in C over a bounded list of A with the same joint diagram; via diagram_preserved + infra_82_saturate_inside. The companion step 'include the questioned tuple over A in a level-nu V <= C' is infra_72_level_hull. Axioms clean."
   }
  ],
  "edges": [
@@ -8965,8 +8974,13 @@
    "from": "infra_84_layout_diagrams_single",
    "to": "infra_84_layout_amalgam",
    "kind": "hard"
+  },
+  {
+   "from": "infra_84_strip_realize_single",
+   "to": "infra_84_layout_amalgam",
+   "kind": "hard"
   }
  ],
- "doneCount": 461,
+ "doneCount": 462,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

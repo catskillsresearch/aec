@@ -486,6 +486,7 @@ Lean: imports `Section5.Results` and `Section6.Results`. Soft paper chain after 
 | `infra_84_layout_amalgam` | Lemma 8.4 (P.scheme): natural layout (8), common object of U and C in T, T' | [`Lemma84Single.lean`](AEC/Section8/Lemma84Single.lean) (open, cycle 99) |
 | `infra_84_layout_diagrams_of_type` | Layout (8), diagram level: equal types over C give equal bounded joint diagrams | [`Layout84Single.lean`](AEC/Section8/Layout84Single.lean) (**done**, cycle 100) |
 | `infra_84_layout_diagrams_single` | Layout (8) for Lemma 8.4: bounded joint diagrams of U (with mark) and C agree in T, T' | [`Layout84Single.lean`](AEC/Section8/Layout84Single.lean) (**done**, cycle 100) |
+| `infra_84_strip_realize_single` | Cor 6.7 strip step for Lemma 8.4 (diagram level): A_{H'} realized inside C over A | [`Layout84Single.lean`](AEC/Section8/Layout84Single.lean) (**done**, cycle 100) |
 | `infra_72_mixed_level` | Lemma 7.2 last sentence (A at a smaller level than B), stated with sorry (audit) | [`Lemma72Mixed.lean`](AEC/Section7/Lemma72Mixed.lean) (open, cycle 96) |
 | `infra_82_tiedFreeMixed_base_equiv` | Mixed tied freeness under a reindexed change of base tuple | [`TiedAlong.lean`](AEC/Section8/TiedAlong.lean) (**done**, cycle 97) |
 | `infra_82_mark_tied_along_single` | Lemma 8.2(4) for `P.scheme`: tied freeness of the mark along arrows (Def 8.1 tied, cycle 97 ruling) | [`TiedAlong.lean`](AEC/Section8/TiedAlong.lean) (**done**, cycle 97) |
