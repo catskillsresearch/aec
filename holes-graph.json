@@ -7642,6 +7642,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 233: proved."
+  },
+  {
+   "id": "infra_83_full_single_of_template_arrows",
+   "label": "Lemma 8.3 from the templates once, at each closed well-ordered level, Y_I maps over X_I into every all-dominated realization (V,b') of the prescribed type carrying the mark to b' up to a relabelling ULift(Fin n) = idx; Theorem 7.9 existence at closed levels supplies (V,b'), realization and all-domination pulled back. Remaining: the template arrow (constructive primeness of Y_I)",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PieceMatch.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 234: proved."
   }
  ],
  "edges": [
@@ -13857,8 +13866,13 @@
    "from": "infra_83_realizes_reindex",
    "to": "infra_83_arity_removal",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_full_single_of_template_arrows",
+   "to": "infra_83_lemma_8_3_full_single",
+   "kind": "hard"
   }
  ],
- "doneCount": 780,
+ "doneCount": 781,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

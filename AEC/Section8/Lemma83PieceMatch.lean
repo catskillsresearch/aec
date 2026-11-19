@@ -2361,4 +2361,67 @@ theorem infra_83_realizes_reindex {P : SingleModelData K} {μ : Cardinal.{u}}
   exact h
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+set_option maxHeartbeats 1600000 in
+/-- **`full_single` from template arrows into all-dominated realizations.** Lemma 8.3 follows
+once, at each closed well-ordered level, `Y_I` maps over `X_I` into every all-dominated
+realization `(V, b')` of the prescribed type, carrying the template mark to `b'` up to a fixed
+relabelling `ULift (Fin n) ≃ idx`. (Theorem 7.9 existence at closed levels supplies one such
+`(V, b')`; realization and all-domination are then pulled back to the template.) This isolates
+the remaining content of arity removal: the template arrow = constructive primeness of `Y_I`. -/
+theorem infra_83_full_single_of_template_arrows (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) :
+    ∃ (X Y : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
+        P.scheme.Object #I hI)
+      (incl : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
+        SystemArrow K oneVertexShape (P.scheme.asSystem hI (X I hI))
+          (P.scheme.asSystem hI (Y I hI)))
+      (mk : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
+        Fin Pr.n → Occurrence K oneVertexShape (P.scheme.asSystem hI (Y I hI))),
+      (∀ (I : Type u) [LinearOrder I] [WellFoundedLT I] [Nonempty I]
+          (hI : #I ∈ infra_78_closedTail P ∩ infra_615_closed P)
+          (V : P.scheme.Object #I hI.2.1)
+          (f : SystemArrow K oneVertexShape (P.scheme.asSystem hI.2.1 (X I hI.2.1))
+            (P.scheme.asSystem hI.2.1 V))
+          (b' : (Pr.assign hI.2.1 (X I hI.2.1)).idx →
+            Occurrence K oneVertexShape (P.scheme.asSystem hI.2.1 V)),
+          AllDominated f trivial _ b' →
+          SameGaloisType (Pr.assign hI.2.1 (X I hI.2.1)) (asTuple f trivial b')
+            (Equiv.refl _) (Equiv.refl _) →
+          ∃ (realEq : ULift.{u} (Fin Pr.n) ≃ (Pr.assign hI.2.1 (X I hI.2.1)).idx)
+            (h : SystemArrow K oneVertexShape (P.scheme.asSystem hI.2.1 (Y I hI.2.1))
+              (P.scheme.asSystem hI.2.1 V)),
+            SystemArrow.comp (incl I hI.2.1) h = f ∧
+            ∀ a : ULift.{u} (Fin Pr.n), h.mapOcc (mk I hI.2.1 a.down) = b' (realEq a)) →
+      Lemma83Conclusion P.scheme Pr := by
+  obtain ⟨F, X, Y, eX, eY, incl, mk, hincl, harr⟩ := infra_83_pair_template_clauses P Pr
+  refine ⟨X, Y, incl, mk, fun hS => ?_⟩
+  refine infra_83_conclusion_of_marked_values_idx P Pr F X Y eX eY incl mk hincl harr _
+    (infra_83_closed_tail P) (fun I _ _ _ hI => ?_)
+  have hfin : Finite (Pr.assign hI.2.1 (X I hI.2.1)).idx :=
+    Finite.of_equiv _ (Pr.arity hI.2.1 (X I hI.2.1)).symm
+  obtain ⟨V, f, hf, b', hD, hT⟩ := infra_79_existence_at P
+    ⟨infra_79_tail P, infra_79_retraction_pair P⟩ hI (X I hI.2.1) (Pr.assign hI.2.1 (X I hI.2.1))
+    hfin
+  obtain ⟨realEq, h, hh, hb⟩ := hS I hI V f b' hD hT
+  have hb' : (fun a : ULift.{u} (Fin Pr.n) => h.mapOcc (mk I hI.2.1 a.down)) =
+      fun a => b' (realEq a) := funext hb
+  have hr : SameGaloisType (asTuple (SystemArrow.comp (incl I hI.2.1) h) trivial
+      (fun a : ULift.{u} (Fin Pr.n) => h.mapOcc (mk I hI.2.1 a.down)))
+      (Pr.assign hI.2.1 (X I hI.2.1)) realEq (Equiv.refl _) := by
+    rw [hb', hh]
+    exact infra_83_realizes_reindex _ f b' hT realEq
+  have hd : AllDominated (SystemArrow.comp (incl I hI.2.1) h) trivial (ULift.{u} (Fin Pr.n))
+      (fun a : ULift.{u} (Fin Pr.n) => h.mapOcc (mk I hI.2.1 a.down)) := by
+    rw [hb', hh]
+    exact infra_83_dominated_reindex f realEq b' hD
+  refine ⟨ULift.{u} (Fin Pr.n), Equiv.refl _, realEq,
+    infra_83_realizes_pull P Pr (incl I hI.2.1) trivial h _ realEq hr, ?_⟩
+  exact infra_83_dominated_pull P (incl I hI.2.1) trivial h _
+    ((Cardinal.lt_aleph0_of_finite _).trans (P.aleph0_lt hI.2.1)) hd
+end
+
 end AEC
