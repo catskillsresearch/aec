@@ -47,3 +47,68 @@ theorem infra_83_pair_samples_X (P : SingleModelData K)
     fun f x hx => LS83.pair_closed P.E _ _ (fun f x hx => hX f x hx)
       (fun f x hx => Lab83.labFun_mem_range emb f x hx) f x hx, fun x => ?_⟩
   exact Lab83.map_label_value emb x
+
+/-- **Samples in the two-copy pair language** (`pairLang2`): the sublanguage `pairLang`
+(τ, LS witnesses, `ret`, labels restricted to `X`) leaves both `X = range F(emb)` and
+`Y = range F_Y` closed, its restricted labels generate `X` from the `J`-skeleton, and the second
+(full) label copy generates `L = F(J⁺)` from the `J⁺`-skeleton. -/
+theorem infra_83_pair2_samples (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) {κ : Cardinal.{u}} (hκ : ℵ₀ ≤ κ)
+    (θ : Cardinal.{u}) :
+    ∃ μ : Cardinal.{u}, θ ≤ μ ∧ κ < μ ∧
+    ∃ (J : Type u) (_ : LinearOrder J) (_ : Nonempty J), OrderSat83.OrderSaturated κ J ∧ #J = μ ∧
+    ∃ M : MarkedPair K oneVertexShape P.scheme Pr, M.μ = μ ∧
+      ∃ eX : Language.Embedding K.τ (P.E.obj J).carrier
+          ((P.scheme.asSystem M.hμ M.X).obj PUnit.unit).carrier,
+        Function.Bijective eX ∧ K.Strong eX ∧
+        (∀ (Z : Type u) [LinearOrder Z] [Nonempty Z], #Z = μ →
+          Nonempty ((P.E.obj Z).carrier ≃[K.τ]
+            ((P.scheme.asSystem M.hμ M.Y).obj PUnit.unit).carrier)) ∧
+      ∃ (Jplus : Type u) (_ : LinearOrder Jplus) (_ : Nonempty Jplus) (emb : J ↪o Jplus)
+        (strip : Set Jplus), #strip = μ ∧ IsConvexRegion strip ∧
+      ∃ (F : Language.Embedding K.τ ((P.scheme.asSystem M.hμ M.Y).obj PUnit.unit).carrier
+          (P.E.obj Jplus).carrier),
+        K.Strong F ∧ (∀ x, F (M.incl.onVertex PUnit.unit (eX x)) = P.E.map emb x) ∧
+      ∃ s₀ : (LS83.pairLang P.E).Structure (P.E.obj Jplus).carrier,
+        @LS83.LSClosed K _ (@Language.LHom.reduct _ _ (LS83.pairInl P.E) _ s₀) ∧
+        @Language.LHom.reduct _ _ ((LS83.pairInl P.E).comp (LS83.lsInl K)) _ s₀ =
+          (P.E.obj Jplus).str ∧
+        (∀ {n} (f : (LS83.pairLang P.E).Functions n) (x : Fin n → (P.E.obj Jplus).carrier),
+          (∀ i, x i ∈ Set.range (P.E.map emb)) →
+            @Language.Structure.funMap _ _ s₀ n f x ∈ Set.range (P.E.map emb)) ∧
+        (∀ {n} (f : (LS83.pairLang P.E).Functions n) (x : Fin n → (P.E.obj Jplus).carrier),
+          (∀ i, x i ∈ Set.range F) → @Language.Structure.funMap _ _ s₀ n f x ∈ Set.range F) ∧
+        (∀ x : (P.E.obj J).carrier, ∃ (n : ℕ) (a : (Lab83.labLang P.E).Functions n)
+          (p : Fin n → J), StrictMono p ∧
+          @Language.Structure.funMap _ _ s₀ n (Sum.inr a) (fun k => P.E.skeleton (emb (p k))) =
+            P.E.map emb x) ∧
+        (∀ t : SupportTerm P.E.lab P.E.arity Jplus,
+          @Language.Structure.funMap _ _ (@Language.sumStructure _ _ _ s₀ Lab83.labStr) _
+            (Sum.inr ⟨t.label, rfl⟩) (fun k => P.E.skeleton (t.pos k)) = P.E.realize t) := by
+  classical
+  obtain ⟨μ, h1, h2, J, i1, i2, h4, hJ, M, h8, eX, h9, sX, hZ, Jplus, i3, i4, emb, strip, hs, hc,
+    F, sF, hF, R, code, str, g, -, hcl, hred, hX, hY, -⟩ := infra_83_ret_samples P Pr hκ θ
+  let X : Set (P.E.obj Jplus).carrier := Set.range (P.E.map emb)
+  have hXY : X ⊆ Set.range F := by
+    rintro _ ⟨z, rfl⟩
+    exact ⟨_, hF z⟩
+  let s₀ : (LS83.pairLang P.E).Structure (P.E.obj Jplus).carrier :=
+    @Language.sumStructure _ _ _ (LS83.retExp str g) (Lab83.labRStr X)
+  have hlabX : ∀ {n} (a : (Lab83.labLang P.E).Functions n) (x : Fin n → (P.E.obj Jplus).carrier),
+      (∀ k, x k ∈ X) → Lab83.labFun a x ∈ X := fun a x hx => Lab83.labFun_mem_range emb a x hx
+  refine ⟨μ, h1, h2, J, i1, i2, h4, hJ, M, h8, eX, h9, sX, hZ, Jplus, i3, i4, emb, strip, hs, hc,
+    F, sF, hF, s₀, hcl, hred,
+    fun f x hx => LS83.pair_closed P.E (LS83.retExp str g) (Lab83.labRStr X) hX
+      (fun a x hx => Lab83.labR_mem hlabX le_rfl a x hx) f x hx,
+    fun f x hx => LS83.pair_closed P.E (LS83.retExp str g) (Lab83.labRStr X) hY
+      (fun a x hx => Lab83.labR_mem hlabX hXY a x hx) f x hx, fun x => ?_, fun t => ?_⟩
+  · obtain ⟨n, a, p, hp, hv⟩ := Lab83.map_label_value (E := P.E) emb x
+    refine ⟨n, a, p, hp, ?_⟩
+    show Lab83.labR X a _ = _
+    rw [Lab83.labR_of_mem a (fun k => P.E.skeleton (emb (p k)))
+      (fun k => (⟨P.E.skeleton (p k), P.E.skeleton_natural emb (p k)⟩ :
+        P.E.skeleton (emb (p k)) ∈ X))]
+    exact hv
+  · exact Lab83.labFun_skeleton t
+
+end AEC

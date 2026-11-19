@@ -5590,6 +5590,24 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 104: Lab83.labT, labT_mem_range, labT_skeleton. Input for the Y-sort label copy (remaining item (1) of infra_83_pair_sample_family). Axioms clean. | Cycle 104: + labT_mem_range_map (e(E(f)(E(J))) closed under labels transported along e; X ≅ F(J) inside Y ≅ F(Z) when the iso respects J ↪ Z)."
+  },
+  {
+   "id": "infra_83_pair2_samples",
+   "label": "Lemma 8.3 proof: samples in the two-copy pair language (sublanguage τ+LS+ret+labels restricted to X keeps X and Y closed, restricted labels generate X from the J-skeleton; full label copy generates L from the J⁺-skeleton)",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PairSamples.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 105: infra_83_pair2_samples, Lab83.labR (labels restricted to X), labR_mem, labR_of_mem. Y-labels transported along Y ≅ F(Z) respecting J ↪ Z are NOT used: the samples' iso Y ≅ F(Z) is not known to respect X ≅ F(J) (tracked as infra_83_Y_iso_over_X). Axioms clean."
+  },
+  {
+   "id": "infra_83_Y_iso_over_X",
+   "label": "Lemma 8.3 proof: choose the iso Y ≅ F(Z) over X ≅ F(J), i.e. ι ∘ F(J ↪ Z) = incl ∘ eX, so Y-labels transported along ι keep X closed and Y_H ≅ F(Z_H)",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PairSamples.lean",
+   "status": "open",
+   "blocker": null,
+   "detail": "Cycle 105 split: needed for the faithful Y_H ≅ F(Z_H); the current samples only give some iso F(Z) ≅ Y (categoricity)."
   }
  ],
  "edges": [
@@ -10475,8 +10493,18 @@
    "from": "infra_83_label_transport",
    "to": "infra_83_pair_sample_family",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_pair2_samples",
+   "to": "infra_83_pair_sample_family",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_83_Y_iso_over_X",
+   "to": "infra_83_template_from_colors",
+   "kind": "hard"
   }
  ],
- "doneCount": 556,
+ "doneCount": 557,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

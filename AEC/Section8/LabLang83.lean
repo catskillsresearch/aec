@@ -201,5 +201,38 @@ theorem labT_mem_range_map (he : Function.Injective e) {J : Type u} [LinearOrder
 
 end Transport
 
+section Restricted
+
+open Classical in
+/-- **Labels restricted to a set `R`** (the `X`-sort copy): act as the labels on tuples from
+`R`, and return the first entry otherwise. -/
+noncomputable def labR (R : Set (E.obj I).carrier) {n : ℕ} (a : (labLang E).Functions n)
+    (x : Fin n → (E.obj I).carrier) : (E.obj I).carrier :=
+  if ∀ k, x k ∈ R then labFun a x else x ⟨0, a.2 ▸ E.arity_pos a.1⟩
+
+/-- The restricted-label structure. -/
+@[instance_reducible]
+noncomputable def labRStr (R : Set (E.obj I).carrier) : (labLang E).Structure (E.obj I).carrier where
+  funMap := fun a x => labR R a x
+  RelMap := fun r => PEmpty.elim r
+
+/-- A set containing a label-closed `R` is closed under the labels restricted to `R`. -/
+theorem labR_mem {R S : Set (E.obj I).carrier}
+    (hR : ∀ {n} (a : (labLang E).Functions n) (x : Fin n → (E.obj I).carrier),
+      (∀ k, x k ∈ R) → labFun a x ∈ R) (hRS : R ⊆ S)
+    {n : ℕ} (a : (labLang E).Functions n) (x : Fin n → (E.obj I).carrier) (hx : ∀ k, x k ∈ S) :
+    labR R a x ∈ S := by
+  unfold labR
+  split_ifs with h
+  · exact hRS (hR a x h)
+  · exact hx _
+
+theorem labR_of_mem {R : Set (E.obj I).carrier} {n : ℕ} (a : (labLang E).Functions n)
+    (x : Fin n → (E.obj I).carrier) (hx : ∀ k, x k ∈ R) : labR R a x = labFun a x := by
+  unfold labR
+  rw [if_pos hx]
+
+end Restricted
+
 end Lab83
 end AEC
