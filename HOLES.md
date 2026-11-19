@@ -436,7 +436,7 @@ Lean: imports `Section5.Results` and `Section6.Results`. Soft paper chain after 
 | `infra_8_general_calculus` | Sections 6–7 calculus for a general working scheme | `AEC/Section8/Results.lean` (blocked; needed by restated 8.2–8.5) |
 | `infra_81_prescription_iso` | Def 8.1 prescription commutes with isomorphisms | `AEC/Section8/StationaryPrescription.lean` (open; missing from `StationaryPrescription`) |
 | `infra_82_mixed_reflection` | Lemma 8.2 clause (5), mixed-level reflection | `AEC/Section8/Results.lean` (blocked; both_off for `P.scheme`) |
-| `infra_82_iso_single` | Lemma 8.2 clause (2) pair iso for `P.scheme` | `AEC/Section8/MarkedPairExists.lean` (open; next tip: base-iso invariance of AllDominated + Prop 7.5(2)) |
+| `infra_82_iso_single` | Lemma 8.2 clause (2) pair iso for `P.scheme` | [`PairIsoSingle.lean`](AEC/Section8/PairIsoSingle.lean) (**done**, cycle 95) |
 | `infra_83_lemma_8_3_single` | Lean `lemma_8_3` statement for `W := P.scheme` | [`MarkedPairExists.lean`](AEC/Section8/MarkedPairExists.lean) (**done**, cycle 94, categoricity; `lemma_8_3` itself stays open) |
 | `infra_85_lemma_8_5_single` | Lean `lemma_8_5` statement for `W := P.scheme` | [`MarkedPairExists.lean`](AEC/Section8/MarkedPairExists.lean) (**done**, cycle 94, categoricity + pair extension; audit: Lean 8.5 lacks the chain/union clause, restatement needed) |
 | `lemma_8_3` | Lemma 8.3 | `AEC/Section8/Results.lean:134` (restated, cycle 95) |

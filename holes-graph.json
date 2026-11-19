@@ -652,7 +652,7 @@
    "file": "AEC/Section8/Results.lean",
    "status": "blocked",
    "blocker": null,
-   "detail": "Cycle 95 restatement to the English (Lars ruling): hypotheses = Section 8 conventions (IsWorkingPackage W, Section8Arrows W: arrows = componentwise strong embeddings); clauses (1) marked pairs over every object, (2) base iso extends to pair iso, (3) pointed iff (base entries + tp(t,b/X) transported, markedJointOver), (4) same-level arrows preserve bounded pair orbits (PairOrbitEq, one-way as in English), (5) mixed-level preservation and reflection (iff). Blocked: proof needs the Section 6-7 calculus/isolation for a general working scheme (Lean has it only for SingleModelData; infra_8_general_calculus) and Def 8.1 'prescription commutes with isomorphisms' (not in StationaryPrescription; infra_81_prescription_iso). For W := P.scheme clause (3) needs Prop 7.5 back-and-forth on pairs; clause (5) hits both_off (infra_82_mixed_reflection). Former weaker statement proved for P.scheme as infra_82_lemma_8_2_single."
+   "detail": "Cycle 95 restatement to the English (Lars ruling): hypotheses = Section 8 conventions (IsWorkingPackage W, Section8Arrows W: arrows = componentwise strong embeddings); clauses (1) marked pairs over every object, (2) base iso extends to pair iso, (3) pointed iff (base entries + tp(t,b/X) transported, markedJointOver), (4) same-level arrows preserve bounded pair orbits (PairOrbitEq, one-way as in English), (5) mixed-level preservation and reflection (iff). Blocked: proof needs the Section 6-7 calculus/isolation for a general working scheme (Lean has it only for SingleModelData; infra_8_general_calculus) and Def 8.1 'prescription commutes with isomorphisms' (not in StationaryPrescription; infra_81_prescription_iso). For W := P.scheme clause (3) needs Prop 7.5 back-and-forth on pairs; clause (5) hits both_off (infra_82_mixed_reflection). Former weaker statement proved for P.scheme as infra_82_lemma_8_2_single. | Cycle 95: clause (1) for P.scheme = infra_82_marked_pair_exists; clause (2) for P.scheme = infra_82_iso_single (done). Next for P.scheme: clause (3) pointed iff (Prop 7.5(2) with the extra tuple t, both directions) and clause (4)."
   },
   {
    "id": "lemma_8_3",
@@ -4128,10 +4128,10 @@
    "id": "infra_82_iso_single",
    "label": "Lemma 8.2(2) pair iso for P.scheme",
    "section": 8,
-   "file": "AEC/Section8/MarkedPairExists.lean",
-   "status": "open",
+   "file": "AEC/Section8/PairIsoSingle.lean",
+   "status": "done",
    "blocker": null,
-   "detail": "Next tip (cycle 95). Restated lemma_8_2 clause (2) for W := P.scheme: a bijective base arrow e : M.X -> N.X extends to a MarkedArrow with onY vertexwise bijective. Route: levels equal (cardinality); build the inverse arrow e^-1 (permitted is True); prove AllDominated / IsRelativelyIsolated invariance under a base isomorphism (transport tests through e^-1, restrict-compose identity; two-sided, no one-way diagram_restrict converse); reindex N's mark along tau (as in infra_82_pair_extend_same_level); apply proposition_7_5 clause 2 (sigma := aleph0, intersect its tail) for the structural iso phi; IsStructIso -> bijective; mark preservation via the oneVertexShape occurrence trick. Clause (1) for P.scheme is already infra_82_marked_pair_exists (identical shape). Clause (3) then needs the pointed version (Prop 7.5 b&f with extra tuple), clause (4) the same; clause (5) is infra_82_mixed_reflection (both_off)."
+   "detail": "DONE cycle 95. infra_82_iso_single: on the Proposition 7.5 tail (sigma = aleph0), every bijective base arrow e : M.X -> N.X of marked pairs for W := P.scheme extends to a MarkedArrow with onX = e and onY vertexwise bijective (restated lemma_8_2 clause (2) for the Prop 5.6 scheme). New sorry-free helpers: infra_82_inverse_arrow (AEC coherence), infra_82_isolated_base_iso (relative isolation along a two-sided base iso), infra_82_isolated_reindex_mark (mark reindexing), infra_82_systemArrow_ext, infra_82_restrict_incl_eq; then proposition_7_5 clause 2. Axioms: propext, Classical.choice, Quot.sound."
   }
  ],
  "edges": [
@@ -8159,6 +8159,6 @@
    "kind": "hard"
   }
  ],
- "doneCount": 407,
+ "doneCount": 408,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
