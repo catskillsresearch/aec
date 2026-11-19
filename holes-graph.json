@@ -652,7 +652,7 @@
    "file": "AEC/Section8/Results.lean",
    "status": "blocked",
    "blocker": null,
-   "detail": "Cycle 95 restatement to the English (Lars ruling): hypotheses = Section 8 conventions (IsWorkingPackage W, Section8Arrows W: arrows = componentwise strong embeddings); clauses (1) marked pairs over every object, (2) base iso extends to pair iso, (3) pointed iff (base entries + tp(t,b/X) transported, markedJointOver), (4) same-level arrows preserve bounded pair orbits (PairOrbitEq, one-way as in English), (5) mixed-level preservation and reflection (iff). Blocked: proof needs the Section 6-7 calculus/isolation for a general working scheme (Lean has it only for SingleModelData; infra_8_general_calculus) and Def 8.1 'prescription commutes with isomorphisms' (not in StationaryPrescription; infra_81_prescription_iso). For W := P.scheme clause (3) needs Prop 7.5 back-and-forth on pairs; clause (5) hits both_off (infra_82_mixed_reflection). Former weaker statement proved for P.scheme as infra_82_lemma_8_2_single. | Cycle 95: clause (1) for P.scheme = infra_82_marked_pair_exists; clause (2) for P.scheme = infra_82_iso_single (done). Next for P.scheme: clause (3) pointed iff (Prop 7.5(2) with the extra tuple t, both directions) and clause (4)."
+   "detail": "Cycle 95 restatement to the English (Lars ruling): hypotheses = Section 8 conventions (IsWorkingPackage W, Section8Arrows W: arrows = componentwise strong embeddings); clauses (1) marked pairs over every object, (2) base iso extends to pair iso, (3) pointed iff (base entries + tp(t,b/X) transported, markedJointOver), (4) same-level arrows preserve bounded pair orbits (PairOrbitEq, one-way as in English), (5) mixed-level preservation and reflection (iff). Blocked: proof needs the Section 6-7 calculus/isolation for a general working scheme (Lean has it only for SingleModelData; infra_8_general_calculus) and Def 8.1 'prescription commutes with isomorphisms' (not in StationaryPrescription; infra_81_prescription_iso). For W := P.scheme clause (3) needs Prop 7.5 back-and-forth on pairs; clause (5) hits both_off (infra_82_mixed_reflection). Former weaker statement proved for P.scheme as infra_82_lemma_8_2_single. | Cycle 95: clause (1) for P.scheme = infra_82_marked_pair_exists; clause (2) for P.scheme = infra_82_iso_single (done). Next for P.scheme: clause (3) pointed iff (Prop 7.5(2) with the extra tuple t, both directions) and clause (4). | Cycle 95 (2): P.scheme clause (3) = infra_82_pointed_single (done). Remaining for P.scheme: clause (4) same-level orbit preservation; clause (5) = infra_82_mixed_reflection (both_off)."
   },
   {
    "id": "lemma_8_3",
@@ -4111,9 +4111,9 @@
    "label": "Def 8.1: prescription commutes with isomorphisms",
    "section": 8,
    "file": "AEC/Section8/StationaryPrescription.lean",
-   "status": "open",
+   "status": "done",
    "blocker": null,
-   "detail": "English Def 8.1: the prescription 'commutes with isomorphisms and is free along arrows'. Lean StationaryPrescription has only 'along' (free lift); the iso-commutation is missing. Needed for lemma_8_2 clauses (2),(3). Add as a hypothesis predicate (not a field) once ruled."
+   "detail": "DONE cycle 95 (Lars ruling b): StationaryPrescription.CommutesWithIso, a hypothesis predicate (not a field) with the Def 8.1 English quoted; added as a hypothesis of lemma_8_2..8_5. Also Def 8.1 'taking the mark to the mark': MarkedArrow now carries markMap : M.bIdx ≃ N.bIdx with entrywise preservation (was setwise ∃ j, weaker than the English when mark values repeat)."
   },
   {
    "id": "infra_82_mixed_reflection",
@@ -4137,10 +4137,10 @@
    "id": "infra_82_pointed_single",
    "label": "Lemma 8.2(3) pointed iff for P.scheme",
    "section": 8,
-   "file": "AEC/Section8/PairIsoSingle.lean",
-   "status": "open",
+   "file": "AEC/Section8/PairPointedSingle.lean",
+   "status": "done",
    "blocker": null,
-   "detail": "Next tip (cycle 95). Restated lemma_8_2 clause (3) for W := P.scheme. (<-) route: Prop 7.5(2) with the enlarged mark (b, t): needs AllDominated over X + (b,t) from AllDominated over X + b (re-association lemma like infra_82_isolated_reindex_mark) and #(bIdx ⊕ ι) ≤ σ. Obstacle: proposition_7_5's tail depends on σ (infra_75_tailSet: σ-recursion-closed and succ σ ≤ μ), while the English clause is for all bounded lengths (< the level) on one tail; needs a diagonal tail (levels σ-recursion-closed for every σ < μ) or a ruling to make clause (3) σ-indexed. (->) route: comm gives the base-entry clause; the mark matching σ : M.bIdx ≃ N.bIdx needs a bijection compatible with arr (marks may repeat values; choose via the realizes/along equivalences and the type's equality pattern)."
+   "detail": "DONE cycle 95. infra_82_pointed_single: restated lemma_8_2 clause (3) for W := P.scheme, both directions, on the Theorem 7.9 tail, for every tuple length #ι < μ (one tail, uniform in the length). Ruling (a): no sigma-dependent tail is needed, since the iso clause of Prop 7.5 (infra_75_iso) holds at every eligible level for any mark of size < μ; all-domination is extended to X + (t, b) by infra_82_allDominated_absorb / infra_82_isolated_absorb. Marks matched by list position (MarkedArrow.markMap = σ, cycle-95 Def 8.1 fix; no non-injective reindexing). Axioms: propext, Classical.choice, Quot.sound."
   }
  ],
  "edges": [
@@ -8173,6 +8173,6 @@
    "kind": "hard"
   }
  ],
- "doneCount": 408,
+ "doneCount": 410,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
