@@ -2753,4 +2753,56 @@ theorem infra_83_arrow_of_dominated_chain (P : SingleModelData K) {μ : Cardinal
   exact hfc
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+set_option maxHeartbeats 1600000 in
+/-- **Template arrow from a dominated chain (proved).** Primeness of `Y` over `X + mk` from the
+paper's nested-list data: a first piece `a : X → A 0`, `e 0 : A 0 → Y` over `X` holding the mark
+(`m ↦ mk`, all-dominated over `X`, size `< μ`), and a chain `A 0 → A 1 → …` exhausting `Y` whose
+steps add marks all-dominated over the previous piece and realized in `V` over any arrow. Then
+for every `(V, f, b')` with `tp(b'/X) = tp(m/X)` there is `h : Y → V` over `X` sending `mk` to
+`b'` — exactly the hypothesis of `infra_83_full_single_of_template_arrows`. First step
+`infra_75_embed` (Prop 7.5(1)), rest `infra_83_arrow_of_dominated_chain`. -/
+theorem infra_83_template_arrow_of_chain (P : SingleModelData K) {μ : Cardinal.{u}}
+    (hμ : μ ∈ P.eligible) (X Y V : P.scheme.Object μ hμ) (A : ℕ → P.scheme.Object μ hμ)
+    (incl : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ Y))
+    (a : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ (A 0)))
+    (s : ∀ n, SystemArrow K oneVertexShape (P.scheme.asSystem hμ (A n))
+      (P.scheme.asSystem hμ (A (n + 1))))
+    (e : ∀ n, SystemArrow K oneVertexShape (P.scheme.asSystem hμ (A n)) (P.scheme.asSystem hμ Y))
+    (hae : SystemArrow.comp a (e 0) = incl)
+    (hes : ∀ n, SystemArrow.comp (s n) (e (n + 1)) = e n)
+    (hcover : ∀ x : ((P.scheme.asSystem hμ Y).obj PUnit.unit).carrier,
+      ∃ n y, (e n).onVertex PUnit.unit y = x)
+    {bIdx : Type u} (m : bIdx → Occurrence K oneVertexShape (P.scheme.asSystem hμ (A 0)))
+    (mk : bIdx → Occurrence K oneVertexShape (P.scheme.asSystem hμ Y))
+    (hm : ∀ i, (e 0).mapOcc (m i) = mk i) (hbc : #bIdx < μ)
+    (hDm : AllDominated a trivial bIdx m)
+    {cIdx : ℕ → Type u}
+    (c : ∀ n, cIdx n → Occurrence K oneVertexShape (P.scheme.asSystem hμ (A (n + 1))))
+    (hc : ∀ n, #(cIdx n) < μ)
+    (hD : ∀ n, AllDominated (s n) trivial (cIdx n) (c n))
+    (hreal : ∀ n (g : SystemArrow K oneVertexShape (P.scheme.asSystem hμ (A n))
+        (P.scheme.asSystem hμ V)),
+      ∃ c' : cIdx n → Occurrence K oneVertexShape (P.scheme.asSystem hμ V),
+        SameGaloisType (asTuple (s n) trivial (c n)) (asTuple g trivial c')
+          (Equiv.refl _) (Equiv.refl _))
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ V))
+    (b' : bIdx → Occurrence K oneVertexShape (P.scheme.asSystem hμ V))
+    (hS : SameGaloisType (asTuple a trivial m) (asTuple f trivial b')
+      (Equiv.refl _) (Equiv.refl _)) :
+    ∃ h : SystemArrow K oneVertexShape (P.scheme.asSystem hμ Y) (P.scheme.asSystem hμ V),
+      SystemArrow.comp incl h = f ∧ ∀ i, h.mapOcc (mk i) = b' i := by
+  obtain ⟨g₀, -, hg₀, hg₀m⟩ := infra_75_embed hμ X (A 0) V a trivial f trivial m b' hbc hS hDm
+  obtain ⟨F, hF⟩ := infra_83_arrow_of_dominated_chain P hμ Y V A s e hes hcover c hc hD hreal g₀
+  refine ⟨F, ?_, fun i => ?_⟩
+  · rw [← hae, SystemArrow.comp_assoc, hF, hg₀]
+  · rw [← hm i, ← SystemArrow.mapOcc_comp, hF]
+    apply Sigma.ext
+    · exact Subsingleton.elim _ _
+    · exact heq_of_eq (hg₀m i)
+end
+
 end AEC

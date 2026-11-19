@@ -7705,6 +7705,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 240: proved."
+  },
+  {
+   "id": "infra_83_template_arrow_of_chain",
+   "label": "Template arrow (hypothesis of full_single_of_template_arrows) from nested-list chain data: first piece A0 over X holding the mark (all-dominated, < mu), chain exhausting Y with steps all-dominated and realized in V; then for every (V,f,b') with tp(b'/X)=tp(m/X), Y maps over X into V sending mk to b' (Prop 7.5(1) first step + dominated chain)",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PieceMatch.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 241: proved."
   }
  ],
  "edges": [
@@ -13955,8 +13964,13 @@
    "from": "infra_83_arrow_of_dominated_chain",
    "to": "infra_83_arity_removal",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_template_arrow_of_chain",
+   "to": "infra_83_arity_removal",
+   "kind": "hard"
   }
  ],
- "doneCount": 787,
+ "doneCount": 788,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
