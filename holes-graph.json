@@ -5689,6 +5689,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 105: Lab83.repN/repA/repP (chosen representations), chart, chartEmb, inter_eq_chart."
+  },
+  {
+   "id": "infra_83_rep_language",
+   "label": "Lemma 8.3 proof: representation-position functions (repLang, repStr; X and every superset of X closed; closed sets contain the chosen positions) and the pair languages with them (pairLangR ⊆ pairLangR2 ⊆ pairLangR3: hulls strong, ≤ LS(K) symbols)",
+   "section": 8,
+   "file": "AEC/Section8/PairLangR83.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 105: Lab83.repLang/repFun/repStr/repFun_mem/rep_closed/repLang_card; LS83.pairLangR/R2/R3, hullStrong_pairR/R2/R3, pairLangR*_functions_le, sum_functions_le."
   }
  ],
  "edges": [
@@ -10639,8 +10648,13 @@
    "from": "infra_83_chart_generation",
    "to": "infra_83_X_hull_eq_FJ",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_rep_language",
+   "to": "infra_83_X_hull_eq_FJ",
+   "kind": "hard"
   }
  ],
- "doneCount": 564,
+ "doneCount": 565,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

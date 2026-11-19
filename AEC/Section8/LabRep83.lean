@@ -80,5 +80,61 @@ theorem inter_eq_chart (S : Set (E.obj Jp).carrier) [Nonempty (chart emb S)]
     rw [← hv]
     exact labFun_mem_range emb a _ hX
 
+/-- The language of representation positions: unary symbols `rep_i`, `i : ℕ`. -/
+def repLang : Language.{u, u} where
+  Functions n := {_i : ULift.{u} ℕ // n = 1}
+  Relations _ := PEmpty
+
+open Classical in
+/-- `rep_i y`: the `i`-th chosen representation position (as a skeleton point) of `y ∈ X`;
+`y` itself otherwise. -/
+noncomputable def repFun (i : ℕ) (y : (E.obj Jp).carrier) : (E.obj Jp).carrier :=
+  if h : ∃ x, E.map emb x = y then
+    if hi : i < repN emb h.choose then E.skeleton (emb (repP emb h.choose ⟨i, hi⟩)) else y
+  else y
+
+/-- The representation-position structure. -/
+@[instance_reducible]
+noncomputable def repStr : (repLang.{u}).Structure (E.obj Jp).carrier where
+  funMap := fun {n} f x => repFun emb f.1.down (x ⟨0, f.2 ▸ Nat.zero_lt_one⟩)
+  RelMap := fun r => PEmpty.elim r
+
+/-- Any set containing `X` is closed under the representation positions. -/
+theorem repFun_mem {S : Set (E.obj Jp).carrier} (hXS : Set.range (E.map emb) ⊆ S) (i : ℕ)
+    {y : (E.obj Jp).carrier} (hy : y ∈ S) : repFun emb i y ∈ S := by
+  unfold repFun
+  split_ifs with h hi
+  · exact hXS ⟨_, E.skeleton_natural emb _⟩
+  · exact hy
+  · exact hy
+
+/-- A set closed under the representation positions contains the chosen positions of its
+`X`-elements. -/
+theorem rep_closed {S : Set (E.obj Jp).carrier}
+    (hS : ∀ i y, y ∈ S → repFun emb i y ∈ S) (x : (E.obj J).carrier)
+    (hx : E.map emb x ∈ S) (k : Fin (repN emb x)) : E.skeleton (emb (repP emb x k)) ∈ S := by
+  have h : ∃ x', E.map emb x' = E.map emb x := ⟨x, rfl⟩
+  have hc : h.choose = x := (E.map emb).injective h.choose_spec
+  have := hS k.1 _ hx
+  unfold repFun at this
+  rw [dif_pos h] at this
+  have hk : k.1 < repN emb h.choose := by rw [hc]; exact k.2
+  rw [dif_pos hk] at this
+  have key : ∀ (z : (E.obj J).carrier) (hz : z = x) (hk : k.1 < repN emb z),
+      E.skeleton (emb (repP emb z ⟨k.1, hk⟩)) = E.skeleton (emb (repP emb x k)) := by
+    rintro z rfl hk
+    rfl
+  rw [← key _ hc hk]
+  exact this
+
+/-- `repLang` has countably many function symbols. -/
+theorem repLang_card : Cardinal.mk (Σ i, (repLang.{u}).Functions i) ≤ Cardinal.aleph0 := by
+  refine (Cardinal.mk_le_of_injective (f := fun a : (Σ i, (repLang.{u}).Functions i) =>
+    a.2.1) ?_).trans (by simp)
+  rintro ⟨n, ⟨i⟩, hi⟩ ⟨m, ⟨j⟩, hj⟩ h
+  simp only [ULift.up.injEq] at h
+  subst h hi hj
+  rfl
+
 end Lab83
 end AEC
