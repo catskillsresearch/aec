@@ -7120,6 +7120,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 175: proved."
+  },
+  {
+   "id": "infra_83_marked_of_piece_arrows",
+   "label": "Marked from piece arrows: per bounded c, a piece Y_u of Y' over X' holding a preimage d of (b,c), h : Y_u -> N.Y over toA carrying the mark part to N.b o tau, and >= nu Cor 6.16 indices with retraction images of h(d) in toA[X'] (Galois match via infra_83_sgt_of_piece_arrow)",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PieceMatch.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 176: proved."
   }
  ],
  "edges": [
@@ -13045,8 +13054,13 @@
    "from": "infra_83_sgt_of_piece_arrow",
    "to": "infra_83_bounded_list_match",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_marked_of_piece_arrows",
+   "to": "infra_83_bounded_list_match",
+   "kind": "hard"
   }
  ],
- "doneCount": 722,
+ "doneCount": 723,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

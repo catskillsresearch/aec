@@ -127,4 +127,72 @@ theorem infra_83_sgt_of_piece_arrow (P : SingleModelData K) {ν l : Cardinal.{u}
   exact T.symm
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+set_option maxHeartbeats 3200000 in
+/-- **Marked from piece arrows into marked sample pairs (proved).** As
+`infra_83_marked_of_marked_matches_card`, with the Galois-type match supplied by
+`infra_83_sgt_of_piece_arrow`: for each bounded `c` it suffices to give a piece `Y_u` of `Y'` over
+`X'` holding a preimage `d` of `(b, c)`, an arrow `h : Y_u → N.Y` over `toA : X' → N.X` sending the
+mark part of `d` to the sample mark (along `τ`), and at least `ν` Cor 6.16 indices whose
+retractions send `h(d)` into `toA[X']`. -/
+theorem infra_83_marked_of_piece_arrows (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) {ν : Cardinal.{u}}
+    (hνC : ν ∈ infra_615_closed P) (hνT : ν ∈ infra_78_closedTail P)
+    {X' Y' : P.scheme.Object ν hνC.1}
+    (incl' : SystemArrow K oneVertexShape (P.scheme.asSystem hνC.1 X')
+      (P.scheme.asSystem hνC.1 Y'))
+    {bIdx : Type u} [Finite bIdx]
+    (b : bIdx → Occurrence K oneVertexShape (P.scheme.asSystem hνC.1 Y'))
+    (hmatch : ∀ (cIdx : Type u) (c : cIdx → Occurrence K oneVertexShape (P.scheme.asSystem hνC.1 Y')),
+      #cIdx < ν →
+      ∃ (N : MarkedPair K oneVertexShape P.scheme Pr) (hlC : N.μ ∈ infra_615_closed P)
+        (_ : N.μ ∈ infra_78_closedTail P) (_ : ν ≤ N.μ)
+        (toA : SystemArrow K oneVertexShape (P.scheme.asSystem hνC.1 X')
+          (P.scheme.asSystem hlC.1 N.X))
+        (R : ApproximateRetraction K oneVertexShape P.scheme N.hμ N.X N.Y N.incl)
+        (τ : bIdx ≃ N.bIdx) (Yu : P.scheme.Object ν hνC.1)
+        (inclu : SystemArrow K oneVertexShape (P.scheme.asSystem hνC.1 X')
+          (P.scheme.asSystem hνC.1 Yu))
+        (j : SystemArrow K oneVertexShape (P.scheme.asSystem hνC.1 Yu)
+          (P.scheme.asSystem hνC.1 Y'))
+        (h : SystemArrow K oneVertexShape (P.scheme.asSystem hνC.1 Yu)
+          (P.scheme.asSystem hlC.1 N.Y))
+        (d : bIdx ⊕ cIdx → Occurrence K oneVertexShape (P.scheme.asSystem hνC.1 Yu)),
+        SystemArrow.comp inclu j = incl' ∧
+        SystemArrow.comp inclu h = SystemArrow.comp toA N.incl ∧
+        (∀ s, j.mapOcc (d s) = seqJoint b c s) ∧
+        (∀ a, h.mapOcc (d (Sum.inl a)) = N.b (τ a)) ∧
+        ν ≤ #{i : R.index // ∀ s, ∃ y, toA.onVertex (d s).1 y =
+          (R.retr i).onVertex (d s).1 (h.onVertex (d s).1 (d s).2)}) :
+    (∃ realEq : bIdx ≃ (Pr.assign hνC.1 X').idx,
+      SameGaloisType (asTuple incl' trivial b) (Pr.assign hνC.1 X') realEq (Equiv.refl _)) ∧
+    AllDominated incl' trivial bIdx b := by
+  refine infra_83_marked_of_marked_matches_card P Pr hνC hνT incl' trivial b
+    (fun cIdx c hc => ?_)
+  obtain ⟨N, hlC, hlT, hνl, toA, R, τ, Yu, inclu, j, h, d, hj, hh, hjd, hb, hcount⟩ :=
+    hmatch cIdx c hc
+  let cU : cIdx → Occurrence K oneVertexShape (P.scheme.asSystem hlC.1 N.Y) :=
+    fun k => h.mapOcc (d (Sum.inr k))
+  have hx : seqJoint (fun a => N.b (τ a)) cU = fun s => h.mapOcc (d s) := by
+    funext s
+    rcases s with a | k
+    · exact (hb a).symm
+    · rfl
+  have hy : seqJoint b c = fun s => j.mapOcc (d s) := by
+    funext s
+    exact (hjd s).symm
+  have hd : #(bIdx ⊕ cIdx) < ν := by
+    rw [Cardinal.mk_sum, Cardinal.lift_id, Cardinal.lift_id]
+    exact Cardinal.add_lt_of_lt (P.aleph0_le hνC.1)
+      ((Cardinal.lt_aleph0_of_finite bIdx).trans_le (P.aleph0_le hνC.1)) hc
+  refine ⟨N, hlC, hlT, hνl, toA, trivial, R, τ, cU, ?_, ?_⟩
+  · rw [hx]
+    exact hcount
+  · rw [hx, hy]
+    exact infra_83_sgt_of_piece_arrow P inclu incl' j hj toA N.incl h hh d hd
+end
+
 end AEC
