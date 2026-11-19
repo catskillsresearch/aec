@@ -566,4 +566,28 @@ theorem infra_83_hull_match_compat {L : FirstOrder.Language.{u, u}} {M N Q : Typ
   show ft (Quotient.mk _ (FirstOrder.Language.Term.var (g p))) = _
   rw [ht, hs, hw]
 
+/-- **Enumerations along supports (proved).** The successor-length position map of `s ⊆ t`
+commutes with the increasing enumerations of `s` and `t`. -/
+theorem infra_83_orderEmbOfFin_placeSucc {α : Type*} [LinearOrder α] {s t : Finset α}
+    (hst : s ⊆ t) (hs : s.Nonempty) (ht : t.Nonempty) (a : Fin (s.card.pred + 1))
+    (h1 : s.card = s.card.pred + 1) (h2 : t.card = t.card.pred + 1) :
+    t.orderEmbOfFin h2 (placeSucc hst hs ht a) = s.orderEmbOfFin h1 a := by
+  have key := placeEmb_spec hst (Fin.cast h1.symm a)
+  rw [Finset.orderEmbOfFin_apply, Finset.orderEmbOfFin_apply] at key ⊢
+  simp only [Fin.getElem_fin, Fin.val_cast] at key ⊢
+  have hv : ((placeSucc hst hs ht a) : ℕ) = (placeEmb hst (Fin.cast h1.symm a) : ℕ) := rfl
+  simp only [hv]
+  exact key
+
+/-- **Sample bundles along supports (proved).** The bundles of a sample enumerated by `s ⊆ t`
+agree along the position map: the generator values of the matches on `s` and `t` agree. -/
+theorem infra_83_bundleOf_placeSucc {α : Type u} [LinearOrder α] {M : Type u} {r : ℕ}
+    (base : α → Fin r → M) {s t : Finset α} (hst : s ⊆ t) (hs : s.Nonempty) (ht : t.Nonempty)
+    (h1 : s.card = s.card.pred + 1) (h2 : t.card = t.card.pred + 1)
+    (p : Fin (s.card.pred + 1) × Fin r) :
+    Hull83.bundleOf base t h2 (Prod.map (placeSucc hst hs ht) id p) =
+      Hull83.bundleOf base s h1 p := by
+  simp only [Hull83.bundleOf, Prod.map_fst, Prod.map_snd, id_eq]
+  rw [infra_83_orderEmbOfFin_placeSucc hst hs ht p.1 h1 h2]
+
 end AEC

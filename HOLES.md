@@ -555,6 +555,8 @@ Lean: imports `Section5.Results` and `Section6.Results`. Soft paper chain after 
 | `infra_83_hull_mk_realize` | term-hull elements are terms in the generators | [`Lemma83Isolation.lean`](AEC/Section8/Lemma83Isolation.lean) (**done**, cycle 115) |
 | `infra_83_hull_emb_ext` | hull embeddings are determined by the generators | [`Lemma83Isolation.lean`](AEC/Section8/Lemma83Isolation.lean) (**done**, cycle 115) |
 | `infra_83_hull_match_compat` | partial matches of hull pieces into a sample are compatible | [`Lemma83Isolation.lean`](AEC/Section8/Lemma83Isolation.lean) (**done**, cycle 116) |
+| `infra_83_orderEmbOfFin_placeSucc` | position maps of supports commute with enumerations | [`Lemma83Isolation.lean`](AEC/Section8/Lemma83Isolation.lean) (**done**, cycle 117) |
+| `infra_83_bundleOf_placeSucc` | sample bundles agree along support position maps | [`Lemma83Isolation.lean`](AEC/Section8/Lemma83Isolation.lean) (**done**, cycle 117) |
 | `infra_83_samples_core` | Lemma 8.3 proof (P.scheme): sample pair with base E(J) embedded into E(J + W) over the base | [`Lemma83Samples.lean`](AEC/Section8/Lemma83Samples.lean) (**done**, cycle 101) |
 | `infra_83_samples_order_exists` | Lemma 8.3 proof (P.scheme): the W of the samples exists | [`Lemma83Samples.lean`](AEC/Section8/Lemma83Samples.lean) (**done**, cycle 101) |
 | `infra_83_samples_retractions` | Lemma 8.3 proof (P.scheme): retraction family of the samples | [`Lemma83Samples.lean`](AEC/Section8/Lemma83Samples.lean) (**done**, cycle 101) |
