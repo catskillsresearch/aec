@@ -7372,6 +7372,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 203: proved."
+  },
+  {
+   "id": "infra_83_piece_object",
+   "label": "Template piece between X' and Y' holding a small set: for incl' : X' -> Y' at level nu and at most nu points s of Y', a scheme object Y_u at level nu with inclu : X' -> Y_u, j : Y_u -> Y', inclu ; j = incl', j[Y_u] containing every s i (LS at exact cardinality, coherence)",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PieceMatch.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 204: proved."
   }
  ],
  "edges": [
@@ -13437,8 +13446,13 @@
    "from": "infra_83_expansion_transport",
    "to": "infra_83_XH_sort",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_piece_object",
+   "to": "infra_83_XH_sort",
+   "kind": "hard"
   }
  ],
- "doneCount": 750,
+ "doneCount": 751,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

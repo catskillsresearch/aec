@@ -1247,4 +1247,66 @@ theorem infra_83_expansion_transport {L L' : FirstOrder.Language.{u, u}} {A₀ A
     rw [this]
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+open FirstOrder.Language
+
+set_option maxHeartbeats 1600000 in
+/-- **A template piece between `X'` and `Y'` holding a small set (proved).** Paper (Lemma 8.3: the
+hull `Y_H` of `X_H` and the list): for a scheme arrow `incl' : X' → Y'` at level `ν` and at most `ν`
+points `s` of `Y'`, there is a scheme object `Y_u` at level `ν` with arrows `inclu : X' → Y_u`,
+`j : Y_u → Y'`, `inclu ; j = incl'`, whose image under `j` contains every `s i` (Löwenheim–Skolem at
+the exact cardinality `ν`, `exists_downward`; strongness of `inclu` by coherence). -/
+theorem infra_83_piece_object (P : SingleModelData K) {ν : Cardinal.{u}} {hν : ν ∈ P.eligible}
+    {X' Y' : P.scheme.Object ν hν}
+    (incl' : SystemArrow K oneVertexShape (P.scheme.asSystem hν X') (P.scheme.asSystem hν Y'))
+    {ι : Type u} (s : ι → ((P.scheme.asSystem hν Y').obj PUnit.unit).carrier) (hι : #ι ≤ ν) :
+    ∃ (Yu : P.scheme.Object ν hν)
+      (inclu : SystemArrow K oneVertexShape (P.scheme.asSystem hν X') (P.scheme.asSystem hν Yu))
+      (j : SystemArrow K oneVertexShape (P.scheme.asSystem hν Yu) (P.scheme.asSystem hν Y')),
+      SystemArrow.comp inclu j = incl' ∧ ∀ i, ∃ y, j.onVertex PUnit.unit y = s i := by
+  classical
+  let occ : ((P.scheme.asSystem hν X').obj PUnit.unit).carrier ⊕ ι →
+      ((P.scheme.asSystem hν Y').obj PUnit.unit).carrier :=
+    Sum.elim (incl'.onVertex PUnit.unit) s
+  have hcX : #((P.scheme.asSystem hν X').obj PUnit.unit).carrier = ν := X'.card
+  have hcard : #(((P.scheme.asSystem hν X').obj PUnit.unit).carrier ⊕ ι) ≤ ν := by
+    rw [Cardinal.mk_sum, Cardinal.lift_id, Cardinal.lift_id, hcX]
+    exact Cardinal.add_le_of_le (P.aleph0_le hν) le_rfl hι
+  obtain ⟨Yu, f, hf, hcov⟩ := SingleModelData.exists_downward hν hν Y' occ le_rfl hcard
+  choose h0 hh0' using fun x => hcov (Sum.inl x)
+  let gY := incl'.onVertex PUnit.unit
+  have hh0 : ∀ x, f (h0 x) = gY x := hh0'
+  have hgY : K.Strong gY := incl'.onVertex_strong PUnit.unit
+  let hE : Language.Embedding K.τ ((P.scheme.asSystem hν X').obj PUnit.unit).carrier
+      Yu.model.carrier :=
+    { toFun := h0
+      inj' := fun a b hab => gY.injective (by
+        rw [← hh0 a, ← hh0 b, hab])
+      map_fun' := fun {n} g x => f.injective (by
+        rw [hh0, f.map_fun]
+        show gY (Structure.funMap g x) = _
+        rw [gY.map_fun]
+        congr 1
+        funext i
+        exact (hh0 (x i)).symm)
+      map_rel' := fun {n} r x => by
+        rw [← f.map_rel]
+        have : (f ∘ (h0 ∘ x)) = gY ∘ x := funext fun i => hh0 (x i)
+        rw [this]
+        exact gY.map_rel r x }
+  have hcomp : f.comp hE = gY := by
+    ext x
+    exact hh0 x
+  have hsh : K.Strong hE := K.coherence hE gY f hgY hf hcomp
+  refine ⟨Yu, ⟨fun _ => hE, fun _ => hsh, fun h => h.elim⟩,
+    ⟨fun _ => f, fun _ => hf, fun h => h.elim⟩, ?_, fun i => hcov (Sum.inr i)⟩
+  apply SystemArrow.ext
+  intro v
+  cases v
+  ext x
+  exact hh0 x
+end
+
 end AEC
