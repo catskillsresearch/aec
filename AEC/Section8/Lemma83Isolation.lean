@@ -1088,4 +1088,31 @@ theorem infra_83_mix_pair_into_sample {L₁ L₂ L : FirstOrder.Language.{u, u}}
     hcX hcY hsq
   exact ⟨onX, onY, h1, h2, fun x => hcomm x⟩
 
+/-- **The mixed sublanguage template pair maps into a homogeneous sample along an order
+embedding (proved).** `infra_83_mix_pair_into_sample` for the bundles `base ∘ e` of a bundled
+sample homogeneous in every arity for the template colors, along `e : I ↪o S.α` (order
+saturation supplies such `e`). -/
+theorem infra_83_mix_pair_into_sample_along {L₁ L₂ L : FirstOrder.Language.{u, u}}
+    (χ : L₁ →ᴸ L₂) (ψ₂ : L₂ →ᴸ L) (φ₀ : K.τ →ᴸ L₁) {P : ∀ (M : Type u) [L.Structure M], Prop}
+    {r r₁ r₀ : ℕ} [NeZero r] [NeZero r₁] [NeZero r₀]
+    {c : (m : ℕ) → 0 < m → Hull83.TpColorB L r m}
+    (hc : ∀ (n : ℕ) (κ : Cardinal.{u}), Hull83.Joint (Hull83.TpSampleB P r) n c κ)
+    (hcoh : ∀ {m m' : ℕ} (hm' : 0 < m') (hm : 0 < m) (f : Fin m' ↪o Fin m),
+      c m' hm' = Hull83.tpResB r f (c m hm))
+    (σ : Fin r₁ → Fin r) (τ : Fin r₀ → Fin r₁)
+    (hPX : Hull83.SubHullStrong (ψ₂.comp χ) φ₀ P) (hPY : Hull83.SubHullStrong ψ₂ (χ.comp φ₀) P)
+    {S : Hull83.ColorSample (Hull83.TpColorB L r)} {M : Type u} [L.Structure M] (hPM : P M)
+    (hMK : K.Mem (Hull83.subModel' ψ₂ (χ.comp φ₀) M)) (base : S.α → Fin r → M)
+    (hcol : ∀ (m : ℕ) (s : Finset S.α) (h : s.card = m),
+      S.col m s = Hull83.tpCode (Hull83.bundleOf base s h))
+    (hhom : ∀ n, Hull83.Homog S n c) {I : Type u} [LinearOrder I] [Nonempty I] (e : I ↪o S.α) :
+    ∃ (onX : ((Hull83.subLangPieces (ψ₂.comp χ) φ₀ hc hcoh (σ ∘ τ) hPX).limit I).obj.carrier
+        ↪[K.τ] (Hull83.subModel' (ψ₂.comp χ) φ₀ M).carrier)
+      (onY : ((Hull83.subLangPieces ψ₂ (χ.comp φ₀) hc hcoh σ hPY).limit I).obj.carrier
+        ↪[K.τ] (Hull83.subModel' ψ₂ (χ.comp φ₀) M).carrier),
+      K.Strong onX ∧ K.Strong onY ∧
+      ∀ x, onY ((Hull83.subLangMixHom χ ψ₂ φ₀ hc hcoh σ τ hPX hPY).limMap I x) = onX x :=
+  infra_83_mix_pair_into_sample χ ψ₂ φ₀ hc hcoh σ τ hPX hPY hPM hMK (fun i => base (e i))
+    (infra_83_sample_tp_orderMap base hcol hhom e)
+
 end AEC
