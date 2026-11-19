@@ -5022,7 +5022,7 @@
    "file": "AEC/Section8/Lemma83Single.lean",
    "status": "open",
    "blocker": null,
-   "detail": "Cycle 101 split of the faithful 8.3 ('The samples and their language')."
+   "detail": "Cycle 101 split of the faithful 8.3 ('The samples and their language'). | Cycle 101: covered by infra_83_samples_strip (any J incl. padded dense; L = E(J+) via Prop 6.15 fresh strip) + infra_83_padded_dense_exists + infra_83_samples_retractions. Remaining: 'Choose the presentations sufficiently rich for any prescribed set-sized order-saturation bound' (order-saturated padded dense J, Z, W of the level size)."
   },
   {
    "id": "infra_83_hull_extraction",
@@ -5095,6 +5095,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 101: mu.ord.ToType x_lex Q."
+  },
+  {
+   "id": "infra_83_samples_strip",
+   "label": "Lemma 8.3 proof (P.scheme): for any J of the level size (dense padded allowed), sample marked pair with base P.E(J), Y ~ P.E(Z), Y strongly into L = P.E(J+) over the base, J+ with fresh strip of disjoint convex level-size fibers (Prop 6.15)",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83Samples.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 101: infra_79_existence_at + infra_615_two_sided."
   }
  ],
  "edges": [
@@ -9665,8 +9674,13 @@
    "from": "infra_83_padded_dense_exists",
    "to": "infra_83_samples",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_samples_strip",
+   "to": "infra_83_samples",
+   "kind": "hard"
   }
  ],
- "doneCount": 504,
+ "doneCount": 505,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

@@ -153,4 +153,58 @@ theorem infra_83_padded_dense_exists (μ : Cardinal.{u}) (hμ : aleph0 ≤ μ) :
       · exact h
       · exact absurd h (lt_irrefl _)
 
+/-- **The samples of the Lemma 8.3 proof (P.scheme), presentation-invariant strip form.** English:
+"choose a pair X = F(J) ≤ Y, Y ≃ F(Z), with Y all-dominated over X + b. ... We may take J, Z, and
+a further order W, to be padded dense orders ... W has many disjoint convex substrips, each of the
+level size. Proposition 6.15, in its presentation-invariant form, puts Y over X into L = F(J + W)."
+On the tail `infra_78_closedTail P ∩ infra_615_closed P`, for **every** nonempty linear order `J`
+of the level size (dense padded orders allowed): a marked pair with base `P.E(J)` (bijective strong
+`eX`), extension a copy of `P.E(Z)` for every `Z` of the level size, and an order `J⁺ ⊇ J` with a
+fresh convex strip carrying countably many disjoint convex level-size fibers (Proposition 6.15)
+such that the extension embeds strongly into `L = P.E(J⁺)` over the base. -/
+theorem infra_83_samples_strip (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) {μ : Cardinal.{u}}
+    (hμ : μ ∈ infra_78_closedTail P ∩ infra_615_closed P)
+    (J : Type u) [LinearOrder J] [Nonempty J] (hJ : #J = μ) :
+    ∃ M : MarkedPair K oneVertexShape P.scheme Pr, M.μ = μ ∧
+      ∃ eX : Language.Embedding K.τ (P.E.obj J).carrier
+          ((P.scheme.asSystem M.hμ M.X).obj PUnit.unit).carrier,
+        Function.Bijective eX ∧ K.Strong eX ∧
+        (∀ (Z : Type u) [LinearOrder Z] [Nonempty Z], #Z = μ →
+          Nonempty ((P.E.obj Z).carrier ≃[K.τ]
+            ((P.scheme.asSystem M.hμ M.Y).obj PUnit.unit).carrier)) ∧
+        ∃ (Jplus : Type u) (_ : LinearOrder Jplus) (_ : Nonempty Jplus) (emb : J ↪o Jplus)
+          (strip : Set Jplus) (V : ℕ → Set Jplus),
+          #Jplus = μ ∧ IsConvexRegion strip ∧ #strip = μ ∧
+          (∀ n, IsConvexRegion (V n) ∧ #(V n) = μ ∧ V n ⊆ strip) ∧
+          Pairwise (Function.onFun Disjoint V) ∧
+          ∃ F : Language.Embedding K.τ ((P.scheme.asSystem M.hμ M.Y).obj PUnit.unit).carrier
+              (P.E.obj Jplus).carrier,
+            K.Strong F ∧ ∀ x, F (M.incl.onVertex PUnit.unit (eX x)) = P.E.map emb x := by
+  classical
+  have htail := infra_79_tail P
+  have hμe : μ ∈ P.eligible := hμ.1.1
+  have hcJ : Model.card (P.E.obj J) = μ := SingleModelData.card_obj_eq hμe J hJ
+  let X0 : SMObject K μ := SMObject.ofModel (P.E.obj J) (P.hE J) hcJ
+  have hfin : Finite (Pr.assign hμe X0).idx :=
+    Finite.of_equiv _ (Pr.arity hμe X0).symm
+  obtain ⟨Y, f, hf, b, hAll, hS⟩ :=
+    infra_79_existence_at P ⟨htail, infra_79_retraction_pair P⟩ hμ X0
+      (Pr.assign hμe X0) hfin
+  let M : MarkedPair K oneVertexShape P.scheme Pr :=
+    ⟨μ, hμe, X0, Y, f, hf, _, b, Equiv.refl _, hS.symm, hAll⟩
+  let φ := SMObject.ofModelEquiv (P.E.obj J) (P.hE J) hcJ
+  have hsX : K.Strong φ.toEmbedding := strong_of_equiv K φ (P.hE J)
+  have hcY : Model.card ((P.scheme.asSystem M.hμ M.Y).obj PUnit.unit) = μ := SMObject.card Y
+  refine ⟨M, rfl, φ.toEmbedding, φ.bijective, hsX, fun Z _ _ hZ => ?_, ?_⟩
+  · have hcat' := SingleModelData.categorical (P := P) hμe
+    exact hcat'.unique_model (P.E.obj Z) _ (P.hE Z) ((P.scheme.asSystem M.hμ M.Y).inK PUnit.unit)
+      (SingleModelData.card_obj_eq hμe Z hZ) hcY
+  · obtain ⟨Jplus, l, n, emb, strip, V, h1, h2, h3, h4, h5, -, hemb⟩ :=
+      infra_615_two_sided P hμ.2 J hJ
+    obtain ⟨F, hF, hFi⟩ := hemb _ ((M.incl.onVertex PUnit.unit).comp φ.toEmbedding)
+      ((P.scheme.asSystem M.hμ M.Y).inK PUnit.unit)
+      (K.strong_trans _ _ hsX (M.incl.onVertex_strong PUnit.unit)) hcY
+    exact ⟨Jplus, l, n, emb, strip, V, h1, h2, h3, h4, h5, F, hF, hFi⟩
+
 end AEC
