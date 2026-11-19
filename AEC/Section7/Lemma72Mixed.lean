@@ -105,6 +105,77 @@ theorem infra_72_tied_move_mixed
     (fun t : p.idx ⊕ β => Sum.map (fun j => (i, j)) id t)
   exact infra_73_diagramEq_of_eq h (fun t => by cases t <;> rfl) (fun t => by cases t <;> rfl)
 
+/-- **Mixed-level tied move from recursion closure (proved; cycle 98).** As
+`infra_72_tied_move_mixed`, but with the base tuple hosted at the base level `ν` and only
+recursion closure at `ν` with `σ⁺ ≤ ν` (the hypotheses of the same-level `infra_73_tied_move`),
+instead of `ν` in `infra_73_tailSet P σ`. -/
+theorem infra_72_tied_move_mixed_rec
+    (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : ℵ₀ ≤ σ)
+    {ν μ : Cardinal.{u}} (hν : ν ∈ P.eligible) (hrec : ν ∈ recursionClosedLevels P σ)
+    (hσSucc : Order.succ σ ≤ ν)
+    {hμ : μ ∈ P.eligible} (hνμ : ν ≤ μ)
+    {A : P.scheme.Object ν hν} {B : P.scheme.Object μ hμ}
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hν A) (P.scheme.asSystem hμ B))
+    (hf : P.scheme.permitted (X := A) (Y := B) f)
+    (p : TupleOver K oneVertexShape P.scheme hν A) (hpν : p.ν = ν) (hidx : #p.idx ≤ σ)
+    {β : Type u} (Y : β → Occurrence K oneVertexShape (P.scheme.asSystem hμ B))
+    (hβ : #β ≤ P.g σ + ls K) :
+    ∃ (seq : ApproximationSequence p)
+      (Y0 : β → Occurrence K oneVertexShape (P.scheme.asSystem hν A)),
+      seq.τ + ℵ₀ < #(seq.κIndex) ∧ #β ≤ seq.τ ∧ #β < ν ∧
+        infra_78_isMoveMixed f seq Y Y0 := by
+  classical
+  have hσlt : σ < ν := (Order.lt_succ σ).trans_le hσSucc
+  obtain ⟨seq, -, -, hτ, hlong⟩ := infra_73_sequence_rec P σ hσ hν hrec hσSucc p hpν hidx
+  have hβν : #β < ν := by
+    have hg : P.g σ < ν :=
+      (hν.1.closed P.g (Set.mem_insert_of_mem _ rfl)).below σ hσ hσlt
+    exact hβ.trans_lt (add_lt_of_lt (P.aleph0_le hν) hg (P.ls_lt hν))
+  let xs : seq.κIndex × p.idx → Occurrence K oneVertexShape (P.scheme.asSystem hν A) :=
+    fun ij => seq.family ij.1 ij.2
+  have hα : #(seq.κIndex × p.idx) < ν := seq.concat_bounded
+  obtain ⟨Y0, hY0⟩ := infra_78_move_mixed f hf hνμ xs Y hα hβν
+  refine ⟨seq, Y0, hlong, hβ.trans hτ, hβν, ?_⟩
+  intro i
+  have h := infra_73_scheme_comp hY0
+    (fun t : p.idx ⊕ β => Sum.map (fun j => (i, j)) id t)
+  exact infra_73_diagramEq_of_eq h (fun t => by cases t <;> rfl) (fun t => by cases t <;> rfl)
+
+/-- **Mixed-level uniqueness of tied-free extensions from recursion closure (proved; cycle 98).**
+As `infra_72_tied_unique_mixed`, with the base tuple hosted at `ν`, recursion closure at `ν` and
+`σ⁺ ≤ ν` in place of `ν ∈ infra_73_tailSet P σ`. -/
+theorem infra_72_tied_unique_mixed_rec
+    (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : ℵ₀ ≤ σ)
+    {ν μ : Cardinal.{u}} (hν : ν ∈ P.eligible) (hrec : ν ∈ recursionClosedLevels P σ)
+    (hσSuccν : Order.succ σ ≤ ν)
+    (hμ : μ ∈ P.eligible) (hνμ : ν ≤ μ)
+    (hrecμ : μ ∈ recursionClosedLevels P σ)
+    {A : P.scheme.Object ν hν} {B : P.scheme.Object μ hμ}
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hν A) (P.scheme.asSystem hμ B))
+    (hf : P.scheme.permitted (X := A) (Y := B) f)
+    (p : TupleOver K oneVertexShape P.scheme hν A) (hpν : p.ν = ν) (hidx : #p.idx ≤ σ)
+    (pB1 pB2 : TupleOver K oneVertexShape P.scheme hμ B)
+    (eB1 : p.idx ≃ pB1.idx) (eB2 : p.idx ≃ pB2.idx)
+    (h1ν : pB1.ν = μ) (h2ν : pB2.ν = μ)
+    (hT1 : IsTiedFreeMixed f p pB1 eB1) (hT2 : IsTiedFreeMixed f p pB2 eB2) :
+    SameGaloisType pB1 pB2 eB1.symm eB2.symm := by
+  classical
+  have hσSucc : Order.succ σ ≤ μ := hσSuccν.trans hνμ
+  have hσlt : σ < μ := (Order.lt_succ σ).trans_le hσSucc
+  have hidx1 : #pB1.idx ≤ σ := by rw [← Cardinal.mk_congr eB1]; exact hidx
+  by_contra hneq
+  obtain ⟨β, Y, hβ, hnot⟩ :=
+    infra_73_differing_test P σ hσ hμ hrecμ hσSucc pB1 pB2 eB1.symm eB2.symm h1ν h2ν
+      hidx1 (hidx1.trans_lt hσlt) hneq
+  apply hnot
+  obtain ⟨seq, Y0, hlong, hβτ, hβν, hmv⟩ :=
+    infra_72_tied_move_mixed_rec P σ hσ hν hrec hσSuccν hνμ f hf p hpν hidx Y hβ
+  have d1 := hT1 seq Y Y0 hlong hβτ hβν hmv
+  have d2 := hT2 seq Y Y0 hlong hβτ hβν hmv
+  have d := P.scheme.diagram_trans pB1.host p.host pB2.host _ _ _
+    (P.scheme.diagram_symm p.host pB1.host _ _ d1) d2
+  exact infra_73_diagramEq_of_eq d (fun t => by cases t <;> rfl) (fun t => by cases t <;> rfl)
+
 /-- **Mixed-level uniqueness of tied-free extensions (proved; port of `infra_73_tied_unique`).**
 Two mixed tied-free extensions over `B` (level `μ`, recursion closed) of `p` over `A` (level `ν`
 in the `σ`-tail) have the same Galois type over `B`. The level hypothesis at `μ` is the one of
@@ -504,16 +575,18 @@ theorem infra_72_tied_of_isolated_mixed
 
 set_option maxHeartbeats 6400000 in
 /-- **English Lemma 7.2 clause 2 at mixed levels, with the level of `B` closed (proved helper;
-cycle 97 ruling 3).** As `infra_72_mixed_level`, with two extra hypotheses: `A`'s level `ν` in
-the `σ`-tail and `B`'s level `μ` recursion closed. Only the uniqueness step
-(`infra_72_tied_unique_mixed`, testing over `B`) uses them; every other step uses bounds at `ν`
-only. Used for Lemma 8.2(5), where both levels lie in the tail. The English-exact statement
+cycle 97 ruling 3).** As `infra_72_mixed_level`, with one extra hypothesis: `B`'s level `μ`
+recursion closed (cycle 98: the former second extra hypothesis, `A`'s level in
+`infra_73_tailSet P σ`, is removed; the uniqueness step now uses
+`infra_72_tied_unique_mixed_rec`, which needs at `ν` only the recursion closure and `σ⁺ ≤ ν`
+already among the English-side hypotheses). Only the uniqueness step (testing over `B`) uses
+`hrecμ`; every other step uses bounds at `ν` only. Used for Lemma 8.2(5), where both levels lie in the tail. The English-exact statement
 `infra_72_mixed_level` stays open. -/
 theorem infra_72_mixed_level_closed
     (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : ℵ₀ ≤ σ)
     {ν μ : Cardinal.{u}} (hν : ν ∈ P.eligible) (hμ : μ ∈ P.eligible) (hνμ : ν ≤ μ)
     (hrec : ν ∈ recursionClosedLevels P σ) (hσSucc : Order.succ σ ≤ ν)
-    (hνT : ν ∈ infra_73_tailSet P σ) (hrecμ : μ ∈ recursionClosedLevels P σ)
+    (hrecμ : μ ∈ recursionClosedLevels P σ)
     {A : P.scheme.Object ν hν} {B : P.scheme.Object μ hμ}
     (f : SystemArrow K oneVertexShape (P.scheme.asSystem hν A) (P.scheme.asSystem hμ B))
     (hf : P.scheme.permitted (X := A) (Y := B) f)
@@ -602,7 +675,8 @@ theorem infra_72_mixed_level_closed
     hqν hBν.ge hidx hidxν hIso hExt hMargTied
   have hT'' := infra_72_tied_of_isolated_mixed P σ hσ hν hμ hνμ hrec hσSucc f hf q q'' eB'' e
     hqν hν''.ge hidx hidxν hIso hExt'' hMargTied''
-  have hU := infra_72_tied_unique_mixed P σ hσ hν hνT hμ hνμ hrecμ f hf q hidx qB q'' eB eB''
+  have hU := infra_72_tied_unique_mixed_rec P σ hσ hν hrec hσSucc hμ hνμ hrecμ f hf q hqν hidx
+    qB q'' eB eB''
     hBν hν'' hT hT''
   have hU' := infra_73_sgt_equiv_trans hU e
   rw [he''] at hU'

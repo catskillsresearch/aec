@@ -296,17 +296,16 @@ theorem infra_82_mark_tied_along_mixed {P : SingleModelData K}
 
 set_option maxHeartbeats 1600000 in
 /-- **The mark map of a marked arrow is positional up to type (P.scheme; toward 8.2(5)).** For
-a marked arrow `f : M → N` from a level `M.μ` in the `ℵ₀`-tail to a larger or equal recursion-closed
-level, the image of the source mark read through `f.markMap` has, over `N.X`, the type of the
+a marked arrow `f : M → N` between recursion-closed (at `ℵ₀`) levels `M.μ ≤ N.μ`, the image of the source mark read through `f.markMap` has, over `N.X`, the type of the
 target mark read through the positional matching
 `M.realEq ∘ arity_M ∘ arity_N⁻¹ ∘ N.realEq⁻¹`: both are tied free extensions of `tp(b/M.X)`
 along `f.onX` (Definition 8.1, `TiedAlong`), so they agree by uniqueness of mixed tied free
-extensions (`infra_72_tied_unique_mixed`). -/
+extensions (`infra_72_tied_unique_mixed_rec`). -/
 theorem infra_82_mark_positional_mixed {P : SingleModelData K}
     {Pr : StationaryPrescription K oneVertexShape P.scheme} (hTA : Pr.TiedAlong)
     {M N : MarkedPair K oneVertexShape P.scheme Pr}
     (f : MarkedArrow K oneVertexShape P.scheme Pr M N) (hlev : M.μ ≤ N.μ)
-    (hMT : M.μ ∈ infra_73_tailSet P ℵ₀) (hNrec : N.μ ∈ recursionClosedLevels P ℵ₀) :
+    (hMrec : M.μ ∈ recursionClosedLevels P ℵ₀) (hNrec : N.μ ∈ recursionClosedLevels P ℵ₀) :
     SameGaloisType (infra_82_markImage f) (asTuple N.incl N.incl_arrow N.b)
       (Equiv.refl M.bIdx).symm
       ((M.realEq.trans ((Pr.arity M.hμ M.X).trans (Pr.arity N.hμ N.X).symm)).trans
@@ -333,8 +332,8 @@ theorem infra_82_mark_positional_mixed {P : SingleModelData K}
   have hT1 := infra_82_mark_tied_along_mixed hTA f hlev
   have hidx : #(asTuple M.incl M.incl_arrow M.b).idx ≤ ℵ₀ :=
     (Cardinal.lt_aleph0_of_finite M.bIdx).le
-  exact infra_72_tied_unique_mixed P ℵ₀ le_rfl M.hμ hMT N.hμ hlev hNrec f.onX f.onX_arrow
-    (asTuple M.incl M.incl_arrow M.b) hidx (infra_82_markImage f)
+  exact infra_72_tied_unique_mixed_rec P ℵ₀ le_rfl M.hμ hMrec (Order.succ_le_of_lt hμ0) N.hμ hlev
+    hNrec f.onX f.onX_arrow (asTuple M.incl M.incl_arrow M.b) rfl hidx (infra_82_markImage f)
     (asTuple N.incl N.incl_arrow N.b) (Equiv.refl _) _ rfl rfl hT1 hT2
 
 /-- **Lemma 8.2(4) for P.scheme (proved).** English: "Same-level arrows preserve bounded pair
