@@ -5397,10 +5397,10 @@
    "id": "infra_83_vertex_ls_expansion",
    "label": "Lemma 8.3 proof: LS witness expansion — expand sample structures by <= ls K functions so every closed substructure is strong (Shelah presentation-style, finite-subset directed LS system)",
    "section": 8,
-   "file": "AEC/Section8/HullReduct83.lean",
-   "status": "open",
+   "file": "AEC/Section8/LSExpansion83.lean",
+   "status": "done",
    "blocker": null,
-   "detail": "Cycle 103 split: the remaining input of HullStrong via hullStrong_of_substructures. Needs a coherent choice N_s <= M (s finite) with s ⊆ N_s, N_s <= N_t for s ⊆ t, #N_s <= ls K, enumerated by ls K many s-ary functions; closure under them is a directed union of the N_s, strong by chain/coherence axioms. | Cycle 103: directed system done (infra_83_ls_system). Remaining: the expansion language (for each n and each of ls K slots an n-ary function enumerating N_s for the n-element set s, in increasing enumeration of a well-order of M), closure = union of the N_s over finite s (directed), strong via chain_union/chain_upper or a directed-union lemma. | Cycle 103: + lsSystem (directed, strong maps) and strong_of_directed_cover. Remaining: witness language (arity-n symbols indexed by Enum K) interpreted by enumerating N_{set of the arguments}; every closed L-substructure B equals the union of N_s over finite s ⊆ B, so strong_of_directed_cover (restricted system) gives HullStrong via hullStrong_of_substructures."
+   "detail": "Cycle 104: LS83.exists_ls_expansion — every M ∈ K has an lsLang K = τ(K)+lsW K structure (lsW: Enum K function symbols of each positive arity, none of arity 0) whose τ-reduct is M (lsStr_reduct, rfl) and in which every nonempty substructure has strong reduct (LSClosed); lsLang_card_le: |lsLang K| ≤ LS(K); hullStrong_lsClosed: HullStrong (lsInl K) LSClosed. Proof: witness functions enumerate the M-hull of the tuple's entries (subModel_card ≤ LS(K) = #Enum K); closed sets contain all such hulls; strong_of_hull_closed' via the pulled-back directed system and Lemma 2.1. Nonempty is needed (the empty model need not be in K). Axioms clean."
   },
   {
    "id": "infra_83_ls_system",
@@ -10185,6 +10185,6 @@
    "kind": "hard"
   }
  ],
- "doneCount": 538,
+ "doneCount": 539,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

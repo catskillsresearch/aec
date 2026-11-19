@@ -569,7 +569,7 @@ Lean: imports `Section5.Results` and `Section6.Results`. Soft paper chain after 
 | `infra_83_piece_into_sample` | Lemma 8.3 proof: template pieces embed in homogeneous samples at enumerated bundles | [`HullBundle83.lean`](AEC/Section8/HullBundle83.lean) (**done**, cycle 103) |
 | `infra_83_joint_demand` | Lemma 8.3 proof: color extraction with size and saturation as one demand | [`HullTypes83.lean`](AEC/Section8/HullTypes83.lean) (**done**, cycle 103) |
 | `infra_83_hullstrong_substructures` | Lemma 8.3 proof: strong closed substructures give strong term hulls | [`HullReduct83.lean`](AEC/Section8/HullReduct83.lean) (**done**, cycle 103) |
-| `infra_83_vertex_ls_expansion` | Lemma 8.3 proof: LS witness expansion so closed substructures are strong | [`HullReduct83.lean`](AEC/Section8/HullReduct83.lean) (open, cycle 103) |
+| `infra_83_vertex_ls_expansion` | Lemma 8.3 proof: LS witness expansion so nonempty closed substructures are strong | [`LSExpansion83.lean`](AEC/Section8/LSExpansion83.lean) (**done**, cycle 104) |
 | `infra_83_ls_system` | Lemma 8.3 proof: coherent finite-subset LS system over any index type | [`LSSystem83.lean`](AEC/Section8/LSSystem83.lean) (**done**, cycle 103) |
 | `infra_83_directed_cover_strong` | Lemma 8.3 proof: models covered by strong directed systems are strong | [`LSSystem83.lean`](AEC/Section8/LSSystem83.lean) (**done**, cycle 103) |
 | `infra_83_hull_closed_strong` | Lemma 8.3 proof: submodels closed under finite LS hulls are strong | [`LSSystem83.lean`](AEC/Section8/LSSystem83.lean) (**done**, cycle 103) |
