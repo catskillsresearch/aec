@@ -1268,4 +1268,69 @@ theorem infra_83_value_arrow {A B A' B' X Y X' Y' : Model K.τ}
     show eY' (gY (eY.symm (incl (eX a)))) = incl' (eX' (gX (eX.symm (eX a))))
     rw [hincl, Language.Equiv.symm_apply_apply, Language.Equiv.symm_apply_apply, hincl', hsq]
 
+/-- The doubled-shape system of the pair template at `I`: base copy `F_X(I)`, extension copy
+`F_Y(I)`, edge the template inclusion `η_I`. -/
+noncomputable def pairPresent83 (FX FY : EM83.FinPieces K) (η : EM83.PiecesHom FX FY)
+    (I : Type u) [LinearOrder I] [Nonempty I] : SystemObject K oneVertexShape.{u}.doubled where
+  obj := Sum.elim (fun _ => (FX.limit I).obj) (fun _ => (FY.limit I).obj)
+  inK
+    | Sum.inl _ => (FX.limit_spec I).1
+    | Sum.inr _ => (FY.limit_spec I).1
+  edge {i j} h :=
+    match i, j, h with
+    | Sum.inl _, Sum.inr _, _ => η.limMap I
+    | Sum.inl _, Sum.inl _, h => False.elim h
+    | Sum.inr _, Sum.inr _, h => False.elim h
+    | Sum.inr _, Sum.inl _, h => False.elim h
+  edge_strong {i j} h :=
+    match i, j, h with
+    | Sum.inl _, Sum.inr _, _ => η.limMap_strong I
+    | Sum.inl _, Sum.inl _, h => False.elim h
+    | Sum.inr _, Sum.inr _, h => False.elim h
+    | Sum.inr _, Sum.inl _, h => False.elim h
+
+/-- The doubled-shape arrow of an order embedding: `F_X(f)` and `F_Y(f)`. -/
+noncomputable def pairOnOrder83 (FX FY : EM83.FinPieces K) (η : EM83.PiecesHom FX FY)
+    {I J : Type u} [LinearOrder I] [LinearOrder J] [Nonempty I] [Nonempty J] (f : I ↪o J) :
+    SystemArrow K oneVertexShape.{u}.doubled (pairPresent83 FX FY η I) (pairPresent83 FX FY η J) where
+  onVertex
+    | Sum.inl _ => EM83.gEmMap (F := FX) f
+    | Sum.inr _ => EM83.gEmMap (F := FY) f
+  onVertex_strong
+    | Sum.inl _ => EM83.gEmMap_strong f
+    | Sum.inr _ => EM83.gEmMap_strong f
+  comm {i j} h :=
+    match i, j, h with
+    | Sum.inl _, Sum.inr _, _ => (η.limMap_natural f).symm
+    | Sum.inl _, Sum.inl _, h => False.elim h
+    | Sum.inr _, Sum.inr _, h => False.elim h
+    | Sum.inr _, Sum.inl _, h => False.elim h
+
+/-- **The pair template `F^b` as a `TermTemplate` on the doubled shape** (Lemma 8.3): values
+`F_X(I) → F_Y(I)`, order maps `F_X(f)`, `F_Y(f)`; functorial by `gEmMap_id` / `gEmMap_comp`. -/
+noncomputable def pairTemplate83 (FX FY : EM83.FinPieces K) (η : EM83.PiecesHom FX FY) :
+    TermTemplate K oneVertexShape.{u}.doubled where
+  present I _ _ := pairPresent83 FX FY η I
+  onOrder f := pairOnOrder83 FX FY η f
+  onOrder_id
+    | Sum.inl _, x => by
+        show EM83.gEmMap (F := FX) _ x = x
+        rw [EM83.gEmMap_id]; rfl
+    | Sum.inr _, x => by
+        show EM83.gEmMap (F := FY) _ x = x
+        rw [EM83.gEmMap_id]; rfl
+  onOrder_comp f g
+    | Sum.inl _, x => by
+        show EM83.gEmMap (F := FX) _ x = EM83.gEmMap (F := FX) g (EM83.gEmMap (F := FX) f x)
+        rw [EM83.gEmMap_comp]; rfl
+    | Sum.inr _, x => by
+        show EM83.gEmMap (F := FY) _ x = EM83.gEmMap (F := FY) g (EM83.gEmMap (F := FY) f x)
+        rw [EM83.gEmMap_comp]; rfl
+/-- The edge of the pair template is the template inclusion. -/
+theorem pairTemplate83_edge (FX FY : EM83.FinPieces K) (η : EM83.PiecesHom FX FY)
+    (I : Type u) [LinearOrder I] [Nonempty I] (v : (oneVertexShape.{u}).Vertex) x :
+    ((pairTemplate83 FX FY η).present I).edge
+      (show (oneVertexShape.{u}).doubled.specified (Sum.inl v) (Sum.inr v) from rfl) x =
+      η.limMap I x := rfl
+
 end AEC
