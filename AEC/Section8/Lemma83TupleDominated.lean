@@ -486,5 +486,23 @@ theorem infra_83_marked_of_marked_matches_card (P : SingleModelData K)
   obtain ⟨S, hS, hSg⟩ := infra_83_pick_retained _ hgood
   exact ⟨N, hlC, hlT, hνl, toA, htoA, R, S, hS, τ, cU, hSg, hExt⟩
 
+
+/-- **From good evaluation codes to retraction images (proved).** With the Cor 6.16 eval law
+`g (code i) (F y) = F (incl (r i y))` and `F ∘ incl` injective, an index whose evaluation sends the
+matched (bounded) piece `onY[Y_I]` into `F[incl[onX[X_I]]]` has `r_i(onY x) ∈ onX[X_I]` for every
+`x`; so the count of good codes (`infra_83_good_codes_of_match`) bounds the count of retained
+retractions in the `hmatch` clause of `infra_83_marked_of_marked_matches_card`. -/
+theorem infra_83_images_of_good_codes {ι Xc Yc LL XI YI : Type u} (incl : Xc → Yc) (F : Yc → LL)
+    (r : ι → Yc → Xc) (onX : XI → Xc) (onY : YI → Yc) (g : LL → LL → LL) (code : ι → LL)
+    (hev : ∀ i y, g (code i) (F y) = F (incl (r i y)))
+    (hFi : Function.Injective (fun z => F (incl z))) :
+    #{i : ι // ∀ x : YI, ∃ y : XI, g (code i) (F (onY x)) = F (incl (onX y))} ≤
+      #{i : ι // ∀ x : YI, ∃ y : XI, onX y = r i (onY x)} := by
+  refine Cardinal.mk_subtype_mono fun i hi x => ?_
+  obtain ⟨y, hy⟩ := hi x
+  refine ⟨y, hFi ?_⟩
+  change F (incl (onX y)) = F (incl (r i (onY x)))
+  rw [← hy, hev]
+
 end
 end AEC

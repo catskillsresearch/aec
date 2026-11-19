@@ -7066,6 +7066,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 170: proved."
+  },
+  {
+   "id": "infra_83_images_of_good_codes",
+   "label": "Good evaluation codes (ret(code i, F(onY x)) in F[incl[onX[X_I]]]) give retraction images r_i(onY x) in onX[X_I] (eval law + F o incl injective), as a cardinal bound feeding the count clause of marked_of_marked_matches_card",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83TupleDominated.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 171: proved."
   }
  ],
  "edges": [
@@ -12961,8 +12970,13 @@
    "from": "infra_83_marked_of_marked_matches_card",
    "to": "infra_83_bounded_arity_free",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_images_of_good_codes",
+   "to": "infra_83_bounded_list_match",
+   "kind": "hard"
   }
  ],
- "doneCount": 717,
+ "doneCount": 718,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
