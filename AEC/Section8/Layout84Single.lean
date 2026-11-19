@@ -767,4 +767,49 @@ theorem infra_84_testing_of_small_common_base (P : SingleModelData K) {ν μ : C
     (fun t => by rcases t with a | i <;> simp [hu])
     (fun t => by rcases t with a | i <;> simp [hu'])
 
+/-- **Lemma 8.4 for P.scheme, joint tests whose `C`-part lies in `A` (uniform bound).** In Lemma
+8.4, `A ≤ U` and `A ≤ C` are read compatibly in `T` (`uT ∘ incl = cT ∘ aC`) and in `T′`
+(`uT' ∘ iso ∘ incl = cT' ∘ aC`, the map `U ≅ U′` fixes `A`). Joint tests from `U` and `C` whose
+`C`-part comes from `A` are therefore tests from `U` alone, and agreement on `U`-tests of size at
+most `g(σ) + LS(K)` gives agreement on all such joint tests of total size `< ν`. Stated for a
+general `X` (= `U`) with readings `x`, `x′` (= `uT`, `uT' ∘ iso`). -/
+theorem infra_84_UA_tests_single (P : SingleModelData K) {ν μ : Cardinal.{u}}
+    (hν : ν ∈ P.eligible) (hμ : μ ∈ P.eligible) (hνμ : ν ≤ μ)
+    (A X : P.scheme.Object ν hν) (C Tt Tt' : P.scheme.Object μ hμ)
+    (incl : SystemArrow K oneVertexShape (P.scheme.asSystem hν A) (P.scheme.asSystem hν X))
+    (aC : SystemArrow K oneVertexShape (P.scheme.asSystem hν A) (P.scheme.asSystem hμ C))
+    (cT : SystemArrow K oneVertexShape (P.scheme.asSystem hμ C) (P.scheme.asSystem hμ Tt))
+    (cT' : SystemArrow K oneVertexShape (P.scheme.asSystem hμ C) (P.scheme.asSystem hμ Tt'))
+    (x : SystemArrow K oneVertexShape (P.scheme.asSystem hν X) (P.scheme.asSystem hμ Tt))
+    (x' : SystemArrow K oneVertexShape (P.scheme.asSystem hν X) (P.scheme.asSystem hμ Tt'))
+    (hc : ∀ a, x.mapOcc (incl.mapOcc a) = cT.mapOcc (aC.mapOcc a))
+    (hc' : ∀ a, x'.mapOcc (incl.mapOcc a) = cT'.mapOcc (aC.mapOcc a))
+    {α : Type u} {σ : Cardinal.{u}} (hσinf : aleph0 ≤ σ) (hσ : σ < ν) (hα : #α ≤ σ)
+    (v : α → Occurrence K oneVertexShape (P.scheme.asSystem hμ Tt))
+    (v' : α → Occurrence K oneVertexShape (P.scheme.asSystem hμ Tt'))
+    (hsmall : ∀ {β : Type u} (Z : β → Occurrence K oneVertexShape (P.scheme.asSystem hν X)),
+      #β ≤ P.g σ + ls K →
+      P.scheme.DiagramEq (X := Tt) (Y := Tt')
+        (Sum.elim v (fun b => x.mapOcc (Z b))) (Sum.elim v' (fun b => x'.mapOcc (Z b))))
+    {ιU ιA : Type u} (ZU : ιU → Occurrence K oneVertexShape (P.scheme.asSystem hν X))
+    (ZA : ιA → Occurrence K oneVertexShape (P.scheme.asSystem hν A))
+    (hj : #(α ⊕ (ιU ⊕ ιA)) < ν) :
+    P.scheme.DiagramEq (X := Tt) (Y := Tt')
+      (Sum.elim v (Sum.elim (fun i => x.mapOcc (ZU i)) (fun i => cT.mapOcc (aC.mapOcc (ZA i)))))
+      (Sum.elim v' (Sum.elim (fun i => x'.mapOcc (ZU i))
+        (fun i => cT'.mapOcc (aC.mapOcc (ZA i))))) := by
+  have H := infra_84_U_tests_single' P hν hμ hνμ X Tt Tt' x x' hσinf hσ hα v v' hsmall
+    (Sum.elim ZU (fun i => incl.mapOcc (ZA i))) hj
+  exact infra_73_diagramEq_of_eq H
+    (fun t => by
+      rcases t with a | i | i
+      · rfl
+      · rfl
+      · exact hc (ZA i))
+    (fun t => by
+      rcases t with a | i | i
+      · rfl
+      · rfl
+      · exact hc' (ZA i))
+
 end AEC

@@ -4825,6 +4825,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 100: level-nu restatement of infra_84_testing_of_common_base as consumed by the diagram-level layout; from infra_84_U_tests_single'. Bound g(sigma)+LS, conclusion for total size < nu. Axioms clean."
+  },
+  {
+   "id": "infra_84_UA_tests_single",
+   "label": "Lemma 8.4 (P.scheme): joint tests whose C-part lies in A, uniform bound",
+   "section": 8,
+   "file": "AEC/Section8/Layout84Single.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 100: A-part of C read through U (uT o incl = cT o aC, iso fixes A), then infra_84_U_tests_single'. Axioms clean. Remaining joint case: C-parts outside A (infra_84_layout_amalgam)."
   }
  ],
  "edges": [
@@ -9245,8 +9254,13 @@
    "from": "infra_84_testing_of_small_common_base",
    "to": "infra_84_layout_amalgam",
    "kind": "hard"
+  },
+  {
+   "from": "infra_84_UA_tests_single",
+   "to": "infra_84_U_part_bound",
+   "kind": "hard"
   }
  ],
- "doneCount": 481,
+ "doneCount": 482,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
