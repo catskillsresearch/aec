@@ -7759,6 +7759,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 246: proved."
+  },
+  {
+   "id": "infra_83_dominated_of_tower_at",
+   "label": "At a closed level a finite mark b of X <= Y is all-dominated once Y has one exhausting countable tower of small strong submodels M n (b in M 0) with each (b, M n) isolated relative to b over X (embed_of_tower + dominated_of_primeness_at)",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PieceMatch.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 247: proved."
   }
  ],
  "edges": [
@@ -14039,8 +14048,13 @@
    "from": "infra_83_embed_of_tower",
    "to": "infra_83_arity_removal",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_dominated_of_tower_at",
+   "to": "infra_83_arity_removal",
+   "kind": "hard"
   }
  ],
- "doneCount": 793,
+ "doneCount": 794,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

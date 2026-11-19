@@ -3165,4 +3165,38 @@ theorem infra_83_embed_of_tower
 
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+set_option maxHeartbeats 1600000 in
+/-- **All-domination from isolation along one tower (proved).** At a closed level, a finite mark
+`b` of `X ≤ Y` is all-dominated as soon as `Y` has one exhausting countable tower of small strong
+submodels `M n` (with `b` in `M 0`) such that each `(b, M n)` is isolated relative to `b` over
+`X`: `infra_83_embed_of_tower` gives the primeness arrows and
+`infra_83_dominated_of_primeness_at` converts them. So arity removal for the template reduces to
+choosing such a tower in `Y_I` (nested bounded-width lists) and proving isolation of its
+stages. -/
+theorem infra_83_dominated_of_tower_at (P : SingleModelData K) {μ : Cardinal.{u}}
+    (hμ : μ ∈ infra_78_closedTail P ∩ infra_615_closed P) {X Y : P.scheme.Object μ hμ.1.1}
+    (incl : SystemArrow K oneVertexShape (P.scheme.asSystem _ X) (P.scheme.asSystem _ Y))
+    {bIdx : Type u} [Finite bIdx]
+    (b : bIdx → Occurrence K oneVertexShape (P.scheme.asSystem _ Y))
+    (M : ℕ → Model K.τ) (j : ∀ n, Language.Embedding K.τ (M n).carrier Y.model.carrier)
+    (hj : ∀ n, K.Strong (j n)) (hMc : ∀ n, Model.card (M n) < μ)
+    (hmono : ∀ n x, ∃ y, j (n + 1) y = j n x) (hcov : ∀ y, ∃ n x, j n x = y)
+    (hd : ∀ i, ∃ x, j 0 x = (b i).2)
+    (hIsoT : ∀ n, IsRelativelyIsolated (uIdx := bIdx) (cIdx := (M n).carrier)
+      (asTuple incl trivial (seqJoint b (fun x => Y.occ (j n x))))
+      (Equiv.refl (bIdx ⊕ (M n).carrier))) :
+    AllDominated incl trivial bIdx b := by
+  refine infra_83_dominated_of_primeness_at P hμ incl b (fun V inclV b' _ hS => ?_)
+  obtain ⟨h, -, hh, hb⟩ := infra_83_embed_of_tower hμ.1.1 X Y V incl trivial inclV trivial b b'
+    ((Cardinal.lt_aleph0_of_finite _).trans (P.aleph0_lt hμ.1.1)) hS M j hj hMc hmono hcov hd hIsoT
+  refine ⟨h, hh, fun i => ?_⟩
+  apply Sigma.ext
+  · exact Subsingleton.elim _ _
+  · exact heq_of_eq (hb i)
+end
+
 end AEC
