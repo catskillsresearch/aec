@@ -7075,6 +7075,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 171: proved."
+  },
+  {
+   "id": "infra_83_retained_of_match_ret",
+   "label": "Piece match into a ret-sample (YI may be one bounded list's hull) gives at least #X_I Cor 6.16 indices with r_i(onY x) in onX[X_I] for all x (good_codes_of_match_ret + images_of_good_codes)",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83TupleDominated.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 172: proved."
   }
  ],
  "edges": [
@@ -12975,8 +12984,13 @@
    "from": "infra_83_images_of_good_codes",
    "to": "infra_83_bounded_list_match",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_retained_of_match_ret",
+   "to": "infra_83_bounded_list_match",
+   "kind": "hard"
   }
  ],
- "doneCount": 718,
+ "doneCount": 719,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

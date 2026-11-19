@@ -6,6 +6,7 @@ public import AEC.Section7.IsolationTransfer
 public import AEC.Section7.Prop78General
 public import AEC.Section7.SeedStage
 public import AEC.Section8.PairIsoSingle
+public import AEC.Section8.Lemma83RetGood
 
 @[expose] public section
 
@@ -16,6 +17,8 @@ Tuple form of `infra_83_dominated_of_retraction_pair`: the hypothesis that the r
 the image of the *whole* small upper object into the image of `X` is replaced by the paper's
 "only images of the tested tuple have been placed in `X_H`".
 -/
+
+open FirstOrder FirstOrder.Language
 
 namespace AEC
 section
@@ -503,6 +506,43 @@ theorem infra_83_images_of_good_codes {ι Xc Yc LL XI YI : Type u} (incl : Xc �
   refine ⟨y, hFi ?_⟩
   change F (incl (onX y)) = F (incl (r i (onY x)))
   rw [← hy, hev]
+
+
+/-- **Retained retractions from a piece match into a ret-sample (proved).** Under the hypotheses
+of `infra_83_good_codes_of_match_ret` (here `YI` may be the hull of one bounded list, not a whole
+template value), with `F ∘ M.incl` injective, at least `#X_I` Cor 6.16 indices send every matched
+point `onY x` of the piece into `onX[X_I]`. -/
+theorem infra_83_retained_of_match_ret (P : SingleModelData K)
+    {Pr : StationaryPrescription K oneVertexShape P.scheme}
+    {J Jplus : Type u} [LinearOrder J] [Nonempty J] [LinearOrder Jplus] [Nonempty Jplus]
+    {M : MarkedPair K oneVertexShape P.scheme Pr}
+    (eX : (P.E.obj J).carrier → ((P.scheme.asSystem M.hμ M.X).obj PUnit.unit).carrier)
+    (hsurj : Function.Surjective eX) (emb : J ↪o Jplus)
+    (F : ((P.scheme.asSystem M.hμ M.Y).obj PUnit.unit).carrier → (P.E.obj Jplus).carrier)
+    (hF : ∀ x, F (M.incl.onVertex PUnit.unit (eX x)) = P.E.map emb x)
+    (R : ApproximateRetraction K oneVertexShape P.scheme M.hμ M.X M.Y M.incl)
+    (code : R.index → (P.E.obj J).carrier) (hcode : Function.Bijective code)
+    (G : (P.E.obj Jplus).carrier → (P.E.obj Jplus).carrier → (P.E.obj Jplus).carrier)
+    (heval : ∀ i y, G (P.E.map emb (code i)) (F y) =
+      F (M.incl.onVertex PUnit.unit ((R.retr i).onVertex PUnit.unit y)))
+    {L₀ : FirstOrder.Language.{u, u}} {XI YI : Type u} [L₀.Structure YI]
+    [L₀.Structure (P.E.obj Jplus).carrier]
+    (onX : XI → ((P.scheme.asSystem M.hμ M.X).obj PUnit.unit).carrier)
+    (onY : YI → ((P.scheme.asSystem M.hμ M.Y).obj PUnit.unit).carrier) (inclI : XI → YI)
+    (hcomm : ∀ x, onY (inclI x) = M.incl.onVertex PUnit.unit (onX x))
+    (mY : YI ↪[L₀] (P.E.obj Jplus).carrier) (hmY : ∀ y, mY y = F (onY y))
+    (ret : L₀.Functions 2) (hret : ∀ a b, Structure.funMap ret ![a, b] = G a b)
+    (hmeet : ∀ (x' : YI) (z : ((P.scheme.asSystem M.hμ M.X).obj PUnit.unit).carrier),
+      F (onY x') = F (M.incl.onVertex PUnit.unit z) → ∃ y, x' = inclI y)
+    (hFX : Function.Injective (fun x => F (M.incl.onVertex PUnit.unit (onX x))))
+    (hFi : Function.Injective (fun z => F (M.incl.onVertex PUnit.unit z))) :
+    #XI ≤ #{i : R.index // ∀ x : YI, ∃ y : XI,
+      onX y = (R.retr i).onVertex PUnit.unit (onY x)} :=
+  (infra_83_good_codes_of_match_ret P eX hsurj emb F hF R code hcode G heval onX onY inclI hcomm
+    mY hmY ret hret hmeet hFX).trans
+    (infra_83_images_of_good_codes (M.incl.onVertex PUnit.unit) F
+      (fun i y => (R.retr i).onVertex PUnit.unit y) onX onY G (fun i => P.E.map emb (code i))
+      heval hFi)
 
 end
 end AEC
