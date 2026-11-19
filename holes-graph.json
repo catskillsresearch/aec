@@ -7633,6 +7633,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 232: proved."
+  },
+  {
+   "id": "infra_83_realizes_reindex",
+   "label": "If b' realizes p with identity index maps, b' o e realizes p through the bijection e (companion of dominated_reindex for feeding Theorem 7.9 existence into full_single_of_realization_target)",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PieceMatch.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 233: proved."
   }
  ],
  "edges": [
@@ -13843,8 +13852,13 @@
    "from": "infra_83_dominated_reindex",
    "to": "infra_83_arity_removal",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_realizes_reindex",
+   "to": "infra_83_arity_removal",
+   "kind": "hard"
   }
  ],
- "doneCount": 779,
+ "doneCount": 780,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

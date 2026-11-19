@@ -2336,4 +2336,29 @@ theorem infra_83_dominated_reindex {P : SingleModelData K} {μ : Cardinal.{u}}
   fun cIdx c hc => infra_82_isolated_reindex_mark incl τ b c (hD cIdx c hc)
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+/-- **Realization under relabelling the mark (proved).** If `b'` realizes `p` with identity
+index maps, then `b' ∘ e` realizes `p` through the bijection `e` itself. Companion of
+`infra_83_dominated_reindex` for feeding Theorem 7.9 existence into
+`infra_83_full_single_of_realization_target`. -/
+theorem infra_83_realizes_reindex {P : SingleModelData K} {μ : Cardinal.{u}}
+    {hμ : μ ∈ P.eligible} {X V : P.scheme.Object μ hμ}
+    (p : TupleOver K oneVertexShape P.scheme hμ X)
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ V))
+    (b' : p.idx → Occurrence K oneVertexShape (P.scheme.asSystem hμ V))
+    (hS : SameGaloisType p (asTuple f trivial b') (Equiv.refl _) (Equiv.refl _))
+    {α : Type u} (e : α ≃ p.idx) :
+    SameGaloisType (asTuple f trivial (fun a => b' (e a))) p e (Equiv.refl _) := by
+  rcases hS.symm with ⟨ρ, hρ, top, f1, f2, hf1, hf2, hcomm, hval⟩
+  refine ⟨ρ, hρ, top, f1, f2, hf1, hf2, hcomm, fun j => ?_⟩
+  have h := hval j
+  show (⟨(b' (e (e.symm j))).1, f1.onVertex _ (b' (e (e.symm j))).2⟩ :
+      Occurrence K oneVertexShape _) = _
+  rw [Equiv.apply_symm_apply]
+  exact h
+end
+
 end AEC
