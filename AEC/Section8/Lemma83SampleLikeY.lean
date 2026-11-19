@@ -153,7 +153,9 @@ abbrev retM3 (E : OrderPresentation K) (n : ℕ) : (LS83.pairLangM3 E n).Functio
   Sum.inl (Sum.inl (Sum.inl (Sum.inl (Sum.inl (Sum.inr PUnit.unit)))))
 
 /-- **Ret-sample-like structures**: `ret` evaluates a Cor 6.16 retraction family of a marked
-pair whose `X`-copy is `F(J)` inside `N ≃ E(J⁺)`. -/
+pair whose `X`-copy is `F(J)` inside `N ≃ E(J⁺)`; this `X`-copy is the `X`-sort of `N` (its
+chart points are the `X`-chart, it is closed under the `X`-language, and `X`-closed sets meet it
+in `F` of their chart). -/
 def RetSampleLike (P : SingleModelData K) (Pr : StationaryPrescription K oneVertexShape P.scheme)
     (N : Type u) [(LS83.pairLangM3 P.E Pr.n).Structure N] : Prop :=
   ∃ (M : MarkedPair K oneVertexShape P.scheme Pr) (J Jp : Type u) (_ : LinearOrder J)
@@ -166,6 +168,14 @@ def RetSampleLike (P : SingleModelData K) (Pr : StationaryPrescription K oneVert
     Function.Surjective eX ∧ Function.Injective F ∧
     (∀ x, F (M.incl.onVertex PUnit.unit (eX x)) = P.E.map emb x) ∧
     Function.Bijective code ∧ ℵ₀ ≤ M.μ ∧
+    (∀ x, chartXM P.E Pr.n x ↔ ∃ j, P.E.skeleton (emb j) = g x) ∧
+    (∀ {k} (f : (LS83.pairLangR P.E).Functions k) (x : Fin k → N),
+      (∀ i, g (x i) ∈ Set.range (P.E.map emb)) →
+        g (xFun P.E Pr.n f x) ∈ Set.range (P.E.map emb)) ∧
+    (∀ (T : Set (P.E.obj Jp).carrier) [Nonempty (Lab83.chart emb T)],
+      (∀ {k} (f : (LS83.pairLangR P.E).Functions k) (x : Fin k → N), (∀ i, g (x i) ∈ T) →
+        g (xFun P.E Pr.n f x) ∈ T) →
+      T ∩ Set.range (P.E.map emb) = Set.range (P.E.map (Lab83.chartEmb emb T))) ∧
     ∀ (i : R.index) (y : ((P.scheme.asSystem M.hμ M.Y).obj PUnit.unit).carrier),
       g (Structure.funMap (retM3 P.E Pr.n)
         ![g.symm (P.E.map emb (code i)), g.symm (F y)]) =
@@ -249,7 +259,8 @@ theorem infra_83_pairMS3_coherent_colors (P : SingleModelData K)
     exact hrF ⟨_, (hF (P.E.skeleton j)).trans (P.E.skeleton_natural emb j)⟩
   · obtain ⟨R, code, hcode, hev⟩ := hret
     exact ⟨M, J, Jplus, i1, i2, i3, i4, emb, Equiv.refl _, eX, F, R, code, hbij.2, F.injective,
-      hF, hcode, by rw [hM]; exact hμ.le, fun i y => hev i y⟩
+      hF, hcode, by rw [hM]; exact hμ.le, fun x => Iff.rfl, fun f x hx => hX f x hx,
+      fun T _ hT => hchX T hT, fun i y => hev i y⟩
   · fin_cases i
     · exact P.E.skeleton.injective.comp emb.injective
     · exact F.injective.comp (ι.injective.comp P.E.skeleton.injective)
@@ -293,7 +304,7 @@ theorem infra_83_retSampleLike_good (P : SingleModelData K)
           (fun b => g (Structure.funMap (retM3 P.E Pr.n)
               ![g.symm (P.E.map emb (code i)), g.symm b])) '' Set.range F ⊆
             Set.range (P.E.map emb)} = M.μ := by
-  obtain ⟨M, J, Jp, i1, i2, i3, i4, emb, g, eX, F, R, code, hsurj, hF, hFX, hcode, hμ, hev⟩ := h
+  obtain ⟨M, J, Jp, i1, i2, i3, i4, emb, g, eX, F, R, code, hsurj, hF, hFX, hcode, hμ, -, -, -, hev⟩ := h
   refine ⟨M, J, Jp, i1, i2, i3, i4, emb, g, eX, F, R, code, hsurj, hF, hFX, hcode, fun A => ?_⟩
   exact infra_83_ret_good_card_mu P eX hsurj emb F hFX R code
     (fun a b => g (Structure.funMap (retM3 P.E Pr.n) ![g.symm a, g.symm b])) hev hμ A
