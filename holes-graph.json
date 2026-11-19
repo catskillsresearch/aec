@@ -670,7 +670,7 @@
    "file": "AEC/Section8/Results.lean",
    "status": "blocked",
    "blocker": null,
-   "detail": "Blocked: stated for an arbitrary WorkingScheme W with no IsWorkingPackage/categoricity hypotheses (underhypothesized vs the English, which uses saturation/exhaustion). Proof path needs proposition_7_8 (blocked on infra_78_mixed_level_isolation) and a general-scheme version of the Section 6-7 same-level machinery, which exists only for SingleModelData. Large missing development. lemma_8_4 is itself a mixed-level (nu<mu) descent of Galois types: same blocker as infra_78_mixed_level_isolation."
+   "detail": "Blocked: stated for an arbitrary WorkingScheme W with no IsWorkingPackage/categoricity hypotheses (underhypothesized vs the English, which uses saturation/exhaustion). Proof path needs proposition_7_8 (blocked on infra_78_mixed_level_isolation) and a general-scheme version of the Section 6-7 same-level machinery, which exists only for SingleModelData. Large missing development. lemma_8_4 is itself a mixed-level (nu<mu) descent of Galois types: same blocker as infra_78_mixed_level_isolation. | Cycle 94 audit: the Lean lemma_8_4 is a generic testing bound (p, q over A at ν with hosts at arbitrary levels; tests of size ≤ k(σ) ⇒ SameGaloisType). The English Lemma 8.4 is about a small marked pair (A,U,b) inside T, its image inside T′, over C at level μ, with b/C, b′/C prescribed free extensions; comparisons of v ∈ T, v′ ∈ T′ on joint tests from U and C. The Lean form drops this setting; for W := P.scheme with both hosts above ν it is the infra_612_galois_trans_cross_level_both_off obstruction. Restatement needed before proof."
   },
   {
    "id": "lemma_8_5",
