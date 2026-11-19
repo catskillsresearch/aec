@@ -6922,6 +6922,15 @@
    "status": "open",
    "blocker": null,
    "detail": "Open (cycle 154 plan)."
+  },
+  {
+   "id": "infra_83_XH_sort_sample",
+   "label": "Sample level: the Y-language hull of any family meets the X-copy exactly in F of its own X-chart (X_H = F(J_H) for X_H the X-sort of the whole hull)",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83RetGood.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 155: proved."
   }
  ],
  "edges": [
@@ -12737,8 +12746,13 @@
    "from": "infra_83_bounded_list_match",
    "to": "infra_83_bounded_arity_free",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_XH_sort_sample",
+   "to": "infra_83_XH_sort",
+   "kind": "hard"
   }
  ],
- "doneCount": 701,
+ "doneCount": 702,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

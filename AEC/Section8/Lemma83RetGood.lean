@@ -111,4 +111,45 @@ theorem infra_83_meet_of_chart (P : SingleModelData K)
   rw [hT] at hw
   exact hchart hw
 
+
+/-- **`X_H` as the `X`-sort of the `Y`-hull (sample level, proved).** English (Lemma 8.3 proof:
+"write the resulting chart orders as `J_H` … `X_H = F(J_H)`", both directions of generation):
+in an `X`-sample-like structure, the `Y`-language term hull of any family meets the `X`-copy
+`F(emb)(J)` exactly in `F` of its own `X`-chart. So the `X`-sort part of the whole hull is
+`F(J_H)` with `J_H` the `X`-chart points of the hull, and a `Y`-hull element in the `X` sort is
+in this `X_H` by definition. -/
+theorem infra_83_XH_sort_sample (E : OrderPresentation K) (n : ℕ) {N : Type u}
+    [(LS83.pairLangM3 E n).Structure N] {J Jp : Type u} [LinearOrder J] [Nonempty J]
+    [LinearOrder Jp] [Nonempty Jp] (emb : J ↪o Jp) (g : N ≃ (E.obj Jp).carrier)
+    (hchart : ∀ (T : Set (E.obj Jp).carrier) [Nonempty (Lab83.chart emb T)],
+      (∀ {k} (f : (LS83.pairLangR E).Functions k) (x : Fin k → N), (∀ i, g (x i) ∈ T) →
+        g (xFun E n f x) ∈ T) →
+      T ∩ Set.range (E.map emb) = Set.range (E.map (Lab83.chartEmb emb T)))
+    {ι : Type} (v : ι → N)
+    [Nonempty (Lab83.chart emb
+      (g '' Set.range (@Hull83.hullVal _ _ ((psiM E n).reduct N) ι v)))] :
+    g '' Set.range (@Hull83.hullVal _ _ ((psiM E n).reduct N) ι v) ∩ Set.range (E.map emb) =
+      Set.range (E.map (Lab83.chartEmb emb
+        (g '' Set.range (@Hull83.hullVal _ _ ((psiM E n).reduct N) ι v)))) := by
+  letI := (psiM E n).reduct N
+  set S := Set.range (Hull83.hullVal (L := LS83.pairLangM2 E n) v)
+  have hS : S = Set.range fun t : (LS83.pairLangM2 E n).Term ι => t.realize v := by
+    ext y
+    constructor
+    · rintro ⟨x, rfl⟩
+      exact ⟨x.out, (Hull83.hullVal_out v x).symm⟩
+    · rintro ⟨t, rfl⟩
+      exact ⟨Quotient.mk _ t, rfl⟩
+  have hcl : ∀ {k} (f : (LS83.pairLangM2 E n).Functions k) (x : Fin k → N),
+      (∀ i, x i ∈ S) → yFun E n f x ∈ S := by
+    intro k f x hx
+    rw [hS] at hx ⊢
+    choose t ht using hx
+    exact ⟨Term.func f t, by simp only [Term.realize, ht]⟩
+  apply hchart
+  intro k f x hx
+  refine ⟨_, hcl ((chiM E n).onFunction f) x fun i => ?_, rfl⟩
+  obtain ⟨y, hy, hyx⟩ := hx i
+  rwa [← g.injective hyx]
+
 end AEC
