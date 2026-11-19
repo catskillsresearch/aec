@@ -3654,7 +3654,7 @@
    "file": "AEC/Section7/Prop78General.lean",
    "status": "blocked",
    "blocker": "infra_78_general_assembly",
-   "detail": "OPEN, board-only (cycle 93). English: 'More generally the assertion holds for a bounded mark b satisfying Definition 7.7, with |b| <= theta.' The finite proof (infra_78_marginal_general_level, matrix construction) uses finiteness at: limit invariance of the fixed mark (replace infra_78_limit_invariant5 by the Def 7.7 hypothesis), and isolation bounds at the joint arity (|b| <= theta). Hard; first step is to state it. | Cycle 93: STATED as infra_78_general_statement (Prop78General.lean; same uniform tail infra_78_closedTail as proposition_7_8, tied Def 7.7 SatisfiesContinuityTied p, #p.idx <= theta). Finite case proved (infra_78_general_finite). Split: infra_78_general_small_cof (open), infra_78_general_assembly (blocked on it)."
+   "detail": "OPEN, board-only (cycle 93). English: 'More generally the assertion holds for a bounded mark b satisfying Definition 7.7, with |b| <= theta.' The finite proof (infra_78_marginal_general_level, matrix construction) uses finiteness at: limit invariance of the fixed mark (replace infra_78_limit_invariant5 by the Def 7.7 hypothesis), and isolation bounds at the joint arity (|b| <= theta). Hard; first step is to state it. | Cycle 93: STATED as infra_78_general_statement (Prop78General.lean; same uniform tail infra_78_closedTail as proposition_7_8, tied Def 7.7 SatisfiesContinuityTied p, #p.idx <= theta). Finite case proved (infra_78_general_finite). Split: infra_78_general_small_cof (open), infra_78_general_assembly (blocked on it). | Cycle 93 (end): small_cof and assembly DONE (infra_78_general_assembly_closed). Remaining: infra_78_def77_tail_meet (ruling: Def 7.7 tail is only cofinal) and the any-host reduction (p.nu arbitrary, as infra_78_marginal_general_level does for finite p)."
   },
   {
    "id": "infra_612_tied_symm_core",
@@ -3760,18 +3760,18 @@
    "label": "Prop 7.8 general: invariant (5) at matrix limits with cf(delta) <= |b|",
    "section": 7,
    "file": "AEC/Section7/Prop78General.lean",
-   "status": "open",
+   "status": "done",
    "blocker": null,
-   "detail": "OPEN (cycle 93). English: 'At limits use the working scheme's unions; Definition 7.7 preserves the marginal invariant.' For |b| < cf(delta) the invariant is infra_78_limit_invariant5 (proved). For cf(delta) <= |b| <= theta: choose the matrix level kappa also in the SatisfiesContinuityTied tail of p and apply Def 7.7 to the chain of base stages (b in the union of the upper stages, tied free from each X_i by (5) below delta). | Cycle 93: limit step reduced to infra_78_general_limit_invariant (done). Remaining: feed Def 7.7 at the matrix limit: kappa in the Def 7.7 tail of p, b|X_0 the tied free lift of p along X -> X_0 (IsTiedFreeMixed), and each b|X_i tied-free from X_0. The last needs a cancellation lemma for tied freeness (X -> X_0 -> X_i: free from X along both legs => free from X_0), via infra_610_tied_free_lift + infra_73_tied_unique + transfer along SameGaloisType (as infra_612_tiedFreeMixed_copy); tracked here. | Cycle 93 (cont.): cancellation lemma infra_78_tiedFree_cancel PROVED (true); matrix limit step generalized (infra_78_matrix_limit_step_gen, hF oracle). Remaining: discharge hF for the matrix mark from Def 7.7 (kappa in the Def 7.7 tail, stage freeness via cancellation, stage-0 free lift of p via mixed transitivity), and thread hF instead of hcof through RecursionOutputs (rc_inv5_all, recursion outputs) and infra_78_isolation_over_A. | Cycle 93 (cont. 2): infra_78_chain_stage_free and infra_78_hF_of_def77 PROVED: Def 7.7 now discharges hF given the stage-0 seed (stage-0 restriction is the mixed tied free lift of p along A -> X_0, plus stage 0 free from X_b). Remaining: carry the seed through the matrix (seeded limit step: from p mixed-free into X_b and invariant (5) at stage 0 via mixed transitivity), and thread it instead of hcof through RecursionOutputs (rc_inv5_all, outputs) and infra_78_isolation_over_A; kappa must be chosen in the Def 7.7 tail (intersect with infra_78_closedTail). | Cycle 93 (cont. 3): infra_78_matrix_limit_step_def77 PROVED (limit step needs only the per-stage seed + Def 7.7 at kappa). Remaining for small_cof/assembly: maintain the seed invariant in the recursion (successor step: mixed transitivity infra_78_tiedFreeMixed_trans from (5); limit: from the union seed) and replace hcof by it in RecursionOutputs (rc_inv5_all, outputs) and infra_78_isolation_over_A, with kappa in the Def 7.7 tail. | Cycle 93 (cont. 4): infra_78_limit_inv5_cocone_def77 and infra_78_rc_inv5_all_def77 PROVED: invariant (5) at all recursion stages without hcof. Remaining (small_cof/assembly): discharge the per-stage seed hypothesis in the assembly (stage_transport + tiedFreeMixed_trans + left_congr via hD/F2 diagrams), and port infra_78_recursion_outputs / rc_failing_list / isolation_over_A (which call rc_inv5_all with hcof) to the def77 variant; choose kappa in the Def 7.7 tail. | Cycle 93 (cont. 5): infra_78_rc_stage_seed PROVED (per-stage seed discharged). Remaining: port infra_78_recursion_outputs / rc_failing_list / infra_78_isolation_over_A to rc_inv5_all_def77 (+ rc_stage_seed), then the assembly with kappa in the Def 7.7 tail intersected with the existing level tails. | Cycle 93 (cont. 6): isolation_over_A / isolated_stage / rc_failing_list refactored to take (5)-at-every-stage instead of hcof (green, axioms clean). Remaining for small_cof: none at the recursion level beyond instantiating rc_inv5_all_def77 + rc_stage_seed in a general assembly (= infra_78_general_assembly: port infra_78_matrix_assembly_level from [Finite p.idx] to |p| <= theta with Def 7.7, choosing kappa in the Def 7.7 tail)."
+   "detail": "DONE cycle 93: invariant (5) at every matrix stage, limits of any cofinality, for a bounded mark (|b| <= sigma) given Def 7.7 for p at the matrix level: infra_78_rc_inv5_all_def77 (limits: infra_78_limit_inv5_cocone_def77 / infra_78_matrix_limit_step_def77; stage freeness by cancellation infra_78_tiedFree_cancel + infra_78_chain_stage_free; per-stage seed infra_78_rc_stage_seed). No cofinality hypothesis; axioms clean. | History: OPEN (cycle 93). English: 'At limits use the working scheme's unions; Definition 7.7 preserves the marginal invariant.' For |b| < cf(delta) the invariant is infra_78_limit_invariant5 (proved). For cf(delta) <= |b| <= theta: choose the matrix level kappa also in the SatisfiesContinuityTied tail of p and apply Def 7.7 to the chain of base stages (b in the union of the upper stages, tied free from each X_i by (5) below delta). | Cycle 93: limit step reduced to infra_78_general_limit_invariant (done). Remaining: feed Def 7.7 at the matrix limit: kappa in the Def 7.7 tail of p, b|X_0 the tied free lift of p along X -> X_0 (IsTiedFreeMixed), and each b|X_i tied-free from X_0. The last needs a cancellation lemma for tied freeness (X -> X_0 -> X_i: free from X along both legs => free from X_0), via infra_610_tied_free_lift + infra_73_tied_unique + transfer along SameGaloisType (as infra_612_tiedFreeMixed_copy); tracked here. | Cycle 93 (cont.): cancellation lemma infra_78_tiedFree_cancel PROVED (true); matrix limit step generalized (infra_78_matrix_limit_step_gen, hF oracle). Remaining: discharge hF for the matrix mark from Def 7.7 (kappa in the Def 7.7 tail, stage freeness via cancellation, stage-0 free lift of p via mixed transitivity), and thread hF instead of hcof through RecursionOutputs (rc_inv5_all, recursion outputs) and infra_78_isolation_over_A. | Cycle 93 (cont. 2): infra_78_chain_stage_free and infra_78_hF_of_def77 PROVED: Def 7.7 now discharges hF given the stage-0 seed (stage-0 restriction is the mixed tied free lift of p along A -> X_0, plus stage 0 free from X_b). Remaining: carry the seed through the matrix (seeded limit step: from p mixed-free into X_b and invariant (5) at stage 0 via mixed transitivity), and thread it instead of hcof through RecursionOutputs (rc_inv5_all, outputs) and infra_78_isolation_over_A; kappa must be chosen in the Def 7.7 tail (intersect with infra_78_closedTail). | Cycle 93 (cont. 3): infra_78_matrix_limit_step_def77 PROVED (limit step needs only the per-stage seed + Def 7.7 at kappa). Remaining for small_cof/assembly: maintain the seed invariant in the recursion (successor step: mixed transitivity infra_78_tiedFreeMixed_trans from (5); limit: from the union seed) and replace hcof by it in RecursionOutputs (rc_inv5_all, outputs) and infra_78_isolation_over_A, with kappa in the Def 7.7 tail. | Cycle 93 (cont. 4): infra_78_limit_inv5_cocone_def77 and infra_78_rc_inv5_all_def77 PROVED: invariant (5) at all recursion stages without hcof. Remaining (small_cof/assembly): discharge the per-stage seed hypothesis in the assembly (stage_transport + tiedFreeMixed_trans + left_congr via hD/F2 diagrams), and port infra_78_recursion_outputs / rc_failing_list / isolation_over_A (which call rc_inv5_all with hcof) to the def77 variant; choose kappa in the Def 7.7 tail. | Cycle 93 (cont. 5): infra_78_rc_stage_seed PROVED (per-stage seed discharged). Remaining: port infra_78_recursion_outputs / rc_failing_list / infra_78_isolation_over_A to rc_inv5_all_def77 (+ rc_stage_seed), then the assembly with kappa in the Def 7.7 tail intersected with the existing level tails. | Cycle 93 (cont. 6): isolation_over_A / isolated_stage / rc_failing_list refactored to take (5)-at-every-stage instead of hcof (green, axioms clean). Remaining for small_cof: none at the recursion level beyond instantiating rc_inv5_all_def77 + rc_stage_seed in a general assembly (= infra_78_general_assembly: port infra_78_matrix_assembly_level from [Finite p.idx] to |p| <= theta with Def 7.7, choosing kappa in the Def 7.7 tail)."
   },
   {
    "id": "infra_78_general_assembly",
    "label": "Prop 7.8 general: matrix assembly for bounded marks |b| <= theta",
    "section": 7,
    "file": "AEC/Section7/Prop78General.lean",
-   "status": "blocked",
-   "blocker": "infra_78_general_small_cof",
-   "detail": "BLOCKED on infra_78_general_small_cof (cycle 93). Re-run infra_78_matrix_assembly_level (AssemblyGlue) for a bounded mark: replace [Finite p.idx] by #p.idx <= theta, the limit invariant by infra_78_general_small_cof / infra_78_limit_invariant5, and the joint isolation arity aleph0 + theta by theta; then the any-host reduction as in infra_78_marginal_general_level."
+   "status": "done",
+   "blocker": null,
+   "detail": "DONE cycle 93: infra_78_general_assembly_closed (Prop78General.lean): infra_78_matrix_assembly_level for a bounded mark #p.idx <= theta (no Finite), given Definition 7.7 for p at every matrix level kappa in infra_73_tailSet P lambda (infra_78_def77_at; the closed-level reading of 'holds at every sufficiently closed eligible level'). Conclusion identical to matrix_assembly_level (isolation for lists |c| <= theta). Axioms clean. | History: BLOCKED on infra_78_general_small_cof (cycle 93). Re-run infra_78_matrix_assembly_level (AssemblyGlue) for a bounded mark: replace [Finite p.idx] by #p.idx <= theta, the limit invariant by infra_78_general_small_cof / infra_78_limit_invariant5, and the joint isolation arity aleph0 + theta by theta; then the any-host reduction as in infra_78_marginal_general_level."
   },
   {
    "id": "infra_78_general_limit_invariant",
@@ -3871,6 +3871,24 @@
    "status": "done",
    "blocker": null,
    "detail": "PROVED cycle 93 (axioms clean): from the seed-stage mixed tied freeness H0 and the small-test identification with p (hDp), every stage k satisfying (5) has its mark the mixed tied free lift of p along A -> X_0 -> X_k (stage_transport + tiedFreeMixed_trans + left_congr). Discharges the seed hypothesis of infra_78_rc_inv5_all_def77."
+  },
+  {
+   "id": "infra_78_general_assembly_closed",
+   "label": "Prop 7.8 assembly for bounded marks (closed-level Def 7.7)",
+   "section": 7,
+   "file": "AEC/Section7/Prop78General.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "PROVED cycle 93 (axioms clean). See infra_78_general_assembly."
+  },
+  {
+   "id": "infra_78_def77_tail_meet",
+   "label": "Def 7.7 tail meets the matrix closure tail",
+   "section": 7,
+   "file": "AEC/Section7/Theorem713.lean",
+   "status": "open",
+   "blocker": "ruling",
+   "detail": "OPEN cycle 93 (needs a ruling). SatisfiesContinuityTied p gives SOME cofinal set T of levels (Tail = cofinal only, not closed under intersection); the Prop 7.8 matrix level kappa must lie in infra_73_tailSet P lambda (recursion-closed levels, not upward closed). Two cofinal sets can be disjoint, so infra_78_general (via infra_78_general_assembly_closed) cannot obtain Def 7.7 at a matrix level from the current formal Def 7.7. English Def 7.7: 'the following holds at every sufficiently closed eligible level to which p is freely lifted'. Options: (a) restate SatisfiesContinuityTied with the closed-level reading (Def 7.7 at every kappa in infra_73_tailSet P sigma for some sigma, or every eligible level above some bound), checking downstream users (Theorem 7.13 / infra_713_*); (b) keep it and add the meet as a hypothesis of infra_78_general (weaker than English: not allowed for a paper-numbered statement)."
   }
  ],
  "edges": [
@@ -7681,8 +7699,28 @@
    "from": "infra_78_rc_stage_seed",
    "to": "infra_78_general_small_cof",
    "kind": "hard"
+  },
+  {
+   "from": "infra_78_general_assembly_closed",
+   "to": "infra_78_general_assembly",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_78_rc_inv5_all_def77",
+   "to": "infra_78_general_assembly_closed",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_78_rc_stage_seed",
+   "to": "infra_78_general_assembly_closed",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_78_def77_tail_meet",
+   "to": "infra_78_general",
+   "kind": "hard"
   }
  ],
- "doneCount": 374,
+ "doneCount": 377,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
