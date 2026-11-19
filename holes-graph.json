@@ -6049,6 +6049,24 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 107: transition maps of Y-hull pieces are F-images of order embeddings of chart index sets (labels commute)."
+  },
+  {
+   "id": "infra_83_pairMS2_X_chart_functor",
+   "label": "X-chart order embeddings h_e form a functor (h_id = id, h_(e≫f) = h_f ∘ h_e)",
+   "section": 8,
+   "file": "Lemma83SampleLikeY.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 107: chosen h_e with ε_l ∘ F_X(e) = F(h_e) ∘ ε_k are functorial (uniqueness via skeleton injectivity)."
+  },
+  {
+   "id": "infra_83_pairMS2_Y_chart_functor",
+   "label": "Y-chart order embeddings h_e form a functor (h_id = id, h_(e≫f) = h_f ∘ h_e)",
+   "section": 8,
+   "file": "Lemma83SampleLikeY.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 107: chosen h_e with ε_l ∘ F_Y(e) = F(h_e) ∘ ε_k are functorial."
   }
  ],
  "edges": [
@@ -11294,8 +11312,18 @@
    "from": "infra_83_pairMS2_Y_chart_natural",
    "to": "infra_83_Y_hull_eq_FZ",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_pairMS2_X_chart_functor",
+   "to": "infra_83_X_hull_eq_FJ",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_83_pairMS2_Y_chart_functor",
+   "to": "infra_83_Y_hull_eq_FZ",
+   "kind": "hard"
   }
  ],
- "doneCount": 605,
+ "doneCount": 607,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

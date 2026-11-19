@@ -1469,4 +1469,95 @@ theorem infra_83_pairMS2_Y_chart_natural (P : SingleModelData K)
   rw [hq, P.E.skeleton_natural]
   rfl
 
+
+/-- **The induced chart order embeddings form a functor**: choosing `h_e : H_k ↪o H_l` with
+`ε_l ∘ F_X(e) = F(h_e) ∘ ε_k`, we get `h_id = id` and `h_(e ≫ f) = h_f ∘ h_e`. -/
+theorem infra_83_pairMS2_X_chart_functor (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) :
+    ∃ (c : (m : ℕ) → 0 < m → Hull83.TpColorB (LS83.pairLangM3 P.E Pr.n) 3 m)
+      (hc : ∀ (n : ℕ) (κ : Cardinal.{u}),
+        Hull83.Joint (Hull83.TpSampleB (fun N _ => pairMAdmittedS2 P.E Pr.n N) 3) n c κ)
+      (hcoh : ∀ {m m' : ℕ} (hm' : 0 < m') (hm : 0 < m) (f : Fin m' ↪o Fin m),
+        c m' hm' = Hull83.tpResB 3 f (c m hm))
+      (hXs : Hull83.SubHullStrong ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) (fun N _ => pairMAdmittedS2 P.E Pr.n N))
+      (ch : ∀ k, PieceChart P.E ((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).obj k) k)
+      (h : ∀ {k l : ℕ}, (Fin (k + 1) ↪o Fin (l + 1)) → (ch k).H ↪o (ch l).H),
+      (∀ {k l : ℕ} (e : Fin (k + 1) ↪o Fin (l + 1)) x,
+        (ch l).ε ((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).map e x) = P.E.map (h e) ((ch k).ε x)) ∧
+      (∀ k (p : (ch k).H), h (idEmb (α := Fin (k + 1))) p = p) ∧
+      ∀ {k l m : ℕ} (e : Fin (k + 1) ↪o Fin (l + 1)) (f : Fin (l + 1) ↪o Fin (m + 1))
+        (p : (ch k).H), h (e.trans f) p = h f (h e p) := by
+  obtain ⟨c, hc, hcoh, hXs, ch, hn⟩ := infra_83_pairMS2_X_chart_natural P Pr
+  have hn' : ∀ (k l : ℕ) (e : Fin (k + 1) ↪o Fin (l + 1)), ∃ h : (ch k).H ↪o (ch l).H,
+      ∀ x, (ch l).ε ((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).map e x) = P.E.map h ((ch k).ε x) := fun k l e => hn e
+  choose h hh using hn'
+  have key : ∀ (k l : ℕ) (e : Fin (k + 1) ↪o Fin (l + 1)) (p : (ch k).H) x,
+      (ch k).ε x = P.E.skeleton p →
+        (ch l).ε ((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).map e x) = P.E.skeleton (h k l e p) := by
+    intro k l e p x hx
+    rw [hh, hx, P.E.skeleton_natural]
+  refine ⟨c, hc, hcoh, hXs, ch, fun {k l} e => h k l e, fun {k l} e x => hh k l e x, ?_, ?_⟩
+  · intro k p
+    obtain ⟨x, hx⟩ := (ch k).bij.2 (P.E.skeleton p)
+    have h1 := key k k idEmb p x hx
+    rw [EM83.FinPieces.map_refl, Language.Embedding.refl_apply] at h1
+    exact (P.E.skeleton.injective (hx.symm.trans h1)).symm
+  · intro k l m e f p
+    obtain ⟨x, hx⟩ := (ch k).bij.2 (P.E.skeleton p)
+    have h1 := key k m (e.trans f) p x hx
+    rw [EM83.FinPieces.map_trans, Language.Embedding.comp_apply] at h1
+    have h2 := key l m f (h k l e p) _ (key k l e p x hx)
+    exact P.E.skeleton.injective (h1.symm.trans h2)
+
+
+/-- **The induced chart order embeddings form a functor**: choosing `h_e : H_k ↪o H_l` with
+`ε_l ∘ F_Y(e) = F(h_e) ∘ ε_k`, we get `h_id = id` and `h_(e ≫ f) = h_f ∘ h_e`. -/
+theorem infra_83_pairMS2_Y_chart_functor (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) :
+    ∃ (c : (m : ℕ) → 0 < m → Hull83.TpColorB (LS83.pairLangM3 P.E Pr.n) 3 m)
+      (hc : ∀ (n : ℕ) (κ : Cardinal.{u}),
+        Hull83.Joint (Hull83.TpSampleB (fun N _ => pairMAdmittedS2 P.E Pr.n N) 3) n c κ)
+      (hcoh : ∀ {m m' : ℕ} (hm' : 0 < m') (hm : 0 < m) (f : Fin m' ↪o Fin m),
+        c m' hm' = Hull83.tpResB 3 f (c m hm))
+      (hXs : Hull83.SubHullStrong (psiM P.E Pr.n)
+        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) (fun N _ => pairMAdmittedS2 P.E Pr.n N))
+      (ch : ∀ k, PieceChart P.E ((Hull83.subLangPieces (psiM P.E Pr.n)
+        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs).obj k) k)
+      (h : ∀ {k l : ℕ}, (Fin (k + 1) ↪o Fin (l + 1)) → (ch k).H ↪o (ch l).H),
+      (∀ {k l : ℕ} (e : Fin (k + 1) ↪o Fin (l + 1)) x,
+        (ch l).ε ((Hull83.subLangPieces (psiM P.E Pr.n)
+        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs).map e x) = P.E.map (h e) ((ch k).ε x)) ∧
+      (∀ k (p : (ch k).H), h (idEmb (α := Fin (k + 1))) p = p) ∧
+      ∀ {k l m : ℕ} (e : Fin (k + 1) ↪o Fin (l + 1)) (f : Fin (l + 1) ↪o Fin (m + 1))
+        (p : (ch k).H), h (e.trans f) p = h f (h e p) := by
+  obtain ⟨c, hc, hcoh, hXs, ch, hn⟩ := infra_83_pairMS2_Y_chart_natural P Pr
+  have hn' : ∀ (k l : ℕ) (e : Fin (k + 1) ↪o Fin (l + 1)), ∃ h : (ch k).H ↪o (ch l).H,
+      ∀ x, (ch l).ε ((Hull83.subLangPieces (psiM P.E Pr.n)
+        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs).map e x) = P.E.map h ((ch k).ε x) := fun k l e => hn e
+  choose h hh using hn'
+  have key : ∀ (k l : ℕ) (e : Fin (k + 1) ↪o Fin (l + 1)) (p : (ch k).H) x,
+      (ch k).ε x = P.E.skeleton p →
+        (ch l).ε ((Hull83.subLangPieces (psiM P.E Pr.n)
+        ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs).map e x) = P.E.skeleton (h k l e p) := by
+    intro k l e p x hx
+    rw [hh, hx, P.E.skeleton_natural]
+  refine ⟨c, hc, hcoh, hXs, ch, fun {k l} e => h k l e, fun {k l} e x => hh k l e x, ?_, ?_⟩
+  · intro k p
+    obtain ⟨x, hx⟩ := (ch k).bij.2 (P.E.skeleton p)
+    have h1 := key k k idEmb p x hx
+    rw [EM83.FinPieces.map_refl, Language.Embedding.refl_apply] at h1
+    exact (P.E.skeleton.injective (hx.symm.trans h1)).symm
+  · intro k l m e f p
+    obtain ⟨x, hx⟩ := (ch k).bij.2 (P.E.skeleton p)
+    have h1 := key k m (e.trans f) p x hx
+    rw [EM83.FinPieces.map_trans, Language.Embedding.comp_apply] at h1
+    have h2 := key l m f (h k l e p) _ (key k l e p x hx)
+    exact P.E.skeleton.injective (h1.symm.trans h2)
+
+
 end AEC
