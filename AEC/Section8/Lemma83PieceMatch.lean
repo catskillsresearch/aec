@@ -3692,4 +3692,71 @@ theorem infra_83_dominated_of_lists_at (P : SingleModelData K) {μ : Cardinal.{u
   · exact heq_of_eq (hb i)
 end
 
+
+section
+
+/-- The `n`-th nested list: everything in a piece over at most `n` indices from `D n`. -/
+def nestedList83 {Y Z : Type u} (D : ℕ → Set Z) (Piece : Finset Z → Set Y) (n : ℕ) : Set Y :=
+  ⋃ J : {J : Finset Z // (↑J : Set Z) ⊆ D n ∧ J.card ≤ n}, Piece J.1
+
+/-- **Nested bounded-width lists from an exhaustion of the index set (proved).** If the index
+set `Z` is exhausted by an increasing sequence `D n` of sets of size `< μ` (countable
+cofinality) and every element of `Y` lies in a piece `Piece J` over a finite `J ⊆ Z`, pieces
+having size `≤ lam < μ`, then the lists `nestedList83 D Piece n` (elements in a piece over at most
+`n` indices of `D n`) are small, nested, and every piece lies inside one of them. Entries of the
+`n`-th list have horizontal width `≤ n`: these are the paper's nested bounded-width lists. -/
+theorem infra_83_nested_lists {Y Z : Type u} {μ lam : Cardinal.{u}} (hμ : ℵ₀ < μ) (hlam : lam < μ)
+    (D : ℕ → Set Z) (hDmono : Monotone D) (hDcov : ∀ z, ∃ n, z ∈ D n)
+    (hDcard : ∀ n, #(D n) < μ) (Piece : Finset Z → Set Y) (hPcard : ∀ J, #(Piece J) ≤ lam) :
+    (∀ n, #(nestedList83 D Piece n) < μ) ∧
+    (∀ n, nestedList83 D Piece n ⊆ nestedList83 D Piece (n + 1)) ∧
+    ∀ J : Finset Z, ∃ n, Piece J ⊆ nestedList83 D Piece n := by
+  classical
+  refine ⟨fun n => ?_, fun n => ?_, fun J => ?_⟩
+  · have hidx : #{J : Finset Z // (↑J : Set Z) ⊆ D n ∧ J.card ≤ n} < μ := by
+      have h1 : #{J : Finset Z // (↑J : Set Z) ⊆ D n ∧ J.card ≤ n} ≤ #(Finset (D n)) := by
+        refine Cardinal.mk_le_of_injective (f := fun J => J.1.subtype (· ∈ D n)) ?_
+        intro J1 J2 h0
+        have h : J1.1.subtype (· ∈ D n) = J2.1.subtype (· ∈ D n) := h0
+        apply Subtype.ext
+        ext z
+        constructor
+        · intro hz
+          have hzD : z ∈ D n := J1.2.1 hz
+          have : (⟨z, hzD⟩ : D n) ∈ J1.1.subtype (· ∈ D n) := Finset.mem_subtype.mpr hz
+          rw [h] at this
+          exact Finset.mem_subtype.mp this
+        · intro hz
+          have hzD : z ∈ D n := J2.2.1 hz
+          have : (⟨z, hzD⟩ : D n) ∈ J2.1.subtype (· ∈ D n) := Finset.mem_subtype.mpr hz
+          rw [← h] at this
+          exact Finset.mem_subtype.mp this
+      have h2 : #(Finset (D n)) ≤ #(List (D n)) :=
+        Cardinal.mk_le_of_surjective (f := List.toFinset) (fun t => ⟨t.toList, by simp⟩)
+      exact (h1.trans (h2.trans (Cardinal.mk_list_le_max _))).trans_lt (max_lt hμ (hDcard n))
+    refine (Cardinal.mk_iUnion_le _).trans_lt (lt_of_le_of_lt ?_ (Cardinal.mul_lt_of_lt hμ.le hidx hlam))
+    gcongr
+    exact ciSup_le' fun J => hPcard J.1
+  · intro y hy
+    simp only [nestedList83, Set.mem_iUnion] at hy ⊢
+    obtain ⟨⟨J, hJ, hc⟩, hyJ⟩ := hy
+    exact ⟨⟨J, hJ.trans (hDmono n.le_succ), hc.trans n.le_succ⟩, hyJ⟩
+  · have : ∃ n, (↑J : Set Z) ⊆ D n := by
+      induction J using Finset.induction_on with
+      | empty => exact ⟨0, by simp⟩
+      | insert a J _ ih =>
+        obtain ⟨n, hn⟩ := ih
+        obtain ⟨m, hm⟩ := hDcov a
+        refine ⟨max n m, ?_⟩
+        intro z hz
+        simp only [Finset.coe_insert, Set.mem_insert_iff, Finset.mem_coe] at hz
+        rcases hz with rfl | hz
+        · exact hDmono (le_max_right n m) hm
+        · exact hDmono (le_max_left n m) (hn hz)
+    obtain ⟨n, hn⟩ := this
+    refine ⟨max n J.card, fun y hy => ?_⟩
+    simp only [nestedList83, Set.mem_iUnion]
+    exact ⟨⟨J, hn.trans (hDmono (le_max_left _ _)), le_max_right _ _⟩, hy⟩
+end
+
 end AEC
