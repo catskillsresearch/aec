@@ -4690,6 +4690,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 100: English 'each bounded test over the layout has a local realization in U_{H'}', diagram level; infra_72_level_hull + diagram_preserved. Axioms clean."
+  },
+  {
+   "id": "infra_84_two_segment_witness",
+   "label": "Layout (8): a disagreement of placed comparisons has a small witness split into first-part (U) and second-part (A_{H'}) parameters",
+   "section": 8,
+   "file": "AEC/Section8/Layout84Single.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 100: from infra_84_two_segment_tester; witness X1 in I1, X2 in I2 each of size <= g sigma. Axioms clean."
   }
  ],
  "edges": [
@@ -9035,8 +9044,13 @@
    "from": "infra_84_local_realization_single",
    "to": "infra_84_layout_amalgam",
    "kind": "hard"
+  },
+  {
+   "from": "infra_84_two_segment_witness",
+   "to": "infra_84_layout_amalgam",
+   "kind": "hard"
   }
  ],
- "doneCount": 466,
+ "doneCount": 467,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

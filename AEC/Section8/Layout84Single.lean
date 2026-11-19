@@ -249,4 +249,45 @@ theorem infra_84_local_realization_single (P : SingleModelData K) {ν μ : Cardi
   have d := P.scheme.diagram_preserved B₀ Tt j trivial L₀ hκ (hκ.trans_le hνμ)
   exact infra_73_diagramEq_of_eq d (fun _ => rfl) (fun k => (hL k).symm)
 
+/-- **Layout (8): small witness split into the two parts.** English (Lemma 8.4 proof): "If the two
+candidates disagree on the questioned test, their placed comparisons disagree and yield a witness
+within that bound. Its second-part parameters lie in A_{H'} ...; its first-part parameters lie in
+the original U." With the template-only bound `g` of `infra_84_two_segment_tester`: if two
+placements over the two-segment layout `I₁ ⊕ₗ I₂` disagree somewhere, they disagree on a set
+`X₁ ∪ X₂` with first-part parameters `X₁ ⊆ I₁` and second-part parameters `X₂ ⊆ I₂`, each of size
+at most `g σ`. -/
+theorem infra_84_two_segment_witness (K : AbstractElementaryClass.{u}) [CategoricalUnbounded K]
+    (E : OrderPresentation K) (D : StableDiagram K) :
+    ∃ g : Cardinal.{u} → Cardinal.{u},
+      (∀ σ τ, σ ≤ τ → g σ ≤ g τ) ∧ (∀ σ, aleph0 ≤ g σ) ∧
+      ∀ (I₁ I₂ : Type u) [LinearOrder I₁] [WellFoundedLT I₁] [LinearOrder I₂]
+        [WellFoundedLT I₂] [Nonempty I₁] {α : Type u} (σ : Cardinal.{u}), aleph0 ≤ σ →
+        #α ≤ σ → ∀ P P' : Placement E.lab E.arity (Lex (I₁ ⊕ I₂)) α,
+          ¬ P.AgreeOn E D P' Set.univ →
+          ∃ (X₁ : Set I₁) (X₂ : Set I₂), #X₁ ≤ g σ ∧ #X₂ ≤ g σ ∧
+            ¬ P.AgreeOn E D P'
+              ((fun i => toLex (Sum.inl i)) '' X₁ ∪ (fun i => toLex (Sum.inr i)) '' X₂) := by
+  obtain ⟨g, hmono, hinf, htest⟩ := infra_84_two_segment_tester K E D
+  refine ⟨g, hmono, hinf, fun I₁ I₂ _ _ _ _ _ α σ hσ hα P P' hdis => ?_⟩
+  by_contra hno
+  push Not at hno
+  apply hdis
+  refine htest I₁ I₂ σ hσ hα P P' (fun X hX => ?_)
+  let X₁ : Set I₁ := {i | toLex (Sum.inl i) ∈ X}
+  let X₂ : Set I₂ := {i | toLex (Sum.inr i) ∈ X}
+  have h1 : #X₁ ≤ #X := Cardinal.mk_le_of_injective (f := fun i : X₁ => (⟨_, i.2⟩ : X))
+    (fun a b h => Subtype.ext (by
+      have := congrArg (fun x : X => ofLex x.1) h
+      simpa using this))
+  have h2 : #X₂ ≤ #X := Cardinal.mk_le_of_injective (f := fun i : X₂ => (⟨_, i.2⟩ : X))
+    (fun a b h => Subtype.ext (by
+      have := congrArg (fun x : X => ofLex x.1) h
+      simpa using this))
+  have hsub : X ⊆ (fun i => toLex (Sum.inl i)) '' X₁ ∪ (fun i => toLex (Sum.inr i)) '' X₂ := by
+    intro x hx
+    rcases hxs : ofLex x with i | i
+    · left; exact ⟨i, by simp [X₁, ← hxs, hx], by simp [← hxs]⟩
+    · right; exact ⟨i, by simp [X₂, ← hxs, hx], by simp [← hxs]⟩
+  exact (hno X₁ X₂ (h1.trans hX) (h2.trans hX)).mono hsub
+
 end AEC

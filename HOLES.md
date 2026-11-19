@@ -491,6 +491,7 @@ Lean: imports `Section5.Results` and `Section6.Results`. Soft paper chain after 
 | `infra_84_two_segment_placement` | Lemma 6.4 over the two-segment layout (8) | [`Layout84Single.lean`](AEC/Section8/Layout84Single.lean) (**done**, cycle 100) |
 | `infra_84_layout_one_ambient` | Layout (8): equal layout diagrams move T' comparisons into one ambient | [`Layout84Single.lean`](AEC/Section8/Layout84Single.lean) (**done**, cycle 100) |
 | `infra_84_local_realization_single` | Layout (8): bounded tests realized locally at level nu over A | [`Layout84Single.lean`](AEC/Section8/Layout84Single.lean) (**done**, cycle 100) |
+| `infra_84_two_segment_witness` | Layout (8): small placed witness split into U-part and A_{H'}-part | [`Layout84Single.lean`](AEC/Section8/Layout84Single.lean) (**done**, cycle 100) |
 | `infra_72_mixed_level` | Lemma 7.2 last sentence (A at a smaller level than B), stated with sorry (audit) | [`Lemma72Mixed.lean`](AEC/Section7/Lemma72Mixed.lean) (open, cycle 96) |
 | `infra_82_tiedFreeMixed_base_equiv` | Mixed tied freeness under a reindexed change of base tuple | [`TiedAlong.lean`](AEC/Section8/TiedAlong.lean) (**done**, cycle 97) |
 | `infra_82_mark_tied_along_single` | Lemma 8.2(4) for `P.scheme`: tied freeness of the mark along arrows (Def 8.1 tied, cycle 97 ruling) | [`TiedAlong.lean`](AEC/Section8/TiedAlong.lean) (**done**, cycle 97) |
