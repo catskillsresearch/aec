@@ -6985,6 +6985,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 161: proved."
+  },
+  {
+   "id": "infra_83_dominated_of_tuple_retractions",
+   "label": "All-domination along an arrow of pairs into an all-dominated pair from retraction images of each bounded tuple (b,c) only (tuple (7) + host transfer + Lemma 7.6); no whole-object image hypothesis",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83TupleDominated.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 162: proved."
   }
  ],
  "edges": [
@@ -12835,8 +12844,13 @@
    "from": "infra_83_tied_from_marked_retractions",
    "to": "infra_83_bounded_arity_free",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_dominated_of_tuple_retractions",
+   "to": "infra_83_all_dominated",
+   "kind": "hard"
   }
  ],
- "doneCount": 708,
+ "doneCount": 709,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
