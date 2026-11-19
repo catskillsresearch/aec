@@ -1206,4 +1206,37 @@ theorem infra_83_good_of_closure {Xc Yc L XI YI : Type*} (incl : Xc → Yc) (F :
   obtain ⟨y, rfl⟩ := hmeet x' (r (onY x)) (hx'.symm.trans (hev _))
   exact ⟨y, hx'.trans (by rw [hcomm])⟩
 
+/-- **Bounded-arity partial matches (proved).** English (Lemma 8.3 proof, "bounded horizontal
+arity"): the samples supplied by the coherent colors (`Hull83.Joint … n c κ`) are homogeneous
+only through a finite arity `n`; in such a sample the template pieces on supports of size at most
+`n` embed compatibly, generators going to the bundles. -/
+theorem infra_83_piece_matches_bounded {L : FirstOrder.Language.{u, u}}
+    {P : ∀ (M : Type u) [L.Structure M], Prop} {r : ℕ}
+    {c : (m : ℕ) → 0 < m → Hull83.TpColorB L r m}
+    (hc : ∀ (n : ℕ) (κ : Cardinal.{u}), Hull83.Joint (Hull83.TpSampleB P r) n c κ)
+    (hcoh : ∀ {m m' : ℕ} (hm' : 0 < m') (hm : 0 < m) (f : Fin m' ↪o Fin m),
+      c m' hm' = Hull83.tpResB r f (c m hm))
+    {S : Hull83.ColorSample (Hull83.TpColorB L r)} {M : Type u} [L.Structure M]
+    (base : S.α → Fin r → M)
+    (hcol : ∀ (m : ℕ) (s : Finset S.α) (h : s.card = m),
+      S.col m s = Hull83.tpCode (Hull83.bundleOf base s h))
+    {n : ℕ} (hhom : Hull83.Homog S n c) :
+    ∃ m : ∀ s : {s : Finset S.α // s.Nonempty ∧ s.card ≤ n},
+        Hull83.Hull (L := L) (Hull83.witB hc s.1.card.pred).v ↪[L] M,
+      (∀ s p, m s (Quotient.mk _ (FirstOrder.Language.Term.var p)) =
+        Hull83.bundleOf base s.1 (Nat.succ_pred_eq_of_pos (Finset.card_pos.mpr s.2.1)).symm p) ∧
+      ∀ {s t : {s : Finset S.α // s.Nonempty ∧ s.card ≤ n}} (h : s.1 ⊆ t.1),
+        (m t).comp (Hull83.hullMapEmb (Prod.map (placeSucc h s.2.1 t.2.1) id)
+          (Hull83.tpPieceB_tp hc hcoh (placeSucc h s.2.1 t.2.1))) = m s := by
+  have key : ∀ s : {s : Finset S.α // s.Nonempty ∧ s.card ≤ n}, ∃ f :
+      Hull83.Hull (L := L) (Hull83.witB hc s.1.card.pred).v ↪[L] M, ∀ p,
+        f (Quotient.mk _ (FirstOrder.Language.Term.var p)) =
+          Hull83.bundleOf base s.1 (Nat.succ_pred_eq_of_pos (Finset.card_pos.mpr s.2.1)).symm p :=
+    fun s => Hull83.piece_into_sample hc base hcol hhom
+      ((Nat.succ_pred_eq_of_pos (Finset.card_pos.mpr s.2.1)).le.trans s.2.2) s.1 _
+  choose m hm using key
+  refine ⟨m, hm, fun {s t} h => ?_⟩
+  exact infra_83_hull_match_compat _ _ (m s) (m t) _ _ (hm s) (hm t)
+    (fun p => infra_83_bundleOf_placeSucc base h s.2.1 t.2.1 _ _ p)
+
 end AEC
