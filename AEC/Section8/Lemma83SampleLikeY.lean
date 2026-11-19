@@ -161,11 +161,13 @@ def RetSampleLike (P : SingleModelData K) (Pr : StationaryPrescription K oneVert
   ∃ (M : MarkedPair K oneVertexShape P.scheme Pr) (J Jp : Type u) (_ : LinearOrder J)
     (_ : Nonempty J) (_ : LinearOrder Jp) (_ : Nonempty Jp) (emb : J ↪o Jp)
     (g : N ≃ (P.E.obj Jp).carrier)
-    (eX : (P.E.obj J).carrier → ((P.scheme.asSystem M.hμ M.X).obj PUnit.unit).carrier)
-    (F : ((P.scheme.asSystem M.hμ M.Y).obj PUnit.unit).carrier → (P.E.obj Jp).carrier)
+    (eX : Language.Embedding K.τ (P.E.obj J).carrier
+      ((P.scheme.asSystem M.hμ M.X).obj PUnit.unit).carrier)
+    (F : Language.Embedding K.τ ((P.scheme.asSystem M.hμ M.Y).obj PUnit.unit).carrier
+      (P.E.obj Jp).carrier)
     (R : ApproximateRetraction K oneVertexShape P.scheme M.hμ M.X M.Y M.incl)
     (code : R.index → (P.E.obj J).carrier),
-    Function.Surjective eX ∧ Function.Injective F ∧
+    Function.Surjective eX ∧ Function.Injective F ∧ K.Strong eX ∧ K.Strong F ∧
     (∀ x, F (M.incl.onVertex PUnit.unit (eX x)) = P.E.map emb x) ∧
     Function.Bijective code ∧ ℵ₀ ≤ M.μ ∧
     (∀ x, chartXM P.E Pr.n x ↔ ∃ j, P.E.skeleton (emb j) = g x) ∧
@@ -208,8 +210,8 @@ theorem infra_83_pairMS3_coherent_colors (P : SingleModelData K)
       ∀ (m : ℕ) (hm : 0 < m) (a b : Fin m), a < b → ∀ i : Fin 3,
         (rhoM P.E Pr.n i).relabel ![(a, i), (b, i)] ∈ c m hm := by
   refine Hull83.tpB_coherent_colors_formula2 (thetaM P.E Pr.n) (rhoM P.E Pr.n) fun κ => ?_
-  obtain ⟨μ, hθ, hμ, J, i1, i2, -, hJ, M, hM, eX, hbij, -, ι, Jplus, i3, i4, emb, strip, hstrip, -,
-    F, -, hF, s₀, hcl, hred, hX, hchX, hY, hchY, -, -, hlabX, hret⟩ :=
+  obtain ⟨μ, hθ, hμ, J, i1, i2, -, hJ, M, hM, eX, hbij, hsX, ι, Jplus, i3, i4, emb, strip, hstrip, -,
+    F, hsF, hF, s₀, hcl, hred, hX, hchX, hY, hchY, -, -, hlabX, hret⟩ :=
     infra_83_pairR_samples P Pr (κ := ℵ₀) le_rfl κ
   obtain ⟨e⟩ : Nonempty (J ≃ strip) := Cardinal.eq.mp (hJ.trans hstrip.symm)
   let str : (LS83.pairLangM3 P.E Pr.n).Structure (P.E.obj Jplus).carrier :=
@@ -258,7 +260,7 @@ theorem infra_83_pairMS3_coherent_colors (P : SingleModelData K)
     obtain ⟨j, rfl⟩ : ∃ j, P.E.skeleton (emb j) = x := hx
     exact hrF ⟨_, (hF (P.E.skeleton j)).trans (P.E.skeleton_natural emb j)⟩
   · obtain ⟨R, code, hcode, hev⟩ := hret
-    exact ⟨M, J, Jplus, i1, i2, i3, i4, emb, Equiv.refl _, eX, F, R, code, hbij.2, F.injective,
+    exact ⟨M, J, Jplus, i1, i2, i3, i4, emb, Equiv.refl _, eX, F, R, code, hbij.2, F.injective, hsX, hsF,
       hF, hcode, by rw [hM]; exact hμ.le, fun x => Iff.rfl, fun f x hx => hX f x hx,
       fun T _ hT => hchX T hT, fun i y => hev i y⟩
   · fin_cases i
@@ -304,7 +306,7 @@ theorem infra_83_retSampleLike_good (P : SingleModelData K)
           (fun b => g (Structure.funMap (retM3 P.E Pr.n)
               ![g.symm (P.E.map emb (code i)), g.symm b])) '' Set.range F ⊆
             Set.range (P.E.map emb)} = M.μ := by
-  obtain ⟨M, J, Jp, i1, i2, i3, i4, emb, g, eX, F, R, code, hsurj, hF, hFX, hcode, hμ, -, -, -, hev⟩ := h
+  obtain ⟨M, J, Jp, i1, i2, i3, i4, emb, g, eX, F, R, code, hsurj, hF, -, -, hFX, hcode, hμ, -, -, -, hev⟩ := h
   refine ⟨M, J, Jp, i1, i2, i3, i4, emb, g, eX, F, R, code, hsurj, hF, hFX, hcode, fun A => ?_⟩
   exact infra_83_ret_good_card_mu P eX hsurj emb F hFX R code
     (fun a b => g (Structure.funMap (retM3 P.E Pr.n) ![g.symm a, g.symm b])) hev hμ A

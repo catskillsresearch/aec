@@ -406,4 +406,29 @@ theorem infra_83_eX_bijective (P : SingleModelData K)
   rw [← hF x, ← hF y, hxy]
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+/-- **Ret-sample data carry strong `τ`-identifications (proved).** The strengthened
+`RetSampleLike` (cycle 183; verified on the real samples in `infra_83_pairMS3_coherent_colors`)
+records `eX : F(J) → X` as a strong bijective `τ`-embedding and `F : Y → F(Jp)` as a strong
+`τ`-embedding with `F ∘ incl ∘ eX = F(emb)`: the inputs for turning the order-map embeddings of
+`infra_83_sample_pair_square` into scheme arrows into the sample pair. -/
+theorem infra_83_ret_sample_tau (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) {N : Type u}
+    [(LS83.pairLangM3 P.E Pr.n).Structure N] (h : RetSampleLike P Pr N) :
+    ∃ (M : MarkedPair K oneVertexShape P.scheme Pr) (J Jp : Type u) (_ : LinearOrder J)
+      (_ : Nonempty J) (_ : LinearOrder Jp) (_ : Nonempty Jp) (emb : J ↪o Jp)
+      (eX : Language.Embedding K.τ (P.E.obj J).carrier
+        ((P.scheme.asSystem M.hμ M.X).obj PUnit.unit).carrier)
+      (F : Language.Embedding K.τ ((P.scheme.asSystem M.hμ M.Y).obj PUnit.unit).carrier
+        (P.E.obj Jp).carrier),
+      Function.Bijective eX ∧ K.Strong eX ∧ K.Strong F ∧
+      ∀ x, F (M.incl.onVertex PUnit.unit (eX x)) = P.E.map emb x := by
+  obtain ⟨M, J, Jp, i1, i2, i3, i4, emb, -, eX, F, -, -, hsurj, -, hsX, hsF, hF, -⟩ := h
+  exact ⟨M, J, Jp, i1, i2, i3, i4, emb, eX, F,
+    infra_83_eX_bijective P emb eX F hsurj hF, hsX, hsF, hF⟩
+end
+
 end AEC

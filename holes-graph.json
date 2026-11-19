@@ -7186,12 +7186,12 @@
   },
   {
    "id": "infra_83_ret_sample_tau",
-   "label": "Strengthen the ret-sample data (RetSampleLike) so that eX : F(J) -> X is a tau-isomorphism and F : Y -> F(Jp) a tau-embedding (both hold for the real samples, where X = F(J) and Y embeds in F(Jp) through g), and re-verify the real samples; needed to promote the order-map tau-embeddings (infra_83_sample_pair_square) to scheme SystemArrows toA : X_I -> M.X and h : Y_u -> M.Y.",
+   "label": "RetSampleLike strengthened: eX a strong (bijective) tau-embedding F(J) -> X and F a strong tau-embedding Y -> F(Jp); re-verified on the real samples (infra_83_pairMS3_coherent_colors); exposed by infra_83_ret_sample_tau",
    "section": 8,
-   "file": "AEC/Section8/Lemma83SampleLikeY.lean",
-   "status": "open",
+   "file": "AEC/Section8/Lemma83PieceMatch.lean",
+   "status": "done",
    "blocker": null,
-   "detail": "Open (cycle 182): RetSampleLike currently records eX and F only as functions."
+   "detail": "Cycle 183: proved."
   }
  ],
  "edges": [
@@ -13157,8 +13157,13 @@
    "from": "infra_83_ret_sample_tau",
    "to": "infra_83_bounded_list_match",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_ret_sample_tau",
+   "to": "infra_83_bounded_list_match",
+   "kind": "hard"
   }
  ],
- "doneCount": 729,
+ "doneCount": 730,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
