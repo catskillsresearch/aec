@@ -5589,7 +5589,7 @@
    "file": "AEC/Section8/LabLang83.lean",
    "status": "done",
    "blocker": null,
-   "detail": "Cycle 104: Lab83.labT, labT_mem_range, labT_skeleton. Input for the Y-sort label copy (remaining item (1) of infra_83_pair_sample_family). Axioms clean."
+   "detail": "Cycle 104: Lab83.labT, labT_mem_range, labT_skeleton. Input for the Y-sort label copy (remaining item (1) of infra_83_pair_sample_family). Axioms clean. | Cycle 104: + labT_mem_range_map (e(E(f)(E(J))) closed under labels transported along e; X ≅ F(J) inside Y ≅ F(Z) when the iso respects J ↪ Z)."
   }
  ],
  "edges": [

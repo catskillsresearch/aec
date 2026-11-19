@@ -184,6 +184,21 @@ theorem labT_skeleton (he : Function.Injective e) (t : SupportTerm E.lab E.arity
     funext fun k => he (h k).choose_spec
   rw [hc, labFun_skeleton]
 
+/-- **Sub-presentation images are closed under transported labels**: for an order embedding
+`f : J ↪o I`, the set `e(E(f)(E(J)))` (e.g. `X ≅ F(J)` inside `Y ≅ F(Z)`) is closed under the
+labels transported along an injective `e`. -/
+theorem labT_mem_range_map (he : Function.Injective e) {J : Type u} [LinearOrder J] [Nonempty J]
+    (f : J ↪o I) {n : ℕ} (a : (labLang E).Functions n) (x : Fin n → N)
+    (hx : ∀ k, x k ∈ Set.range (e ∘ E.map f)) : labT e a x ∈ Set.range (e ∘ E.map f) := by
+  unfold labT
+  split_ifs with h
+  · have hy : ∀ k, (h k).choose ∈ Set.range (E.map f) := fun k => by
+      obtain ⟨z, hz⟩ := hx k
+      exact ⟨z, he (hz.trans (h k).choose_spec.symm)⟩
+    obtain ⟨w, hw⟩ := labFun_mem_range f a _ hy
+    exact ⟨w, by simp only [Function.comp_apply, hw]⟩
+  · exact hx _
+
 end Transport
 
 end Lab83
