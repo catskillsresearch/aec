@@ -7498,6 +7498,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 217: proved."
+  },
+  {
+   "id": "infra_83_dominated_of_primeness",
+   "label": "Arity removal reduced to constructive primeness: on the Theorem 7.9 tail, Y is all-dominated over X + b (finite b) once Y maps over X onto b' into every all-dominated V over X + b' with tp(b'/X) = tp(b/X) (Theorem 7.9 existence + dominated_pull); no arity bound on c",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PieceMatch.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 218: proved."
   }
  ],
  "edges": [
@@ -13633,8 +13642,13 @@
    "from": "infra_83_piece_of_suborder",
    "to": "infra_83_XH_sort",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_dominated_of_primeness",
+   "to": "infra_83_arity_removal",
+   "kind": "hard"
   }
  ],
- "doneCount": 764,
+ "doneCount": 765,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

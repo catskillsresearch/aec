@@ -1783,4 +1783,40 @@ theorem infra_83_piece_of_suborder (P : SingleModelData K) {ν : Cardinal.{u}}
   exact hh0 x
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+set_option maxHeartbeats 1600000 in
+/-- **Arity removal reduced to constructive primeness (proved reduction).** Paper (Lemma 8.3,
+via Prop 7.5 / Theorem 7.9): on the Theorem 7.9 tail, `Y` is all-dominated over `X + b` (finite
+`b`) as soon as `Y` maps over `X` onto `b'` into every all-dominated `V` over `X + b'` with
+`tp(b'/X) = tp(b/X)`: Theorem 7.9 supplies such a `V`, and all-domination pulls back along the
+arrow (`infra_83_dominated_pull`). No arity bound on the tuples `c` is involved. -/
+theorem infra_83_dominated_of_primeness (P : SingleModelData K) :
+    ∃ T, ∃ hT : Tail P.eligible T,
+      ∀ μ (hμ : μ ∈ T) (X Y : P.scheme.Object μ (Tail.mem hT hμ))
+        (incl : SystemArrow K oneVertexShape (P.scheme.asSystem _ X) (P.scheme.asSystem _ Y))
+        {bIdx : Type u} [Finite bIdx]
+        (b : bIdx → Occurrence K oneVertexShape (P.scheme.asSystem _ Y)),
+        (∀ (V : P.scheme.Object μ (Tail.mem hT hμ))
+          (inclV : SystemArrow K oneVertexShape (P.scheme.asSystem _ X) (P.scheme.asSystem _ V))
+          (b' : bIdx → Occurrence K oneVertexShape (P.scheme.asSystem _ V)),
+          AllDominated inclV trivial bIdx b' →
+          SameGaloisType (asTuple incl trivial b) (asTuple inclV trivial b')
+            (Equiv.refl bIdx) (Equiv.refl bIdx) →
+          ∃ h : SystemArrow K oneVertexShape (P.scheme.asSystem _ Y) (P.scheme.asSystem _ V),
+            SystemArrow.comp incl h = inclV ∧ ∀ i, h.mapOcc (b i) = b' i) →
+        AllDominated incl trivial bIdx b := by
+  obtain ⟨T, hT, H79⟩ := theorem_7_9 P
+  refine ⟨T, hT, fun μ hμ X Y incl bIdx _ b H => ?_⟩
+  obtain ⟨⟨V, f, hf, b', hD, hS⟩, -⟩ :=
+    (H79 μ hμ X (asTuple incl trivial b)).1 (inferInstanceAs (Finite bIdx))
+  obtain ⟨h, hh, hb⟩ := H V f b' hD hS
+  have hb' : b' = fun i => h.mapOcc (b i) := (funext hb).symm
+  subst hb' hh
+  exact infra_83_dominated_pull P incl trivial h b
+    ((Cardinal.lt_aleph0_of_finite _).trans (P.aleph0_lt (Tail.mem hT hμ))) hD
+end
+
 end AEC
