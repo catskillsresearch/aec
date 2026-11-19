@@ -1558,4 +1558,42 @@ theorem infra_83_relIso_piece_iff (P : SingleModelData K) {μ : Cardinal.{u}}
     exact H'
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+/-- **All-domination checked on pieces (proved characterization).** `Y` is all-dominated over
+`X + b` iff for every bounded `c` and every piece `X ≤ Y_u ≤ Y` holding a preimage `d` of `(b, c)`,
+`tp(d/X)` in `Y_u` is isolated relative to its `b`-part (`infra_83_relIso_piece_iff`; such pieces
+exist by `infra_83_piece_with_tuple`, so the condition is not vacuous). -/
+theorem infra_83_dominated_iff_pieces (P : SingleModelData K) {μ : Cardinal.{u}}
+    {hμ : μ ∈ P.eligible} {X Y : P.scheme.Object μ hμ}
+    (incl : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ Y))
+    {bIdx : Type u} (b : bIdx → Occurrence K oneVertexShape (P.scheme.asSystem hμ Y))
+    (hb : #bIdx < μ) :
+    AllDominated incl trivial bIdx b ↔
+      ∀ (cIdx : Type u) (c : cIdx → Occurrence K oneVertexShape (P.scheme.asSystem hμ Y)),
+        #cIdx < μ →
+        ∀ (Yu : P.scheme.Object μ hμ)
+          (inclu : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ Yu))
+          (j : SystemArrow K oneVertexShape (P.scheme.asSystem hμ Yu) (P.scheme.asSystem hμ Y))
+          (d : bIdx ⊕ cIdx → Occurrence K oneVertexShape (P.scheme.asSystem hμ Yu)),
+          SystemArrow.comp inclu j = incl → (∀ s, j.mapOcc (d s) = seqJoint b c s) →
+          IsRelativelyIsolated (uIdx := bIdx) (cIdx := cIdx) (asTuple inclu trivial d)
+            (Equiv.refl _) := by
+  constructor
+  · intro hD cIdx c hc Yu inclu j d hj hjd
+    have hcard : #(bIdx ⊕ cIdx) < μ := by
+      rw [Cardinal.mk_sum, Cardinal.lift_id, Cardinal.lift_id]
+      exact Cardinal.add_lt_of_lt (P.aleph0_lt hμ).le hb hc
+    exact (infra_83_relIso_piece_iff P incl inclu j b c d hj hjd hcard).1 (hD cIdx c hc)
+  · intro H
+    refine infra_83_dominated_of_piece_isolation P incl b hb fun cIdx c hc => ?_
+    have hcard : #(bIdx ⊕ cIdx) ≤ μ := by
+      rw [Cardinal.mk_sum, Cardinal.lift_id, Cardinal.lift_id]
+      exact Cardinal.add_le_of_le (P.aleph0_le hμ) (hb.le) hc.le
+    obtain ⟨Yu, inclu, j, d, hj, hjd⟩ := infra_83_piece_with_tuple P incl (seqJoint b c) hcard
+    exact ⟨Yu, inclu, j, d, hj, hjd, H cIdx c hc Yu inclu j d hj hjd⟩
+end
+
 end AEC
