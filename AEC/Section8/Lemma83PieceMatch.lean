@@ -2903,4 +2903,80 @@ theorem infra_83_arrow_of_model_chain_seq {M N : Model K.τ} (hM : K.Mem M) (hN 
   exact h
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+set_option maxHeartbeats 1600000 in
+/-- **Constructive primeness along a dominated chain, with an invariant (proved).** Refinement
+of `infra_83_arrow_of_dominated_chain` in which the realization of the step types is only needed
+for arrows `g : A n → V` satisfying an invariant `Inv n g` (e.g. "`g` is over `X` and carries the
+marks chosen so far"), which every Prop 7.5(1) extension carrying `c n` to the chosen
+realization must re-establish. The resulting `F : Y → V` restricts on each `A n` to an arrow
+satisfying `Inv n`, and to `g₀` on `A 0`. -/
+theorem infra_83_arrow_of_dominated_chain_inv (P : SingleModelData K) {μ : Cardinal.{u}}
+    (hμ : μ ∈ P.eligible) (Y V : P.scheme.Object μ hμ) (A : ℕ → P.scheme.Object μ hμ)
+    (s : ∀ n, SystemArrow K oneVertexShape (P.scheme.asSystem hμ (A n))
+      (P.scheme.asSystem hμ (A (n + 1))))
+    (e : ∀ n, SystemArrow K oneVertexShape (P.scheme.asSystem hμ (A n)) (P.scheme.asSystem hμ Y))
+    (hes : ∀ n, SystemArrow.comp (s n) (e (n + 1)) = e n)
+    (hcover : ∀ x : ((P.scheme.asSystem hμ Y).obj PUnit.unit).carrier,
+      ∃ n y, (e n).onVertex PUnit.unit y = x)
+    {cIdx : ℕ → Type u}
+    (c : ∀ n, cIdx n → Occurrence K oneVertexShape (P.scheme.asSystem hμ (A (n + 1))))
+    (hc : ∀ n, #(cIdx n) < μ)
+    (hD : ∀ n, AllDominated (s n) trivial (cIdx n) (c n))
+    (Inv : ∀ n, SystemArrow K oneVertexShape (P.scheme.asSystem hμ (A n))
+      (P.scheme.asSystem hμ V) → Prop)
+    (hreal : ∀ n (g : SystemArrow K oneVertexShape (P.scheme.asSystem hμ (A n))
+        (P.scheme.asSystem hμ V)), Inv n g →
+      ∃ c' : cIdx n → Occurrence K oneVertexShape (P.scheme.asSystem hμ V),
+        SameGaloisType (asTuple (s n) trivial (c n)) (asTuple g trivial c')
+          (Equiv.refl _) (Equiv.refl _) ∧
+        ∀ g' : SystemArrow K oneVertexShape (P.scheme.asSystem hμ (A (n + 1)))
+            (P.scheme.asSystem hμ V),
+          SystemArrow.comp (s n) g' = g → (∀ i, g'.mapOcc (c n i) = c' i) → Inv (n + 1) g')
+    (g₀ : SystemArrow K oneVertexShape (P.scheme.asSystem hμ (A 0)) (P.scheme.asSystem hμ V))
+    (h₀ : Inv 0 g₀) :
+    ∃ F : SystemArrow K oneVertexShape (P.scheme.asSystem hμ Y) (P.scheme.asSystem hμ V),
+      SystemArrow.comp (e 0) F = g₀ ∧ ∀ n, Inv n (SystemArrow.comp (e n) F) := by
+  have stepE : ∀ n (g : SystemArrow K oneVertexShape (P.scheme.asSystem hμ (A n))
+      (P.scheme.asSystem hμ V)), Inv n g →
+      ∃ g', Inv (n + 1) g' ∧ SystemArrow.comp (s n) g' = g := by
+    intro n g hI
+    obtain ⟨c', hS, hI'⟩ := hreal n g hI
+    obtain ⟨g', -, hcomp, hm⟩ := infra_75_embed hμ (A n) (A (n + 1)) V (s n) trivial g trivial
+      (c n) c' (hc n) hS (hD n)
+    refine ⟨g', hI' g' hcomp (fun i => ?_), hcomp⟩
+    apply Sigma.ext
+    · exact Subsingleton.elim _ _
+    · exact heq_of_eq (hm i)
+  let G : ∀ n, {g : SystemArrow K oneVertexShape (P.scheme.asSystem hμ (A n))
+      (P.scheme.asSystem hμ V) // Inv n g} := fun n =>
+    Nat.rec ⟨g₀, h₀⟩ (fun n gn => ⟨Classical.choose (stepE n gn.1 gn.2),
+      (Classical.choose_spec (stepE n gn.1 gn.2)).1⟩) n
+  have hGs : ∀ n, SystemArrow.comp (s n) (G (n + 1)).1 = (G n).1 := fun n =>
+    (Classical.choose_spec (stepE n (G n).1 (G n).2)).2
+  obtain ⟨f, hf, hfc⟩ := infra_83_arrow_of_model_chain_seq (K := K)
+    (M := (P.scheme.asSystem hμ Y).obj PUnit.unit) (N := (P.scheme.asSystem hμ V).obj PUnit.unit)
+    (K.strong_mem_cod _ ((e 0).onVertex_strong PUnit.unit))
+    (K.strong_mem_cod _ (g₀.onVertex_strong PUnit.unit))
+    (fun n => (P.scheme.asSystem hμ (A n)).obj PUnit.unit)
+    (fun n => K.strong_mem_dom _ ((e n).onVertex_strong PUnit.unit))
+    (fun n => (s n).onVertex PUnit.unit) (fun n => (e n).onVertex PUnit.unit)
+    (fun n => (e n).onVertex_strong PUnit.unit)
+    (fun n => congrArg (fun a => SystemArrow.onVertex a PUnit.unit) (hes n))
+    hcover (fun n => (G n).1.onVertex PUnit.unit) (fun n => (G n).1.onVertex_strong PUnit.unit)
+    (fun n => congrArg (fun a => SystemArrow.onVertex a PUnit.unit) (hGs n))
+  let F : SystemArrow K oneVertexShape (P.scheme.asSystem hμ Y) (P.scheme.asSystem hμ V) :=
+    ⟨fun _ => f, fun _ => hf, fun h => h.elim⟩
+  have hF : ∀ n, SystemArrow.comp (e n) F = (G n).1 := by
+    intro n
+    show SystemArrow.mk _ _ _ = SystemArrow.mk _ _ _
+    congr 1
+    funext v
+    exact hfc n
+  exact ⟨F, hF 0, fun n => by rw [hF n]; exact (G n).2⟩
+end
+
 end AEC

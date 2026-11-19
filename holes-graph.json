@@ -7732,6 +7732,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 243: proved."
+  },
+  {
+   "id": "infra_83_arrow_of_dominated_chain_inv",
+   "label": "Dominated-chain primeness with an invariant: step realizations needed only for arrows g : A n -> V satisfying Inv n g, each Prop 7.5(1) extension re-establishing Inv; the glued F : Y -> V extends g0 and restricts to Inv-arrows on every A n (removes the too-strong all-g realization hypothesis)",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PieceMatch.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 244: proved."
   }
  ],
  "edges": [
@@ -13997,8 +14006,13 @@
    "from": "infra_83_arrow_of_model_chain_seq",
    "to": "infra_83_arity_removal",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_arrow_of_dominated_chain_inv",
+   "to": "infra_83_arity_removal",
+   "kind": "hard"
   }
  ],
- "doneCount": 790,
+ "doneCount": 791,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
