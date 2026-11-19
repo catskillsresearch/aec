@@ -225,5 +225,34 @@ theorem tpB_coherent_colors {P : ∀ (M : Type u) [L.Structure M], Prop} {r : �
     coherent_colors_compat (P := TpSampleB P r) (fun f c => tpResB r f c)
       (fun S hS _ _ f s hs => tpSampleB_compat S hS f s hs) hc hm' hm f⟩
 
+/-- **Coherent colors under a joint demand.**  If the admitted samples carry a second cardinal
+invariant `sat` (the order saturation of their ambient chart orders) that thinning does not
+decrease, and samples exist with both size and `sat` above any bound, then the extracted
+colors retain samples meeting both demands at once: "treat the requested homogeneous size
+and the requested order saturation as one cardinal demand". -/
+theorem coherent_colors_demand {C : ℕ → Type u} {P : ColorSample C → Prop}
+    (hres : ∀ S (H : Set S.α), P S → P (S.restrict H))
+    (sat : ColorSample C → Cardinal.{u}) (hsat : ∀ S (H : Set S.α), sat S ≤ sat (S.restrict H))
+    (hlarge : ∀ κ : Cardinal.{u}, ∃ S, P S ∧ κ ≤ #S.α ∧ κ ≤ sat S) :
+    ∃ c : (m : ℕ) → 0 < m → C m, ∀ (n : ℕ) (κ : Cardinal.{u}),
+      ∃ S : ColorSample C, P S ∧ κ ≤ #S.α ∧ κ ≤ sat S ∧ Homog S n c := by
+  let P' : ColorSample C → Prop := fun S => P S ∧ #S.α ≤ sat S
+  have hres' : ∀ S (H : Set S.α), P' S → P' (S.restrict H) := fun S H hS =>
+    ⟨hres S H hS.1, (Cardinal.mk_set_le H).trans (hS.2.trans (hsat S H))⟩
+  have hlarge' : ∀ κ : Cardinal.{u}, ∃ S, P' S ∧ κ ≤ #S.α := by
+    intro κ
+    obtain ⟨S, hS, hκ, hκs⟩ := hlarge κ
+    obtain ⟨H, hH⟩ := Cardinal.le_mk_iff_exists_set.mp hκ
+    refine ⟨S.restrict H, ⟨hres S H hS, ?_⟩, ?_⟩
+    · show #↥H ≤ _
+      rw [hH]
+      exact hκs.trans (hsat S H)
+    · show κ ≤ #↥H
+      rw [hH]
+  obtain ⟨c, hc⟩ := coherent_colors (P := P') hres' hlarge'
+  refine ⟨c, fun n κ => ?_⟩
+  obtain ⟨S, ⟨hS, hsz⟩, hκ, hhom⟩ := hc n κ
+  exact ⟨S, hS, hκ, hκ.trans hsz, hhom⟩
+
 end Hull83
 end AEC

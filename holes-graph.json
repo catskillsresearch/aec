@@ -5374,6 +5374,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 103: Hull83.piece_into_sample: for a sample colored by bundle types of (M, base), homogeneous through arity n, each piece of arity k+1 <= n L-embeds into M sending variable p to bundleOf base s hs p. Axioms clean."
+  },
+  {
+   "id": "infra_83_joint_demand",
+   "label": "Lemma 8.3 proof: coherent color extraction retaining size and order saturation as one cardinal demand",
+   "section": 8,
+   "file": "AEC/Section8/HullTypes83.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 103: Hull83.coherent_colors_demand: for a thinning-closed family with a thinning-monotone invariant sat (ambient order saturation) and samples large in both, the extracted colors keep homogeneous samples with size >= kappa and sat >= kappa. Axioms clean."
   }
  ],
  "edges": [
@@ -10099,8 +10108,13 @@
    "from": "infra_83_piece_into_sample",
    "to": "infra_83_bounded_arity_free",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_joint_demand",
+   "to": "infra_83_pair_sample_family",
+   "kind": "hard"
   }
  ],
- "doneCount": 533,
+ "doneCount": 534,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
