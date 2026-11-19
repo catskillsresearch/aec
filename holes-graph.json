@@ -5014,6 +5014,51 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 101: categoricity + infra_82_iso_any; clause (3) of Lemma83Conclusion is independent of the template."
+  },
+  {
+   "id": "infra_83_samples",
+   "label": "Lemma 8.3 proof (P.scheme): samples X = F(J) <= Y ~ F(Z), Y all-dominated over X+b, Y over X into L = F(J+W) (Prop 6.15 presentation-invariant), padded dense orders",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83Single.lean",
+   "status": "open",
+   "blocker": null,
+   "detail": "Cycle 101 split of the faithful 8.3 ('The samples and their language')."
+  },
+  {
+   "id": "infra_83_hull_extraction",
+   "label": "Lemma 8.3 proof (P.scheme): fixed finitary expansion + homogeneous finite hulls (Theorem 2.6 finite-arity extraction) giving the pair template F^b with X_H = F(J_H), Y_H ~ F(Z_H), L_H = F(J_H + W_H)",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83Single.lean",
+   "status": "open",
+   "blocker": null,
+   "detail": "Cycle 101 split ('Homogeneous finite hulls')."
+  },
+  {
+   "id": "infra_83_template_strong",
+   "label": "Lemma 8.3 proof (P.scheme): X_H -> Y_H -> L_H componentwise strong, also for maps induced by order embeddings of H incl. mixed sizes (vertex LS witnesses, directed unions)",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83Single.lean",
+   "status": "open",
+   "blocker": null,
+   "detail": "Cycle 101 split ('The vertex LS witnesses prove ...')."
+  },
+  {
+   "id": "infra_83_bounded_arity_free",
+   "label": "Lemma 8.3 proof (P.scheme): bounded horizontal arity - the mark of Y_H realizes p_{X_H} and tp(u*/X) is the free extension of tp(u/X_H) (7), via retractions and Lemma 6.11",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83Single.lean",
+   "status": "open",
+   "blocker": null,
+   "detail": "Cycle 101 split ('Bounded horizontal arity')."
+  },
+  {
+   "id": "infra_83_all_dominated",
+   "label": "Lemma 8.3 proof (P.scheme): Y_H all-dominated over X_H + b (Lemma 7.6 isolation + Prop 7.5 constructive primeness, removing the arity restriction)",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83Single.lean",
+   "status": "open",
+   "blocker": null,
+   "detail": "Cycle 101 split ('The actual sample pair is all-dominated' / 'Removing the arity restriction')."
   }
  ],
  "edges": [
@@ -9537,6 +9582,31 @@
   },
   {
    "from": "infra_83_clause3_single",
+   "to": "infra_83_lemma_8_3_full_single",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_83_samples",
+   "to": "infra_83_lemma_8_3_full_single",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_83_hull_extraction",
+   "to": "infra_83_lemma_8_3_full_single",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_83_template_strong",
+   "to": "infra_83_lemma_8_3_full_single",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_83_bounded_arity_free",
+   "to": "infra_83_lemma_8_3_full_single",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_83_all_dominated",
    "to": "infra_83_lemma_8_3_full_single",
    "kind": "hard"
   }
