@@ -6616,6 +6616,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 122: proved."
+  },
+  {
+   "id": "infra_83_subLang_limit_into_sample",
+   "label": "The sublanguage (subLangPieces) template value of I embeds strongly into the L0-reduct of a homogeneous sample",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83Isolation.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 123: proved."
   }
  ],
  "edges": [
@@ -12236,8 +12245,13 @@
    "from": "infra_83_pair_into_sample_along",
    "to": "infra_83_bounded_arity_free",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_subLang_limit_into_sample",
+   "to": "infra_83_bounded_arity_free",
+   "kind": "hard"
   }
  ],
- "doneCount": 672,
+ "doneCount": 673,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
