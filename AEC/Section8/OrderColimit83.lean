@@ -992,8 +992,10 @@ theorem infra_83_pairMS2_joint (P : SingleModelData K)
           m I (((Hull83.subLangPieces (psiM P.E Pr.n)
         ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hY).limit I).canon s x) = P.E.skeleton (g I i)) ∧
       ∀ (I : Type u) [LinearOrder I],
-        #(OCol83.Col (OCol83.phiH h I) (OCol83.phiH_comp h hcomp I)) ≤ #(Finset I) * ls K) := by
-  obtain ⟨c, hc, hcoh, hθ, hρ, -⟩ := infra_83_pairMS2_coherent_colors P Pr
+        #(OCol83.Col (OCol83.phiH h I) (OCol83.phiH_comp h hcomp I)) ≤ #(Finset I) * ls K) ∧
+      ∀ (n : ℕ) (κ : Cardinal.{u}),
+        Hull83.Joint (Hull83.TpSampleB (fun N _ => pairMAdmittedS3 P Pr N) 3) n c κ := by
+  obtain ⟨c, hc, hcoh, hθ, hρ, hc3⟩ := infra_83_pairMS2_coherent_colors P Pr
   have hX : Hull83.SubHullStrong ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
       ((LS83.pairInlR P.E).comp (LS83.lsInl K)) (fun N _ => pairMAdmittedS2 P.E Pr.n N) :=
     fun M _ hM => pairM_subHullStrongX P.E Pr.n M hM.1.1
@@ -1015,7 +1017,7 @@ theorem infra_83_pairMS2_joint (P : SingleModelData K)
     fun I _ _ => ⟨ηXY.limMap_strong I, ηYL.limMap_strong I⟩,
     fun f => ⟨ηXY.limMap_natural f, ηYL.limMap_natural f⟩,
     infra_83_pairMS2_X_hull_natural_c P Pr c hc hcoh hθ hρ hX,
-    infra_83_pairMS2_Y_hull_natural_c P Pr c hc hcoh hθ hρ hY⟩
+    infra_83_pairMS2_Y_hull_natural_c P Pr c hc hcoh hθ hρ hY, hc3⟩
 
 /-- A family of piece elements fixed by every piece map has a well-defined image in every limit
 value: all canonical images agree. -/
@@ -1365,7 +1367,7 @@ theorem infra_83_pair_values (P : SingleModelData K)
             (∀ b, onY (eY I hI b) = eY J hJ (EM83.gEmMap (F := FY) f b)) ∧
             (∀ x, onY (incl I hI x) = incl J hJ (onX x)) ∧
             ∀ i, onY (eY I hI (b I i)) = eY J hJ (b J i) := by
-  obtain ⟨c, hc, hcoh, hXs, hYs, ηXY, FL, ηYL, E, hE, hstr, hnat, hXb, hYb⟩ := infra_83_pairMS2_joint P Pr
+  obtain ⟨c, hc, hcoh, hXs, hYs, ηXY, FL, ηYL, E, hE, hstr, hnat, hXb, hYb, -⟩ := infra_83_pairMS2_joint P Pr
   obtain ⟨chX, hX', hidX, hcompX, mX, hvX, hmX, -, -, -, gX, -, -, -, hcX⟩ := hXb
   obtain ⟨chY, hY', hidY, hcompY, mY, hvY, hmY, -, -, -, gY, -, -, -, hcY⟩ := hYb
   have key : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible), _ :=

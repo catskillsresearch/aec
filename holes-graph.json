@@ -6822,7 +6822,7 @@
    "file": "AEC/Section8/Lemma83SampleLikeY.lean",
    "status": "open",
    "blocker": null,
-   "detail": "Open (cycle 145). | Cycle 146: infra_83_pairMS2_coherent_colors now also returns the pairMAdmittedS3 joint samples for the SAME colors c (via joint_tpSampleB_mono); all 15 consumers updated. Remaining: expose hc3 through infra_83_pairMS2_joint and the matching into samples."
+   "detail": "Open (cycle 145). | Cycle 146: infra_83_pairMS2_coherent_colors now also returns the pairMAdmittedS3 joint samples for the SAME colors c (via joint_tpSampleB_mono); all 15 consumers updated. Remaining: expose hc3 through infra_83_pairMS2_joint and the matching into samples. | Cycle 147: infra_83_pairMS2_joint also returns the pairMAdmittedS3 joint samples for its colors c."
   },
   {
    "id": "infra_83_pairMS3_coherent_colors",
