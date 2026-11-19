@@ -73,6 +73,58 @@ Theorem 10.5 as stated: the abstract `productCopies` needs more axioms.
 
 ---
 
+## Main-path assessment (Nov 19, 2026): Sections 6-7 for a general working package
+
+Priority (Lars, Nov 19): reach `theorem_1_2` / `theorem_1_3`. Off the main path: `infra_78_tuple_amalgam_large`, `infra_612_galois_trans_cross_level_both_off`, `infra_75_product_free`, `infra_84_segment_model_homogeneity`, `infra_72_mixed_level` (its stale hard edge to the done `infra_82_comparison_single` was removed; that proof uses `infra_72_mixed_level_closed`). On the main path besides 8.3: `infra_8_general_calculus`, `infra_82_mixed_reflection`.
+
+**Size of the generalization.**
+- Already general: Section 6 up to 6.13 (`lemma_6_1`, `lemma_6_9`, `theorem_6_10`, `lemma_6_11_untied`, `proposition_6_12/13_untied`) is stated over a `WorkingScheme`.
+- `SingleModelData`-specific: `proposition_6_15`, `corollary_6_16`, `lemma_6_17` and all of Section 7 (`lemma_7_2` … `theorem_7_13`). Also 6.3-6.7, which are stated for `K`-model presentations with `[CategoricalUnbounded K]` rather than for scheme objects.
+- Scale: Section 6 has 32 files and about 19.2k lines, 22 of them mentioning `SingleModelData`. Section 7 has 59 files and about 28.5k lines, 52 of them mentioning it. Together that is roughly 1,400 uses of `P.E`/`P.D`/`P.g`/`P.tester`, over 1,000 of them in Section 6, about 320 in `FreshStrip.lean` alone.
+- The heavy dependence is concentrated in three places:
+  - (a) Presentation combinatorics: `E.obj`, `E.map`, supports, fresh strips (6.15, 6.16).
+  - (b) Level closure: `infra_615_closed`, `infra_78_closedTail`, pad recursion, which are closure points of `{D.t, g}`.
+  - (c) Testing bounds: `P.tester` (Prop 4.8) and `P.D` (Prop 4.2).
+- Section 7 mostly goes through `P.scheme`, `TupleOver`, `SameGaloisType`, `AllDominated` and Section 6 results. Once 6.15-6.17 and the level closures are abstract, it ports by changing the parameter: oneVertexShape becomes `S`, and `P.scheme` becomes `W`.
+
+**Prerequisite gap in Def 5.2.** `IsWorkingPackage` currently has four parts: `HasChainUnions ∧ HasMixedDownward ∧ IsSaturated ∧ SatisfiesExhaustion`. It does not include `HasPresentations`, and `HasPresentations` itself only asks for vertexwise isomorphism plus some permitted arrow per order embedding. The paper's Def 5.2(2) asks for more:
+- objects are finite-support label terms on `I`;
+- `F(f)` arrows are induced by substitution, including across levels;
+- every object is isomorphic to a well-ordered presentation;
+- diagrams on term lists are natural (5.2(3), last sentence).
+
+6.15/6.16 (fresh strip, approximate retractions) and 8.3 (`F = C`'s template) use exactly this. So the first step is a faithful restatement: add a presentation clause with finite supports, natural `F(f)` arrows and natural term diagrams to `IsWorkingPackage`. Then re-prove it for `P.scheme` in `proposition_5_6` (`E` is an `OrderPresentation`, so the supports exist) and add it to `theorem_8_6`'s output. For the output, 8.3's `F^b` comes from `EM83.FinPieces` and has finite supports (`infra_83_finite_support`).
+
+**Can the 8.3 single machinery be restated generically?** Partly.
+- The proved generic layer carries over unchanged:
+  - the arrow-gluing lemmas: `arrow_of_cover`, `arrow_of_substructure_cover`, `arrow_of_chain`;
+  - the list tower: `embed_of_lists`, `infra_83_list_realizations`, `nested_lists`, `range_pieces`, `pieces_transport`;
+  - the sample/colour layer (`Hull83`, `EM83.FinPieces`, `pairTemplate83`), apart from `P.E`, `P.scheme` and oneVertexShape.
+- What is tied to `SingleModelData`:
+  - the sample languages: `pairLangM*`, `LS83`, built from `P.E` labels;
+  - `infra_75_place` / `dominated_of_primeness_at` (Prop 7.5 / Section 7);
+  - the closed-level sets.
+- Once Sections 6-7 and Def 5.2(2) are generic, these follow by replacing `P.E` with `W.template` (finite-support labels) and oneVertexShape with `S`. The shape change matters because objects become systems rather than single models; most lemmas are per-vertex.
+- Estimate: about 30-50% of the 8.3 files touched, mostly signatures.
+
+**`infra_82_mixed_reflection` for general W.** The paper's proof (8.2 text, line 34) uses only package clauses:
+1. a large pair isomorphism;
+2. mixed saturation in the underlying scheme (`IsSaturated`, whose witness may be at a larger level);
+3. small-level homogeneity (diagram equality iff structural isomorphism, a `WorkingScheme` field).
+
+It does not use Sections 6-7 or the `both_off` cross-level Galois transitivity. The board's current note ("both hosts large: the both_off obstruction") reflects the `P.scheme` Galois-type formulation. Restated with W's `DiagramEq` and proved from `IsSaturated` plus homogeneity, it looks directly provable and generic. Recommended as the next independent tip.
+
+**Fastest order to `theorem_8_6`.**
+1. Faithful Def 5.2(2) presentation clause in `IsWorkingPackage`, re-proved for `P.scheme`.
+2. `infra_82_mixed_reflection`, generic over W (package clauses only).
+3. Finish `infra_83_lemma_8_3_full_single` for `P.scheme`: list isolation plus mark realization, the current tip.
+4. Abstract the level closure. Replace `infra_615_closed` / `infra_78_closedTail` with a `ClosedLevels W` predicate given by the bound functions used in 6.15-7.13; Theorem 13.5 bookkeeping supplies it.
+5. Port 6.15-6.17 to `W.template` (the largest single job, about 6-8k lines touched), then Section 7 by reparametrization.
+6. Restate 8.2-8.5 over W and reuse the single proofs.
+7. `theorem_8_6` assembly: Lemma 8.5 unions plus 8.3 template plus 8.2.
+
+Steps 1-3 are small or medium. Steps 4-5 are the bulk: weeks of cycles at the current rate. Alternative considered: code marked pairs as single models of an expanded AEC `K^b` and reuse `SingleModelData` verbatim. It is not viable as stated, because `K^b` must be an AEC at all cardinalities (chains, LS), while marked pairs are only defined at eligible levels. The paper deliberately works with schemes for this reason.
+
 ## Remaining hole clusters (prove-first DAG)
 
 ```mermaid

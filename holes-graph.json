@@ -4104,7 +4104,7 @@
    "file": "AEC/Section8/Results.lean",
    "status": "blocked",
    "blocker": null,
-   "detail": "Section 8 conventions: 'We use the working package of Definition 5.2, and the calculus and isolation results of the preceding two Sections, at sufficiently closed eligible levels.' Lean proves Sections 6-7 only for SingleModelData; lemma_8_2..8_5 over an arbitrary working scheme (and the derived C^b) need them for W. Large development (or a ruling to take them as an explicit hypothesis bundle)."
+   "detail": "Section 8 conventions: 'We use the working package of Definition 5.2, and the calculus and isolation results of the preceding two Sections, at sufficiently closed eligible levels.' Lean proves Sections 6-7 only for SingleModelData; lemma_8_2..8_5 over an arbitrary working scheme (and the derived C^b) need them for W. Large development (or a ruling to take them as an explicit hypothesis bundle). | Nov 19 assessment (see HOLES.md 'Main-path assessment'): first restate Def 5.2(2) faithfully (finite-support presentations, natural F(f), natural term diagrams; IsWorkingPackage currently omits HasPresentations); then abstract level closure, port 6.15-6.17 to W.template, reparametrize Section 7 (S, W). Sections 6.1-6.13 already general."
   },
   {
    "id": "infra_81_prescription_iso",
@@ -4122,7 +4122,7 @@
    "file": "AEC/Section8/Results.lean",
    "status": "blocked",
    "blocker": null,
-   "detail": "Clause (5) of the restated lemma_8_2: PairOrbitEq between two pairs at a common small level iff between their images at a common larger level. For W := P.scheme the larger-level comparison has both hosts large: the both_off obstruction. Tracked separately per ruling."
+   "detail": "Clause (5) of the restated lemma_8_2: PairOrbitEq between two pairs at a common small level iff between their images at a common larger level. For W := P.scheme the larger-level comparison has both hosts large: the both_off obstruction. Tracked separately per ruling. | Nov 19 assessment: the paper's proof (8.2 text l.34) uses only package clauses (large pair iso, mixed IsSaturated, small-level homogeneity), not Sections 6-7 nor both_off; restate with W's DiagramEq and prove generically. Recommended next independent tip."
   },
   {
    "id": "infra_82_iso_single",
