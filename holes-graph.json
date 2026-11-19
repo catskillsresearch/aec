@@ -5464,6 +5464,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 104: LS83.exists_ls_tp_presentation = Hull83.exists_tp_presentation with L = lsLang K, P = LSClosed, hullStrong_lsClosed, lsLang_functions_le (≤ LS(K)), large_lsClosed (exists_ls_expansion). Axioms clean."
+  },
+  {
+   "id": "infra_83_pair_sort_chain",
+   "label": "Lemma 8.3 proof: generic sort chain X → Y → L of bundled hull pieces (nested sort selections σ∘τ ⊆ σ ⊆ all), strong natural PiecesHoms and composite template maps",
+   "section": 8,
+   "file": "AEC/Section8/PairChain83.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 104: Hull83.subSubBundleHom (X → Y), pairChainHom = subBundleHom.comp subSubBundleHom (X → L), pairChain_limMap. Axioms clean."
   }
  ],
  "edges": [
@@ -10244,8 +10253,13 @@
    "from": "infra_83_ls_presentation",
    "to": "infra_83_template_from_colors",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_pair_sort_chain",
+   "to": "infra_83_pair_pieces",
+   "kind": "hard"
   }
  ],
- "doneCount": 543,
+ "doneCount": 544,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
