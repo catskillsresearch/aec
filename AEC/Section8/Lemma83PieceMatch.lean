@@ -2167,4 +2167,40 @@ theorem infra_83_dominated_iff_primeness (P : SingleModelData K) :
       ((Cardinal.lt_aleph0_of_finite _).trans (P.aleph0_lt (Tail.mem hT hμ))) hD
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+set_option maxHeartbeats 1600000 in
+/-- **`full_single` reduced to realization + all-domination of the template mark.** Over the
+pair-language templates `X, Y, incl, mk` of `infra_83_pair_template_clauses`, Lemma 8.3 follows
+once, at every closed well-ordered level, the template mark realizes the prescription and is
+all-dominated over `X_I`. (Equivalent to `infra_83_full_single_of_primeness` by
+`infra_83_dominated_iff_primeness`.) -/
+theorem infra_83_full_single_of_dominated (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) :
+    ∃ (X Y : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
+        P.scheme.Object #I hI)
+      (incl : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
+        SystemArrow K oneVertexShape (P.scheme.asSystem hI (X I hI))
+          (P.scheme.asSystem hI (Y I hI)))
+      (mk : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
+        Fin Pr.n → Occurrence K oneVertexShape (P.scheme.asSystem hI (Y I hI))),
+      (∀ (I : Type u) [LinearOrder I] [WellFoundedLT I] [Nonempty I]
+          (hI : #I ∈ infra_78_closedTail P ∩ infra_615_closed P),
+          (∃ realEq : ULift.{u} (Fin Pr.n) ≃ (Pr.assign hI.2.1 (X I hI.2.1)).idx,
+            SameGaloisType (asTuple (incl I hI.2.1) trivial
+              (fun a : ULift.{u} (Fin Pr.n) => mk I hI.2.1 a.down))
+              (Pr.assign hI.2.1 (X I hI.2.1)) realEq (Equiv.refl _)) ∧
+          AllDominated (incl I hI.2.1) trivial (ULift.{u} (Fin Pr.n))
+            (fun a : ULift.{u} (Fin Pr.n) => mk I hI.2.1 a.down)) →
+      Lemma83Conclusion P.scheme Pr := by
+  obtain ⟨F, X, Y, eX, eY, incl, mk, hincl, harr⟩ := infra_83_pair_template_clauses P Pr
+  refine ⟨X, Y, incl, mk, fun hS => ?_⟩
+  refine infra_83_conclusion_of_marked_values_idx P Pr F X Y eX eY incl mk hincl harr _
+    (infra_83_closed_tail P) (fun I _ _ _ hI => ?_)
+  obtain ⟨⟨realEq, hr⟩, hD⟩ := hS I hI
+  exact ⟨ULift.{u} (Fin Pr.n), Equiv.refl _, realEq, hr, hD⟩
+end
+
 end AEC
