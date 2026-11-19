@@ -6193,6 +6193,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 107: chart_natural now exports the coordinate generators; chart_functor exports h_e ∘ j_k = j_l ∘ e."
+  },
+  {
+   "id": "infra_83_hull_eq_coord_embedding",
+   "label": "F_X(I) ≅ F(J_I) / F_Y(I) ≅ F(Z_I) now also give I ↪o J_I (coordinates of the chart colimit)",
+   "section": 8,
+   "file": "OrderColimit83.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 107: OCol83.pos/pos_place/pos_strictMono; coordinate clause threaded through F_pieces and limit_of_cocone."
   }
  ],
  "edges": [
@@ -11553,8 +11562,18 @@
    "from": "infra_83_chart_coord_natural",
    "to": "infra_83_Y_hull_eq_FZ",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_hull_eq_coord_embedding",
+   "to": "infra_83_X_hull_eq_FJ",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_83_hull_eq_coord_embedding",
+   "to": "infra_83_Y_hull_eq_FZ",
+   "kind": "hard"
   }
  ],
- "doneCount": 621,
+ "doneCount": 622,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

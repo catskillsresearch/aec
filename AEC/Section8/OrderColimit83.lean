@@ -29,6 +29,22 @@ abbrev Idx (I : Type u) [LinearOrder I] := {s : Finset I // s.Nonempty}
 /-- Union of supports. -/
 def up (s t : Idx I) : Idx I := ⟨s.1 ∪ t.1, s.2.mono Finset.subset_union_left⟩
 
+/-- Position of a point of a support in its successor-length enumeration. -/
+noncomputable def pos (s : Idx I) (i : I) (hi : i ∈ s.1) : Fin (s.1.card.pred + 1) :=
+  Fin.cast (Nat.succ_pred (Finset.card_pos.mpr s.2).ne').symm ((s.1.orderIsoOfFin rfl).symm ⟨i, hi⟩)
+
+theorem pos_place {s t : Idx I} (hst : s.1 ⊆ t.1) (i : I) (hi : i ∈ s.1) :
+    placeSucc hst s.2 t.2 (pos s i hi) = pos t i (hst hi) := by
+  apply Fin.ext
+  simp [placeSucc, placeEmb_apply, pos, Finset.orderEmbOfFin]
+
+theorem pos_strictMono (s : Idx I) (i i' : I) (hi : i ∈ s.1) (hi' : i' ∈ s.1) (h : i < i') :
+    pos s i hi < pos s i' hi' := by
+  have : (s.1.orderIsoOfFin rfl).symm ⟨i, hi⟩ < (s.1.orderIsoOfFin rfl).symm ⟨i', hi'⟩ :=
+    (s.1.orderIsoOfFin rfl).symm.strictMono (show (⟨i, hi⟩ : s.1) < ⟨i', hi'⟩ from h)
+  exact this
+
+
 variable {G : Idx I → Type u} [∀ s, LinearOrder (G s)]
   (φ : ∀ {s t : Idx I}, s.1 ⊆ t.1 → G s ↪o G t)
 
@@ -235,8 +251,8 @@ theorem infra_83_pairMS2_X_hull_eq_FJ (P : SingleModelData K)
         ∃ (J : Type u) (_ : LinearOrder J) (_ : Nonempty J)
           (m : (((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
         ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3)) hXs).limit I).obj.carrier ↪[K.τ] (P.E.obj J).carrier)),
-          K.Strong m ∧ Function.Bijective m := by
-  obtain ⟨c, hc, hcoh, hXs, ch, h, hid, hcomp, hL⟩ := infra_83_pairMS2_X_limit_of_cocone P Pr
+          K.Strong m ∧ Function.Bijective m ∧ Nonempty (I ↪o J) := by
+  obtain ⟨c, hc, hcoh, hXs, ch, h, hid, hcomp, hjc, hL⟩ := infra_83_pairMS2_X_limit_of_cocone P Pr
   refine ⟨c, hc, hcoh, hXs, fun I _ _ => ?_⟩
   let φ : ∀ {s t : OCol83.Idx I}, s.1 ⊆ t.1 → (ch s.1.card.pred).H ↪o (ch t.1.card.pred).H :=
     fun {s t} hst => h (placeSucc hst s.2 t.2)
@@ -253,7 +269,13 @@ theorem infra_83_pairMS2_X_hull_eq_FJ (P : SingleModelData K)
     exact hid _ x
   obtain ⟨m, hm, hb⟩ := hL I (OCol83.Col φ hcφ) (fun s => OCol83.iota φ hcφ hiφ s)
     (fun {s t} hst => OCol83.iota_compat φ hcφ hiφ hst) (fun y => OCol83.cover φ hcφ hiφ P.E y)
-  exact ⟨OCol83.Col φ hcφ, inferInstance, inferInstance, m, hm, hb⟩
+  obtain ⟨g, -⟩ := OCol83.exists_coord_embedding φ hcφ hiφ
+    (fun s i hi => (ch s.1.card.pred).j (OCol83.pos s i hi))
+    (fun {s t} hst i hi => by
+      show h (placeSucc hst s.2 t.2) _ = _
+      rw [hjc, OCol83.pos_place])
+    (fun s i i' hi hi' hii' => (ch s.1.card.pred).mono (OCol83.pos_strictMono s i i' hi hi' hii'))
+  exact ⟨OCol83.Col φ hcφ, inferInstance, inferInstance, m, hm, hb, ⟨g⟩⟩
 
 /-- **`F_Y(I) ≅ F(Z_I)`**: in the pair template over `X`- and `Y`-sample-like structures, the
 EM value of the `Y`-pieces at every `I` is strongly and bijectively `τ`-isomorphic to `F(Z_I)`,
@@ -272,8 +294,8 @@ theorem infra_83_pairMS2_Y_hull_eq_FZ (P : SingleModelData K)
         ∃ (J : Type u) (_ : LinearOrder J) (_ : Nonempty J)
           (m : (((Hull83.subLangPieces (psiM P.E Pr.n)
         ((chiM P.E Pr.n).comp ((LS83.pairInlR P.E).comp (LS83.lsInl K))) hc hcoh (fun i : Fin 2 => i.castSucc) hXs).limit I).obj.carrier ↪[K.τ] (P.E.obj J).carrier)),
-          K.Strong m ∧ Function.Bijective m := by
-  obtain ⟨c, hc, hcoh, hXs, ch, h, hid, hcomp, hL⟩ := infra_83_pairMS2_Y_limit_of_cocone P Pr
+          K.Strong m ∧ Function.Bijective m ∧ Nonempty (I ↪o J) := by
+  obtain ⟨c, hc, hcoh, hXs, ch, h, hid, hcomp, hjc, hL⟩ := infra_83_pairMS2_Y_limit_of_cocone P Pr
   refine ⟨c, hc, hcoh, hXs, fun I _ _ => ?_⟩
   let φ : ∀ {s t : OCol83.Idx I}, s.1 ⊆ t.1 → (ch s.1.card.pred).H ↪o (ch t.1.card.pred).H :=
     fun {s t} hst => h (placeSucc hst s.2 t.2)
@@ -290,6 +312,12 @@ theorem infra_83_pairMS2_Y_hull_eq_FZ (P : SingleModelData K)
     exact hid _ x
   obtain ⟨m, hm, hb⟩ := hL I (OCol83.Col φ hcφ) (fun s => OCol83.iota φ hcφ hiφ s)
     (fun {s t} hst => OCol83.iota_compat φ hcφ hiφ hst) (fun y => OCol83.cover φ hcφ hiφ P.E y)
-  exact ⟨OCol83.Col φ hcφ, inferInstance, inferInstance, m, hm, hb⟩
+  obtain ⟨g, -⟩ := OCol83.exists_coord_embedding φ hcφ hiφ
+    (fun s i hi => (ch s.1.card.pred).j (OCol83.pos s i hi))
+    (fun {s t} hst i hi => by
+      show h (placeSucc hst s.2 t.2) _ = _
+      rw [hjc, OCol83.pos_place])
+    (fun s i i' hi hi' hii' => (ch s.1.card.pred).mono (OCol83.pos_strictMono s i i' hi hi' hii'))
+  exact ⟨OCol83.Col φ hcφ, inferInstance, inferInstance, m, hm, hb, ⟨g⟩⟩
 
 end AEC
