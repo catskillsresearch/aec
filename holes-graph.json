@@ -6700,7 +6700,7 @@
   },
   {
    "id": "infra_83_ret_admission",
-   "label": "Lemma 8.3 (P.scheme) gap: the admitted pair samples record that ret evaluates a Cor 6.16 retraction family of the sample's marked pair (the eval law of infra_83_full_single_of_ret_evals) and that Y-hull terms landing in the X sort are X-hull terms (hmeet of infra_83_good_of_closure)",
+   "label": "Lemma 8.3 (P.scheme): admission records that ret evaluates the Cor 6.16 retractions of the sample's marked pair (the Y∩X-sort half is tracked as infra_83_YX_meet)",
    "section": 8,
    "file": "AEC/Section8/Lemma83SampleLikeY.lean",
    "status": "done",
@@ -6877,6 +6877,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 152: proved."
+  },
+  {
+   "id": "infra_83_YX_meet",
+   "label": "Lemma 8.3 (P.scheme): in a matched ret-sample the Y_I-image meets the sample's X-copy only in the X_I-image (hmeet of infra_83_good_codes_of_match_ret; paper: colors record that Y-terms landing in the X sort are X-terms)",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83RetGood.lean",
+   "status": "open",
+   "blocker": null,
+   "detail": "Open (cycle 152): split off from infra_83_ret_admission, whose ret-evaluation half is closed by RetSampleLike. Needed: chart of the Y_I-hull ∩ X-copy = J-chart of X_I (xHull_eq_chart gives X_I-hull = F(J_H); XSampleLike chart clause gives T ∩ X = F(chart T))."
   }
  ],
  "edges": [
@@ -12661,6 +12670,16 @@
   {
    "from": "infra_83_good_codes_of_match_ret",
    "to": "infra_83_pairMS3_rebase",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_83_YX_meet",
+   "to": "infra_83_bounded_arity_free",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_83_YX_meet",
+   "to": "infra_83_all_dominated",
    "kind": "hard"
   }
  ],
