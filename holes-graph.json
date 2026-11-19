@@ -4681,6 +4681,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 100: English 'The argument applies both to (8) and to the specified image inside T''. Via diagram_iso + diagram_preserved. Axioms clean."
+  },
+  {
+   "id": "infra_84_local_realization_single",
+   "label": "Layout (8): bounded tests realized locally in a level-nu object over A inside T (same diagram)",
+   "section": 8,
+   "file": "AEC/Section8/Layout84Single.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 100: English 'each bounded test over the layout has a local realization in U_{H'}', diagram level; infra_72_level_hull + diagram_preserved. Axioms clean."
   }
  ],
  "edges": [
@@ -9021,8 +9030,13 @@
    "from": "infra_84_layout_one_ambient",
    "to": "infra_84_layout_amalgam",
    "kind": "hard"
+  },
+  {
+   "from": "infra_84_local_realization_single",
+   "to": "infra_84_layout_amalgam",
+   "kind": "hard"
   }
  ],
- "doneCount": 465,
+ "doneCount": 466,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

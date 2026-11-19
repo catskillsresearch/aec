@@ -3,6 +3,7 @@ module
 public import AEC.Section8.Lemma84Single
 public import AEC.Section7.RelativeIsolationTransfer
 public import AEC.Section8.ReflectSingle
+public import AEC.Section7.Lemma72Mixed
 
 @[expose] public section
 
@@ -224,5 +225,28 @@ theorem infra_84_layout_one_ambient (P : SingleModelData K) {μ : Cardinal.{u}}
     exact P.scheme.diagram_trans _ _ _ _ _ _ (P.scheme.diagram_symm _ _ _ _ d') H
   · intro H
     exact P.scheme.diagram_trans _ _ _ _ _ _ d' H
+
+/-- **Layout (8): local realization of a bounded test at level `ν`.** English (Lemma 8.4 proof):
+"For a bounded candidate tuple in either ambient, each bounded test over the layout has a local
+realization in U_{H'}". Diagram-level form for `P.scheme`: any list `L` (candidate plus test
+parameters) of size `< ν` in an ambient `T` at level `μ ≥ ν` over a level-`ν` object `A` lies in a
+level-`ν` object `B₀` over `A` inside `T`, with the same diagram there as in `T`
+(`infra_72_level_hull` and `diagram_preserved`). -/
+theorem infra_84_local_realization_single (P : SingleModelData K) {ν μ : Cardinal.{u}}
+    {hν : ν ∈ P.eligible} {hμ : μ ∈ P.eligible} (hνμ : ν ≤ μ)
+    (A : P.scheme.Object ν hν) (Tt : P.scheme.Object μ hμ)
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hν A) (P.scheme.asSystem hμ Tt))
+    {κ : Type u} (L : κ → Occurrence K oneVertexShape (P.scheme.asSystem hμ Tt)) (hκ : #κ < ν) :
+    ∃ (B₀ : P.scheme.Object ν hν)
+      (f₀ : SystemArrow K oneVertexShape (P.scheme.asSystem hν A) (P.scheme.asSystem hν B₀))
+      (j : SystemArrow K oneVertexShape (P.scheme.asSystem hν B₀) (P.scheme.asSystem hμ Tt))
+      (L₀ : κ → Occurrence K oneVertexShape (P.scheme.asSystem hν B₀)),
+      (∀ a, j.onVertex PUnit.unit (f₀.onVertex PUnit.unit a) = f.onVertex PUnit.unit a) ∧
+      (∀ k, L k = j.mapOcc (L₀ k)) ∧
+      P.scheme.DiagramEq (X := B₀) (Y := Tt) L₀ L := by
+  obtain ⟨B₀, f₀, j, L₀, hcomm, hL⟩ := infra_72_level_hull f L hκ
+  refine ⟨B₀, f₀, j, L₀, hcomm, hL, ?_⟩
+  have d := P.scheme.diagram_preserved B₀ Tt j trivial L₀ hκ (hκ.trans_le hνμ)
+  exact infra_73_diagramEq_of_eq d (fun _ => rfl) (fun k => (hL k).symm)
 
 end AEC
