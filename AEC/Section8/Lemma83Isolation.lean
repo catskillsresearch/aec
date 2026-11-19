@@ -1264,4 +1264,33 @@ theorem infra_83_hull_emb_term {L : FirstOrder.Language.{u, u}} {M N : Type u}
   rw [infra_83_hull_mk_realize v, ← FirstOrder.Language.HomClass.realize_term]
   rfl
 
+/-- **Images of matches are closed (proved).** The image of an `L`-embedding is closed under
+every function symbol of `L`; in particular the image of a template hull in a sample is closed
+under the retraction evaluation `ret` when `ret` is in the hull's language (the closure hypothesis
+`hclosed` of `infra_83_good_of_closure`). -/
+theorem infra_83_range_closed {L : FirstOrder.Language.{u, u}} {A N : Type*} [L.Structure A]
+    [L.Structure N] (f : A ↪[L] N) {k : ℕ} (g : L.Functions k) (x : Fin k → N)
+    (hx : ∀ i, x i ∈ Set.range f) :
+    FirstOrder.Language.Structure.funMap g x ∈ Set.range f := by
+  choose y hy using hx
+  refine ⟨FirstOrder.Language.Structure.funMap g y, ?_⟩
+  rw [f.map_fun]
+  congr 1
+  funext i
+  exact hy i
+
+/-- **Closure of a matched `Y`-image under a binary evaluation (proved).** If a binary symbol
+`ret` of the `Y` language is interpreted in the sample by `g`, and the code `c` lies in the
+matched image, then `g c` maps the matched image into itself. -/
+theorem infra_83_range_closed_binary {L : FirstOrder.Language.{u, u}} {A N : Type*}
+    [L.Structure A] [L.Structure N] (f : A ↪[L] N) (ret : L.Functions 2) (g : N → N → N)
+    (hg : ∀ a b, FirstOrder.Language.Structure.funMap ret ![a, b] = g a b) {c : N}
+    (hc : c ∈ Set.range f) (y : A) : ∃ y', g c (f y) = f y' := by
+  have h := infra_83_range_closed f ret ![c, f y] (fun i => by
+    fin_cases i
+    · exact hc
+    · exact ⟨y, rfl⟩)
+  obtain ⟨y', hy'⟩ := h
+  exact ⟨y', by rw [← hg, hy']⟩
+
 end AEC

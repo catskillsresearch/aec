@@ -6724,6 +6724,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 132: proved."
+  },
+  {
+   "id": "infra_83_range_closed",
+   "label": "images of L-embeddings (template matches) are closed under the function symbols",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83Isolation.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 133: proved."
   }
  ],
  "edges": [
@@ -12414,8 +12423,13 @@
    "from": "infra_83_hull_emb_term",
    "to": "infra_83_bounded_arity_free",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_range_closed",
+   "to": "infra_83_bounded_arity_free",
+   "kind": "hard"
   }
  ],
- "doneCount": 682,
+ "doneCount": 683,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
