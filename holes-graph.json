@@ -4960,6 +4960,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 101: infra_84_layout_type_determined + infra_84_tests_of_sameGaloisType."
+  },
+  {
+   "id": "infra_84_layout_agree_single",
+   "label": "Lemma 8.4 (P.scheme): over a layout object charted onto E(I1 +lex I2), the Lemma 7.2 extensions have lifting placements with the same full comparison",
+   "section": 8,
+   "file": "AEC/Section8/TermGen84Single.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 101: infra_84_two_segment_placed_comparison (Lemma 6.5 iff) + infra_84_layout_tests_determined."
   }
  ],
  "edges": [
@@ -9460,8 +9469,13 @@
    "from": "infra_84_layout_tests_determined",
    "to": "infra_84_layout_amalgam",
    "kind": "hard"
+  },
+  {
+   "from": "infra_84_layout_agree_single",
+   "to": "infra_84_layout_amalgam",
+   "kind": "hard"
   }
  ],
- "doneCount": 495,
+ "doneCount": 496,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
