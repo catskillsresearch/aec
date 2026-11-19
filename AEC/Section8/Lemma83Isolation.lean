@@ -524,4 +524,30 @@ theorem infra_83_pair_limit_desc {FX FY : EM83.FinPieces K} (η : EM83.PiecesHom
   refine h2.trans ?_
   exact (hsq s y).trans (by rw [h3])
 
+/-- **Hull elements are terms in the generators (proved).** -/
+theorem infra_83_hull_mk_realize {L : FirstOrder.Language.{u, u}} {M : Type u} [L.Structure M] {ι : Type}
+    (v : ι → M) (t : L.Term ι) :
+    (Quotient.mk (Hull83.hullSetoid v) t : Hull83.Hull (L := L) v) =
+      t.realize (fun p => (Quotient.mk (Hull83.hullSetoid v) (FirstOrder.Language.Term.var p) :
+        Hull83.Hull (L := L) v)) := by
+  apply Hull83.hullVal_injective (L := L) v
+  rw [Hull83.hullVal_mk, ← Hull83.hullEmb_apply, ← FirstOrder.Language.HomClass.realize_term]
+  rfl
+
+/-- **Embeddings of a term hull are determined by the generators (proved).** English (Lemma 8.3
+proof): the partial matches of the template pieces into a sample are determined by where the
+skeleton goes; in particular the piece embeddings of `Hull83.piece_into_sample` for `s ⊆ t` are
+compatible. -/
+theorem infra_83_hull_emb_ext {L : FirstOrder.Language.{u, u}} {M N : Type u} [L.Structure M]
+    [L.Structure N] {ι : Type} {v : ι → M} (f g : Hull83.Hull (L := L) v ↪[L] N)
+    (h : ∀ p, f (Quotient.mk _ (FirstOrder.Language.Term.var p)) = g (Quotient.mk _ (FirstOrder.Language.Term.var p))) : f = g := by
+  ext x
+  induction x using Quotient.ind with
+  | _ t =>
+    rw [infra_83_hull_mk_realize v t, ← FirstOrder.Language.HomClass.realize_term,
+      ← FirstOrder.Language.HomClass.realize_term]
+    congr 1
+    funext p
+    exact h p
+
 end AEC
