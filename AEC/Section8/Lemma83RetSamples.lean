@@ -105,3 +105,60 @@ theorem infra_83_ret_samples (P : SingleModelData K)
   have e2 : h.2.choose = y := F.injective h.2.choose_spec
   refine key.trans ?_
   rw [e1, e2]
+
+/-- The admitted class of the retraction-expanded samples: LS-closed `lsLang K`-reduct. -/
+abbrev retAdmitted (N : Type u) [(LS83.retLang K).Structure N] : Prop :=
+  @LS83.LSClosed K N ((Language.LHom.sumInl : LS83.lsLang K →ᴸ LS83.retLang K).reduct N)
+
+/-- **Coherent colors of the three-sort skeleton bundles in the retraction language.** -/
+theorem infra_83_ret_coherent_colors (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) :
+    ∃ c : (m : ℕ) → 0 < m → Hull83.TpColorB (LS83.retLang K) 3 m,
+      (∀ (n : ℕ) (κ : Cardinal.{u}),
+        Hull83.Joint (Hull83.TpSampleB (fun N _ => retAdmitted (K := K) N) 3) n c κ) ∧
+      ∀ {m m' : ℕ} (hm' : 0 < m') (hm : 0 < m) (f : Fin m' ↪o Fin m),
+        c m' hm' = Hull83.tpResB 3 f (c m hm) := by
+  refine Hull83.tpB_coherent_colors fun κ => ?_
+  obtain ⟨μ, hθ, -, J, i1, i2, -, hJ, M, -, eX, -, -, hZ, Jplus, i3, i4, emb, strip, hstrip, -,
+    F, -, -, R, code, str, g, -, hcl, -, -, -, -⟩ :=
+    infra_83_ret_samples P Pr (κ := ℵ₀) le_rfl κ
+  obtain ⟨ι⟩ := hZ J hJ
+  obtain ⟨e⟩ : Nonempty (J ≃ strip) := Cardinal.eq.mp (hJ.trans hstrip.symm)
+  refine ⟨J, i1, (P.E.obj Jplus).carrier, LS83.retExp str g, hcl, hJ ▸ hθ,
+    jzwBundle (fun j => P.E.skeleton (emb j)) (fun j => F (ι (P.E.skeleton j)))
+      (fun j => P.E.skeleton (e j).1), fun i => ?_⟩
+  fin_cases i
+  · exact P.E.skeleton.injective.comp emb.injective
+  · exact F.injective.comp (ι.injective.comp P.E.skeleton.injective)
+  · exact P.E.skeleton.injective.comp (Subtype.val_injective.comp e.injective)
+
+/-- **The `X → Y → L` template of the retraction-expanded samples** (pair language: `τ(K)`,
+LS witnesses, retraction evaluation; sorts `J`, `Z`, `W`).  Piece functors `F_X → F_Y → F_L`
+with strong natural transformations, an order presentation of `K` with values `F_L(I)`, and
+strong induced maps natural in order embeddings. -/
+theorem infra_83_ret_template (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) :
+    ∃ (FX FY FL : EM83.FinPieces K) (ηXY : EM83.PiecesHom FX FY) (ηYL : EM83.PiecesHom FY FL)
+      (E : OrderPresentation K),
+      (∀ (I : Type u) [LinearOrder I] [Nonempty I], E.obj I = (FL.limit I).obj) ∧
+      (∀ (I : Type u) [LinearOrder I] [Nonempty I],
+        K.Strong (ηXY.limMap I) ∧ K.Strong (ηYL.limMap I) ∧
+          (ηYL.comp ηXY).limMap I = (ηYL.limMap I).comp (ηXY.limMap I)) ∧
+      ∀ {I J : Type u} [LinearOrder I] [LinearOrder J] [Nonempty I] [Nonempty J] (f : I ↪o J),
+        (ηXY.limMap J).comp (EM83.gEmMap (F := FX) f) =
+            (EM83.gEmMap (F := FY) f).comp (ηXY.limMap I) ∧
+          (ηYL.limMap J).comp (EM83.gEmMap (F := FY) f) =
+            (EM83.gEmMap (F := FL) f).comp (ηYL.limMap I) := by
+  obtain ⟨c, hc, hcoh⟩ := infra_83_ret_coherent_colors P Pr
+  let σ : Fin 2 → Fin 3 := fun i => i.castSucc
+  let τ : Fin 1 → Fin 2 := fun _ => 0
+  let φ := (Language.LHom.sumInl : LS83.lsLang K →ᴸ LS83.retLang K).comp (LS83.lsInl K)
+  let ηXY := Hull83.subSubBundleHom hc hcoh σ τ φ LS83.hullStrong_ret
+  let ηYL := Hull83.subBundleHom hc hcoh σ φ LS83.hullStrong_ret
+  exact ⟨_, _, _, ηXY, ηYL,
+    Hull83.tpPresentationB hc hcoh (by norm_num) φ LS83.hullStrong_ret LS83.retLang_functions_le,
+    fun I _ _ => rfl,
+    fun I _ _ => ⟨ηXY.limMap_strong I, ηYL.limMap_strong I, EM83.PiecesHom.limMap_comp _ _ I⟩,
+    fun f => ⟨ηXY.limMap_natural f, ηYL.limMap_natural f⟩⟩
+
+end AEC
