@@ -652,7 +652,7 @@
    "file": "AEC/Section8/Results.lean",
    "status": "blocked",
    "blocker": null,
-   "detail": "Blocked: stated for an arbitrary WorkingScheme W with no IsWorkingPackage/categoricity hypotheses (underhypothesized vs the English, which uses saturation/exhaustion). Proof path needs proposition_7_8 (blocked on infra_78_mixed_level_isolation) and a general-scheme version of the Section 6-7 same-level machinery, which exists only for SingleModelData. Large missing development. | Cycle 94: theorem_7_13 / infra_79_general done; clause (1) for the Prop 5.6 scheme proved as infra_82_marked_pair_exists. Remaining: restate for SingleModelData (or with IsWorkingPackage hypotheses) and the pair-isomorphism clause (English 'iff it transports the joint type'; Lean asserts every base iso extends, condition dropped — audit needed)."
+   "detail": "Blocked: stated for an arbitrary WorkingScheme W with no IsWorkingPackage/categoricity hypotheses (underhypothesized vs the English, which uses saturation/exhaustion). Proof path needs proposition_7_8 (blocked on infra_78_mixed_level_isolation) and a general-scheme version of the Section 6-7 same-level machinery, which exists only for SingleModelData. Large missing development. | Cycle 94: theorem_7_13 / infra_79_general done; clause (1) for the Prop 5.6 scheme proved as infra_82_marked_pair_exists. Remaining: restate for SingleModelData (or with IsWorkingPackage hypotheses) and the pair-isomorphism clause (English 'iff it transports the joint type'; Lean asserts every base iso extends, condition dropped — audit needed). | Cycle 94: the Lean statement is proved for W := P.scheme (infra_82_lemma_8_2_single). Remaining: the arbitrary-WorkingScheme statement (underhypothesized: needs IsWorkingPackage/closure hypotheses or a SingleModelData-like structure on C^b) and the English clauses missing from the Lean statement (iso of pairs, pointed iff, orbit preservation, mixed reflection)."
   },
   {
    "id": "lemma_8_3",
@@ -4047,10 +4047,19 @@
    "id": "infra_82_pair_extend",
    "label": "Lemma 8.2 (2) for the Prop 5.6 scheme: a base isomorphism extends to a marked-pair arrow",
    "section": 8,
-   "file": null,
-   "status": "open",
+   "file": "AEC/Section8/MarkedPairExists.lean",
+   "status": "done",
    "blocker": null,
-   "detail": "OPEN (cycle 94). English: 'An isomorphism e : X ≅ X′ extends to an isomorphism (X,Y,b) ≅ (X′,Y′,b′)'; proof: existence by Thm 7.9, extension by Prop 7.5 back-and-forth / primeness. Plan (same level, M.μ = N.μ, subst): apply infra_79_primeness_same_level to the tuple asTuple M.incl M.b (finite via Pr.arity), SameGaloisType.refl, M.dominated, N := N.Y, g := e ≫ N.incl, b'' := N.b ∘ τ; the Galois hypothesis is the chain M.realizes → Pr.along e (SameGaloisType part of IsFreeLift; not vacuous) → N.realizes restricted along e (restriction lemma for SameGaloisType: compose the commuting square with e) with infra_612_galois_trans_mid_any (finite marks, ℵ₀ bound). Cross-level e (M.μ ≠ N.μ) needs a cast or the mixed form. Note the Lean lemma_8_2 asks only for a MarkedArrow (not an isomorphism); the iso form would need Prop 7.5 back-and-forth."
+   "detail": "PROVED cycle 94 (axioms clean): infra_82_pair_extend_same_level (Thm 7.9 primeness + Pr.along Galois part + infra_82_sameGalois_restrict + infra_612_galois_trans_last_base twice); bijective base arrows force equal levels (card), so infra_82_lemma_8_2_single proves the Lean lemma_8_2 statement for W := P.scheme. | OPEN (cycle 94). English: 'An isomorphism e : X ≅ X′ extends to an isomorphism (X,Y,b) ≅ (X′,Y′,b′)'; proof: existence by Thm 7.9, extension by Prop 7.5 back-and-forth / primeness. Plan (same level, M.μ = N.μ, subst): apply infra_79_primeness_same_level to the tuple asTuple M.incl M.b (finite via Pr.arity), SameGaloisType.refl, M.dominated, N := N.Y, g := e ≫ N.incl, b'' := N.b ∘ τ; the Galois hypothesis is the chain M.realizes → Pr.along e (SameGaloisType part of IsFreeLift; not vacuous) → N.realizes restricted along e (restriction lemma for SameGaloisType: compose the commuting square with e) with infra_612_galois_trans_mid_any (finite marks, ℵ₀ bound). Cross-level e (M.μ ≠ N.μ) needs a cast or the mixed form. Note the Lean lemma_8_2 asks only for a MarkedArrow (not an isomorphism); the iso form would need Prop 7.5 back-and-forth."
+  },
+  {
+   "id": "infra_82_lemma_8_2_single",
+   "label": "Lean lemma_8_2 statement for the Prop 5.6 scheme",
+   "section": 8,
+   "file": "AEC/Section8/MarkedPairExists.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "PROVED cycle 94 (axioms clean). Not lemma_8_2 itself: that is stated for an arbitrary WorkingScheme (Section 8 is applied to the derived schemes C^b, so specializing to P.scheme would narrow it). Audit note: the Lean lemma_8_2 asks only for a MarkedArrow extending e, while the English asks for an isomorphism of pairs plus the pointed iff clause, orbit preservation and mixed reflection."
   }
  ],
  "edges": [
@@ -7996,8 +8005,18 @@
    "from": "infra_82_pair_extend",
    "to": "lemma_8_2",
    "kind": "hard"
+  },
+  {
+   "from": "infra_82_marked_pair_exists",
+   "to": "infra_82_lemma_8_2_single",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_82_pair_extend",
+   "to": "infra_82_lemma_8_2_single",
+   "kind": "hard"
   }
  ],
- "doneCount": 400,
+ "doneCount": 402,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

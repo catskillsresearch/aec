@@ -47,4 +47,103 @@ theorem infra_82_marked_pair_exists (P : SingleModelData K)
     SystemArrow.refl _, trivial, fun v => ?_⟩
   exact Function.bijective_id
 
+/-- Restricting both sides of a Galois equality along a base arrow. -/
+theorem infra_82_sameGalois_restrict {P : SingleModelData K} {μ ν : Cardinal.{u}}
+    {hμ : μ ∈ P.eligible} {hν : ν ∈ P.eligible}
+    {A : P.scheme.Object μ hμ} {B : P.scheme.Object ν hν}
+    (e : SystemArrow K oneVertexShape (P.scheme.asSystem hμ A) (P.scheme.asSystem hν B))
+    (he : P.scheme.permitted (X := A) (Y := B) e)
+    {t1 t2 : TupleOver K oneVertexShape P.scheme hν B} {ι : Type u}
+    {e1 : t1.idx ≃ ι} {e2 : t2.idx ≃ ι} (h : SameGaloisType t1 t2 e1 e2) :
+    SameGaloisType (t1.restrict e he) (t2.restrict e he) e1 e2 := by
+  rcases h with ⟨ρ, hρ, top, f1, f2, hf1, hf2, hcomm, hval⟩
+  refine ⟨ρ, hρ, top, f1, f2, hf1, hf2, fun v => ?_, hval⟩
+  have := congrArg (fun φ => φ.comp (e.onVertex v)) (hcomm v)
+  exact this
+
+/-- **Lemma 8.2 (2) for the Prop 5.6 scheme, same level (proved, cycle 94).** For marked pairs
+`M`, `N` at one level and a class embedding `e : M.X → N.X` of the bases, there is an arrow of
+marked pairs extending `e`: Theorem 7.9 primeness (`infra_79_primeness_same_level`) for the
+all-dominated `M`, with the Galois hypothesis from `M.realizes`, the stationarity of the
+prescription along `e` (the `SameGaloisType` part of `Pr.along`) and `N.realizes` restricted
+along `e` (`infra_612_galois_trans_last_base`, twice). -/
+theorem infra_82_pair_extend_same_level (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme)
+    (M N : MarkedPair K oneVertexShape P.scheme Pr) (hlev : M.μ = N.μ)
+    (e : SystemArrow K oneVertexShape (P.scheme.asSystem M.hμ M.X) (P.scheme.asSystem N.hμ N.X))
+    (he : P.scheme.permitted (X := M.X) (Y := N.X) e) :
+    ∃ arr : MarkedArrow K oneVertexShape P.scheme Pr M N, arr.onX = e := by
+  classical
+  obtain ⟨μ, hμ, X, Y, incl, hincl, bIdx, b, ⟨eM, hM⟩, hdom⟩ := M
+  obtain ⟨μ', hμ', X', Y', incl', hincl', bIdx', b', ⟨eN, hN⟩, hdom'⟩ := N
+  simp only at hlev e he ⊢
+  subst hlev
+  obtain ⟨e0, hFL, -⟩ := Pr.along e he
+  have hN' := infra_82_sameGalois_restrict e he hN
+  have hlt : ℵ₀ < μ := P.aleph0_lt hμ
+  have hfinX : Finite (Pr.assign hμ X).idx := Finite.of_equiv _ (Pr.arity hμ X).symm
+  have hidxX : #(Pr.assign hμ X).idx ≤ ℵ₀ := (Cardinal.lt_aleph0_of_finite _).le
+  have S1 := infra_612_galois_trans_last_base (t1 := Pr.assign hμ X)
+    (t2 := (Pr.assign hμ' X').restrict e he)
+    (t3 := (asTuple incl' hincl' b').restrict e he) (e12 := e0) (e32 := eN)
+    hFL hN'.symm ℵ₀ le_rfl hlt hidxX rfl
+  have hfinB : Finite bIdx := Finite.of_equiv _ (eM.trans (Pr.arity hμ X)).symm
+  have hidxB : #bIdx ≤ ℵ₀ := (Cardinal.lt_aleph0_of_finite _).le
+  have S2 := infra_612_galois_trans_last_base (t1 := asTuple incl hincl b)
+    (t2 := Pr.assign hμ X) (t3 := (asTuple incl' hincl' b').restrict e he) (e12 := eM)
+    hM (SameGaloisType.swap_refl S1) ℵ₀ le_rfl hlt hidxB rfl
+  set τ : bIdx ≃ bIdx' := eM.trans (e0.trans eN.symm).symm.symm with hτ
+  have hg : P.scheme.permitted (X := X) (Y := Y') (SystemArrow.comp e incl') :=
+    P.scheme.comp e incl' he hincl'
+  have hGal : SameGaloisType (asTuple incl hincl b)
+      (asTuple (SystemArrow.comp e incl') hg (fun j => b' (τ j))) (Equiv.refl _)
+      (Equiv.refl _) := by
+    rcases S2 with ⟨ρ, hρ, top, f1, f2, hf1, hf2, hcomm, hval⟩
+    refine ⟨ρ, hρ, top, f1, f2, hf1, hf2, hcomm, fun j => ?_⟩
+    have := hval (τ j)
+    erw [τ.symm_apply_apply j] at this
+    exact this
+  obtain ⟨h, hh, hcomp, hv⟩ := infra_79_primeness_same_level hμ X (asTuple incl hincl b) hfinB
+    Y incl hincl b hdom (SameGaloisType.refl _) Y' (SystemArrow.comp e incl') hg
+    (fun j => b' (τ j)) hGal
+  refine ⟨⟨e, h, he, hh, hcomp, fun i => ⟨τ i, ?_⟩⟩, rfl⟩
+  show (⟨(b i).1, h.onVertex (b i).1 (b i).2⟩ : Occurrence K oneVertexShape
+    (P.scheme.asSystem hμ' Y')) = b' (τ i)
+  have h1 : h.onVertex (b i).1 (b i).2 = (b' (τ i)).2 := hv i
+  revert h1
+  generalize b i = o1
+  generalize b' (τ i) = o2
+  obtain ⟨⟨⟩, x1⟩ := o1
+  obtain ⟨⟨⟩, x2⟩ := o2
+  intro h1
+  exact congrArg (Sigma.mk PUnit.unit) h1
+
+/-- **Lemma 8.2 for the Prop 5.6 scheme (proved, cycle 94).** The Lean statement of `lemma_8_2`
+with `W := P.scheme`: on the Theorem 7.9 tail every object sits in a marked pair
+(`infra_82_marked_pair_exists`), and every bijective class embedding of bases extends to an arrow of
+marked pairs (`infra_82_pair_extend_same_level`; a bijection of bases forces equal levels, since an
+object at level `μ` has cardinality `μ`). -/
+theorem infra_82_lemma_8_2_single (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) :
+    ∃ T, ∃ hT : Tail P.scheme.eligible T,
+      (∀ μ (hμ : μ ∈ T) (X : P.scheme.Object μ (Tail.mem hT hμ)),
+        ∃ M : MarkedPair K oneVertexShape P.scheme Pr, M.μ = μ ∧
+          ∃ e : SystemArrow K oneVertexShape (P.scheme.asSystem _ X) (P.scheme.asSystem _ M.X),
+            P.scheme.permitted (X := X) (Y := M.X) e ∧ ∀ v, Function.Bijective (e.onVertex v)) ∧
+      ∀ (M N : MarkedPair K oneVertexShape P.scheme Pr)
+        (e : SystemArrow K oneVertexShape (P.scheme.asSystem M.hμ M.X)
+          (P.scheme.asSystem N.hμ N.X)),
+        M.μ ∈ T → N.μ ∈ T →
+        (∀ v, Function.Bijective (e.onVertex v)) →
+        P.scheme.permitted (X := M.X) (Y := N.X) e →
+        ∃ arr : MarkedArrow K oneVertexShape P.scheme Pr M N, arr.onX = e := by
+  obtain ⟨T, hT, H⟩ := infra_82_marked_pair_exists P Pr
+  refine ⟨T, hT, H, fun M N e _ _ hbij he => ?_⟩
+  have hlev : M.μ = N.μ := by
+    have h1 : #M.X.model.carrier = M.μ := M.X.card
+    have h2 : #N.X.model.carrier = N.μ := N.X.card
+    rw [← h1, ← h2]
+    exact Cardinal.mk_congr (Equiv.ofBijective _ (hbij PUnit.unit))
+  exact infra_82_pair_extend_same_level P Pr M N hlev e he
+
 end AEC
