@@ -152,7 +152,7 @@ theorem infra_72_tiedFreeMixed_of_sameGalois
     (q : TupleOver K oneVertexShape P.scheme hν A)
     (qB q'' : TupleOver K oneVertexShape P.scheme hμ B)
     {ι0 : Type u} (eB : q.idx ≃ ι0) (eq'' : q''.idx ≃ ι0) (eqB : qB.idx ≃ ι0)
-    (hBν : qB.ν = μ) (hν'' : q''.ν = μ) (hidx : #ι0 < ν)
+    (hBν : μ ≤ qB.ν) (hν'' : μ ≤ q''.ν) (hidx : #ι0 < ν)
     (hT : IsTiedFreeMixed f q qB (eB.trans eqB.symm))
     (hSame : SameGaloisType qB q'' eqB eq'') :
     IsTiedFreeMixed f q q'' (eB.trans eq''.symm) := by
@@ -162,7 +162,7 @@ theorem infra_72_tiedFreeMixed_of_sameGalois
     rw [mk_sum, lift_id, lift_id]
     exact add_lt_of_lt (P.aleph0_le hν) hidx hιν
   have d2 := infra_78_diagramEq_of_sameGalois hSame Z
-    (by rw [hBν]; exact hs.trans_le hνμ) (by rw [hν'']; exact hs.trans_le hνμ)
+    (hs.trans_le (hνμ.trans hBν)) (hs.trans_le (hνμ.trans hν''))
   have d1' := infra_73_diagramEq_of_eq d1 (fun _ => rfl)
     (ys' := fun t => alignJoint eqB (typeJoint (p := qB) Z) (Sum.map (eB) id t))
     (fun t => by

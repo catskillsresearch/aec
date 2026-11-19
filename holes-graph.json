@@ -4189,12 +4189,12 @@
   },
   {
    "id": "infra_82_orbit_preservation_single",
-   "label": "Lemma 8.2 clause (4) for P.scheme: same-level arrows preserve bounded pair orbits",
+   "label": "Lemma 8.2(4) for P.scheme: same-level arrows preserve bounded pair orbits",
    "section": 8,
-   "file": "AEC/Section8/Results.lean",
-   "status": "open",
+   "file": "AEC/Section8/TiedAlong.lean",
+   "status": "done",
    "blocker": null,
-   "detail": "Cycle 96. English (8.2): 'Same-level arrows preserve bounded pair orbits'; orbits are pair isomorphism orbits (line 3173), the base moves. Lean PairOrbitEq M M refl t1 t2 -> PairOrbitEq N N refl (f t1) (f t2) matches (bijective onX allowed; mark fixed entrywise). Proof (paper 3010-3018): Lemma 7.2 free extension of joint types, bounded approximation lists, an automorphism of N.X matching them by bounded diagram homogeneity in C, testing bound, then the pair isomorphism test (clause 3, done for P.scheme as infra_82_pointed_single). Not provided by infra_82_iso_any / infra_75_iso (same base only); no bounded diagram homogeneity lemma exists in Lean yet. | Cycle 96: reduction proved (infra_82_orbit_criterion_single); remaining piece infra_82_orbit_base_auto_single. | Cycle 96: proved given infra_82_mark_tied_along_single and infra_82_orbit_tail_single (infra_82_orbit_preservation_of_tied_single). | Cycle 96 (later): only infra_82_mark_tied_along_single remains."
+   "detail": "DONE cycle 97: infra_82_orbit_preservation_single (hypotheses: Def 8.1 CommutesWithIso and TiedAlong). Axioms clean."
   },
   {
    "id": "infra_84_single",
@@ -4288,12 +4288,12 @@
   },
   {
    "id": "infra_82_mark_tied_along_single",
-   "label": "Lemma 8.2(4) for P.scheme: tied freeness of the mark along same-level marked arrows",
+   "label": "Tied freeness of the mark along same-level marked arrows (P.scheme)",
    "section": 8,
-   "file": "AEC/Section8/PairOrbitSingle.lean",
-   "status": "open",
+   "file": "AEC/Section8/TiedAlong.lean",
+   "status": "done",
    "blocker": null,
-   "detail": "Cycle 96. Needed: for a same-level marked arrow f : M -> N, IsTiedFreeMixed f.onX (b over M.X) (b' o markMap over N.X) refl. English Def 8.1: 'for every arrow X -> X', p_X' is the free extension of p_X'. Lean StationaryPrescription.along is the untied IsFreeLift, which the repo notes follows from the extension alone (infra_73_ext_isFreeLift), so it does not give this. Proposed: a P.scheme hypothesis predicate Pr.TiedAlong (positional via arity, like CommutesWithIso) plus transport from assign to the realizing marks (infra_75_tiedFree_base_congr and a target-side congruence). Needs a ruling: whether 'free extension' in Def 8.1 is the tied notion (as in Sections 6-7). | Cycle 97 ruling: Def 8.1 freeness is tied. Implemented for P.scheme as StationaryPrescription.TiedAlong (AEC/Section8/TiedAlong.lean; positional via arity; SGT extension part + IsTiedFreeMixed), since the general structure field along is over an arbitrary working scheme where Lean has no tied notion (infra_8_general_calculus, untouched). MarkedPair now carries realEq as data."
+   "detail": "DONE cycle 97 under Def 8.1 TiedAlong (ruling 1). Chain: TiedAlong over M.X, realEq data, mark_ext, sgt_restrict, base_equiv, tiedFreeMixed_of_sameGalois. Axioms clean."
   },
   {
    "id": "infra_82_orbit_tail_single",
@@ -8617,6 +8617,6 @@
    "kind": "hard"
   }
  ],
- "doneCount": 435,
+ "doneCount": 437,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

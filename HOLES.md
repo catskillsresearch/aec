@@ -445,7 +445,7 @@ Lean: imports `Section5.Results` and `Section6.Results`. Soft paper chain after 
 | `infra_83_lemma_8_3_full_single` | Restated Lemma 8.3 for `P.scheme`, all clauses | [`Lemma83Single.lean`](AEC/Section8/Lemma83Single.lean) (**done**, cycle 95) |
 | `infra_83_lemma_8_3_single` | Lean `lemma_8_3` statement for `W := P.scheme` | [`MarkedPairExists.lean`](AEC/Section8/MarkedPairExists.lean) (**done**, cycle 94, categoricity; `lemma_8_3` itself stays open) |
 | `infra_85_lemma_8_5_single` | Lean `lemma_8_5` statement for `W := P.scheme` | [`MarkedPairExists.lean`](AEC/Section8/MarkedPairExists.lean) (**done**, cycle 94, categoricity + pair extension; audit: Lean 8.5 lacks the chain/union clause, restatement needed) |
-| `infra_82_orbit_preservation_single` | Lemma 8.2(4) for `P.scheme`: same-level arrows preserve pair orbits (needs bounded diagram homogeneity) | `AEC/Section8/Results.lean` (open, cycle 96) |
+| `infra_82_orbit_preservation_single` | Lemma 8.2(4) for `P.scheme`: same-level arrows preserve pair orbits (needs bounded diagram homogeneity) | [`TiedAlong.lean`](AEC/Section8/TiedAlong.lean) (**done**, cycle 97) |
 | `infra_82_orbit_criterion_single` | Lemma 8.2(4) reduction for `P.scheme`: base automorphism criterion | [`PairOrbitSingle.lean`](AEC/Section8/PairOrbitSingle.lean) (**done**, cycle 96) |
 | `infra_82_mark_type_auto_single` | Lemma 8.2(4) for `P.scheme`: base automorphisms keep tp(b/X) | [`PairOrbitSingle.lean`](AEC/Section8/PairOrbitSingle.lean) (**done**, cycle 96) |
 | `infra_82_base_homogeneity_single` | Lemma 8.2(4) for `P.scheme`: bounded diagram homogeneity in the base | [`PairOrbitSingle.lean`](AEC/Section8/PairOrbitSingle.lean) (**done**, cycle 96) |
@@ -463,7 +463,7 @@ Lean: imports `Section5.Results` and `Section6.Results`. Soft paper chain after 
 | `infra_72_tiedFreeMixed_of_sameGalois` | Lemma 7.2 mixed, step (d): mixed tied freeness transfers along equal types over `B` | [`Lemma72Mixed.lean`](AEC/Section7/Lemma72Mixed.lean) (**done**, cycle 96) |
 | `infra_72_mixed_level` | Lemma 7.2 last sentence (A at a smaller level than B), stated with sorry (audit) | [`Lemma72Mixed.lean`](AEC/Section7/Lemma72Mixed.lean) (open, cycle 96) |
 | `infra_82_tiedFreeMixed_base_equiv` | Mixed tied freeness under a reindexed change of base tuple | [`TiedAlong.lean`](AEC/Section8/TiedAlong.lean) (**done**, cycle 97) |
-| `infra_82_mark_tied_along_single` | Lemma 8.2(4) for `P.scheme`: tied freeness of the mark along arrows (Def 8.1 reading; ruling needed) | `AEC/Section8/PairOrbitSingle.lean` (open, cycle 96) |
+| `infra_82_mark_tied_along_single` | Lemma 8.2(4) for `P.scheme`: tied freeness of the mark along arrows (Def 8.1 reading; ruling needed) | [`TiedAlong.lean`](AEC/Section8/TiedAlong.lean) (**done**, cycle 97) |
 | `infra_82_orbit_tail_single` | Lemma 8.2(4) for `P.scheme`: diagonal closure (via `infra_615_closed`) | [`PairOrbitSingle.lean`](AEC/Section8/PairOrbitSingle.lean) (**done**, cycle 96) |
 | `infra_82_pointed_all` | Lemma 8.2(3) for `P.scheme` at every level | [`PairPointedSingle.lean`](AEC/Section8/PairPointedSingle.lean) (**done**, cycle 96) |
 | `infra_84_base_testing_single` | Lemma 8.4 for `P.scheme`: one-base testing bound | [`Lemma84Single.lean`](AEC/Section8/Lemma84Single.lean) (**done**, cycle 96) |
