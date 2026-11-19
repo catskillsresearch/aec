@@ -248,6 +248,8 @@ public import AEC.Section8.Lemma83PairTemplateR4
 public import AEC.Section8.Lemma83PairDemand
 public import AEC.Section8.MarkLang83
 public import AEC.Section8.Lemma83MarkValues
+public import AEC.Section8.PairLangM83
+public import AEC.Section8.Lemma83PairTemplateM
 public import AEC.Section8.Lemma84Single
 public import AEC.Section8.Results
 public import AEC.Section8.StationaryPrescription
