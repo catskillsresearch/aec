@@ -5320,6 +5320,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 103: onTerm_relabel, tpCode_reduct, subToHull_hullMap, SubHullStrong, reductClass (+ hullStrong_reductClass), subFinPieces, subPiecesHom (strong, natural), sub_template_map (limMap strong + natural on all nonempty orders). Axioms clean."
+  },
+  {
+   "id": "infra_83_bundled_type_colors",
+   "label": "Lemma 8.3 proof: coherent type colors for bundled samples (one sequence per order sort per index); hulls generalized to arbitrary variable types",
+   "section": 8,
+   "file": "AEC/Section8/HullTypes83.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 103: TpColorB (variables Fin m x Fin r), tpResB, bundleOf, TpSampleB (each sort sequence injective), tpSampleB_reindex/_restrict/_large/_compat, tpB_coherent_colors. Hull/hullMap/tpCode generalized from Fin m to any variable type (HullPieces83), so bundled witnesses use the same hull API. Axioms clean."
   }
  ],
  "edges": [
@@ -10015,8 +10024,13 @@
    "from": "infra_83_sort_pieces_hom",
    "to": "infra_83_pair_pieces",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_bundled_type_colors",
+   "to": "infra_83_pair_sample_family",
+   "kind": "hard"
   }
  ],
- "doneCount": 527,
+ "doneCount": 528,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

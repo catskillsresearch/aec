@@ -58,11 +58,11 @@ section SubHull
 variable {M : Type u} [L.Structure M] {m : ℕ}
 
 /-- The `L₀`-hull of a tuple of an `L`-structure (computed in the reduct). -/
-def subHull (v : Fin m → M) : Type u := @Hull L₀ M (ψ.reduct M) m v
+def subHull (v : Fin m → M) : Type u := @Hull L₀ M (ψ.reduct M) (Fin m) v
 
 /-- The `L₀`-hull maps into the `L`-hull. -/
 def subToHull (v : Fin m → M) : subHull ψ v → Hull (L := L) v :=
-  @Quotient.map _ _ (@hullSetoid L₀ M (ψ.reduct M) m v) (hullSetoid (L := L) v) (ψ.onTerm)
+  @Quotient.map _ _ (@hullSetoid L₀ M (ψ.reduct M) (Fin m) v) (hullSetoid (L := L) v) (ψ.onTerm)
     (fun t t' (htt : @Term.realize L₀ M (ψ.reduct M) _ v t =
         @Term.realize L₀ M (ψ.reduct M) _ v t') => by
       letI := ψ.reduct M
@@ -71,7 +71,7 @@ def subToHull (v : Fin m → M) : subHull ψ v → Hull (L := L) v :=
       exact htt)
 
 theorem hullVal_subToHull (v : Fin m → M) (x : subHull ψ v) :
-    hullVal (L := L) v (subToHull ψ v x) = @hullVal L₀ M (ψ.reduct M) m v x := by
+    hullVal (L := L) v (subToHull ψ v x) = @hullVal L₀ M (ψ.reduct M) (Fin m) v x := by
   letI := ψ.reduct M
   induction x using Quotient.ind with
   | _ t =>
@@ -84,7 +84,7 @@ variable (φ₀ : K.τ →ᴸ L₀)
 
 /-- The `τ`-model of the `L₀`-hull. -/
 noncomputable def subHullModel {M : Type u} [L.Structure M] {m : ℕ} (v : Fin m → M) : Model K.τ :=
-  @red K L₀ φ₀ (subHull ψ v) (@hullStructure L₀ M (ψ.reduct M) m v)
+  @red K L₀ φ₀ (subHull ψ v) (@hullStructure L₀ M (ψ.reduct M) (Fin m) v)
 
 /-- The `τ`-model of the sample, seen through `L₀`. -/
 def subModel' (M : Type u) [L.Structure M] : Model K.τ := @red K L₀ φ₀ M (ψ.reduct M)
@@ -92,8 +92,8 @@ def subModel' (M : Type u) [L.Structure M] : Model K.τ := @red K L₀ φ₀ M (
 /-- The `L₀`-hull embedding into the sample, after reduct. -/
 noncomputable def subHullEmb {M : Type u} [L.Structure M] {m : ℕ} (v : Fin m → M) :
     (subHullModel ψ φ₀ v).carrier ↪[K.τ] (red (ψ.comp φ₀) M).carrier :=
-  @redEmb K L₀ φ₀ (subHull ψ v) M (@hullStructure L₀ M (ψ.reduct M) m v) (ψ.reduct M)
-    (@hullEmb L₀ M (ψ.reduct M) m v)
+  @redEmb K L₀ φ₀ (subHull ψ v) M (@hullStructure L₀ M (ψ.reduct M) (Fin m) v) (ψ.reduct M)
+    (@hullEmb L₀ M (ψ.reduct M) (Fin m) v)
 
 /-- **Sublanguage hull inclusion.**  The `L₀`-hull of `v` is a `τ`-substructure of its
 `L`-hull, compatibly with both embeddings into the sample. -/
@@ -118,7 +118,7 @@ theorem onTerm_relabel {α β : Type*} (g : α → β) (t : L₀.Term α) :
 /-- Equal `L`-types give equal `L₀`-types in the reducts. -/
 theorem tpCode_reduct {M N : Type u} [L.Structure M] [L.Structure N] {m : ℕ}
     {v : Fin m → M} {w : Fin m → N} (h : tpCode (L := L) v = tpCode w) :
-    @tpCode L₀ M (ψ.reduct M) m v = @tpCode L₀ N (ψ.reduct N) m w := by
+    @tpCode L₀ M (ψ.reduct M) (Fin m) v = @tpCode L₀ N (ψ.reduct N) (Fin m) w := by
   letI := ψ.reduct M
   letI := ψ.reduct N
   ext θ
@@ -129,7 +129,7 @@ theorem tpCode_reduct {M N : Type u} [L.Structure M] [L.Structure N] {m : ℕ}
 theorem subToHull_hullMap {M N : Type u} [L.Structure M] [L.Structure N] {m m' : ℕ}
     {v' : Fin m' → N} {v : Fin m → M} (g : Fin m' → Fin m)
     (h : tpCode (L := L) v' = tpCode (v ∘ g)) (x : subHull ψ v') :
-    subToHull ψ v (@hullMap L₀ M N (ψ.reduct M) (ψ.reduct N) m m' v' v g (tpCode_reduct ψ h) x) =
+    subToHull ψ v (@hullMap L₀ M N (ψ.reduct M) (ψ.reduct N) (Fin m) (Fin m') v' v g (tpCode_reduct ψ h) x) =
       hullMap g h (subToHull ψ v' x) := by
   induction x using Quotient.ind with
   | _ t =>

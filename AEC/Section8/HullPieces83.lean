@@ -28,39 +28,39 @@ variable {L : Language.{u, u}}
 
 section HullDef
 
-variable {M : Type u} [L.Structure M] {m : ℕ}
+variable {M : Type u} [L.Structure M] {ι : Type}
 
 /-- Terms identified when they have the same value at `v`. -/
-def hullSetoid (v : Fin m → M) : Setoid (L.Term (Fin m)) :=
+def hullSetoid (v : ι → M) : Setoid (L.Term ι) :=
   Setoid.ker (fun t => t.realize v)
 
 /-- The term hull of `v`, presented by terms. -/
-abbrev Hull (v : Fin m → M) : Type u := Quotient (hullSetoid (L := L) v)
+abbrev Hull (v : ι → M) : Type u := Quotient (hullSetoid (L := L) v)
 
-noncomputable instance hullStructure (v : Fin m → M) : L.Structure (Hull (L := L) v) where
+noncomputable instance hullStructure (v : ι → M) : L.Structure (Hull (L := L) v) where
   funMap f xs := Quotient.mk _ (Term.func f (fun i => (xs i).out))
   RelMap r xs := Structure.RelMap r (fun i => (xs i).out.realize v)
 
 /-- The value of a hull element in `M`. -/
-def hullVal (v : Fin m → M) : Hull (L := L) v → M :=
+def hullVal (v : ι → M) : Hull (L := L) v → M :=
   Quotient.lift (fun t => t.realize v) (fun _ _ h => h)
 
-theorem hullVal_mk (v : Fin m → M) (t : L.Term (Fin m)) :
+theorem hullVal_mk (v : ι → M) (t : L.Term ι) :
     hullVal v (Quotient.mk (hullSetoid v) t) = t.realize v := rfl
 
-theorem hullVal_out (v : Fin m → M) (x : Hull (L := L) v) :
+theorem hullVal_out (v : ι → M) (x : Hull (L := L) v) :
     hullVal v x = x.out.realize v := by
   conv_lhs => rw [← Quotient.out_eq x]
   rfl
 
-theorem hullVal_injective (v : Fin m → M) : Function.Injective (hullVal (L := L) v) := by
+theorem hullVal_injective (v : ι → M) : Function.Injective (hullVal (L := L) v) := by
   intro x y h
   induction x using Quotient.ind
   induction y using Quotient.ind
   exact Quotient.sound h
 
 /-- The hull embeds in `M`. -/
-noncomputable def hullEmb (v : Fin m → M) : Hull (L := L) v ↪[L] M where
+noncomputable def hullEmb (v : ι → M) : Hull (L := L) v ↪[L] M where
   toFun := hullVal v
   inj' := hullVal_injective v
   map_fun' {n} f xs := by
@@ -71,54 +71,54 @@ noncomputable def hullEmb (v : Fin m → M) : Hull (L := L) v ↪[L] M where
       Structure.RelMap r (fun i => (xs i).out.realize v)
     simp only [hullVal_out]
 
-theorem hullEmb_apply (v : Fin m → M) (x : Hull (L := L) v) : hullEmb v x = hullVal v x := rfl
+theorem hullEmb_apply (v : ι → M) (x : Hull (L := L) v) : hullEmb v x = hullVal v x := rfl
 
 end HullDef
 
 /-- Tuples of the same type satisfy the same term equations. -/
-theorem term_eq_iff_of_tp {M N : Type u} [L.Structure M] [L.Structure N] {m : ℕ}
-    {v : Fin m → M} {w : Fin m → N} (h : tpCode (L := L) v = tpCode w) (t t' : L.Term (Fin m)) :
+theorem term_eq_iff_of_tp {M N : Type u} [L.Structure M] [L.Structure N] {ι : Type}
+    {v : ι → M} {w : ι → N} (h : tpCode (L := L) v = tpCode w) (t t' : L.Term ι) :
     t.realize v = t'.realize v ↔ t.realize w = t'.realize w := by
-  have := congrArg (fun c : TpColor L m => (Term.equal t t' : L.Formula (Fin m)) ∈ c) h
+  have := congrArg (fun c : Set (L.Formula ι) => (Term.equal t t' : L.Formula ι) ∈ c) h
   simp only [tpCode, Set.mem_setOf_eq, Formula.realize_equal] at this
   exact Iff.of_eq this
 
 /-- Tuples of the same type satisfy the same atomic relations on terms. -/
-theorem rel_iff_of_tp {M N : Type u} [L.Structure M] [L.Structure N] {m : ℕ}
-    {v : Fin m → M} {w : Fin m → N} (h : tpCode (L := L) v = tpCode w) {n : ℕ}
-    (r : L.Relations n) (ts : Fin n → L.Term (Fin m)) :
+theorem rel_iff_of_tp {M N : Type u} [L.Structure M] [L.Structure N] {ι : Type}
+    {v : ι → M} {w : ι → N} (h : tpCode (L := L) v = tpCode w) {n : ℕ}
+    (r : L.Relations n) (ts : Fin n → L.Term ι) :
     Structure.RelMap r (fun i => (ts i).realize v) ↔
       Structure.RelMap r (fun i => (ts i).realize w) := by
-  have := congrArg (fun c : TpColor L m => (r.formula ts : L.Formula (Fin m)) ∈ c) h
+  have := congrArg (fun c : Set (L.Formula ι) => (r.formula ts : L.Formula ι) ∈ c) h
   simp only [tpCode, Set.mem_setOf_eq, Formula.realize_rel] at this
   exact Iff.of_eq this
 
 section HullMap
 
-variable {M N : Type u} [L.Structure M] [L.Structure N] {m m' : ℕ}
+variable {M N : Type u} [L.Structure M] [L.Structure N] {ι ι' : Type}
 
 /-- The map of hulls along a map of positions `g` with `tp(v') = tp(v ∘ g)`. -/
-def hullMap {v' : Fin m' → N} {v : Fin m → M} (g : Fin m' → Fin m)
+def hullMap {v' : ι' → N} {v : ι → M} (g : ι' → ι)
     (h : tpCode (L := L) v' = tpCode (v ∘ g)) : Hull (L := L) v' → Hull (L := L) v :=
   Quotient.map (fun t => t.relabel g) (fun t t' (htt : t.realize v' = t'.realize v') => by
     show (t.relabel g).realize v = (t'.relabel g).realize v
     rw [Term.realize_relabel, Term.realize_relabel]
     exact (term_eq_iff_of_tp h t t').mp htt)
 
-theorem hullVal_hullMap {v' : Fin m' → N} {v : Fin m → M} (g : Fin m' → Fin m)
+theorem hullVal_hullMap {v' : ι' → N} {v : ι → M} (g : ι' → ι)
     (h : tpCode (L := L) v' = tpCode (v ∘ g)) (x : Hull (L := L) v') :
     hullVal v (hullMap g h x) = x.out.realize (v ∘ g) := by
   conv_lhs => rw [← Quotient.out_eq x]
   show (x.out.relabel g).realize v = _
   rw [Term.realize_relabel]
 
-theorem realize_out_mk {v' : Fin m' → N} {v : Fin m → M} (g : Fin m' → Fin m)
-    (h : tpCode (L := L) v' = tpCode (v ∘ g)) (t : L.Term (Fin m')) :
+theorem realize_out_mk {v' : ι' → N} {v : ι → M} (g : ι' → ι)
+    (h : tpCode (L := L) v' = tpCode (v ∘ g)) (t : L.Term ι') :
     (Quotient.mk (hullSetoid v') t).out.realize (v ∘ g) = t.realize (v ∘ g) :=
   (term_eq_iff_of_tp h _ _).mp (Quotient.mk_out (s := hullSetoid v') t)
 
 /-- The hull map is an `L`-embedding. -/
-noncomputable def hullMapEmb {v' : Fin m' → N} {v : Fin m → M} (g : Fin m' → Fin m)
+noncomputable def hullMapEmb {v' : ι' → N} {v : ι → M} (g : ι' → ι)
     (h : tpCode (L := L) v' = tpCode (v ∘ g)) : Hull (L := L) v' ↪[L] Hull (L := L) v where
   toFun := hullMap g h
   inj' := by
@@ -145,20 +145,20 @@ noncomputable def hullMapEmb {v' : Fin m' → N} {v : Fin m → M} (g : Fin m' �
     simp only [hullVal_hullMap]
     exact (rel_iff_of_tp h r (fun i => (xs i).out)).symm
 
-theorem hullMapEmb_apply {v' : Fin m' → N} {v : Fin m → M} (g : Fin m' → Fin m)
+theorem hullMapEmb_apply {v' : ι' → N} {v : ι → M} (g : ι' → ι)
     (h : tpCode (L := L) v' = tpCode (v ∘ g)) (x : Hull (L := L) v') :
     hullMapEmb g h x = hullMap g h x := rfl
 
 /-- The hull map along the identity is the identity. -/
-theorem hullMap_id (v : Fin m → M) (h : tpCode (L := L) v = tpCode (v ∘ id))
+theorem hullMap_id (v : ι → M) (h : tpCode (L := L) v = tpCode (v ∘ id))
     (x : Hull (L := L) v) : hullMap id h x = x := by
   apply hullVal_injective v
   rw [hullVal_hullMap, hullVal_out]
   rfl
 
 /-- Hull maps compose. -/
-theorem hullMap_comp {P : Type u} [L.Structure P] {m'' : ℕ} {v'' : Fin m'' → P}
-    {v' : Fin m' → N} {v : Fin m → M} (g' : Fin m'' → Fin m') (g : Fin m' → Fin m)
+theorem hullMap_comp {P : Type u} [L.Structure P] {ι'' : Type} {v'' : ι'' → P}
+    {v' : ι' → N} {v : ι → M} (g' : ι'' → ι') (g : ι' → ι)
     (h' : tpCode (L := L) v'' = tpCode (v' ∘ g')) (h : tpCode (L := L) v' = tpCode (v ∘ g))
     (h'' : tpCode (L := L) v'' = tpCode (v ∘ (g ∘ g'))) (x : Hull (L := L) v'') :
     hullMap g h (hullMap g' h' x) = hullMap (g ∘ g') h'' x := by

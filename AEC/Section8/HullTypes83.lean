@@ -33,7 +33,7 @@ variable {L : Language.{u, u}}
 abbrev TpColor (L : Language.{u, u}) (m : ℕ) : Type u := Set (L.Formula (Fin m))
 
 /-- The type of a tuple. -/
-def tpCode {M : Type u} [L.Structure M] {m : ℕ} (v : Fin m → M) : TpColor L m :=
+def tpCode {M : Type u} [L.Structure M] {ι : Type} (v : ι → M) : Set (L.Formula ι) :=
   {φ | φ.Realize v}
 
 /-- Restriction of a type along an increasing map of positions. -/
@@ -132,6 +132,98 @@ theorem tp_coherent_colors {P : ∀ (M : Type u) [L.Structure M], Prop}
   exact ⟨c, hc, fun hm' hm f =>
     coherent_colors_compat (P := TpSample P) (fun f c => tpRes f c)
       (fun S hS _ _ f s hs => tpSample_compat S hS f s hs) hc hm' hm f⟩
+
+/-! ### Bundled samples
+
+In the pair samples each index carries a bundle of `r` entries (one increasing sequence per
+order sort, and the retraction indices).  A finite index set is colored by the type of the
+bundles it enumerates, in the variables `Fin m × Fin r`. -/
+
+/-- The bundled palette at arity `m`. -/
+abbrev TpColorB (L : Language.{u, u}) (r m : ℕ) : Type u := Set (L.Formula (Fin m × Fin r))
+
+/-- Restriction of a bundled type along an increasing map of positions. -/
+def tpResB (r : ℕ) {m m' : ℕ} (f : Fin m' ↪o Fin m) (c : TpColorB L r m) : TpColorB L r m' :=
+  {φ | φ.relabel (Prod.map f id) ∈ c}
+
+theorem tpResB_tpCode {M : Type u} [L.Structure M] {r m m' : ℕ} (f : Fin m' ↪o Fin m)
+    (v : Fin m × Fin r → M) : tpResB r f (tpCode (L := L) v) = tpCode (v ∘ Prod.map f id) := by
+  ext φ
+  exact Formula.realize_relabel
+
+/-- The bundles of an increasing enumeration. -/
+def bundleOf {α : Type u} [LinearOrder α] {M : Type u} {r : ℕ} (base : α → Fin r → M) {m : ℕ}
+    (s : Finset α) (h : s.card = m) : Fin m × Fin r → M :=
+  fun p => base (s.orderEmbOfFin h p.1) p.2
+
+/-- Bundled samples: every sort sequence of the bundle is injective. -/
+def TpSampleB (P : ∀ (M : Type u) [L.Structure M], Prop) (r : ℕ)
+    (S : ColorSample (TpColorB L r)) : Prop :=
+  ∃ (M : Type u) (_ : L.Structure M), P M ∧ ∃ base : S.α → Fin r → M,
+    (∀ i, Function.Injective fun a => base a i) ∧
+    ∀ (m : ℕ) (s : Finset S.α) (h : s.card = m), S.col m s = tpCode (bundleOf base s h)
+
+theorem tpSampleB_reindex {P : ∀ (M : Type u) [L.Structure M], Prop} {r : ℕ}
+    (S : ColorSample (TpColorB L r)) {β : Type u} [LinearOrder β] (e : β ↪o S.α)
+    (hS : TpSampleB P r S) : TpSampleB P r (S.reindex e) := by
+  obtain ⟨M, inst, hP, base, hinj, hcol⟩ := hS
+  refine ⟨M, inst, hP, fun x => base (e x), fun i => (hinj i).comp e.injective, ?_⟩
+  intro m s h
+  have h' : (s.map e.toEmbedding).card = m := (Finset.card_map _).trans h
+  show S.col m (s.map e.toEmbedding) = _
+  rw [hcol m _ h']
+  unfold bundleOf
+  rw [orderEmbOfFin_map e s h h']
+  rfl
+
+theorem tpSampleB_restrict {P : ∀ (M : Type u) [L.Structure M], Prop} {r : ℕ}
+    (S : ColorSample (TpColorB L r)) (H : Set S.α) (hS : TpSampleB P r S) :
+    TpSampleB P r (S.restrict H) := by
+  rw [ColorSample.restrict_eq_reindex]
+  exact tpSampleB_reindex S _ hS
+
+/-- Arbitrarily large bundled samples from arbitrarily long bundled sequences. -/
+theorem tpSampleB_large {P : ∀ (M : Type u) [L.Structure M], Prop} {r : ℕ}
+    (hlarge : ∀ κ : Cardinal.{u}, ∃ (α : Type u) (_ : LinearOrder α) (M : Type u)
+      (_ : L.Structure M), P M ∧ κ ≤ #α ∧
+      ∃ base : α → Fin r → M, ∀ i, Function.Injective fun a => base a i)
+    (κ : Cardinal.{u}) : ∃ S, TpSampleB P r S ∧ κ ≤ #S.α := by
+  obtain ⟨α, lin, M, inst, hP, hκ, base, hinj⟩ := hlarge κ
+  refine ⟨⟨α, fun m s => if h : s.card = m then tpCode (bundleOf base s h) else ∅⟩,
+    ⟨M, inst, hP, base, hinj, fun m s h => by simp [h]⟩, hκ⟩
+
+theorem tpSampleB_compat {P : ∀ (M : Type u) [L.Structure M], Prop} {r : ℕ}
+    (S : ColorSample (TpColorB L r)) (hS : TpSampleB P r S) {m m' : ℕ}
+    (f : Fin m' ↪o Fin m) (s : Finset S.α) (hs : s.card = m) :
+    S.col m' (Finset.univ.map (f.trans (s.orderEmbOfFin hs)).toEmbedding) =
+      tpResB r f (S.col m s) := by
+  obtain ⟨M, inst, hP, base, hinj, hcol⟩ := hS
+  have hc : (Finset.univ.map (f.trans (s.orderEmbOfFin hs)).toEmbedding).card = m' := by simp
+  rw [hcol m' _ hc, hcol m s hs, tpResB_tpCode]
+  have : (Finset.univ.map (f.trans (s.orderEmbOfFin hs)).toEmbedding).orderEmbOfFin hc =
+      f.trans (s.orderEmbOfFin hs) :=
+    (Finset.orderEmbOfFin_unique' hc (fun x => Finset.mem_map.mpr
+      ⟨x, Finset.mem_univ _, rfl⟩)).symm
+  unfold bundleOf
+  rw [this]
+  rfl
+
+/-- **Coherent bundled type colors.**  From arbitrarily long bundled sequences in admitted
+structures: bundled types at all positive arities, coherent under restriction, with
+arbitrarily large homogeneous bundled samples. -/
+theorem tpB_coherent_colors {P : ∀ (M : Type u) [L.Structure M], Prop} {r : ℕ}
+    (hlarge : ∀ κ : Cardinal.{u}, ∃ (α : Type u) (_ : LinearOrder α) (M : Type u)
+      (_ : L.Structure M), P M ∧ κ ≤ #α ∧
+      ∃ base : α → Fin r → M, ∀ i, Function.Injective fun a => base a i) :
+    ∃ c : (m : ℕ) → 0 < m → TpColorB L r m,
+      (∀ (n : ℕ) (κ : Cardinal.{u}), Joint (TpSampleB P r) n c κ) ∧
+      ∀ {m m' : ℕ} (hm' : 0 < m') (hm : 0 < m) (f : Fin m' ↪o Fin m),
+        c m' hm' = tpResB r f (c m hm) := by
+  obtain ⟨c, hc⟩ := coherent_colors (P := TpSampleB P r)
+    (fun S H hS => tpSampleB_restrict S H hS) (tpSampleB_large hlarge)
+  exact ⟨c, hc, fun hm' hm f =>
+    coherent_colors_compat (P := TpSampleB P r) (fun f c => tpResB r f c)
+      (fun S hS _ _ f s hs => tpSampleB_compat S hS f s hs) hc hm' hm f⟩
 
 end Hull83
 end AEC
