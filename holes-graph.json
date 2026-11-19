@@ -6688,6 +6688,24 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 130: proved."
+  },
+  {
+   "id": "infra_83_all_arity_sample",
+   "label": "Lemma 8.3 (P.scheme) gap: an admitted pairMS2 sample homogeneous in EVERY arity for the template colors (hypothesis hhom of infra_83_mix_pair_into_saturated_sample), or a finite-fragment replacement of the global value->sample arrow",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83Isolation.lean",
+   "status": "open",
+   "blocker": null,
+   "detail": "Cycle 131 (found): Hull83.Joint only gives samples homogeneous through each finite n; a single all-arity homogeneous sample is not supplied by the coherent colors (that is what the EM limit avoids). The global-arrow route of infra_83_full_single_of_ret_evals therefore needs either this sample or a tuple-wise (bounded-arity) reformulation; infra_83_piece_matches_bounded gives the finite matches."
+  },
+  {
+   "id": "infra_83_ret_admission",
+   "label": "Lemma 8.3 (P.scheme) gap: the admitted pair samples record that ret evaluates a Cor 6.16 retraction family of the sample's marked pair (the eval law of infra_83_full_single_of_ret_evals) and that Y-hull terms landing in the X sort are X-hull terms (hmeet of infra_83_good_of_closure)",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83Isolation.lean",
+   "status": "open",
+   "blocker": null,
+   "detail": "Cycle 131 (found): pairMAdmittedS2 = pairMAdmitted + XSampleLike + YSampleLike records LS-closure, sort closure, chart and the sort-intersection clause for closed sets, but not that ret is a retraction family of a marked pair; infra_83_ret_samples has the eval law only for the constructed samples. Needed for the paper's (7) via colors."
   }
  ],
  "edges": [
@@ -12347,6 +12365,26 @@
   {
    "from": "infra_83_piece_matches_bounded",
    "to": "infra_83_bounded_arity_free",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_83_all_arity_sample",
+   "to": "infra_83_bounded_arity_free",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_83_all_arity_sample",
+   "to": "infra_83_all_dominated",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_83_ret_admission",
+   "to": "infra_83_bounded_arity_free",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_83_ret_admission",
+   "to": "infra_83_all_dominated",
    "kind": "hard"
   }
  ],
