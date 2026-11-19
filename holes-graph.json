@@ -7975,6 +7975,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 270: proved."
+  },
+  {
+   "id": "infra_83_full_single_of_template_list_matches",
+   "label": "Lemma 8.3 (full_single) reduces to realization of the template mark plus, for every template piece system and n, a sample match of (mark, nestedList n) into an actual sample pair A <= U at a closed level >= #I (toA : X_I -> A, #I almost-fixing retractions, retraction images in toA[X_I], same Galois type along toA, tp(dU/A) isolated rel. mark); isolation discharged via isolation_of_matched_tuple",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PieceMatch.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 271: proved."
   }
  ],
  "edges": [
@@ -14370,8 +14379,13 @@
    "from": "infra_83_full_single_of_template_lists",
    "to": "infra_83_lemma_8_3_full_single",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_full_single_of_template_list_matches",
+   "to": "infra_83_lemma_8_3_full_single",
+   "kind": "hard"
   }
  ],
- "doneCount": 817,
+ "doneCount": 818,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

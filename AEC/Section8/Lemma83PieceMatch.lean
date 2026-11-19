@@ -4220,4 +4220,78 @@ theorem infra_83_full_single_of_template_lists (P : SingleModelData K)
       hPk hPS hPc (hIso D Piece hDm hDc hDk hPm hPk hPS hPc)⟩
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+set_option maxHeartbeats 3200000 in
+/-- **`full_single` from realization + sample matches of the template's nested lists (proved
+reduction).** The isolation hypothesis of `infra_83_full_single_of_template_lists` is discharged
+by `infra_83_isolation_of_matched_tuple` (Lemma 7.6 mixed through approximate retractions):
+it suffices that, for every template piece system and every `n`, the mark with the nested
+bounded-width list `nestedList83 D Piece n` is matched into an actual sample pair `A ≤ U` at a
+closed level `l ≥ #I`: an arrow `toA : X_I → A`, `#I` retractions `U → A` almost fixing `A`,
+a tuple `dU` of `U` with retraction images in `toA[X_I]`, the same Galois type over `X_I` along
+`toA`, and `tp(dU/A)` isolated relative to its mark part (paper, proof of Lemma 8.3). -/
+theorem infra_83_full_single_of_template_list_matches (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) :
+    ∃ (X Y : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
+        P.scheme.Object #I hI)
+      (incl : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
+        SystemArrow K oneVertexShape (P.scheme.asSystem hI (X I hI))
+          (P.scheme.asSystem hI (Y I hI)))
+      (mk : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
+        Fin Pr.n → Occurrence K oneVertexShape (P.scheme.asSystem hI (Y I hI))),
+      (∀ (I : Type u) [LinearOrder I] [WellFoundedLT I] [Nonempty I]
+          (hI : #I ∈ infra_78_closedTail P ∩ infra_615_closed P),
+          (∃ realEq : ULift.{u} (Fin Pr.n) ≃ (Pr.assign hI.2.1 (X I hI.2.1)).idx,
+            SameGaloisType (asTuple (incl I hI.2.1) trivial
+              (fun a : ULift.{u} (Fin Pr.n) => mk I hI.2.1 a.down))
+              (Pr.assign hI.2.1 (X I hI.2.1)) realEq (Equiv.refl _)) ∧
+          ∀ (D : ℕ → Set I) (Piece : Finset I → K.τ.Substructure (Y I hI.2.1).model.carrier),
+            Monotone D → (∀ z, ∃ n, z ∈ D n) → (∀ n, #(D n) < #I) →
+            Monotone Piece → (∀ J, #(Piece J) ≤ ls K) →
+            (∀ J, K.Strong (M := subM83 (Piece J)) (N := (Y I hI.2.1).model) (Piece J).subtype) →
+            (∀ y, ∃ J, y ∈ Piece J) →
+            ∀ n, ∃ (l : Cardinal.{u}) (hlC : l ∈ infra_615_closed P) (_ : l ∈ infra_78_closedTail P)
+              (_ : #I ≤ l) (A U : P.scheme.Object l hlC.1)
+              (toA : SystemArrow K oneVertexShape (P.scheme.asSystem hI.2.1 (X I hI.2.1))
+                (P.scheme.asSystem hlC.1 A))
+              (htoA : P.scheme.permitted (X := X I hI.2.1) (Y := A) toA)
+              (inclS : SystemArrow K oneVertexShape (P.scheme.asSystem hlC.1 A)
+                (P.scheme.asSystem hlC.1 U))
+              (hinclS : P.scheme.permitted (X := A) (Y := U) inclS)
+              (ι : Type u) (r : ι → SystemArrow K oneVertexShape
+                (P.scheme.asSystem hlC.1 U) (P.scheme.asSystem hlC.1 A))
+              (_ : #ι = #I)
+              (_ : ∀ a : Occurrence K oneVertexShape (P.scheme.asSystem hlC.1 A),
+                Finite {i : ι // (r i).onVertex a.1 (inclS.onVertex a.1 a.2) ≠ a.2})
+              (dU : ULift.{u} (Fin Pr.n) ⊕
+                  nestedList83 D (fun J => (Piece J : Set (Y I hI.2.1).model.carrier)) n →
+                Occurrence K oneVertexShape (P.scheme.asSystem hlC.1 U)),
+              (∀ i s, ∃ y, toA.onVertex (dU s).1 y = (r i).onVertex (dU s).1 (dU s).2) ∧
+              SameGaloisType (asTuple (incl I hI.2.1) trivial
+                  (seqJoint (fun a : ULift.{u} (Fin Pr.n) => mk I hI.2.1 a.down)
+                    (fun k => (Y I hI.2.1).occ k.1)))
+                ((asTuple inclS hinclS dU).restrict toA htoA) (Equiv.refl _) (Equiv.refl _) ∧
+              IsRelativelyIsolated (uIdx := ULift.{u} (Fin Pr.n))
+                (cIdx := nestedList83 D (fun J => (Piece J : Set (Y I hI.2.1).model.carrier)) n)
+                (asTuple inclS hinclS dU) (Equiv.refl _)) →
+      Lemma83Conclusion P.scheme Pr := by
+  obtain ⟨X, Y, incl, mk, hred⟩ := infra_83_full_single_of_template_lists P Pr
+  refine ⟨X, Y, incl, mk, fun hS => hred fun I _ _ _ hI => ⟨(hS I hI).1, ?_⟩⟩
+  intro D Piece hDm hDc hDk hPm hPk hPS hPc n
+  obtain ⟨l, hlC, hlT, hνl, A, U, toA, htoA, inclS, hinclS, ι, r, hιcard, halmost, dU, himg,
+    hExt, hIso⟩ := (hS I hI).2 D Piece hDm hDc hDk hPm hPk hPS hPc n
+  have hν0 : ℵ₀ ≤ #I := P.aleph0_le hI.2.1
+  obtain ⟨hcard, -, -⟩ := infra_83_nested_lists (P.aleph0_lt hI.2.1) (P.ls_lt hI.2.1) D hDm hDc
+    hDk (fun J => (Piece J : Set (Y I hI.2.1).model.carrier)) hPk
+  have hd : #(ULift.{u} (Fin Pr.n) ⊕
+      nestedList83 D (fun J => (Piece J : Set (Y I hI.2.1).model.carrier)) n) < #I := by
+    rw [Cardinal.mk_sum, Cardinal.lift_id, Cardinal.lift_id]
+    exact Cardinal.add_lt_of_lt hν0 ((Cardinal.lt_aleph0_of_finite _).trans_le hν0) (hcard n)
+  exact infra_83_isolation_of_matched_tuple P hI.2 hlC hI.1 hlT hνl A U (X I hI.2.1) (Y I hI.2.1)
+    toA htoA inclS hinclS (incl I hI.2.1) trivial r hιcard halmost _ dU hd himg hExt hIso
+end
+
 end AEC
