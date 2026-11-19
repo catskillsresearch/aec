@@ -3300,4 +3300,42 @@ theorem infra_83_dominated_of_tower_matches_at (P : SingleModelData K) {μ : Car
     hIso
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+set_option maxHeartbeats 1600000 in
+/-- **All-domination from isolation on small strong submodels holding the mark (proved).** At a
+closed level, a finite mark `b` of `X ≤ Y` is all-dominated if for every small strong submodel
+`j : M → Y` containing `b`, the list `(b, M)` is isolated relative to `b` over `X`. The tower is
+supplied by `exists_strong_tower` (countable cofinality of the level), so no tower bookkeeping
+remains: only isolation (e.g. from sample matches) of small strong pieces holding the mark. -/
+theorem infra_83_dominated_of_small_pieces_at (P : SingleModelData K) {μ : Cardinal.{u}}
+    (hμ : μ ∈ infra_78_closedTail P ∩ infra_615_closed P) {X Y : P.scheme.Object μ hμ.1.1}
+    (incl : SystemArrow K oneVertexShape (P.scheme.asSystem _ X) (P.scheme.asSystem _ Y))
+    {bIdx : Type u} [Finite bIdx]
+    (b : bIdx → Occurrence K oneVertexShape (P.scheme.asSystem _ Y))
+    (hIsoS : ∀ (M : Model K.τ) (j : Language.Embedding K.τ M.carrier Y.model.carrier),
+      K.Strong j → Model.card M < μ → (∀ i, ∃ x, j x = (b i).2) →
+      IsRelativelyIsolated (uIdx := bIdx) (cIdx := M.carrier)
+        (asTuple incl trivial (seqJoint b (fun x => Y.occ (j x))))
+        (Equiv.refl (bIdx ⊕ M.carrier))) :
+    AllDominated incl trivial bIdx b := by
+  have hb : #bIdx < μ := (Cardinal.lt_aleph0_of_finite _).trans (P.aleph0_lt hμ.1.1)
+  obtain ⟨M, j, hj, hMc, hmono, hcov, hd⟩ :=
+    exists_strong_tower Y.mem (P.aleph0_le hμ.1.1) hμ.1.1.1.working.countableCof
+      (P.ls_lt hμ.1.1) Y.card (fun i => (b i).2) hb
+  refine infra_83_dominated_of_tower_at P hμ incl b M j hj hMc hmono hcov hd (fun n => ?_)
+  have hbn : ∀ i, ∃ x, j n x = (b i).2 := by
+    intro i
+    obtain ⟨x, hx⟩ := hd i
+    induction n with
+    | zero => exact ⟨x, hx⟩
+    | succ n ih =>
+      obtain ⟨x', hx'⟩ := ih
+      obtain ⟨y, hy⟩ := hmono n x'
+      exact ⟨y, hy.trans hx'⟩
+  exact hIsoS (M n) (j n) (hj n) (hMc n) hbn
+end
+
 end AEC

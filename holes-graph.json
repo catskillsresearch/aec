@@ -7786,6 +7786,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 249: proved."
+  },
+  {
+   "id": "infra_83_dominated_of_small_pieces_at",
+   "label": "At a closed level a finite mark b is all-dominated if every small strong submodel M of Y containing b has (b, M) isolated relative to b over X (tower from exists_strong_tower, countable cofinality; then dominated_of_tower_at)",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PieceMatch.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 250: proved."
   }
  ],
  "edges": [
@@ -14081,8 +14090,13 @@
    "from": "infra_83_dominated_of_tower_matches_at",
    "to": "infra_83_arity_removal",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_dominated_of_small_pieces_at",
+   "to": "infra_83_arity_removal",
+   "kind": "hard"
   }
  ],
- "doneCount": 796,
+ "doneCount": 797,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
