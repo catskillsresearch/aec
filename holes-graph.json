@@ -5887,6 +5887,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 106: Hull83.subLangPieces_coord (generic, any sublanguage pieces). With infra_83_pairMS2_X/Y_pieces_coord: ε_l(F_X(e) x_a) = skeleton(j_l(e a))."
+  },
+  {
+   "id": "infra_83_pairMS2_X_charts_coherent",
+   "label": "Lemma 8.3 proof: coherent coordinate charts of the X-pieces (PieceChart family ε_k : X_k ≅ F(H_k), coordinate a ↦ skeleton j_k a, and the piece map of e sends coordinate a to the point charted by j_l(e a))",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83SampleLikeY.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 106: PieceChart, pairMS2_X_coord_of, infra_83_pairMS2_X_charts_coherent. Not yet: the charts of non-coordinate elements (terms) along piece maps, and the monotonicity of j_k (not recorded by the colors; needs an order relation on chart points)."
   }
  ],
  "edges": [
@@ -11022,8 +11031,13 @@
    "from": "infra_83_pieces_coord_natural",
    "to": "infra_83_Y_hull_eq_FZ",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_pairMS2_X_charts_coherent",
+   "to": "infra_83_X_hull_eq_FJ",
+   "kind": "hard"
   }
  ],
- "doneCount": 587,
+ "doneCount": 588,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

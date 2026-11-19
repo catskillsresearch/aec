@@ -392,6 +392,68 @@ theorem infra_83_pairMS2_X_pieces_coord (P : SingleModelData K)
     rw [hx]
     exact (hj (a, 0)).symm
 
+/-- The coordinate chart of one `X`-piece, for given colors recording `thetaM`. -/
+theorem pairMS2_X_coord_of (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme)
+    {c : (m : ℕ) → 0 < m → Hull83.TpColorB (LS83.pairLangM3 P.E Pr.n) 3 m}
+    (hc : ∀ (n : ℕ) (κ : Cardinal.{u}),
+        Hull83.Joint (Hull83.TpSampleB (fun N _ => pairMAdmittedS2 P.E Pr.n N) 3) n c κ)
+    (hθ : ∀ (m : ℕ) (hm : 0 < m) (a : Fin m) (i : Fin 3),
+        (thetaM P.E Pr.n i).relabel (fun _ => (a, i)) ∈ c m hm) (k : ℕ) :
+        ∃ (J : Type u) (_ : LinearOrder J) (_ : Nonempty J) (H : Set J) (_ : Nonempty H)
+          (ε : (Hull83.subHullModel ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+            ((LS83.pairInlR P.E).comp (LS83.lsInl K))
+            ((Hull83.witB hc k).v ∘ Prod.map id (fun _ : Fin 1 => (0 : Fin 3)))).carrier ↪[K.τ]
+            (P.E.obj H).carrier) (jH : Fin (k + 1) → H),
+          Function.Bijective ε ∧ Function.Injective jH ∧
+          ∀ x a, Hull83.subHullEmb ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+              ((LS83.pairInlR P.E).comp (LS83.lsInl K))
+              ((Hull83.witB hc k).v ∘ Prod.map id (fun _ : Fin 1 => (0 : Fin 3))) x =
+              (Hull83.witB hc k).v (a, 0) →
+            ε x = P.E.skeleton (jH a) := by
+  obtain ⟨J, Jp, i1, i2, i3, i4, emb, g, hX, hch, hcx, hτf, hτr⟩ := (Hull83.witB hc k).mem.1.2
+  have hpt : ∀ p : Fin (k + 1) × Fin 1, ∃ j, P.E.skeleton (emb j) =
+      g ((Hull83.witB hc k).v (p.1, 0)) := fun p =>
+    (hcx _).1 ((thetaM_zero _ _ _).1 (Hull83.witB_realize hc hθ k p.1 0))
+  choose j hj using hpt
+  obtain ⟨T, hne, hset⟩ : ∃ (T : Set (P.E.obj Jp).carrier) (_ : Nonempty (Lab83.chart emb T)),
+      g '' Set.range (@Hull83.hullVal _ _ (((psiM P.E Pr.n).comp (chiM P.E Pr.n)).reduct _) _
+        ((Hull83.witB hc k).v ∘ Prod.map id (fun _ : Fin 1 => (0 : Fin 3)))) =
+        Set.range (P.E.map (Lab83.chartEmb emb T)) := by
+    obtain ⟨hne, hset⟩ := xHull_eq_chart P.E Pr.n emb g hX hch _ j hj
+    exact ⟨_, hne, hset⟩
+  let f := (sampleEmb P.E Pr.n g hτf hτr).comp
+    (Hull83.subHullEmb ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+      ((LS83.pairInlR P.E).comp (LS83.lsInl K))
+      ((Hull83.witB hc k).v ∘ Prod.map id (fun _ : Fin 1 => (0 : Fin 3))))
+  have hrange : Set.range f = Set.range (P.E.map (Lab83.chartEmb emb T)) := by
+    rw [← hset]
+    ext y
+    constructor
+    · rintro ⟨x, rfl⟩
+      exact ⟨_, ⟨x, rfl⟩, rfl⟩
+    · rintro ⟨_, ⟨x, rfl⟩, rfl⟩
+      exact ⟨x, rfl⟩
+  obtain ⟨ε, hbij, hε⟩ := emb_equiv_of_range f _ hrange
+  have hmem : ∀ a : Fin (k + 1), j (a, 0) ∈ Lab83.chart emb T := fun a => by
+    have h1 : P.E.skeleton (emb (j (a, 0))) ∈ Set.range (P.E.map (Lab83.chartEmb emb T)) := by
+      rw [← hset, hj (a, 0)]
+      exact ⟨_, ⟨Quotient.mk _ (Term.var (a, 0)), rfl⟩, rfl⟩
+    obtain ⟨y, hy⟩ := Lab83.skeleton_mem_range (E := P.E) (Lab83.chartEmb emb T) h1
+    have : y.1 = j (a, 0) := emb.injective hy
+    exact this ▸ y.2
+  refine ⟨J, i1, i2, _, hne, ε, fun a => ⟨j (a, 0), hmem a⟩, hbij, ?_, ?_⟩
+  · intro a b hab
+    have h2 : j (a, 0) = j (b, 0) := congrArg Subtype.val hab
+    have h3 := (hj (a, 0)).symm.trans ((congrArg (fun z => P.E.skeleton (emb z)) h2).trans (hj (b, 0)))
+    exact (Hull83.witB hc k).inj 0 (g.injective h3)
+  · intro x a hx
+    apply (P.E.map (Lab83.chartEmb emb T)).injective
+    rw [hε x, P.E.skeleton_natural]
+    show g _ = _
+    rw [hx]
+    exact (hj (a, 0)).symm
+
 /-- **`Y_k ≅ F(Z_k)` sends coordinates to skeleton points**: the `τ`-isomorphism of the
 `Y`-piece onto `F(Z_k)` maps the hull element of the `a`-th `Z`-coordinate to the skeleton
 point of an injectively chosen `z a ∈ Z_k`. -/
@@ -469,5 +531,57 @@ theorem infra_83_pairMS2_Y_pieces_coord (P : SingleModelData K)
     refine h4.trans ?_
     rw [P.E.skeleton_natural]
     exact (congrArg g hx).trans (hz a).symm
+
+/-- A chart of a finite piece `A` over `k + 1` coordinates: a `τ`-isomorphism onto `F(H)` for
+some `H ⊆ J`, with an injective coordinate map into `H`. -/
+structure PieceChart (E : OrderPresentation K) (A : Model K.τ) (k : ℕ) where
+  J : Type u
+  [lo : LinearOrder J]
+  [ne : Nonempty J]
+  H : Set J
+  [hne : Nonempty H]
+  ε : A.carrier ↪[K.τ] (E.obj H).carrier
+  bij : Function.Bijective ε
+  j : Fin (k + 1) → H
+  inj : Function.Injective j
+
+attribute [instance] PieceChart.lo PieceChart.ne PieceChart.hne
+
+/-- **Coherent coordinate charts of the `X`-pieces**: in the pair template over `X`- and
+`Y`-sample-like structures, the `X`-pieces carry charts `ε_k : X_k ≅ F(H_k)` sending the
+`a`-th coordinate to the skeleton point `j_k a`, and the piece map of `e` sends the
+`a`-th coordinate to the element charted by `j_l (e a)`. -/
+theorem infra_83_pairMS2_X_charts_coherent (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) :
+    ∃ (c : (m : ℕ) → 0 < m → Hull83.TpColorB (LS83.pairLangM3 P.E Pr.n) 3 m)
+      (hc : ∀ (n : ℕ) (κ : Cardinal.{u}),
+        Hull83.Joint (Hull83.TpSampleB (fun N _ => pairMAdmittedS2 P.E Pr.n N) 3) n c κ)
+      (hcoh : ∀ {m m' : ℕ} (hm' : 0 < m') (hm : 0 < m) (f : Fin m' ↪o Fin m),
+        c m' hm' = Hull83.tpResB 3 f (c m hm))
+      (hXs : Hull83.SubHullStrong ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) (fun N _ => pairMAdmittedS2 P.E Pr.n N))
+      (ch : ∀ k, PieceChart P.E ((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+        ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3))
+        hXs).obj k) k),
+      ∀ {k l : ℕ} (e : Fin (k + 1) ↪o Fin (l + 1)) x (a : Fin (k + 1)),
+        Hull83.subHullEmb ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+          ((LS83.pairInlR P.E).comp (LS83.lsInl K))
+          ((Hull83.witB hc k).v ∘ Prod.map id (fun _ : Fin 1 => (0 : Fin 3))) x =
+          (Hull83.witB hc k).v (a, 0) →
+        (ch k).ε x = P.E.skeleton ((ch k).j a) ∧
+        (ch l).ε ((Hull83.subLangPieces ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+          ((LS83.pairInlR P.E).comp (LS83.lsInl K)) hc hcoh (fun _ : Fin 1 => (0 : Fin 3))
+          hXs).map e x) = P.E.skeleton ((ch l).j (e a)) := by
+  obtain ⟨c, hc, hcoh, hθ⟩ := infra_83_pairMS2_coherent_colors P Pr
+  have hXs : Hull83.SubHullStrong ((psiM P.E Pr.n).comp (chiM P.E Pr.n))
+      ((LS83.pairInlR P.E).comp (LS83.lsInl K)) (fun N _ => pairMAdmittedS2 P.E Pr.n N) :=
+    fun M _ hM => pairM_subHullStrongX P.E Pr.n M hM.1.1
+  have hk := fun k => pairMS2_X_coord_of P Pr hc hθ k
+  choose J lo ne H hne ε jH hb hi hcoord using hk
+  refine ⟨c, hc, hcoh, hXs, fun k =>
+    { J := J k, lo := lo k, ne := ne k, H := H k, hne := hne k, ε := ε k, bij := hb k,
+      j := jH k, inj := hi k }, fun {k l} e x a hx => ⟨hcoord k x a hx, ?_⟩⟩
+  exact hcoord l _ (e a)
+    (Hull83.subLangPieces_coord _ _ hc hcoh _ hXs e x a 0 hx)
 
 end AEC
