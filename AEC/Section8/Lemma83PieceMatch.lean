@@ -2497,4 +2497,54 @@ theorem infra_83_arrow_of_cover (S : DirectedSystem K.τ)
   exact congrFun (congrArg DFunLike.coe (hψc i)) y
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+/-- A substructure of a model, as a model. -/
+abbrev subM83 {M : Model K.τ} (A : K.τ.Substructure M.carrier) : Model K.τ := ⟨A, inferInstance⟩
+
+/-- The directed system of a directed family of substructures, ordered by inclusion. -/
+def subSystem83 {M : Model K.τ} (𝒮 : Set (K.τ.Substructure M.carrier)) (hne : 𝒮.Nonempty)
+    (hdir : ∀ A ∈ 𝒮, ∀ B ∈ 𝒮, ∃ C ∈ 𝒮, A ≤ C ∧ B ≤ C) : DirectedSystem K.τ where
+  ι := 𝒮
+  nonempty := ⟨⟨hne.some, hne.some_mem⟩⟩
+  rel A B := A.1 ≤ B.1
+  refl _ := le_rfl
+  trans h1 h2 := h1.trans h2
+  directed A B := by
+    obtain ⟨C, hC, h1, h2⟩ := hdir A.1 A.2 B.1 B.2
+    exact ⟨⟨C, hC⟩, h1, h2⟩
+  obj A := subM83 A.1
+  map h := Language.Substructure.inclusion h
+  map_refl _ := by ext; rfl
+  map_trans _ _ := by ext; rfl
+
+/-- **Arrow out of a model from compatible arrows on a directed family of strong substructures
+covering it (proved).** Substructure form of `infra_83_arrow_of_cover`, the shape used by the
+nested-list arity removal: if every `A ∈ 𝒮` is strong in `M`, `𝒮` is directed under `≤` and
+covers `M`, then compatible strong `g_A : A → N` glue to a strong `f : M → N`. -/
+theorem infra_83_arrow_of_substructure_cover {M N : Model K.τ} (hM : K.Mem M) (hN : K.Mem N)
+    (𝒮 : Set (K.τ.Substructure M.carrier)) (hne : 𝒮.Nonempty)
+    (hdir : ∀ A ∈ 𝒮, ∀ B ∈ 𝒮, ∃ C ∈ 𝒮, A ≤ C ∧ B ≤ C)
+    (hS : ∀ A ∈ 𝒮, K.Strong (M := subM83 A) (N := M) A.subtype)
+    (hcover : ∀ x : M.carrier, ∃ A ∈ 𝒮, x ∈ A)
+    (g : ∀ A ∈ 𝒮, Language.Embedding K.τ A N.carrier)
+    (hg : ∀ A (hA : A ∈ 𝒮), K.Strong (M := subM83 A) (N := N) (g A hA))
+    (hgcomp : ∀ A (hA : A ∈ 𝒮) B (hB : B ∈ 𝒮) (h : A ≤ B),
+      (g B hB).comp (Language.Substructure.inclusion h) = g A hA) :
+    ∃ f : Language.Embedding K.τ M.carrier N.carrier, K.Strong f ∧
+      ∀ A (hA : A ∈ 𝒮), f.comp (A.subtype) = g A hA := by
+  have hmem : ∀ A ∈ 𝒮, K.Mem (subM83 A) := fun A hA => K.strong_mem_dom _ (hS A hA)
+  obtain ⟨f, hf, hfc⟩ := infra_83_arrow_of_cover (subSystem83 𝒮 hne hdir)
+    (fun A => hmem A.1 A.2)
+    (fun {A B} hAB => K.coherence (M₀ := subM83 A.1) (M₁ := subM83 B.1) (M₂ := M)
+      (Language.Substructure.inclusion hAB) A.1.subtype B.1.subtype (hS A.1 A.2) (hS B.1 B.2)
+      (by ext; rfl))
+    hM hN (fun A => A.1.subtype) (fun A => hS A.1 A.2) (fun _ => by ext; rfl)
+    (fun x => by obtain ⟨A, hA, hx⟩ := hcover x; exact ⟨⟨A, hA⟩, ⟨x, hx⟩, rfl⟩)
+    (fun A => g A.1 A.2) (fun A => hg A.1 A.2) (fun {A B} hAB => hgcomp A.1 A.2 B.1 B.2 hAB)
+  exact ⟨f, hf, fun A hA => hfc ⟨A, hA⟩⟩
+end
+
 end AEC
