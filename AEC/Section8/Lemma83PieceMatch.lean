@@ -1117,4 +1117,20 @@ theorem infra_83_gY_strong_of_FZ (E : OrderPresentation K) {A : Model K.τ}
   exact K.strong_trans ψY (E.map eZ) hψY (E.map_strong eZ)
 end
 
+
+section
+
+/-- **The `X`-sort reading of a piece from its chart (proved).** Paper (Lemma 8.3: "`X_H = F(J_H)`",
+`infra_83_XH_sort_sample`): if the image `gY[Y_u]` meets the `X`-copy `W` exactly in `F` of its own
+`X`-chart (`gY[Y_u] ∩ W = C`) and that chart copy `C` lies in `gY[X']`, then every point of
+`gY[Y_u]` in `W` is the image of a point of `X'`: the hypothesis `hXH` of `infra_83_piece_meet`. -/
+theorem infra_83_piece_XH_of_chart {Yc Xc B : Type u} (gY : Yc → B) (inclu : Xc → Yc)
+    (W C : Set B) (hS : Set.range gY ∩ W = C) (hsub : C ⊆ Set.range (gY ∘ inclu)) :
+    ∀ x', gY x' ∈ W → ∃ y, gY x' = gY (inclu y) := by
+  intro x' hx
+  have : gY x' ∈ C := hS ▸ ⟨⟨x', rfl⟩, hx⟩
+  obtain ⟨y, hy⟩ := hsub this
+  exact ⟨y, hy.symm⟩
+end
+
 end AEC

@@ -7345,6 +7345,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 200: proved."
+  },
+  {
+   "id": "infra_83_piece_XH_of_chart",
+   "label": "X-sort reading of a piece from its chart: if gY[Y_u] meets the X-copy W exactly in the chart copy C and C lies in gY[X'], then every point of gY[Y_u] in W comes from X' (hXH of piece_meet)",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PieceMatch.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 201: proved."
   }
  ],
  "edges": [
@@ -13395,8 +13404,13 @@
    "from": "infra_83_gY_strong_of_FZ",
    "to": "infra_83_XH_sort",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_piece_XH_of_chart",
+   "to": "infra_83_XH_sort",
+   "kind": "hard"
   }
  ],
- "doneCount": 747,
+ "doneCount": 748,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
