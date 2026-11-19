@@ -137,7 +137,7 @@ theorem subToHull_hullMap {M N : Type u} [L.Structure M] [L.Structure N] {m m' :
 
 /-- Vertex LS witnesses for the sublanguage hulls. -/
 def SubHullStrong (P : ∀ (M : Type u) [L.Structure M], Prop) : Prop :=
-  ∀ (M : Type u) [L.Structure M], P M → ∀ {ι : Type} [Finite ι] (v : ι → M),
+  ∀ (M : Type u) [L.Structure M], P M → ∀ {ι : Type} [Finite ι] [Nonempty ι] (v : ι → M),
     K.Strong (subHullEmb ψ φ₀ v)
 
 /-- The admitted `L₀`-structures: reducts of admitted `L`-structures. -/
@@ -147,7 +147,7 @@ def reductClass (P : ∀ (M : Type u) [L.Structure M], Prop) :
 
 theorem hullStrong_reductClass {P : ∀ (M : Type u) [L.Structure M], Prop}
     (hP : SubHullStrong ψ φ₀ P) : HullStrong φ₀ (reductClass ψ P) := by
-  intro M inst₀ hM ι hι v
+  intro M inst₀ hM ι hι hι' v
   obtain ⟨inst, hPM, rfl⟩ := hM
   exact hP M hPM v
 
@@ -177,7 +177,7 @@ noncomputable def subFinPieces (hP : SubHullStrong ψ φ₀ P) : EM83.FinPieces 
       (⇑e) (⇑f) (tpCode_reduct ψ (tpPiece_tp hc hcoh e)) (tpCode_reduct ψ (tpPiece_tp hc hcoh f))
       (tpCode_reduct ψ (tpPiece_tp hc hcoh (e.trans f))) x).symm
   strong e := @hullMap_strong K L₀ φ₀ (reductClass ψ P) (hullStrong_reductClass ψ φ₀ hP)
-    _ _ (ψ.reduct _) (ψ.reduct _) ⟨_, (wit hc _).mem, rfl⟩ ⟨_, (wit hc _).mem, rfl⟩ _ _ _ _ _ _ (⇑e)
+    _ _ (ψ.reduct _) (ψ.reduct _) ⟨_, (wit hc _).mem, rfl⟩ ⟨_, (wit hc _).mem, rfl⟩ _ _ _ _ _ _ _ _ (⇑e)
     (tpCode_reduct ψ (tpPiece_tp hc hcoh e))
 
 include hcoh in

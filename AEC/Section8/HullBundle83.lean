@@ -71,7 +71,7 @@ theorem tpPieceB_tp {k l : ℕ} (e : Fin (k + 1) ↪o Fin (l + 1)) :
     _ = tpResB r e (tpCode (L := L) (witB hc l).v) := by rw [(witB hc l).tp]
     _ = tpCode ((witB hc l).v ∘ Prod.map e id) := tpResB_tpCode e _
 
-variable (φ : K.τ →ᴸ L)
+variable (φ : K.τ →ᴸ L) [NeZero r]
 
 include hcoh in
 /-- **The finite pieces of `K` from bundled samples.** -/
@@ -127,7 +127,7 @@ variable {P : ∀ (M : Type u) [L.Structure M], Prop} {r : ℕ}
   (hc : ∀ (n : ℕ) (κ : Cardinal.{u}), Joint (TpSampleB P r) n c κ)
   (hcoh : ∀ {m m' : ℕ} (hm' : 0 < m') (hm : 0 < m) (f : Fin m' ↪o Fin m),
     c m' hm' = tpResB r f (c m hm))
-  (hr : 0 < r)
+  (hr : 0 < r) [NeZero r]
 
 /-- The term enumeration of the bundled hull pieces. -/
 noncomputable def tpEnumB (k : ℕ) (a : Σ n, L.Term (Fin n × Fin r)) :
@@ -194,7 +194,7 @@ variable {P : ∀ (M : Type u) [L.Structure M], Prop} {r : ℕ}
   (hc : ∀ (n : ℕ) (κ : Cardinal.{u}), Joint (TpSampleB P r) n c κ)
   (hcoh : ∀ {m m' : ℕ} (hm' : 0 < m') (hm : 0 < m) (f : Fin m' ↪o Fin m),
     c m' hm' = tpResB r f (c m hm))
-  {r₀ : ℕ} (σ : Fin r₀ → Fin r) (φ : K.τ →ᴸ L)
+  {r₀ : ℕ} (σ : Fin r₀ → Fin r) (φ : K.τ →ᴸ L) [NeZero r] [NeZero r₀]
 
 include hcoh in
 theorem subBundle_tp {k l : ℕ} (e : Fin (k + 1) ↪o Fin (l + 1)) :

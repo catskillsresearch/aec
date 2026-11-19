@@ -5391,7 +5391,7 @@
    "file": "AEC/Section8/HullReduct83.lean",
    "status": "done",
    "blocker": null,
-   "detail": "Cycle 103: Hull83.hullStrong_of_substructures: if every L-substructure of an admitted structure has strong tau-reduct, every term hull does (equivRange onto the range, iso invariance, transitivity). Reduces HullStrong for the pair samples to closure of L-substructures under the LS witness functions. Axioms clean."
+   "detail": "Cycle 103: Hull83.hullStrong_of_substructures: if every L-substructure of an admitted structure has strong tau-reduct, every term hull does (equivRange onto the range, iso invariance, transitivity). Reduces HullStrong for the pair samples to closure of L-substructures under the LS witness functions. Axioms clean. | Cycle 104: HullStrong and SubHullStrong now quantify over nonempty finite variable types only, and hullStrong_of_substructures needs only nonempty substructures (an empty model need not be in K). Bundled/sub-bundle pieces take [NeZero r] / [NeZero r₀]."
   },
   {
    "id": "infra_83_vertex_ls_expansion",

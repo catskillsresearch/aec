@@ -55,22 +55,24 @@ def redEquiv {M N : Type u} [L.Structure M] [L.Structure N] (f : M ↪[L] N) (g 
 /-- **Vertex LS witnesses.**  In every admitted structure the reduct of the term hull of every
 finite tuple is strong in the reduct of the structure. -/
 def HullStrong (P : ∀ (M : Type u) [L.Structure M], Prop) : Prop :=
-  ∀ (M : Type u) [L.Structure M], P M → ∀ {ι : Type} [Finite ι] (v : ι → M),
+  ∀ (M : Type u) [L.Structure M], P M → ∀ {ι : Type} [Finite ι] [Nonempty ι] (v : ι → M),
     K.Strong (redEmb φ (hullEmb (L := L) v))
 
 
 /-- **Vertex LS witnesses from closed substructures.**  If in every admitted structure each
-`L`-substructure (a subset closed under all functions of the expanded language, in
+`L`-substructure (a nonempty subset closed under all functions of the expanded language, in
 particular under the LS witness functions) has strong reduct, then the term hull of every
 tuple has strong reduct. -/
 theorem hullStrong_of_substructures {P : ∀ (M : Type u) [L.Structure M], Prop}
     (hsub : ∀ (M : Type u) [L.Structure M], P M → ∀ A : L.Substructure M,
-      K.Strong (redEmb φ (Substructure.subtype A))) :
+      (A : Set M).Nonempty → K.Strong (redEmb φ (Substructure.subtype A))) :
     HullStrong φ P := by
-  intro M _ hM ι _ v
+  intro M _ hM ι _ _ v
   let A := (hullEmb (L := L) v).toHom.range
   let e := (hullEmb (L := L) v).equivRange
-  have hA := hsub M hM A
+  have hA := hsub M hM A (by
+    obtain ⟨i⟩ := ‹Nonempty ι›
+    exact ⟨hullEmb (L := L) v (Quotient.mk _ (Term.var i)), Hom.mem_range.mpr ⟨Quotient.mk _ (Term.var i), rfl⟩⟩)
   let e' := redEquiv φ e.toEmbedding e.symm.toEmbedding (fun x => e.symm_apply_apply x)
     (fun y => e.apply_symm_apply y)
   have hmemA : K.Mem (red φ A) := K.strong_mem_dom _ hA
@@ -90,7 +92,7 @@ variable {φ}
 `g` with `tp(v') = tp(v ∘ g)` is a strong `τ`-embedding. -/
 theorem hullMap_strong {P : ∀ (M : Type u) [L.Structure M], Prop} (hP : HullStrong φ P)
     {M N : Type u} [L.Structure M] [L.Structure N] (hM : P M) (hN : P N) {ι ι' : Type}
-    [Finite ι] [Finite ι'] {v' : ι' → N} {v : ι → M} (g : ι' → ι)
+    [Finite ι] [Finite ι'] [Nonempty ι] [Nonempty ι'] {v' : ι' → N} {v : ι → M} (g : ι' → ι)
     (h : tpCode (L := L) v' = tpCode (v ∘ g)) :
     K.Strong (redEmb φ (hullMapEmb g h)) := by
   -- the sub-hull of `v ∘ g` inside the hull of `v`
