@@ -6256,6 +6256,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 108: infra_83_pairMS2_Y_marks_c (+ generic EM83const_canon / EM83const_gEmMap)."
+  },
+  {
+   "id": "infra_83_XY_incl_transport",
+   "label": "Lemma 8.3 proof: X ⊆ Y in J/Z coordinates: strong natural ι_I : F(J_I) → F(Z_I) with ι_I ∘ m^X_I = m^Y_I ∘ η_I",
+   "section": 8,
+   "file": "AEC/Section8/OrderColimit83.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 108: item (2) in its faithful form (vertexwise inclusion transported; need not be F of an order map J_I → Z_I)."
   }
  ],
  "edges": [
@@ -11676,8 +11685,13 @@
    "from": "infra_83_pairMS2_Y_marks",
    "to": "infra_83_pair_pieces",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_XY_incl_transport",
+   "to": "infra_83_pair_pieces",
+   "kind": "hard"
   }
  ],
- "doneCount": 630,
+ "doneCount": 631,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

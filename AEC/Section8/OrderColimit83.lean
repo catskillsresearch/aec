@@ -1126,4 +1126,56 @@ theorem infra_83_pairMS2_Y_marks_c (P : SingleModelData K)
   rw [← hm]
   exact congrArg (m J) (EM83const_gEmMap _ (d i) (hd i) f (s0 I) (s0 J))
 
+/-- **`X ⊆ Y` in `J`/`Z` coordinates**: given the natural identifications
+`m^X_I : F_X(I) ≅ F(J_I)`, `m^Y_I : F_Y(I) → F(Z_I)` (as in `infra_83_pairMS2_joint`) and the strong
+natural template map `η : F_X → F_Y`, the inclusion transports to strong `τ`-embeddings
+`ι_I : F(J_I) → F(Z_I)` with `ι_I ∘ m^X_I = m^Y_I ∘ η_I`, natural in `I`:
+`ι_I' ∘ F(J_f) = F(Z_f) ∘ ι_I`. (They need not be `F` of an order embedding `J_I → Z_I`; the
+faithful Lemma 8.3 only uses the vertexwise inclusion.) -/
+theorem infra_83_XY_incl_transport (E : OrderPresentation K) (FX FY : EM83.FinPieces K) (η : EM83.PiecesHom FX FY)
+    (J Z : ∀ (I : Type u) [LinearOrder I] [Nonempty I], Type u)
+    [∀ (I : Type u) [LinearOrder I] [Nonempty I], LinearOrder (J I)]
+    [∀ (I : Type u) [LinearOrder I] [Nonempty I], Nonempty (J I)]
+    [∀ (I : Type u) [LinearOrder I] [Nonempty I], LinearOrder (Z I)]
+    [∀ (I : Type u) [LinearOrder I] [Nonempty I], Nonempty (Z I)]
+    (Jf : ∀ {I I' : Type u} [LinearOrder I] [Nonempty I] [LinearOrder I'] [Nonempty I'],
+      (I ↪o I') → (J I ↪o J I'))
+    (Zf : ∀ {I I' : Type u} [LinearOrder I] [Nonempty I] [LinearOrder I'] [Nonempty I'],
+      (I ↪o I') → (Z I ↪o Z I'))
+    (mX : ∀ (I : Type u) [LinearOrder I] [Nonempty I], (FX.limit I).obj.carrier ↪[K.τ] (E.obj (J I)).carrier)
+    (mY : ∀ (I : Type u) [LinearOrder I] [Nonempty I], (FY.limit I).obj.carrier ↪[K.τ] (E.obj (Z I)).carrier)
+    (hX : ∀ (I : Type u) [LinearOrder I] [Nonempty I], K.Strong (mX I) ∧ Function.Bijective (mX I))
+    (hY : ∀ (I : Type u) [LinearOrder I] [Nonempty I], K.Strong (mY I))
+    (hη : ∀ (I : Type u) [LinearOrder I] [Nonempty I], K.Strong (η.limMap I))
+    (sqX : ∀ (I I' : Type u) [LinearOrder I] [Nonempty I] [LinearOrder I'] [Nonempty I'] (f : I ↪o I') x,
+      mX I' (EM83.gEmMap (F := FX) f x) = E.map (Jf f) (mX I x))
+    (sqY : ∀ (I I' : Type u) [LinearOrder I] [Nonempty I] [LinearOrder I'] [Nonempty I'] (f : I ↪o I') x,
+      mY I' (EM83.gEmMap (F := FY) f x) = E.map (Zf f) (mY I x))
+    (sqη : ∀ {I I' : Type u} [LinearOrder I] [Nonempty I] [LinearOrder I'] [Nonempty I'] (f : I ↪o I'),
+      (η.limMap I').comp (EM83.gEmMap (F := FX) f) = (EM83.gEmMap (F := FY) f).comp (η.limMap I)) :
+    ∃ ι : ∀ (I : Type u) [LinearOrder I] [Nonempty I], (E.obj (J I)).carrier ↪[K.τ] (E.obj (Z I)).carrier,
+      (∀ (I : Type u) [LinearOrder I] [Nonempty I], K.Strong (ι I)) ∧
+      (∀ (I : Type u) [LinearOrder I] [Nonempty I] x, ι I (mX I x) = mY I (η.limMap I x)) ∧
+      ∀ (I I' : Type u) [LinearOrder I] [Nonempty I] [LinearOrder I'] [Nonempty I'] (f : I ↪o I') y,
+        ι I' (E.map (Jf f) y) = E.map (Zf f) (ι I y) := by
+  let eX : ∀ (I : Type u) [LinearOrder I] [Nonempty I], (FX.limit I).obj.carrier ≃[K.τ] (E.obj (J I)).carrier :=
+    fun I _ _ => embeddingEquivOfSurjective (mX I) (hX I).2.2
+  have heX : ∀ (I : Type u) [LinearOrder I] [Nonempty I] y, mX I ((eX I).symm y) = y :=
+    fun I _ _ y => (eX I).apply_symm_apply y
+  refine ⟨fun I _ _ => (mY I).comp ((η.limMap I).comp (eX I).symm.toEmbedding), fun I _ _ => ?_,
+    fun I _ _ x => ?_, fun I I' _ _ _ _ f y => ?_⟩
+  · refine K.strong_trans _ _ (K.strong_trans _ _ ?_ (hη I)) (hY I)
+    exact strong_of_equiv K (eX I).symm (K.strong_mem_cod (mX I) (hX I).1)
+  · show mY I (η.limMap I ((eX I).symm (mX I x))) = _
+    congr 2
+    exact (eX I).symm_apply_apply x
+  · show mY I' (η.limMap I' ((eX I').symm (E.map (Jf f) y))) =
+      E.map (Zf f) (mY I (η.limMap I ((eX I).symm y)))
+    obtain ⟨x, rfl⟩ := (hX I).2.2 y
+    have h1 : (eX I').symm (E.map (Jf f) (mX I x)) = EM83.gEmMap (F := FX) f x := by
+      rw [← sqX]; exact (eX I').symm_apply_apply _
+    have h2 : (eX I).symm (mX I x) = x := (eX I).symm_apply_apply x
+    rw [h1, h2, ← sqY]
+    exact congrArg (mY I') (congrFun (congrArg (⇑) (sqη f)) x)
+
 end AEC
