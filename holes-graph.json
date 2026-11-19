@@ -7714,6 +7714,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 241: proved."
+  },
+  {
+   "id": "infra_83_arrow_of_chain_seq",
+   "label": "Sequence form of arrow_of_chain: compatible strong G n : A n -> N on an exhausting chain of strong substructures glue to a strong f : M -> N extending every G n (lets the chain carry an invariant)",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PieceMatch.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 242: proved."
   }
  ],
  "edges": [
@@ -13969,8 +13978,13 @@
    "from": "infra_83_template_arrow_of_chain",
    "to": "infra_83_arity_removal",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_arrow_of_chain_seq",
+   "to": "infra_83_arity_removal",
+   "kind": "hard"
   }
  ],
- "doneCount": 788,
+ "doneCount": 789,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

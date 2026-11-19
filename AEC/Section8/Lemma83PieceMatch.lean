@@ -2565,6 +2565,46 @@ def natSubSystem83 {M : Model K.τ} (A : ℕ → K.τ.Substructure M.carrier) (h
   map_refl _ := by ext; rfl
   map_trans _ _ := by ext; rfl
 
+/-- **Arrow out of a model from a compatible sequence on an exhausting chain (proved).**
+Sequence form of `infra_83_arrow_of_chain`: compatible strong `G n : A n → N` glue to a strong
+`f : M → N` with `f ∘ (A n).subtype = G n` for all `n`. -/
+theorem infra_83_arrow_of_chain_seq {M N : Model K.τ} (hM : K.Mem M) (hN : K.Mem N)
+    (A : ℕ → K.τ.Substructure M.carrier) (hmono : Monotone A)
+    (hS : ∀ n, K.Strong (M := subM83 (A n)) (N := M) (A n).subtype)
+    (hcover : ∀ x : M.carrier, ∃ n, x ∈ A n)
+    (G : ∀ n, Language.Embedding K.τ (A n) N.carrier)
+    (hG : ∀ n, K.Strong (M := subM83 (A n)) (N := N) (G n))
+    (hstep : ∀ n, (G (n + 1)).comp (Language.Substructure.inclusion (hmono n.le_succ)) = G n) :
+    ∃ f : Language.Embedding K.τ M.carrier N.carrier, K.Strong f ∧
+      ∀ n, f.comp (A n).subtype = G n := by
+  have hcomp : ∀ i j (h : i ≤ j),
+      (G j).comp (Language.Substructure.inclusion (hmono h)) = (G i) := by
+    intro i j h
+    induction j, h using Nat.le_induction with
+    | base => ext x; rfl
+    | succ j hij ih =>
+      ext x
+      have h1 := congrFun (congrArg DFunLike.coe (hstep j))
+        (Language.Substructure.inclusion (hmono hij) x)
+      have h2 := congrFun (congrArg DFunLike.coe ih) x
+      simp only [Language.Embedding.comp_apply] at h1 h2 ⊢
+      rw [← h2, ← h1]
+      rfl
+  have hmem : ∀ n, K.Mem (subM83 (A n)) := fun n => K.strong_mem_dom _ (hS n)
+  obtain ⟨f, hf, hfc⟩ := infra_83_arrow_of_cover (natSubSystem83 A hmono)
+    (fun i => hmem i.down)
+    (fun {i j} hij => K.coherence (M₀ := subM83 (A i.down)) (M₁ := subM83 (A j.down)) (M₂ := M)
+      (Language.Substructure.inclusion (hmono hij)) (A i.down).subtype (A j.down).subtype
+      (hS i.down) (hS j.down) (by ext; rfl))
+    hM hN (fun i => (A i.down).subtype) (fun i => hS i.down) (fun _ => by ext; rfl)
+    (fun x => by obtain ⟨n, hx⟩ := hcover x; exact ⟨⟨n⟩, ⟨x, hx⟩, rfl⟩)
+    (fun i => G i.down) (fun i => hG i.down) (fun {i j} hij => hcomp i.down j.down hij)
+  exact ⟨f, hf, fun n => hfc ⟨n⟩⟩
+end
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
 /-- **Arrow out of a model along an exhausting chain, built step by step (proved).** If `M` is
 the union of an increasing chain `A 0 ≤ A 1 ≤ …` of strong substructures and every strong
 `g : A n → N` extends to a strong `g' : A (n+1) → N`, then a strong `g₀ : A 0 → N` extends to a
