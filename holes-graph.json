@@ -6463,6 +6463,24 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 111: proved reduction (template_clauses + marked_of_sample_arrow + idx assembly)."
+  },
+  {
+   "id": "infra_83_retraction_subfamily",
+   "label": "Sub-families of exactly nu members of a Corollary 6.16 approximate retraction family, chosen from a set of >= nu indices, still almost fix the base",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83Isolation.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 112: proved."
+  },
+  {
+   "id": "infra_83_full_single_of_sample_families",
+   "label": "Lemma 8.3 (P.scheme) reduced to arrows into marked samples whose Cor 6.16 family has >= #I members sending Y_I into X_I",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83Isolation.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 112: proved reduction."
   }
  ],
  "edges": [
@@ -11998,8 +12016,18 @@
    "from": "infra_83_full_single_of_sample_arrows",
    "to": "infra_83_lemma_8_3_full_single",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_retraction_subfamily",
+   "to": "infra_83_lemma_8_3_full_single",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_83_full_single_of_sample_families",
+   "to": "infra_83_lemma_8_3_full_single",
+   "kind": "hard"
   }
  ],
- "doneCount": 655,
+ "doneCount": 657,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

@@ -368,4 +368,67 @@ theorem infra_83_full_single_of_sample_arrows (P : SingleModelData K)
   obtain ⟨realEq, hr⟩ := hR
   exact ⟨N.bIdx, σ, realEq, hr, hD⟩
 
+/-- **Sub-families of an approximate retraction family (proved).** From a Corollary 6.16 family
+`R` and a set of indices of size at least `ν`, one extracts a family of exactly `ν` retractions,
+each a member of `R` with index in the set, still almost fixing the base. -/
+theorem infra_83_retraction_subfamily {S : SystemShape.{u}} {W : WorkingScheme K S}
+    {μ : Cardinal.{u}} {hμ : μ ∈ W.eligible} {A B : W.Object μ hμ}
+    {incl : SystemArrow K S (W.asSystem hμ A) (W.asSystem hμ B)}
+    (R : ApproximateRetraction K S W hμ A B incl) (good : R.index → Prop) {ν : Cardinal.{u}}
+    (hν : ν ≤ #{i // good i}) :
+    ∃ (ι : Type u) (r : ι → SystemArrow K S (W.asSystem hμ B) (W.asSystem hμ A)),
+      #ι = ν ∧
+      (∀ a : Occurrence K S (W.asSystem hμ A),
+        Finite {i : ι // (r i).onVertex a.1 (incl.onVertex a.1 a.2) ≠ a.2}) ∧
+      ∀ i, ∃ j, good j ∧ r i = R.retr j := by
+  obtain ⟨s, hsub, hs⟩ := Cardinal.le_mk_iff_exists_subset.mp hν
+  let g : s → R.index := fun i => i.1
+  refine ⟨s, fun i => R.retr (g i), hs, fun a => ?_, fun i => ⟨g i, hsub i.2, rfl⟩⟩
+  have := R.almost_id a
+  have hg : Function.Injective g := fun x y h => Subtype.ext h
+  refine Finite.of_injective
+    (fun i : {i : s // (R.retr (g i)).onVertex a.1 (incl.onVertex a.1 a.2) ≠ a.2} =>
+      (⟨g i.1, i.2⟩ : {j : R.index // (R.retr j).onVertex a.1 (incl.onVertex a.1 a.2) ≠ a.2}))
+    ?_
+  intro x y h
+  exact Subtype.ext (hg (by simpa using congrArg Subtype.val h))
+
+/-- **Lemma 8.3 (P.scheme) reduced to arrows into marked samples, Corollary 6.16 form (proved
+reduction).** As `infra_83_full_single_of_sample_arrows`, with the retractions taken from an
+approximate retraction family of the sample (Corollary 6.16, `infra_83_samples_retractions`): it
+suffices that at least `#I` members of the family send the image of `Y_I` into the image of
+`X_I`. -/
+theorem infra_83_full_single_of_sample_families (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) :
+    ∃ (X Y : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
+        P.scheme.Object #I hI)
+      (incl : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
+        SystemArrow K oneVertexShape (P.scheme.asSystem hI (X I hI))
+          (P.scheme.asSystem hI (Y I hI)))
+      (mk : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
+        Fin Pr.n → Occurrence K oneVertexShape (P.scheme.asSystem hI (Y I hI))),
+      (∀ (I : Type u) [LinearOrder I] [WellFoundedLT I] [Nonempty I]
+          (hI : #I ∈ infra_78_closedTail P ∩ infra_615_closed P),
+        ∃ (N : MarkedPair K oneVertexShape P.scheme Pr) (_ : N.μ ∈ infra_615_closed P)
+          (_ : N.μ ∈ infra_78_closedTail P) (_ : #I ≤ N.μ)
+          (onX : SystemArrow K oneVertexShape (P.scheme.asSystem hI.1.1 (X I hI.1.1))
+            (P.scheme.asSystem N.hμ N.X))
+          (onY : SystemArrow K oneVertexShape (P.scheme.asSystem hI.1.1 (Y I hI.1.1))
+            (P.scheme.asSystem N.hμ N.Y))
+          (R : ApproximateRetraction K oneVertexShape P.scheme N.hμ N.X N.Y N.incl)
+          (σ : N.bIdx ≃ ULift.{u} (Fin Pr.n)),
+          SystemArrow.comp (incl I hI.1.1) onY = SystemArrow.comp onX N.incl ∧
+          #I ≤ #{i : R.index // ∀ x : (Y I hI.1.1).model.carrier, ∃ y : (X I hI.1.1).model.carrier,
+            onX.onVertex PUnit.unit y = (R.retr i).onVertex PUnit.unit (onY.onVertex PUnit.unit x)} ∧
+          ∀ j, onY.mapOcc (mk I hI.1.1 (σ j).down) = N.b j) →
+      Lemma83Conclusion P.scheme Pr := by
+  obtain ⟨X, Y, incl, mk, H⟩ := infra_83_full_single_of_sample_arrows P Pr
+  refine ⟨X, Y, incl, mk, fun hS => H fun I _ _ _ hI => ?_⟩
+  obtain ⟨N, hlC, hlT, hle, onX, onY, R, σ, hc, hgood, hb⟩ := hS I hI
+  obtain ⟨ι, r, hι, hal, hr⟩ := infra_83_retraction_subfamily R _ hgood
+  refine ⟨N, hlC, hlT, hle, onX, onY, ι, r, σ, hc, hι, hal, fun i x => ?_, hb⟩
+  obtain ⟨j, hj, hrj⟩ := hr i
+  rw [hrj]
+  exact hj x
+
 end AEC
