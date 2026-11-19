@@ -4222,6 +4222,24 @@
    "status": "open",
    "blocker": null,
    "detail": "Cycle 96. Remaining piece of infra_82_orbit_preservation_single: given a same-level marked arrow f : M -> N and a pair automorphism of M (marks fixed) taking t1 to t2, produce an automorphism e of N.X meeting infra_82_orbit_criterion_single for s = f t1, s' = f t2: base entries, tp(b_N/N.X) kept positionwise, diagram of (b,s,Z) carried to (b,s',eZ). Paper (3010-3018): Lemma 7.2 free extension of joint types, bounded approximation lists, bounded diagram homogeneity (P.scheme.diagram_iso, Def 5.2(3)), testing bound. The global condition on tp(b/N.X) is not a bounded-list condition, so diagram_iso alone does not give it."
+  },
+  {
+   "id": "infra_84_base_testing_single",
+   "label": "Lemma 8.4 for P.scheme: one-base testing bound (tests from C)",
+   "section": 8,
+   "file": "AEC/Section8/Lemma84Single.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "DONE cycle 96. At mu in recursionClosedLevels P sigma with succ sigma <= mu: two same-level tuples over one base C of size <= sigma agreeing on all tests from C of size <= g sigma + LS(K) agree on all tests from C of size < mu. infra_73_differing_test + infra_72_diagramEq_of_sameGalois. Axioms clean."
+  },
+  {
+   "id": "infra_84_diagonal_tail",
+   "label": "Lemma 8.4 uniformity: diagonal recursion tail",
+   "section": 8,
+   "file": "AEC/Section8/Lemma84Single.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "DONE cycle 96. Tail of eligible mu with mu in recursionClosedLevels P sigma for every infinite sigma < mu (diagonal tower; new monotonicity of the profile recursion in sigma, infra_84_pad_recursion_mono_sigma). Gives k(sigma) = g(max sigma aleph0) + LS(K) < nu uniformly. Axioms clean."
   }
  ],
  "edges": [
@@ -8307,8 +8325,18 @@
    "from": "infra_82_orbit_base_auto_single",
    "to": "infra_82_orbit_preservation_single",
    "kind": "hard"
+  },
+  {
+   "from": "infra_84_base_testing_single",
+   "to": "infra_84_single",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_84_diagonal_tail",
+   "to": "infra_84_single",
+   "kind": "hard"
   }
  ],
- "doneCount": 416,
+ "doneCount": 418,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
