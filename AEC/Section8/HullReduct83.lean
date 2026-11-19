@@ -58,6 +58,32 @@ def HullStrong (P : ∀ (M : Type u) [L.Structure M], Prop) : Prop :=
   ∀ (M : Type u) [L.Structure M], P M → ∀ {ι : Type} [Finite ι] (v : ι → M),
     K.Strong (redEmb φ (hullEmb (L := L) v))
 
+
+/-- **Vertex LS witnesses from closed substructures.**  If in every admitted structure each
+`L`-substructure (a subset closed under all functions of the expanded language, in
+particular under the LS witness functions) has strong reduct, then the term hull of every
+tuple has strong reduct. -/
+theorem hullStrong_of_substructures {P : ∀ (M : Type u) [L.Structure M], Prop}
+    (hsub : ∀ (M : Type u) [L.Structure M], P M → ∀ A : L.Substructure M,
+      K.Strong (redEmb φ (Substructure.subtype A))) :
+    HullStrong φ P := by
+  intro M _ hM ι _ v
+  let A := (hullEmb (L := L) v).toHom.range
+  let e := (hullEmb (L := L) v).equivRange
+  have hA := hsub M hM A
+  let e' := redEquiv φ e.toEmbedding e.symm.toEmbedding (fun x => e.symm_apply_apply x)
+    (fun y => e.apply_symm_apply y)
+  have hmemA : K.Mem (red φ A) := K.strong_mem_dom _ hA
+  have hmem : K.Mem (red φ (Hull (L := L) v)) := K.iso_closed ⟨e'.symm⟩ hmemA
+  have he : K.Strong e'.toEmbedding :=
+    K.transport_strong (Language.Embedding.refl K.τ _) e' (K.strong_refl _ hmem)
+  have hcomp : redEmb φ (hullEmb (L := L) v) = (redEmb φ (Substructure.subtype A)).comp
+      e'.toEmbedding := by
+    ext x
+    exact (Embedding.equivRange_apply (hullEmb (L := L) v) x).symm
+  rw [hcomp]
+  exact K.strong_trans _ _ he hA
+
 variable {φ}
 
 /-- **Hull maps are strong.**  Between admitted structures, the hull map along a position map

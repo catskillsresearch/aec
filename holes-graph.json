@@ -5383,6 +5383,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 103: Hull83.coherent_colors_demand: for a thinning-closed family with a thinning-monotone invariant sat (ambient order saturation) and samples large in both, the extracted colors keep homogeneous samples with size >= kappa and sat >= kappa. Axioms clean. | Cycle 103: + bundled instance tpB_coherent_colors_demand (TpSampleD: ambient demand sat M >= sample size, thinning-closed; colors coherent under tpResB). Axioms clean."
+  },
+  {
+   "id": "infra_83_hullstrong_substructures",
+   "label": "Lemma 8.3 proof: vertex LS witnesses — strong closed substructures give HullStrong",
+   "section": 8,
+   "file": "AEC/Section8/HullReduct83.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 103: Hull83.hullStrong_of_substructures: if every L-substructure of an admitted structure has strong tau-reduct, every term hull does (equivRange onto the range, iso invariance, transitivity). Reduces HullStrong for the pair samples to closure of L-substructures under the LS witness functions. Axioms clean."
   }
  ],
  "edges": [
@@ -10113,8 +10122,13 @@
    "from": "infra_83_joint_demand",
    "to": "infra_83_pair_sample_family",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_hullstrong_substructures",
+   "to": "infra_83_template_strong",
+   "kind": "hard"
   }
  ],
- "doneCount": 534,
+ "doneCount": 535,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
