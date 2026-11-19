@@ -4627,6 +4627,24 @@
    "status": "open",
    "blocker": null,
    "detail": "Cycle 99 split of infra_84_U_part_bound. Needed input for infra_84_testing_of_common_base: D at level mu with dT : D -> T, dT' : D -> T', j jointly surjective from U-and-C occurrences, uT = dT o j and uT' o iso = dT' o j. Paper: (A,U,b) = F^b(H), universal strip H' in C (Cor 6.7), joint diagrams of U and AH' equal those of the natural layout UH cup AH' inside UH' (Lemma 7.2 with b isolated over A, b/AH' prescribed free), Lemma 6.4 / Prop 6.3. Caveat: T and T' need not literally share D; the paper only matches bounded joint diagrams, so the realistic Lean target is a diagram-level version (bounded tests of U,C in T and in T' agree with those of a fixed layout)."
+  },
+  {
+   "id": "infra_84_layout_diagrams_of_type",
+   "label": "Layout (8), diagram level: equal types over C give equal bounded joint diagrams with C (overlaps recorded)",
+   "section": 8,
+   "file": "AEC/Section8/Layout84Single.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 100: proved from Theorem 6.6 (infra_72_diagramEq_of_sameGalois). Axioms: propext, Classical.choice, Quot.sound."
+  },
+  {
+   "id": "infra_84_layout_diagrams_single",
+   "label": "Layout (8) for Lemma 8.4 (P.scheme): bounded joint diagrams of U (with mark) and C agree in T and T' (Lemma 7.2 step)",
+   "section": 8,
+   "file": "AEC/Section8/Layout84Single.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 100: diagram-level layout (8) with C in place of A_{H'} (A_{H'} embeds into C). U-part < nu, C-part < mu. From the Lemma 8.4 hypothesis 'corresponding bounded tuples of U, U' jointly with the marks have equal types over C' via Theorem 6.6. Axioms clean."
   }
  ],
  "edges": [
@@ -8937,8 +8955,18 @@
    "from": "infra_84_layout_amalgam",
    "to": "infra_84_U_part_bound",
    "kind": "hard"
+  },
+  {
+   "from": "infra_84_layout_diagrams_of_type",
+   "to": "infra_84_layout_amalgam",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_84_layout_diagrams_single",
+   "to": "infra_84_layout_amalgam",
+   "kind": "hard"
   }
  ],
- "doneCount": 459,
+ "doneCount": 461,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
