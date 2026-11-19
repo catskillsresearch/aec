@@ -5581,6 +5581,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 104: infra_83_pair_samples_X. Design issue found: Y = range F_Y is NOT closed under the label symbols (Y is not of the form F(·) inside L), so the Y-sort hull chain must use a separate Y-label interpretation (labels of F_Y ≅ F(Z) transported through the iso) or a sublanguage for the Y-sort (HullSub83). Axioms clean."
+  },
+  {
+   "id": "infra_83_label_transport",
+   "label": "Lemma 8.3 proof: labels transported along an injection e : E(I) → N (for the Y-sort, Y ≅ F(Z)); range e closed, transported skeleton generates range e",
+   "section": 8,
+   "file": "AEC/Section8/LabLang83.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 104: Lab83.labT, labT_mem_range, labT_skeleton. Input for the Y-sort label copy (remaining item (1) of infra_83_pair_sample_family). Axioms clean."
   }
  ],
  "edges": [
@@ -10461,8 +10470,13 @@
    "from": "infra_83_pair_samples_X",
    "to": "infra_83_label_sort_match",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_label_transport",
+   "to": "infra_83_pair_sample_family",
+   "kind": "hard"
   }
  ],
- "doneCount": 555,
+ "doneCount": 556,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

@@ -153,5 +153,38 @@ theorem closure_skeleton_eq {J Jp : Type u} [LinearOrder J] [Nonempty J] [Linear
     rw [← hp]
     exact Substructure.fun_mem _ a _ fun k => Substructure.subset_closure ⟨p k, rfl⟩
 
+section Transport
+
+variable {N : Type u} (e : (E.obj I).carrier → N)
+
+open Classical in
+/-- **Transported labels** (for the `Y`-sort, `Y ≅ F(Z)` inside `L`): labels act through an
+injection `e : E(I) → N` on tuples from its range, and return the first entry otherwise. -/
+noncomputable def labT {n : ℕ} (a : (labLang E).Functions n) (x : Fin n → N) : N :=
+  if h : ∀ k, ∃ y, e y = x k then e (labFun a fun k => (h k).choose)
+  else x ⟨0, a.2 ▸ E.arity_pos a.1⟩
+
+/-- The range of `e` is closed under the transported labels. -/
+theorem labT_mem_range {n : ℕ} (a : (labLang E).Functions n) (x : Fin n → N)
+    (hx : ∀ k, x k ∈ Set.range e) : labT e a x ∈ Set.range e := by
+  unfold labT
+  split_ifs with h
+  · exact ⟨_, rfl⟩
+  · exact hx _
+
+/-- The transported labels realize `e` of support terms on the transported skeleton, so the
+transported skeleton generates `range e`. -/
+theorem labT_skeleton (he : Function.Injective e) (t : SupportTerm E.lab E.arity I) :
+    labT e (n := E.arity t.label) ⟨t.label, rfl⟩ (fun k => e (E.skeleton (t.pos k))) =
+      e (E.realize t) := by
+  have h : ∀ k, ∃ y, e y = e (E.skeleton (t.pos k)) := fun k => ⟨_, rfl⟩
+  unfold labT
+  rw [dif_pos h]
+  have hc : (fun k => (h k).choose) = fun k => E.skeleton (t.pos k) :=
+    funext fun k => he (h k).choose_spec
+  rw [hc, labFun_skeleton]
+
+end Transport
+
 end Lab83
 end AEC
