@@ -4185,7 +4185,7 @@
    "file": "AEC/Section8/Lemma83Single.lean",
    "status": "open",
    "blocker": null,
-   "detail": "Cycle 101 restatement (ruling): stated with sorry. The cycle-95 proof now proves infra_83_lemma_8_3_weak_single only. Needs a pair template on the doubled shape whose values are marked pairs functorially (marks as designated terms), e.g. X = E(I), Y = E(I +lex extra) with the mark realized by terms (stationarity), plus marked-arrow uniqueness."
+   "detail": "Cycle 101 restatement (ruling): stated with sorry. The cycle-95 proof now proves infra_83_lemma_8_3_weak_single only. Needs a pair template on the doubled shape whose values are marked pairs functorially (marks as designated terms), e.g. X = E(I), Y = E(I +lex extra) with the mark realized by terms (stationarity), plus marked-arrow uniqueness. | Cycle 109: assembly done (infra_83_conclusion_of_marked_values: template clauses (1)-(2) + clause (3) + realEq); remaining = template values are marked pairs on a tail (realizes + all-dominated), reducible via infra_83_marked_of_sub to an embedding over X_I into a marked pair over X_I sending mk_I to its mark."
   },
   {
    "id": "infra_82_orbit_preservation_single",
@@ -6346,6 +6346,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 109: proved (infra_83_realizes_pull, infra_83_relIso_pull, infra_83_dominated_pull, infra_83_marked_of_sub, MarkedPair.pullY). Reduces realizes/dominated for the template values (X_I, Y_I, b_I) to an embedding of Y_I over X_I into a marked pair over X_I sending b_I to its mark."
+  },
+  {
+   "id": "infra_83_conclusion_of_marked_values",
+   "label": "Lemma 8.3 proof (P.scheme): faithful Lemma83Conclusion from a pair template (data of infra_83_pair_template_clauses) whose values are marked pairs on a tail (realizes via arity + all-dominated); clause (3) by infra_83_clause3_single",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83Assembly.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 109: proved. infra_83_lemma_8_3_full_single now reduces exactly to the marked-pair property of the template values (infra_83_bounded_arity_free, infra_83_all_dominated); realEq := ULift-Fin n ≃ assign via Pr.arity."
   }
  ],
  "edges": [
@@ -11816,8 +11825,13 @@
    "from": "infra_83_marked_sub_pair",
    "to": "infra_83_lemma_8_3_full_single",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_conclusion_of_marked_values",
+   "to": "infra_83_lemma_8_3_full_single",
+   "kind": "hard"
   }
  ],
- "doneCount": 642,
+ "doneCount": 643,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
