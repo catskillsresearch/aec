@@ -72,4 +72,39 @@ theorem infra_78_general_finite (P : SingleModelData K) :
             (asTuple f hf (seqJoint b c)) (Equiv.refl (p.idx ⊕ cIdx)) :=
   fun μ hμ X p θ hfin _ _ hθ hθμ => infra_78_marginal_general_level P μ hμ X p θ hfin hθ hθμ
 
+/-- **Invariant (5) at a matrix limit from freeness over some stage (proved, cycle 93).**
+The step of `infra_78_tied_continuity` after local character: if the mark `p` over the union
+`X_δ` is tied-free from some stage `X_i` (for `|b| < cf δ` this is local character,
+`infra_78_tied_local`; for a bounded mark satisfying Definition 7.7 it is Def 7.7's conclusion at
+`i = 0`, "Definition 7.7 preserves the marginal invariant"), and (5) holds at every stage, then
+(5) holds at `δ`. No cofinality hypothesis. -/
+theorem infra_78_general_limit_invariant {P : SingleModelData K} {μ : Cardinal.{u}}
+    {hμ : μ ∈ P.eligible} (C : SameLevelChain P hμ)
+    (p : TupleOver K oneVertexShape P.scheme hμ C.unionObj)
+    (X : P.scheme.Object μ hμ)
+    (g : SystemArrow K oneVertexShape
+      (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ (C.obj 0 C.hlim.1)))
+    (hg : P.scheme.permitted (X := X) (Y := C.obj 0 C.hlim.1) g)
+    (hAll : ∀ (i : Ordinal.{u}) (hi : i < C.δ),
+      IsTiedFree
+        (SystemArrow.comp g (C.le C.hlim.1 hi (bot_le : (0 : Ordinal.{u}) ≤ i)))
+        ((p.restrict (C.toUnion i hi) (C.toUnion_arrow i hi)).restrict
+          (SystemArrow.comp g (C.le C.hlim.1 hi (bot_le : (0 : Ordinal.{u}) ≤ i)))
+          (P.scheme.comp g (C.le C.hlim.1 hi (bot_le : (0 : Ordinal.{u}) ≤ i)) hg
+            (C.le_arrow C.hlim.1 hi (bot_le : (0 : Ordinal.{u}) ≤ i))))
+        (p.restrict (C.toUnion i hi) (C.toUnion_arrow i hi)) (Equiv.refl _))
+    (hF : ∃ i : Ordinal.{u}, ∃ hi : i < C.δ,
+      IsTiedFree (C.toUnion i hi)
+        (p.restrict (C.toUnion i hi) (C.toUnion_arrow i hi)) p (Equiv.refl _)) :
+    IsTiedFree (SystemArrow.comp g (C.toUnion 0 C.hlim.1))
+      (p.restrict (SystemArrow.comp g (C.toUnion 0 C.hlim.1))
+        (P.scheme.comp g (C.toUnion 0 C.hlim.1) hg (C.toUnion_arrow 0 C.hlim.1)))
+      p (Equiv.refl _) := by
+  obtain ⟨i, hi, hF⟩ := hF
+  have hzero : (0 : Ordinal.{u}) ≤ i := bot_le
+  have hgA := P.scheme.comp g (C.le C.hlim.1 hi hzero) hg (C.le_arrow C.hlim.1 hi hzero)
+  have htrans := infra_78_tiedFree_trans (SystemArrow.comp g (C.le C.hlim.1 hi hzero)) hgA
+    (C.toUnion i hi) (C.toUnion_arrow i hi) p (hAll i hi) hF
+  exact infra_78_tiedFree_congr_arrow _ _ p (infra_613_cocone_arrow C g hi) htrans
+
 end AEC

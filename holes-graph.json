@@ -3762,7 +3762,7 @@
    "file": "AEC/Section7/Prop78General.lean",
    "status": "open",
    "blocker": null,
-   "detail": "OPEN (cycle 93). English: 'At limits use the working scheme's unions; Definition 7.7 preserves the marginal invariant.' For |b| < cf(delta) the invariant is infra_78_limit_invariant5 (proved). For cf(delta) <= |b| <= theta: choose the matrix level kappa also in the SatisfiesContinuityTied tail of p and apply Def 7.7 to the chain of base stages (b in the union of the upper stages, tied free from each X_i by (5) below delta)."
+   "detail": "OPEN (cycle 93). English: 'At limits use the working scheme's unions; Definition 7.7 preserves the marginal invariant.' For |b| < cf(delta) the invariant is infra_78_limit_invariant5 (proved). For cf(delta) <= |b| <= theta: choose the matrix level kappa also in the SatisfiesContinuityTied tail of p and apply Def 7.7 to the chain of base stages (b in the union of the upper stages, tied free from each X_i by (5) below delta). | Cycle 93: limit step reduced to infra_78_general_limit_invariant (done). Remaining: feed Def 7.7 at the matrix limit: kappa in the Def 7.7 tail of p, b|X_0 the tied free lift of p along X -> X_0 (IsTiedFreeMixed), and each b|X_i tied-free from X_0. The last needs a cancellation lemma for tied freeness (X -> X_0 -> X_i: free from X along both legs => free from X_0), via infra_610_tied_free_lift + infra_73_tied_unique + transfer along SameGaloisType (as infra_612_tiedFreeMixed_copy); tracked here."
   },
   {
    "id": "infra_78_general_assembly",
@@ -3772,6 +3772,15 @@
    "status": "blocked",
    "blocker": "infra_78_general_small_cof",
    "detail": "BLOCKED on infra_78_general_small_cof (cycle 93). Re-run infra_78_matrix_assembly_level (AssemblyGlue) for a bounded mark: replace [Finite p.idx] by #p.idx <= theta, the limit invariant by infra_78_general_small_cof / infra_78_limit_invariant5, and the joint isolation arity aleph0 + theta by theta; then the any-host reduction as in infra_78_marginal_general_level."
+  },
+  {
+   "id": "infra_78_general_limit_invariant",
+   "label": "Prop 7.8 general: invariant (5) at a limit from freeness over some stage",
+   "section": 7,
+   "file": "AEC/Section7/Prop78General.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "PROVED cycle 93 (axioms clean): the post-local-character step of infra_78_tied_continuity with the hypothesis 'p over X_delta tied-free from some stage X_i' instead of |b| < cf(delta). For bounded marks under Def 7.7 that hypothesis is Def 7.7's conclusion at i = 0."
   }
  ],
  "edges": [
@@ -7507,8 +7516,13 @@
    "from": "infra_78_general_finite",
    "to": "infra_78_general",
    "kind": "hard"
+  },
+  {
+   "from": "infra_78_general_limit_invariant",
+   "to": "infra_78_general_small_cof",
+   "kind": "hard"
   }
  ],
- "doneCount": 363,
+ "doneCount": 364,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
