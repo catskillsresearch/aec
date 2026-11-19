@@ -3,6 +3,7 @@ module
 public import AEC.Section8.Lemma83Assembly
 public import AEC.Section7.TiedDescent
 public import AEC.Section6.DescentRetractionTied
+public import AEC.Section7.Theorem79Existence
 
 @[expose] public section
 
@@ -173,5 +174,48 @@ theorem infra_83_dominated_of_retraction_pair (P : SingleModelData K) {μ : Card
     · rfl
   rw [hx] at H
   exact infra_83_tiedFree_of_mixed _ _ _ _ H
+
+/-- **All-domination of a pair from a retraction-carrying arrow into a larger all-dominated pair,
+across levels (Lemma 8.3 proof, (7) + "the actual sample pair is all-dominated").** A pair
+`X ≤ Y` at a closed level `ν` with an arrow of pairs `(onX, onY)` into a pair `X' ≤ Y'` at a closed
+level `l ≥ ν`, carrying the finite tuple `b` to the mark `b'`, where `Y'` is all-dominated over
+`X' + b'` and `ν` retractions `r_i : Y' → X'` almost fix `X'` and send the image of `Y` into the
+image of `X`: then `Y` is all-dominated over `X + b`. This is Theorem 7.9's descent step
+(`infra_79_descent`: Lemma 6.17 tied + mixed Lemma 7.6) with the isolation input read off from the
+all-domination of the larger pair. -/
+theorem infra_83_dominated_of_retraction_pair_mixed (P : SingleModelData K) {ν l : Cardinal.{u}}
+    (hνC : ν ∈ infra_615_closed P) (hlC : l ∈ infra_615_closed P)
+    (hνT : ν ∈ infra_78_closedTail P) (hlT : l ∈ infra_78_closedTail P) (hνl : ν ≤ l)
+    {X Y : P.scheme.Object ν hνC.1} {X' Y' : P.scheme.Object l hlC.1}
+    (incl : SystemArrow K oneVertexShape (P.scheme.asSystem hνC.1 X)
+      (P.scheme.asSystem hνC.1 Y))
+    (incl' : SystemArrow K oneVertexShape (P.scheme.asSystem hlC.1 X')
+      (P.scheme.asSystem hlC.1 Y'))
+    (onX : SystemArrow K oneVertexShape (P.scheme.asSystem hνC.1 X)
+      (P.scheme.asSystem hlC.1 X'))
+    (onY : SystemArrow K oneVertexShape (P.scheme.asSystem hνC.1 Y)
+      (P.scheme.asSystem hlC.1 Y'))
+    (hcomm : SystemArrow.comp incl onY = SystemArrow.comp onX incl')
+    {ι : Type u}
+    (r : ι → SystemArrow K oneVertexShape (P.scheme.asSystem hlC.1 Y')
+      (P.scheme.asSystem hlC.1 X'))
+    (hιcard : #ι = ν)
+    (halmost : ∀ a : Occurrence K oneVertexShape (P.scheme.asSystem hlC.1 X'),
+      Finite {i : ι // (r i).onVertex a.1 (incl'.onVertex a.1 a.2) ≠ a.2})
+    (himg : ∀ i (x : Y.model.carrier),
+      ∃ y : X.model.carrier,
+        onX.onVertex PUnit.unit y = (r i).onVertex PUnit.unit (onY.onVertex PUnit.unit x))
+    {bIdx : Type u} [Finite bIdx]
+    (b : bIdx → Occurrence K oneVertexShape (P.scheme.asSystem hνC.1 Y))
+    (b' : bIdx → Occurrence K oneVertexShape (P.scheme.asSystem hlC.1 Y'))
+    (hb : ∀ i, onY.mapOcc (b i) = b' i)
+    (hdom : AllDominated incl' trivial bIdx b') :
+    AllDominated incl trivial bIdx b := by
+  have hsq : ∀ v, (incl'.onVertex v).comp (onX.onVertex v) =
+      (onY.onVertex v).comp (incl.onVertex v) := fun v =>
+    (congrArg (fun φ : SystemArrow K oneVertexShape _ _ => φ.onVertex v) hcomm).symm
+  exact infra_79_descent P hνC hlC hνT hlT hνl X' Y' X Y onX onY incl' incl trivial trivial
+    trivial trivial hsq r hιcard (fun _ => trivial) halmost himg b b' (fun k => (hb k).symm)
+    (fun c hJ => hdom _ c (hJ.trans_le hνl))
 
 end AEC

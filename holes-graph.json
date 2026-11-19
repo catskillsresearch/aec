@@ -5058,7 +5058,7 @@
    "file": "AEC/Section8/Lemma83Single.lean",
    "status": "open",
    "blocker": null,
-   "detail": "Cycle 101 split ('The actual sample pair is all-dominated' / 'Removing the arity restriction'). | Cycle 109: all-domination pulls back to sub-objects containing the mark (infra_83_dominated_pull) and transports along onto arrows (infra_83_dominated_push). | Cycle 109: reduced (infra_83_dominated_of_realizes_onto) to: values realize the prescribed type + the prime-pair arrow Y'' -> Y_I over X_I sending the mark to mk_I is onto. | Cycle 109 caveat: the onto-prime-arrow route (infra_83_dominated_of_realizes_onto') may not apply (non-onto self-embeddings over X+b); direct domination is the primary route. | Cycle 110: Lemma 7.6 step done for same-level pair arrows (infra_83_dominated_descend_pair). Remaining: (7) tied-free lifts (Lemma 6.11 majority with retraction images), a same-level pair arrow from the value into an all-dominated pair, and the arity-removal recursion (Prop 7.5). | Cycle 110: reduced (infra_83_dominated_of_retraction_pair) to a same-level pair arrow from the value into an all-dominated sample pair whose Cor 6.16 retractions send the value's Y into its X. Remaining: building that arrow from colors + order saturation (the paper's partial-match extension), or the tuple-wise variant + Prop 7.5 arity removal."
+   "detail": "Cycle 101 split ('The actual sample pair is all-dominated' / 'Removing the arity restriction'). | Cycle 109: all-domination pulls back to sub-objects containing the mark (infra_83_dominated_pull) and transports along onto arrows (infra_83_dominated_push). | Cycle 109: reduced (infra_83_dominated_of_realizes_onto) to: values realize the prescribed type + the prime-pair arrow Y'' -> Y_I over X_I sending the mark to mk_I is onto. | Cycle 109 caveat: the onto-prime-arrow route (infra_83_dominated_of_realizes_onto') may not apply (non-onto self-embeddings over X+b); direct domination is the primary route. | Cycle 110: Lemma 7.6 step done for same-level pair arrows (infra_83_dominated_descend_pair). Remaining: (7) tied-free lifts (Lemma 6.11 majority with retraction images), a same-level pair arrow from the value into an all-dominated pair, and the arity-removal recursion (Prop 7.5). | Cycle 110: reduced (infra_83_dominated_of_retraction_pair) to a same-level pair arrow from the value into an all-dominated sample pair whose Cor 6.16 retractions send the value's Y into its X. Remaining: building that arrow from colors + order saturation (the paper's partial-match extension), or the tuple-wise variant + Prop 7.5 arity removal. | Cycle 110: cross-level form done (infra_83_dominated_of_retraction_pair_mixed). Remaining: the pair arrow value -> actual sample (paper: partial matches from homogeneous colors extended by sample order saturation) with the samples' Cor 6.16 retractions mapping the value's Y into its X (paper only needs it for tested tuples + Prop 7.5 recursion)."
   },
   {
    "id": "infra_83_samples_core",
@@ -6427,6 +6427,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 110: proved (infra_617_tied_from_retractions at nu = mu, infra_83_tiedFree_of_mixed, infra_83_dominated_descend_pair). Note: Lemma 6.17 asks all of Y to retract into X; the paper only needs the tested tuple's images."
+  },
+  {
+   "id": "infra_83_dominated_of_retraction_pair_mixed",
+   "label": "Lemma 8.3 proof (P.scheme): cross-level — a pair at a closed level nu with a pair arrow into an all-dominated pair at a closed level l >= nu carrying nu retractions (almost fixing X', images of Y inside X) is all-dominated (Thm 7.9 descent step)",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83Isolation.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 110: proved via infra_79_descent (Lemma 6.17 tied + mixed Lemma 7.6). This is the paper's '(7) + actual sample pair is all-dominated' for the full value, given the arrow into a sample and the retraction family."
   }
  ],
  "edges": [
@@ -11942,8 +11951,13 @@
    "from": "infra_83_dominated_of_retraction_pair",
    "to": "infra_83_all_dominated",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_dominated_of_retraction_pair_mixed",
+   "to": "infra_83_all_dominated",
+   "kind": "hard"
   }
  ],
- "doneCount": 651,
+ "doneCount": 652,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
