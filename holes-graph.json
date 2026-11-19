@@ -9017,6 +9017,15 @@
    "blocker": null,
    "detail": "FIDELITY GAP (audit Nov 19): lemma_4_6: board notes the DisjointBlockSwap/OrderIso packaging is degenerate (orderIso_swaps_blocks_empty); the done proof goes through the English pipeline (BlockRegions/LexTree). Verify the registered lemma_4_6 statement is the English one, not the degenerate packaging. | VERIFIED Nov 19: registered lemma_4_6 (BlockInterchange.lean:805) is the English form: BlockRegions = monotone region key (convex regions), each region exactly its two blocks (region_blocks), one block entirely before the other (blocks_ordered, firstOnRight), first family avoids R.second, second avoids R.first, conclusion SameNaturalDiagram after interchange. The degenerate DisjointBlockSwap packaging is not the registered statement. No gap.",
    "path": "main"
+  },
+  {
+   "id": "infra_83_full_single_of_template_list_piece_data",
+   "label": "Lemma 8.3 (full_single) from realization + per (D, Piece, n) template-side piece data for (mark, nestedList n) (strong psi : X_I -> F(J0), e0, gY : Y_u -> F(Jp) in F[N.Y], L0-reading with ret = G, sort meet, marks) into a ret-sample marked pair; via infra_83_one_match_of_piece",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PieceMatch.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 274: proved."
   }
  ],
  "edges": [
@@ -15492,8 +15501,13 @@
    "from": "fid_46_packaging",
    "to": "lemma_4_6",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_full_single_of_template_list_piece_data",
+   "to": "infra_83_lemma_8_3_full_single",
+   "kind": "hard"
   }
  ],
- "doneCount": 821,
+ "doneCount": 822,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
