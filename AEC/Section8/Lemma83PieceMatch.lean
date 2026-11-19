@@ -963,4 +963,35 @@ theorem infra_83_full_single_of_piece_data (P : SingleModelData K)
   · exact hcount d
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+open FirstOrder.Language
+
+/-- **Sort intersection on the piece from the `X`-sort reading (proved).** Paper (Lemma 8.3:
+"`X_H` is the `X`-sort part of the hull"): if the image of the piece `gY[Y_u]` meets the `X`-copy
+`F(emb)[F(J)]` only inside `gY[X']`, then the sort intersection clause of
+`infra_83_marked_of_piece_data` holds: `gY x' = F(incl z)` forces `x' ∈ X'` (`gY` injective; every
+`F(incl z)` lies in the `X`-copy since `eX` is onto). -/
+theorem infra_83_piece_meet (P : SingleModelData K)
+    {Pr : StationaryPrescription K oneVertexShape P.scheme} {M : MarkedPair K oneVertexShape P.scheme Pr}
+    {J Jp : Type u} [LinearOrder J] [Nonempty J] [LinearOrder Jp] [Nonempty Jp] (emb : J ↪o Jp)
+    (eX : (P.E.obj J).carrier → ((P.scheme.asSystem M.hμ M.X).obj PUnit.unit).carrier)
+    (hsurj : Function.Surjective eX)
+    (F : ((P.scheme.asSystem M.hμ M.Y).obj PUnit.unit).carrier → (P.E.obj Jp).carrier)
+    (hF : ∀ x, F (M.incl.onVertex PUnit.unit (eX x)) = P.E.map emb x)
+    {ν : Cardinal.{u}} {hν : ν ∈ P.eligible} {X' Yu : P.scheme.Object ν hν}
+    (inclu : SystemArrow K oneVertexShape (P.scheme.asSystem hν X') (P.scheme.asSystem hν Yu))
+    (gY : ((P.scheme.asSystem hν Yu).obj PUnit.unit).carrier → (P.E.obj Jp).carrier)
+    (hgi : Function.Injective gY)
+    (hXH : ∀ x', gY x' ∈ Set.range (P.E.map emb) → ∃ y, gY x' = gY (inclu.onVertex PUnit.unit y)) :
+    ∀ (x' : ((P.scheme.asSystem hν Yu).obj PUnit.unit).carrier)
+      (z : ((P.scheme.asSystem M.hμ M.X).obj PUnit.unit).carrier),
+      gY x' = F (M.incl.onVertex PUnit.unit z) → ∃ y, x' = inclu.onVertex PUnit.unit y := by
+  intro x' z hxz
+  obtain ⟨v, rfl⟩ := hsurj z
+  obtain ⟨y, hy⟩ := hXH x' ⟨v, by rw [hxz, hF]⟩
+  exact ⟨y, hgi hy⟩
+end
+
 end AEC

@@ -7291,6 +7291,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 194: proved."
+  },
+  {
+   "id": "infra_83_piece_meet",
+   "label": "Sort intersection on a template piece from its X-sort reading: if gY[Y_u] meets the X-copy F(emb)[F(J)] only inside gY[X'], then gY x' = F(incl z) forces x' in X' (the hmeet clause of the piece data)",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PieceMatch.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 195: proved."
   }
  ],
  "edges": [
@@ -13311,8 +13320,13 @@
    "from": "infra_83_full_single_of_piece_data",
    "to": "infra_83_lemma_8_3_full_single",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_piece_meet",
+   "to": "infra_83_XH_sort",
+   "kind": "hard"
   }
  ],
- "doneCount": 741,
+ "doneCount": 742,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
