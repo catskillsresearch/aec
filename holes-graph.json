@@ -5698,6 +5698,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 105: Lab83.repLang/repFun/repStr/repFun_mem/rep_closed/repLang_card; LS83.pairLangR/R2/R3, hullStrong_pairR/R2/R3, pairLangR*_functions_le, sum_functions_le."
+  },
+  {
+   "id": "infra_83_pairR_samples",
+   "label": "Lemma 8.3 proof: pair samples with representation positions in the X-language: X and Y closed in their languages, every set closed under the X-language meets X in F(J_S) (chart generation), Y-labels and full labels realize support terms",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PairSamplesR.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 105: infra_83_pairR_samples (pair2/pair3 samples now also expose that the X-label copy is labR X)."
   }
  ],
  "edges": [
@@ -10653,8 +10662,18 @@
    "from": "infra_83_rep_language",
    "to": "infra_83_X_hull_eq_FJ",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_pairR_samples",
+   "to": "infra_83_X_hull_eq_FJ",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_83_pairR_samples",
+   "to": "infra_83_pair_sample_family",
+   "kind": "hard"
   }
  ],
- "doneCount": 565,
+ "doneCount": 566,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

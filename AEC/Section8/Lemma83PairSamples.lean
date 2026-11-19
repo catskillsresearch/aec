@@ -84,7 +84,10 @@ theorem infra_83_pair2_samples (P : SingleModelData K)
             P.E.map emb x) ∧
         (∀ t : SupportTerm P.E.lab P.E.arity Jplus,
           @Language.Structure.funMap _ _ (@Language.sumStructure _ _ _ s₀ Lab83.labStr) _
-            (Sum.inr ⟨t.label, rfl⟩) (fun k => P.E.skeleton (t.pos k)) = P.E.realize t) := by
+            (Sum.inr ⟨t.label, rfl⟩) (fun k => P.E.skeleton (t.pos k)) = P.E.realize t) ∧
+        (∀ {n} (a : (Lab83.labLang P.E).Functions n) (x : Fin n → (P.E.obj Jplus).carrier),
+          @Language.Structure.funMap _ _ s₀ n (Sum.inr a) x =
+            Lab83.labR (Set.range (P.E.map emb)) a x) := by
   classical
   obtain ⟨μ, h1, h2, J, i1, i2, h4, hJ, M, h8, eX, h9, sX, hZ, Jplus, i3, i4, emb, strip, hs, hc,
     F, sF, hF, R, code, str, g, -, hcl, hred, hX, hY, -⟩ := infra_83_ret_samples P Pr hκ θ
@@ -101,7 +104,8 @@ theorem infra_83_pair2_samples (P : SingleModelData K)
     fun f x hx => LS83.pair_closed P.E (LS83.retExp str g) (Lab83.labRStr X) hX
       (fun a x hx => Lab83.labR_mem hlabX le_rfl a x hx) f x hx,
     fun f x hx => LS83.pair_closed P.E (LS83.retExp str g) (Lab83.labRStr X) hY
-      (fun a x hx => Lab83.labR_mem hlabX hXY a x hx) f x hx, fun x => ?_, fun t => ?_⟩
+      (fun a x hx => Lab83.labR_mem hlabX hXY a x hx) f x hx, fun x => ?_, fun t => ?_,
+    fun a x => rfl⟩
   · obtain ⟨n, a, p, hp, hv⟩ := Lab83.map_label_value (E := P.E) emb x
     refine ⟨n, a, p, hp, ?_⟩
     show Lab83.labR X a _ = _
