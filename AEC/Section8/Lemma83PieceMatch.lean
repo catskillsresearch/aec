@@ -1,6 +1,7 @@
 module
 
 public import AEC.Section8.Lemma83Isolation
+public import AEC.Section8.Lemma83TupleDominated
 
 @[expose] public section
 
@@ -81,5 +82,49 @@ theorem infra_83_piece_matches_bounded_along {L : FirstOrder.Language.{u, u}}
   refine ⟨m, hm, fun {s t} h => ?_⟩
   exact infra_83_hull_match_compat _ _ (m s) (m t) _ _ (hm s) (hm t)
     (fun p => infra_83_bundleOf_placeSucc (fun i => base (e i)) h s.2.1 t.2.1 _ _ p)
+
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+/-- **Galois-type match from an arrow of a piece (proved).** Paper (Lemma 8.3 proof): "F of that
+order map embeds `X_H` into `X`, identifying `u` with `u*`". If a sub-object `Y_u` of the value
+`Y_I` over `X_I` (`inclu ; j = inclI`) contains the tested tuple `d` and maps by `h` into the
+sample's `U` over `toA` (`inclu ; h = toA ; incl`), then `tp(j(d)/X_I)` in `Y_I` equals the
+restriction along `toA` of `tp(h(d)/A)`: the `SameGaloisType` input of
+`infra_83_marked_of_marked_matches` needs only an arrow of the piece `Y_u`, not of `Y_I`. -/
+theorem infra_83_sgt_of_piece_arrow (P : SingleModelData K) {ν l : Cardinal.{u}}
+    {hν : ν ∈ P.eligible} {hl : l ∈ P.eligible}
+    {X Yu YI : P.scheme.Object ν hν} {A U : P.scheme.Object l hl}
+    (inclu : SystemArrow K oneVertexShape (P.scheme.asSystem hν X) (P.scheme.asSystem hν Yu))
+    (inclI : SystemArrow K oneVertexShape (P.scheme.asSystem hν X) (P.scheme.asSystem hν YI))
+    (j : SystemArrow K oneVertexShape (P.scheme.asSystem hν Yu) (P.scheme.asSystem hν YI))
+    (hj : SystemArrow.comp inclu j = inclI)
+    (toA : SystemArrow K oneVertexShape (P.scheme.asSystem hν X) (P.scheme.asSystem hl A))
+    (incl : SystemArrow K oneVertexShape (P.scheme.asSystem hl A) (P.scheme.asSystem hl U))
+    (h : SystemArrow K oneVertexShape (P.scheme.asSystem hν Yu) (P.scheme.asSystem hl U))
+    (hh : SystemArrow.comp inclu h = SystemArrow.comp toA incl)
+    {idx : Type u} (d : idx → Occurrence K oneVertexShape (P.scheme.asSystem hν Yu))
+    (hd : #idx < ν) :
+    SameGaloisType (asTuple inclI trivial (fun k => j.mapOcc (d k)))
+      ((asTuple incl trivial (fun k => h.mapOcc (d k))).restrict toA trivial)
+      (Equiv.refl _) (Equiv.refl _) := by
+  have h12 : SameGaloisType (asTuple inclu trivial d)
+      ((asTuple incl trivial (fun k => h.mapOcc (d k))).restrict toA trivial)
+      (Equiv.refl _) (Equiv.refl _) :=
+    ⟨l, hl, U, h, SystemArrow.refl _, trivial, trivial,
+      fun v => congrArg (fun φ : SystemArrow K oneVertexShape _ _ => φ.onVertex v) hh,
+      fun k => rfl⟩
+  have h23 : SameGaloisType (asTuple inclu trivial d) (asTuple inclI trivial (fun k => j.mapOcc (d k)))
+      (Equiv.refl _) (Equiv.refl _) :=
+    ⟨ν, hν, YI, j, SystemArrow.refl _, trivial, trivial,
+      fun v => congrArg (fun φ : SystemArrow K oneVertexShape _ _ => φ.onVertex v) hj,
+      fun k => rfl⟩
+  have hσ : ℵ₀ ≤ max ℵ₀ #idx := le_max_left _ _
+  have hσν : max ℵ₀ #idx < ν := max_lt (P.aleph0_lt hν) hd
+  have T := infra_612_galois_trans_last_base h12.symm h23 (max ℵ₀ #idx) hσ hσν
+    (le_max_right _ _) rfl
+  exact T.symm
+end
 
 end AEC

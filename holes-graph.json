@@ -7111,6 +7111,15 @@
    "status": "open",
    "blocker": null,
    "detail": "Open (cycle 174 correction)."
+  },
+  {
+   "id": "infra_83_sgt_of_piece_arrow",
+   "label": "Galois-type match from an arrow of a piece: a sub-object Y_u of Y_I over X_I containing the tuple d, with h : Y_u -> U over toA, gives tp(j(d)/X_I) = tp(h(d)/A)|toA (Galois transitivity at the base level); no arrow of Y_I",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PieceMatch.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 175: proved."
   }
  ],
  "edges": [
@@ -13031,8 +13040,13 @@
    "from": "infra_83_arity_removal",
    "to": "infra_83_all_dominated",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_sgt_of_piece_arrow",
+   "to": "infra_83_bounded_list_match",
+   "kind": "hard"
   }
  ],
- "doneCount": 721,
+ "doneCount": 722,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
