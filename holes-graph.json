@@ -5302,6 +5302,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 103: card_terms_le, tpEnum (terms in finitely many variables), tpPieceEnum : PieceEnum (tpFinPieces ..) (skeleton = first variable, distinct by witness injectivity), tpPresentation := EM83.presentation, exists_tp_presentation (hypotheses: large admitted class, HullStrong, small expansion). Axioms clean."
+  },
+  {
+   "id": "infra_83_sublanguage_hulls",
+   "label": "Lemma 8.3 proof: sort hulls in nested sublanguages and their strong inclusions",
+   "section": 8,
+   "file": "AEC/Section8/HullSub83.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 103: Hull83.embOfComp (+_comp, _strong via coherence), subHull / subToHull (psi.onTerm) / hullVal_subToHull, subHullModel, subHullEmb, subHullIncl : L0-hull -> L-hull tau-embedding over the sample, subHullIncl_strong. Axioms clean."
   }
  ],
  "edges": [
@@ -9987,8 +9996,13 @@
    "from": "infra_83_hull_presentation",
    "to": "infra_83_template_from_colors",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_sublanguage_hulls",
+   "to": "infra_83_pair_pieces",
+   "kind": "hard"
   }
  ],
- "doneCount": 525,
+ "doneCount": 526,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
