@@ -4338,7 +4338,7 @@
    "file": "AEC/Section8/Results.lean",
    "status": "open",
    "blocker": null,
-   "detail": "Cycle 96. English 8.2: comparisons preserved and reflected from a common small level to a common larger level. Preservation route mirrors clause (4): cross homogeneity (infra_82_base_homogeneity_cross_single), cross diagram transport (infra_82_orbit_diagram_cross_single), mixed over-B isolation, positional mark matching between two pairs (needs the realizing equivalence as data, see the markMap/list-position finding), tied mark freeness (infra_82_mark_tied_along_single). Reflection: paper 'let a large pair isomorphism match the two images ... approximation list'. | Cycle 97: MarkedPair.realEq is data; infra_82_mark_type_iso_single now gives the explicit positional matching realEq1 . arity1 . arity2^-1 . realEq2^-1."
+   "detail": "Cycle 96. English 8.2: comparisons preserved and reflected from a common small level to a common larger level. Preservation route mirrors clause (4): cross homogeneity (infra_82_base_homogeneity_cross_single), cross diagram transport (infra_82_orbit_diagram_cross_single), mixed over-B isolation, positional mark matching between two pairs (needs the realizing equivalence as data, see the markMap/list-position finding), tied mark freeness (infra_82_mark_tied_along_single). Reflection: paper 'let a large pair isomorphism match the two images ... approximation list'. | Cycle 97: MarkedPair.realEq is data; infra_82_mark_type_iso_single now gives the explicit positional matching realEq1 . arity1 . arity2^-1 . realEq2^-1. | Cycle 98: preservation direction proved (infra_82_comparison_preservation_single). Remaining: reflection (N-orbit equal implies M-orbit equal)."
   },
   {
    "id": "infra_82_base_homogeneity_cross_single",
@@ -4501,6 +4501,15 @@
    "status": "done",
    "blocker": null,
    "detail": "DONE cycle 98. With infra_82_markedComp (composition of marked arrows): tp(f1 mark / N1.X) = tp((f2 o alpha) mark read back along e / N1.X), positionally; from infra_82_mark_positional_mixed twice and infra_82_mark_type_iso_single."
+  },
+  {
+   "id": "infra_82_comparison_preservation_single",
+   "label": "Lemma 8.2(5) for P.scheme, preservation direction",
+   "section": 8,
+   "file": "AEC/Section8/ComparisonSingle.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "DONE cycle 98. Tail infra_615_closed; hypotheses CommutesWithIso and TiedAlong (Definition 8.1). Homogeneity across pairs, mark transport, mixed over-B isolation (infra_72_mixed_level_closed), pair isomorphism test. Axioms clean."
   }
  ],
  "edges": [
@@ -8741,8 +8750,13 @@
    "from": "infra_82_mark_transport_cross_single",
    "to": "infra_82_comparison_single",
    "kind": "hard"
+  },
+  {
+   "from": "infra_82_comparison_preservation_single",
+   "to": "infra_82_comparison_single",
+   "kind": "hard"
   }
  ],
- "doneCount": 446,
+ "doneCount": 447,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
