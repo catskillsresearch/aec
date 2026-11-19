@@ -1,6 +1,7 @@
 module
 
 public import AEC.Section2.FiniteHull
+public import AEC.Section2.Results
 
 /-!
 # Lemma 8.3: a coherent finite-subset Löwenheim–Skolem system
@@ -164,6 +165,46 @@ theorem subModel_card (s : {t : Finset α // t.Nonempty}) :
     _ = max (ls K) (mk (subHull hM base s).1) := add_eq_max hall
     _ = ls K := max_eq_left hA
 
+
+/-- **Directed covers are strong.**  If a model `A` embedded in `N ∈ K` is covered by the
+images of a directed system of models of `K` with strong maps, each strong in `N` through
+`A`, then `A` is strong in `N` (Lemma 2.1 and isomorphism invariance).  This turns the
+directed LS system into strongness of the closure under the witness functions. -/
+theorem strong_of_directed_cover (S : DirectedSystem K.τ) (hmem : ∀ i, K.Mem (S.obj i))
+    (hstrong : ∀ {i j} (hij : S.rel i j), K.Strong (S.map hij)) {A N : Model K.τ}
+    (hN : K.Mem N) (incl : A.carrier ↪[K.τ] N.carrier)
+    (g : ∀ i, (S.obj i).carrier ↪[K.τ] A.carrier)
+    (hg : ∀ i, K.Strong (incl.comp (g i)))
+    (hcompat : ∀ {i j} (hij : S.rel i j), (g j).comp (S.map hij) = g i)
+    (hcover : ∀ a, ∃ i y, g i y = a) : K.Strong incl := by
+  obtain ⟨L, hL, hcanon, huniv⟩ := lemma_2_1 K S hmem hstrong
+  obtain ⟨f, hf, hfc⟩ := huniv N (fun i => incl.comp (g i)) hN hg (fun {i j} hij => by
+    rw [Language.Embedding.comp_assoc, hcompat hij])
+  have hrange : ∀ a, ∃ y, f y = incl a := fun a => by
+    obtain ⟨i, y, rfl⟩ := hcover a
+    exact ⟨L.canon i y, by
+      have := congrFun (congrArg (⇑) (hfc i)) y
+      simpa using this⟩
+  let φ := factorEmbedding incl f hrange
+  have hφ : f.comp φ = incl := factorEmbedding_comp incl f hrange
+  have hsurj : Function.Surjective φ := fun x => by
+    obtain ⟨i, y, rfl⟩ := L.joint x
+    refine ⟨g i y, f.injective ?_⟩
+    have h1 := congrFun (congrArg (⇑) hφ) (g i y)
+    have h2 := congrFun (congrArg (⇑) (hfc i)) y
+    simp only [Language.Embedding.comp_apply] at h1 h2
+    rw [h1, h2]
+  let e : A.carrier ≃[K.τ] L.obj.carrier :=
+    { toEquiv := Equiv.ofBijective φ ⟨φ.injective, hsurj⟩
+      map_fun' := fun F x => φ.map_fun F x
+      map_rel' := fun r x => φ.map_rel r x }
+  have hA : K.Mem A := K.iso_closed ⟨e.symm⟩ hL
+  have he : K.Strong e.toEmbedding :=
+    K.transport_strong (Language.Embedding.refl K.τ _) e (K.strong_refl _ hA)
+  have : incl = f.comp e.toEmbedding := by
+    rw [← hφ]; rfl
+  rw [this]
+  exact K.strong_trans _ _ he hf
 
 end LS83
 end AEC

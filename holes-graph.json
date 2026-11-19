@@ -5410,6 +5410,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 103: LS83.subHull/subModel/subIncl (strong, covers base '' s), subInclFactor (strong, commuting) for t ⊊ s, subModel_card <= ls K; port of Section 2 FiniteHull from Fin n to any DecidableEq α. Axioms clean."
+  },
+  {
+   "id": "infra_83_directed_cover_strong",
+   "label": "Lemma 8.3 proof: a model covered by a strong directed system, strong in N through it, is strong in N",
+   "section": 8,
+   "file": "AEC/Section8/LSSystem83.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 103: LS83.strong_of_directed_cover (lemma_2_1 limit, factorEmbedding onto the limit is bijective, iso invariance, transitivity). Used to show closures under the LS witness functions are strong. Axioms clean."
   }
  ],
  "edges": [
@@ -10155,8 +10164,13 @@
    "from": "infra_83_ls_system",
    "to": "infra_83_vertex_ls_expansion",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_directed_cover_strong",
+   "to": "infra_83_vertex_ls_expansion",
+   "kind": "hard"
   }
  ],
- "doneCount": 536,
+ "doneCount": 537,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
