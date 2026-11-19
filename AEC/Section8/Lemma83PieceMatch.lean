@@ -1421,4 +1421,43 @@ theorem infra_83_dominated_of_piece_isolation (P : SingleModelData K) {μ : Card
   exact H'
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+/-- **Marked from pieces (proved).** `X ≤ Y` with mark `b` is marked (the mark realizes the
+prescribed type and `Y` is all-dominated over `X + b`) once some piece `X ≤ Y₀ ≤ Y` holding a
+preimage of `b` realizes the type there (`infra_83_realizes_push`), and every bounded `c` has a
+piece holding a preimage of `(b, c)` with the relatively isolated type
+(`infra_83_dominated_of_piece_isolation`). -/
+theorem infra_83_marked_of_pieces (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) {μ : Cardinal.{u}}
+    {hμ : μ ∈ P.eligible} {X Y : P.scheme.Object μ hμ}
+    (incl : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ Y))
+    {bIdx : Type u} (b : bIdx → Occurrence K oneVertexShape (P.scheme.asSystem hμ Y))
+    (hb : #bIdx < μ) (realEq : bIdx ≃ (Pr.assign hμ X).idx)
+    (Y0 : P.scheme.Object μ hμ)
+    (incl0 : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ Y0))
+    (j0 : SystemArrow K oneVertexShape (P.scheme.asSystem hμ Y0) (P.scheme.asSystem hμ Y))
+    (b0 : bIdx → Occurrence K oneVertexShape (P.scheme.asSystem hμ Y0))
+    (hj0 : SystemArrow.comp incl0 j0 = incl) (hb0 : ∀ i, j0.mapOcc (b0 i) = b i)
+    (hr0 : SameGaloisType (asTuple incl0 trivial b0) (Pr.assign hμ X) realEq (Equiv.refl _))
+    (hloc : ∀ (cIdx : Type u) (c : cIdx → Occurrence K oneVertexShape (P.scheme.asSystem hμ Y)),
+      #cIdx < μ →
+      ∃ (Yu : P.scheme.Object μ hμ)
+        (inclu : SystemArrow K oneVertexShape (P.scheme.asSystem hμ X) (P.scheme.asSystem hμ Yu))
+        (j : SystemArrow K oneVertexShape (P.scheme.asSystem hμ Yu) (P.scheme.asSystem hμ Y))
+        (d : bIdx ⊕ cIdx → Occurrence K oneVertexShape (P.scheme.asSystem hμ Yu)),
+        SystemArrow.comp inclu j = incl ∧ (∀ s, j.mapOcc (d s) = seqJoint b c s) ∧
+        IsRelativelyIsolated (uIdx := bIdx) (cIdx := cIdx) (asTuple inclu trivial d)
+          (Equiv.refl _)) :
+    SameGaloisType (asTuple incl trivial b) (Pr.assign hμ X) realEq (Equiv.refl _) ∧
+      AllDominated incl trivial bIdx b := by
+  refine ⟨?_, infra_83_dominated_of_piece_isolation P incl b hb hloc⟩
+  have H := infra_83_realizes_push P Pr incl0 trivial j0 b0 realEq hr0
+  have hx : (fun i => j0.mapOcc (b0 i)) = b := funext hb0
+  rw [hx, hj0] at H
+  exact H
+end
+
 end AEC

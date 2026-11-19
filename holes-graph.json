@@ -7417,6 +7417,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 208: proved."
+  },
+  {
+   "id": "infra_83_marked_of_pieces",
+   "label": "Marked from pieces: X <= Y with mark b is marked once a piece X <= Y0 <= Y holding a preimage of b realizes the prescribed type there (realizes_push) and every bounded c has a piece holding a preimage of (b, c) with relatively isolated type",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83PieceMatch.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 209: proved."
   }
  ],
  "edges": [
@@ -13507,8 +13516,13 @@
    "from": "infra_83_dominated_of_piece_isolation",
    "to": "infra_83_arity_removal",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_marked_of_pieces",
+   "to": "infra_83_arity_removal",
+   "kind": "hard"
   }
  ],
- "doneCount": 755,
+ "doneCount": 756,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
