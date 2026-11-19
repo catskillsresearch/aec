@@ -445,4 +445,48 @@ theorem infra_84_tests_of_sameGaloisType {S : SystemShape.{u}} {W : WorkingSchem
     exact eq_of_heq (Sigma.mk.inj this).2
   · exact congrArg (fun φ => φ (p b)) (congrArg DFunLike.coe (hcomm v))
 
+/-- **Layout (8): Lemma 7.2 determines the layout tests.** English (Lemma 8.4 proof): "each
+bounded tuple of U, together with b, is isolated over A, whereas the marginal of b over A_{H'} is
+the prescribed free extension. Lemma 7.2 determines its joint type." Composing
+`infra_84_layout_type_determined` with `infra_84_tests_of_sameGaloisType`: two such extensions
+`qB₁`, `qB₂` over `B` have equal diagrams together with every bounded parameter list of `B`
+(including parameters that are mixed terms over the layout). -/
+theorem infra_84_layout_tests_determined
+    (P : SingleModelData K) (σ : Cardinal.{u}) (hσ : ℵ₀ ≤ σ)
+    {ν μ : Cardinal.{u}} (hν : ν ∈ P.eligible) (hμ : μ ∈ P.eligible) (hνμ : ν ≤ μ)
+    (hrec : ν ∈ recursionClosedLevels P σ) (hσSucc : Order.succ σ ≤ ν)
+    (hrecμ : μ ∈ recursionClosedLevels P σ)
+    {A : P.scheme.Object ν hν} {B : P.scheme.Object μ hμ}
+    (f : SystemArrow K oneVertexShape (P.scheme.asSystem hν A) (P.scheme.asSystem hμ B))
+    (hf : P.scheme.permitted (X := A) (Y := B) f)
+    (q : TupleOver K oneVertexShape P.scheme hν A)
+    (qB₁ qB₂ : TupleOver K oneVertexShape P.scheme hμ B)
+    (eB₁ : q.idx ≃ qB₁.idx) (eB₂ : q.idx ≃ qB₂.idx)
+    {uIdx cIdx : Type u} (e : q.idx ≃ uIdx ⊕ cIdx)
+    (hqν : q.ν = ν) (hB₁ν : qB₁.ν = μ) (hB₂ν : qB₂.ν = μ)
+    (hidx : #q.idx ≤ σ) (hidxν : #q.idx < ν)
+    {wι : Type u} (W : wι → Occurrence K oneVertexShape (P.scheme.asSystem hν A))
+    (hW : IsIsolatingFragment q e W)
+    (hExt₁ : SameGaloisType q (qB₁.restrict f hf) eB₁ (Equiv.refl qB₁.idx))
+    (hExt₂ : SameGaloisType q (qB₂.restrict f hf) eB₂ (Equiv.refl qB₂.idx))
+    (hMarg₁ : IsTiedFreeMixed f (q.marginal e) (qB₁.marginal (eB₁.symm.trans e))
+      (Equiv.refl uIdx))
+    (hMarg₂ : IsTiedFreeMixed f (q.marginal e) (qB₂.marginal (eB₂.symm.trans e))
+      (Equiv.refl uIdx))
+    (D : StableDiagram K) {β : Type u}
+    (p : β → ((P.scheme.asSystem hμ B).obj PUnit.unit).carrier) {ρ : Cardinal.{u}}
+    (hρinf : aleph0 ≤ ρ) (hj : #((uIdx ⊕ cIdx) ⊕ β) ≤ ρ)
+    (ht₁ : D.t ρ ≤ Model.card ((P.scheme.asSystem qB₁.hν qB₁.host).obj PUnit.unit))
+    (ht₂ : D.t ρ ≤ Model.card ((P.scheme.asSystem qB₂.hν qB₂.host).obj PUnit.unit)) :
+    D.same hj ((P.scheme.asSystem qB₁.hν qB₁.host).inK PUnit.unit)
+      ((P.scheme.asSystem qB₂.hν qB₂.host).inK PUnit.unit) ht₁ ht₂
+      (Sum.elim (fun i => (qB₁.val ((eB₁.symm.trans e).symm i)).2)
+        (fun b => qB₁.incl.onVertex PUnit.unit (p b)))
+      (Sum.elim (fun i => (qB₂.val ((eB₂.symm.trans e).symm i)).2)
+        (fun b => qB₂.incl.onVertex PUnit.unit (p b))) :=
+  infra_84_tests_of_sameGaloisType qB₁ qB₂ _ _
+    (infra_84_layout_type_determined P σ hσ hν hμ hνμ hrec hσSucc hrecμ f hf q qB₁ qB₂ eB₁ eB₂ e
+      hqν hB₁ν hB₂ν hidx hidxν W hW hExt₁ hExt₂ hMarg₁ hMarg₂)
+    D PUnit.unit _ _ (fun _ => rfl) (fun _ => rfl) p hρinf hj ht₁ ht₂
+
 end AEC
