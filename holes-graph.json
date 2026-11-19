@@ -6526,6 +6526,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 115: proved."
+  },
+  {
+   "id": "infra_83_hull_match_compat",
+   "label": "Partial matches of hull pieces into one sample are compatible along position maps",
+   "section": 8,
+   "file": "AEC/Section8/Lemma83Isolation.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 116: proved."
   }
  ],
  "edges": [
@@ -12096,8 +12105,13 @@
    "from": "infra_83_hull_emb_ext",
    "to": "infra_83_bounded_arity_free",
    "kind": "hard"
+  },
+  {
+   "from": "infra_83_hull_match_compat",
+   "to": "infra_83_bounded_arity_free",
+   "kind": "hard"
   }
  ],
- "doneCount": 662,
+ "doneCount": 663,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

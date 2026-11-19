@@ -550,4 +550,20 @@ theorem infra_83_hull_emb_ext {L : FirstOrder.Language.{u, u}} {M N : Type u} [L
     funext p
     exact h p
 
+/-- **Compatibility of partial matches (proved).** Two hull embeddings into one sample `Q` whose
+generator values agree along a position map `g` commute with the hull map along `g`: the
+matches of the pieces on `s ⊆ t` into a homogeneous sample are compatible. -/
+theorem infra_83_hull_match_compat {L : FirstOrder.Language.{u, u}} {M N Q : Type u}
+    [L.Structure M] [L.Structure N] [L.Structure Q] {ι ι' : Type} {v' : ι' → N} {v : ι → M}
+    (g : ι' → ι) (h : Hull83.tpCode (L := L) v' = Hull83.tpCode (v ∘ g))
+    (fs : Hull83.Hull (L := L) v' ↪[L] Q) (ft : Hull83.Hull (L := L) v ↪[L] Q)
+    (ws : ι' → Q) (wt : ι → Q)
+    (hs : ∀ p, fs (Quotient.mk _ (FirstOrder.Language.Term.var p)) = ws p)
+    (ht : ∀ p, ft (Quotient.mk _ (FirstOrder.Language.Term.var p)) = wt p)
+    (hw : ∀ p, wt (g p) = ws p) :
+    ft.comp (Hull83.hullMapEmb g h) = fs := by
+  refine infra_83_hull_emb_ext _ _ fun p => ?_
+  show ft (Quotient.mk _ (FirstOrder.Language.Term.var (g p))) = _
+  rw [ht, hs, hw]
+
 end AEC
