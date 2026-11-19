@@ -1163,5 +1163,5 @@ infra_83_FZ_piece_for_list --> infra_83_XH_sort
 infra_83_chart_sub_of_points --> infra_83_XH_sort
 infra_83_piece_meet_of_chart --> infra_83_XH_sort
 infra_83_dominated_iff_primeness --> infra_83_arity_removal
-infra_83_full_single_of_dominated --> infra_83_full_single
+infra_83_full_single_of_dominated --> infra_83_lemma_8_3_full_single
 infra_83_dominated_iff_primeness_at --> infra_83_arity_removal
