@@ -1,6 +1,6 @@
 {
  "updated": "2026-11-18 cycle 96 (8.2 orbit comparison with mark matching; Lemma84Conclusion; clause (4) and 8.4 single tracked)",
- "sorryCount": 38,
+ "sorryCount": 39,
  "legend": {
   "open": "No unfinished required proof-deps — try next",
   "blocked": "Waiting on incomplete required proof-deps",
