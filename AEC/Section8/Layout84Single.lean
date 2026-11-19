@@ -599,4 +599,35 @@ theorem infra_84_object_testing_single (P : SingleModelData K) {ν : Cardinal.{u
       rw [e.apply_symm_apply]; rfl
   exact infra_84_sameD_of_eq key (fun i => (congrFun h0 i).symm) (fun i => (congrFun h1 i).symm)
 
+/-- **Layout (8): small witness of a disagreement.** English (Lemma 8.4 proof): "If the two
+candidates disagree on the questioned test, their placed comparisons disagree and yield a witness
+within that bound." In the setting of `infra_84_object_testing_single`: a disagreement of `d₀`,
+`d₁` on some test from `X` of total size `< ν` yields one on a test from `X` of size at most
+`g(σ) + LS(K)`. (Splitting the witness parameters into the two segments is
+`infra_84_two_segment_witness` at the placement level.) -/
+theorem infra_84_object_witness_single (P : SingleModelData K) {ν : Cardinal.{u}}
+    (hν : ν ∈ P.eligible)
+    (I₁ I₂ : Type u) [LinearOrder I₁] [WellFoundedLT I₁] [LinearOrder I₂] [WellFoundedLT I₂]
+    [Nonempty I₁] (hI : #(Lex (I₁ ⊕ I₂)) = ν)
+    (X B₀ B₁ : P.scheme.Object ν hν)
+    (i₀ : SystemArrow K oneVertexShape (P.scheme.asSystem hν X) (P.scheme.asSystem hν B₀))
+    (i₁ : SystemArrow K oneVertexShape (P.scheme.asSystem hν X) (P.scheme.asSystem hν B₁))
+    {α : Type u} {σ : Cardinal.{u}} (hσinf : aleph0 ≤ σ) (hσ : σ < ν) (hα : #α ≤ σ)
+    (d₀ : α → Occurrence K oneVertexShape (P.scheme.asSystem hν B₀))
+    (d₁ : α → Occurrence K oneVertexShape (P.scheme.asSystem hν B₁))
+    {β : Type u} (Z : β → Occurrence K oneVertexShape (P.scheme.asSystem hν X))
+    (hj : #(α ⊕ β) < ν)
+    (hdis : ¬ P.scheme.DiagramEq (X := B₀) (Y := B₁)
+      (Sum.elim d₀ (fun b => i₀.mapOcc (Z b))) (Sum.elim d₁ (fun b => i₁.mapOcc (Z b)))) :
+    ∃ (γ : Type u) (Z' : γ → Occurrence K oneVertexShape (P.scheme.asSystem hν X)),
+      #γ ≤ P.g σ + ls K ∧
+      ¬ P.scheme.DiagramEq (X := B₀) (Y := B₁)
+        (Sum.elim d₀ (fun b => i₀.mapOcc (Z' b))) (Sum.elim d₁ (fun b => i₁.mapOcc (Z' b))) := by
+  by_contra hno
+  apply hdis
+  refine infra_84_object_testing_single P hν I₁ I₂ hI X B₀ B₁ i₀ i₁ hσinf hσ hα d₀ d₁
+    (fun {γ} Z' hγ => ?_) Z hj
+  by_contra hne
+  exact hno ⟨γ, Z', hγ, hne⟩
+
 end AEC

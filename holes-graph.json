@@ -4789,6 +4789,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 100 helper."
+  },
+  {
+   "id": "infra_84_object_witness_single",
+   "label": "Layout (8): a disagreement on a bounded base test has a witness of size <= g(sigma)+LS",
+   "section": 8,
+   "file": "AEC/Section8/Layout84Single.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 100: contrapositive of infra_84_object_testing_single. Axioms clean."
   }
  ],
  "edges": [
@@ -9189,8 +9198,13 @@
    "from": "infra_84_sameD_of_eq",
    "to": "infra_84_object_testing_single",
    "kind": "hard"
+  },
+  {
+   "from": "infra_84_object_witness_single",
+   "to": "infra_84_layout_amalgam",
+   "kind": "hard"
   }
  ],
- "doneCount": 477,
+ "doneCount": 478,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
