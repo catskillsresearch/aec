@@ -3809,4 +3809,54 @@ theorem infra_83_dominated_of_bounded_lists_at (P : SingleModelData K) {μ : Car
     exact ⟨n, fun y hy => ⟨⟨y, hn hy⟩, rfl⟩⟩
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+set_option maxHeartbeats 1600000 in
+/-- **`full_single` from realization + isolation of nested bounded-width lists (proved
+reduction).** Lemma 8.3 follows once, at each closed well-ordered level, the template mark
+realizes the prescription and `Y_I` carries strong monotone finite-support pieces (size
+`≤ lam < #I`, covering) over an index type with an exhaustion `D n` (sizes `< #I`) such that
+the mark with each nested bounded-width list is isolated relative to the mark over `X_I`
+(`infra_83_dominated_of_bounded_lists_at`). -/
+theorem infra_83_full_single_of_bounded_lists (P : SingleModelData K)
+    (Pr : StationaryPrescription K oneVertexShape P.scheme) :
+    ∃ (X Y : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
+        P.scheme.Object #I hI)
+      (incl : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
+        SystemArrow K oneVertexShape (P.scheme.asSystem hI (X I hI))
+          (P.scheme.asSystem hI (Y I hI)))
+      (mk : ∀ (I : Type u) [LinearOrder I] [Nonempty I] (hI : #I ∈ P.eligible),
+        Fin Pr.n → Occurrence K oneVertexShape (P.scheme.asSystem hI (Y I hI))),
+      (∀ (I : Type u) [LinearOrder I] [WellFoundedLT I] [Nonempty I]
+          (hI : #I ∈ infra_78_closedTail P ∩ infra_615_closed P),
+          (∃ realEq : ULift.{u} (Fin Pr.n) ≃ (Pr.assign hI.2.1 (X I hI.2.1)).idx,
+            SameGaloisType (asTuple (incl I hI.2.1) trivial
+              (fun a : ULift.{u} (Fin Pr.n) => mk I hI.2.1 a.down))
+              (Pr.assign hI.2.1 (X I hI.2.1)) realEq (Equiv.refl _)) ∧
+          ∃ (Z : Type u) (lam : Cardinal.{u}) (D : ℕ → Set Z)
+            (Piece : Finset Z → K.τ.Substructure (Y I hI.2.1).model.carrier),
+            lam < #I ∧ Monotone D ∧ (∀ z, ∃ n, z ∈ D n) ∧ (∀ n, #(D n) < #I) ∧
+            Monotone Piece ∧ (∀ J, #(Piece J) ≤ lam) ∧
+            (∀ J, K.Strong (M := subM83 (Piece J)) (N := (Y I hI.2.1).model) (Piece J).subtype) ∧
+            (∀ y, ∃ J, y ∈ Piece J) ∧
+            ∀ n, IsRelativelyIsolated (uIdx := ULift.{u} (Fin Pr.n))
+              (cIdx := nestedList83 D (fun J => (Piece J : Set (Y I hI.2.1).model.carrier)) n)
+              (asTuple (incl I hI.2.1) trivial
+                (seqJoint (fun a : ULift.{u} (Fin Pr.n) => mk I hI.2.1 a.down)
+                  (fun k => (Y I hI.2.1).occ k.1)))
+              (Equiv.refl _)) →
+      Lemma83Conclusion P.scheme Pr := by
+  obtain ⟨F, X, Y, eX, eY, incl, mk, hincl, harr⟩ := infra_83_pair_template_clauses P Pr
+  refine ⟨X, Y, incl, mk, fun hS => ?_⟩
+  refine infra_83_conclusion_of_marked_values_idx P Pr F X Y eX eY incl mk hincl harr _
+    (infra_83_closed_tail P) (fun I _ _ _ hI => ?_)
+  obtain ⟨⟨realEq, hr⟩, Z, lam, D, Piece, hlam, hDm, hDc, hDk, hPm, hPk, hPS, hPc, hIso⟩ :=
+    hS I hI
+  exact ⟨ULift.{u} (Fin Pr.n), Equiv.refl _, realEq, hr,
+    infra_83_dominated_of_bounded_lists_at P hI (incl I hI.2.1) _ hlam D hDm hDc hDk Piece hPm
+      hPk hPS hPc hIso⟩
+end
+
 end AEC
