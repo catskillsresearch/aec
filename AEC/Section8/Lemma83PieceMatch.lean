@@ -2203,4 +2203,35 @@ theorem infra_83_full_single_of_dominated (P : SingleModelData K)
   exact ⟨ULift.{u} (Fin Pr.n), Equiv.refl _, realEq, hr, hD⟩
 end
 
+
+section
+variable {K : AbstractElementaryClass.{u}}
+
+set_option maxHeartbeats 1600000 in
+/-- **All-domination iff constructive primeness, at every closed level (proved).** Pointwise form
+of `infra_83_dominated_iff_primeness` at the levels used by `infra_83_closed_tail`:
+`→` by `infra_79_primeness_same_level`, `←` by `infra_83_dominated_of_primeness_at`. -/
+theorem infra_83_dominated_iff_primeness_at (P : SingleModelData K) {μ : Cardinal.{u}}
+    (hμ : μ ∈ infra_78_closedTail P ∩ infra_615_closed P) {X Y : P.scheme.Object μ hμ.1.1}
+    (incl : SystemArrow K oneVertexShape (P.scheme.asSystem _ X) (P.scheme.asSystem _ Y))
+    {bIdx : Type u} [Finite bIdx]
+    (b : bIdx → Occurrence K oneVertexShape (P.scheme.asSystem _ Y)) :
+    AllDominated incl trivial bIdx b ↔
+    (∀ (V : P.scheme.Object μ hμ.1.1)
+      (inclV : SystemArrow K oneVertexShape (P.scheme.asSystem _ X) (P.scheme.asSystem _ V))
+      (b' : bIdx → Occurrence K oneVertexShape (P.scheme.asSystem _ V)),
+      AllDominated inclV trivial bIdx b' →
+      SameGaloisType (asTuple incl trivial b) (asTuple inclV trivial b')
+        (Equiv.refl bIdx) (Equiv.refl bIdx) →
+      ∃ h : SystemArrow K oneVertexShape (P.scheme.asSystem _ Y) (P.scheme.asSystem _ V),
+        SystemArrow.comp incl h = inclV ∧ ∀ i, h.mapOcc (b i) = b' i) := by
+  refine ⟨fun hD V inclV b' _ hS => ?_, infra_83_dominated_of_primeness_at P hμ incl b⟩
+  obtain ⟨h, -, hh, hb⟩ := infra_79_primeness_same_level hμ.1.1 X (asTuple incl trivial b)
+    (inferInstanceAs (Finite bIdx)) Y incl trivial b hD (SameGaloisType.refl _) V inclV trivial b' hS
+  refine ⟨h, hh, fun i => ?_⟩
+  apply Sigma.ext
+  · exact Subsingleton.elim _ _
+  · exact heq_of_eq (hb i)
+end
+
 end AEC
