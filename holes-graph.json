@@ -343,9 +343,9 @@
    "label": "Prop 5.6",
    "section": 5,
    "file": "AEC/Section5/Results.lean",
-   "status": "done",
+   "status": "blocked",
    "blocker": null,
-   "detail": "No sorry (axioms: propext, Classical.choice, Quot.sound). Strengthened statement, inputs (K)(D : StableDiagram K)(g): ∃ S W, IsWorkingPackage W ∧ HasPresentations W W.template ∧ an object at every eligible level ∧ one vertex ∧ eligible unbounded ∧ every eligible μ is a closure point of {D.t, g}. Scheme SingleModelData.scheme (SingleModelScheme.lean) on eligible = closure points of {D.t, g} above ls K, E from exists_orderPresentation_of_categoricalUnbounded (CategoricalUnbounded from D); package SingleModelData.isWorkingPackage (SingleModelPackage.lean). Objects are real K-models (nonempty at every level), so the package is not vacuous. The Lean proof uses the closure-point infrastructure of Thm 4.11 (ClosedLevels.lean), Prop 4.3 and Thm 2.6; it does not call theorem_4_11 or PlacedTester (amalgamation is not a clause of a working scheme). Needed three repairs of Definition 5.2 (see notes). Downstream: Thm 9.3 (start scheme), Prop 10.2 (choose λ₀).",
+   "detail": "CASCADE-BLOCKED on fid_523_natural_term_diagrams (proof itself sorry-free; not done while a hard predecessor is open). No sorry (axioms: propext, Classical.choice, Quot.sound). Strengthened statement, inputs (K)(D : StableDiagram K)(g): ∃ S W, IsWorkingPackage W ∧ HasPresentations W W.template ∧ an object at every eligible level ∧ one vertex ∧ eligible unbounded ∧ every eligible μ is a closure point of {D.t, g}. Scheme SingleModelData.scheme (SingleModelScheme.lean) on eligible = closure points of {D.t, g} above ls K, E from exists_orderPresentation_of_categoricalUnbounded (CategoricalUnbounded from D); package SingleModelData.isWorkingPackage (SingleModelPackage.lean). Objects are real K-models (nonempty at every level), so the package is not vacuous. The Lean proof uses the closure-point infrastructure of Thm 4.11 (ClosedLevels.lean), Prop 4.3 and Thm 2.6; it does not call theorem_4_11 or PlacedTester (amalgamation is not a clause of a working scheme). Needed three repairs of Definition 5.2 (see notes). Downstream: Thm 9.3 (start scheme), Prop 10.2 (choose λ₀).",
    "path": "main"
   },
   {
@@ -353,9 +353,9 @@
    "label": "Prop 5.7",
    "section": 5,
    "file": "AEC/Section5/Results.lean",
-   "status": "done",
+   "status": "blocked",
    "blocker": null,
-   "detail": "No sorry (axioms: propext, Classical.choice, Quot.sound). Naming tail eligibleTail (μ0 ⊔ ℵ₀); exists_named_realization_of_arrow via wellOrder_arrow + diagram_preserved (NamedRealizationExistence.lean); namedWorkingScheme + isWorkingPackage_namedWorkingScheme (after the Def 5.2 repairs the named scheme takes #ι < μ0 and the tail bounds μ0 ≤ μ, ℵ₀ ≤ μ, which make name-extended lists bounded). Hyps: Convention 5.3, HasPresentations, seed objects. Downstream: Thm 9.3, Prop 10.6, Lem 10.8. | Nov 26: re-proved with Def 5.2(2) in IsWorkingPackage (infra_57_named_term_presentations); axioms propext, Classical.choice, Quot.sound.",
+   "detail": "CASCADE-BLOCKED on fid_523_natural_term_diagrams (proof itself sorry-free; not done while a hard predecessor is open). No sorry (axioms: propext, Classical.choice, Quot.sound). Naming tail eligibleTail (μ0 ⊔ ℵ₀); exists_named_realization_of_arrow via wellOrder_arrow + diagram_preserved (NamedRealizationExistence.lean); namedWorkingScheme + isWorkingPackage_namedWorkingScheme (after the Def 5.2 repairs the named scheme takes #ι < μ0 and the tail bounds μ0 ≤ μ, ℵ₀ ≤ μ, which make name-extended lists bounded). Hyps: Convention 5.3, HasPresentations, seed objects. Downstream: Thm 9.3, Prop 10.6, Lem 10.8. | Nov 26: re-proved with Def 5.2(2) in IsWorkingPackage (infra_57_named_term_presentations); axioms propext, Classical.choice, Quot.sound.",
    "path": "main"
   },
   {
@@ -9094,6 +9094,16 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 563: proved."
+  },
+  {
+   "id": "fid_523_natural_term_diagrams",
+   "label": "fid_523_natural_term_diagrams",
+   "section": 5,
+   "file": "AEC/Section5/PresentationClause.lean",
+   "status": "open",
+   "blocker": null,
+   "detail": "FIDELITY GAP (found Nov 26): Def 5.2(3) last sentence 'On term lists diagrams are natural: they depend only on labels and the order and equality pattern of all positions used, including in comparisons between eligible levels' is not in IsWorkingPackage (HasTermPresentations covers 5.2(2) only). Plan: add a naturality conjunct to HasTermPresentations (same Φ, pres, e): term lists over well-orders I, J with the same labels and the same joint order/equality pattern have DiagramEq images; prove for P.scheme (amalgamate I and J over the matched positions into one well-order K, push both lists along E-arrows to the same list in E(K), diagram_preserved + trans) and for the named scheme (reduce to F on I0 ⊕ H).",
+   "path": "main"
   }
  ],
  "edges": [
@@ -15619,8 +15629,18 @@
    "from": "AllDominated.append",
    "to": "proposition_7_5",
    "kind": "hard"
+  },
+  {
+   "from": "fid_523_natural_term_diagrams",
+   "to": "proposition_5_6",
+   "kind": "hard"
+  },
+  {
+   "from": "fid_523_natural_term_diagrams",
+   "to": "proposition_5_7",
+   "kind": "hard"
   }
  ],
- "doneCount": 796,
+ "doneCount": 794,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
