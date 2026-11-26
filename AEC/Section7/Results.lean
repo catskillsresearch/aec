@@ -145,13 +145,18 @@ theorem proposition_7_3 {K : AbstractElementaryClass.{u}} (P : SingleModelData K
           ¬ IsTiedFree f q qB eB) :=
   infra_73_lemma P σ hσ
 
-/-- **Proposition 7.5.** At a recursion-closed level, an object all-dominated over `X + b`
-embeds over `X` into any same-level extension carrying a tuple of the same Galois type, and
-any two all-dominated objects over that data are structurally isomorphic over it.
+/-- **Proposition 7.5.** English: "Let Y be all-dominated over X + b at a sufficiently closed
+eligible level µ. 1. If an extension N of X contains a tuple b' of the same type over X, there is
+an arrow Y → N over X sending b to b'. The target may be at a larger eligible level. [...]
+2. Two all-dominated objects over the same data X + b are isomorphic over those data. [...]
+3. In an actual coupling, if a bounded tuple x has product with b over X, then tp(x/Y) is free
+from X."
 
-Path A packaging: `SingleModelData`, recursion-closed levels, same-level hosts. English
-clause 3 (product freeness from `X`), mixed-level targets, and prescribed extra tuple
-matches are demoted. -/
+Clause 1 is stated for targets at any eligible level `ν ≥ µ` (`infra_79_primeness_mixed_bounded`;
+same level `ν = µ` included); clause 3 is `proposition_7_5_product_free`'s content (tied products
+and freeness, actual coupling `x.ν = µ`, closure at `infra_75_wide P σ`). Still open under
+`fid_75_clauses`: the "prescribed bounded tuple match" riders of clauses 1 and 2, and the
+`SingleModelData` packaging (`fid_67_general_package`). -/
 theorem proposition_7_5 {K : AbstractElementaryClass.{u}} (P : SingleModelData K)
     (σ : Cardinal.{u}) (hσ : ℵ₀ ≤ σ) :
     ∃ T, ∃ hT : Tail P.eligible T,
@@ -160,13 +165,15 @@ theorem proposition_7_5 {K : AbstractElementaryClass.{u}} (P : SingleModelData K
         (hincl : P.scheme.permitted (X := X) (Y := Y) incl) {bIdx : Type u}
         (b : bIdx → Occurrence K oneVertexShape (P.scheme.asSystem _ Y)),
         #bIdx ≤ σ → #bIdx < μ → AllDominated incl hincl bIdx b →
-        (∀ (N : P.scheme.Object μ (Tail.mem hT hμ))
-          (f : SystemArrow K oneVertexShape (P.scheme.asSystem _ X) (P.scheme.asSystem _ N))
+        (∀ ν (hν : ν ∈ P.eligible) (N : P.scheme.Object ν hν)
+          (f : SystemArrow K oneVertexShape (P.scheme.asSystem _ X) (P.scheme.asSystem hν N))
           (hf : P.scheme.permitted (X := X) (Y := N) f)
-          (b' : bIdx → Occurrence K oneVertexShape (P.scheme.asSystem _ N)),
-          SameGaloisType (asTuple incl hincl b) (asTuple f hf b')
+          (b' : bIdx → Occurrence K oneVertexShape (P.scheme.asSystem hν N)),
+          μ ≤ ν →
+          SameGaloisType (asTuple incl hincl b) (⟨ν, hν, N, f, hf, bIdx, b'⟩ :
+              TupleOver K oneVertexShape P.scheme (Tail.mem hT hμ) X)
             (Equiv.refl bIdx) (Equiv.refl bIdx) →
-          ∃ g : SystemArrow K oneVertexShape (P.scheme.asSystem _ Y) (P.scheme.asSystem _ N),
+          ∃ g : SystemArrow K oneVertexShape (P.scheme.asSystem _ Y) (P.scheme.asSystem hν N),
             P.scheme.permitted (X := Y) (Y := N) g ∧
             SystemArrow.comp incl g = f ∧
             ∀ i, g.onVertex (b i).1 (b i).2 = (b' i).2) ∧
@@ -180,8 +187,29 @@ theorem proposition_7_5 {K : AbstractElementaryClass.{u}} (P : SingleModelData K
           ∃ φ : SystemArrow K oneVertexShape (P.scheme.asSystem _ Y) (P.scheme.asSystem _ Y₂),
             P.scheme.IsStructIso (X := Y) (Y := Y₂) φ ∧
             SystemArrow.comp incl φ = incl₂ ∧
-            ∀ i, φ.onVertex (b i).1 (b i).2 = (b₂ i).2) :=
-  infra_75_lemma P σ hσ
+            ∀ i, φ.onVertex (b i).1 (b i).2 = (b₂ i).2) ∧
+        (∀ x : TupleOver K oneVertexShape P.scheme (Tail.mem hT hμ) Y, x.ν = μ → #x.idx ≤ σ →
+          IsProductTied (x.restrict incl hincl) (infra_75_markOver incl hincl x b)
+            (infra_75_jointOver incl hincl x b) (Equiv.refl _) →
+          IsTiedFree incl (x.restrict incl hincl) x (Equiv.refl _)) := by
+  let w : Cardinal.{u} := infra_75_wide P σ
+  have hσw : σ ≤ w := le_self_add
+  have hw : ℵ₀ ≤ w := hσ.trans hσw
+  refine ⟨infra_75_tailSet P w, infra_75_tail P w hw, ?_⟩
+  intro μ hμ X Y incl hincl bIdx b hbσ hbμ hAll
+  have hμel : μ ∈ P.eligible := hμ.1.1
+  refine ⟨?_, ?_, ?_⟩
+  · intro ν hν N f hf b' _hμν hGal
+    have hθ : ℵ₀ ≤ max (#bIdx) ℵ₀ := le_max_right _ _
+    have hθμ : max (#bIdx) ℵ₀ < μ := max_lt hbμ (P.aleph0_lt hμel)
+    exact infra_79_primeness_mixed_bounded P hμel X (asTuple incl hincl b) (max (#bIdx) ℵ₀) hθ
+      hθμ (le_max_left _ _) Y incl hincl b hAll
+      (SameGaloisType.refl _) ν hν N f hf b' hGal
+  · intro Y₂ incl₂ hincl₂ b₂ hAll₂ hGal
+    exact infra_75_iso hμel X Y Y₂ incl hincl incl₂ hincl₂ b b₂ hbμ hAll hAll₂ hGal
+  · intro x hxν hxσ hprod
+    exact infra_75_product_free_level P σ hσ hμel (infra_76_rec_mono hσw hμ.1)
+      ((Order.succ_le_succ hσw).trans hμ.2) hμ.1 hμ.2 X Y incl hincl bIdx b hbσ hAll x hxν hxσ hprod
 
 /-- **Lemma 7.6.** If the free lift of `q_A` is isolated relative to `u` by the push of a
 list from `A`, then `q_A` is isolated relative to `u` by that list.

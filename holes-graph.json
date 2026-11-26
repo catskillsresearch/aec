@@ -683,7 +683,7 @@
    "file": "AEC/Section7/Results.lean",
    "status": "blocked",
    "blocker": null,
-   "detail": "CASCADE-BLOCKED on proposition_7_3, fid_75_clauses (proof itself sorry-free; not done while a hard predecessor is open). Done for SingleModelData: same-level clause 1 embedding and clause 2 structural iso. Clause 3, mixed-level N, and prescribed tuple match demoted. 0 sorry.",
+   "detail": "CASCADE-BLOCKED on proposition_7_3, fid_75_clauses, infra_75_product_free_level (proof itself sorry-free; not done while a hard predecessor is open). Done for SingleModelData: same-level clause 1 embedding and clause 2 structural iso. Clause 3, mixed-level N, and prescribed tuple match demoted. 0 sorry.",
    "path": "main"
   },
   {
@@ -8935,7 +8935,7 @@
    "file": "AEC/Section7/Results.lean",
    "status": "open",
    "blocker": null,
-   "detail": "FIDELITY GAP (audit Nov 19): proposition_7_5: English clause 3 (product freeness from X), mixed-level targets, and prescribed extra tuple matches are demoted (not in the statement); also SingleModelData/same-level packaging.",
+   "detail": "FIDELITY GAP (audit Nov 19): proposition_7_5: English clause 3 (product freeness from X), mixed-level targets, and prescribed extra tuple matches are demoted (not in the statement); also SingleModelData/same-level packaging. | Nov 26 partial fix: proposition_7_5 now states clause 1 for targets at any eligible ν ≥ µ (infra_79_primeness_mixed_bounded) and clause 3 (product freeness, from infra_75_product_free_level), axioms clean. STILL OPEN: the 'prescribed bounded tuple match' riders of clauses 1 and 2 (extend the match b ↦ b' by a bounded x ↦ x' with tp(b,x/X) = tp(b',x'/X); route: AllDominated over X+b ⇒ over X+(b,x) by relative-isolation monotonicity + reindexing, then infra_75_embed/infra_75_iso/infra_79_primeness_mixed_bounded on (b,x)).",
    "path": "main"
   },
   {
@@ -15594,6 +15594,16 @@
   {
    "from": "WorkingScheme.isWorkingPackageCore_withTemplate",
    "to": "infra_57_named_term_presentations",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_79_primeness_mixed_bounded",
+   "to": "proposition_7_5",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_75_product_free_level",
+   "to": "proposition_7_5",
    "kind": "hard"
   }
  ],

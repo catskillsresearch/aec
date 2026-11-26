@@ -248,7 +248,7 @@ theorem infra_82_iso_single (P : SingleModelData K)
       (infra_82_isolated_reindex_mark incl' τ b' c (hdom' cIdx c hc))
   have hBlt : #bIdx < μ := lt_of_le_of_lt hidxB hlt
   obtain ⟨φ, hφ, hcomp, hv⟩ :=
-    (H μ hMT X Y incl hincl b hidxB hBlt hdom).2 Y' (SystemArrow.comp e incl') hg
+    (H μ hMT X Y incl hincl b hidxB hBlt hdom).2.1 Y' (SystemArrow.comp e incl') hg
       (fun j => b' (τ j)) hdom2 hGal
   refine ⟨⟨e, φ, he, trivial, hcomp, τ, fun i => ?_⟩, rfl,
     P.scheme.isStructIso_bijective _ _ φ hφ⟩
