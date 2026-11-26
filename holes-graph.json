@@ -9072,6 +9072,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 559: proved."
+  },
+  {
+   "id": "WorkingScheme.isWorkingPackageCore_withTemplate",
+   "label": "Prop 5.7 proof: replacing the template (withTemplate) keeps the four non-presentation clauses; the named scheme gets template F.withFixedSupport I0",
+   "section": 8,
+   "file": "AEC/Section5/NamedPresentation.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 560: proved."
   }
  ],
  "edges": [
@@ -15577,8 +15586,13 @@
    "from": "TermTemplate.FiniteSupport.withFixedSupport",
    "to": "infra_57_named_term_presentations",
    "kind": "hard"
+  },
+  {
+   "from": "WorkingScheme.isWorkingPackageCore_withTemplate",
+   "to": "infra_57_named_term_presentations",
+   "kind": "hard"
   }
  ],
- "doneCount": 826,
+ "doneCount": 827,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

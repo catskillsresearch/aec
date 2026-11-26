@@ -1,4 +1,4 @@
-# Nodes: (see holes-graph.json)  Hard edges: 1223
+# Nodes: (see holes-graph.json)  Hard edges: 1224
 # Convention: FROM --> TO means the English proof of TO requires FROM.
 # infra_78_mixed_level_isolation (Prop 7.8 rho^+ matrix argument; mixed tied free lift and mixed Lemma 7.6 done grokbot_02)
 # Retired: infra_610_qPres_empty_joint_on_I, infra_610_same_head_transfers_joint, infra_69_transfer_sequence, WorkingScheme.exists_approximationSequence.
@@ -1226,3 +1226,4 @@ infra_57_named_term_presentations --> proposition_5_7
 exists_split --> infra_57_named_term_presentations
 splitRealize_map --> infra_57_named_term_presentations
 TermTemplate.FiniteSupport.withFixedSupport --> infra_57_named_term_presentations
+WorkingScheme.isWorkingPackageCore_withTemplate --> infra_57_named_term_presentations
