@@ -270,26 +270,36 @@
     }
 
     function ranks(data) {
+      // As-late-as-possible ranks (same as the xodarev2026 board): each node
+      // sits one row above its earliest consumer, so open (green) leaves hang
+      // next to the work that uses them instead of at the top. Hard edges
+      // always count; soft edges count only when the source is done.
       const ids = data.nodes.map(n => n.id);
-      const preds = new Map(ids.map(id => [id, []]));
+      const byId = Object.fromEntries(data.nodes.map(n => [n.id, n]));
+      const idSet = new Set(ids);
+      const succs = new Map(ids.map(id => [id, []]));
       for (const e of data.edges) {
-        if (e.kind !== "hard") continue;
-        if (!preds.has(e.to)) continue;
-        preds.get(e.to).push(e.from);
+        if (!idSet.has(e.from) || !idSet.has(e.to)) continue;
+        if (e.kind === "hard" || (e.kind === "soft" && byId[e.from] && nodeStatus(byId[e.from]) === "done")) {
+          succs.get(e.from).push(e.to);
+        }
       }
-      const depth = new Map();
+      const long = new Map();
       const visiting = new Set();
       function dfs(id) {
-        if (depth.has(id)) return depth.get(id);
+        if (long.has(id)) return long.get(id);
         if (visiting.has(id)) return 0;
         visiting.add(id);
         let d = 0;
-        for (const p of preds.get(id) || []) d = Math.max(d, dfs(p) + 1);
+        for (const t of succs.get(id) || []) d = Math.max(d, dfs(t) + 1);
         visiting.delete(id);
-        depth.set(id, d);
+        long.set(id, d);
         return d;
       }
-      for (const id of ids) dfs(id);
+      let maxLong = 0;
+      for (const id of ids) maxLong = Math.max(maxLong, dfs(id));
+      const depth = new Map();
+      for (const id of ids) depth.set(id, maxLong - (long.get(id) || 0));
       return depth;
     }
 
