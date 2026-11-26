@@ -9054,6 +9054,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 557: proved."
+  },
+  {
+   "id": "splitRealize_map",
+   "label": "Prop 5.7 proof: split-label realization in F(J ⊕ₗ H) is surjective (splitRealize_surjective) and substitution along H ↪o H' is F(id ⊕ f) (splitRealize_map)",
+   "section": 8,
+   "file": "AEC/Section5/FixedSupportTerms.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 558: proved."
   }
  ],
  "edges": [
@@ -15549,8 +15558,13 @@
    "from": "exists_split",
    "to": "infra_57_named_term_presentations",
    "kind": "hard"
+  },
+  {
+   "from": "splitRealize_map",
+   "to": "infra_57_named_term_presentations",
+   "kind": "hard"
   }
  ],
- "doneCount": 824,
+ "doneCount": 825,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

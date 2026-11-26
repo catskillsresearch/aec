@@ -1,6 +1,7 @@
 module
 
 public import AEC.Section5.PresentationClause
+public import AEC.Section5.TermTemplate
 
 @[expose] public section
 
@@ -159,6 +160,39 @@ theorem exists_split {Lab : Type u} {arity : Lab → ℕ} {J H : Type u} [Linear
       rw [dif_neg hi']
       refine (hposR _ (hqlt _) (by omega) _ ?_)
       simp only [Fin.val_cast, b]; omega
+
+/-- Split-label realization in `F (J ⊕ₗ H)`: realize the original label on the full list. -/
+def splitRealize {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}} {F : TermTemplate K S}
+    (Φ : F.FiniteSupport) (J : Type u) [LinearOrder J] [Nonempty J] {H : Type u} [LinearOrder H]
+    [Nonempty H] (v : S.Vertex) (t : SupportTerm (SplitLabel (Φ.Lab v) (Φ.arity v) J) SplitLabel.arity' H) :
+    ((F.withFixedSupport J).present H).obj v |>.carrier :=
+  Φ.realize (I := J ⊕ₗ H) v ⟨t.label.label, splitPos t.label t.pos,
+    splitPos_strictMono t.label t.increasing⟩
+
+theorem splitRealize_surjective {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
+    {F : TermTemplate K S} (Φ : F.FiniteSupport) (J : Type u) [LinearOrder J] [Nonempty J]
+    {H : Type u} [LinearOrder H] [Nonempty H] (v : S.Vertex) :
+    Function.Surjective (splitRealize Φ J (H := H) v) := by
+  intro x
+  obtain ⟨t0, rfl⟩ := Φ.realize_surjective (I := J ⊕ₗ H) v x
+  obtain ⟨b, q, hb, hq, heq⟩ := exists_split (arity := Φ.arity v) t0.label t0.pos t0.increasing
+  refine ⟨⟨b, q, hq⟩, ?_⟩
+  unfold splitRealize
+  congr 1
+  exact (SupportTerm.ext_of_label_eq hb.symm heq).symm
+
+theorem splitRealize_map {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
+    {F : TermTemplate K S} (Φ : F.FiniteSupport) (J : Type u) [LinearOrder J] [Nonempty J]
+    {H H' : Type u} [LinearOrder H] [LinearOrder H'] [Nonempty H] [Nonempty H']
+    (f : H ↪o H') (v : S.Vertex)
+    (t : SupportTerm (SplitLabel (Φ.Lab v) (Φ.arity v) J) SplitLabel.arity' H) :
+    ((F.withFixedSupport J).onOrder f).onVertex v (splitRealize Φ J v t) =
+      splitRealize Φ J v ⟨t.label, f ∘ t.pos, f.strictMono.comp t.increasing⟩ := by
+  unfold splitRealize
+  change (F.onOrder (sumLexEmbedRight (J := J) f)).onVertex v _ = _
+  rw [Φ.realize_map]
+  congr 1
+  exact SupportTerm.ext_of_label_eq rfl (fun i => congrFun (sumLexEmbedRight_splitPos f t.label t.pos) i)
 
 end
 end AEC
