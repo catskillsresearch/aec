@@ -214,6 +214,7 @@
     <div class="stats" id="stats"></div>
     <div class="controls">
       <label><input type="checkbox" id="tog-focus" checked> focus open (hide done)</label>
+      <label><input type="checkbox" id="tog-hidedone"> hide completed</label>
     </div>
   </header>
   <div id="load-error" class="err" hidden></div>
@@ -377,7 +378,8 @@
     }
 
     function layout(data, visible) {
-      const depth = ranks(data);
+      // Rank only the visible boxes, so hiding completed ones closes the gaps.
+      const depth = ranks({ ...data, nodes: data.nodes.filter(n => visible.has(n.id)) });
       const nodes = data.nodes.filter(n => visible.has(n.id));
       const boxes = new Map(nodes.map(n => [n.id, nodeBox(n)]));
 
@@ -458,9 +460,13 @@
           || open[0]?.id
           || null);
       const seeds = focus ? (seedOpen ? [seedOpen] : []) : openIds;
-      const visible = focus && seeds.length
+      let visible = focus && seeds.length
         ? neighborhood(data, seeds)
         : new Set(data.nodes.map(n => n.id));
+      if (document.getElementById("tog-hidedone")?.checked) {
+        const st = Object.fromEntries(data.nodes.map(n => [n.id, nodeStatus(n)]));
+        visible = new Set([...visible].filter(id => st[id] !== "done" && st[id] !== "retired"));
+      }
 
       const { pos, width, height, rankList } = layout(data, visible);
       const byId = Object.fromEntries(data.nodes.map(n => [n.id, n]));
@@ -647,6 +653,15 @@
 
     let DATA = null;
     function redraw() { if (DATA) render(DATA); }
+
+    (function initHideDoneToggle() {
+      const el = document.getElementById("tog-hidedone");
+      el.checked = localStorage.getItem("aec-holes-hide-done") === "1";
+      el.addEventListener("change", () => {
+        localStorage.setItem("aec-holes-hide-done", el.checked ? "1" : "0");
+        redraw();
+      });
+    })();
 
     (function initFocusToggle() {
       const el = document.getElementById("tog-focus");
