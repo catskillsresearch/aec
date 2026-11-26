@@ -19,6 +19,10 @@
       --err-bg: #f3ddd0;
       --done: #1d4f91;
       --done-bg: #d5e4f7;
+      --cx: #a3121f;
+      --cx-bg: #f8d3d6;
+      --partial: #b35c00;
+      --partial-bg: #fde3c4;
     }
     * { box-sizing: border-box; }
     body {
@@ -137,6 +141,7 @@
     .node { pointer-events: auto; cursor: copy; }
     .node rect { stroke-width: 1.4; cursor: copy; }
     .node text { font-size: 12px; pointer-events: none; fill: var(--ink); }
+    .node text.node-id { font-size: 10px; fill: var(--muted); }
     .node .badge {
       font-size: 8px;
       font-weight: 700;
@@ -146,6 +151,12 @@
     .status-open rect { fill: var(--open-bg); stroke: var(--open); stroke-width: 2.25; }
     .status-done rect { fill: var(--done-bg); stroke: var(--done); }
     .status-blocked rect { fill: var(--blocked-bg); stroke: var(--blocked); }
+    .status-counterexample rect, .status-refuted rect { fill: var(--cx-bg); stroke: var(--cx); stroke-width: 2.25; }
+    .status-partly-refuted rect { fill: var(--partial-bg); stroke: var(--partial); stroke-width: 2.25; }
+    .chip.cx { background: var(--cx-bg); border-color: var(--cx); color: var(--cx); }
+    .chip.partial { background: var(--partial-bg); border-color: var(--partial); color: var(--partial); }
+    .legend .cx i { background: var(--cx-bg); color: var(--cx); }
+    .legend .partial i { background: var(--partial-bg); color: var(--partial); }
     .chip.done { background: var(--done-bg); border-color: var(--done); color: var(--done); }
     .node.dim { opacity: 0.22; }
     .edge {
@@ -155,11 +166,16 @@
       opacity: 0.55;
       pointer-events: none;
     }
+    .edge.soft {
+      stroke-dasharray: 5 4;
+      opacity: 0.32;
+    }
     .edge.dim { opacity: 0.08; }
     .edge.hot {
       stroke: #1a1f1c;
       stroke-width: 2.15;
       opacity: 1;
+      stroke-dasharray: none;
     }
     .node.selected rect { filter: drop-shadow(0 0 0.3rem color-mix(in srgb, var(--open) 40%, transparent)); }
     #detail {
@@ -185,6 +201,8 @@
       background: var(--err-bg);
       color: var(--err);
     }
+      .status-retired rect { fill: #e4e2dc; stroke: #8f8a80; stroke-dasharray: 4 3; }
+    .status-retired text { fill: #6b675f; }
   </style>
 </head>
 <body>
@@ -205,16 +223,17 @@
       <h2>Graph</h2>
       <div class="legend">
         <span class="open"><i></i>open</span>
-        <span class="done"><i></i>done</span>
+        <span class="done"><i></i>done (proved / counterexample / refuted)</span>
         <span class="blocked"><i></i>blocked</span>
+        <span>solid = hard dep · dashed = soft (paper-order only)</span>
       </div>
       <div id="graph"></div>
       <div id="detail"><div class="title">Select a node</div></div>
     </section>
   </main>
   <script>
-    const STATUS_RANK = { open: 0, done: 1, blocked: 2 };
-    const NW = 132, NH = 32, RANK_GAP = 96, NODE_GAP = 28, PAD_X = 110, PAD_Y = 28;
+    const STATUS_RANK = { open: 0, blocked: 1, counterexample: 2, refuted: 2, "partly-refuted": 2, done: 2, retired: 3 };
+    const NW = 168, NH = 34, RANK_GAP = 96, NODE_GAP = 28, PAD_X = 280, PAD_Y = 48;
     const FOCUS_KEY = "aec-holes-focus-open";
     let SELECTED = null;
 
@@ -224,7 +243,7 @@
     }
 
     function countBy(nodes) {
-      const c = { open: 0, blocked: 0, done: 0 };
+      const c = { open: 0, blocked: 0, done: 0, counterexample: 0, refuted: 0, "partly-refuted": 0 };
       for (const n of nodes) {
         const s = normStatus(n.status);
         c[s] = (c[s] || 0) + 1;
@@ -236,7 +255,7 @@
     function addHardAncestors(data, keep) {
       const preds = new Map(data.nodes.map(n => [n.id, []]));
       for (const e of data.edges) {
-        if (e.kind !== "hard") continue;
+        if (e.kind && e.kind !== "hard") continue;
         if (!preds.has(e.to)) continue;
         preds.get(e.to).push(e.from);
       }
@@ -261,8 +280,12 @@
       return keep;
     }
 
+    function isHard(e) {
+      return !e.kind || e.kind === "hard";
+    }
+
     function hardPreds(data, id) {
-      return data.edges.filter(e => e.to === id && e.kind === "hard").map(e => e.from);
+      return data.edges.filter(e => e.to === id && isHard(e)).map(e => e.from);
     }
 
     function nodeStatus(n) {
@@ -270,20 +293,22 @@
     }
 
     function ranks(data) {
-      // As-late-as-possible ranks (same as the xodarev2026 board): each node
-      // sits one row above its earliest consumer, so open (green) leaves hang
-      // next to the work that uses them instead of at the top. Hard edges
-      // always count; soft edges count only when the source is done.
-      const ids = data.nodes.map(n => n.id);
+      // As-late-as-possible ranks: each node sits one row above its earliest
+      // consumer, so Mathlib-only leaves hang next to first use rather than at
+      // the top. Hard edges always participate. Soft edges also do when the
+      // source is already done, so paper-order follow-ons sit below their
+      // foundations — without letting unfinished tips pull done nodes down.
       const byId = Object.fromEntries(data.nodes.map(n => [n.id, n]));
+      const ids = data.nodes.map(n => n.id);
       const idSet = new Set(ids);
       const succs = new Map(ids.map(id => [id, []]));
       for (const e of data.edges) {
         if (!idSet.has(e.from) || !idSet.has(e.to)) continue;
-        if (e.kind === "hard" || (e.kind === "soft" && byId[e.from] && nodeStatus(byId[e.from]) === "done")) {
+        if (isHard(e) || (e.kind === "soft" && byId[e.from] && nodeStatus(byId[e.from]) === "done")) {
           succs.get(e.from).push(e.to);
         }
       }
+      // Longest path to a sink; invert so sinks sit at the bottom.
       const long = new Map();
       const visiting = new Set();
       function dfs(id) {
@@ -291,7 +316,7 @@
         if (visiting.has(id)) return 0;
         visiting.add(id);
         let d = 0;
-        for (const t of succs.get(id) || []) d = Math.max(d, dfs(t) + 1);
+        for (const s of succs.get(id) || []) d = Math.max(d, dfs(s) + 1);
         visiting.delete(id);
         long.set(id, d);
         return d;
@@ -305,11 +330,10 @@
 
     function neighborhood(data, seeds) {
       // Seed cone only: unfinished hard ancestors of the seeds, plus a bounded
-      // forward fan of their dependents. Do NOT pull ancestors of forward nodes
-      // (that dragged unrelated opens like 5.7 into a 3.11 focus).
+      // forward fan of their dependents. Soft edges are ignored for focus.
       const keep = new Set(seeds);
       addHardAncestors(data, keep);
-      const hard = data.edges.filter(e => e.kind === "hard");
+      const hard = data.edges.filter(isHard);
       const queue = [...seeds];
       const dist = new Map(seeds.map(s => [s, 0]));
       while (queue.length) {
@@ -334,15 +358,38 @@
       return ((index / (count - 1)) - 0.5) * span;
     }
 
+    function estimateTextWidth(s, fontSize) {
+      return Math.ceil((s || "").length * fontSize * 0.62);
+    }
+
+    /** Box size and the lines painted on a node (declaration / short label, then module id). */
+    function nodeBox(n) {
+      const st = nodeStatus(n);
+      const label = n.label || n.id;
+      const showId = label !== n.id && !label.includes(n.id);
+      const w = Math.max(NW, Math.min(340, 20 + Math.max(
+        estimateTextWidth(label, 12),
+        showId ? estimateTextWidth(n.id, 10) : 0
+      )));
+      // Open badge + optional module-id line need a taller card.
+      const h = NH + (st === "open" ? 8 : 0) + (showId ? 12 : 0);
+      return { w, h, label, showId };
+    }
+
     function layout(data, visible) {
       const depth = ranks(data);
       const nodes = data.nodes.filter(n => visible.has(n.id));
+      const boxes = new Map(nodes.map(n => [n.id, nodeBox(n)]));
+
       const byRank = new Map();
-      for (const n of nodes) {
-        const r = depth.get(n.id) || 0;
+      function add(r, n) {
         if (!byRank.has(r)) byRank.set(r, []);
         byRank.get(r).push(n);
       }
+      // ALAP ranks: foundations sit just above first use, dependents later.
+      // Open (green) leaves therefore hang next to the module that consumes
+      // them, not at the top. No top-left pinning. Ranks are centred.
+      for (const n of nodes) add(depth.get(n.id) || 0, n);
       const rankList = [...byRank.keys()].sort((a, b) => a - b);
       // Compact ranks to 0..k for display spacing
       const rankIndex = new Map(rankList.map((r, i) => [r, i]));
@@ -353,23 +400,32 @@
       }
       const pos = new Map();
       let maxW = 0;
-      for (const r of rankList) {
-        const list = byRank.get(r);
-        const rowW = list.length * NW + Math.max(0, list.length - 1) * NODE_GAP;
-        maxW = Math.max(maxW, rowW);
-      }
+      const rowWidth = (list) => {
+        if (!list.length) return 0;
+        return list.reduce((s, n) => s + boxes.get(n.id).w, 0) + Math.max(0, list.length - 1) * NODE_GAP;
+      };
+      for (const r of rankList) maxW = Math.max(maxW, rowWidth(byRank.get(r)));
       const width = Math.max(PAD_X * 2 + maxW, 960);
+      let y = PAD_Y + 16;
+      const rowY = new Map();
       for (const r of rankList) {
         const list = byRank.get(r);
         const ri = rankIndex.get(r);
-        const rowW = list.length * NW + Math.max(0, list.length - 1) * NODE_GAP;
-        const x0 = (width - rowW) / 2;
-        const y = PAD_Y + 16 + ri * (NH + RANK_GAP);
-        list.forEach((n, i) => {
-          pos.set(n.id, { x: x0 + i * (NW + NODE_GAP), y, w: NW, h: NH, rank: ri, rawRank: r });
+        const rowW = rowWidth(list);
+        const rowH = Math.max(NH, ...list.map(n => boxes.get(n.id).h));
+        // Centre each rank in the canvas. Extra PAD_X keeps wide node
+        // labels from clipping at the left or right edge.
+        const x0 = PAD_X + (maxW - rowW) / 2;
+        rowY.set(r, y);
+        let x = x0;
+        list.forEach((n) => {
+          const b = boxes.get(n.id);
+          pos.set(n.id, { x, y, w: b.w, h: b.h, rank: ri, rawRank: r, showId: b.showId, label: b.label });
+          x += b.w + NODE_GAP;
         });
+        y += rowH + RANK_GAP;
       }
-      const height = PAD_Y + 16 + Math.max(1, rankList.length) * (NH + RANK_GAP) + 24;
+      const height = y + 24;
       return { pos, width, height, rankList: rankList.map(r => rankIndex.get(r)), depth };
     }
 
@@ -409,7 +465,13 @@
       const { pos, width, height, rankList } = layout(data, visible);
       const byId = Object.fromEntries(data.nodes.map(n => [n.id, n]));
 
-      const edges = data.edges.filter(e => visible.has(e.from) && visible.has(e.to));
+      // Soft edges into done nodes read as "unproven proves proven" — omit them.
+      // Soft edges never drive status; they are paper-order only.
+      const edges = data.edges.filter(e => {
+        if (!visible.has(e.from) || !visible.has(e.to)) return false;
+        if (e.kind === "soft" && nodeStatus(byId[e.to]) === "done") return false;
+        return true;
+      });
       const outIdx = new Map(), inIdx = new Map(), outN = new Map(), inN = new Map();
       for (const e of edges) {
         outN.set(e.from, (outN.get(e.from) || 0) + 1);
@@ -456,7 +518,8 @@
           cy2 = down ? y2 - dy : y2 + dy;
         }
         const d = `M${x1},${y1} C${cx1},${cy1} ${cx2},${cy2} ${x2},${y2}`;
-        return `<path class="edge" data-from="${e.from}" data-to="${e.to}" marker-end="url(#arrow)" d="${d}" />`;
+        const soft = e.kind === "soft" ? " soft" : "";
+        return `<path class="edge${soft}" data-from="${e.from}" data-to="${e.to}" marker-end="url(#arrow)" d="${d}" />`;
       }).join("");
 
       const rankLabels = rankList.map((ri, i) => {
@@ -471,10 +534,14 @@
           ? `<text class="badge" x="8" y="11">OPEN</text>`
           : "";
         const ty = st === "open" ? 24 : 20;
+        const idLine = p.showId
+          ? `<text class="node-id" x="8" y="${ty + 13}">${n.id}</text>`
+          : "";
         return `<g class="node status-${st}" data-id="${n.id}" transform="translate(${p.x},${p.y})">
           <rect width="${p.w}" height="${p.h}" rx="2" />
           ${badge}
-          <text x="8" y="${ty}">${n.label}</text>
+          <text x="8" y="${ty}">${p.label}</text>
+          ${idLine}
         </g>`;
       }).join("");
 
@@ -528,11 +595,13 @@
         const keepBright = new Set([id]);
         addHardAncestors(data, keepBright);
         for (const e of data.edges) {
-          if (e.kind === "hard" && e.from === id) keepBright.add(e.to);
+          if (isHard(e) && e.from === id) keepBright.add(e.to);
         }
         document.querySelectorAll(".edge").forEach(path => {
-          const hot = path.dataset.from === id || path.dataset.to === id;
-          path.classList.toggle("hot", hot);
+          const incident = path.dataset.from === id || path.dataset.to === id;
+          const soft = path.classList.contains("soft");
+          // Only hard edges get the thick "hot" treatment — soft stays dashed.
+          path.classList.toggle("hot", incident && !soft);
           const bothKept = keepBright.has(path.dataset.from) && keepBright.has(path.dataset.to);
           path.classList.toggle("dim", focusMode && !bothKept);
         });
@@ -544,11 +613,18 @@
         const n = byId[id];
         if (!n) return;
         const preds = hardPreds(data, id).map(p => byId[p]?.label || p).join(", ") || "—";
+        const softOut = data.edges
+          .filter(e => e.kind === "soft" && e.from === id && nodeStatus(byId[e.to]) !== "done")
+          .map(e => byId[e.to]?.label || e.to);
+        const softNote = softOut.length
+          ? `<div style="margin-top:0.25rem;color:var(--muted)"><b>soft (paper-order):</b> ${softOut.join(", ")}</div>`
+          : "";
         document.getElementById("detail").innerHTML = `
           <div class="title">${n.label} <span class="id">(${n.id})</span>
             <span id="copy-tip" class="copy-tip" hidden></span></div>
           <div><b>status:</b> ${nodeStatus(n)} · <b>file:</b> ${n.file}</div>
-          <div><b>proof requires:</b> ${preds}</div>
+          <div><b>proof requires (hard):</b> ${preds}</div>
+          ${softNote}
           ${n.blocker ? `<div style="margin-top:0.3rem;color:var(--blocked)"><b>blocker:</b> ${n.blocker}</div>` : ""}
           ${n.detail ? `<div style="margin-top:0.3rem"><b>detail:</b> ${n.detail}</div>` : ""}
         `;
@@ -583,14 +659,23 @@
       });
     })();
 
-    fetch("holes-graph.json", { cache: "no-store" })
-      .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
-      .then(data => { DATA = data; render(data); })
-      .catch(err => {
-        const box = document.getElementById("load-error");
-        box.hidden = false;
-        box.textContent = `Could not load holes-graph.json (${err.message}). Serve the repo root and reload.`;
-      });
+    /* Embedded by `python3 scripts/build_holes.py` so file:// open works without a server. */
+    const EMBEDDED_HOLES_GRAPH = null; /*HOLES_GRAPH_JSON*/
+    function loadGraph(data) { DATA = data; render(data); }
+    if (EMBEDDED_HOLES_GRAPH && typeof EMBEDDED_HOLES_GRAPH === "object") {
+      loadGraph(EMBEDDED_HOLES_GRAPH);
+    } else {
+      fetch("holes-graph.json", { cache: "no-store" })
+        .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
+        .then(loadGraph)
+        .catch(err => {
+          const box = document.getElementById("load-error");
+          box.hidden = false;
+          box.textContent =
+            `Could not load holes-graph.json (${err.message}). ` +
+            `Run python3 scripts/build_holes.py (embeds the graph) or serve the repo root.`;
+        });
+    }
   </script>
 </body>
 </html>
