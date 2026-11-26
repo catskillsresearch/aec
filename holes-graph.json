@@ -631,9 +631,9 @@
    "label": "Lem 7.11",
    "section": 7,
    "file": "AEC/Section7/Results.lean",
-   "status": "done",
+   "status": "blocked",
    "blocker": "infra_711_successor",
-   "detail": "cycle 83: lemma_7_11 = infra_711_induction(infra_711_successor); statement unchanged (tied, matches English); #print axioms: propext, Classical.choice, Quot.sound",
+   "detail": "CASCADE-BLOCKED on theorem_7_9 (proof itself sorry-free; not done while a hard predecessor is open). cycle 83: lemma_7_11 = infra_711_induction(infra_711_successor); statement unchanged (tied, matches English); #print axioms: propext, Classical.choice, Quot.sound",
    "path": "main"
   },
   {
@@ -641,9 +641,9 @@
    "label": "Lem 7.12",
    "section": 7,
    "file": "AEC/Section7/Results.lean",
-   "status": "done",
+   "status": "blocked",
    "blocker": null,
-   "detail": "PROVED cycle 89 (sorry-free; #print axioms: propext, Classical.choice, Quot.sound). RESTATED cycle 76 to the tied notions (English Lemma 7.12): over SingleModelData P, a tail of levels; (1) L well-ordered, #L.delta <= mu (Def 7.10 size convention), ProductIndependentTied L (tied finite products of finite sublists, IsFiniteProductTied)  ==>  exists C : TiedListWitnessingChain L with C.AllDominatedIncrement (top/listToTop/mark_spec = the whole configuration retained in an extension of the given ambient); (2) L, L' of total length <= mu with tied witnessing chains and the same successive marginal types over A (order iso e, per-entry equivs ei)  ==>  SameGaloisType L.whole L'.whole (one amalgam identifies the entire lists). Old untied statement removed (unused). Split: lemma_7_12_existence (clause 1), lemma_7_12_uniqueness (clause 2); the paper's extension of (2) to bounded individual tuples is lemma_7_12_bounded. Remaining untied consumer: theorem_7_13 still uses ProductIndependent / ListWitnessingChain-era notions.",
+   "detail": "CASCADE-BLOCKED on lemma_7_11, lemma_7_12_existence, lemma_7_12_uniqueness, lemma_7_12_bounded (proof itself sorry-free; not done while a hard predecessor is open). PROVED cycle 89 (sorry-free; #print axioms: propext, Classical.choice, Quot.sound). RESTATED cycle 76 to the tied notions (English Lemma 7.12): over SingleModelData P, a tail of levels; (1) L well-ordered, #L.delta <= mu (Def 7.10 size convention), ProductIndependentTied L (tied finite products of finite sublists, IsFiniteProductTied)  ==>  exists C : TiedListWitnessingChain L with C.AllDominatedIncrement (top/listToTop/mark_spec = the whole configuration retained in an extension of the given ambient); (2) L, L' of total length <= mu with tied witnessing chains and the same successive marginal types over A (order iso e, per-entry equivs ei)  ==>  SameGaloisType L.whole L'.whole (one amalgam identifies the entire lists). Old untied statement removed (unused). Split: lemma_7_12_existence (clause 1), lemma_7_12_uniqueness (clause 2); the paper's extension of (2) to bounded individual tuples is lemma_7_12_bounded. Remaining untied consumer: theorem_7_13 still uses ProductIndependent / ListWitnessingChain-era notions.",
    "path": "main"
   },
   {
@@ -651,8 +651,8 @@
    "label": "Lem 7.2",
    "section": 7,
    "file": "AEC/Section7/Results.lean",
-   "status": "done",
-   "detail": "Done. Path A lemma_7_2 unchanged. English-complete form lemma_7_2_tied (Results) = infra_72_lemma_tied: projection clause plus, under the English free-extension hypothesis (tied-free u-marginal, hMargTied), qB is IsTiedFree and IsRelativelyIsolated over B. The untied IsFreeLift marginal hypothesis of lemma_7_2 is too weak for clause 2 (it follows from hExt). | Cycle 96 audit: the mixed-level last sentence of the English is not formalized; tracked as infra_72_mixed_level.",
+   "status": "blocked",
+   "detail": "CASCADE-BLOCKED on fid_72_mixed_sentence (proof itself sorry-free; not done while a hard predecessor is open). Done. Path A lemma_7_2 unchanged. English-complete form lemma_7_2_tied (Results) = infra_72_lemma_tied: projection clause plus, under the English free-extension hypothesis (tied-free u-marginal, hMargTied), qB is IsTiedFree and IsRelativelyIsolated over B. The untied IsFreeLift marginal hypothesis of lemma_7_2 is too weak for clause 2 (it follows from hExt). | Cycle 96 audit: the mixed-level last sentence of the English is not formalized; tracked as infra_72_mixed_level.",
    "blocker": null,
    "path": "main"
   },
@@ -661,9 +661,9 @@
    "label": "Lem 7.6",
    "section": 7,
    "file": "AEC/Section7/Results.lean",
-   "status": "done",
+   "status": "blocked",
    "blocker": null,
-   "detail": "Path A push-only descent green (infra_76_lemma). English Lem 7.6 (arbitrary isolating fragment W of q_B, same level, tied-free lift): lemma_7_6_tied (AEC/Section7/TiedDescent.lean), no sorryAx. Mixed nu<mu still deferred.",
+   "detail": "CASCADE-BLOCKED on proposition_7_5 (proof itself sorry-free; not done while a hard predecessor is open). Path A push-only descent green (infra_76_lemma). English Lem 7.6 (arbitrary isolating fragment W of q_B, same level, tied-free lift): lemma_7_6_tied (AEC/Section7/TiedDescent.lean), no sorryAx. Mixed nu<mu still deferred.",
    "path": "main"
   },
   {
@@ -671,8 +671,8 @@
    "label": "Prop 7.3",
    "section": 7,
    "file": "AEC/Section7/Results.lean",
-   "status": "done",
-   "detail": "Path A dichotomy green (infra_73_lemma). English uniform shrink green, no sorryAx: proposition_7_3_uniform (AEC/Section7/BlockRestriction.lean) = proposition_7_3_uniform_of_block (AltTwoTied.lean) + infra_73_block_restriction.",
+   "status": "blocked",
+   "detail": "CASCADE-BLOCKED on lemma_7_2 (proof itself sorry-free; not done while a hard predecessor is open). Path A dichotomy green (infra_73_lemma). English uniform shrink green, no sorryAx: proposition_7_3_uniform (AEC/Section7/BlockRestriction.lean) = proposition_7_3_uniform_of_block (AltTwoTied.lean) + infra_73_block_restriction.",
    "blocker": null,
    "path": "main"
   },
@@ -681,9 +681,9 @@
    "label": "Prop 7.5",
    "section": 7,
    "file": "AEC/Section7/Results.lean",
-   "status": "done",
+   "status": "blocked",
    "blocker": null,
-   "detail": "Done for SingleModelData: same-level clause 1 embedding and clause 2 structural iso. Clause 3, mixed-level N, and prescribed tuple match demoted. 0 sorry.",
+   "detail": "CASCADE-BLOCKED on proposition_7_3, fid_75_clauses (proof itself sorry-free; not done while a hard predecessor is open). Done for SingleModelData: same-level clause 1 embedding and clause 2 structural iso. Clause 3, mixed-level N, and prescribed tuple match demoted. 0 sorry.",
    "path": "main"
   },
   {
@@ -691,9 +691,9 @@
    "label": "Prop 7.8",
    "section": 7,
    "file": "AEC/Section7/Results.lean",
-   "status": "done",
+   "status": "blocked",
    "blocker": null,
-   "detail": "Cycle 95: restated to include the English 'More generally the assertion holds for a bounded mark b satisfying Definition 7.7, with |b| ≤ θ' as a second conjunct (hypotheses #p.idx ≤ θ and SatisfiesContinuityTied p, exactly the English), proved by infra_78_general. | DONE cycle 67, statement unchanged: proof := <infra_78_closedTail P, infra_78_closedTail_tail P, infra_78_marginal_general_level P>. Axioms: propext, Classical.choice, Quot.sound (no sorryAx). RESTATED (grokbot_01 Phase 1.1), open with sorry. Now over SingleModelData P (P.scheme, oneVertexShape: the package of theorem_6_10, proposition_6_13, proposition_7_3_uniform, lemma_7_6_tied) instead of a bare WorkingScheme; tail T chosen before theta (uniform closure). Bounded-mark (Def 7.7) generalization not stated. Blocked on infra_78_mixed_level_isolation (stubs in AEC/Section7/MixedLevel.lean). AUDIT NOTE (cycle 64, no statement change): paper 'Proposition 7.8. Let lambda be a sufficiently closed eligible level, let X be an object there, and let p = tp(b/X) be a finite-tuple type. For every infinite theta < lambda there is a same-level extension X <= U containing a realization of p such that tp(b, c/X) is isolated relative to b for every c in U with |c| <= theta.' Types are Theorem 6.6's tp(v/A; B) for arrows A -> B0, B1 (identification in an amalgam over A), with no restriction on the level of B; so the Lean p with any host level >= lambda matches the English as written. Its proof for hosts above lambda uses the cross-level identification the paper takes from Theorem 6.6, whose Lean form (infra_78_cross_level_galois / infra_612_galois_trans_cross_level, via infra_78_tuple_amalgam_large) is unverified. The case p.nu = lambda is infra_78_matrix_assembly_level. Cycle 66: the case p.nu = lambda is proved (infra_78_matrix_assembly_level, sorry-free); proposition_7_8 unchanged and still sorry.",
+   "detail": "CASCADE-BLOCKED on proposition_7_3 (proof itself sorry-free; not done while a hard predecessor is open). Cycle 95: restated to include the English 'More generally the assertion holds for a bounded mark b satisfying Definition 7.7, with |b| ≤ θ' as a second conjunct (hypotheses #p.idx ≤ θ and SatisfiesContinuityTied p, exactly the English), proved by infra_78_general. | DONE cycle 67, statement unchanged: proof := <infra_78_closedTail P, infra_78_closedTail_tail P, infra_78_marginal_general_level P>. Axioms: propext, Classical.choice, Quot.sound (no sorryAx). RESTATED (grokbot_01 Phase 1.1), open with sorry. Now over SingleModelData P (P.scheme, oneVertexShape: the package of theorem_6_10, proposition_6_13, proposition_7_3_uniform, lemma_7_6_tied) instead of a bare WorkingScheme; tail T chosen before theta (uniform closure). Bounded-mark (Def 7.7) generalization not stated. Blocked on infra_78_mixed_level_isolation (stubs in AEC/Section7/MixedLevel.lean). AUDIT NOTE (cycle 64, no statement change): paper 'Proposition 7.8. Let lambda be a sufficiently closed eligible level, let X be an object there, and let p = tp(b/X) be a finite-tuple type. For every infinite theta < lambda there is a same-level extension X <= U containing a realization of p such that tp(b, c/X) is isolated relative to b for every c in U with |c| <= theta.' Types are Theorem 6.6's tp(v/A; B) for arrows A -> B0, B1 (identification in an amalgam over A), with no restriction on the level of B; so the Lean p with any host level >= lambda matches the English as written. Its proof for hosts above lambda uses the cross-level identification the paper takes from Theorem 6.6, whose Lean form (infra_78_cross_level_galois / infra_612_galois_trans_cross_level, via infra_78_tuple_amalgam_large) is unverified. The case p.nu = lambda is infra_78_matrix_assembly_level. Cycle 66: the case p.nu = lambda is proved (infra_78_matrix_assembly_level, sorry-free); proposition_7_8 unchanged and still sorry.",
    "restated": true,
    "path": "main"
   },
@@ -702,9 +702,9 @@
    "label": "Thm 7.13",
    "section": 7,
    "file": "AEC/Section7/Results.lean",
-   "status": "done",
+   "status": "blocked",
    "blocker": null,
-   "detail": "PROVED cycle 94, sorry-free (axioms clean): infra_713_of_parts with lift, continuity, realize. | Cycle 91: ASSEMBLED theorem_7_13 := infra_713_of_parts P (infra_713_lift P) (infra_713_continuity P) (infra_713_realize P) on the tail infra_712_levels P; (1a) = infra_713_unique (done). Remaining sorries: infra_713_lift (1b), infra_713_continuity (2), infra_713_realize (3). RESTATED cycle 90 to the tied notions (per the cycle-76 7.12 precedent), matching the English: over SingleModelData P, a tail; L well-ordered, finite entries (TupleList.FiniteEach), ProductIndependentTied, bounded (#(Sigma i, idx) < mu). (1a) any product-independent L' of finite tuples with the same marginals has the same whole type; (1b) a tied free lift q of L.whole along X -> B (IsTiedFree) has every finite sublist the IsFiniteProductTied of the lifted marginals, and any q' over B with the same finite-subtuple types has q's type; (2) SatisfiesContinuityTied L.whole (tied Definition 7.7, WIDENED cycle 91 per review to the English quantifier: exists a tail T such that at every mu' in T with mu <= mu', every SameLevelChain at mu', base arrow A -> X_0 across levels, tied free lift at X_0 via IsTiedFreeMixed, tied freeness at every stage ==> tied freeness over the union; no proved result used the narrow same-level form); (3) all-dominated Y over X + b realizing tp(b/X), mapped over X, b into an ambient containing L. Old untied statement (WorkingScheme, ProductIndependent, IsFreeLift, SatisfiesContinuity) removed (no consumers). Open sorry. Plan: (1a) from lemma_7_12 existence + uniqueness (transport the order along e); (1b) Prop 6.12 tied finite projections + (1a) at base B; (2) infra_78_tied_continuity on finite subtuples + (1b); (3) Theorem 7.9 general form (needs bounded marks: infra_78_def77_bounded_marks / Prop 7.8 general) -- clause (3) is the hard one. | Cycle 93: (1a), (1b), (2) all proved; only (3) infra_713_realize remains (blocked on def77_bounded_marks / bounded-mark 7.8/7.9).",
+   "detail": "CASCADE-BLOCKED on lemma_7_12 (proof itself sorry-free; not done while a hard predecessor is open). PROVED cycle 94, sorry-free (axioms clean): infra_713_of_parts with lift, continuity, realize. | Cycle 91: ASSEMBLED theorem_7_13 := infra_713_of_parts P (infra_713_lift P) (infra_713_continuity P) (infra_713_realize P) on the tail infra_712_levels P; (1a) = infra_713_unique (done). Remaining sorries: infra_713_lift (1b), infra_713_continuity (2), infra_713_realize (3). RESTATED cycle 90 to the tied notions (per the cycle-76 7.12 precedent), matching the English: over SingleModelData P, a tail; L well-ordered, finite entries (TupleList.FiniteEach), ProductIndependentTied, bounded (#(Sigma i, idx) < mu). (1a) any product-independent L' of finite tuples with the same marginals has the same whole type; (1b) a tied free lift q of L.whole along X -> B (IsTiedFree) has every finite sublist the IsFiniteProductTied of the lifted marginals, and any q' over B with the same finite-subtuple types has q's type; (2) SatisfiesContinuityTied L.whole (tied Definition 7.7, WIDENED cycle 91 per review to the English quantifier: exists a tail T such that at every mu' in T with mu <= mu', every SameLevelChain at mu', base arrow A -> X_0 across levels, tied free lift at X_0 via IsTiedFreeMixed, tied freeness at every stage ==> tied freeness over the union; no proved result used the narrow same-level form); (3) all-dominated Y over X + b realizing tp(b/X), mapped over X, b into an ambient containing L. Old untied statement (WorkingScheme, ProductIndependent, IsFreeLift, SatisfiesContinuity) removed (no consumers). Open sorry. Plan: (1a) from lemma_7_12 existence + uniqueness (transport the order along e); (1b) Prop 6.12 tied finite projections + (1a) at base B; (2) infra_78_tied_continuity on finite subtuples + (1b); (3) Theorem 7.9 general form (needs bounded marks: infra_78_def77_bounded_marks / Prop 7.8 general) -- clause (3) is the hard one. | Cycle 93: (1a), (1b), (2) all proved; only (3) infra_713_realize remains (blocked on def77_bounded_marks / bounded-mark 7.8/7.9).",
    "path": "main"
   },
   {
@@ -712,9 +712,9 @@
    "label": "Thm 7.9",
    "section": 7,
    "file": "AEC/Section7/Results.lean",
-   "status": "done",
+   "status": "blocked",
    "blocker": null,
-   "detail": "Cycle 95: restated to include 'More generally this holds for a bounded marginal satisfying Definition 7.7' (hypotheses #p.idx < μ and SatisfiesContinuityTied p) with existence and the mixed-level embedding clause; proved by infra_79_existence_general + bounded primeness. | DONE cycle 72: theorem_7_9 := infra_79_of_existence P (infra_79_existence P); no sorry; axioms propext, Classical.choice, Quot.sound. Statement = the cycle-68 audited English form (existence clause + embedding clause into an ambient at any eligible level >= mu); the paper's \"more generally ... bounded marginal satisfying Definition 7.7\" sentence is the soft hypothesis infra_78_def77_bounded_marks, treated exactly as for proposition_7_8. Cycle 71: theorem_7_9 = infra_79_of_existence (infra_79_existence_of_parts P <infra_79_tail P, ?_>); the one sorry is exactly infra_79_retraction_pair_statement. Cycle 70: existence clause split; theorem_7_9 = infra_79_of_existence (infra_79_existence_of_parts P ?_) with the one sorry standing for infra_79_tail AND infra_79_retraction_pair. Cycle 69: infra_79_primeness_mixed DONE, so theorem_7_9 = infra_79_of_existence applied to infra_79_existence_statement (the only open part; one sorry). Blocked (cycle 68 audit + split). Statement audit vs English ('At sufficiently closed eligible levels, every finite-tuple type p = tp(b/X) has an all-dominated realization: there is Y >= X all-dominated over X + b realizing p. More generally this holds for a bounded marginal satisfying Definition 7.7. An all-dominated realization embeds over X, b into any actual ambient containing a realization of that type, with the mixed-level conventions of Proposition 7.5.'): the Phase 3.1 Lean form omitted the embedding clause; RESTATED cycle 68 to existence AND (every all-dominated realization embeds over X, b into any ambient N at any eligible level nu >= mu containing a realization of p). The bounded-marginal generalization is a paper hypothesis (infra_78_def77_bounded_marks, soft), as for proposition_7_8. Full claim = infra_79_existence (open) + infra_79_primeness_same_level (done) + infra_79_primeness_mixed (open) + infra_79_assemble (done). Previous: Open (cycle 67): every hard dep done (proposition_7_8 done cycle 67, lemma_6_17). RESTATED (grokbot_01 Phase 3.1), open with sorry: over SingleModelData (was bare WorkingScheme, underhypothesized). Omitted: bounded-mark generalization, primeness clause. Blocked on proposition_7_8.",
+   "detail": "CASCADE-BLOCKED on proposition_7_8, fid_79_clauses (proof itself sorry-free; not done while a hard predecessor is open). Cycle 95: restated to include 'More generally this holds for a bounded marginal satisfying Definition 7.7' (hypotheses #p.idx < μ and SatisfiesContinuityTied p) with existence and the mixed-level embedding clause; proved by infra_79_existence_general + bounded primeness. | DONE cycle 72: theorem_7_9 := infra_79_of_existence P (infra_79_existence P); no sorry; axioms propext, Classical.choice, Quot.sound. Statement = the cycle-68 audited English form (existence clause + embedding clause into an ambient at any eligible level >= mu); the paper's \"more generally ... bounded marginal satisfying Definition 7.7\" sentence is the soft hypothesis infra_78_def77_bounded_marks, treated exactly as for proposition_7_8. Cycle 71: theorem_7_9 = infra_79_of_existence (infra_79_existence_of_parts P <infra_79_tail P, ?_>); the one sorry is exactly infra_79_retraction_pair_statement. Cycle 70: existence clause split; theorem_7_9 = infra_79_of_existence (infra_79_existence_of_parts P ?_) with the one sorry standing for infra_79_tail AND infra_79_retraction_pair. Cycle 69: infra_79_primeness_mixed DONE, so theorem_7_9 = infra_79_of_existence applied to infra_79_existence_statement (the only open part; one sorry). Blocked (cycle 68 audit + split). Statement audit vs English ('At sufficiently closed eligible levels, every finite-tuple type p = tp(b/X) has an all-dominated realization: there is Y >= X all-dominated over X + b realizing p. More generally this holds for a bounded marginal satisfying Definition 7.7. An all-dominated realization embeds over X, b into any actual ambient containing a realization of that type, with the mixed-level conventions of Proposition 7.5.'): the Phase 3.1 Lean form omitted the embedding clause; RESTATED cycle 68 to existence AND (every all-dominated realization embeds over X, b into any ambient N at any eligible level nu >= mu containing a realization of p). The bounded-marginal generalization is a paper hypothesis (infra_78_def77_bounded_marks, soft), as for proposition_7_8. Full claim = infra_79_existence (open) + infra_79_primeness_same_level (done) + infra_79_primeness_mixed (open) + infra_79_assemble (done). Previous: Open (cycle 67): every hard dep done (proposition_7_8 done cycle 67, lemma_6_17). RESTATED (grokbot_01 Phase 3.1), open with sorry: over SingleModelData (was bare WorkingScheme, underhypothesized). Omitted: bounded-mark generalization, primeness clause. Blocked on proposition_7_8.",
    "restated": true,
    "path": "main"
   },
@@ -3133,9 +3133,9 @@
    "label": "Thm 7.9 embedding clause, ambient at the level of X",
    "section": 7,
    "file": "AEC/Section7/Theorem79.lean",
-   "status": "done",
+   "status": "blocked",
    "blocker": null,
-   "detail": "DONE cycle 68. Any all-dominated realization (Y, b) of a finite p (host any level) embeds over X, b -> b', into any same-level N realizing p: infra_612_galois_trans_mid_any (Yb ~ p ~ Nb') then infra_75_embed (Prop 7.5 (1)). Works at every eligible level. Axioms: propext, Classical.choice, Quot.sound.",
+   "detail": "CASCADE-BLOCKED on proposition_7_5 (proof itself sorry-free; not done while a hard predecessor is open). DONE cycle 68. Any all-dominated realization (Y, b) of a finite p (host any level) embeds over X, b -> b', into any same-level N realizing p: infra_612_galois_trans_mid_any (Yb ~ p ~ Nb') then infra_75_embed (Prop 7.5 (1)). Works at every eligible level. Axioms: propext, Classical.choice, Quot.sound.",
    "path": "main"
   },
   {
@@ -3153,9 +3153,9 @@
    "label": "Thm 7.9 existence: all-dominated realization of a finite p",
    "section": 7,
    "file": "AEC/Section7/RetractionPair.lean",
-   "status": "done",
+   "status": "blocked",
    "blocker": null,
-   "detail": "DONE cycle 72 (theorem infra_79_existence := infra_79_existence_of_parts P <infra_79_tail P, infra_79_retraction_pair P>; statement unchanged). Axioms: propext, Classical.choice, Quot.sound. Cycle 71: infra_79_tail DONE; blocked only on infra_79_retraction_pair. Blocked (cycle 70 split). = infra_79_existence_of_parts (done) applied to infra_79_tail (open) and infra_79_retraction_pair (open); the other paper steps infra_79_lift_isolate, infra_79_descent, infra_79_identify are DONE (all with only propext, Classical.choice, Quot.sound). Statement unchanged (Lean def infra_79_existence_statement): exists a tail T such that for mu in T, X at mu and finite p over X (host any level) there are Y >= X at mu and b with AllDominated f hf p.idx b and SameGaloisType p (asTuple f hf b) refl refl. Previous: Open (cycle 68; Lean def infra_79_existence_statement). Exists a tail T such that for mu in T, X at mu and finite p over X (host any level) there are Y >= X at mu and b with AllDominated f hf p.idx b and SameGaloisType p (asTuple f hf b) refl refl. Paper proof (Theorem 7.9): lift X by a presentation arrow to a much larger level lambda and apply proposition_7_8 there with theta = nu (DONE); Corollary 6.16 retractions r_j : U -> A (j < nu) almost fixing A (DONE); mixed LS closure to a level-nu pair A' <= U' containing I_p, b with r_j[U'] in A' (closure under nu maps, countably many rounds); lemma_6_17 (tied, DONE) gives tp(b,d/A) = free lift of tp(b,d/A'); downward transfer (lemma_7_6_tied, DONE) gives isolation of tp(b,d/A') relative to b for every bounded d in U'; anchors + bounded diagram homogeneity give A' ~ X and transport (infra_78_anchor_iso / iso_rename pattern). Likely split: lift_isolate, retraction_pair, descent, identify. Tail must make Prop 7.8 (at lambda), lemma_6_17 (at nu and lambda) and the anchor isomorphism available.",
+   "detail": "CASCADE-BLOCKED on infra_79_existence_of_parts (proof itself sorry-free; not done while a hard predecessor is open). DONE cycle 72 (theorem infra_79_existence := infra_79_existence_of_parts P <infra_79_tail P, infra_79_retraction_pair P>; statement unchanged). Axioms: propext, Classical.choice, Quot.sound. Cycle 71: infra_79_tail DONE; blocked only on infra_79_retraction_pair. Blocked (cycle 70 split). = infra_79_existence_of_parts (done) applied to infra_79_tail (open) and infra_79_retraction_pair (open); the other paper steps infra_79_lift_isolate, infra_79_descent, infra_79_identify are DONE (all with only propext, Classical.choice, Quot.sound). Statement unchanged (Lean def infra_79_existence_statement): exists a tail T such that for mu in T, X at mu and finite p over X (host any level) there are Y >= X at mu and b with AllDominated f hf p.idx b and SameGaloisType p (asTuple f hf b) refl refl. Previous: Open (cycle 68; Lean def infra_79_existence_statement). Exists a tail T such that for mu in T, X at mu and finite p over X (host any level) there are Y >= X at mu and b with AllDominated f hf p.idx b and SameGaloisType p (asTuple f hf b) refl refl. Paper proof (Theorem 7.9): lift X by a presentation arrow to a much larger level lambda and apply proposition_7_8 there with theta = nu (DONE); Corollary 6.16 retractions r_j : U -> A (j < nu) almost fixing A (DONE); mixed LS closure to a level-nu pair A' <= U' containing I_p, b with r_j[U'] in A' (closure under nu maps, countably many rounds); lemma_6_17 (tied, DONE) gives tp(b,d/A) = free lift of tp(b,d/A'); downward transfer (lemma_7_6_tied, DONE) gives isolation of tp(b,d/A') relative to b for every bounded d in U'; anchors + bounded diagram homogeneity give A' ~ X and transport (infra_78_anchor_iso / iso_rename pattern). Likely split: lift_isolate, retraction_pair, descent, identify. Tail must make Prop 7.8 (at lambda), lemma_6_17 (at nu and lambda) and the anchor isomorphism available.",
    "path": "main"
   },
   {
@@ -3163,9 +3163,9 @@
    "label": "Thm 7.9 embedding clause, ambient above the level of X",
    "section": 7,
    "file": "AEC/Section7/Theorem79.lean",
-   "status": "done",
+   "status": "blocked",
    "blocker": null,
-   "detail": "DONE cycle 69 (theorem infra_79_primeness_mixed : infra_79_primeness_mixed_statement P, statement unchanged). Level-mu copy N0 -> N over X of b' (infra_612_exists_level_copy_arrow); Yb ~ copy via infra_612_galois_trans_last_base twice (through p and through N); infra_75_embed into N0; compose with N0 -> N. Axioms: propext, Classical.choice, Quot.sound. Previous: Open (cycle 68; Lean def infra_79_primeness_mixed_statement). Paper: Theorem 7.9 embedding 'with the mixed-level conventions of Proposition 7.5' (the target may be at a larger eligible level). Lean proposition_7_5 has only the same-level target. Planned route: take a level-mu strong sub-object N0 of the level-nu ambient N containing g(X) and b' (the sub-presentation construction of infra_612_exists_level_copy, exposing the arrow r : N0 -> N over X with r(b0') = b'), get Yb ~ N0b0' by tests through p and N (to_sameD chain + infra_612_same_galois at mu), apply infra_79_primeness_same_level into N0, and compose with r.",
+   "detail": "CASCADE-BLOCKED on infra_79_primeness_same_level (proof itself sorry-free; not done while a hard predecessor is open). DONE cycle 69 (theorem infra_79_primeness_mixed : infra_79_primeness_mixed_statement P, statement unchanged). Level-mu copy N0 -> N over X of b' (infra_612_exists_level_copy_arrow); Yb ~ copy via infra_612_galois_trans_last_base twice (through p and through N); infra_75_embed into N0; compose with N0 -> N. Axioms: propext, Classical.choice, Quot.sound. Previous: Open (cycle 68; Lean def infra_79_primeness_mixed_statement). Paper: Theorem 7.9 embedding 'with the mixed-level conventions of Proposition 7.5' (the target may be at a larger eligible level). Lean proposition_7_5 has only the same-level target. Planned route: take a level-mu strong sub-object N0 of the level-nu ambient N containing g(X) and b' (the sub-presentation construction of infra_612_exists_level_copy, exposing the arrow r : N0 -> N over X with r(b0') = b'), get Yb ~ N0b0' by tests through p and N (to_sameD chain + infra_612_same_galois at mu), apply infra_79_primeness_same_level into N0, and compose with r.",
    "path": "main"
   },
   {
@@ -3193,9 +3193,9 @@
    "label": "Thm 7.9 lift X to a closed level lambda > nu and isolate (Prop 7.8, theta = nu)",
    "section": 7,
    "file": "AEC/Section7/Theorem79Existence.lean",
-   "status": "done",
+   "status": "blocked",
    "blocker": null,
-   "detail": "DONE cycle 70. For nu in infra_78_closedTail, X at nu, finite p with p.nu = nu, and closed lambda > nu: presentation arrow iota : X -> B at lambda, mixed tied free lift of p (infra_78_tied_free_lift_mixed, reindexed to p.idx), Prop 7.8 at lambda with theta = nu (infra_78_marginal_general_level). Output in the form of infra_78_marginal_identify_level: bounded diagrams of the restricted upper mark equal those of p, IsTiedFreeMixed iota (q|X) q refl, and every tp(b,c/B), |c| <= nu, isolated relative to b. Axioms: propext, Classical.choice, Quot.sound.",
+   "detail": "CASCADE-BLOCKED on proposition_7_8 (proof itself sorry-free; not done while a hard predecessor is open). DONE cycle 70. For nu in infra_78_closedTail, X at nu, finite p with p.nu = nu, and closed lambda > nu: presentation arrow iota : X -> B at lambda, mixed tied free lift of p (infra_78_tied_free_lift_mixed, reindexed to p.idx), Prop 7.8 at lambda with theta = nu (infra_78_marginal_general_level). Output in the form of infra_78_marginal_identify_level: bounded diagrams of the restricted upper mark equal those of p, IsTiedFreeMixed iota (q|X) q refl, and every tp(b,c/B), |c| <= nu, isolated relative to b. Axioms: propext, Classical.choice, Quot.sound.",
    "path": "main"
   },
   {
@@ -3213,9 +3213,9 @@
    "label": "Thm 7.9 descent: isolation over A descends to A' (Lemma 6.17 + mixed Lemma 7.6)",
    "section": 7,
    "file": "AEC/Section7/Theorem79Existence.lean",
-   "status": "done",
+   "status": "blocked",
    "blocker": null,
-   "detail": "DONE cycle 70. Level-lambda pair A <= U, level-nu pair A' <= U' (nu <= lambda, both in infra_615_closed and infra_78_closedTail), commuting square, nu arrows r_i : U -> A almost fixing A with r_i[U'] in A'. If every tp(b,c/A), |c| < nu, is isolated relative to b, then U' is all-dominated over A' + b' (AllDominated, statement exactly Def of all-dominated). Proof: infra_617_tied_from_retractions (tied Lemma 6.17) + infra_617_same_galois + infra_78_tied_descent_mixed with fragment parameter max(aleph0,|b,c|) < nu (infra_79_closedTail_sigma2). Axioms: propext, Classical.choice, Quot.sound.",
+   "detail": "CASCADE-BLOCKED on lemma_7_6 (proof itself sorry-free; not done while a hard predecessor is open). DONE cycle 70. Level-lambda pair A <= U, level-nu pair A' <= U' (nu <= lambda, both in infra_615_closed and infra_78_closedTail), commuting square, nu arrows r_i : U -> A almost fixing A with r_i[U'] in A'. If every tp(b,c/A), |c| < nu, is isolated relative to b, then U' is all-dominated over A' + b' (AllDominated, statement exactly Def of all-dominated). Proof: infra_617_tied_from_retractions (tied Lemma 6.17) + infra_617_same_galois + infra_78_tied_descent_mixed with fragment parameter max(aleph0,|b,c|) < nu (infra_79_closedTail_sigma2). Axioms: propext, Classical.choice, Quot.sound.",
    "path": "main"
   },
   {
@@ -3233,9 +3233,9 @@
    "label": "Thm 7.9 existence clause from its parts",
    "section": 7,
    "file": "AEC/Section7/Theorem79Existence.lean",
-   "status": "done",
+   "status": "blocked",
    "blocker": null,
-   "detail": "DONE cycle 70. infra_79_existence_of_parts P : infra_79_tail_statement P AND infra_79_retraction_pair_statement P -> infra_79_existence_statement P, on the tail infra_78_closedTail P INTER infra_615_closed P: level-mu copy p' of p (infra_612_exists_level_copy), closed lambda > mu, lift_isolate, retraction pair, descent, identify, renaming along phi (infra_78_iso_rename_asTuple), and p ~ p' ~ b' (infra_612_galois_trans_cross_level_right_base). theorem_7_9 is now `refine infra_79_of_existence P (infra_79_existence_of_parts P ?_); sorry`. Axioms: propext, Classical.choice, Quot.sound.",
+   "detail": "CASCADE-BLOCKED on infra_79_lift_isolate (proof itself sorry-free; not done while a hard predecessor is open). DONE cycle 70. infra_79_existence_of_parts P : infra_79_tail_statement P AND infra_79_retraction_pair_statement P -> infra_79_existence_statement P, on the tail infra_78_closedTail P INTER infra_615_closed P: level-mu copy p' of p (infra_612_exists_level_copy), closed lambda > mu, lift_isolate, retraction pair, descent, identify, renaming along phi (infra_78_iso_rename_asTuple), and p ~ p' ~ b' (infra_612_galois_trans_cross_level_right_base). theorem_7_9 is now `refine infra_79_of_existence P (infra_79_existence_of_parts P ?_); sorry`. Axioms: propext, Classical.choice, Quot.sound.",
    "path": "main"
   },
   {
@@ -3283,9 +3283,9 @@
    "label": "Lemma 7.11 successor step",
    "section": 7,
    "file": "AEC/Section7/Lemma711Induction.lean",
-   "status": "done",
+   "status": "blocked",
    "blocker": "infra_711_succ_product (open); assembly done",
-   "detail": "cycle 83: infra_711_successor = successor_of_product(succ_product); axioms clean",
+   "detail": "CASCADE-BLOCKED on infra_75_product_free_level, infra_711_succ_assembly (proof itself sorry-free; not done while a hard predecessor is open). cycle 83: infra_711_successor = successor_of_product(succ_product); axioms clean",
    "path": "main"
   },
   {
@@ -3313,9 +3313,9 @@
    "label": "Prop 7.5(3) tied, actual coupling, level joints",
    "section": 7,
    "file": "AEC/Section7/ProductFreeLevel.lean",
-   "status": "done",
+   "status": "blocked",
    "blocker": "",
-   "detail": "Proved (cycle 80): infra_75_product_free_level (tests reduction + free evaluation). Axioms clean. Narrowed (cycle 79) to levels also closed at infra_75_wide P σ; the general infra_75_product_free stays tracked.",
+   "detail": "CASCADE-BLOCKED on lemma_7_2 (proof itself sorry-free; not done while a hard predecessor is open). Proved (cycle 80): infra_75_product_free_level (tests reduction + free evaluation). Axioms clean. Narrowed (cycle 79) to levels also closed at infra_75_wide P σ; the general infra_75_product_free stays tracked.",
    "path": "main"
   },
   {
@@ -3323,9 +3323,9 @@
    "label": "Lemma 7.12(1): product-independent lists have all-dominated-increment tied chains",
    "section": 7,
    "file": "AEC/Section7/Lemma712Products.lean",
-   "status": "done",
+   "status": "blocked",
    "blocker": null,
-   "detail": "PROVED cycle 87/88. lemma_7_12_existence: at mu in closedTail, 615closed, recursionClosedLevels P aleph0 (+succ), recursionClosedLevels P (wide P aleph0) (+succ) gives infra_712_existence_at (verbatim clause (1) of lemma_7_12). Cycle 88: lemma_7_12_existence_tail gives the paper form 'at sufficiently closed eligible levels': on the tail infra_712_levels P = closedTail ∩ 615closed ∩ {wide P aleph0 < mu} (infra_712_levels_tail, from infra_79_tail) every hypothesis holds (615closed gives recursionClosedLevels at every smaller infinite size: infra_712_recursionClosed_of_615). No weakening: lemma_7_12 is itself 'exists tail T'. Axioms clean.",
+   "detail": "CASCADE-BLOCKED on theorem_7_9 (proof itself sorry-free; not done while a hard predecessor is open). PROVED cycle 87/88. lemma_7_12_existence: at mu in closedTail, 615closed, recursionClosedLevels P aleph0 (+succ), recursionClosedLevels P (wide P aleph0) (+succ) gives infra_712_existence_at (verbatim clause (1) of lemma_7_12). Cycle 88: lemma_7_12_existence_tail gives the paper form 'at sufficiently closed eligible levels': on the tail infra_712_levels P = closedTail ∩ 615closed ∩ {wide P aleph0 < mu} (infra_712_levels_tail, from infra_79_tail) every hypothesis holds (615closed gives recursionClosedLevels at every smaller infinite size: infra_712_recursionClosed_of_615). No weakening: lemma_7_12 is itself 'exists tail T'. Axioms clean.",
    "path": "main"
   },
   {
@@ -3333,9 +3333,9 @@
    "label": "Lemma 7.12(2): lists with tied chains and equal marginals have one whole amalgam",
    "section": 7,
    "file": "AEC/Section7/Lemma712Uniqueness.lean",
-   "status": "done",
+   "status": "blocked",
    "blocker": null,
-   "detail": "PROVED cycle 89: clause (2) of lemma_7_12 via lemma_7_12_of_marks from infra_712u_marks. Axioms clean.",
+   "detail": "CASCADE-BLOCKED on theorem_7_9 (proof itself sorry-free; not done while a hard predecessor is open). PROVED cycle 89: clause (2) of lemma_7_12 via lemma_7_12_of_marks from infra_712u_marks. Axioms clean.",
    "path": "main"
   },
   {
@@ -3343,9 +3343,9 @@
    "label": "Lemma 7.12(2) for bounded individual tuples",
    "section": 7,
    "file": "AEC/Section7/Results.lean",
-   "status": "done",
+   "status": "blocked",
    "blocker": null,
-   "detail": "PROVED cycle 90 (sorry-free; axioms propext, Classical.choice, Quot.sound). AEC/Section7/Results.lean lemma_7_12_bounded = 7.12(2) with each entry bounded (#(indexAt i) < mu, no TupleList.FiniteEach), total lengths <= mu, tied witnessing chains, same successive marginals ==> SameGaloisType L.whole L'.whole (one amalgam identifies the entire lists; a bounded total list is the special case). Refactor: TupleList finiteness is now the class TupleList.FiniteEach (carried by lemma_7_11 / lemma_7_12 clause 1-2, matching 'finite tuples'). Proof: infra_712b_chain_succ (successor at arity sigma = max(#idx, aleph0) < mu), the Lemma712Common packed recursion under infra_712b_Bnd, and infra_712u_common/marks generalized to bounded entries.",
+   "detail": "CASCADE-BLOCKED on lemma_7_12_uniqueness (proof itself sorry-free; not done while a hard predecessor is open). PROVED cycle 90 (sorry-free; axioms propext, Classical.choice, Quot.sound). AEC/Section7/Results.lean lemma_7_12_bounded = 7.12(2) with each entry bounded (#(indexAt i) < mu, no TupleList.FiniteEach), total lengths <= mu, tied witnessing chains, same successive marginals ==> SameGaloisType L.whole L'.whole (one amalgam identifies the entire lists; a bounded total list is the special case). Refactor: TupleList finiteness is now the class TupleList.FiniteEach (carried by lemma_7_11 / lemma_7_12 clause 1-2, matching 'finite tuples'). Proof: infra_712b_chain_succ (successor at arity sigma = max(#idx, aleph0) < mu), the Lemma712Common packed recursion under infra_712b_Bnd, and infra_712u_common/marks generalized to bounded entries.",
    "path": "main"
   },
   {
@@ -3363,9 +3363,9 @@
    "label": "Prop 7.5(3) level: free evaluation of x on bounded tests from Y",
    "section": 7,
    "file": "AEC/Section7/ProductFreeLevel.lean",
-   "status": "done",
+   "status": "blocked",
    "blocker": "",
-   "detail": "Proved (cycle 80): infra_75_free_eval_level = glue(eval_product, eval_project). Axioms clean.",
+   "detail": "CASCADE-BLOCKED on infra_75_eval_product (proof itself sorry-free; not done while a hard predecessor is open). Proved (cycle 80): infra_75_free_eval_level = glue(eval_product, eval_project). Axioms clean.",
    "path": "main"
   },
   {
@@ -3383,9 +3383,9 @@
    "label": "7.5(3) steps (i)-(iii): x has tied product with (b,Z) over X for every bounded test Z ⊆ Y",
    "section": "7",
    "file": "AEC/Section7/ProductFreeLevel.lean",
-   "status": "done",
+   "status": "blocked",
    "blocker": "",
-   "detail": "Proved (cycle 80): infra_75_eval_product via infra_75_product_extend: re-realize x⊗b with x and a tied free lift y_b into x.host (indep_level_joints), level-μ amalgam (infra_78_same_level_type_amalgam), carry c along, Lemma 7.2 tied (infra_73_tied_of_isolated, isolation from AllDominated) makes (y_b, c) tied free; helpers infra_75_tiedFree_base_congr, infra_75_tiedFree_target_push. Axioms clean.",
+   "detail": "CASCADE-BLOCKED on lemma_7_2 (proof itself sorry-free; not done while a hard predecessor is open). Proved (cycle 80): infra_75_eval_product via infra_75_product_extend: re-realize x⊗b with x and a tied free lift y_b into x.host (indep_level_joints), level-μ amalgam (infra_78_same_level_type_amalgam), carry c along, Lemma 7.2 tied (infra_73_tied_of_isolated, isolation from AllDominated) makes (y_b, c) tied free; helpers infra_75_tiedFree_base_congr, infra_75_tiedFree_target_push. Axioms clean.",
    "path": "main"
   },
   {
@@ -3403,9 +3403,9 @@
    "label": "7.11 successor from the product over M_i",
    "section": "7",
    "file": "AEC/Section7/Lemma711Successor.lean",
-   "status": "done",
+   "status": "blocked",
    "blocker": "",
-   "detail": "Proved (cycle 80): infra_711_successor_of_product: IH + level 7.5(3) (infra_75_product_free_level) + infra_78_tiedFree_trans. The successor statement and infra_711_induction tail now use closure at infra_75_wide P ℵ₀ (paper: sufficiently closed). The IsTiedFree/IsTiedFreeMixed adapter is definitional at ν = μ (no lemma needed).",
+   "detail": "CASCADE-BLOCKED on infra_75_product_free_level (proof itself sorry-free; not done while a hard predecessor is open). Proved (cycle 80): infra_711_successor_of_product: IH + level 7.5(3) (infra_75_product_free_level) + infra_78_tiedFree_trans. The successor statement and infra_711_induction tail now use closure at infra_75_wide P ℵ₀ (paper: sufficiently closed). The IsTiedFree/IsTiedFreeMixed adapter is definitional at ν = μ (no lemma needed).",
    "path": "main"
   },
   {
@@ -3413,9 +3413,9 @@
    "label": "7.11 successor: x and b_i have tied product over M_i",
    "section": "7",
    "file": "AEC/Section7/Lemma711Successor.lean",
-   "status": "done",
+   "status": "blocked",
    "blocker": "infra_711_succ_pair (open), infra_711_succ_base_change (open); glue infra_711_succ_product_of_parts done",
-   "detail": "cycle 83: infra_711_succ_product = succ_product_of_parts(succ_pair, succ_base_change); axioms clean",
+   "detail": "CASCADE-BLOCKED on infra_711_succ_base_change (proof itself sorry-free; not done while a hard predecessor is open). cycle 83: infra_711_succ_product = succ_product_of_parts(succ_pair, succ_base_change); axioms clean",
    "path": "main"
   },
   {
@@ -3433,9 +3433,9 @@
    "label": "7.11 successor: products lift freely to M_i",
    "section": "7",
    "file": "AEC/Section7/Lemma711Successor.lean",
-   "status": "done",
+   "status": "blocked",
    "blocker": "",
-   "detail": "cycle 83: infra_711_succ_base_change (Lemma711Successor.lean): base change level-joints 6.12 with p=tp(x/A), q=tp(b_i/A), joint=(x,b_i) over A; tp(b_i/M_i) pushed into x's host (target_push) and reindexed (infra_711_tiedFree_base_equiv); axioms clean",
+   "detail": "CASCADE-BLOCKED on infra_75_eval_product (proof itself sorry-free; not done while a hard predecessor is open). cycle 83: infra_711_succ_base_change (Lemma711Successor.lean): base change level-joints 6.12 with p=tp(x/A), q=tp(b_i/A), joint=(x,b_i) over A; tp(b_i/M_i) pushed into x's host (target_push) and reindexed (infra_711_tiedFree_base_equiv); axioms clean",
    "path": "main"
   },
   {
@@ -3453,9 +3453,9 @@
    "label": "7.12(1) pre-chain construction",
    "section": 7,
    "file": "AEC/Section7/Lemma712Existence.lean",
-   "status": "done",
+   "status": "blocked",
    "blocker": null,
-   "detail": "infra_712_prechain_statement PROVED cycle 86: infra_712_prechain_of_recursion P (infra_712_recursion P) (successor infra_712_succ, limit infra_712_limit, recursion infra_712_recursion). Axioms clean.",
+   "detail": "CASCADE-BLOCKED on theorem_7_9 (proof itself sorry-free; not done while a hard predecessor is open). infra_712_prechain_statement PROVED cycle 86: infra_712_prechain_of_recursion P (infra_712_recursion P) (successor infra_712_succ, limit infra_712_limit, recursion infra_712_recursion). Axioms clean.",
    "path": "main"
   },
   {
@@ -3463,9 +3463,9 @@
    "label": "7.12(1) freeness of marks",
    "section": 7,
    "file": "AEC/Section7/Lemma712Existence.lean",
-   "status": "done",
+   "status": "blocked",
    "blocker": null,
-   "detail": "PROVED cycle 87: infra_712_free_marks := infra_712_free_marks_of_step P (infra_712_free_step P).",
+   "detail": "CASCADE-BLOCKED on infra_712_free_step (proof itself sorry-free; not done while a hard predecessor is open). PROVED cycle 87: infra_712_free_marks := infra_712_free_marks_of_step P (infra_712_free_step P).",
    "path": "main"
   },
   {
@@ -3473,9 +3473,9 @@
    "label": "7.12(1) one freeness step",
    "section": 7,
    "file": "AEC/Section7/Lemma712Existence.lean",
-   "status": "done",
+   "status": "blocked",
    "blocker": null,
-   "detail": "PROVED cycle 87: infra_712_free_step := infra_712_free_step_of_products P (infra_712_products P).",
+   "detail": "CASCADE-BLOCKED on lemma_7_11 (proof itself sorry-free; not done while a hard predecessor is open). PROVED cycle 87: infra_712_free_step := infra_712_free_step_of_products P (infra_712_products P).",
    "path": "main"
   },
   {
@@ -3493,9 +3493,9 @@
    "label": "7.12(1) successor step",
    "section": 7,
    "file": "AEC/Section7/Lemma712Existence.lean",
-   "status": "done",
+   "status": "blocked",
    "blocker": null,
-   "detail": "infra_712_succ PROVED cycle 85c: at a 7.9 level, X mapped into N by g, finite b' in N => all-dominated f : X -> Y with b realizing tp(b'/X), and h : Y -> N over X with h b = b'. Uses infra_79_existence_at (level-wise 7.9 existence, factored out of infra_79_existence_of_parts) and infra_79_primeness_same_level. Axioms: propext, Classical.choice, Quot.sound.",
+   "detail": "CASCADE-BLOCKED on theorem_7_9 (proof itself sorry-free; not done while a hard predecessor is open). infra_712_succ PROVED cycle 85c: at a 7.9 level, X mapped into N by g, finite b' in N => all-dominated f : X -> Y with b realizing tp(b'/X), and h : Y -> N over X with h b = b'. Uses infra_79_existence_at (level-wise 7.9 existence, factored out of infra_79_existence_of_parts) and infra_79_primeness_same_level. Axioms: propext, Classical.choice, Quot.sound.",
    "path": "main"
   },
   {
@@ -3513,9 +3513,9 @@
    "label": "7.12(1) recursion assembly",
    "section": 7,
    "file": "AEC/Section7/Lemma712Recursion.lean",
-   "status": "done",
+   "status": "blocked",
    "blocker": null,
-   "detail": "infra_712_recursion PROVED cycle 86 (AEC/Section7/Lemma712Recursion.lean): stages = StrongSub L.host (level-mu object + strong embedding into L.host; subset = range), built by infra_78_coherent_chain_engine (WellFounded.fix, maps Unit, Arr = subset); scheme arrows = factorEmbedding through the larger stage, strong by K.coherence (no new axiom/field); successors infra_712_succ, limits infra_712_limit (image of the union = union of images); marks = preimages of L.val; top = L.host, listToTop = id. Axioms: propext, Classical.choice, Quot.sound.",
+   "detail": "CASCADE-BLOCKED on infra_712_succ (proof itself sorry-free; not done while a hard predecessor is open). infra_712_recursion PROVED cycle 86 (AEC/Section7/Lemma712Recursion.lean): stages = StrongSub L.host (level-mu object + strong embedding into L.host; subset = range), built by infra_78_coherent_chain_engine (WellFounded.fix, maps Unit, Arr = subset); scheme arrows = factorEmbedding through the larger stage, strong by K.coherence (no new axiom/field); successors infra_712_succ, limits infra_712_limit (image of the union = union of images); marks = preimages of L.val; top = L.host, listToTop = id. Axioms: propext, Classical.choice, Quot.sound.",
    "path": "main"
   },
   {
@@ -3803,9 +3803,9 @@
    "label": "Thm 7.13 (3) level-wise",
    "section": 7,
    "file": "AEC/Section7/Prop78General.lean",
-   "status": "done",
+   "status": "blocked",
    "blocker": null,
-   "detail": "PROVED cycle 94 (axioms clean; moved to Prop78General.lean): finite + infinite cases. | Open, not started (cycle 91) per instruction. infra_713_realize_statement: all-dominated Y over X + b realizing tp(b/X), mapped over X, b into an ambient containing L. Needs the general bounded-mark Prop 7.8 / Thm 7.9 (cf. infra_78_def77_bounded_marks, soft) -- hard. | Cycle 93 split: glue proved (case on Finite L.whole.idx); finite case done (infra_713_realize_finite), infinite case is the open tip infra_713_realize_infinite. Paper statement unchanged.",
+   "detail": "CASCADE-BLOCKED on infra_713_realize_finite (proof itself sorry-free; not done while a hard predecessor is open). PROVED cycle 94 (axioms clean; moved to Prop78General.lean): finite + infinite cases. | Open, not started (cycle 91) per instruction. infra_713_realize_statement: all-dominated Y over X + b realizing tp(b/X), mapped over X, b into an ambient containing L. Needs the general bounded-mark Prop 7.8 / Thm 7.9 (cf. infra_78_def77_bounded_marks, soft) -- hard. | Cycle 93 split: glue proved (case on Finite L.whole.idx); finite case done (infra_713_realize_finite), infinite case is the open tip infra_713_realize_infinite. Paper statement unchanged.",
    "path": "main"
   },
   {
@@ -4003,9 +4003,9 @@
    "label": "Thm 7.13 (3) for a finite list",
    "section": 7,
    "file": "AEC/Section7/Theorem713.lean",
-   "status": "done",
+   "status": "blocked",
    "blocker": null,
-   "detail": "PROVED cycle 93 (axioms clean): Finite L.whole.idx; infra_79_existence_at (levels infra_712_levels subset closedTail and 615_closed) + infra_79_primeness_same_level with N = L.host, h = id.",
+   "detail": "CASCADE-BLOCKED on infra_79_existence (proof itself sorry-free; not done while a hard predecessor is open). PROVED cycle 93 (axioms clean): Finite L.whole.idx; infra_79_existence_at (levels infra_712_levels subset closedTail and 615_closed) + infra_79_primeness_same_level with N = L.host, h = id.",
    "path": "main"
   },
   {
@@ -4153,9 +4153,9 @@
    "label": "Prop 7.5(3) (paper clause, tail form)",
    "section": 7,
    "file": "AEC/Section7/ProductFreeLevel.lean",
-   "status": "done",
+   "status": "blocked",
    "blocker": null,
-   "detail": "PROVED cycle 93 (axioms clean). English: 'Let Y be all-dominated over X + b at a sufficiently closed eligible level µ. ... 3. In an actual coupling, if a bounded tuple x has product with b over X, then tp(x/Y) is free from X.' Tail of levels closed at sigma and at infra_75_wide P sigma (a function of sigma: 'sufficiently closed'); actual coupling x.nu = mu; tied product/freeness. From infra_75_product_free_level. | OFF-PATH (Nov 19): not a hard-edge ancestor of theorem_1_2/theorem_1_3; no further work (ruling: prove only what the goal theorems use).",
+   "detail": "CASCADE-BLOCKED on infra_75_product_free_level (proof itself sorry-free; not done while a hard predecessor is open). PROVED cycle 93 (axioms clean). English: 'Let Y be all-dominated over X + b at a sufficiently closed eligible level µ. ... 3. In an actual coupling, if a bounded tuple x has product with b over X, then tp(x/Y) is free from X.' Tail of levels closed at sigma and at infra_75_wide P sigma (a function of sigma: 'sufficiently closed'); actual coupling x.nu = mu; tied product/freeness. From infra_75_product_free_level. | OFF-PATH (Nov 19): not a hard-edge ancestor of theorem_1_2/theorem_1_3; no further work (ruling: prove only what the goal theorems use).",
    "path": "off"
   },
   {
@@ -4493,9 +4493,9 @@
    "label": "Lemma 8.2 (1) for the Prop 5.6 scheme: every object sits in a marked pair",
    "section": 8,
    "file": "AEC/Section8/MarkedPairExists.lean",
-   "status": "done",
+   "status": "blocked",
    "blocker": null,
-   "detail": "PROVED cycle 94 (axioms clean): for SingleModelData and any StationaryPrescription, on infra_78_closedTail ∩ infra_615_closed, infra_79_existence_at gives an all-dominated realization of the prescribed (finite) mark; e = id. Covers the first clause of lemma_8_2 for P.scheme; lemma_8_2 itself stays blocked (arbitrary WorkingScheme statement; pair isomorphism clause).",
+   "detail": "CASCADE-BLOCKED on theorem_7_9 (proof itself sorry-free; not done while a hard predecessor is open). PROVED cycle 94 (axioms clean): for SingleModelData and any StationaryPrescription, on infra_78_closedTail ∩ infra_615_closed, infra_79_existence_at gives an all-dominated realization of the prescribed (finite) mark; e = id. Covers the first clause of lemma_8_2 for P.scheme; lemma_8_2 itself stays blocked (arbitrary WorkingScheme statement; pair isomorphism clause).",
    "path": "main"
   },
   {
@@ -4513,9 +4513,9 @@
    "label": "Lean lemma_8_2 statement for the Prop 5.6 scheme",
    "section": 8,
    "file": "AEC/Section8/MarkedPairExists.lean",
-   "status": "done",
+   "status": "blocked",
    "blocker": null,
-   "detail": "PROVED cycle 94 (axioms clean). Not lemma_8_2 itself: that is stated for an arbitrary WorkingScheme (Section 8 is applied to the derived schemes C^b, so specializing to P.scheme would narrow it). Audit note: the Lean lemma_8_2 asks only for a MarkedArrow extending e, while the English asks for an isomorphism of pairs plus the pointed iff clause, orbit preservation and mixed reflection. | OFF-PATH (Nov 19): not a hard-edge ancestor of theorem_1_2/theorem_1_3; no further work (ruling: prove only what the goal theorems use).",
+   "detail": "CASCADE-BLOCKED on infra_82_marked_pair_exists (proof itself sorry-free; not done while a hard predecessor is open). PROVED cycle 94 (axioms clean). Not lemma_8_2 itself: that is stated for an arbitrary WorkingScheme (Section 8 is applied to the derived schemes C^b, so specializing to P.scheme would narrow it). Audit note: the Lean lemma_8_2 asks only for a MarkedArrow extending e, while the English asks for an isomorphism of pairs plus the pointed iff clause, orbit preservation and mixed reflection. | OFF-PATH (Nov 19): not a hard-edge ancestor of theorem_1_2/theorem_1_3; no further work (ruling: prove only what the goal theorems use).",
    "path": "off"
   },
   {
@@ -4523,9 +4523,9 @@
    "label": "Lean lemma_8_3 statement for the Prop 5.6 scheme",
    "section": 8,
    "file": "AEC/Section8/MarkedPairExists.lean",
-   "status": "done",
+   "status": "blocked",
    "blocker": null,
-   "detail": "PROVED cycle 94 (axioms clean): F := P.template; marked pair over the coded E(I) (infra_82_marked_pair_exists); M.Y ≅ E(I) by SingleModelData.categorical. Not lemma_8_3 itself (arbitrary WorkingScheme). Audit note: Lean lemma_8_3 only asks F(I) ≅ M.Y for some marked pair M; the English template presents the whole pair (X, Y, b) and every marked pair at such a level is isomorphic to a value.",
+   "detail": "CASCADE-BLOCKED on infra_82_marked_pair_exists (proof itself sorry-free; not done while a hard predecessor is open). PROVED cycle 94 (axioms clean): F := P.template; marked pair over the coded E(I) (infra_82_marked_pair_exists); M.Y ≅ E(I) by SingleModelData.categorical. Not lemma_8_3 itself (arbitrary WorkingScheme). Audit note: Lean lemma_8_3 only asks F(I) ≅ M.Y for some marked pair M; the English template presents the whole pair (X, Y, b) and every marked pair at such a level is isomorphic to a value.",
    "path": "main"
   },
   {
@@ -15597,6 +15597,6 @@
    "kind": "hard"
   }
  ],
- "doneCount": 829,
+ "doneCount": 793,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

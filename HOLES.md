@@ -394,11 +394,11 @@ Waits on Section 5 working package. Lean: later Results import this module.
 | `lemma_6_5` | Lemma 6.5 | `AEC/Section6/Results.lean` (**done**: no `sorryAx`; `placedComparisons` in `PlacedComparisons.lean`: `exists_placedComparison` (`exists_boundedDiagramLift`), `placedComparison_unique` (`Placement.LiftsBounded.agreeOn_univ`), `placedComparison_agree_iff_tests` (← `agreeOn_univ_of_tests`, → `Placement.LiftsBounded.same_of_agreeOn`). Statement repair: dropped `SameGaloisType`/`Tail`/`WorkingScheme` and the monotone-only `g`; presentation-level under `ClosedLevel K E D g μ`, with existence, uniqueness over all of `A`, and the testing iff at bounded levels `ρ < μ` with `#β ≤ g σ + ls K`. Hard `4.10→6.5`, `4.8→6.5`, `6.3→6.5`; `6.4→6.5` kept hard) |
 | `theorem_6_6` | Theorem 6.6 | `AEC/Section6/Results.lean` (**done**: no `sorryAx`; packages `ClosedLevel.amalgamation` and `ClosedLevel.tuple_amalgamation_iff`. Statement repair: dropped bare `WorkingScheme`/`SameGaloisType`/unconstrained `g`; presentation-level under `ClosedLevel K E D g μ`. Hard `4.11→6.6`; soft `6.5→6.6`) |
 | `corollary_6_7` | Corollary 6.7 | `AEC/Section6/Results.lean` (**done**: no `sorryAx`; `exists_strong_embedding_into_larger`, `exists_strong_embedding_into_larger_base`, `exists_actual_nu_type` in `LargerLevelRealization.lean`: chart `N ≅ E(Below μ)`, suborder `S` of size `ν` covering the images of `A` and the tuple (`exists_suborder_cover`), `ClosedLevel.exists_tuple_amalgam` at `ν`, then `exists_strong_embedding_over` at `ν` into the chart of `N`. Statement repair: dropped bare `WorkingScheme`/`Tail`/`SystemArrow`; presentation-level under `ClosedLevel` at `ν < μ`, with realization, prescribed tuple (tests `#β ≤ g(#α ⊔ ℵ₀) + ls K` at `ρ < ν`) and actual `ν`-types. Hard `4.11→6.7`; soft `6.6→6.7`) |
-| `infra_55_one_point_cut` | Infra: one-point cut | `AEC/Section5/OrderPatternRealization.lean` (**open**) |
-| `infra_55_enumerate_added` | Infra: enumerate added | `AEC/Section5/OrderPatternRealization.lean` (**open**) |
-| `infra_55_pattern_realize` | Infra: pattern realize | `AEC/Section5/OrderPatternRealization.lean` (**open**: was `order_pattern_realized_over_old`) |
-| `infra_69_present_padded` | Infra: present padded | `AEC/Section6/UniformApproximations.lean` (**open**) |
-| `infra_69_chart_iso` | Infra: chart iso | `AEC/Section6/UniformApproximations.lean` (**open**) |
+| `infra_55_one_point_cut` | Infra: one-point cut | `AEC/Section5/OrderPatternRealization.lean` (**done**) |
+| `infra_55_enumerate_added` | Infra: enumerate added | `AEC/Section5/OrderPatternRealization.lean` (**done**) |
+| `infra_55_pattern_realize` | Infra: pattern realize | `AEC/Section5/OrderPatternRealization.lean` (**done**: was `order_pattern_realized_over_old`) |
+| `infra_69_present_padded` | Infra: present padded | `AEC/Section6/UniformApproximations.lean` (**done**) |
+| `infra_69_chart_iso` | Infra: chart iso | `AEC/Section6/UniformApproximations.lean` (**done**) |
 | `infra_69_place_type` | Infra: place type | `AEC/Section6/UniformApproximations.lean` (**done**: placement ≤τ on the IsPadded well-ordered skeleton; that skeleton does not fill cuts) |
 | `infra_69_pad_recursion` | Infra: σ⁺ profile recursion | `AEC/Section6/PaddedPlacement.lean` (**done**: `β₀`, `2^β+σ+b`, suprema at limits) |
 | `infra_69_pad_recursion_closed` | Infra: recursion below the level | `AEC/Section6/PaddedPlacement.lean` (**done**: the hypothesis, not a `{D.t,g}`-closure theorem) |
@@ -408,25 +408,25 @@ Waits on Section 5 working package. Lean: later Results import this module.
 | `infra_69_pad_stage_card` | Infra: σ⁺ stage cardinals | `AEC/Section6/PaddedPlacement.lean` (**done**: stages and their union stay under the recursion) |
 | `infra_69_pad_obstruction` | Infra: padded profile obstruction | `AEC/Section6/PaddedPlacement.lean` (**done**: `σ⁺` first-time events; reuses inert continuation, no-event comparison, event codes, local placement) |
 | `infra_69_place_on_fills` | Infra: place on cut-filling chart | `AEC/Section6/UniformApproximations.lean` (**done**: under `infra_69_pad_recursion_closed`; one `Placement` over the padded chart lifting joints of size at most `max σ τ`) |
-| `infra_69_shared_supports` | Infra: shared supports | `AEC/Section6/UniformApproximations.lean` (**open**) |
-| `infra_69_cut_clusters` | Infra: cut clusters | `AEC/Section6/UniformApproximations.lean` (**open**) |
-| `infra_69_separators` | Infra: separators | `AEC/Section6/UniformApproximations.lean` (**open**) |
-| `infra_69_include_shared` | Infra: include shared | `AEC/Section6/UniformApproximations.lean` (**open**) |
-| `infra_69_anchor_bound` | Infra: anchor bound | `AEC/Section6/UniformApproximations.lean` (**open**) |
-| `infra_69_slot_assignment` | Infra: slot assignment | `AEC/Section6/UniformApproximations.lean` (**open**) |
-| `infra_69_disjoint_regions` | Infra: disjoint regions | `AEC/Section6/UniformApproximations.lean` (**open**) |
-| `infra_69_copy_cluster` | Infra: copy cluster | `AEC/Section6/UniformApproximations.lean` (**open**) |
-| `infra_69_richness_arity` | Infra: richness arity | `AEC/Section6/UniformApproximations.lean` (**open**) |
-| `infra_69_interpret_copies` | Infra: interpret copies | `AEC/Section6/UniformApproximations.lean` (**open**) |
-| `infra_69_choose_supports` | Infra: choose supports | `AEC/Section6/UniformApproximations.lean` (**open**) |
-| `infra_69_whole_block_diff` | Infra: whole-block diff | `AEC/Section6/UniformApproximations.lean` (**open**) |
-| `infra_69_no_internal_hits` | Infra: no internal hits | `AEC/Section6/UniformApproximations.lean` (**open**) |
+| `infra_69_shared_supports` | Infra: shared supports | `AEC/Section6/UniformApproximations.lean` (**done**) |
+| `infra_69_cut_clusters` | Infra: cut clusters | `AEC/Section6/UniformApproximations.lean` (**done**) |
+| `infra_69_separators` | Infra: separators | `AEC/Section6/UniformApproximations.lean` (**done**) |
+| `infra_69_include_shared` | Infra: include shared | `AEC/Section6/UniformApproximations.lean` (**done**) |
+| `infra_69_anchor_bound` | Infra: anchor bound | `AEC/Section6/UniformApproximations.lean` (**done**) |
+| `infra_69_slot_assignment` | Infra: slot assignment | `AEC/Section6/UniformApproximations.lean` (**done**) |
+| `infra_69_disjoint_regions` | Infra: disjoint regions | `AEC/Section6/UniformApproximations.lean` (**done**) |
+| `infra_69_copy_cluster` | Infra: copy cluster | `AEC/Section6/UniformApproximations.lean` (**done**) |
+| `infra_69_richness_arity` | Infra: richness arity | `AEC/Section6/UniformApproximations.lean` (**done**) |
+| `infra_69_interpret_copies` | Infra: interpret copies | `AEC/Section6/UniformApproximations.lean` (**done**) |
+| `infra_69_choose_supports` | Infra: choose supports | `AEC/Section6/UniformApproximations.lean` (**done**) |
+| `infra_69_whole_block_diff` | Infra: whole-block diff | `AEC/Section6/UniformApproximations.lean` (**done**) |
+| `infra_69_no_internal_hits` | Infra: no internal hits | `AEC/Section6/UniformApproximations.lean` (**done**) |
 | `infra_69_lem61_off_hits` | Infra: Lem 6.1 off hits | `AEC/Section6/UniformApproximations.lean` (**done**: `SameNaturalDiagram` by `lemma_4_6_blockInterchange` on `ChartOffHit` / `CopyInterchange` in `OffHitBlock.lean`. Statement narrowed: the scheme sentence is `OffHitCopyDiagramEq`) |
 | `infra_69_off_hit_diagramEq` | Infra: off-hit DiagramEq | `AEC/Section6/UniformApproximations.lean` (**done**: `OffHitCopyDiagramEq` on `SingleModelData`. `ChartOffHit.readCopy` is the occurrence reading of `movedJoint`; `Placement.Lifts`, `SameNaturalDiagram.same`, and `diagramEq_iff_sameD` give `D(vᵢ, Z) = p↾Z`. Caller supplies `hplaced` and `hread`) |
-| `infra_69_hit_bound` | Infra: hit bound | `AEC/Section6/UniformApproximations.lean` (**open**) |
-| `infra_69_finitary_exceptions` | Infra: finitary exceptions | `AEC/Section6/UniformApproximations.lean` (**open**) |
-| `infra_69_subtuple_uniform` | Infra: subtuple uniform | `AEC/Section6/UniformApproximations.lean` (**open**) |
-| `infra_69_uniformity_bounds` | Infra: uniformity bounds | `AEC/Section6/UniformApproximations.lean` (**open**) |
+| `infra_69_hit_bound` | Infra: hit bound | `AEC/Section6/UniformApproximations.lean` (**done**) |
+| `infra_69_finitary_exceptions` | Infra: finitary exceptions | `AEC/Section6/UniformApproximations.lean` (**done**) |
+| `infra_69_subtuple_uniform` | Infra: subtuple uniform | `AEC/Section6/UniformApproximations.lean` (**done**) |
+| `infra_69_uniformity_bounds` | Infra: uniformity bounds | `AEC/Section6/UniformApproximations.lean` (**done**) |
 | `infra_69_assemble` | Infra: assemble approx seq | `AEC/Section6/UniformApproximations.lean` (**done** under `infra_69_pad_recursion_closed`: `present_padded`, chart equivalence, `place_on_fills`, `support_copy_sequence`) |
 | `infra_69_recursion_tail` | Infra: recursion-closed tail | `AEC/Section6/UniformApproximations.lean` (**done**: eligible levels closed under `{D.t, g}` and under the `σ⁺` profile recursion at every smaller test size) |
 | `infra_69_transfer_tuple` | Infra: push occurrences | `AEC/Section6/UniformApproximations.lean` (**done**: occurrence list along a carrier equivalence) |
@@ -512,27 +512,27 @@ Lean: imports `AEC.Section6.Results`.
 
 | Decl | Title | Location |
 |------|-------|----------|
-| `lemma_7_2` | Lemma 7.2 | `AEC/Section7/Results.lean` (**done**: Path A `lemma_7_2`; English form `lemma_7_2_tied` via `infra_72_over_B_isolation` under tied-free `u`-marginal) |
+| `lemma_7_2` | Lemma 7.2 | `AEC/Section7/Results.lean` (**blocked** on `fid_72_mixed_sentence` (CASCADE-BLOCKED); proof sorry-free, was done: Path A `lemma_7_2`; English form `lemma_7_2_tied` via `infra_72_over_B_isolation` under tied-free `u`-marginal) |
 | `proposition_7_3` | Proposition 7.3 | `AEC/Section7/Results.lean` (done: Path A dichotomy green; English uniform shrink `proposition_7_3_uniform` in `BlockRestriction.lean` = `proposition_7_3_uniform_of_block` + `infra_73_block_restriction`) |
-| `proposition_7_5` | Proposition 7.5 | `AEC/Section7/Results.lean` (**done**: clauses 1–2) |
+| `proposition_7_5` | Proposition 7.5 | `AEC/Section7/Results.lean` (**blocked** on `proposition_7_3`, `fid_75_clauses` (CASCADE-BLOCKED); proof sorry-free, was done: clauses 1–2) |
 | `lemma_7_6` | Lemma 7.6 | `AEC/Section7/Results.lean` (done: Path A push-only green; English arbitrary-fragment form `lemma_7_6_tied` in `TiedDescent.lean`) |
-| `proposition_7_8` | Proposition 7.8 | `AEC/Section7/Results.lean` (**done**, cycle 67, statement unchanged: `infra_78_closedTail` + `infra_78_marginal_general_level`; no `sorryAx`); cycle 95: restated with the English "more generally" bounded-mark clause (Def 7.7 hypothesis), proved by `infra_78_general` |
-| `theorem_7_9` | Theorem 7.9 | `AEC/Section7/Results.lean` (**done**; cycle 95: restated to include the English "More generally this holds for a bounded marginal satisfying Definition 7.7" clause (existence + embedding, ambient at any level `ν ≥ μ`), proved by `infra_79_existence_general` and bounded primeness; axioms clean) |
-| `infra_79_existence` | Thm 7.9 existence of an all-dominated realization | [`RetractionPair.lean`](AEC/Section7/RetractionPair.lean) (**done**, cycle 72; `infra_79_existence_of_parts` on `infra_79_tail` + `infra_79_retraction_pair`; statement `infra_79_existence_statement` unchanged) |
-| `infra_79_primeness_same_level` | Thm 7.9 embedding into a same-level ambient | [`Theorem79.lean`](AEC/Section7/Theorem79.lean) (**done**, cycle 68; `infra_612_galois_trans_mid_any` + `infra_75_embed`) |
-| `infra_79_primeness_mixed` | Thm 7.9 embedding into an ambient above the level of `X` | [`Theorem79.lean`](AEC/Section7/Theorem79.lean) (**done**, cycle 69; level-`μ` copy `N0 → N`, `infra_612_galois_trans_last_base`, `infra_75_embed`) |
+| `proposition_7_8` | Proposition 7.8 | `AEC/Section7/Results.lean` (**blocked** on `proposition_7_3` (CASCADE-BLOCKED); proof sorry-free, was done, cycle 67, statement unchanged: `infra_78_closedTail` + `infra_78_marginal_general_level`; no `sorryAx`); cycle 95: restated with the English "more generally" bounded-mark clause (Def 7.7 hypothesis), proved by `infra_78_general` |
+| `theorem_7_9` | Theorem 7.9 | `AEC/Section7/Results.lean` (**blocked** on `proposition_7_8`, `fid_79_clauses` (CASCADE-BLOCKED); proof sorry-free, was done; cycle 95: restated to include the English "More generally this holds for a bounded marginal satisfying Definition 7.7" clause (existence + embedding, ambient at any level `ν ≥ μ`), proved by `infra_79_existence_general` and bounded primeness; axioms clean) |
+| `infra_79_existence` | Thm 7.9 existence of an all-dominated realization | [`RetractionPair.lean`](AEC/Section7/RetractionPair.lean) (**blocked** on `infra_79_existence_of_parts` (CASCADE-BLOCKED); proof sorry-free, was done, cycle 72; `infra_79_existence_of_parts` on `infra_79_tail` + `infra_79_retraction_pair`; statement `infra_79_existence_statement` unchanged) |
+| `infra_79_primeness_same_level` | Thm 7.9 embedding into a same-level ambient | [`Theorem79.lean`](AEC/Section7/Theorem79.lean) (**blocked** on `proposition_7_5` (CASCADE-BLOCKED); proof sorry-free, was done, cycle 68; `infra_612_galois_trans_mid_any` + `infra_75_embed`) |
+| `infra_79_primeness_mixed` | Thm 7.9 embedding into an ambient above the level of `X` | [`Theorem79.lean`](AEC/Section7/Theorem79.lean) (**blocked** on `infra_79_primeness_same_level` (CASCADE-BLOCKED); proof sorry-free, was done, cycle 69; level-`μ` copy `N0 → N`, `infra_612_galois_trans_last_base`, `infra_75_embed`) |
 | `infra_612_exists_level_copy_arrow` | level-`μ` copy of a tuple with its arrow into the original host | [`Theorem79.lean`](AEC/Section7/Theorem79.lean) (**done**, cycle 69) |
 | `infra_612_galois_trans_last_base` | Galois transitivity, last host at `μ`, first and middle at any level | [`Theorem79.lean`](AEC/Section7/Theorem79.lean) (**done**, cycle 69) |
 | `infra_79_assemble` | Thm 7.9 from its parts | [`Theorem79.lean`](AEC/Section7/Theorem79.lean) (**done**, cycle 68) |
 | `infra_612_galois_trans_mid_any` | Galois transitivity, ends at `μ`, middle at any level | [`Theorem79.lean`](AEC/Section7/Theorem79.lean) (**done**, cycle 68) |
-| `infra_79_lift_isolate` | Thm 7.9 lift to a closed `λ > ν`, Prop 7.8 there with `θ = ν` | [`Theorem79Existence.lean`](AEC/Section7/Theorem79Existence.lean) (**done**, cycle 70; presentation arrow, `infra_78_tied_free_lift_mixed`, `infra_78_marginal_general_level`) |
+| `infra_79_lift_isolate` | Thm 7.9 lift to a closed `λ > ν`, Prop 7.8 there with `θ = ν` | [`Theorem79Existence.lean`](AEC/Section7/Theorem79Existence.lean) (**blocked** on `proposition_7_8` (CASCADE-BLOCKED); proof sorry-free, was done, cycle 70; presentation arrow, `infra_78_tied_free_lift_mixed`, `infra_78_marginal_general_level`) |
 | `infra_79_tiedFreeMixed_right_congr` | mixed tied freeness along a Galois type of the upper tuple | [`Theorem79Existence.lean`](AEC/Section7/Theorem79Existence.lean) (**done**, cycle 70) |
-| `infra_79_descent` | Thm 7.9 descent: isolation over `A` to all-dominated over `A' + b'` | [`Theorem79Existence.lean`](AEC/Section7/Theorem79Existence.lean) (**done**, cycle 70; tied Lemma 6.17 + mixed Lemma 7.6 `infra_78_tied_descent_mixed`) |
+| `infra_79_descent` | Thm 7.9 descent: isolation over `A` to all-dominated over `A' + b'` | [`Theorem79Existence.lean`](AEC/Section7/Theorem79Existence.lean) (**blocked** on `lemma_7_6` (CASCADE-BLOCKED); proof sorry-free, was done, cycle 70; tied Lemma 6.17 + mixed Lemma 7.6 `infra_78_tied_descent_mixed`) |
 | `infra_79_identify` | Thm 7.9 `φ : X ≅ A'` carrying the marginal of `b'` to `p` | [`Theorem79Existence.lean`](AEC/Section7/Theorem79Existence.lean) (**done**, cycle 70; `infra_78_tied_at_mixed` sequence + `infra_78_marginal_identify_level`) |
-| `infra_79_existence_of_parts` | Thm 7.9 existence clause from tail + retraction pair | [`Theorem79Existence.lean`](AEC/Section7/Theorem79Existence.lean) (**done**, cycle 70; tail `infra_78_closedTail ∩ infra_615_closed`) |
+| `infra_79_existence_of_parts` | Thm 7.9 existence clause from tail + retraction pair | [`Theorem79Existence.lean`](AEC/Section7/Theorem79Existence.lean) (**blocked** on `infra_79_lift_isolate` (CASCADE-BLOCKED); proof sorry-free, was done, cycle 70; tail `infra_78_closedTail ∩ infra_615_closed`) |
 | `infra_79_retraction_pair` | Thm 7.9 level-`ν` pair `A' ≤ U'` closed under `ν` Cor 6.16 retractions | [`RetractionPair.lean`](AEC/Section7/RetractionPair.lean) (**done**, cycle 72; `ν` of the `λ` Cor 6.16 retractions, `ω`-chain of `infra_78_mixed_ls_pair` stages (`Classical.epsilon`), `infra_78_factor_arrow` chain arrows, `infra_78_theta_union` over `ULift ℕ`) |
 | `infra_79_tail` | Thm 7.9 tail: `infra_78_closedTail ∩ infra_615_closed` unbounded | [`Theorem79Existence.lean`](AEC/Section7/Theorem79Existence.lean) (**done**, cycle 71; witness `⨆ n, infra_78_closedTower P κ n` is in both sets by `infra_78_closedTower_sup_mem` (`ClosureLevel.lean`); no `ω`-sup closure assumed) |
-| `lemma_7_11` | Lemma 7.11 | `AEC/Section7/Results.lean` (**done**, cycle 83; tied statement unchanged since cycle 73, matches the English; proof `infra_711_induction P (infra_711_successor P)`; `#print axioms`: propext, Classical.choice, Quot.sound) |
+| `lemma_7_11` | Lemma 7.11 | `AEC/Section7/Results.lean` (**blocked** on `theorem_7_9` (CASCADE-BLOCKED); proof sorry-free, was done, cycle 83; tied statement unchanged since cycle 73, matches the English; proof `infra_711_induction P (infra_711_successor P)`; `#print axioms`: propext, Classical.choice, Quot.sound) |
 | `infra_711_tied_chain` | Def 7.10 tied list-linked chain | [`TiedListChain.lean`](AEC/Section7/TiedListChain.lean) (**done**, cycle 73; `free` = tied `tp(bᵢ/Mᵢ) = tp(bᵢ/A)^fr`) |
 | `infra_711_limit` | Lemma 7.11 limit step | [`Lemma711Limit.lean`](AEC/Section7/Lemma711Limit.lean) (**done**, cycle 73b; stages below `j` as a `SameLevelChain` via `Ordinal.enum`, union `M_j`; second clause of the tied Prop 6.13) |
 | `infra_711_successor` | Lemma 7.11 successor step | [`Lemma711Successor.lean`](AEC/Section7/Lemma711Successor.lean) **done** (cycle 83; `infra_711_successor` = `infra_711_successor_of_product` ∘ `infra_711_succ_product`, axioms clean) |
@@ -541,7 +541,7 @@ Lean: imports `AEC.Section6.Results`.
 | `infra_711_succ_pair` | 7.11: `(x, bᵢ)` has tied products with selections below `i` | **done** (cycle 83; `infra_711_succ_pair`, axioms clean) |
 | `infra_711_succ_base_change` | 7.11: products lift freely to `Mᵢ` | **done** (cycle 83; `infra_711_succ_base_change`, axioms clean) |
 | `infra_711_succ_product_glue` | 7.11: product over `Mᵢ` from its parts | **done** (cycle 81) |
-| `infra_75_product_free_level` | Prop 7.5(3) tied, actual coupling, level joints | [`ProductFreeLevel.lean`](AEC/Section7/ProductFreeLevel.lean) (**done**, cycle 80: `infra_75_product_free_level`; levels also closed at `infra_75_wide P σ`) |
+| `infra_75_product_free_level` | Prop 7.5(3) tied, actual coupling, level joints | [`ProductFreeLevel.lean`](AEC/Section7/ProductFreeLevel.lean) (**blocked** on `lemma_7_2` (CASCADE-BLOCKED); proof sorry-free, was done, cycle 80: `infra_75_product_free_level`; levels also closed at `infra_75_wide P σ`) |
 | `infra_75_tests_reduction` | Prop 7.5(3) level: testing reduction | [`ProductFreeLevel.lean`](AEC/Section7/ProductFreeLevel.lean) (**done**, cycle 77; `infra_75_tiedFree_of_tests`, `infra_75_product_free_level_of_eval`; bounded tests via `infra_73_differing_test`, no amalgam) |
 | `infra_75_free_eval_level` | Prop 7.5(3) level: free evaluation on bounded tests | **done** (cycle 80: glue of `infra_75_eval_product` + `infra_75_eval_project`) |
 | `infra_75_eval_product` | 7.5(3) (i)-(iii): x has tied product with (b,Z) over X, every bounded test Z | **done** (cycle 80: `infra_75_eval_product` via `infra_75_product_extend`; level-μ amalgam + Lemma 7.2 tied, no large amalgam) |
@@ -549,14 +549,14 @@ Lean: imports `AEC.Section6.Results`.
 | `infra_75_free_eval_glue` | free evaluation from the two steps | **done** (`infra_75_free_eval_of_parts`) |
 | `infra_75_product_free` | Prop 7.5(3) tied: product with `b` + all-dominated `Y` ⇒ `tp(x/Y)` free from `X` | **open**, off-path (cycle 93: closure at `σ` only; the paper clause is `proposition_7_5_product_free`, **done**) |
 | `infra_612_finiteLevel_exists` | Prop 6.12 (5,6) soundness: level-form finite products exist | `AEC/Section6/ProductTied.lean` (**done** cycle 93; soft edge into `proposition_6_12`) |
-| `proposition_7_5_product_free` | Prop 7.5(3), paper clause (tail of sufficiently closed levels) | `AEC/Section7/ProductFreeLevel.lean` (**done** cycle 93) |
+| `proposition_7_5_product_free` | Prop 7.5(3), paper clause (tail of sufficiently closed levels) | `AEC/Section7/ProductFreeLevel.lean` (**blocked** on `infra_75_product_free_level` (CASCADE-BLOCKED); proof sorry-free, was done cycle 93) |
 | `infra_711_induction` | Lemma 7.11 induction assembly | [`Lemma711Induction.lean`](AEC/Section7/Lemma711Induction.lean) (**done**, cycle 75; `lemma_7_11` from `infra_711_successor_statement`; first stage via `infra_711_tiedFree_of_bijective`, limit via tied 6.13) |
-| `lemma_7_12` | Lemma 7.12 | `AEC/Section7/Results.lean` (**done**, cycle 89: sorry-free, axioms propext / Classical.choice / Quot.sound; restated cycle 76 to the tied notions: `ProductIndependentTied`, `TiedListWitnessingChain`) |
+| `lemma_7_12` | Lemma 7.12 | `AEC/Section7/Results.lean` (**blocked** on `lemma_7_11`, `lemma_7_12_existence`, `lemma_7_12_uniqueness`, `lemma_7_12_bounded` (CASCADE-BLOCKED); proof sorry-free, was done, cycle 89: sorry-free, axioms propext / Classical.choice / Quot.sound; restated cycle 76 to the tied notions: `ProductIndependentTied`, `TiedListWitnessingChain`) |
 | `lemma_7_12_existence` | Lemma 7.12(1) | done (cycle 87/88): lemma_7_12_existence + lemma_7_12_existence_tail (tail infra_712_levels) |
 | `infra_712_prechain` | 7.12(1) pre-chain construction | **done** (cycle 86; `infra_712_prechain_of_recursion P (infra_712_recursion P)`) |
 | `infra_712_succ` | 7.12(1) successor step | **done** (cycle 85c; `infra_712_succ` via level-wise `infra_79_existence_at` + `infra_79_primeness_same_level`; axioms clean) |
 | `infra_712_limit` | 7.12(1) limit step | **done** (cycle 85d; `infra_712_limit` via `infra_78_chain_union_kappa`; axioms clean) |
-| `infra_712_recursion` | 7.12(1) recursion assembly | [`Lemma712Recursion.lean`](AEC/Section7/Lemma712Recursion.lean) (**done**, cycle 86; strong subsets of `L.host` via the chain engine; factor arrows strong by coherence; axioms clean) |
+| `infra_712_recursion` | 7.12(1) recursion assembly | [`Lemma712Recursion.lean`](AEC/Section7/Lemma712Recursion.lean) (**blocked** on `infra_712_succ` (CASCADE-BLOCKED); proof sorry-free, was done, cycle 86; strong subsets of `L.host` via the chain engine; factor arrows strong by coherence; axioms clean) |
 | `infra_712_free_marks` | 7.12(1) all marks free | done (cycle 87): AEC/Section7/Lemma712Products.lean |
 | `infra_712_free_step` | 7.12(1) one freeness step | done (cycle 87): AEC/Section7/Lemma712Products.lean |
 | `infra_712_products` | 7.12(1) products of `bᵢ` with earlier marks | done (cycle 87): AEC/Section7/Lemma712Products.lean |
@@ -565,7 +565,7 @@ Lean: imports `AEC.Section6.Results`.
 | `lemma_7_12_bounded` | Lemma 7.12(2), bounded individual tuples | **done** (cycle 90, sorry-free; `TupleList.FiniteEach` refactor) |
 | `infra_712b_free_pull` | 7.12(2) bounded: `free_pull_of_lt` | **done** (cycle 90) |
 | `infra_712b_chain_succ` | 7.12(2) bounded: successor step at arity `max(#idx, ℵ₀) < μ` | **done** (cycle 90) |
-| `theorem_7_13` | Theorem 7.13 | `AEC/Section7/Results.lean` (**done**, cycle 94, sorry-free: lift, continuity, realize; restated cycle 90 to tied notions; Def 7.7 tail ⊆ `infra_78_closedTail` per ruling (a)) |
+| `theorem_7_13` | Theorem 7.13 | `AEC/Section7/Results.lean` (**blocked** on `lemma_7_12` (CASCADE-BLOCKED); proof sorry-free, was done, cycle 94, sorry-free: lift, continuity, realize; restated cycle 90 to tied notions; Def 7.7 tail ⊆ `infra_78_closedTail` per ruling (a)) |
 | `infra_713_unique_short` | Thm 7.13 (1a), `|δ| ≤ μ` | **done** (cycle 90, `Theorem713.lean`) |
 | `infra_713_unique_long` | Thm 7.13 (1a), `|δ| > μ` | **done** (cycle 91, `infra_713_unique`) |
 | `infra_713_lift` | Thm 7.13 (1b) | **done** (cycle 92: both halves proved) |
@@ -586,7 +586,7 @@ Lean: imports `AEC.Section6.Results`.
 | `infra_713_productTied_base_change_mixed` / `infra_713_finite_base_change_mixed` / `infra_713_tiedFreeMixed_base_sameGalois` | mixed base change and source transfer | **done** (cycle 93) |
 | `infra_713_tied_move_mixed` | mixed tied move | **done** (cycle 93) |
 | `infra_713_tiedFree_reindex_mixed` | finite projections of mixed tied free lifts | **done** (cycle 93) |
-| `infra_713_realize` | Thm 7.13 (3) | [`Prop78General.lean`](AEC/Section7/Prop78General.lean) (**done**, cycle 94: finite + infinite cases) |
+| `infra_713_realize` | Thm 7.13 (3) | [`Prop78General.lean`](AEC/Section7/Prop78General.lean) (**blocked** on `infra_713_realize_finite` (CASCADE-BLOCKED); proof sorry-free, was done, cycle 94: finite + infinite cases) |
 | `infra_713_realize_finite` | Thm 7.13 (3), finite list | **done** (cycle 93, via Thm 7.9 at the level) |
 | `infra_713_realize_infinite` | Thm 7.13 (3), infinite list | [`Prop78General.lean`](AEC/Section7/Prop78General.lean) (**done**, cycle 94, from `infra_79_general`) |
 | `infra_79_general` | Thm 7.9 general form (bounded marginal with Def 7.7) | [`Prop78General.lean`](AEC/Section7/Prop78General.lean) (**done**, cycle 94: `infra_79_existence_at_bounded` + `infra_79_general_primeness`) |
@@ -602,9 +602,9 @@ Lean: imports `Section5.Results` and `Section6.Results`. Soft paper chain after 
 | Decl | Title | Location |
 |------|-------|----------|
 | `lemma_8_2` | Lemma 8.2 | `AEC/Section8/Results.lean:76` (restated to the English, cycle 95) |
-| `infra_82_marked_pair_exists` | Lemma 8.2 (1), Prop 5.6 scheme: every object sits in a marked pair | [`MarkedPairExists.lean`](AEC/Section8/MarkedPairExists.lean) (**done**, cycle 94) |
+| `infra_82_marked_pair_exists` | Lemma 8.2 (1), Prop 5.6 scheme: every object sits in a marked pair | [`MarkedPairExists.lean`](AEC/Section8/MarkedPairExists.lean) (**blocked** on `theorem_7_9` (CASCADE-BLOCKED); proof sorry-free, was done, cycle 94) |
 | `infra_82_pair_extend` | Lemma 8.2 (2), Prop 5.6 scheme: base embedding extends to a marked-pair arrow | [`MarkedPairExists.lean`](AEC/Section8/MarkedPairExists.lean) (**done**, cycle 94: `infra_82_pair_extend_same_level`) |
-| `infra_82_lemma_8_2_single` | Lean `lemma_8_2` statement for `W := P.scheme` | [`MarkedPairExists.lean`](AEC/Section8/MarkedPairExists.lean) (**done**, cycle 94; `lemma_8_2` itself, over an arbitrary scheme, stays open) |
+| `infra_82_lemma_8_2_single` | Lean `lemma_8_2` statement for `W := P.scheme` | [`MarkedPairExists.lean`](AEC/Section8/MarkedPairExists.lean) (**blocked** on `infra_82_marked_pair_exists` (CASCADE-BLOCKED); proof sorry-free, was done, cycle 94; `lemma_8_2` itself, over an arbitrary scheme, stays open) |
 | `infra_8_general_calculus` | Sections 6–7 calculus for a general working scheme | `AEC/Section8/Results.lean` (blocked; needed by restated 8.2–8.5) |
 | `infra_81_prescription_iso` | Def 8.1 prescription commutes with isomorphisms | `AEC/Section8/StationaryPrescription.lean` (**done**, cycle 95: `StationaryPrescription.CommutesWithIso` hypothesis predicate) |
 | `infra_82_mixed_reflection` | Lemma 8.2 clause (5), mixed-level reflection | `AEC/Section8/Results.lean` (blocked; both_off for `P.scheme`) |
@@ -616,7 +616,7 @@ Lean: imports `Section5.Results` and `Section6.Results`. Soft paper chain after 
 | `infra_82_pair_extend_mixed` | Cross-level marked-pair extension for `P.scheme` | [`Lemma83Single.lean`](AEC/Section8/Lemma83Single.lean) (**done**, cycle 95) |
 | `infra_83_lemma_8_3_full_single` | Lemma 8.3 for `P.scheme`, faithful (cycle 101) form `Lemma83Conclusion` | [`Lemma83Single.lean`](AEC/Section8/Lemma83Single.lean) (open, cycle 101; stated with sorry) |
 | `infra_83_lemma_8_3_weak_single` | Weaker cycle-95 form of Lemma 8.3 for `P.scheme` (vertexwise isos only) | [`Lemma83Single.lean`](AEC/Section8/Lemma83Single.lean) (**done**, cycle 95; weaker than the English) |
-| `infra_83_lemma_8_3_single` | Lean `lemma_8_3` statement for `W := P.scheme` | [`MarkedPairExists.lean`](AEC/Section8/MarkedPairExists.lean) (**done**, cycle 94, categoricity; `lemma_8_3` itself stays open) |
+| `infra_83_lemma_8_3_single` | Lean `lemma_8_3` statement for `W := P.scheme` | [`MarkedPairExists.lean`](AEC/Section8/MarkedPairExists.lean) (**blocked** on `infra_82_marked_pair_exists` (CASCADE-BLOCKED); proof sorry-free, was done, cycle 94, categoricity; `lemma_8_3` itself stays open) |
 | `infra_85_lemma_8_5_single` | Lean `lemma_8_5` statement for `W := P.scheme` | [`MarkedPairExists.lean`](AEC/Section8/MarkedPairExists.lean) (**done**, cycle 94, categoricity + pair extension; audit: Lean 8.5 lacks the chain/union clause, restatement needed) |
 | `infra_82_orbit_preservation_single` | Lemma 8.2(4) for `P.scheme`: same-level arrows preserve pair orbits (under Def 8.1 `CommutesWithIso` + `TiedAlong`) | [`TiedAlong.lean`](AEC/Section8/TiedAlong.lean) (**done**, cycle 97) |
 | `infra_82_orbit_criterion_single` | Lemma 8.2(4) reduction for `P.scheme`: base automorphism criterion | [`PairOrbitSingle.lean`](AEC/Section8/PairOrbitSingle.lean) (**done**, cycle 96) |
