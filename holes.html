@@ -656,7 +656,7 @@
 
     (function initHideDoneToggle() {
       const el = document.getElementById("tog-hidedone");
-      el.checked = localStorage.getItem("aec-holes-hide-done") === "1";
+      el.checked = localStorage.getItem("aec-holes-hide-done") !== "0";
       el.addEventListener("change", () => {
         localStorage.setItem("aec-holes-hide-done", el.checked ? "1" : "0");
         redraw();
