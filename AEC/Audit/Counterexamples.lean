@@ -359,13 +359,14 @@ noncomputable def emptyTemplate : TermTemplate tinyAEC.{u} (SystemShape.discrete
   TermTemplate.const (SystemObject.constDiscrete PUnit.{u + 1} ⟨PEmpty.{u + 1}, eStr _⟩
     (⟨fun x => x.elim⟩ : Subsingleton PEmpty.{u + 1}))
 
-/-- **Claim 11.13 is false as formalized.** Its second half (the extension property of `U`) is
+/-- **Claim 11.13 is false as formalized without the presentation clause of Definition 5.2(2)**
+(i.e. for `IsWorkingPackageCore`; the emptied scheme is not a package under `IsWorkingPackage`). Its second half (the extension property of `U`) is
 about arbitrary geometric systems and holds no matter what the scheme is. With the object-free
 scheme the first half is vacuous, and an extension `∅ → pt` with no complementary pieces
 (so the empty list enumerates them) does not embed over `∅` into `∅`. -/
 theorem claim_11_13_false :
     ¬ ∀ (K : AbstractElementaryClass.{u}) (S : SystemShape.{u})
-    (W : WorkingScheme K S) (hpack : IsWorkingPackage W) {n : ℕ}
+    (W : WorkingScheme K S) (hpack : IsWorkingPackageCore W) {n : ℕ}
     {L : Set (Finset (Fin n))},
     ∃ T, ∃ hT : Tail W.eligible T,
       ∀ μ (hμ : μ ∈ T) (Xg Ug : GeometricSystem K n L) (f : GeometricArrow K Xg Ug)
@@ -390,7 +391,7 @@ theorem claim_11_13_false :
   intro H
   obtain ⟨T, hT, hmain⟩ := H tinyAEC.{u} (SystemShape.discrete PUnit.{u + 1})
     (WorkingScheme.emptied emptyTemplate Set.univ (fun κ => ⟨κ, le_rfl, trivial⟩))
-    (WorkingScheme.emptied_isWorkingPackage _ _ _) (n := 0) (L := L0)
+    (WorkingScheme.emptied_isWorkingPackageCore _ _ _) (n := 0) (L := L0)
   obtain ⟨μ, hμ1, hμT⟩ := hT.2 1
   have hι : #PEmpty.{u + 1} < μ := by
     rw [Cardinal.mk_eq_zero]

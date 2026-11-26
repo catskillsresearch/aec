@@ -69,6 +69,11 @@ theorem hasTermPresentations (P : SingleModelData K) : HasTermPresentations P.sc
       intro v
       exact (e.comp eI.symm).bijective
 
+/-- **Proposition 5.6.** The single-model scheme is a working package (Definition 5.2,
+including the presentation clause 5.2(2)). -/
+theorem isWorkingPackage (P : SingleModelData K) : IsWorkingPackage P.scheme :=
+  isWorkingPackage_of_core P.isWorkingPackageCore P.hasTermPresentations
+
 end SingleModelData
 
 end

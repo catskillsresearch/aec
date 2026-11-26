@@ -223,18 +223,19 @@ theorem hasChainUnions_namedWorkingScheme
           rw [← SystemArrow.mapOcc_comp, hfac i0]; exact hZ
         _ = toU.mapOcc (namesU j) := rfl
 
-/-- Full working-package transfer for the named scheme of Proposition 5.7. -/
-theorem isWorkingPackage_namedWorkingScheme
+/-- Working-package transfer (all clauses except the presentation clause of Definition 5.2(2))
+for the named scheme of Proposition 5.7. -/
+theorem isWorkingPackageCore_namedWorkingScheme
     (W : WorkingScheme K S) (hpack : IsWorkingPackage W)
     {μ0 : Cardinal.{u}} {hμ0 : μ0 ∈ W.eligible} (X0 : W.Object μ0 hμ0)
     {ι : Type u} (c : ι → Occurrence K S (W.asSystem hμ0 X0))
     (T : Set Cardinal.{u}) (hT : EligibleSubclass W.eligible T)
     (hι : #ι < μ0) (hTail : ∀ μ ∈ T, μ0 ≤ μ) (hinf : ∀ μ ∈ T, aleph0 ≤ μ) :
-    IsWorkingPackage (namedWorkingScheme W X0 c T hT hι hTail hinf) :=
+    IsWorkingPackageCore (namedWorkingScheme W X0 c T hT hι hTail hinf) :=
   ⟨hasChainUnions_namedWorkingScheme W hpack.1 X0 c T hT hι hTail hinf,
     hasMixedDownward_namedWorkingScheme W hpack.2.1 X0 c T hT hι hTail hinf,
     isSaturated_namedWorkingScheme W hpack.2.2.1 X0 c T hT hι hTail hinf,
-    satisfiesExhaustion_namedWorkingScheme W hpack.2.2.2 X0 c T hT hι hTail hinf⟩
+    satisfiesExhaustion_namedWorkingScheme W hpack.2.2.2.1 X0 c T hT hι hTail hinf⟩
 
 end WorkingScheme
 

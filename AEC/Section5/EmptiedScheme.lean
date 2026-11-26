@@ -50,10 +50,11 @@ def WorkingScheme.emptied (F : TermTemplate K S) (E : Set Cardinal.{u})
   diagram_restrict X := X.elim
   diagram_iso X := X.elim
 
-/-- The emptied scheme vacuously satisfies every working-package clause. -/
-theorem WorkingScheme.emptied_isWorkingPackage (F : TermTemplate K S) (E : Set Cardinal.{u})
+/-- The emptied scheme vacuously satisfies every working-package clause except the
+presentation clause of Definition 5.2(2) (which needs objects `F(I)`). -/
+theorem WorkingScheme.emptied_isWorkingPackageCore (F : TermTemplate K S) (E : Set Cardinal.{u})
     (hE : ∀ κ : Cardinal.{u}, ∃ μ, κ ≤ μ ∧ μ ∈ E) :
-    IsWorkingPackage (WorkingScheme.emptied F E hE) :=
+    IsWorkingPackageCore (WorkingScheme.emptied F E hE) :=
   ⟨⟨fun _ _ _ obj => (obj (Classical.arbitrary _)).elim⟩,
     ⟨fun _ _ X => X.elim⟩, ⟨fun X => X.elim⟩, ⟨fun X => X.elim⟩⟩
 

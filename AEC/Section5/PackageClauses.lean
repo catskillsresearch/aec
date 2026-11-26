@@ -1,6 +1,7 @@
 module
 
 public import AEC.Section5.WorkingScheme
+public import AEC.Section5.PresentationClause
 public import Mathlib.Order.WellFounded
 
 @[expose] public section
@@ -117,10 +118,33 @@ class SatisfiesExhaustion {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}
         (fun i => ⟨(xs i).1, f.onVertex (xs i).1 (xs i).2⟩)) →
     W.permitted (X := X) (Y := Y) f
 
-/-- The four working-package clauses of Definition 5.2 beyond the scheme data. -/
-def IsWorkingPackage {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
+/-- The working-package clauses of Definition 5.2 other than the presentation clause of
+5.2(2): chain unions, mixed downward clause, saturation, exhaustion. -/
+def IsWorkingPackageCore {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
     (W : WorkingScheme K S) : Prop :=
   HasChainUnions W ∧ HasMixedDownward W ∧ IsSaturated W ∧ SatisfiesExhaustion W
+
+/-- **Definition 5.2**: the working-package clauses beyond the scheme data, including the
+presentation clause of 5.2(2) (`HasTermPresentations`: finite-support term template, `F(I)`
+objects, substitution arrows also across levels, every object isomorphic to a well-ordered
+presentation). -/
+def IsWorkingPackage {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
+    (W : WorkingScheme K S) : Prop :=
+  HasChainUnions W ∧ HasMixedDownward W ∧ IsSaturated W ∧ SatisfiesExhaustion W ∧
+    HasTermPresentations W
+
+theorem IsWorkingPackage.core {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
+    {W : WorkingScheme K S} (h : IsWorkingPackage W) : IsWorkingPackageCore W :=
+  ⟨h.1, h.2.1, h.2.2.1, h.2.2.2.1⟩
+
+theorem IsWorkingPackage.presentations {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
+    {W : WorkingScheme K S} (h : IsWorkingPackage W) : HasTermPresentations W :=
+  h.2.2.2.2
+
+theorem isWorkingPackage_of_core {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
+    {W : WorkingScheme K S} (h : IsWorkingPackageCore W) (hp : HasTermPresentations W) :
+    IsWorkingPackage W :=
+  ⟨h.1, h.2.1, h.2.2.1, h.2.2.2, hp⟩
 
 end
 end AEC

@@ -275,8 +275,9 @@ theorem exists_directed_union (hμ : μ ∈ P.eligible) (S : DirectedSystem K.τ
 /-! ## The package -/
 
 variable (P) in
-/-- **Proposition 5.6.** The single-model scheme is a working package. -/
-theorem isWorkingPackage : IsWorkingPackage P.scheme :=
+/-- **Proposition 5.6**, all clauses except the presentation clause (`hasTermPresentations`,
+`SingleModelPresentation.lean`). -/
+theorem isWorkingPackageCore : IsWorkingPackageCore P.scheme :=
   ⟨P.hasChainUnions, P.hasMixedDownward, P.isSaturated, P.satisfiesExhaustion⟩
 
 end SingleModelData

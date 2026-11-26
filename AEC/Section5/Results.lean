@@ -11,6 +11,7 @@ public import AEC.Section5.NamedPackageTransfer
 public import AEC.Section5.NamedRealizationExistence
 public import AEC.Section5.SingleModelScheme
 public import AEC.Section5.SingleModelPackage
+public import AEC.Section5.SingleModelPresentation
 public import AEC.Section4.CountableClosure
 public import AEC.Section4.StableDiagram
 public import Mathlib.Order.WellFoundedSet
@@ -213,6 +214,21 @@ theorem proposition_5_6 (K : AbstractElementaryClass.{u}) (D : StableDiagram K)
   · exact hμ.1.closed D.t (Set.mem_insert _ _)
   · exact hg
 
+/-- **Proposition 5.7, presentation clause** (open). The named scheme with its four
+non-presentation clauses is `namedWorkingScheme` (`isWorkingPackageCore_namedWorkingScheme`);
+Definition 5.2(2) for the named objects needs the paper's template `H ↦ F(J + H)`, where `J`
+is the union of the finite supports of the representations of `c` in a well-ordered chart and
+terms with fixed positions in `J` become new labels (proof of Prop 5.7). -/
+theorem infra_57_named_term_presentations {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
+    (W : WorkingScheme K S) (hpack : IsWorkingPackage W)
+    {μ0 : Cardinal.{u}} {hμ0 : μ0 ∈ W.eligible} (X0 : W.Object μ0 hμ0)
+    {ι : Type u} (c : ι → Occurrence K S (W.asSystem hμ0 X0))
+    (T : Set Cardinal.{u}) (hT : EligibleSubclass W.eligible T)
+    (hι : #ι < μ0) (hTail : ∀ μ ∈ T, μ0 ≤ μ) (hinf : ∀ μ ∈ T, aleph0 ≤ μ) :
+    ∃ S' : SystemShape.{u}, ∃ W' : WorkingScheme K S',
+      IsWorkingPackage W' ∧ W'.eligible = T := by
+  sorry
+
 /-- **Proposition 5.7** (Naming bounded data). On an unbounded class of higher eligible levels,
 the diagram of a fixed bounded list is realized, and those levels carry a working scheme.
 
@@ -251,8 +267,9 @@ theorem proposition_5_7 {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
     have hinf : ∀ μ ∈ T, aleph0 ≤ μ := fun μ hμ => le_sup_right.trans hμ.2
     let W' : WorkingScheme K S :=
       WorkingScheme.namedWorkingScheme W X0 c T hT hι hTail hinf
-    exact ⟨S, W',
-      WorkingScheme.isWorkingPackage_namedWorkingScheme W hpack X0 c T hT hι hTail hinf, rfl⟩
+    have _hcore : IsWorkingPackageCore W' :=
+      WorkingScheme.isWorkingPackageCore_namedWorkingScheme W hpack X0 c T hT hι hTail hinf
+    exact infra_57_named_term_presentations W hpack X0 c T hT hι hTail hinf
 
 /-- **Proposition 5.8** (Obtaining the diagram clause). On a countably closed unbounded supply
 of levels at which objects are isomorphic by permitted arrows, equality of bounded diagrams is

@@ -1,6 +1,6 @@
 {
  "updated": "2026-11-18 cycle 96 (8.2 orbit comparison with mark matching; Lemma84Conclusion; clause (4) and 8.4 single tracked)",
- "sorryCount": 40,
+ "sorryCount": 41,
  "legend": {
   "open": "No unfinished required proof-deps — try next",
   "blocked": "Waiting on incomplete required proof-deps",
@@ -353,9 +353,9 @@
    "label": "Prop 5.7",
    "section": 5,
    "file": "AEC/Section5/Results.lean",
-   "status": "done",
+   "status": "blocked",
    "blocker": null,
-   "detail": "No sorry (axioms: propext, Classical.choice, Quot.sound). Naming tail eligibleTail (μ0 ⊔ ℵ₀); exists_named_realization_of_arrow via wellOrder_arrow + diagram_preserved (NamedRealizationExistence.lean); namedWorkingScheme + isWorkingPackage_namedWorkingScheme (after the Def 5.2 repairs the named scheme takes #ι < μ0 and the tail bounds μ0 ≤ μ, ℵ₀ ≤ μ, which make name-extended lists bounded). Hyps: Convention 5.3, HasPresentations, seed objects. Downstream: Thm 9.3, Prop 10.6, Lem 10.8.",
+   "detail": "BLOCKED Nov 26 on infra_57_named_term_presentations (presentation clause of the named scheme, after IsWorkingPackage gained Def 5.2(2)). No sorry (axioms: propext, Classical.choice, Quot.sound). Naming tail eligibleTail (μ0 ⊔ ℵ₀); exists_named_realization_of_arrow via wellOrder_arrow + diagram_preserved (NamedRealizationExistence.lean); namedWorkingScheme + isWorkingPackage_namedWorkingScheme (after the Def 5.2 repairs the named scheme takes #ι < μ0 and the tail bounds μ0 ≤ μ, ℵ₀ ≤ μ, which make name-extended lists bounded). Hyps: Convention 5.3, HasPresentations, seed objects. Downstream: Thm 9.3, Prop 10.6, Lem 10.8.",
    "path": "main"
   },
   {
@@ -8903,9 +8903,9 @@
    "label": "fid_52_presentation_clause",
    "section": 5,
    "file": "AEC/Section5/PackageClauses.lean",
-   "status": "open",
+   "status": "done",
    "blocker": null,
-   "detail": "FIDELITY GAP (audit Nov 19): Def 5.2(2) presentation clause missing from IsWorkingPackage: HasPresentations is not a conjunct, and as stated it only gives vertexwise isos + some permitted arrow per order embedding. Paper: elements are labels on finite increasing lists (finite support), substitution along order embeddings induces the arrow (incl. mixed levels), every object iso to a well-ordered presentation, natural term diagrams (5.2(3) last sentence). RULED (Lars Nov 19): restate faithfully, later window.",
+   "detail": "FIDELITY GAP (audit Nov 19): Def 5.2(2) presentation clause missing from IsWorkingPackage: HasPresentations is not a conjunct, and as stated it only gives vertexwise isos + some permitted arrow per order embedding. Paper: elements are labels on finite increasing lists (finite support), substitution along order embeddings induces the arrow (incl. mixed levels), every object iso to a well-ordered presentation, natural term diagrams (5.2(3) last sentence). RULED (Lars Nov 19): restate faithfully, later window. | DONE Nov 26: HasTermPresentations (PresentationClause.lean: TermTemplate.FiniteSupport + objects F(I), substitution arrows incl. mixed levels, every object iso to a well-ordered presentation) is the 5th conjunct of IsWorkingPackage; proved for P.scheme (SingleModelPresentation.lean, proposition_5_6 sorry-free). 5.2(3) natural term diagrams is a separate sentence. Prop 5.7's named scheme now needs infra_57_named_term_presentations. Audit claim_11_13_false restated for IsWorkingPackageCore.",
    "path": "main"
   },
   {
@@ -9035,6 +9035,16 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 555: proved."
+  },
+  {
+   "id": "infra_57_named_term_presentations",
+   "label": "Prop 5.7 presentation clause for named scheme",
+   "section": 5,
+   "file": "AEC/Section5/Results.lean",
+   "status": "open",
+   "blocker": null,
+   "detail": "Def 5.2(2) for the named package of Prop 5.7: needs the paper's template H ↦ F(J+H) (J = union of finite supports of c's representations; terms with fixed J positions become labels). The four other clauses are isWorkingPackageCore_namedWorkingScheme. Opened Nov 26 when IsWorkingPackage gained HasTermPresentations.",
+   "path": "main"
   }
  ],
  "edges": [
@@ -15519,6 +15529,11 @@
   {
    "from": "SingleModelData.hasTermPresentations",
    "to": "fid_52_presentation_clause",
+   "kind": "hard"
+  },
+  {
+   "from": "infra_57_named_term_presentations",
+   "to": "proposition_5_7",
    "kind": "hard"
   }
  ],
