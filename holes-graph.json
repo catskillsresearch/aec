@@ -9045,6 +9045,15 @@
    "blocker": null,
    "detail": "Def 5.2(2) for the named package of Prop 5.7: needs the paper's template H ↦ F(J+H) (J = union of finite supports of c's representations; terms with fixed J positions become labels). The four other clauses are isWorkingPackageCore_namedWorkingScheme. Opened Nov 26 when IsWorkingPackage gained HasTermPresentations.",
    "path": "main"
+  },
+  {
+   "id": "exists_split",
+   "label": "Prop 5.7 proof: every increasing list on J ⊕ₗ H splits as fixed J-positions then H-positions (SplitLabel, splitPos, splitPos_strictMono, sumLexEmbedRight_splitPos); first piece of the split-label finite supports of F(J+H)",
+   "section": 8,
+   "file": "AEC/Section5/FixedSupportTerms.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 557: proved."
   }
  ],
  "edges": [
@@ -15535,8 +15544,13 @@
    "from": "infra_57_named_term_presentations",
    "to": "proposition_5_7",
    "kind": "hard"
+  },
+  {
+   "from": "exists_split",
+   "to": "infra_57_named_term_presentations",
+   "kind": "hard"
   }
  ],
- "doneCount": 823,
+ "doneCount": 824,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

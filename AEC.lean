@@ -295,6 +295,7 @@ public import AEC.Section14.Results
 public import AEC.Audit.TinyAEC
 public import AEC.Audit.Counterexamples
 public import AEC.Section5.EmptiedScheme
+public import AEC.Section5.FixedSupportTerms
 public import AEC.Audit.AllSets
 public import AEC.Audit.AllSetsMinimal
 public import AEC.Audit.NoPairs
