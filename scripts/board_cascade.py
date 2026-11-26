@@ -34,6 +34,14 @@ while changed:
             if k is not None:
                 md[k] = md[k].replace('(**done**', f"(**blocked** on `{'`, `'.join(undone)}` ({TAG}); proof sorry-free, was done", 1)
             changed = True; log.append(('blocked', i, undone))
+        elif n.get('status') == 'blocked' and n.get('detail', '').startswith(TAG) and undone:
+            new = f"{TAG} on {', '.join(undone)} (proof itself sorry-free; not done while a hard predecessor is open). "
+            old = re.match(r'^' + TAG + r' on [^)]*\)\. ', n['detail'])
+            if old and old.group(0) != new:
+                n['detail'] = new + n['detail'][old.end():]
+                k = row(i)
+                if k is not None:
+                    md[k] = re.sub(r"\(\*\*blocked\*\* on [^(]*\(" + TAG, f"(**blocked** on `{'`, `'.join(undone)}` ({TAG}", md[k])
         elif n.get('status') == 'blocked' and n.get('detail', '').startswith(TAG) and not undone:
             n['status'] = 'done'
             n['detail'] = re.sub(r'^' + TAG + r' on [^)]*\)\. ', '', n['detail'])
