@@ -6,6 +6,7 @@ public import AEC.Section7.IsolationBound
 public import AEC.Section7.Primness
 public import AEC.Section7.FiniteIsolation
 public import AEC.Section7.AllDominated
+public import AEC.Section7.PrescribedMatch
 public import AEC.Section7.ContinuityCondition
 public import AEC.Section7.ProductIndependent
 public import AEC.Section7.WitnessingChain
@@ -154,9 +155,9 @@ from X."
 
 Clause 1 is stated for targets at any eligible level `ν ≥ µ` (`infra_79_primeness_mixed_bounded`;
 same level `ν = µ` included); clause 3 is `proposition_7_5_product_free`'s content (tied products
-and freeness, actual coupling `x.ν = µ`, closure at `infra_75_wide P σ`). Still open under
-`fid_75_clauses`: the "prescribed bounded tuple match" riders of clauses 1 and 2, and the
-`SingleModelData` packaging (`fid_67_general_package`). -/
+and freeness, actual coupling `x.ν = µ`, closure at `infra_75_wide P σ`). The last two conjuncts
+are the "prescribed bounded tuple match" riders of clauses 1 and 2 (`AllDominated.append`). The
+`SingleModelData` packaging is `fid_67_general_package`. -/
 theorem proposition_7_5 {K : AbstractElementaryClass.{u}} (P : SingleModelData K)
     (σ : Cardinal.{u}) (hσ : ℵ₀ ≤ σ) :
     ∃ T, ∃ hT : Tail P.eligible T,
@@ -191,14 +192,67 @@ theorem proposition_7_5 {K : AbstractElementaryClass.{u}} (P : SingleModelData K
         (∀ x : TupleOver K oneVertexShape P.scheme (Tail.mem hT hμ) Y, x.ν = μ → #x.idx ≤ σ →
           IsProductTied (x.restrict incl hincl) (infra_75_markOver incl hincl x b)
             (infra_75_jointOver incl hincl x b) (Equiv.refl _) →
-          IsTiedFree incl (x.restrict incl hincl) x (Equiv.refl _)) := by
+          IsTiedFree incl (x.restrict incl hincl) x (Equiv.refl _)) ∧
+        -- clause 1, "A prescribed bounded tuple match can be retained whenever its joint type
+        -- with b over X already agrees."
+        (∀ {xIdx : Type u} (x : xIdx → Occurrence K oneVertexShape (P.scheme.asSystem _ Y)),
+          #xIdx < μ →
+          ∀ ν (hν : ν ∈ P.eligible) (N : P.scheme.Object ν hν)
+            (f : SystemArrow K oneVertexShape (P.scheme.asSystem _ X) (P.scheme.asSystem hν N))
+            (hf : P.scheme.permitted (X := X) (Y := N) f)
+            (b' : bIdx → Occurrence K oneVertexShape (P.scheme.asSystem hν N))
+            (x' : xIdx → Occurrence K oneVertexShape (P.scheme.asSystem hν N)),
+            μ ≤ ν →
+            SameGaloisType (asTuple incl hincl (seqJoint b x))
+              (⟨ν, hν, N, f, hf, bIdx ⊕ xIdx, seqJoint b' x'⟩ :
+                TupleOver K oneVertexShape P.scheme (Tail.mem hT hμ) X)
+              (Equiv.refl _) (Equiv.refl _) →
+            ∃ g : SystemArrow K oneVertexShape (P.scheme.asSystem _ Y) (P.scheme.asSystem hν N),
+              P.scheme.permitted (X := Y) (Y := N) g ∧
+              SystemArrow.comp incl g = f ∧
+              (∀ i, g.onVertex (b i).1 (b i).2 = (b' i).2) ∧
+              ∀ j, g.onVertex (x j).1 (x j).2 = (x' j).2) ∧
+        -- clause 2, "The isomorphism may retain a prescribed bounded tuple match of the kind
+        -- just described."
+        (∀ {xIdx : Type u} (x : xIdx → Occurrence K oneVertexShape (P.scheme.asSystem _ Y)),
+          #xIdx < μ →
+          ∀ (Y₂ : P.scheme.Object μ (Tail.mem hT hμ))
+            (incl₂ : SystemArrow K oneVertexShape (P.scheme.asSystem _ X) (P.scheme.asSystem _ Y₂))
+            (hincl₂ : P.scheme.permitted (X := X) (Y := Y₂) incl₂)
+            (b₂ : bIdx → Occurrence K oneVertexShape (P.scheme.asSystem _ Y₂))
+            (x₂ : xIdx → Occurrence K oneVertexShape (P.scheme.asSystem _ Y₂)),
+            AllDominated incl₂ hincl₂ bIdx b₂ →
+            SameGaloisType (asTuple incl hincl (seqJoint b x)) (asTuple incl₂ hincl₂ (seqJoint b₂ x₂))
+              (Equiv.refl _) (Equiv.refl _) →
+            ∃ φ : SystemArrow K oneVertexShape (P.scheme.asSystem _ Y) (P.scheme.asSystem _ Y₂),
+              P.scheme.IsStructIso (X := Y) (Y := Y₂) φ ∧
+              SystemArrow.comp incl φ = incl₂ ∧
+              (∀ i, φ.onVertex (b i).1 (b i).2 = (b₂ i).2) ∧
+              ∀ j, φ.onVertex (x j).1 (x j).2 = (x₂ j).2) := by
   let w : Cardinal.{u} := infra_75_wide P σ
   have hσw : σ ≤ w := le_self_add
   have hw : ℵ₀ ≤ w := hσ.trans hσw
   refine ⟨infra_75_tailSet P w, infra_75_tail P w hw, ?_⟩
   intro μ hμ X Y incl hincl bIdx b hbσ hbμ hAll
   have hμel : μ ∈ P.eligible := hμ.1.1
-  refine ⟨?_, ?_, ?_⟩
+  have hμ0 : ℵ₀ ≤ μ := P.aleph0_le hμel
+  have hbx : ∀ {xIdx : Type u}, #xIdx < μ → #(bIdx ⊕ xIdx) < μ := fun hx => by
+    rw [Cardinal.mk_sum, Cardinal.lift_id, Cardinal.lift_id]
+    exact Cardinal.add_lt_of_lt hμ0 hbμ hx
+  refine ⟨?_, ?_, ?_, ?_, ?_⟩
+  rotate_left 3
+  · intro xIdx x hx ν hν N f hf b' x' _hμν hGal
+    have hθ : ℵ₀ ≤ max (#(bIdx ⊕ xIdx)) ℵ₀ := le_max_right _ _
+    have hθμ : max (#(bIdx ⊕ xIdx)) ℵ₀ < μ := max_lt (hbx hx) (P.aleph0_lt hμel)
+    obtain ⟨g, hg, hc, hv⟩ := infra_79_primeness_mixed_bounded P hμel X
+      (asTuple incl hincl (seqJoint b x)) (max (#(bIdx ⊕ xIdx)) ℵ₀) hθ hθμ (le_max_left _ _)
+      Y incl hincl (seqJoint b x) (hAll.append hμ0 x hx) (SameGaloisType.refl _) ν hν N f hf
+      (seqJoint b' x') hGal
+    exact ⟨g, hg, hc, fun i => hv (Sum.inl i), fun j => hv (Sum.inr j)⟩
+  · intro xIdx x hx Y₂ incl₂ hincl₂ b₂ x₂ hAll₂ hGal
+    obtain ⟨φ, hφ, hc, hv⟩ := infra_75_iso hμel X Y Y₂ incl hincl incl₂ hincl₂ (seqJoint b x)
+      (seqJoint b₂ x₂) (hbx hx) (hAll.append hμ0 x hx) (hAll₂.append hμ0 x₂ hx) hGal
+    exact ⟨φ, hφ, hc, fun i => hv (Sum.inl i), fun j => hv (Sum.inr j)⟩
   · intro ν hν N f hf b' _hμν hGal
     have hθ : ℵ₀ ≤ max (#bIdx) ℵ₀ := le_max_right _ _
     have hθμ : max (#bIdx) ℵ₀ < μ := max_lt hbμ (P.aleph0_lt hμel)

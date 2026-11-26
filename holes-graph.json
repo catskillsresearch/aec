@@ -683,7 +683,7 @@
    "file": "AEC/Section7/Results.lean",
    "status": "blocked",
    "blocker": null,
-   "detail": "CASCADE-BLOCKED on proposition_7_3, fid_75_clauses, infra_75_product_free_level (proof itself sorry-free; not done while a hard predecessor is open). Done for SingleModelData: same-level clause 1 embedding and clause 2 structural iso. Clause 3, mixed-level N, and prescribed tuple match demoted. 0 sorry.",
+   "detail": "CASCADE-BLOCKED on proposition_7_3, infra_75_product_free_level (proof itself sorry-free; not done while a hard predecessor is open). Done for SingleModelData: same-level clause 1 embedding and clause 2 structural iso. Clause 3, mixed-level N, and prescribed tuple match demoted. 0 sorry.",
    "path": "main"
   },
   {
@@ -8933,9 +8933,9 @@
    "label": "fid_75_clauses",
    "section": 7,
    "file": "AEC/Section7/Results.lean",
-   "status": "open",
+   "status": "done",
    "blocker": null,
-   "detail": "FIDELITY GAP (audit Nov 19): proposition_7_5: English clause 3 (product freeness from X), mixed-level targets, and prescribed extra tuple matches are demoted (not in the statement); also SingleModelData/same-level packaging. | Nov 26 partial fix: proposition_7_5 now states clause 1 for targets at any eligible ν ≥ µ (infra_79_primeness_mixed_bounded) and clause 3 (product freeness, from infra_75_product_free_level), axioms clean. STILL OPEN: the 'prescribed bounded tuple match' riders of clauses 1 and 2 (extend the match b ↦ b' by a bounded x ↦ x' with tp(b,x/X) = tp(b',x'/X); route: AllDominated over X+b ⇒ over X+(b,x) by relative-isolation monotonicity + reindexing, then infra_75_embed/infra_75_iso/infra_79_primeness_mixed_bounded on (b,x)).",
+   "detail": "FIDELITY GAP (audit Nov 19): proposition_7_5: English clause 3 (product freeness from X), mixed-level targets, and prescribed extra tuple matches are demoted (not in the statement); also SingleModelData/same-level packaging. | Nov 26 partial fix: proposition_7_5 now states clause 1 for targets at any eligible ν ≥ µ (infra_79_primeness_mixed_bounded) and clause 3 (product freeness, from infra_75_product_free_level), axioms clean. STILL OPEN: the 'prescribed bounded tuple match' riders of clauses 1 and 2 (extend the match b ↦ b' by a bounded x ↦ x' with tp(b,x/X) = tp(b',x'/X); route: AllDominated over X+b ⇒ over X+(b,x) by relative-isolation monotonicity + reindexing, then infra_75_embed/infra_75_iso/infra_79_primeness_mixed_bounded on (b,x)). | DONE Nov 26: proposition_7_5 now states all three clauses with the riders: clause 1 into targets at any ν ≥ µ, with a prescribed bounded tuple match x ↦ x' when tp(b,x/X) = tp(b',x'/X); clause 2 iso retaining a prescribed match; clause 3 product freeness. Key lemma AllDominated.append (Section7/PrescribedMatch.lean, generic W). SingleModelData packaging remains fid_67.",
    "path": "main"
   },
   {
@@ -9085,6 +9085,15 @@
    "blocker": null,
    "detail": "Cycle 560: proved.",
    "path": "main"
+  },
+  {
+   "id": "AllDominated.append",
+   "label": "Prop 7.5 riders: all-dominated over X+b gives all-dominated over X+(b,x) for bounded x (prescribed bounded tuple match in clauses 1-2)",
+   "section": 8,
+   "file": "AEC/Section7/PrescribedMatch.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 563: proved."
   }
  ],
  "edges": [
@@ -15605,8 +15614,13 @@
    "from": "infra_75_product_free_level",
    "to": "proposition_7_5",
    "kind": "hard"
+  },
+  {
+   "from": "AllDominated.append",
+   "to": "proposition_7_5",
+   "kind": "hard"
   }
  ],
- "doneCount": 794,
+ "doneCount": 796,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

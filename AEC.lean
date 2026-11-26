@@ -138,6 +138,7 @@ public import AEC.Section6.FreshStrip
 public import AEC.Section6.ApproxRetractionProof
 public import AEC.Section6.DescentRetraction
 public import AEC.Section7.AllDominated
+public import AEC.Section7.PrescribedMatch
 public import AEC.Section7.ContinuityCondition
 public import AEC.Section7.ProductIndependent
 public import AEC.Section7.RelativeIsolation
