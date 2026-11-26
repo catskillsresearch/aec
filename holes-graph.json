@@ -1,6 +1,6 @@
 {
  "updated": "2026-11-18 cycle 96 (8.2 orbit comparison with mark matching; Lemma84Conclusion; clause (4) and 8.4 single tracked)",
- "sorryCount": 41,
+ "sorryCount": 40,
  "legend": {
   "open": "No unfinished required proof-deps — try next",
   "blocked": "Waiting on incomplete required proof-deps",
@@ -353,9 +353,9 @@
    "label": "Prop 5.7",
    "section": 5,
    "file": "AEC/Section5/Results.lean",
-   "status": "blocked",
+   "status": "done",
    "blocker": null,
-   "detail": "BLOCKED Nov 26 on infra_57_named_term_presentations (presentation clause of the named scheme, after IsWorkingPackage gained Def 5.2(2)). No sorry (axioms: propext, Classical.choice, Quot.sound). Naming tail eligibleTail (μ0 ⊔ ℵ₀); exists_named_realization_of_arrow via wellOrder_arrow + diagram_preserved (NamedRealizationExistence.lean); namedWorkingScheme + isWorkingPackage_namedWorkingScheme (after the Def 5.2 repairs the named scheme takes #ι < μ0 and the tail bounds μ0 ≤ μ, ℵ₀ ≤ μ, which make name-extended lists bounded). Hyps: Convention 5.3, HasPresentations, seed objects. Downstream: Thm 9.3, Prop 10.6, Lem 10.8.",
+   "detail": "No sorry (axioms: propext, Classical.choice, Quot.sound). Naming tail eligibleTail (μ0 ⊔ ℵ₀); exists_named_realization_of_arrow via wellOrder_arrow + diagram_preserved (NamedRealizationExistence.lean); namedWorkingScheme + isWorkingPackage_namedWorkingScheme (after the Def 5.2 repairs the named scheme takes #ι < μ0 and the tail bounds μ0 ≤ μ, ℵ₀ ≤ μ, which make name-extended lists bounded). Hyps: Convention 5.3, HasPresentations, seed objects. Downstream: Thm 9.3, Prop 10.6, Lem 10.8. | Nov 26: re-proved with Def 5.2(2) in IsWorkingPackage (infra_57_named_term_presentations); axioms propext, Classical.choice, Quot.sound.",
    "path": "main"
   },
   {
@@ -9041,46 +9041,50 @@
    "label": "Prop 5.7 presentation clause for named scheme",
    "section": 5,
    "file": "AEC/Section5/Results.lean",
-   "status": "open",
+   "status": "done",
    "blocker": null,
-   "detail": "Def 5.2(2) for the named package of Prop 5.7: needs the paper's template H ↦ F(J+H) (J = union of finite supports of c's representations; terms with fixed J positions become labels). The four other clauses are isWorkingPackageCore_namedWorkingScheme. Opened Nov 26 when IsWorkingPackage gained HasTermPresentations.",
+   "detail": "Def 5.2(2) for the named package of Prop 5.7: needs the paper's template H ↦ F(J+H) (J = union of finite supports of c's representations; terms with fixed J positions become labels). The four other clauses are isWorkingPackageCore_namedWorkingScheme. Opened Nov 26 when IsWorkingPackage gained HasTermPresentations. | DONE Nov 26 (cycle 561): WorkingScheme.hasTermPresentations_named (NamedPresentation.lean): chart X0 as pres I0, template H ↦ F(I0 ⊕ₗ H) with split labels, names = F(inl) of chart preimages of c; arrows from F(id ⊕ f) preserve names; onto by diagram_iso.",
    "path": "main"
   },
   {
    "id": "exists_split",
    "label": "Prop 5.7 proof: every increasing list on J ⊕ₗ H splits as fixed J-positions then H-positions (SplitLabel, splitPos, splitPos_strictMono, sumLexEmbedRight_splitPos); first piece of the split-label finite supports of F(J+H)",
-   "section": 8,
+   "section": 5,
    "file": "AEC/Section5/FixedSupportTerms.lean",
    "status": "done",
    "blocker": null,
-   "detail": "Cycle 557: proved."
+   "detail": "Cycle 557: proved.",
+   "path": "main"
   },
   {
    "id": "splitRealize_map",
    "label": "Prop 5.7 proof: split-label realization in F(J ⊕ₗ H) is surjective (splitRealize_surjective) and substitution along H ↪o H' is F(id ⊕ f) (splitRealize_map)",
-   "section": 8,
+   "section": 5,
    "file": "AEC/Section5/FixedSupportTerms.lean",
    "status": "done",
    "blocker": null,
-   "detail": "Cycle 558: proved."
+   "detail": "Cycle 558: proved.",
+   "path": "main"
   },
   {
    "id": "TermTemplate.FiniteSupport.withFixedSupport",
    "label": "Prop 5.7 proof: split labels over J make H ↦ F(J ⊕ₗ H) a finite-support term template (Def 5.2(2) term data for the named template; splitPattern, splitPos_pair)",
-   "section": 8,
+   "section": 5,
    "file": "AEC/Section5/FixedSupportTerms.lean",
    "status": "done",
    "blocker": null,
-   "detail": "Cycle 559: proved."
+   "detail": "Cycle 559: proved.",
+   "path": "main"
   },
   {
    "id": "WorkingScheme.isWorkingPackageCore_withTemplate",
    "label": "Prop 5.7 proof: replacing the template (withTemplate) keeps the four non-presentation clauses; the named scheme gets template F.withFixedSupport I0",
-   "section": 8,
+   "section": 5,
    "file": "AEC/Section5/NamedPresentation.lean",
    "status": "done",
    "blocker": null,
-   "detail": "Cycle 560: proved."
+   "detail": "Cycle 560: proved.",
+   "path": "main"
   }
  ],
  "edges": [
@@ -15593,6 +15597,6 @@
    "kind": "hard"
   }
  ],
- "doneCount": 827,
+ "doneCount": 829,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

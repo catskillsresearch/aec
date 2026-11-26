@@ -8,6 +8,7 @@ public import AEC.Section5.EligibleSubclass
 public import AEC.Section5.TermTemplate
 public import AEC.Section5.NamedWorkingScheme
 public import AEC.Section5.NamedPackageTransfer
+public import AEC.Section5.NamedPresentation
 public import AEC.Section5.NamedRealizationExistence
 public import AEC.Section5.SingleModelScheme
 public import AEC.Section5.SingleModelPackage
@@ -214,11 +215,11 @@ theorem proposition_5_6 (K : AbstractElementaryClass.{u}) (D : StableDiagram K)
   · exact hμ.1.closed D.t (Set.mem_insert _ _)
   · exact hg
 
-/-- **Proposition 5.7, presentation clause** (open). The named scheme with its four
-non-presentation clauses is `namedWorkingScheme` (`isWorkingPackageCore_namedWorkingScheme`);
-Definition 5.2(2) for the named objects needs the paper's template `H ↦ F(J + H)`, where `J`
-is the union of the finite supports of the representations of `c` in a well-ordered chart and
-terms with fixed positions in `J` become new labels (proof of Prop 5.7). -/
+/-- **Proposition 5.7, presentation clause.** The named scheme (`namedWorkingScheme`, four
+non-presentation clauses by `isWorkingPackageCore_namedWorkingScheme`) with the paper's template
+`H ↦ F(I0 ⊕ₗ H)` for a well-ordered chart `I0` of `X0`, whose terms with fixed positions in
+`I0` are split labels (`TermTemplate.FiniteSupport.withFixedSupport`); Definition 5.2(2) is
+`WorkingScheme.hasTermPresentations_named`. -/
 theorem infra_57_named_term_presentations {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
     (W : WorkingScheme K S) (hpack : IsWorkingPackage W)
     {μ0 : Cardinal.{u}} {hμ0 : μ0 ∈ W.eligible} (X0 : W.Object μ0 hμ0)
@@ -227,7 +228,9 @@ theorem infra_57_named_term_presentations {K : AbstractElementaryClass.{u}} {S :
     (hι : #ι < μ0) (hTail : ∀ μ ∈ T, μ0 ≤ μ) (hinf : ∀ μ ∈ T, aleph0 ≤ μ) :
     ∃ S' : SystemShape.{u}, ∃ W' : WorkingScheme K S',
       IsWorkingPackage W' ∧ W'.eligible = T := by
-  sorry
+  obtain ⟨I0, _, _, hP⟩ := WorkingScheme.hasTermPresentations_named W hpack X0 c T hT hι hTail hinf
+  exact ⟨S, _, isWorkingPackage_of_core (WorkingScheme.isWorkingPackageCore_withTemplate _ _
+    (WorkingScheme.isWorkingPackageCore_namedWorkingScheme W hpack X0 c T hT hι hTail hinf)) hP, rfl⟩
 
 /-- **Proposition 5.7** (Naming bounded data). On an unbounded class of higher eligible levels,
 the diagram of a fixed bounded list is realized, and those levels carry a working scheme.
