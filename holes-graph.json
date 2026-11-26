@@ -9063,6 +9063,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 558: proved."
+  },
+  {
+   "id": "TermTemplate.FiniteSupport.withFixedSupport",
+   "label": "Prop 5.7 proof: split labels over J make H ↦ F(J ⊕ₗ H) a finite-support term template (Def 5.2(2) term data for the named template; splitPattern, splitPos_pair)",
+   "section": 8,
+   "file": "AEC/Section5/FixedSupportTerms.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 559: proved."
   }
  ],
  "edges": [
@@ -15563,8 +15572,13 @@
    "from": "splitRealize_map",
    "to": "infra_57_named_term_presentations",
    "kind": "hard"
+  },
+  {
+   "from": "TermTemplate.FiniteSupport.withFixedSupport",
+   "to": "infra_57_named_term_presentations",
+   "kind": "hard"
   }
  ],
- "doneCount": 825,
+ "doneCount": 826,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }

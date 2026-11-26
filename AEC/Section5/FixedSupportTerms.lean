@@ -194,5 +194,91 @@ theorem splitRealize_map {K : AbstractElementaryClass.{u}} {S : SystemShape.{u}}
   congr 1
   exact SupportTerm.ext_of_label_eq rfl (fun i => congrFun (sumLexEmbedRight_splitPos f t.label t.pos) i)
 
+theorem splitPos_pair {Lab : Type u} {arity : Lab → ℕ} {J H : Type u} [LinearOrder J]
+    [LinearOrder H] {b b' : SplitLabel Lab arity J} (h : b = b')
+    (q : Fin b.arity' → H) (q' : Fin b'.arity' → H) (a : Fin (arity b.label)) :
+    (∃ x : J, splitPos b q a = toLex (inl x) ∧
+        splitPos b' q' (Fin.cast (congrArg arity (congrArg SplitLabel.label h)) a) =
+          toLex (inl x)) ∨
+      (∃ c : Fin b.arity', splitPos b q a = toLex (inr (q c)) ∧
+        splitPos b' q' (Fin.cast (congrArg arity (congrArg SplitLabel.label h)) a) =
+          toLex (inr (q' (Fin.cast (congrArg SplitLabel.arity' h) c)))) := by
+  subst h
+  unfold splitPos
+  by_cases ha : a.val < b.k
+  · left
+    exact ⟨b.fixed ⟨a, ha⟩, by simp [ha], by simp [ha]⟩
+  · right
+    refine ⟨⟨a - b.k, by unfold SplitLabel.arity'; omega⟩, by simp [ha], by simp [ha]⟩
+
+/-- Pattern evaluation for split labels: same split labels and the same pattern of the
+`H`-positions give the same pattern of the full lists on `J ⊕ₗ H`. -/
+theorem splitPattern {Lab : Type u} {arity : Lab → ℕ} {J H : Type u} [LinearOrder J]
+    [LinearOrder H] {n : ℕ} (t s : Fin n → SupportTerm (SplitLabel Lab arity J)
+      SplitLabel.arity' H)
+    (hlabel : ∀ i, (t i).label = (s i).label)
+    (heq : ∀ i j (a : Fin (t i).label.arity') (b : Fin (t j).label.arity'),
+      (t i).pos a = (t j).pos b ↔
+        (s i).pos (Fin.cast (congrArg SplitLabel.arity' (hlabel i)) a) =
+          (s j).pos (Fin.cast (congrArg SplitLabel.arity' (hlabel j)) b))
+    (hlt : ∀ i j (a : Fin (t i).label.arity') (b : Fin (t j).label.arity'),
+      (t i).pos a < (t j).pos b ↔
+        (s i).pos (Fin.cast (congrArg SplitLabel.arity' (hlabel i)) a) <
+          (s j).pos (Fin.cast (congrArg SplitLabel.arity' (hlabel j)) b))
+    (i j : Fin n) (a : Fin (arity (t i).label.label)) (b : Fin (arity (t j).label.label)) :
+    (splitPos (t i).label (t i).pos a = splitPos (t j).label (t j).pos b ↔
+      splitPos (s i).label (s i).pos
+          (Fin.cast (congrArg arity (congrArg SplitLabel.label (hlabel i))) a) =
+        splitPos (s j).label (s j).pos
+          (Fin.cast (congrArg arity (congrArg SplitLabel.label (hlabel j))) b)) ∧
+    (splitPos (t i).label (t i).pos a < splitPos (t j).label (t j).pos b ↔
+      splitPos (s i).label (s i).pos
+          (Fin.cast (congrArg arity (congrArg SplitLabel.label (hlabel i))) a) <
+        splitPos (s j).label (s j).pos
+          (Fin.cast (congrArg arity (congrArg SplitLabel.label (hlabel j))) b)) := by
+  rcases splitPos_pair (hlabel i) (t i).pos (s i).pos a with ⟨x, h1, h2⟩ | ⟨c, h1, h2⟩ <;>
+    rcases splitPos_pair (hlabel j) (t j).pos (s j).pos b with ⟨y, h3, h4⟩ | ⟨d, h3, h4⟩ <;>
+    rw [h1, h2, h3, h4]
+  · exact ⟨Iff.rfl, Iff.rfl⟩
+  · simp
+  · simp
+  · simp only [toLex_inj, Sum.inr.injEq, Lex.inr_lt_inr_iff]
+    exact ⟨heq i j c d, hlt i j c d⟩
+
+/-- Full support term on `J ⊕ₗ H` of a split term. -/
+def SupportTerm.unsplit {Lab : Type u} {arity : Lab → ℕ} {J H : Type u} [LinearOrder J]
+    [LinearOrder H] (t : SupportTerm (SplitLabel Lab arity J) SplitLabel.arity' H) :
+    SupportTerm Lab arity (J ⊕ₗ H) :=
+  ⟨t.label.label, splitPos t.label t.pos, splitPos_strictMono t.label t.increasing⟩
+
+/-- **Finite supports of the fixed-support template** (proof of Proposition 5.7): split labels
+over `J` make `H ↦ F (J ⊕ₗ H)` a finite-support term template. -/
+def TermTemplate.FiniteSupport.withFixedSupport {K : AbstractElementaryClass.{u}}
+    {S : SystemShape.{u}} {F : TermTemplate K S} (Φ : F.FiniteSupport) (J : Type u)
+    [LinearOrder J] [Nonempty J] : (F.withFixedSupport J).FiniteSupport where
+  Lab v := SplitLabel (Φ.Lab v) (Φ.arity v) J
+  arity _ := SplitLabel.arity'
+  realize v t := splitRealize Φ J v t
+  realize_surjective v := splitRealize_surjective Φ J v
+  realize_map f v t := splitRealize_map Φ J f v t
+  pattern_vertex v _ t s hlabel heq hlt :=
+    Φ.pattern_vertex (I := J ⊕ₗ _) v (fun i => (t i).unsplit) (fun i => (s i).unsplit)
+      (fun i => congrArg SplitLabel.label (hlabel i))
+      (fun i j a b => (splitPattern t s hlabel heq hlt i j a b).1)
+      (fun i j a b => (splitPattern t s hlabel heq hlt i j a b).2)
+  pattern_edge h a b p p' q q' hp hp' hq hq' hpat := by
+    refine Φ.pattern_edge (I := J ⊕ₗ _) h a.label b.label (splitPos a p) (splitPos a p')
+      (splitPos b q) (splitPos b q') (splitPos_strictMono a hp) (splitPos_strictMono a hp')
+      (splitPos_strictMono b hq) (splitPos_strictMono b hq') ?_
+    intro x y
+    rcases splitPos_pair (rfl : a = a) p p' x with ⟨u, h1, h2⟩ | ⟨c, h1, h2⟩ <;>
+      rcases splitPos_pair (rfl : b = b) q q' y with ⟨w, h3, h4⟩ | ⟨d, h3, h4⟩ <;>
+      simp only [Fin.cast_eq_self] at h2 h4 <;> rw [h1, h2, h3, h4]
+    · exact ⟨Iff.rfl, Iff.rfl, Iff.rfl⟩
+    · simp
+    · simp
+    · simp only [toLex_inj, Sum.inr.injEq, Lex.inr_lt_inr_iff]
+      exact hpat c d
+
 end
 end AEC
