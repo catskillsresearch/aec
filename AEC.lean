@@ -99,10 +99,12 @@ public import AEC.Section5.NamedPackageTransfer
 public import AEC.Section5.NamedRealizationExistence
 public import AEC.Section5.PackageClauses
 public import AEC.Section5.PaddedOrder
+public import AEC.Section5.PresentationClause
 public import AEC.Section5.OrderPatternRealization
 public import AEC.Section5.PatternCode
 public import AEC.Section5.Results
 public import AEC.Section5.SingleModelPackage
+public import AEC.Section5.SingleModelPresentation
 public import AEC.Section5.SingleModelScheme
 public import AEC.Section5.StrictClosure
 public import AEC.Section5.SystemArrow

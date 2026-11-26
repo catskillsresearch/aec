@@ -9026,6 +9026,15 @@
    "status": "done",
    "blocker": null,
    "detail": "Cycle 274: proved."
+  },
+  {
+   "id": "SingleModelData.hasTermPresentations",
+   "label": "Def 5.2(2) presentation clause (HasTermPresentations: finite-support term data, F(I) objects, substitution arrows incl. mixed levels, every object iso to a presentation) for the single-model scheme",
+   "section": 8,
+   "file": "AEC/Section5/SingleModelPresentation.lean",
+   "status": "done",
+   "blocker": null,
+   "detail": "Cycle 555: proved."
   }
  ],
  "edges": [
@@ -15506,8 +15515,13 @@
    "from": "infra_83_full_single_of_template_list_piece_data",
    "to": "infra_83_lemma_8_3_full_single",
    "kind": "hard"
+  },
+  {
+   "from": "SingleModelData.hasTermPresentations",
+   "to": "fid_52_presentation_clause",
+   "kind": "hard"
   }
  ],
- "doneCount": 822,
+ "doneCount": 823,
  "meta": "grokbot_01 (2026-11-18): Phase 0 complete (all degenerate/refuted nodes restated or audited); Phase 1 done; Phase 2 demoted to infra_78_tied_free_lift_mixed; Phase 3: 7.9 restated, 7.12 vacuity audited. sorryCount 42. Uncommitted in /tmp/aec-grok."
 }
